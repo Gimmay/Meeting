@@ -1,7 +1,7 @@
 <?php
 	return [
 		'DB_TYPE'   => 'mysqli',
-		'DB_HOST'   => 'localhost',
+		'DB_HOST'   => '192.168.0.66',
 		'DB_PORT'   => '3306',
 		'DB_NAME'   => 'gimmay_meeting',
 		'DB_USER'   => 'developer',

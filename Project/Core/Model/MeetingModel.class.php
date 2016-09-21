@@ -17,6 +17,11 @@
 
 		public function createMeeting($data){
 			if($this->create($data)){
+				$data['creator'] = I('session.MANAGER_USER_ID', 0, 'int');
+				$data['creatime'] = time();
+				$data['director_id'] = 2799;
+				$data['contacts_1_id'] = 2799;
+				$data['contacts_2_id'] = 2799;
 				$result = $this->add($data);
 
 				return $result ? ['status' => true, 'message' => '创建成功'] : [

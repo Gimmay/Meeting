@@ -16,7 +16,7 @@
 			$this->_assignEmployeeName();
 			$this->assign('cv_name', CONTROLLER_NAME.':'.ACTION_NAME);
 		}
-
+		
 		private function _checkLogin(){
 			$canAccessDirectly = function (){
 				$list  = [
