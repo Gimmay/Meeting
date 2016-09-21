@@ -166,9 +166,7 @@
 				else $this->error($result['message'], '', 3);
 				exit;
 			}
-			$model_2 = D('Employee');
 			$info = $model->findEmployee(1, ['id' => I('get.id', 0, 'int')]);
-			$info = $model_2->writeExtendInformation($info, true);
 			/** @var \Core\Model\DepartmentModel $dept_model */
 			$dept_model = D('Core/Department');
 			/* 获取职位列表（for select插件） */
