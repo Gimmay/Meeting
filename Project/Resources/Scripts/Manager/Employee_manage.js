@@ -63,7 +63,7 @@ var temp = {
 			var name = $(this).text();
 			var select_temp = '';
 			ManageObject.object.loading.loading(true);
-			Common.ajax({data:{requestType:'assign_permission',aid:id,id:employee_id},callback:function(data){
+			Common.ajax({data:{requestType:'assign_permission',pid:id,id:employee_id},callback:function(data){
 				ManageObject.object.loading.complete();
 				if(data.status){
 					$('#authorize_all a').each(function(){
@@ -86,7 +86,7 @@ var temp = {
 			var name = $(this).text();
 			var select_temp = '';
 			ManageObject.object.loading.loading(true);
-			Common.ajax({data:{requestType:'anti_assign_permission',aid:id,id:employee_id,type:type},callback:function(data){
+			Common.ajax({data:{requestType:'anti_assign_permission',pid:id,id:employee_id,type:type},callback:function(data){
 				ManageObject.object.loading.complete();
 				if(data.status){
 					$('#authorize_select a').each(function(){
@@ -314,7 +314,6 @@ $(function(){
 		});
 		temp.bindEvent();
 	});
-
 	$('#authorize_search .input-group-addon').on('click',function(){
 		temp.searchAuthorize();
 	});
@@ -325,8 +324,14 @@ $(function(){
 		}
 	});
 
+	// 单个员工删除
 	$('.delete_btn').on('click',function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
 		$('#delete_employee').find('input[name=id]').val(id);
+	});
+
+	// 批量删除员工
+	$('.batch_delete_btn').on('click',function(){
+		
 	});
 });

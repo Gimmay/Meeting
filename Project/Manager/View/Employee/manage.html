@@ -41,7 +41,7 @@
 										<p>新增员工</p>
 									</a>
 								</div>
-								<div class="function_btn bg-danger">
+								<div class="function_btn bg-danger"  data-toggle="modal" data-target="#batch_delete_employee">
 									<i></i>
 									<p>批量删除</p>
 								</div>
@@ -106,7 +106,7 @@
 														<button type="button" class="btn btn-default btn-xs btn_distribution_role" data-toggle="modal" data-target="#distribution_role">分配角色</button>
 													</if>
 													<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
-													<a href="<{:U('Employee/alter')}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
+													<a href="<{:U('Employee/alter',['id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
 													<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_employee">删除</button>
 												</div>
 											</td>
@@ -148,6 +148,29 @@
 			</div>
 		</div>
 	</div>
+	<!-- 批量删除 -->
+	<div class="modal fade" id="batch_delete_employee" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">删除角色</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete">
+					<input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除角色？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary batch_delete_btn">确认删除</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 	<!-- 分配角色 -->
 	<div class="modal fade" id="distribution_role" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog" style="width: 80%">
@@ -178,7 +201,7 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<a href="javascript:history.go(0)" class="btn btn-default" >关闭</a>
 					</div>
 					<input type="hidden" name="hide_employee_id" >
 				</form>

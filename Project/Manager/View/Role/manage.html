@@ -10,6 +10,7 @@
 	<!--<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/custom.css">-->
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
@@ -19,6 +20,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -38,16 +40,20 @@
 								</div>
 								<div class="function_btn bg-danger">
 									<i></i>
-									<p>删除角色</p>
+									<p>批量删除</p>
 								</div>
 							</div>
 						</header>
 						<div class="repertory clearfix">
-							<div class="input-group repertory_text">
-								<span class="input-group-addon">搜索用户</span>
-								<input type="text" class="form-control" placeholder="搜索条件...">
-							</div>
-							<button type="submit" class="btn btn-default search">查询</button>
+							<form action="" method="get">
+								<div class="input-group repertory_text">
+									<input type="search" name="keyword" class="form-control" placeholder="名称/拼音简码/手机号" value="">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default mian_search">搜索角色</button>
+									</span>
+								</div>
+								<a type="reset" class="btn btn-default mian_search" href="/Employee/manage.aspx">查看所有</a>
+								<input type="hidden" name="__hash__" value="60a112eddc18ef6246d7074173bbbdf1_677a914e2ded4bf6065ffa798f1e82fd"></form>
 						</div>
 						<div class="table_wrap">
 							<table class="table table-bordered" style="text-align: center">
@@ -82,11 +88,13 @@
 											<td><{$single.comment}></td>
 											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
 											<td>
-												<if condition="$max_role_level elt $single['level']">
-													<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#authorize_role">授权</button>
-													<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#modify_role">修改</button>
-													<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#delete_role">删除</button>
-												</if>
+												<div class="btn-group" data-id="<{$single.id}>">
+													<if condition="$max_role_level elt $single['level']">
+														<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
+														<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#modify_role">修改</button>
+														<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#delete_role">删除</button>
+													</if>
+												</div>
 											</td>
 										</tr>
 									</volist>
@@ -106,47 +114,6 @@
 						</div>
 					</section>
 				</div>
-			</div>
-		</div>
-	</div>
-	<!-- 角色授权 -->
-	<div class="modal fade" id="authorize_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="authorize_role_title">角色授权</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="authorize_role_name" class="col-sm-2 control-label">名称：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control name" name="name" id="authorize_role_name">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="authorize_role_status" class="col-sm-2 control-label">禁用：</label>
-							<div class="col-sm-10">
-								<select name="status" id="authorize_role_status" class="form-control">
-									<option value="1">是</option>
-									<option value="0">否</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="authorize_role_comment" class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-10">
-								<textarea class="form-control comment" name="comment" id="authorize_role_comment"></textarea>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="button" class="btn btn-primary">保存</button>
-					</div>
-				</form>
 			</div>
 		</div>
 	</div>
@@ -276,6 +243,43 @@
 			</div>
 		</div>
 	</div>
+	<!-- 员工授权 -->
+	<div class="modal fade" id="authorize_role" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 80%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="authorize_role_title">员工授权</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post">
+					<div class="modal-body role_body">
+						<div class="btn_rect">
+							<header><h3>已选择角色</h3></header>
+							<section class="select_area btn_green" id="authorize_select">
+							</section>
+						</div>
+						<div class="btn_rect but_wrap">
+							<header>
+								<div class="form-group">
+									<div class="input-group" id="authorize_search">
+										<input class="form-control" type="text" placeholder="角色名">
+										<div class="input-group-addon">搜索</div>
+									</div>
+								</div>
+							</header>
+							<section class="all_area" id="authorize_all">
+							</section>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					</div>
+					<input type="hidden" name="hide_employee_id" >
+				</form>
+			</div>
+		</div>
+	</div>
 	<script>
 		var ManageObject = {
 			data  :{
@@ -289,7 +293,8 @@
 				icheck        :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
-				})
+				}),
+				loading: $().QuasarLoading()
 			}
 		}
 	</script>

@@ -9,15 +9,11 @@ $(function(){
 	 *  图标变化
 	 *  打开二级导航的同时其他兄弟元素导航关闭二级导航
 	 * */
-	$('.side-item-link').on('click', function(){
+	$('.side-item-link').each(function(){
 		if($(this).parent('.side_item').hasClass('active')){
-			if($(this).parent('.side_item').hasClass('has_child')){
-				$(this).find('.arrow').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-left');
-			}
+			$(this).find('.arrow').removeClass('glyphicon-chevron-left').addClass('glyphicon-chevron-down');
 		}else{
-			if($(this).parent('.side_item').hasClass('has_child')){
-				$(this).find('.arrow').removeClass('glyphicon-chevron-left').addClass('glyphicon-chevron-down');
-			}
+			$(this).find('.arrow').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-left');
 		}
 	});
 	/*
@@ -69,5 +65,50 @@ var Common = {
 			}
 		});
 		return result;
-	}
+	},
+	
+	/*
+	 *   ==============================RegExp================================
+	 *   RegExp
+	 *   正则判断字符串是否邮箱、手机号码、电话、传真、汉字、数字、特殊字符
+	 *   ==============================RegExp================================
+	 */
+	RegExpClass:function(){
+
+		//验证字符串是否为email
+		this.isEmail = function(str){
+			var emailReg = /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)*\.[\w-]+$/i;
+			return emailReg.test(str);
+		};
+
+		//验证字符串是否为手机号码
+		this.isMobile = function(str){
+			var patrn = /^((13[0-9])|(15[0-35-9])|(18[0,2,3,5-9]))\d{8}$/;
+			return patrn.test(str);
+		};
+
+		//验证字符串是否为电话或者传真
+		this.isTel = function(str){
+			var patrn = /^[+]{0,1}(\d){1,3}[ ]?([-]?((\d)|[ ]){1,12})+$/;
+			return patrn.test(str);
+		};
+
+		//验证字符串是否为汉字
+		this.isCN = function(str){
+			var p = /^[\u4e00-\u9fa5\w]+$/;
+			return p.test(str);
+		};
+
+		//验证字符串是否为数字
+		this.isNum = function(str){
+			var p = /^\d+$/;
+			return p.test(str);
+		};
+
+		//验证字符串是否含有特殊字符
+		this.isUnSymbols = function(str){
+			var p = /^[\u4e00-\u9fa5\w \.,()，ê?。¡ê（ê¡§）ê?]+$/;
+			return p.test(str);
+		};
+	},
 };

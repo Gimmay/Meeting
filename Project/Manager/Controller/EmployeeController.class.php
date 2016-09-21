@@ -87,11 +87,11 @@
 						echo json_encode($result);
 					break;
 					case 'assign_permission':
-						$result = $assign_permission_model->assignPermission(I('post.aid', 0, 'int'), I('post.id', 0, 'int'), 1);
+						$result = $assign_permission_model->assignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 1);
 						echo json_encode($result);
 					break;
 					case 'anti_assign_permission':
-						$result = $assign_permission_model->antiAssignPermission(I('post.aid', 0, 'int'), I('post.id', 0, 'int'), I('post.type', 1, 'int'));
+						$result = $assign_permission_model->antiAssignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), I('post.type', 1, 'int'));
 						echo json_encode($result);
 					break;
 					case 'delete':
@@ -120,6 +120,7 @@
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 				'order'   => I('get.column', 'id').' '.I('get.sort', 'desc')
 			]);
+
 			$employee_list = $model_2->writeExtendInformation($employee_list);
 			/* 为每条用户记录设定最大的角色等级 */
 			$employee_list = $this->_setMaxRoleLevel($employee_list);

@@ -32,6 +32,10 @@
 			};
 			/** @var \Core\Model\RoleModel $model */
 			$model = D('Core/Role');
+			/** @var \Core\Model\PermissionModel $permission_model */
+			$permission_model = D('Core/Permission');
+			/** @var \Core\Model\AssignPermissionModel $assign_permission_model */
+			$assign_permission_model = D('Core/AssignPermission');
 			if(IS_POST){
 				$type = strtolower(I('post.requestType', ''));
 				switch($type){
@@ -39,6 +43,22 @@
 						$result = $model->createRole(I('post.'));
 						if($result['status']) $this->success($result['message']);
 						else $this->error($result['message'], '', 3);
+					break;
+					case 'get_assigned_permission':
+						$result = $permission_model->getPermissionOfRole(I('post.id', 0, 'int'), null);
+						echo json_encode($result);
+					break;
+					case 'get_unassigned_permission':
+						$result = $permission_model->getPermissionOfRole(I('post.id', 0, 'int'), null, true, I('post.keyword', ''));
+						echo json_encode($result);
+					break;
+					case 'assign_permission':
+						$result = $assign_permission_model->assignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 0);
+						echo json_encode($result);
+					break;
+					case 'anti_assign_permission':
+						$result = $assign_permission_model->antiAssignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 0);
+						echo json_encode($result);
 					break;
 					default:
 					break;
