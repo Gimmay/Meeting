@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>会议模块 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<!--<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/custom.css">-->
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/jQuery/cityselect/jquery.cityselect.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/menu"/>
+			<div class="mt_wrapper">
+				<include file="Public/header"/>
+				<div class="mian_body">
+					<section class="content">
+						<header class="c_header">
+							<div class="function_list clearfix">
+								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
+									<i></i>
+									<p>创建会议</p>
+								</div>
+								<div class="function_btn bg-danger">
+									<i></i>
+									<p>修改会议</p>
+								</div>
+							</div>
+						</header>
+						<div class="repertory clearfix">
+							<div class="input-group repertory_text">
+								<span class="input-group-addon">搜索会议</span>
+								<input type="text" class="form-control" placeholder="搜索条件...">
+							</div>
+							<button type="submit" class="btn btn-default search">查询</button>
+						</div>
+						<div class="table_wrap">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="5%"></td>
+										<td width="10%">id</td>
+										<td width="10%">名称</td>
+										<td width="10%">状态</td>
+										<td width="15%">创建时间</td>
+										<td width="15%">用户数</td>
+										<td width="15%">备注</td>
+										<td width="20%">操作</td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><input type="checkbox" class="icheck" placeholder=""></td>
+										<td>532452</td>
+										<td>刘先生</td>
+										<td><span class="color-info ">可用</span></td>
+										<td>2016-6-6</td>
+										<td>吉美</td>
+										<td>吉美</td>
+										<td>
+											<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#authorize_role">授权</button>
+											<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#modify_role">修改</button>
+											<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#delete_role">删除</button>
+										</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" class="icheck" placeholder=""></td>
+										<td>532452</td>
+										<td>刘先生</td>
+										<td><span class="color-danger">可用</span></td>
+										<td>2016-6-6</td>
+										<td>吉美</td>
+										<td>吉美</td>
+										<td>
+											<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#authorize_role">授权</button>
+											<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#modify_role">修改</button>
+											<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#delete_role">删除</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="page_wrap">
+							<ul class="pagination ">
+								<li><a href="#">&laquo;</a></li>
+								<li><a href="#">1</a></li>
+								<li><a href="#">2</a></li>
+								<li><a href="#">3</a></li>
+								<li><a href="#">4</a></li>
+								<li><a href="#">5</a></li>
+								<li><a href="#">&raquo;</a></li>
+							</ul>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 新建会议 -->
+	<div class="modal fade" id="create_meeting" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+		<div class="modal-dialog" style="width: 80%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="authorize_role_title">新建会议</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post">
+					<div class="modal-body" style=" padding: 15px 20px 15px 0px;">
+						<div class="form-group has-error">
+							<label for="meeting_name" class="col-sm-2 control-label">会议名称：</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control meeting_name" name="name" id="meeting_name">
+							</div>
+							<div class="error col-sm-1">*必须填写会议名</div>
+						</div>
+						<div class="form-group has-error">
+							<label for="meeting_status" class="col-sm-2 control-label">状态：</label>
+							<div class="col-sm-9">
+								<select name="status" id="meeting_status" class="form-control">
+									<option value="0">新建</option>
+									<option value="1">进行中</option>
+									<option value="2">结束</option>
+									<option value="3">作废</option>
+								</select>
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+						<div class="form-group">
+							<label for="meeting_type" class="col-sm-2 control-label">类型：</label>
+							<div class="col-sm-9">
+								<select name="type" id="meeting_type" class="form-control">
+									<option value="0">成交会</option>
+									<option value="1">特训营</option>
+									<option value="2">优雅女子</option>
+									<option value="3">招商会</option>
+								</select>
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+						<div class="form-group">
+							<label for="meeting_host" class="col-sm-2 control-label">主办方：</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control meeting_host" name="host" id="meeting_host">
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+						<div class="form-group">
+							<label for="meeting_plan" class="col-sm-2 control-label">策划方：</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control meeting_plan" name="plan" id="meeting_plan">
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+						<div class="form-group">
+							<label for="meeting_place" class="col-sm-2 control-label">举办地点：</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control meeting_place" name="place" id="meeting_place">
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+						<div class="form-group">
+							<label for="meeting_start_time" class="col-sm-2 control-label">开始时间：</label>
+							<div class="col-sm-9">
+								<!--<input type="text" class="form-control meeting_start_time" name="meeting_place" id="meeting_start_time">-->
+								<div class="input-group date form_datetime" id="meeting_start_time_wrap">
+									<input class="form-control" id="meeting_start_time" name="start_time">
+									<!--<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>-->
+									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+								</div>
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+						<div class="form-group">
+							<label for="meeting_end_time" class="col-sm-2 control-label">结束时间：</label>
+							<div class="col-sm-9">
+								<div class="input-group date form_datetime" id="meeting_end_time_wrap">
+									<input class="form-control" id="meeting_end_time" name="end_time">
+									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+								</div>
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+						<div class="form-group">
+							<label for="director_id" class="col-sm-2 control-label">负责人ID：</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control director_id" name="director_id" id="director_id">
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+						<div class="form-group">
+							<label for="contacts_1_id" class="col-sm-2 control-label">联系人：</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control contacts_1_id" name="contacts_1_id" id="contacts_1_id">
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+						<div class="form-group">
+							<label for="contacts_2_id" class="col-sm-2 control-label">联系人2：</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control contacts_2_id" name="contacts_2_id" id="contacts_2_id">
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+						<div class="form-group">
+							<label for="brief" class="col-sm-2 control-label">简介：</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control brief" name="brief" id="brief">
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+						<div class="form-group">
+							<label for="logo" class="col-sm-2 control-label">LOGO图片地址：</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control logo" name="logo" id="logo">
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+						<input type="hidden" name="creator" class="creator">
+						<input type="hidden" name="creatime" class="creatime">
+						<div class="form-group">
+							<label for="comment" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-9">
+								<textarea class="form-control comment" name="comment" id="comment"></textarea>
+							</div>
+							<div class="error col-sm-1"></div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary">保存</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+			data  :{
+				positionSelect:'<{:json_encode($position)}>',
+				titleSelect   :'<{:json_encode($position)}>'
+			},
+			object:{
+				startTime     :$('#meeting_start_time_wrap').datetimepicker({
+					language          :'zh-CN',
+					todayBtn          :true,
+					autoclose         :true,
+					todayHighlight    :true,
+					keyboardNavigation:true,
+					forceParse        :true,
+					format            :'yyyy-mm-dd',
+					weekStart         :0,
+					startView         :4,
+					minView           :2,
+					maxView           :4,
+					minuteStep        :5
+				}),
+				endTime     :$('#meeting_end_time_wrap').datetimepicker({
+					language          :'zh-CN',
+					todayBtn          :true,
+					autoclose         :true,
+					todayHighlight    :true,
+					keyboardNavigation:true,
+					forceParse        :true,
+					format            :'yyyy-mm-dd',
+					weekStart         :0,
+					startView         :4,
+					minView           :2,
+					maxView           :4,
+					minuteStep        :5
+				}),
+				/*toast         :$().QuasarToast(),*/
+				icheck        :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				})
+			}
+		}
+	</script>
+</body>
+</html>

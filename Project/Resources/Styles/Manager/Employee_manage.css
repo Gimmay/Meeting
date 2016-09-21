@@ -1,0 +1,54 @@
+
+.info_css p{
+	padding   : 10px 20px;
+	font-size : 14px;
+}
+
+/* 分配角色模态框样式 */
+.role_body{
+	padding : 0 !important;
+}
+
+.btn_rect{
+	padding: 10px;
+	width   : 100%;
+}
+.btn_rect .btn {
+	margin-bottom: 8px;
+	margin-right: 8px;
+}
+.btn_rect section {
+	padding: 10px 10px 0 10px;
+}
+.btn_rect header{
+	padding: 0 10px;
+}
+
+.btn_rect .form-group {
+	margin: 0;
+	padding-right: 50%;
+}
+
+.btn_green .btn{
+	background  : #23C6C8 ;
+	border-color: #23C6C8 ;
+	color       : #FFFFFF;
+	text-shadow : none;
+}
+
+.but_wrap {
+	border-top: 1px solid #e1e1e1;
+	padding: 10px;
+}
+.but_wrap header {
+	margin-bottom: 10px;
+}
+.but_wrap .form-group {
+	margin: 0;
+	padding-right: 50%;
+}
+.all_area {
+	max-height: 400px;
+	overflow: auto;
+}
+

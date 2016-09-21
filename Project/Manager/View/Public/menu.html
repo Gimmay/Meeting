@@ -1,0 +1,36 @@
+<!--会议系统左侧  导航栏 公用-->
+<div class="mt_navbar">
+	<div class="header">
+		<a href="http://www.baidu.com">吉美会议</a>
+	</div>
+	<div class="sidenav">
+		<ul class="sidenav_list" id="side_menu">
+			<li class="side_item <php>if('Employee:manage'==$cv_name) echo 'active';</php>">
+				<a href="<{:U('Employee/manage')}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-home"></i>
+					<span class="nav-label">员工模块</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</a>
+				<ul class="nav-second-level">
+					<li>
+						<a href="<{:U('Employee/create')}>">新建员工</a>
+					</li>
+				</ul>
+			</li>
+			<li class="side_item <php>if('Role:manage'==$cv_name) echo 'active';</php>">
+				<a href="<{:U('Role/manage')}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-home"></i>
+					<span class="nav-label">角色模块</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</a>
+			</li>
+			<li class="side_item <php>if('Meeting:manage'==$cv_name) echo 'active';</php>">
+				<a href="<{:U('Meeting/manage')}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-home"></i>
+					<span class="nav-label">会议模块</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>
