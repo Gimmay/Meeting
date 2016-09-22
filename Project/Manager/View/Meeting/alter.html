@@ -48,7 +48,17 @@
 								<div class="form-group">
 									<label for="meeting_status" class="col-sm-1 control-label">状态：</label>
 									<div class="col-sm-10">
+<<<<<<< HEAD
 										<select name="status" id="meeting_status" class="form-control">
+=======
+
+										<select name="status" id="meeting_status" class="form-control">
+ 											<!--<option value="1" <if condition="$info.status eq 1">selected</if>>成交会</option>-->
+											<!--<option value="2" <if condition="$info.status eq 2">selected</if>>特训营</option>-->
+											<!--<option value="3" <if condition="$info.status eq 3">selected</if>>优雅女子</option>-->
+											<!--<option value="4" <if condition="$info.status eq 4">selected</if>>招商会</option>-->
+
+>>>>>>> origin/master
 											<switch name="info['status']">
 												<case value="1">
 													<option value="0" selected>新建</option>
@@ -75,6 +85,10 @@
 												</case>
 
 											</switch>
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
 										</select>
 									</div>
 									<div class="error col-sm-1"></div>
