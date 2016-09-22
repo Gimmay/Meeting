@@ -5,7 +5,7 @@
 	</div>
 	<div class="sidenav">
 		<ul class="sidenav_list" id="side_menu">
-			<li class="side_item <php>if('Employee:manage'==$cv_name) echo 'active';</php>">
+			<li class="side_item <php>if('Employee'==$c_name) echo 'active';</php>">
 				<a href="<{:U('Employee/manage')}>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon-home"></i>
 					<span class="nav-label">员工模块</span>
@@ -17,14 +17,14 @@
 					</li>
 				</ul>
 			</li>
-			<li class="side_item <php>if('Role:manage'==$cv_name) echo 'active';</php>">
+			<li class="side_item <php>if('Role'==$c_name) echo 'active';</php>">
 				<a href="<{:U('Role/manage')}>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon-home"></i>
 					<span class="nav-label">角色模块</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span>
 				</a>
 			</li>
-			<li class="side_item <php>if('Meeting:manage'==$cv_name) echo 'active';</php>">
+			<li class="side_item <php>if('Meeting'==$c_name) echo 'active';</php>">
 				<a href="<{:U('Meeting/manage')}>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon-home"></i>
 					<span class="nav-label">会议模块</span>
@@ -33,6 +33,18 @@
 				<ul class="nav-second-level">
 					<li>
 						<a href="<{:U('Meeting/create')}>">创建会议</a>
+					</li>
+				</ul>
+			</li>
+			<li class="side_item <php>if('Client'==$c_name) echo 'active';</php>">
+				<a href="<{:U('Client/manage')}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-home"></i>
+					<span class="nav-label">客户模块</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</a>
+				<ul class="nav-second-level">
+					<li>
+						<a href="<{:U('Client/create')}>">新建客户</a>
 					</li>
 				</ul>
 			</li>

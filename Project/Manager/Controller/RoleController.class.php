@@ -60,20 +60,26 @@
 						$result = $assign_permission_model->antiAssignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 0);
 						echo json_encode($result);
 					break;
+					case 'delete':
+						$result = $model->deleteRole(I('post.id'));
+						if($result['status']) $this->success($result['message']);
+						else $this->error($result['message'], '', 3);
+					break;
 					default:
 					break;
 				}
 				exit;
 			}
 			$max_role_level = $model->getMaxRoleLevel(I('session.MANAGER_USER_ID', 0, 'int'));
-			$list_total     = $model->findRole(0, ['keyword' => I('get.keyword', '')]);
-			$page_object    = new Page($list_total, 10);
+			$list_total     = $model->findRole(0, ['keyword' => I('get.keyword', ''), 'status' => 'not deleted']);
+			$page_object    = new Page($list_total, C('PAGE_RECORD_COUNT'));
 			\ThinkPHP\Quasar\Page\setTheme1($page_object);
 			$page_show = $page_object->show();
 			$role_list = $model->findRole(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'order'   => I('get.column', 'id').' '.I('get.sort', 'desc')
+				'order'   => I('get.column', 'id').' '.I('get.sort', 'desc'),
+				'status'  => 'not deleted'
 			]);
 			$role_list = $setEmployeeCount($role_list);
 			$this->assign('role_list', $role_list);
@@ -87,6 +93,7 @@
 			/** @var \Core\Model\RoleModel $model */
 			$model = D('Core/Role');
 			$list  = $model->getUserOfRole($role_id);
+			$this->assign('user_list', $list);
 		}
 
 	}

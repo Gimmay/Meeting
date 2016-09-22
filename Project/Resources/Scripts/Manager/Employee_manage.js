@@ -3,7 +3,7 @@
  */
 var temp = {
 	asignRoleTemp:'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\'>$name</a>',
-	authorizeRoleTemp:'<a class=\"btn btn-default btn-sm btn_role\" href="javascript:void(0)" role="button" data-id=\'$id\' data-type=\'$type\'>$name</a>',
+	authorizeRoleTemp:'<a class=\"btn btn-default btn-sm btn_role\" href="javascript:void(0)" role="button" data-id=\'$id\' data-type=\'$type\' data-role-id="$role_id">$name</a>',
 	authorizeEmployeeTemp:'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\' data-type=\'$type\'>$name</a>',
 	bindEvent:function(){
 		/*
@@ -82,11 +82,12 @@ var temp = {
 		$('#authorize_select a').on('click',function(){
 			var id = $(this).attr('data-id');
 			var type = $(this).attr('data-type');
+			var role_id = $(this).attr('data-role-id');
 			var employee_id = $('input[name=hide_employee_id]').val();
 			var name = $(this).text();
 			var select_temp = '';
 			ManageObject.object.loading.loading(true);
-			Common.ajax({data:{requestType:'anti_assign_permission',pid:id,id:employee_id,type:type},callback:function(data){
+			Common.ajax({data:{requestType:'anti_assign_permission',pid:id,id:employee_id,type:type,rid:role_id},callback:function(data){
 				ManageObject.object.loading.complete();
 				if(data.status){
 					$('#authorize_select a').each(function(){
@@ -142,89 +143,6 @@ var temp = {
 	}
 };
 $(function(){
-	var $code          = $('#code');
-	var $status        = $('#status');
-	var $gender        = $('#gender');
-	var $mobile        = $('#mobile');
-	var $birthday      = $('#birthday');
-	var $name_tmp      = $('#oa_user_info_viewer_name');
-	var $code_tmp      = $('#oa_user_info_viewer_code');
-	var $status_tmp    = $('#oa_user_info_viewer_status_code');
-	var $gender_tmp    = $('#oa_user_info_viewer_gender_code');
-	var $dept_code_tmp = $('#oa_user_info_viewer_dept_code');
-	var $dept_name_tmp = $('#oa_user_info_viewer_dept_name');
-	var $position_tmp  = $('#oa_user_info_viewer_position');
-	//var $title_tmp    = $('#oa_user_info_viewer_title');
-	var $mobile_tmp    = $('#oa_user_info_viewer_mobile');
-	var $birthday_tmp  = $('#oa_user_info_viewer_birthday');
-	var $modal         = $('#oa_user_info_viewer');
-	ManageObject.object.userSelect.onQuasarSelect(function(){
-		var data = $(this).attr('data-ext');
-		if(data){
-			var tmp = data.split('&');
-			for(var i = 0; i<tmp.length; i++){
-				var single = tmp[i].split('=');
-				var key    = single[0];
-				var val    = single[1];
-				if(key == 'gender'){
-					var $gender      = $('#oa_user_info_viewer_'+key);
-					var $gender_code = $('#oa_user_info_viewer_'+key+'_code');
-					switch(parseInt(val)){
-						case 0:
-							$gender.html('男');
-							$gender_code.val(1);
-							break;
-						case 1:
-							$gender.html('女');
-							$gender_code.val(2);
-							break;
-						default:
-							$gender.html('未设置');
-							$gender_code.val(0);
-							break;
-					}
-				}else if(key == 'status'){
-					var $status      = $('#oa_user_info_viewer_'+key);
-					var $status_code = $('#oa_user_info_viewer_'+key+'_code');
-					switch(parseInt(val)){
-						case 0:
-						default:
-							$status.html('否');
-							$status_code.val(0);
-							break;
-						case 1:
-							$status.html('是');
-							$status_code.val(1);
-							break;
-					}
-				}else if(key == 'dept_code'){
-					var $dept_code = $('#oa_user_info_viewer_'+key);
-					$dept_code.val(val);
-				}else{
-					$('#oa_user_info_viewer_'+key).html(val);
-				}
-				if(key == 'name') $modal.find('.modal-title').html('是否自动导入'+val+'的信息？');
-			}
-			$modal.modal('show');
-		}
-	});
-	$('#oa_user_info_viewer_submit').on('click', function(){
-		ManageObject.object.userSelect.setValue($name_tmp.html());
-		ManageObject.object.userSelect.setHtml($name_tmp.html());
-		$code.val($code_tmp.html()).attr('value', $code_tmp.html());
-		$mobile.val($mobile_tmp.html()).attr('value', $mobile_tmp.html());
-		ManageObject.object.positionSelect.setValue($position_tmp.html());
-		ManageObject.object.positionSelect.setHtml($position_tmp.html());
-		ManageObject.object.titleSelect.setValue($position_tmp.html());
-		ManageObject.object.titleSelect.setHtml($position_tmp.html());
-		ManageObject.object.deptSelect.setValue($dept_code_tmp.val());
-		ManageObject.object.deptSelect.setHtml($dept_name_tmp.html());
-		$birthday.val($birthday_tmp.html()).attr('value', $birthday_tmp.html());
-		$gender.find('option[value='+$gender_tmp.val()+']').prop('selected', true);
-		$status.find('option[value='+$status_tmp.val()+']').prop('selected', true);
-		$modal.modal('hide');
-	});
-
 	/*
 	*  分配角色按钮-ajax请求
 	*  分配角色搜索按钮
@@ -285,7 +203,7 @@ $(function(){
 				if(data){
 					$.each(data, function(index, value){
 						if(value.type == '0'){
-							str += temp.authorizeRoleTemp.replace('$id', value.id).replace('$name', value.name).replace('$type',value.type);
+							str += temp.authorizeRoleTemp.replace('$id', value.id).replace('$name', value.name).replace('$type',value.type).replace('$role_id', value.rid);
 						}else if(value.type == '1'){
 							str += temp.authorizeEmployeeTemp.replace('$id', value.id).replace('$name', value.name).replace('$type',value.type);
 						}
@@ -331,7 +249,29 @@ $(function(){
 	});
 
 	// 批量删除员工
-	$('.batch_delete_btn').on('click',function(){
-		
+	$('.batch_delete_btn_confirm').on('click',function(){
+		var str = '';
+		$('.check_item .icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
+			str+=id+','
+		});
+		var s,newStr="";
+		s = str.charAt(str.length-1);
+		if(s==","){
+			for(var i=0;i<str.length-1;i++){
+				newStr+=str[i];
+			}
+			console.log(newStr);
+		}
+		$('#batch_delete_employee').find('input[name=id]').val(newStr);
+	});
+
+	// 全选checkbox
+	$('.all_check').find('.iCheck-helper').on('click',function(){
+		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
+			$('.check_item').find('.icheckbox_square-green').addClass('checked');
+		}else{
+			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
+		}
 	});
 });

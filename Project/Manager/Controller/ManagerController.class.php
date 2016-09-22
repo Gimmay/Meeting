@@ -15,6 +15,7 @@
 			$this->_checkLogin();
 			$this->_assignEmployeeName();
 			$this->assign('cv_name', CONTROLLER_NAME.':'.ACTION_NAME);
+			$this->assign('c_name', CONTROLLER_NAME);
 		}
 
 		private function _checkLogin(){

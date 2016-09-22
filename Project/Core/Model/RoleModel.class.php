@@ -33,9 +33,16 @@
 		public function findRole($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
-			if(isset($filter['status'])) $where['status'] = $filter['status'];
+			if(isset($filter['status'])){
+				$status = strtolower($filter['status']);
+				if($status == 'not deleted') $where['status'] = ['neq', 2];
+				else $where['status'] = $filter['status'];
+			}
 			if(isset($filter['keyword']) && $filter['keyword']){
-				$where['name'] = ['like', "%$filter[keyword]%"];
+				$condition['name'] = ['like', "%$filter[keyword]%"];
+				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
+				$condition['_logic']      = 'or';
+				$where['_complex']        = $condition;
 			}
 			switch((int)$type){
 				case 0: // count
@@ -126,6 +133,16 @@ UNION
 			}
 
 			return $result;
+		}
+
+		public function deleteRole($ids){
+			if($this->create()){
+				$where['id'] = ['in', $ids];
+				$result      = $this->where($where)->save(['status' => 2]);
+				if($result) return ['status' => true, 'message' => '删除成功'];
+				else return ['status' => false, 'message' => $this->getError()];
+			}
+			else return ['status' => false, 'message' => $this->getError()];
 		}
 
 	}

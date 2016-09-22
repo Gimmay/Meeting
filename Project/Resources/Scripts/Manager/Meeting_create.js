@@ -11,9 +11,6 @@ function  checkMeeting(){
 	var $place = $('#meeting_place');
 	var $start_time = $('#meeting_start_time');
 	var $end_time = $('#meeting_end_time');
-	var $director_id = $('#director_id');
-	var $contacts_1_id = $('#contacts_1_id');
-	var $contacts_2_id = $('#contacts_2_id');
 	var $brief = $('#brief');
 	var $logo = $('#logo');
 	var $comment = $('#comment');
@@ -66,23 +63,23 @@ function  checkMeeting(){
 	}else{
 		$end_time.parents('.form-group').removeClass('has-error');
 	}
-	if($director_id.val() == ''){
-		$director_id.parents('.form-group').addClass('has-error');
+	if(CreateObject.object.directorIdSelect.getValue() == ''){
+		CreateObject.object.directorIdSelect.parents('.form-group').addClass('has-error');
 		return false;
 	}else{
-		$director_id.parents('.form-group').removeClass('has-error');
+		CreateObject.object.directorIdSelect.parents('.form-group').removeClass('has-error');
 	}
-	if($contacts_1_id.val() == ''){
-		$contacts_1_id.parents('.form-group').addClass('has-error');
+	if(CreateObject.object.contacts1IdSelect.getValue() == ''){
+		CreateObject.object.contacts1IdSelect.parents('.form-group').addClass('has-error');
 		return false;
 	}else{
-		$contacts_1_id.parents('.form-group').removeClass('has-error');
+		CreateObject.object.contacts1IdSelect.parents('.form-group').removeClass('has-error');
 	}
-	if($contacts_2_id.val() == ''){
-		$contacts_2_id.parents('.form-group').addClass('has-error');
+	if(CreateObject.object.contacts2IdSelect.getValue() == ''){
+		CreateObject.object.contacts2IdSelect.parents('.form-group').addClass('has-error');
 		return false;
 	}else{
-		$contacts_2_id.parents('.form-group').removeClass('has-error');
+		CreateObject.object.contacts2IdSelect.parents('.form-group').removeClass('has-error');
 	}
 	if($brief.val() == ''){
 		$brief.parents('.form-group').addClass('has-error');
@@ -97,3 +94,7 @@ function  checkMeeting(){
 		$logo.parents('.form-group').removeClass('has-error');
 	}
 };
+
+$(function(){
+
+});

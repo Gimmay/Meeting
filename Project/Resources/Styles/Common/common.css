@@ -246,6 +246,10 @@ html, body{
 .color-danger{
 	color : #ED5565 !important;
 }
+.color-red {
+	color : red !important;
+	font-weight: bold;
+}
 
 .btn_role{
 	background   : #F8AC59 !important;

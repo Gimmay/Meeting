@@ -38,7 +38,7 @@
 									<i></i>
 									<p>新增角色</p>
 								</div>
-								<div class="function_btn bg-danger">
+								<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_employee">
 									<i></i>
 									<p>批量删除</p>
 								</div>
@@ -47,19 +47,21 @@
 						<div class="repertory clearfix">
 							<form action="" method="get">
 								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="名称/拼音简码/手机号" value="">
+									<input type="search" name="keyword" class="form-control" placeholder="角色/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default mian_search">搜索角色</button>
 									</span>
 								</div>
-								<a type="reset" class="btn btn-default mian_search" href="/Employee/manage.aspx">查看所有</a>
-								<input type="hidden" name="__hash__" value="60a112eddc18ef6246d7074173bbbdf1_677a914e2ded4bf6065ffa798f1e82fd"></form>
+								<a type="reset" class="btn btn-default mian_search" href="<{:U('manage')}>">查看所有</a>
+							</form>
 						</div>
 						<div class="table_wrap">
 							<table class="table table-bordered" style="text-align: center">
 								<thead>
 									<tr>
-										<td width="5%"></td>
+										<td width="5%" class="all_check">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</td>
 										<td width="10%">名称</td>
 										<td width="10%">状态</td>
 										<td width="5%">用户数</td>
@@ -73,7 +75,7 @@
 								<tbody>
 									<volist name="role_list" id="single">
 										<tr>
-											<td>
+											<td class="check_item">
 												<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
 											</td>
 											<td><{$single.name}></td>
@@ -92,7 +94,7 @@
 													<if condition="$max_role_level elt $single['level']">
 														<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
 														<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#modify_role">修改</button>
-														<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#delete_role">删除</button>
+														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_role">删除</button>
 													</if>
 												</div>
 											</td>
@@ -102,15 +104,9 @@
 							</table>
 						</div>
 						<div class="page_wrap">
-							<ul class="pagination ">
-								<li><a href="#">&laquo;</a></li>
-								<li><a href="#">1</a></li>
-								<li><a href="#">2</a></li>
-								<li><a href="#">3</a></li>
-								<li><a href="#">4</a></li>
-								<li><a href="#">5</a></li>
-								<li><a href="#">&raquo;</a></li>
-							</ul>
+							<div class="pagination">
+								<{$page_show}>
+							</div>
 						</div>
 					</section>
 				</div>
@@ -231,13 +227,15 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title" id="delete_role_title">删除角色</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post">
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete">
+					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						是否删除角色？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="button" class="btn btn-primary">确认删除</button>
+						<button type="submit" class="btn btn-primary">确认删除</button>
 					</div>
 				</form>
 			</div>
@@ -276,6 +274,29 @@
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 					</div>
 					<input type="hidden" name="hide_employee_id" >
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量删除 -->
+	<div class="modal fade" id="batch_delete_employee" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量删除角色</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete">
+					<input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除已选角色？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary batch_delete_btn">确认删除</button>
+					</div>
 				</form>
 			</div>
 		</div>

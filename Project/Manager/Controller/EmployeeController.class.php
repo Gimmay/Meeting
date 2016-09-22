@@ -7,6 +7,7 @@
 	 */
 	namespace Manager\Controller;
 
+	use Core\Logic\PermissionLogic;
 	use Quasar\StringPlus;
 	use Think\Page;
 
@@ -59,75 +60,126 @@
 			$assign_permission_model = D('Core/AssignPermission');
 			/** @var \Core\Model\PermissionModel $permission_model */
 			$permission_model = D('Core/Permission');
+			$permission_logic = new PermissionLogic();
+			$p_list           = [
+				'list'                                                              => $permission_logic->hasPermission(2, I('session.MANAGER_USER_ID', 0, 'int')),
+				'getAssignedRole'                                                   => $permission_logic->hasPermission(7, I('session.MANAGER_USER_ID', 0, 'int')),
+				'getUnassignedRole'                                                 => $permission_logic->hasPermission(8, I('session.MANAGER_USER_ID', 0, 'int')),
+				'assignRole'                                                        => $permission_logic->hasPermission([
+					5, 6
+				], I('session.MANAGER_USER_ID', 0, 'int')),
+				'getAssignedPermission'                                             => $permission_logic->hasPermission(9, I('session.MANAGER_USER_ID', 0, 'int')),
+				'getUnassignedPermission'                                           => $permission_logic->hasPermission(10, I('session.MANAGER_USER_ID', 0, 'int')),
+				'assignPermission'                                                  => $permission_logic->hasPermission([
+					11, 12
+				], I('session.MANAGER_USER_ID', 0, 'int')),
+				'delete'                                                            => $permission_logic->hasPermission(3, I('session.MANAGER_USER_ID', 0, 'int')),
+				'alter'                                                             => $permission_logic->hasPermission(4, I('session.MANAGER_USER_ID', 0, 'int')),
+				'create'                                                            => $permission_logic->hasPermission(1, I('session.MANAGER_USER_ID', 0, 'int'))
+			];
 			if(IS_POST){
 				$type = strtolower(I('post.requestType', ''));
 				switch($type){
 					case 'get_assigned_role':
-						$result = $role_model->getRoleOfEmployee(I('post.id', 0, 'int'), null);
-						echo json_encode($result);
+						if($p_list['getAssignedRole']){
+							$result = $role_model->getRoleOfEmployee(I('post.id', 0, 'int'), null);
+							echo json_encode($result);
+						}
+						else echo json_encode(['status' => false, 'message' => '您没有查询已分配的角色的权限']);
 					break;
 					case 'get_unassigned_role':
-						$result = $role_model->getRoleOfEmployee(I('post.id', 0, 'int'), null, true, I('post.keyword', ''));
-						echo json_encode($result);
+						if($p_list['getUnassignedRole']){
+							$result = $role_model->getRoleOfEmployee(I('post.id', 0, 'int'), null, true, I('post.keyword', ''));
+							echo json_encode($result);
+						}
+						else echo json_encode(['status' => false, 'message' => '您没有查询未分配角色的权限']);
 					break;
 					case 'assign_role':
-						$result = $assign_role_model->assignRole(I('post.rid', 0, 'int'), I('post.id', 0, 'int'), 0);
-						echo json_encode($result);
+						if($p_list['assignRole']){
+							$result = $assign_role_model->assignRole(I('post.rid', 0, 'int'), I('post.id', 0, 'int'), 0);
+							echo json_encode($result);
+						}
+						else echo json_encode(['status' => false, 'message' => '您没有分配角色的权限']);
 					break;
 					case 'anti_assign_role':
-						$result = $assign_role_model->antiAssignRole(I('post.rid', 0, 'int'), I('post.id', 0, 'int'), 0);
-						echo json_encode($result);
+						if($p_list['assignRole']){
+							$result = $assign_role_model->antiAssignRole(I('post.rid', 0, 'int'), I('post.id', 0, 'int'), 0);
+							echo json_encode($result);
+						}
+						else echo json_encode(['status' => false, 'message' => '您没有收回角色的权限']);
 					break;
 					case 'get_assigned_permission':
-						$result = $permission_model->getPermissionOfEmployee(I('post.id', 0, 'int'), null);
-						echo json_encode($result);
+						if($p_list['getAssignedPermission']){
+							$result = $permission_model->getPermissionOfEmployee(I('post.id', 0, 'int'), null);
+							echo json_encode($result);
+						}
+						else echo json_encode(['status' => false, 'message' => '您没有查询已分配权限的权限']);
 					break;
 					case 'get_unassigned_permission':
-						$result = $permission_model->getPermissionOfEmployee(I('post.id', 0, 'int'), null, true, I('post.keyword', ''));
-						echo json_encode($result);
+						if($p_list['getUnassignedPermission']){
+							$result = $permission_model->getPermissionOfEmployee(I('post.id', 0, 'int'), null, true, I('post.keyword', ''));
+							echo json_encode($result);
+						}
+						else echo json_encode(['status' => false, 'message' => '您没有查询未分配权限的权限']);
 					break;
 					case 'assign_permission':
-						$result = $assign_permission_model->assignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 1);
-						echo json_encode($result);
+						if($p_list['assignPermission']){
+							$result = $assign_permission_model->assignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 1);
+							echo json_encode($result);
+						}
+						else echo json_encode(['status' => false, 'message' => '您没有分配权限的权限']);
 					break;
 					case 'anti_assign_permission':
-						$result = $assign_permission_model->antiAssignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), I('post.type', 1, 'int'));
-						echo json_encode($result);
+						if($p_list['assignPermission']){
+							$type   = I('post.type', 1, 'int');
+							$result = ['status' => false, '参数错误'];
+							if($type == 0) $result = $assign_permission_model->antiAssignPermission(I('post.pid', 0, 'int'), I('post.rid', 0, 'int'), 0);
+							if($type == 1) $result = $assign_permission_model->antiAssignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 1);
+							echo json_encode($result);
+						}
+						else echo json_encode(['status' => false, 'message' => '您没有收回权限的权限']);
 					break;
 					case 'delete':
-						$result = $model->deleteEmployee(I('post.id'));
-						if($result['status']) $this->success($result['message']);
-						else $this->error($result['message'], '', 3);
+						if($p_list['delete']){
+							$result = $model->deleteEmployee(I('post.id'));
+							if($result['status']) $this->success($result['message']);
+							else $this->error($result['message'], '', 3);
+						}
+						else echo json_encode(['status' => false, 'message' => '您没有删除员工的权限']);
 					break;
 					default:
 					break;
 				}
 				exit;
 			}
-			/** @var \Manager\Model\EmployeeModel $model_2 */
-			$model_2 = D('Employee');
-			/* 获取当前员工角色的最大等级 */
-			$max_role_level = $role_model->getMaxRoleLevel(I('session.MANAGER_USER_ID', 0, 'int'));
-			/* 获取当前条件下员工记录数 */
-			$list_total = $model->findEmployee(0, ['keyword' => I('get.keyword', '')]);
-			/* 分页设置 */
-			$page_object = new Page($list_total, 10);
-			\ThinkPHP\Quasar\Page\setTheme1($page_object);
-			$page_show = $page_object->show();
-			/* 当前页的员工记录列表 */
-			$employee_list = $model->findEmployee(2, [
-				'keyword' => I('get.keyword', ''),
-				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'order'   => I('get.column', 'id').' '.I('get.sort', 'desc')
-			]);
-
-			$employee_list = $model_2->writeExtendInformation($employee_list);
-			/* 为每条用户记录设定最大的角色等级 */
-			$employee_list = $this->_setMaxRoleLevel($employee_list);
-			$this->assign('list', $employee_list);
-			$this->assign('page_show', $page_show);
-			$this->assign('max_role_level', $max_role_level ? $max_role_level : 5);
-			$this->display();
+			if($p_list['list']){
+				/** @var \Manager\Model\EmployeeModel $model_2 */
+				$model_2 = D('Employee');
+				/* 获取当前员工角色的最大等级 */
+				$max_role_level = $role_model->getMaxRoleLevel(I('session.MANAGER_USER_ID', 0, 'int'));
+				/* 获取当前条件下员工记录数 */
+				$list_total = $model->findEmployee(0, ['keyword' => I('get.keyword', ''), 'status' => 'not deleted']);
+				/* 分页设置 */
+				$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
+				\ThinkPHP\Quasar\Page\setTheme1($page_object);
+				$page_show = $page_object->show();
+				/* 当前页的员工记录列表 */
+				$employee_list = $model->findEmployee(2, [
+					'keyword' => I('get.keyword', ''), '_limit' => $page_object->firstRow.','.$page_object->listRows,
+					'order'   => I('get.column', 'id').' '.I('get.sort', 'desc'), 'status' => 'not deleted'
+				]);
+				$employee_list = $model_2->writeExtendInformation($employee_list);
+				/* 为每条用户记录设定最大的角色等级 */
+				$employee_list = $this->_setMaxRoleLevel($employee_list);
+				$this->assign('list', $employee_list);
+				$this->assign('page_show', $page_show);
+				$this->assign('max_role_level', $max_role_level ? $max_role_level : 5);
+				$this->assign('permission', $p_list);
+				$this->display();
+			}
+			else{
+				$this->error('您没有查看员工模块的权限');
+			}
 		}
 
 		public function create(){
@@ -139,8 +191,8 @@
 				else $this->error($result['message'], '', 3);
 				exit;
 			}
-			/** @var \Core\Model\TDOAUserModel $oa_user_model */
-			$oa_user_model = D('Core/TDOAUser');
+			/** @var \Manager\Model\TDOAUserModel $oa_user_model */
+			$oa_user_model = D('TDOAUser');
 			/** @var \Core\Model\DepartmentModel $dept_model */
 			$dept_model = D('Core/Department');
 			/* 获取职位列表（for select插件） */
@@ -166,9 +218,10 @@
 				else $this->error($result['message'], '', 3);
 				exit;
 			}
+			/** @var \Manager\Model\EmployeeModel $model_2 */
 			$model_2 = D('Employee');
-			$info = $model->findEmployee(1, ['id' => I('get.id', 0, 'int')]);
-			$info = $model_2->writeExtendInformation($info, true);
+			$info    = $model->findEmployee(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
+			$info    = $model_2->writeExtendInformation($info, true);
 			/** @var \Core\Model\DepartmentModel $dept_model */
 			$dept_model = D('Core/Department');
 			/* 获取职位列表（for select插件） */
@@ -195,6 +248,9 @@
 		}
 
 		public function enable(){
+			/** @var \Core\Model\PermissionModel $model */
+			$model = D('Core/Permission');
+			print_r($model->getPermissionOfEmployee(I('get.id', 0, 'int'), 'arr'));
 		}
 
 		public function disable(){

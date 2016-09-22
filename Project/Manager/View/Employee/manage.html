@@ -35,16 +35,19 @@
 					<section class="content">
 						<header class="c_header">
 							<div class="function_list clearfix">
-								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_employee">
-									<a href="<{:U('Employee/create')}>">
+								<if condition="$permission['create'] eq 1">
+									<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_employee">
+										<a href="<{:U('Employee/create')}>"> <i></i>
+											<p>新增员工</p>
+										</a>
+									</div>
+								</if>
+								<if condition="$permission['delete'] eq 1">
+									<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_employee">
 										<i></i>
-										<p>新增员工</p>
-									</a>
-								</div>
-								<div class="function_btn bg-danger"  data-toggle="modal" data-target="#batch_delete_employee">
-									<i></i>
-									<p>批量删除</p>
-								</div>
+										<p>批量删除</p>
+									</div>
+								</if>
 							</div>
 						</header>
 						<div class="repertory clearfix">
@@ -63,7 +66,9 @@
 							<table class="table table-bordered" style="text-align: center">
 								<thead>
 									<tr>
-										<td width="5%"></td>
+										<td width="5%" class="all_check">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</td>
 										<td width="5%">工号</td>
 										<td width="10%">名称</td>
 										<td width="5%">性别</td>
@@ -78,7 +83,7 @@
 								<tbody>
 									<volist name="list" id="single">
 										<tr>
-											<td>
+											<td class="check_item">
 												<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
 											</td>
 											<td><{$single.code}></td>
@@ -103,11 +108,19 @@
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>">
 													<if condition="$max_role_level elt $single['roleLevel']">
-														<button type="button" class="btn btn-default btn-xs btn_distribution_role" data-toggle="modal" data-target="#distribution_role">分配角色</button>
+														<if condition="$permission['assignRole'] eq 1">
+															<button type="button" class="btn btn-default btn-xs btn_distribution_role" data-toggle="modal" data-target="#distribution_role">分配角色</button>
+														</if>
 													</if>
-													<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
-													<a href="<{:U('Employee/alter',['id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
-													<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_employee">删除</button>
+													<if condition="$permission['assignPermission'] eq 1">
+														<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
+													</if>
+													<if condition="$permission['alter'] eq 1">
+														<a href="<{:U('Employee/alter',['id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
+													</if>
+													<if condition="$permission['delete'] eq 1">
+														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_employee">删除</button>
+													</if>
 												</div>
 											</td>
 										</tr>
@@ -132,13 +145,13 @@
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="delete_role_title">删除角色</h2>
+					<h2 class="modal-title" id="delete_role_title">删除员工</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否删除角色？
+						是否删除员工？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -155,13 +168,13 @@
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">删除角色</h2>
+					<h2 class="modal-title">批量删除员工</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否删除角色？
+						是否删除已选员工？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -201,9 +214,9 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<a href="javascript:history.go(0)" class="btn btn-default" >关闭</a>
+						<a href="javascript:history.go(0)" class="btn btn-default">关闭</a>
 					</div>
-					<input type="hidden" name="hide_employee_id" >
+					<input type="hidden" name="hide_employee_id">
 				</form>
 			</div>
 		</div>
@@ -240,184 +253,20 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 					</div>
-					<input type="hidden" name="hide_employee_id" >
+					<input type="hidden" name="hide_employee_id">
 				</form>
 			</div>
 		</div>
 	</div>
 	<script>
 		var ManageObject = {
-			func  :{
-				checkIsEmpty:function(){
-					var $code   = $('#code');
-					var $name   = $('#selected_name');
-					//var $password = $('#password');
-					var $mobile = $('#mobile');
-					if($code.val() == ''){
-						ManageObject.object.toast.toast("工号不能为空");
-						$code.focus();
-						return false;
-					}
-					if($name.text() == ''){
-						ManageObject.object.toast.toast("姓名不能为空");
-						$name.focus();
-						return false;
-					}
-					/*	if($password.val() == ''){
-					 ManageObject.object.toast.toast("密码不能为空");
-					 $password.focus();
-					 return false;
-					 }*/
-					if($mobile.val() == ''){
-						ManageObject.object.toast.toast("手机号不能为空");
-						$mobile.focus();
-						return false;
-					}
-					return true;
-				},
-				checkIsEmptyModify:function(){
-					var $code   = $('#code_m');
-					var $name   = $('#selected_name');
-					//var $password = $('#password');
-					var $mobile = $('#mobile_m');
-					if($code.val() == ''){
-						ManageObject.object.toast.toast("工号不能为空");
-						$code.focus();
-						return false;
-					}
-					if($name.text() == ''){
-						ManageObject.object.toast.toast("姓名不能为空");
-						$name.focus();
-						return false;
-					}
-					/*	if($password.val() == ''){
-					 ManageObject.object.toast.toast("密码不能为空");
-					 $password.focus();
-					 return false;
-					 }*/
-					if($mobile.val() == ''){
-						ManageObject.object.toast.toast("手机号不能为空");
-						$mobile.focus();
-						return false;
-					}
-					return true;
-				}
-			},
 			object:{
-				positionSelect:$('#position').QuasarSelect({
-					name        :'position',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($position)}>',
-					idInput     :'selected_position',
-					idHidden    :'selected_position_form',
-					placeholder :'',
-					justInput   :true,
-					hasEmptyItem:false
-				}),
-				positionSelectModify:$('#position_m').QuasarSelect({
-					name        :'position',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($position)}>',
-					idInput     :'selected_position',
-					idHidden    :'selected_position_form',
-					placeholder :'',
-					justInput   :true,
-					hasEmptyItem:false
-				}),
-				titleSelect   :$('#title').QuasarSelect({
-					name        :'title',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($position)}>',
-					idInput     :'selected_title',
-					idHidden    :'selected_title_form',
-					placeholder :'',
-					justInput   :true,
-					hasEmptyItem:false
-				}),
-				titleSelectModify   :$('#title_m').QuasarSelect({
-					name        :'title',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($position)}>',
-					idInput     :'selected_title',
-					idHidden    :'selected_title_form',
-					placeholder :'',
-					justInput   :true,
-					hasEmptyItem:false
-				}),
-				userSelect    :$('#name').QuasarSelect({
-					name        :'name',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($oa_user)}>',
-					idInput     :'selected_name',
-					idHidden    :'selected_name_form',
-					placeholder :'',
-					justInput   :true,
-					hasEmptyItem:false
-				}),
-				userSelectModify    :$('#name_m').QuasarSelect({
-					name        :'name',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($oa_user)}>',
-					idInput     :'selected_name',
-					idHidden    :'selected_name_form',
-					placeholder :'',
-					justInput   :true,
-					hasEmptyItem:false
-				}),
-				deptSelect    :$('#department').QuasarSelect({
-					name        :'did',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($dept)}>',
-					idInput     :'selected_department',
-					idHidden    :'selected_department_form',
-					placeholder :'',
-					justInput   :true,
-					hasEmptyItem:false
-				}),
-				deptSelectModify    :$('#department_m').QuasarSelect({
-					name        :'did',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($dept)}>',
-					idInput     :'selected_department',
-					idHidden    :'selected_department_form',
-					placeholder :'',
-					justInput   :true,
-					hasEmptyItem:false
-				}),
-				birthDate     :$('#birth_date').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd',
-					weekStart         :0,
-					startView         :4,
-					minView           :2,
-					maxView           :4,
-					minuteStep        :5
-				}),
-				birthDateModify     :$('#birth_date_m').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd',
-					weekStart         :0,
-					startView         :4,
-					minView           :2,
-					maxView           :4,
-					minuteStep        :5
-				}),
-				toast         :$().QuasarToast(),
-				icheck        :$('.icheck').iCheck({
+				toast               :$().QuasarToast(),
+				icheck              :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				}),
-				loading: $().QuasarLoading()
+				loading             :$().QuasarLoading()
 			}
 		};
 	</script>

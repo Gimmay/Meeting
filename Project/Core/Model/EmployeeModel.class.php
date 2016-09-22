@@ -44,7 +44,11 @@
 		public function findEmployee($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
-			if(isset($filter['status'])) $where['status'] = $filter['status'];
+			if(isset($filter['status'])){
+				$status = strtolower($filter['status']);
+				if($status == 'not deleted') $where['status'] = ['neq', 2];
+				else $where['status'] = $filter['status'];
+			}
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$condition['code']        = ['like', "%$filter[keyword]%"];
 				$condition['mobile']      = ['like', "%$filter[keyword]%"];
@@ -119,7 +123,7 @@
 		public function deleteEmployee($ids){
 			if($this->create()){
 				$where['id'] = ['in', $ids];
-				$result      = $this->where($where)->save(['status' => 0]);
+				$result      = $this->where($where)->save(['status' => 2]);
 				if($result) return ['status' => true, 'message' => '删除成功'];
 				else return ['status' => false, 'message' => $this->getError()];
 			}
