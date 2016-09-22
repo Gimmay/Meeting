@@ -18,7 +18,11 @@
 		public function findDepartment($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
-			if(isset($filter['status'])) $where['status'] = $filter['status'];
+			if(isset($filter['status'])){
+				$status = strtolower($filter['status']);
+				if($status == 'not deleted') $where['status'] = ['neq', 2];
+				else $where['status'] = $filter['status'];
+			}
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$where['name'] = ['like', "%$filter[keyword]%"];
 			}

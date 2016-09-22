@@ -34,7 +34,17 @@
 					$list[$key]['department'] = $department['name'];
 				}
 			}
-			
+
 			return $list;
+		}
+
+		public function getEmployeeSelectList(){
+			$sql = "SELECT
+	concat(`code`, ' - ', `name`) `html`, concat(`code`, ',', `name`, ',', pinyin_code) `keyword`,
+	`id` `value`
+FROM user_employee
+WHERE status = 1";
+
+			return $this->query($sql);
 		}
 	}

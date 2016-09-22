@@ -7,9 +7,10 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
-	<!--<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/custom.css">-->
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
@@ -19,6 +20,8 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -33,14 +36,14 @@
 						<div class="modal-header">
 							<h2 class="modal-title" id="authorize_role_title">新建会议</h2>
 						</div>
-						<form class="form-horizontal" role="form" method="post" onsubmit="return checkMeeting()">
+						<form class="form-horizontal" role="form" method="post" action="<{:U('Meeting/addMeeting')}>" onsubmit="return checkMeeting()">
 							<div class="modal-body" style=" padding: 15px 20px 15px 0px;">
 								<div class="form-group">
 									<label for="meeting_name" class="col-sm-1 control-label">会议名称：</label>
 									<div class="col-sm-10">
 										<input type="text" class="form-control meeting_name" name="name" id="meeting_name">
 									</div>
-									<div class="error col-sm-1">*必须填写会议名</div>
+									<div class="error col-sm-1"></div>
 								</div>
 								<div class="form-group">
 									<label for="meeting_status" class="col-sm-1 control-label">状态：</label>
@@ -58,10 +61,10 @@
 									<label for="meeting_type" class="col-sm-1 control-label">类型：</label>
 									<div class="col-sm-10">
 										<select name="type" id="meeting_type" class="form-control">
-											<option value="0">成交会</option>
-											<option value="1">特训营</option>
-											<option value="2">优雅女子</option>
-											<option value="3">招商会</option>
+											<option value="1">成交会</option>
+											<option value="2">特训营</option>
+											<option value="3">优雅女子</option>
+											<option value="4">招商会</option>
 										</select>
 									</div>
 									<div class="error col-sm-1"></div>
@@ -112,21 +115,21 @@
 								<div class="form-group">
 									<label for="director_id" class="col-sm-1 control-label">负责人ID：</label>
 									<div class="col-sm-10">
-										<input type="text" class="form-control director_id" name="director_id" id="director_id">
+										<div id="director_id"></div>
 									</div>
 									<div class="error col-sm-1"></div>
 								</div>
 								<div class="form-group">
 									<label for="contacts_1_id" class="col-sm-1 control-label">联系人：</label>
 									<div class="col-sm-10">
-										<input type="text" class="form-control contacts_1_id" name="contacts_1_id" id="contacts_1_id">
+										<div id="contacts_1_id"></div>
 									</div>
 									<div class="error col-sm-1"></div>
 								</div>
 								<div class="form-group">
 									<label for="contacts_2_id" class="col-sm-1 control-label">联系人2：</label>
 									<div class="col-sm-10">
-										<input type="text" class="form-control contacts_2_id" name="contacts_2_id" id="contacts_2_id">
+										<div id="contacts_2_id"></div>
 									</div>
 									<div class="error col-sm-1"></div>
 								</div>
@@ -164,33 +167,59 @@
 		</div>
 	</div>
 	<script>
-		var ManageObject = {
-			data  :{
-				positionSelect:'<{:json_encode($position)}>',
-				titleSelect   :'<{:json_encode($position)}>'
-			},
+		var CreateObject = {
 			object:{
-				positionSelect:null,
-				titleSelect   :null,
-				birthDate     :null,
-				icheck        :$('.icheck').iCheck({
+				icheck           :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				}),
-				birthDate     :$('#meeting_start_time_wrap , #meeting_end_time_wrap').datetimepicker({
+				meetingTime      :$('#meeting_start_time_wrap , #meeting_end_time_wrap').datetimepicker({
 					language          :'zh-CN',
 					todayBtn          :true,
 					autoclose         :true,
 					todayHighlight    :true,
 					keyboardNavigation:true,
 					forceParse        :true,
-					format            :'yyyy-mm-dd',
+					format            :'yyyy-mm-dd hh:ii:ss',
 					weekStart         :0,
 					startView         :4,
-					minView           :2,
+					minView           :0,
 					maxView           :4,
-					minuteStep        :5
+					minuteStep        :5,
+					startDate         :new Date()
 				}),
+				directorIdSelect :$('#director_id').QuasarSelect({
+					name        :'director_id',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee_list)}>',
+					idInput     :'selected_director_id',
+					idHidden    :'selected_director_id_form',
+					placeholder :'',
+					justInput   :true,
+					hasEmptyItem:false
+				}),
+				contacts1IdSelect:$('#contacts_1_id').QuasarSelect({
+					name        :'contacts_1_id',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee_list)}>',
+					idInput     :'selected_contacts_1_id',
+					idHidden    :'selected_contacts_1_id_form',
+					placeholder :'',
+					justInput   :true,
+					hasEmptyItem:false
+				}),
+				contacts2IdSelect:$('#contacts_2_id').QuasarSelect({
+					name        :'contacts_2_id',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee_list)}>',
+					idInput     :'selected_contacts_2_id',
+					idHidden    :'selected_contacts_2_id_form',
+					placeholder :'',
+					justInput   :true,
+					hasEmptyItem:false
+				}),
+				toast            :$().QuasarToast(),
+				loading          :$().QuasarLoading()
 			}
 		}
 	</script>
