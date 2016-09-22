@@ -87,11 +87,11 @@
 						echo json_encode($result);
 					break;
 					case 'assign_permission':
-						$result = $assign_permission_model->assignPermission(I('post.aid', 0, 'int'), I('post.id', 0, 'int'), 1);
+						$result = $assign_permission_model->assignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 1);
 						echo json_encode($result);
 					break;
 					case 'anti_assign_permission':
-						$result = $assign_permission_model->antiAssignPermission(I('post.aid', 0, 'int'), I('post.id', 0, 'int'), I('post.type', 1, 'int'));
+						$result = $assign_permission_model->antiAssignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), I('post.type', 1, 'int'));
 						echo json_encode($result);
 					break;
 					case 'delete':
@@ -166,7 +166,9 @@
 				else $this->error($result['message'], '', 3);
 				exit;
 			}
+			$model_2 = D('Employee');
 			$info = $model->findEmployee(1, ['id' => I('get.id', 0, 'int')]);
+			$info = $model_2->writeExtendInformation($info, true);
 			/** @var \Core\Model\DepartmentModel $dept_model */
 			$dept_model = D('Core/Department');
 			/* 获取职位列表（for select插件） */

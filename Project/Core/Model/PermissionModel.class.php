@@ -8,12 +8,13 @@
 	namespace Core\Model;
 
 	class PermissionModel extends CoreModel{
-		protected $tableName = 'permission';
+		protected $tableName   = 'permission';
 		protected $tablePrefix = 'system_';
-		
+
 		public function _initialize(){
 			parent::_initialize();
 		}
+
 		public function findPermission($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id']) && $filter['id']) $where['id'] = $filter['id'];
@@ -71,7 +72,7 @@
 		select rid from user_assign_role where type = 0 and oid = $eid
 	)
 ) and (system_permission.name like '$keyword' or system_permission.pinyin_code like '$keyword')";
-				$action_list = $this->query($sql);
+				$permission = $this->query($sql);
 			}
 			else{
 				$sql         = "select `id`, `name`, 1 `type` from system_permission where id in (
@@ -83,13 +84,40 @@ select `id`, `name`, 0 `type` from system_permission where id in (
 		select rid from user_assign_role where type = 0 and oid = $eid
 	)
 )";
-				$action_list = $this->query($sql);
+				$permission = $this->query($sql);
 			}
 			if($type == 'arr' || $type == 'str'){
-				foreach($action_list as $val) array_push($result, $val['id']);
+				foreach($permission as $val) array_push($result, $val['id']);
 				if($type == 'str') $result = implode(',', $result);
 			}
-			else $result = $action_list;
+			else $result = $permission;
+
+			return $result;
+		}
+
+		public function getPermissionOfRole($rid, $type = 'list', $not_assigned = false, $keyword = ''){
+			$type   = strtolower($type);
+			$result = [];
+			if($not_assigned){
+				$keyword     = "%$keyword%";
+				$sql         = "SELECT name, id FROM system_permission
+WHERE id NOT IN (
+	SELECT pid FROM system_assign_permission where oid = $rid and type = 0
+) and (system_permission.pinyin_code like '$keyword' or system_permission.name like '$keyword');";
+				$permission = $this->query($sql);
+			}
+			else{
+				$sql         = "SELECT name, id FROM system_permission
+WHERE id IN (
+	SELECT pid FROM system_assign_permission where oid = $rid and type = 0
+);";
+				$permission = $this->query($sql);
+			}
+			if($type == 'arr' || $type == 'str'){
+				foreach($permission as $val) array_push($result, $val['id']);
+				if($type == 'str') $result = implode(',', $result);
+			}
+			else $result = $permission;
 
 			return $result;
 		}
