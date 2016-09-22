@@ -33,8 +33,7 @@
 					<section class="content">
 						<header class="c_header">
 							<div class="function_list clearfix">
-								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_meeting"
-									 data-backdrop="static">
+								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
 									<i></i>
 									<p>创建会议</p>
 								</div>
@@ -66,24 +65,20 @@
 									</tr>
 								</thead>
 								<tbody>
-									<volist name="content" id="vo">
-										<tr>
-											<td><input type="checkbox" class="icheck" placeholder=""></td>
-											<td><{$vo.id}></td>
-											<td><{$vo.name}></td>
-											<td><span class="color-info ">可用</span></td>
-											<td><{$vo.start_time}></td>
-											<td>吉美</td>
-											<td>吉美</td>
-											<td>
-												<button type="button" class="btn btn-default btn-xs" data-toggle="modal"
-														data-target="#modify_role">修改
-												</button>
-												<button type="button" class="btn btn-default btn-xs" data-toggle="modal"
-														data-target="#delete_role">删除
-												</button>
-											</td>
-										</tr>
+								<volist name="content" id="vo">
+									<tr>
+										<td><input type="checkbox" class="icheck" placeholder=""></td>
+										<td><{$vo.id}></td>
+										<td><{$vo.name}></td>
+										<td><span class="color-info ">可用</span></td>
+										<td><{$vo.start_time}></td>
+										<td>吉美</td>
+										<td>吉美</td>
+										<td>
+											<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#modify_role">修改</button>
+											<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#delete_role">删除</button>
+										</td>
+									</tr>
 									</volist>
 								</tbody>
 							</table>
@@ -105,8 +100,7 @@
 		</div>
 	</div>
 	<!-- 新建会议 -->
-	<div class="modal fade" id="create_meeting" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-		 aria-hidden="true">
+	<div class="modal fade" id="create_meeting" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
 		<div class="modal-dialog" style="width: 80%">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -200,16 +194,14 @@
 						<div class="form-group">
 							<label for="contacts_1_id" class="col-sm-2 control-label">联系人：</label>
 							<div class="col-sm-9">
-								<input type="text" class="form-control contacts_1_id" name="contacts_1_id"
-									   id="contacts_1_id">
+								<input type="text" class="form-control contacts_1_id" name="contacts_1_id" id="contacts_1_id">
 							</div>
 							<div class="error col-sm-1"></div>
 						</div>
 						<div class="form-group">
 							<label for="contacts_2_id" class="col-sm-2 control-label">联系人2：</label>
 							<div class="col-sm-9">
-								<input type="text" class="form-control contacts_2_id" name="contacts_2_id"
-									   id="contacts_2_id">
+								<input type="text" class="form-control contacts_2_id" name="contacts_2_id" id="contacts_2_id">
 							</div>
 							<div class="error col-sm-1"></div>
 						</div>
@@ -252,38 +244,36 @@
 				titleSelect   :'<{:json_encode($position)}>'
 			},
 			object:{
-				startTime:$('#meeting_start_time_wrap').datetimepicker({
+				startTime     :$('#meeting_start_time_wrap').datetimepicker({
 					language          :'zh-CN',
 					todayBtn          :true,
 					autoclose         :true,
 					todayHighlight    :true,
 					keyboardNavigation:true,
 					forceParse        :true,
-					format            :'yyyy-mm-dd hh:ii:ss',
+					format            :'yyyy-mm-dd',
 					weekStart         :0,
 					startView         :4,
-					minView           :0,
+					minView           :2,
 					maxView           :4,
-					minuteStep        :5,
-					startDate         :new Date()
+					minuteStep        :5
 				}),
-				endTime  :$('#meeting_end_time_wrap').datetimepicker({
+				endTime     :$('#meeting_end_time_wrap').datetimepicker({
 					language          :'zh-CN',
 					todayBtn          :true,
 					autoclose         :true,
 					todayHighlight    :true,
 					keyboardNavigation:true,
 					forceParse        :true,
-					format            :'yyyy-mm-dd hh:ii:ss',
+					format            :'yyyy-mm-dd',
 					weekStart         :0,
 					startView         :4,
-					minView           :0,
+					minView           :2,
 					maxView           :4,
-					minuteStep        :5,
-					startDate         :new Date()
+					minuteStep        :5
 				}),
 				/*toast         :$().QuasarToast(),*/
-				icheck   :$('.icheck').iCheck({
+				icheck        :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				})

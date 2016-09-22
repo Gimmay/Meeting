@@ -29,104 +29,133 @@
 			<div class="mt_wrapper">
 				<include file="Public/header"/>
 				<div class="mian_body">
-					<section class="content" style="padding: 20px 80px 20px 40px;">
-						<form class="form-horizontal" role="form" method="post">
-							<div class="form-group">
-								<label for="meeting_name" class="col-sm-3 control-label">会议名称：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control meeting_name" name="meeting_name" id="meeting_name">
+					<section class="content" style="padding: 10px;">
+						<div class="modal-header">
+							<h2 class="modal-title" id="authorize_role_title">新建会议</h2>
+						</div>
+						<form class="form-horizontal" role="form" method="post" onsubmit="return checkMeeting()">
+							<div class="modal-body" style=" padding: 15px 20px 15px 0px;">
+								<div class="form-group">
+									<label for="meeting_name" class="col-sm-1 control-label">会议名称：</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control meeting_name" name="name" id="meeting_name">
+									</div>
+									<div class="error col-sm-1">*必须填写会议名</div>
+								</div>
+								<div class="form-group">
+									<label for="meeting_status" class="col-sm-1 control-label">状态：</label>
+									<div class="col-sm-10">
+										<select name="status" id="meeting_status" class="form-control">
+											<option value="0">新建</option>
+											<option value="1">进行中</option>
+											<option value="2">结束</option>
+											<option value="3">作废</option>
+										</select>
+									</div>
+									<div class="error col-sm-1"></div>
+								</div>
+								<div class="form-group">
+									<label for="meeting_type" class="col-sm-1 control-label">类型：</label>
+									<div class="col-sm-10">
+										<select name="type" id="meeting_type" class="form-control">
+											<option value="0">成交会</option>
+											<option value="1">特训营</option>
+											<option value="2">优雅女子</option>
+											<option value="3">招商会</option>
+										</select>
+									</div>
+									<div class="error col-sm-1"></div>
+								</div>
+								<div class="form-group">
+									<label for="meeting_host" class="col-sm-1 control-label">主办方：</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control meeting_host" name="host" id="meeting_host">
+									</div>
+									<div class="error col-sm-1"></div>
+								</div>
+								<div class="form-group">
+									<label for="meeting_plan" class="col-sm-1 control-label">策划方：</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control meeting_plan" name="plan" id="meeting_plan">
+									</div>
+									<div class="error col-sm-1"></div>
+								</div>
+								<div class="form-group">
+									<label for="meeting_place" class="col-sm-1 control-label">举办地点：</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control meeting_place" name="place" id="meeting_place">
+									</div>
+									<div class="error col-sm-1"></div>
+								</div>
+								<div class="form-group">
+									<label for="meeting_start_time" class="col-sm-1 control-label">开始时间：</label>
+									<div class="col-sm-10">
+										<!--<input type="text" class="form-control meeting_start_time" name="meeting_place" id="meeting_start_time">-->
+										<div class="input-group date form_datetime" id="meeting_start_time_wrap">
+											<input class="form-control" id="meeting_start_time" name="start_time">
+											<!--<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>-->
+											<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+										</div>
+									</div>
+									<div class="error col-sm-1"></div>
+								</div>
+								<div class="form-group">
+									<label for="meeting_end_time" class="col-sm-1 control-label">结束时间：</label>
+									<div class="col-sm-10">
+										<div class="input-group date form_datetime" id="meeting_end_time_wrap">
+											<input class="form-control" id="meeting_end_time" name="end_time">
+											<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+										</div>
+									</div>
+									<div class="error col-sm-1"></div>
+								</div>
+								<div class="form-group">
+									<label for="director_id" class="col-sm-1 control-label">负责人ID：</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control director_id" name="director_id" id="director_id">
+									</div>
+									<div class="error col-sm-1"></div>
+								</div>
+								<div class="form-group">
+									<label for="contacts_1_id" class="col-sm-1 control-label">联系人：</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control contacts_1_id" name="contacts_1_id" id="contacts_1_id">
+									</div>
+									<div class="error col-sm-1"></div>
+								</div>
+								<div class="form-group">
+									<label for="contacts_2_id" class="col-sm-1 control-label">联系人2：</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control contacts_2_id" name="contacts_2_id" id="contacts_2_id">
+									</div>
+									<div class="error col-sm-1"></div>
+								</div>
+								<div class="form-group">
+									<label for="brief" class="col-sm-1 control-label">简介：</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control brief" name="brief" id="brief">
+									</div>
+									<div class="error col-sm-1"></div>
+								</div>
+								<div class="form-group">
+									<label for="logo" class="col-sm-1 control-label">LOGO图片地址：</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control logo" name="logo" id="logo">
+									</div>
+									<div class="error col-sm-1"></div>
+								</div>
+								<input type="hidden" name="creator" class="creator">
+								<input type="hidden" name="creatime" class="creatime">
+								<div class="form-group">
+									<label for="comment" class="col-sm-1 control-label">备注：</label>
+									<div class="col-sm-10">
+										<textarea class="form-control comment" name="comment" id="comment"></textarea>
+									</div>
+									<div class="error col-sm-1"></div>
 								</div>
 							</div>
-							<div class="form-group">
-								<label for="meeting_status" class="col-sm-3 control-label">状态：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control meeting_status" name="meeting_status" id="meeting_status">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="meeting_type" class="col-sm-3 control-label">类型：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control meeting_type" name="meeting_type" id="meeting_type">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="meeting_host" class="col-sm-3 control-label">主办方：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control meeting_host" name="meeting_host" id="meeting_host">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="meeting_plan" class="col-sm-3 control-label">策划方：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control meeting_plan" name="meeting_plan" id="meeting_plan">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="meeting_address" class="col-sm-3 control-label">举办地点：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control meeting_address" name="meeting_address" id="meeting_address">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="meeting_start_time" class="col-sm-3 control-label">开始时间：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control meeting_start_time" name="meeting_start_time" id="meeting_start_time">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="end_time" class="col-sm-3 control-label">结束时间：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control end_time" name="end_time" id="end_time">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="director_id" class="col-sm-3 control-label">负责人ID：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control director_id" name="director_id" id="director_id">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="contacts_1_id" class="col-sm-3 control-label">联系人：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control contacts_1_id" name="contacts_1_id" id="contacts_1_id">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="contacts_2_id" class="col-sm-3 control-label">联系人2：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control contacts_2_id" name="contacts_2_id" id="contacts_2_id">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="brief" class="col-sm-3 control-label">简介：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control brief" name="brief" id="brief">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="logo" class="col-sm-3 control-label">LOGO图片地址：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control logo" name="logo" id="logo">
-								</div>
-							</div>
-
-							<div class="form-group">
-								<label for="creator" class="col-sm-3 control-label">创建人ID：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control creator" name="creator" id="creator">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="creatime" class="col-sm-3 control-label">创建时间：</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control creatime" name="creatime" id="creatime">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="comment" class="col-sm-3 control-label">备注：</label>
-								<div class="col-sm-9">
-									<textarea class="form-control comment" name="comment" id="comment"></textarea>
-								</div>
+							<div class="modal-footer text_center">
+								<button type="submit" class="btn btn-primary">保存</button>
 							</div>
 						</form>
 					</section>
@@ -147,7 +176,21 @@
 				icheck        :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
-				})
+				}),
+				birthDate     :$('#meeting_start_time_wrap , #meeting_end_time_wrap').datetimepicker({
+					language          :'zh-CN',
+					todayBtn          :true,
+					autoclose         :true,
+					todayHighlight    :true,
+					keyboardNavigation:true,
+					forceParse        :true,
+					format            :'yyyy-mm-dd',
+					weekStart         :0,
+					startView         :4,
+					minView           :2,
+					maxView           :4,
+					minuteStep        :5
+				}),
 			}
 		}
 	</script>
