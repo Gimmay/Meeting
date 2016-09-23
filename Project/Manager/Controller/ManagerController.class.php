@@ -27,7 +27,8 @@
 
 				return in_array($curcv, $list) ? true : false;
 			};
-			$model             = D('Core/Employee');
+			/** @var \Manager\Model\EmployeeModel $model */
+			$model             = D('Employee');
 			$is_login          = $model->isLogin();
 			if(!$canAccessDirectly()){
 				if(!$is_login){
@@ -43,7 +44,7 @@
 
 		private function _assignEmployeeName(){
 			$model    = D('Core/Employee');
-			$employee = $model->findEmployee(1, ['id' => I('session.MANAGER_USER_ID',0,'int')]);
+			$employee = $model->findEmployee(1, ['id' => I('session.MANAGER_EMPLOYEE_ID',0,'int')]);
 			$this->assign('curname', $employee['name']);
 		}
 	}

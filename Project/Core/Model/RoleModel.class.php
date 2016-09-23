@@ -7,7 +7,7 @@
 	 */
 	namespace Core\Model;
 
-	use Quasar\StringPlus;
+	use Exception;
 
 	class RoleModel extends CoreModel{
 		protected $tableName   = 'role';
@@ -19,13 +19,18 @@
 
 		public function createRole($data){
 			if($this->create()){
-				$str_obj             = new StringPlus();
-				$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-				$data['creatime']    = time();
-				$data['creator']     = I('session.MANAGER_USER_ID', 0, 'int');
-				$result              = $this->add($data);
-				if($result) return ['status' => true, 'message' => '创建角色成功', 'id' => $result];
-				else return ['status' => false, 'message' => $this->getError()];
+				try{
+					$result = $this->add($data);
+					if($result) return ['status' => true, 'message' => '创建角色成功', 'id' => $result];
+					else return ['status' => false, 'message' => '没有创建角色'];
+				}catch(Exception $error){
+					$message = $error->getMessage();
+					if(stripos($message, 'Duplicate entry')) return [
+						'status'  => false,
+						'message' => "$data[code]工号已存在"
+					];
+					else return ['status' => false, 'message' => $this->getError()];
+				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}
@@ -39,7 +44,7 @@
 				else $where['status'] = $filter['status'];
 			}
 			if(isset($filter['keyword']) && $filter['keyword']){
-				$condition['name'] = ['like', "%$filter[keyword]%"];
+				$condition['name']        = ['like', "%$filter[keyword]%"];
 				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
 				$condition['_logic']      = 'or';
 				$where['_complex']        = $condition;
@@ -67,14 +72,14 @@
 				break;
 				case 2: // select
 				default:
-					if(!isset($filter['order'])) $filter['order'] = 'id desc';
+					if(!isset($filter['_order'])) $filter['_order'] = 'id desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['order'])->select();
-						else $result = $this->order($filter['order'])->select();
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
+						else $result = $this->order($filter['_order'])->select();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['order'])->select();
-						else $result = $this->where($where)->order($filter['order'])->select();
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['_order'])->select();
+						else $result = $this->where($where)->order($filter['_order'])->select();
 					}
 				break;
 			}
@@ -105,8 +110,7 @@ UNION
 			return $result;
 		}
 
-		public function getRoleOfEmployee($eid = null, $type = 'list', $not_assigned = false, $keyword = ''){
-			if($eid == null) $eid = I('session.MANAGER_USER_ID', 0, 'int');
+		public function getRoleOfEmployee($eid, $type = 'list', $not_assigned = false, $keyword = ''){
 			$type = strtolower($type);
 			switch($type){
 				case 'str':
@@ -137,10 +141,17 @@ UNION
 
 		public function deleteRole($ids){
 			if($this->create()){
-				$where['id'] = ['in', $ids];
-				$result      = $this->where($where)->save(['status' => 2]);
-				if($result) return ['status' => true, 'message' => '删除成功'];
-				else return ['status' => false, 'message' => $this->getError()];
+				try{
+					$where['id'] = ['in', $ids];
+					$result      = $this->where($where)->save(['status' => 2]);
+					if($result) return ['status' => true, 'message' => '删除成功'];
+					else return ['status' => false, 'message' => '删除失败'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}

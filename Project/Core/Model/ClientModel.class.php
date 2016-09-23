@@ -8,7 +8,6 @@
 	namespace Core\Model;
 
 	use Exception;
-	use Quasar\StringPlus;
 
 	class ClientModel extends CoreModel{
 		protected $tableName   = 'client';
@@ -18,25 +17,24 @@
 			parent::_initialize();
 		}
 
+		public function isExist($mobile, $name){
+			return $this->where(['mobile' => $mobile, 'name' => $name])->find();
+		}
+
 		public function createClient($data){
-			$str_obj = new StringPlus();
-			if($this->create()){
-				$data['status']      = $data['status'] == 1 ? 0 : (($data['status'] == 0) ? 1 : 1);
-				$data['creatime']    = time();
-				$data['creator']     = I('session.MANAGER_USER_ID', 0, 'int');
-				$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-				$data['password']    = $str_obj->makePassword($data['mobile'], '123456');
-				$data['birthday']    = date('Y-m-d', strtotime($data['birthday']));
+			if($this->create($data)){
 				try{
 					$result = $this->add($data);
 					if($result) return ['status' => true, 'message' => '创建客户成功', 'id' => $result];
-					else return ['status' => false, 'message' => $this->getError()];
+					else return ['status' => false, 'message' => '没有创建任何客户'];
 				}catch(Exception $error){
 					$message = $error->getMessage();
 					if(stripos($message, 'Duplicate entry')) return [
 						'status'  => false,
-						'message' => "$data[code]手机号已存在"
+						'message' => "手机为$data[mobile]且名称为$data[name]的客户已存在"
 					];
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
 					else return ['status' => false, 'message' => $this->getError()];
 				}
 			}
@@ -77,14 +75,14 @@
 				break;
 				case 2: // select
 				default:
-					if(!isset($filter['order'])) $filter['order'] = 'id desc';
+					if(!isset($filter['_order'])) $filter['_order'] = 'id desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['order'])->select();
-						else $result = $this->order($filter['order'])->select();
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
+						else $result = $this->order($filter['_order'])->select();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['order'])->select();
-						else $result = $this->where($where)->order($filter['order'])->select();
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['_order'])->select();
+						else $result = $this->where($where)->order($filter['_order'])->select();
 					}
 				break;
 			}

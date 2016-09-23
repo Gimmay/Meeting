@@ -23,7 +23,7 @@
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
-<body>
+<body data-meeting-id="<{:I('get.mid')}>">
 	<div id="mt_container">
 		<div class="mt_content">
 			<include file="Public/menu"/>
@@ -42,6 +42,27 @@
 									<i></i>
 									<p>批量删除</p>
 								</div>
+								<div class="function_btn bg-success batch_delete_btn_confirm">
+									<i></i>
+									<p>批量签到</p>
+								</div>
+								<div class="function_btn bg-28B778 import_excel_btn">
+									<input type="file" id="import_excel" name="import_excel">
+									<i></i>
+									<p>导入Excel</p>
+								</div>
+								<!--<div class="function_btn bg-info batch_delete_btn_confirm">
+									<a href="<{:U('exportClientDataTemplate')}>">
+										<i></i>
+										<p>导出Excel</p>
+									</a>
+								</div>-->
+								<div class="function_btn bg-f63 batch_delete_btn_confirm">
+									<a href="<{:U('exportClientDataTemplate')}>">
+										<i></i>
+										<p>下载Excel模板</p>
+									</a>
+								</div>
 							</div>
 						</header>
 						<div class="repertory clearfix">
@@ -54,28 +75,37 @@
 								</div>
 								<a type="reset" class="btn btn-default mian_search" href="/Meeting/manage.aspx">查看所有</a>
 							</form>
+							<form action="" method="get" class="sign_check">
+								<div class="input-group pull-left">
+									<input type="checkbox" class="icheck" placeholder="" value="">&nbsp;&nbsp;全部
+								</div>
+								<div class="input-group pull-left">
+									<input type="checkbox" class="icheck" placeholder="" value="">&nbsp;&nbsp;已签到
+								</div>
+								<div class="input-group pull-left">
+									<input type="checkbox" class="icheck" placeholder="" value="">&nbsp;&nbsp;未签到
+								</div>
+							</form>
 						</div>
 						<div class="table_wrap">
-							<table class="table table-bordered" style="text-align: center">
+							<table class="table table-bordered" id="tableExcel" style="text-align: center">
 								<thead>
 									<tr>
 										<td width="5%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="10%">名称</td>
-										<td width="5%">状态</td>
-										<td width="5%">类型</td>
-										<td width="10%">主办方</td>
-										<td width="10%">策划方</td>
-										<td width="10%">举办地点</td>
-										<td width="10%">开始结束时间</td>
-										<td width="10%">负责人</td>
+										<td width="10%">姓名</td>
+										<td width="10%">性别</td>
+										<td width="10%">手机号</td>
+										<td width="10%">会所名称</td>
+										<td width="10%">开拓顾问</td>
+										<td width="10%">服务顾问</td>
 										<td width="10%">创建时间</td>
-										<td width="25%">操作</td>
+										<td width="10%">备注</td>
+										<td width="15%">操作</td>
 									</tr>
 								</thead>
 								<tbody>
-									<volist name="content" id="vo">
 										<tr>
 											<td class="check_item"><input type="checkbox" class="icheck" value="<{$vo.id}>" placeholder=""></td>
 											<td><{$vo.name}></td>
@@ -84,36 +114,23 @@
 												<switch name="vo.status">
 													<case value="1">新建</case>
 													<case value="2">进行中</case>
-													<case value="3">结束</case>
-													<case value="4">作废</case>
 												</switch>
 											</span>
 											</td>
-											<td>
-											<span class="color-info ">
-											<switch name="vo.type">
-												<case value="1">新建</case>
-												<case value="2">进行中</case>
-												<case value="3">结束</case>
-												<case value="4">作废</case>
-											</switch>
-											</span>
-											</td>
-											<td><{$vo.host}></td>
-											<td><{$vo.plan}></td>
-											<td><{$vo.place}></td>
-											<td><{$vo.start_time}><br>至<br><{$vo.end_time}></td>
-											<td><{$vo.director_name}></td>
-											<td><{:date('Y-m-d H:i:s', $vo['creatime'])}></td>
+											<td>手机号码</td>
+											<td>会所名称</td>
+											<td>开拓顾问</td>
+											<td>服务顾问</td>
+											<td>创建时间</td>
+											<td>备注</td>
 											<td>
 												<div class="btn-group" data-id="<{$vo.id}>">
-													<a href="" type="button" class="btn btn-default btn-xs modify_btn">签到点</a>
-													<a href="<{:U('Employee/alter',['id'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
+													<a href="" type="button" class="btn btn-default btn-xs modify_btn">签到</a>
+													<a href="<{:U('Client/alter',['id'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
 													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_meeting">删除</button>
 												</div>
 											</td>
 										</tr>
-									</volist>
 								</tbody>
 							</table>
 						</div>

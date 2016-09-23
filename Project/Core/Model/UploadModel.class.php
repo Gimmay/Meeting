@@ -7,6 +7,8 @@
 	 */
 	namespace Core\Model;
 
+	use Exception;
+
 	class UploadModel extends CoreModel{
 		protected $tableName   = 'upload';
 		protected $tablePrefix = 'system_';
@@ -15,21 +17,19 @@
 			parent::_initialize();
 		}
 
-		public function createRecord($path, $upload_result){
-			$data['file_type']   = $upload_result['type'];
-			$data['save_path']   = $path;
-			$data['creator']     = I('session.MANAGER_USER_ID', 0, 'int');
-			$data['creatime']    = time();
-			$data['suffix']      = $upload_result['ext'];
-			$data['md5']         = $upload_result['md5'];
-			$data['sha1']        = $upload_result['sha1'];
-			$data['size']        = $upload_result['size'];
-			$data['origin_name'] = $upload_result['name'];
+		public function createRecord($data){
 			C('TOKEN_ON', false);
 			if($this->create($data)){
-				$result = $this->add($data);
-				if($result) return ['status' => true, 'message' => '记录成功', 'id' => $result];
-				else return ['status' => false, 'message' => $this->getError()];
+				try{
+					$result = $this->add($data);
+					if($result) return ['status' => true, 'message' => '记录成功', 'id' => $result];
+					else return ['status' => false, 'message' => '记录失败'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}
@@ -64,14 +64,14 @@
 				break;
 				case 2: // select
 				default:
-					if(!isset($filter['order'])) $filter['order'] = 'id desc';
+					if(!isset($filter['_order'])) $filter['_order'] = 'id desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['order'])->select();
-						else $result = $this->order($filter['order'])->select();
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
+						else $result = $this->order($filter['_order'])->select();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['order'])->select();
-						else $result = $this->where($where)->order($filter['order'])->select();
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['_order'])->select();
+						else $result = $this->where($where)->order($filter['_order'])->select();
 					}
 				break;
 			}

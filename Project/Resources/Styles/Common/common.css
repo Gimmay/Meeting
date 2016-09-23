@@ -127,11 +127,33 @@ html, body{
 }
 
 /* text */
-.text_center {
-	text-align: center;
+.text_center{
+	text-align : center;
 }
-.text_right {
-	text-align: right;
+
+.text_right{
+	text-align : right;
+}
+
+/* address 3级菜单 */
+.address_wrap{
+	width : 100%;
+}
+
+.address_wrap .address_item{
+	float        : left;
+	margin-right : 10px;
+}
+
+.address_wrap .address_item.address_details{
+	width : 300px;
+}
+
+.address_wrap .address_item.address_default{
+	margin-left : 20px;
+	min-width   : 300px;
+	line-height : 34px;
+	font-size   : 14px;
 }
 
 /* flex */
@@ -215,7 +237,10 @@ html, body{
 	background   : #F8AC59 !important;
 	border-color : #F8AC59 !important;
 }
-
+.bg-success {
+	background   : #2254A5 !important;
+	border-color : #2254A5 !important;
+}
 .bg-info{
 	background   : #23C6C8 !important;
 	border-color : #23C6C8 !important;
@@ -224,6 +249,11 @@ html, body{
 .bg-danger{
 	background   : #ED5565 !important;
 	border-color : #ED5565 !important;
+}
+
+.bg-f63{
+	background   : #FF6633 !important;
+	border-color : #FF6633 !important;
 }
 
 /* 公共font color */
@@ -246,9 +276,10 @@ html, body{
 .color-danger{
 	color : #ED5565 !important;
 }
-.color-red {
-	color : red !important;
-	font-weight: bold;
+
+.color-red{
+	color       : red !important;
+	font-weight : bold;
 }
 
 .btn_role{
@@ -435,7 +466,7 @@ html, body{
 }
 
 .mt_navbar > .sidenav > .sidenav_list > .side_item > .nav-second-level > li{
-	background: rgba(0,0,0,.4);
+	background : rgba(0, 0, 0, .4);
 }
 
 .mt_navbar > .sidenav > .sidenav_list > .side_item > .nav-second-level > li > a{
@@ -465,7 +496,7 @@ html, body{
 	left       : 0;
 	background : #FFFFFF;
 	z-index    : 998;
-	box-shadow: 0 1px 4px rgba(0,0,0,.5);
+	box-shadow : 0 1px 4px rgba(0, 0, 0, .5);
 }
 
 .mt_wrapper .mt_topbar .nav_info{
@@ -493,14 +524,13 @@ html, body{
 
 .mt_wrapper .mian_body{
 	background    : #FFFFFF;
-	min-height: 100%;
+	min-height    : 100%;
 	border-radius : 4px;
-	box-shadow: 0 3px 7px rgba(0,0,0,.5);
+	box-shadow    : 0 3px 7px rgba(0, 0, 0, .5);
 }
 
 .mt_wrapper .mian_body .content{
 	padding : 10px 0;
-
 }
 
 .mt_wrapper .mian_body .content .c_header{
@@ -553,12 +583,14 @@ html, body{
 }
 
 .function_list .function_btn{
+	position      : relative;
 	width         : 100px;
 	height        : 58px;
 	border-radius : 4px;
 	float         : left;
 	margin        : 10px 20px 10px 0;
 	cursor        : pointer;
+	overflow      : hidden;
 }
 
 .function_list .function_btn p{

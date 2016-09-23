@@ -13,4 +13,20 @@
 		public function _initialize(){
 			parent::_initialize();
 		}
+
+		public function handlerException($message){
+			if(stripos($message, 'Duplicate entry')) return [
+				'status'  => false,
+				'message' => "部分字段违反唯一性约束"
+			];
+			if(stripos($message, 'a foreign key constraint fails')) return [
+				'status'  => false,
+				'message' => "部分字段违反外键约束"
+			];
+			if(stripos($message, 'doesn\'t have a default value')) return [
+				'status'  => false,
+				'message' => "未提交非空字段"
+			];
+			return ['status'=>true];
+		}
 	}

@@ -7,6 +7,8 @@
 	 */
 	namespace Core\Model;
 
+	use Exception;
+
 	class MeetingModel extends CoreModel{
 		protected $tableName   = 'meeting';
 		protected $tablePrefix = 'workflow_';
@@ -19,7 +21,7 @@
 		 * 查询会议记录
 		 *
 		 * @param int   $type   操作类型 0表示获取记录数 1表示获取单条记录 2表示获取结果集
-		 * @param array $filter 过滤条件 可传入的数组索引值包括 id, status, keyword, _limit
+		 * @param array $filter 过滤条件 可传入的数组索引值包括 id, status, keyword, _limit, _order
 		 *
 		 * @return int|array
 		 */
@@ -57,14 +59,14 @@
 				break;
 				case 2: // select
 				default:
-					if(!isset($filter['order'])) $filter['order'] = 'id desc';
+					if(!isset($filter['_order'])) $filter['_order'] = 'id desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['order'])->select();
-						else $result = $this->order($filter['order'])->select();
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
+						else $result = $this->order($filter['_order'])->select();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['order'])->select();
-						else $result = $this->where($where)->order($filter['order'])->select();
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['_order'])->select();
+						else $result = $this->where($where)->order($filter['_order'])->select();
 					}
 				break;
 			}
@@ -74,9 +76,16 @@
 
 		public function createMeeting($data){
 			if($this->create($data)){
-				$data['creator'] = I('session.MANAGER_USER_ID', 0, 'int');
+				$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 				$data['creatime'] = time();
-				$result = $this->add($data);
+				if(I('post.city')){
+					$data['place'] = I('post.province')."-".I('post.city')."-".I('post.area')."-".I('post.address_detail');
+				}else{
+					$data['place'] = I('post.province')."-".I('post.area')."-".I('post.address.detail');
+				}
+
+
+				$result           = $this->add($data);
 
 				return $result ? ['status' => true, 'message' => '创建成功'] : [
 					'status'  => false,
@@ -86,9 +95,14 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function editMeeting(){
-			if($this->create()){
-				$result = $this->save();
+		public function alterMeeting($id, $data){
+			if($this->create($data)){
+				if(I('post.city')){
+					$data['place'] = I('post.province')."-".I('post.city')."-".I('post.area')."-".I('post.address_detail');
+				}else{
+					$data['place'] = I('post.province')."-".I('post.area')."-".I('post.address.detail');
+				}
+				$result = $this->where(['id' => $id])->save($data);
 
 				return $result ? ['status' => true, 'message' => '修改成功'] : [
 					'status'  => false,
@@ -100,17 +114,18 @@
 
 		public function deleteMeeting($ids){
 			if($this->create()){
-				$where['id'] = ['in', $ids];
-				$result      = $this->where($where)->save(['status' => 4]);
-				if($result) return ['status' => true, 'message' => '删除成功'];
-				else return ['status' => false, 'message' => $this->getError()];
+				try{
+					$where['id'] = ['in', $ids];
+					$result      = $this->where($where)->save(['status' => 4]);
+					if($result) return ['status' => true, 'message' => '删除成功'];
+					else return ['status' => false, 'message' => '删除失败'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];
-		}
-
-		public function alterMeeting(){
-			
-
-
 		}
 	}

@@ -7,6 +7,8 @@
 	 */
 	namespace Core\Model;
 
+	use Exception;
+
 	class AssignPermissionModel extends CoreModel{
 		protected $tableName   = 'assign_permission';
 		protected $tablePrefix = 'system_';
@@ -15,29 +17,37 @@
 			parent::_initialize();
 		}
 
-		public function assignPermission($aid, $oid, $type){
-			$data['pid']      = (int)$aid;
-			$data['oid']      = (int)$oid;
-			$data['type']     = $type == 0 ? 0 : ($type == 1 ? 1 : ($type == 2 ? 2 : 0));
-			$data['creatime'] = time();
-			$data['creator']  = I('session.MANAGER_USER_ID', 0, 'int');
+		public function createRecord($data){
 			C('TOKEN_ON', false);
 			if($this->create($data)){
-				$result = $this->add($data);
-				if($result) return ['status' => true, 'message' => '授权成功', 'id'=>$result];
-				else return ['status' => false, 'message' => $this->getError()];
-			}else return ['status' => false, 'message' => $this->getError()];
+				try{
+					$result = $this->add($data);
+					if($result) return ['status' => true, 'message' => '授权成功', 'id' => $result];
+					else return ['status' => false, 'message' => '授权失败'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
+			}
+			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function antiAssignPermission($aid, $oid, $type){
-			$where['pid']  = (int)$aid;
-			$where['oid']  = (int)$oid;
-			$where['type'] = $type == 0 ? 0 : ($type == 1 ? 1 : ($type == 2 ? 2 : 0));
+		public function deleteRecord($condition){
 			C('TOKEN_ON', false);
-			if($this->create($where)){
-				$result = $this->where($where)->delete();
-				if($result) return ['status' => true, 'message' => '收回权限成功'];
-				else return ['status' => false, 'message' => $this->getError()];
-			}else return ['status' => false, 'message' => $this->getError()];
+			if($this->create($condition)){
+				try{
+					$result = $this->where($condition)->delete();
+					if($result) return ['status' => true, 'message' => '收回权限成功'];
+					else return ['status' => false, 'message' => '未收回权限'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
+			}
+			else return ['status' => false, 'message' => $this->getError()];
 		}
 	}

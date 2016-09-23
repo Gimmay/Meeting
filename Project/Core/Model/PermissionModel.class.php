@@ -44,14 +44,14 @@
 				break;
 				case 2: // select
 				default:
-					if(!isset($filter['order'])) $filter['order'] = 'id desc';
+					if(!isset($filter['_order'])) $filter['_order'] = 'id desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['order'])->select();
-						else $result = $this->order($filter['order'])->select();
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
+						else $result = $this->order($filter['_order'])->select();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['order'])->select();
-						else $result = $this->where($where)->order($filter['order'])->select();
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['_order'])->select();
+						else $result = $this->where($where)->order($filter['_order'])->select();
 					}
 				break;
 			}
@@ -59,8 +59,7 @@
 			return $result;
 		}
 
-		public function getPermissionOfEmployee($eid = null, $type = 'list', $not_assigned = false, $keyword = ''){
-			if($eid == null) $eid = I('session.MANAGER_USER_ID', 0, 'int');
+		public function getPermissionOfEmployee($eid, $type = 'list', $not_assigned = false, $keyword = ''){
 			$type   = strtolower($type);
 			$result = [];
 			if($not_assigned){

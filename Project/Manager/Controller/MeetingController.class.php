@@ -46,7 +46,7 @@
 				$model  = D('Core/Meeting'); //实例化表
 				$data   = I('post.', '');         //获取表单数据
 				$result = $model->createMeeting($data); //用model 创建表插入数据
-				$this->success('创建成功');
+				$this->success('创建成功',U('manage'));
 				exit;
 			}
 		}
@@ -84,7 +84,7 @@
 			$meeting_list = $model->findMeeting(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'order'   => I('get.column', 'id').' '.I('get.sort', 'desc'),
+				'_order'   => I('get.column', 'id').' '.I('get.sort', 'desc'),
 				'status'  => 'not deleted'
 			]); // 查出一页会议的内容
 			$meeting_list = $setDirector($meeting_list);
@@ -96,8 +96,33 @@
 		public function alter(){
 			/** @var \Core\Model\MeetingModel $model */
 			$model = D('Core/Meeting');
-			$info  = $model->findMeeting(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
-			$this->assign('info',$info);
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			$setEmployee    = function ($data) use ($employee_model){
+				$tmp                     = $employee_model->findEmployee(1, ['id' => $data['director_id']]);
+				$tmp_one                 = $employee_model->findEmployee(1, ['id' => $data['contacts_1_id']]);
+				$tmp_two                 = $employee_model->findEmployee(1, ['id' => $data['contacts_2_id']]);
+				$data['director_name']   = $tmp['name'];
+				$data['contacts_1_name'] = $tmp_one['name'];
+				$data['contacts_2_name'] = $tmp_two['name'];
+
+				return $data;
+			};
+			if(IS_POST){
+				$result = $model->alterMeeting(I('get.id', 0, 'int'), I('post.')); //传值到model里面操作
+				if($result['status']) $this->success('写入成功',U('manage')); //判断status存在
+				else $this->error($result['message']);			  //判断status不存在
+				exit;
+			}
+
+			$info = $model->findMeeting(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
+			$info = $setEmployee($info);
+			$this->assign('info', $info);
+
+			/** @var \Manager\Model\EmployeeModel $employee_model */
+			$employee_model = D('Employee');
+			$employee_list  = $employee_model->getEmployeeSelectList();
+			$this->assign('employee_list', $employee_list);
 			$this->display();
 		}
 	}

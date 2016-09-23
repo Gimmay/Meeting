@@ -33,12 +33,12 @@
 					<section class="content">
 						<header class="c_header">
 							<div class="function_list clearfix">
-								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
-									<a href="<{:U('Meeting/create')}>"> <i></i>
+								<div class="function_btn bg-warning">
+									<a href="<{:U('SignPlace/create', ['mid'=>$_GET['mid']])}>"> <i></i>
 										<p>添加签到点</p>
 									</a>
 								</div>
-								<div class="function_btn bg-danger batch_delete_btn_confirm"  data-toggle="modal" data-target="#batch_delete_meeting" data-backdrop="static">
+								<div class="function_btn bg-danger batch_delete_btn_confirm"  data-toggle="modal" data-target="#batch_delete_signPlace" data-backdrop="static">
 									<i></i>
 									<p>批量删除</p>
 								</div>
@@ -62,15 +62,12 @@
 										<td width="5%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="10%">名称</td>
-										<td width="5%">状态</td>
-										<td width="5%">类型</td>
-										<td width="10%">主办方</td>
-										<td width="10%">策划方</td>
-										<td width="10%">举办地点</td>
-										<td width="10%">开始结束时间</td>
+										<td width="10%">会议名称</td>
+										<td width="15%">签到点名称</td>
+										<td width="15%">地点</td>
 										<td width="10%">负责人</td>
-										<td width="10%">创建时间</td>
+										<td width="10%">签到负责人</td>
+										<td width="10%">备注</td>
 										<td width="25%">操作</td>
 									</tr>
 								</thead>
@@ -109,11 +106,27 @@
 												<div class="btn-group" data-id="<{$vo.id}>">
 													<a href="" type="button" class="btn btn-default btn-xs modify_btn">签到点</a>
 													<a href="<{:U('Employee/alter',['id'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
-													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_meeting">删除</button>
+													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_signPlace">删除</button>
 												</div>
 											</td>
 										</tr>
 									</volist>
+									<tr>
+										<td class="check_item"><input type="checkbox" class="icheck" value="<{$vo.id}>" placeholder=""></td>
+										<td>测试签到点</td>
+										<td>测试签到点</td>
+										<td>测试签到点</td>
+										<td>测试签到点</td>
+										<td>测试签到点</td>
+										<td>测试签到点</td>
+										<td>
+											<div class="btn-group" data-id="<{$vo.id}>">
+												<a href="<{:U('Client/manage',['mid'=>$_GET['mid']])}>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a>
+												<a href="<{:U('SignPlace/alter')}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
+												<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_meeting">删除</button>
+											</div>
+										</td>
+									</tr>
 								</tbody>
 							</table>
 						</div>
@@ -127,8 +140,8 @@
 			</div>
 		</div>
 	</div>
-	<!-- 删除会议 -->
-	<div class="modal fade" id="delete_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- 删除签到点 -->
+	<div class="modal fade" id="delete_signPlace" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -150,8 +163,8 @@
 			</div>
 		</div>
 	</div>
-	<!-- 批量删除会议 -->
-	<div class="modal fade" id="batch_delete_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- 批量删除签到点 -->
+	<div class="modal fade" id="batch_delete_signPlace" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">

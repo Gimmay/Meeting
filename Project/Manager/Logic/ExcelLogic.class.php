@@ -64,11 +64,10 @@
 				return $data['data']['excel'];
 			};
 			vendor('PHPExcel.PHPExcel');
-			$upload_logic = new UploadLogic();
-			/** @var \Core\Model\UploadModel $upload_model */
-			$upload_model = D('Core/Upload');
-			$result1      = $upload_logic->upload($files, '/Excel/');
-			$result2      = $upload_model->createRecord($getSavePath($result1), $getResult($result1));
+			$core_upload_logic = new UploadLogic();
+			$upload_logic      = new \Manager\Logic\UploadLogic();
+			$result1           = $core_upload_logic->upload($files, '/Excel/');
+			$result2           = $upload_logic->create($getSavePath($result1), $getResult($result1));
 			if($result2['status']){
 				$header       = [];
 				$content      = [];

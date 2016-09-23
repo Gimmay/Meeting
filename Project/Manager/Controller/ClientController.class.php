@@ -16,7 +16,24 @@
 			parent::_initialize();
 		}
 
-		public function index(){
+		public function manage(){
+			if(IS_POST){
+				$logic  = new ClientLogic();
+				$type   = strtolower(I('post.type', ''));
+				$result = $logic->handlerRequest($type);
+				if($result === -1){
+				}
+				else{
+					if($result['status']) $this->success($result['message']);
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
+			}
+			$this->display();
+		}
+
+		public function create(){
+			$this->display();
 		}
 
 		public function exportClientDataTemplate(){
@@ -49,7 +66,7 @@
 
 		public function createClientTest(){
 			$logic            = new ClientLogic();
-			$upload_record_id = 49;
+			$upload_record_id = 5;
 			//$upload_record_id = I('post.id', 0, 'int');
 			//$map    = I('post.map', '');
 			$map    = [
@@ -57,21 +74,23 @@
 				'column' => [20, 21]
 			];
 			$result = $logic->createClientFromExcel($upload_record_id, $map);
-			print_r($result);exit;
+			print_r($result);
+			exit;
 		}
 
 		public function qrcodeTest(){
-			$logic = new JoinLogic();
+			$logic       = new JoinLogic();
 			$client_list = [
-				['id'=>104],
-				['id'=>112]
+				['id' => 21],
+				['id' => 22]
 			];
-			$data = [
-				'mid'=>1,
-				'registration_time'=>time()-34534,
-				'invitor_id'=>1
+			$data        = [
+				'mid'               => 34,
+				'registration_time' => time()-34534,
+				'invitor_id'        => 1
 			];
-			$result = $logic->makeQRCode($client_list, $data);
-			print_r($result);exit;
+			$result      = $logic->makeQRCode($client_list, $data);
+			print_r($result);
+			exit;
 		}
 	}

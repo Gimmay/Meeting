@@ -111,4 +111,77 @@ var Common = {
 			return p.test(str);
 		};
 	},
+
+	/*
+	 *   ==============================文件上传================================
+	 *   文件上传
+	 *   index1、index2 = -1 是表示未找到
+	 *   初始path 格式  C:\fakepath\reset.css
+	 *   lastIndexOf() 方法可返回一个指定的字符串值最后出现的位置，在一个字符串中的指定位置从后向前搜索。
+	 *   getFileName==得到文件的名字（不包含路径）
+	 *   getFileType==得到文件的类型（后缀）
+	 *   judgeFileType==判断上传文件的格式是否符合所需
+	 *   ==============================文件上传================================
+	 */
+	FileUploadClass:function(){
+
+		// 得到上传文件的名字
+		this.getFileName = function(selector){
+			var path = selector.val();
+			var index1 = path.lastIndexOf('/');
+			var index2 = path.lastIndexOf('\\');
+			var index = Math.max(index1, index2);
+			if(index < 0){
+				return path;
+			}else{
+				return path.substring(index + 1);
+			}
+		};
+
+		// 得到上传文件的类型格式（后缀：css、js、png、jpg）
+		this.getFileType = function(fileName){
+			var index = fileName.lastIndexOf(".");
+			if(index >= 0) {
+				return fileName.substr(index+1);
+			}
+		};
+
+		// 判断文件类型是否正确
+		// fileType ：文件的类型（css,jpg,png）
+		// judgeType : 自定义的文件类型（数组格式）
+		// 如果上传文件的格式合法，则返回true。反之返回false。
+		this.judgeFileType = function(fileType,judgeType){
+
+			var flag = false; // 状态
+			for(var i=0;i<judgeType.length;i++){
+				if(fileType == judgeType[i]){
+					flag = true; //一旦找到合适的，立即退出循环
+					break
+				}
+			}
+			//条件判断
+			if(flag){
+				return true;
+			}else{
+				return false;
+			}
+		};
+
+		this.uploadFile = function(url,data){
+			$.ajax({
+				type:'POST',
+				url: url,
+				enctype: 'multipart/form-data',
+				data: {
+					file: filename,
+				},
+				success: function (r) {
+					return r;
+				},
+				error:function(){
+				}
+			});
+		}
+	},
+
 };
