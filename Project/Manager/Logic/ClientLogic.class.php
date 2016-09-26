@@ -53,18 +53,78 @@
 			return $model->createClient($data);
 		}
 
+		//		public function createClientFromExcelData($excel_data, $map){
+		//			$str_obj = new StringPlus();
+		//			/** @var \Manager\Model\ClientModel $model */
+		//			$model        = D('Client');
+		//			/** @var \Core\Model\ClientModel $core_model */
+		//			$core_model = D('Core/Client');
+		//			$table_column = $model->getColumn();
+		//			$data_list    = [];
+		//			foreach($excel_data as $key1 => $line){
+		//				$tmp    = [];
+		//				$mobile = '';
+		//				$name   = '';
+		//				foreach($line as $key2 => $val){
+		//					$column_index = null;
+		//					// 设定映射关系
+		//					if(in_array($key2, $map['data'])){
+		//						$map_index    = array_search($key2, $map['data']);
+		//						$column_index = $map['column'][$map_index];
+		//					}
+		//					// 过滤数据
+		//					switch(strtolower($table_column[$key2]['name'])){
+		//						case 'birthday':
+		//							$val = date('Y-m-d', strtotime($val));
+		//						break;
+		//						case 'gender':
+		//							$val = $val == '男' ? 1 : ($val == '女' ? 2 : 0);
+		//						break;
+		//						case 'develop_consultant':
+		//						case 'service_consultant':
+		//							$val = 1;
+		//						break;
+		//						case 'mobile':
+		//							$mobile = $val;
+		//						break;
+		//						case 'name':
+		//							$name = $val;
+		//						break;
+		//					}
+		//					// 指定特殊列的值
+		//					$tmp['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+		//					$tmp['creatime']    = time();
+		//					$tmp['password']    = $str_obj->makePassword('123456', $mobile);
+		//					$tmp['pinyin_code'] = $str_obj->makePinyinCode($name);
+		//					if($column_index === null) $tmp[$table_column[$key2]['name']] = $val; // 按顺序指定缺省值
+		//					else{ // 设定映射字段
+		//						$tmp[$table_column[$key2]['name']]         = $val;
+		//						$tmp[$table_column[$column_index]['name']] = $val;
+		//					}
+		//				}
+		//				// 判定是否存在该客户
+		//				if($core_model->isExist($mobile, $name)) continue;
+		//				else $data_list[] = $tmp;
+		//			}
+		//			if(!$data_list) return ['status' => false, 'message' => '重复数据无需导入'];
+		//			return $core_model->createMultiClient($data_list);
+		//		}
 		public function createClientFromExcelData($excel_data, $map){
 			$str_obj = new StringPlus();
 			/** @var \Manager\Model\ClientModel $model */
-			$model        = D('Client');
+			$model = D('Client');
 			/** @var \Core\Model\ClientModel $core_model */
 			$core_model = D('Core/Client');
+			/** @var \Core\Model\JoinModel $join_model */
+			$join_model   = D('Core/Join');
 			$table_column = $model->getColumn();
-			$data_list    = [];
+			$count        = 0;
 			foreach($excel_data as $key1 => $line){
-				$tmp    = [];
-				$mobile = '';
-				$name   = '';
+				$client_data       = [];
+				$mobile            = '';
+				$name              = '';
+				$registration_time = '';
+				$invitor           = '';
 				foreach($line as $key2 => $val){
 					$column_index = null;
 					// 设定映射关系
@@ -82,7 +142,7 @@
 						break;
 						case 'develop_consultant':
 						case 'service_consultant':
-							$val = 1;
+							$val = 1; // todo
 						break;
 						case 'mobile':
 							$mobile = $val;
@@ -90,25 +150,52 @@
 						case 'name':
 							$name = $val;
 						break;
+						case 'registration_time':
+							$registration_time = date('Y-m-d', strtotime($val));
+						break;
+						case 'inviter':
+							// todo
+						break;
 					}
 					// 指定特殊列的值
-					$tmp['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					$tmp['creatime']    = time();
-					$tmp['password']    = $str_obj->makePassword('123456', $mobile);
-					$tmp['pinyin_code'] = $str_obj->makePinyinCode($name);
-					if($column_index === null) $tmp[$table_column[$key2]['name']] = $val; // 按顺序指定缺省值
+					$client_data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$client_data['creatime']    = time();
+					$client_data['password']    = $str_obj->makePassword('123456', $mobile);
+					$client_data['pinyin_code'] = $str_obj->makePinyinCode($name);
+					if($column_index === null){
+						if(!in_array($table_column[$key2]['name'], ['registration_time'])) $client_data[$table_column[$key2]['name']] = $val;
+					} // 按顺序指定缺省值
 					else{ // 设定映射字段
-						$tmp[$table_column[$key2]['name']]         = $val;
-						$tmp[$table_column[$column_index]['name']] = $val;
+						if(!in_array($table_column[$key2]['name'], ['registration_time'])) $client_data[$table_column[$key2]['name']] = $val;
+						if(!in_array($table_column[$column_index]['name'], ['registration_time'])) $client_data[$table_column[$column_index]['name']] = $val;
 					}
 				}
 				// 判定是否存在该客户
-				if($core_model->isExist($mobile, $name)) continue;
-				else $data_list[] = $tmp;
-				$data_list[] = $tmp;
+				$exist_client                   = $core_model->isExist($mobile, $name);
+				$join_data['creator']           = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+				$join_data['creatime']          = time();
+				$join_data['registration_time'] = $registration_time;
+				$join_data['mid']               = I('get.mid', 0, 'int');
+				if($exist_client){
+					C('TOKEN_ON', false);
+					$join_data['cid'] = $exist_client['id'];
+					print_r($join_data);exit;
+					$join_result      = $join_model->createRecord($join_data);
+					if($join_result['status']) $count++;
+				}
+				else{
+					C('TOKEN_ON', false);
+					$client_result = $core_model->createClient($client_data);
+					if($client_result['status']){
+						$join_data['cid'] = $client_result['id'];
+						$join_result      = $join_model->createRecord($join_data);
+						if($join_result['status']) $count++;
+					}
+				}
 			}
-			if(!$data_list) return ['status' => false, 'message' => '重复数据无需导入'];
-			return $core_model->createMultiClient($data_list);
+			if($count === 0) return ['status' => false, 'message' => '无需导入任何数据'];
+			if($count == count($excel_data)) return ['status' => true, 'message' => '全部导入成功'];
+			else return ['status' => true, 'message' => '部分数据无需导入'];
 		}
 
 	}

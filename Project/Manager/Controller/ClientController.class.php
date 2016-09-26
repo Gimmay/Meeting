@@ -10,6 +10,7 @@
 	use Manager\Logic\ClientLogic;
 	use Manager\Logic\ExcelLogic;
 	use Manager\Logic\JoinLogic;
+	use Think\Page;
 
 	class ClientController extends ManagerController{
 		public function _initialize(){
@@ -29,6 +30,21 @@
 				}
 				exit;
 			}
+			/** @var \Core\Model\ClientModel $core_model */
+			$core_model = D('Core/Client');
+			$list_total = $core_model->findClient(0, ['keyword' => I('get.keyword', ''), 'status' => 'not deleted']);
+			/* 分页设置 */
+			$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
+			\ThinkPHP\Quasar\Page\setTheme1($page_object);
+			$page_show = $page_object->show();
+			/* 当前页的员工记录列表 */
+			$client_list = $core_model->findClient(2, [
+				'keyword' => I('get.keyword', ''),
+				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
+				'_order'  => I('get.column', 'id').' '.I('get.sort', 'desc'),
+				'status'  => 'not deleted'
+			]);
+
 			$this->display();
 		}
 
@@ -79,7 +95,7 @@
 
 		public function createClientTest(){
 			$logic            = new ClientLogic();
-			$upload_record_id = 5;
+			$upload_record_id = 6;
 			//$upload_record_id = I('post.id', 0, 'int');
 			//$map    = I('post.map', '');
 			$map    = [
