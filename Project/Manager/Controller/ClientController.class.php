@@ -33,6 +33,19 @@
 		}
 
 		public function create(){
+			if(IS_POST){
+				/** @var \Core\Model\ClientModel $model */
+				$model  = D('Core/Client'); //实例化表
+				$data   = I('post.', '');         //获取表单数据
+				$result = $model->createClient($data); //用model 创建表插入数据
+				$this->success('创建成功',U('manage'));
+				exit;
+			}
+
+			/** @var \Manager\Model\EmployeeModel $employee_model */
+			$employee_model = D('Employee');
+			$employee_list  = $employee_model->getEmployeeSelectList();
+			$this->assign('employee_list', $employee_list);
 			$this->display();
 		}
 

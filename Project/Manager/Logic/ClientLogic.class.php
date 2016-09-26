@@ -53,69 +53,14 @@
 			return $model->createClient($data);
 		}
 
-
-		//		public function createClientFromExcelData($excel_data, $map){
-		//			$str_obj      = new StringPlus();
-		//			$table_column = $this->getColumn();
-		//			$data_list    = [];
-		//			foreach($excel_data as $key1 => $line){
-		//				$tmp    = [];
-		//				$mobile = '';
-		//				$name   = '';
-		//				foreach($line as $key2 => $val){
-		//					$column_index = null;
-		//					// 设定映射关系
-		//					if(in_array($key2, $map['data'])){
-		//						$map_index    = array_search($key2, $map['data']);
-		//						$column_index = $map['column'][$map_index];
-		//					}
-		//					// 过滤数据
-		//					switch(strtolower($table_column[$key2]['name'])){
-		//						case 'birthday':
-		//							$val = date('Y-m-d', strtotime($val));
-		//						break;
-		//						case 'gender':
-		//							$val = $val == '男' ? 1 : ($val == '女' ? 2 : 0);
-		//						break;
-		//						case 'develop_consultant':
-		//						case 'service_consultant':
-		//							$val = 1;
-		//						break;
-		//						case 'mobile':
-		//							$mobile = $val;
-		//						break;
-		//						case 'name':
-		//							$name = $val;
-		//						break;
-		//					}
-		//					// 指定特殊列的值
-		//					$tmp['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-		//					$tmp['creatime']    = time();
-		//					$tmp['password']    = $str_obj->makePassword('123456', $mobile);
-		//					$tmp['pinyin_code'] = $str_obj->makePinyinCode($name);
-		//					if($column_index === null) $tmp[$table_column[$key2]['name']] = $val; // 按顺序指定缺省值
-		//					else{ // 设定映射字段
-		//						$tmp[$table_column[$key2]['name']]         = $val;
-		//						$tmp[$table_column[$column_index]['name']] = $val;
-		//					}
-		//				}
-		//				// 判定是否存在该客户
-		//				if($this->isExist($mobile, $name)) continue;
-		//				else $data_list[] = $tmp;
-		//				$data_list[] = $tmp;
-		//			}
-		//			if(!$data_list) return ['status' => false, 'message' => '重复数据无需导入'];
-		//			$result = $this->addAll($data_list);
-		//			if($result) return ['status' => true, 'message' => '导入成功'];
-		//			else return ['status' => false, 'message' => $this->getError()];
-		//		}
 		public function createClientFromExcelData($excel_data, $map){
+			$str_obj = new StringPlus();
 			/** @var \Manager\Model\ClientModel $model */
-			$model = D('Client');
-			/** @var \Core\Model\ClientModel $core_client */
-			$core_client  = D('Core/Client');
-			$str_obj      = new StringPlus();
+			$model        = D('Client');
+			/** @var \Core\Model\ClientModel $core_model */
+			$core_model = D('Core/Client');
 			$table_column = $model->getColumn();
+			$data_list    = [];
 			foreach($excel_data as $key1 => $line){
 				$tmp    = [];
 				$mobile = '';
@@ -158,14 +103,12 @@
 					}
 				}
 				// 判定是否存在该客户
-				$client = $core_client->isExist($mobile, $name);
-				if($core_client->isExist($mobile, $name)){
-					$cid = $client['id'];
-					
-				}
-				else{
-					print_r($tmp);exit;
-				}
+				if($core_model->isExist($mobile, $name)) continue;
+				else $data_list[] = $tmp;
+				$data_list[] = $tmp;
 			}
+			if(!$data_list) return ['status' => false, 'message' => '重复数据无需导入'];
+			return $core_model->createMultiClient($data_list);
 		}
+
 	}

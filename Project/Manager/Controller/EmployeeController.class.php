@@ -68,8 +68,7 @@
 				exit;
 			}
 			if($p_list['list']){
-				/** @var \Manager\Model\EmployeeModel $model_2 */
-				$model_2 = D('Employee');
+				$logic = new EmployeeLogic();
 				/* 获取当前员工角色的最大等级 */
 				$max_role_level = $role_model->getMaxRoleLevel(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));
 				/* 获取当前条件下员工记录数 */
@@ -85,7 +84,7 @@
 					'_order'  => I('get.column', 'id').' '.I('get.sort', 'desc'),
 					'status'  => 'not deleted'
 				]);
-				$employee_list = $model_2->writeExtendInformation($employee_list);
+				$employee_list = $logic->writeExtendInformation($employee_list);
 				/* 为每条用户记录设定最大的角色等级 */
 				$employee_list = $this->_setMaxRoleLevel($employee_list);
 				$this->assign('list', $employee_list);
@@ -134,10 +133,9 @@
 				else $this->error($result['message']);			  //判断status不存在
 				exit;
 			}
-			/** @var \Manager\Model\EmployeeModel $model_2 */
-			$model_2 = D('Employee');
+			$logic = new EmployeeLogic();
 			$info    = $model->findEmployee(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
-			$info    = $model_2->writeExtendInformation($info, true);
+			$info    = $logic->writeExtendInformation($info, true);
 			/** @var \Core\Model\DepartmentModel $dept_model */
 			$dept_model = D('Core/Department');
 			/* 获取职位列表（for select插件） */

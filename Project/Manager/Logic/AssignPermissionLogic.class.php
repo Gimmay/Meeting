@@ -15,8 +15,7 @@
 			$data['oid']      = (int)$oid;
 			$data['type']     = $type == 0 ? 0 : ($type == 1 ? 1 : ($type == 2 ? 2 : 0));
 			$data['creatime'] = time();
-			//$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-			$data['creator']  = -1;
+			$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 
 			return $model->createRecord($data);
 		}

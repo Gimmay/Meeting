@@ -126,6 +126,18 @@
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}
+		public function alterEmployee($id, $data){
+			if($this->create($data)){
+
+				$result = $this->where(['id' => $id])->save($data);
+
+				return $result ? ['status' => true, 'message' => '修改成功'] : [
+					'status'  => false,
+					'message' => $this->getError()
+				];
+			}
+			else return ['status' => false, 'message' => $this->getError()];
+		}
 
 		public function getPositionSelectList(){
 			return $this->field("position as keyword, position as value, position as html")->select();

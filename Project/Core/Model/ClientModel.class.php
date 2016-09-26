@@ -41,10 +41,26 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
+		public function createMultiClient($data){
+			try{
+				$result = $this->addAll($data);
+				if($result) return ['status' => true, 'message' => '创建成功'];
+				else return ['status' => false, 'message' => '创建失败'];
+			}catch(Exception $error){
+				$message = $error->getMessage();
+
+				return ['status' => false, 'message' => $message];
+			}
+		}
+
 		public function findClient($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
-			if(isset($filter['status'])) $where['status'] = $filter['status'];
+			if(isset($filter['status'])){
+				$status = strtolower($filter['status']);
+				if($status == 'not deleted') $where['status'] = ['neq', 3];
+				else $where['status'] = $filter['status'];
+			};
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$condition['mobile']      = ['like', "%$filter[keyword]%"];
 				$condition['name']        = ['like', "%$filter[keyword]%"];

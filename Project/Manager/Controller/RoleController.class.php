@@ -45,6 +45,7 @@
 				}
 				exit;
 			}
+
 			$max_role_level = $model->getMaxRoleLevel(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));
 			/* ↓↓↓↓↓ 获取列表数据 ↓↓↓↓↓ */
 			$list_total     = $model->findRole(0, ['keyword' => I('get.keyword', ''), 'status' => 'not deleted']);
@@ -71,6 +72,18 @@
 			$model = D('Core/Role');
 			$list  = $model->getUserOfRole($role_id);
 			$this->assign('user_list', $list);
+		}
+
+		public function alterRole(){
+			/** @var \Core\Model\RoleModel $model */
+			$model = D('Core/Role');
+			if(IS_POST){
+				$result = $model->alterRole(I('get.id', 0, 'int'), I('post.')); //传值到model里面操作
+				if($result['status']) $this->success('写入成功',U('manage')); //判断status存在
+				else $this->error($result['message']);			  //判断status不存在
+				exit;
+			}
+
 		}
 
 	}

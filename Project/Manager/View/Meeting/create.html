@@ -129,7 +129,7 @@
 									<div class="col-sm-11">
 										<div id="contacts_1_id"></div>
 									</div>
-									
+
 								</div>
 								<div class="form-group">
 									<label for="contacts_2_id" class="col-sm-1 control-label">联系人2：</label>
@@ -196,7 +196,6 @@
 					idInput     :'selected_director_id',
 					idHidden    :'selected_director_id_form',
 					placeholder :'',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
 				contacts1IdSelect:$('#contacts_1_id').QuasarSelect({
@@ -206,7 +205,6 @@
 					idInput     :'selected_contacts_1_id',
 					idHidden    :'selected_contacts_1_id_form',
 					placeholder :'',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
 				contacts2IdSelect:$('#contacts_2_id').QuasarSelect({
@@ -216,20 +214,16 @@
 					idInput     :'selected_contacts_2_id',
 					idHidden    :'selected_contacts_2_id_form',
 					placeholder :'',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
 				toast            :$().QuasarToast(),
-				loading          :$().QuasarLoading()
+				loading          :$().QuasarLoading(),
+				citySelect       :$("#place").citySelect({
+					nodata:"none",
+					url   :'<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/city.min.js'
+				})
 			}
 		};
-		// 三联地址
-		$(function(){
-			$("#place").citySelect({
-				nodata:"none",
-				url   :'<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/city.min.js'
-			});
-		});
 	</script>
 </body>
 </html>

@@ -87,6 +87,19 @@
 			return $result;
 		}
 
+		public function alterRole($id, $data){
+			if($this->create($data)){
+
+				$result = $this->where(['id' => $id])->save($data);
+
+				return $result ? ['status' => true, 'message' => '修改成功'] : [
+					'status'  => false,
+					'message' => $this->getError()
+				];
+			}
+			else return ['status' => false, 'message' => $this->getError()];
+		}
+
 		public function getMaxRoleLevel($oid, $type = 0){
 			$result = $this->alias('main')->join('user_assign_role sub on sub.rid = main.id')->where('sub.oid = %d and sub.type = %d', [
 				$oid,

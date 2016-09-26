@@ -66,6 +66,7 @@
 			$employee_model = D('Core/Employee');
 			$setDirector    = function ($list) use ($employee_model){
 				foreach($list as $key => $val){
+
 					$tmp                         = $employee_model->findEmployee(1, ['id' => $val['director_id']]);
 					$list[$key]['director_name'] = $tmp['name'];
 				}

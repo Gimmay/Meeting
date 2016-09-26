@@ -16,6 +16,6 @@
 		}
 
 		public function getMeetingForSelect(){
-			return $this->field('name html, id value, name keyword')->select();
+			return $this->field('name html, id value, name keyword')->where("status = 1 or status = 2")->select();
 		}
 	}

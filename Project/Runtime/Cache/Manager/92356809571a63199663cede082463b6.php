@@ -1,37 +1,87 @@
-<!DOCTYPE html>
+<?php if (!defined('THINK_PATH')) exit();?><!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<title>新建客户 - 会议系统</title>
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
-	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT}>"></script>
-	<script src="<{$Think.SELF_SCRIPT}>"></script>
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE); ?>">
+	<link rel="stylesheet" href="<?php echo (SELF_STYLE); ?>">
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/bootstrap.min.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/cityselect/jquery.cityselect.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT); ?>"></script>
+	<script src="<?php echo (SELF_SCRIPT); ?>"></script>
 </head>
 <body>
 	<div id="mt_container">
 		<div class="mt_content">
-			<include file="Public/menu"/>
+			<!--会议系统左侧  导航栏 公用-->
+<div class="mt_navbar">
+	<div class="header">
+		<a href="http://www.baidu.com">吉美会议</a>
+	</div>
+	<div class="sidenav">
+		<ul class="sidenav_list" id="side_menu">
+			<li class="side_item <?php if('Employee'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Employee/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-home"></i>
+					<span class="nav-label">员工模块</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</a>
+				<ul class="nav-second-level">
+					<li>
+						<a href="<?php echo U('Employee/create');?>">新建员工</a>
+					</li>
+				</ul>
+			</li>
+			<li class="side_item <?php if('Role'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Role/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-home"></i>
+					<span class="nav-label">角色模块</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</a>
+			</li>
+			<li class="side_item <?php if('Meeting'==$c_name or 'SignPlace'==$c_name or 'Client'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Meeting/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-home"></i>
+					<span class="nav-label">会议模块</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</a>
+				<ul class="nav-second-level">
+					<li>
+						<a href="<?php echo U('Meeting/create');?>">创建会议</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>
 			<div class="mt_wrapper">
-				<include file="Public/header"/>
+				<!--会议系统头部  公用-->
+<div class="mt_topbar">
+	<ul class="nav_info clearfix">
+		<li class="name">
+			<i class="glyphicon glyphicon-user"></i> <span><?php echo ($curname); ?></span>
+		</li>
+		<li class="logout">
+			<a href="<?php echo U('Employee/logout');?>"> <i class="glyphicon glyphicon-log-out"></i> <span>注销</span> </a>
+		</li>
+	</ul>
+</div>
 				<div class="mian_body">
 					<section class="content">
 						<div class="table_wrap">
@@ -241,7 +291,7 @@
 					classStyle  :'form-control',
 					idInput     :'selected_develop_consultant',
 					idHidden    :'selected_develop_consultant_form',
-					data        :'<{:json_encode($employee_list)}>',
+					data        :'<?php echo json_encode($employee_list);?>',
 					placeholder :'',
 					justInput   :true,
 					hasEmptyItem:false
@@ -252,7 +302,7 @@
 					idInput     :'selected_service_consultant',
 					idHidden    :'selected_service_consultant_form',
 					placeholder :'',
-					data        :'<{:json_encode($employee_list)}>',
+					data        :'<?php echo json_encode($employee_list);?>',
 					justInput   :true,
 					hasEmptyItem:false
 				}),
@@ -277,7 +327,7 @@
 		$(function(){
 			$("#address").citySelect({
 				nodata:"none",
-				url   :'<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/city.min.js'
+				url   :'<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/cityselect/city.min.js'
 			});
 		});
 	</script>

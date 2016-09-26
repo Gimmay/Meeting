@@ -22,4 +22,20 @@
 
 			return $model->createRecord($data);
 		}
+
+		public function setExtendColumn($list){
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			foreach($list as $key => $val){
+				$meeting                     = $meeting_model->findMeeting(1, ['id' => $val['mid']]);
+				$director                    = $employee_model->findEmployee(1, ['id' => $val['director_id']]);
+				$sign_director               = $employee_model->findEmployee(1, ['id' => $val['sign_director_id']]);
+				$list[$key]['meeting']       = $meeting['name'];
+				$list[$key]['director']      = $director['name'];
+				$list[$key]['sign_director'] = $sign_director['name'];
+			}
+			return $list;
+		}
 	}

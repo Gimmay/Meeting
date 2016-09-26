@@ -101,24 +101,22 @@
 	<script>
 		var SignPlaceObject = {
 			object:{
-				midSelect :$('#mid').QuasarSelect({
+				midSelect           :$('#mid').QuasarSelect({
 					name        :'mid',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting_list)}>',
 					idInput     :'selected_mid',
 					idHidden    :'selected_mid_form',
 					placeholder :'',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
-				directorIdSelect:$('#director_id').QuasarSelect({
+				directorIdSelect    :$('#director_id').QuasarSelect({
 					name        :'director_id',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($employee_list)}>',
 					idInput     :'selected_director_id',
 					idHidden    :'selected_director_id_form',
 					placeholder :'',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
 				signDirectorIdSelect:$('#sign_director_id').QuasarSelect({
@@ -128,20 +126,16 @@
 					idInput     :'selected_sign_director_id',
 					idHidden    :'selected_sign_director_id_form',
 					placeholder :'',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
-				toast            :$().QuasarToast(),
-				loading          :$().QuasarLoading()
+				toast               :$().QuasarToast(),
+				loading             :$().QuasarLoading(),
+				citySelect          :$("#place").citySelect({
+					nodata:"none",
+					url   :'<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/city.min.js'
+				})
 			}
-		}
-		// 三联地址
-		$(function(){
-			$("#place").citySelect({
-				nodata:"none",
-				url   :'<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/city.min.js'
-			});
-		});
+		};
 	</script>
 </body>
 </html>

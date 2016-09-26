@@ -24,7 +24,7 @@
 					<span class="arrow glyphicon glyphicon-chevron-left"></span>
 				</a>
 			</li>
-			<li class="side_item <php>if('Meeting'==$c_name) echo 'active';</php>">
+			<li class="side_item <php>if('Meeting'==$c_name or 'SignPlace'==$c_name or 'Client'==$c_name) echo 'active';</php>">
 				<a href="<{:U('Meeting/manage')}>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon-home"></i>
 					<span class="nav-label">会议模块</span>

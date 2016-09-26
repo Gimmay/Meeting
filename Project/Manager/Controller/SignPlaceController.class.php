@@ -8,6 +8,7 @@
 	namespace Manager\Controller;
 
 	use Manager\Logic\SignPlaceLogic;
+	use Think\Page;
 
 	class SignPlaceController extends ManagerController{
 		public function _initialize(){
@@ -34,6 +35,25 @@
 		}
 
 		public function manage(){
+			if(IS_POST){
+				exit;
+			}
+			$logic = new SignPlaceLogic();
+			/** @var \Core\Model\SignPlaceModel $model */
+			$model = D('Core/SignPlace');
+			$list_total  = $model->findRecord(0, ['keyword' => I('get.keyword', ''), 'status' => 'not deleted']);
+			$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
+			\ThinkPHP\Quasar\Page\setTheme1($page_object);
+			$page_show   = $page_object->show();
+			$record_list = $model->findRecord(2, [
+				'keyword' => I('get.keyword', ''),
+				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
+				'_order'  => I('get.column', 'id').' '.I('get.sort', 'desc'),
+				'status'  => 'not deleted'
+			]);
+			$record_list = $logic->setExtendColumn($record_list);
+			$this->assign('page_show', $page_show);
+			$this->assign('list', $record_list);
 			$this->display();
 		}
 	}
