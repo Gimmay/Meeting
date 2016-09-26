@@ -186,7 +186,7 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title" id="modify_role_title">修改角色</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post">
+				<form class="form-horizontal" role="form" action="<{:U('alterRole')}>" method="post">
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="modify_role_name" class="col-sm-2 control-label">名称：</label>
@@ -212,7 +212,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="button" class="btn btn-primary">保存</button>
+						<button type="submit" class="btn btn-primary">保存</button>
 					</div>
 				</form>
 			</div>

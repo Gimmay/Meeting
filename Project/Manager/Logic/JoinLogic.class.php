@@ -19,9 +19,16 @@
 			parent::_initialize();
 		}
 
-		public function makeQRCode($client_list, $addition){
+		public function create($data){
 			/** @var \Core\Model\JoinModel $model */
-			$model      = D('Core/Join');
+			$model            = D('Core/Join');
+			$data['creatime'] = time();
+			$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+
+			return $model->createRecord($data);
+		}
+
+		public function makeQRCode($client_list, $addition){
 			$qrcode_obj = new QRCodeLogic();
 			$str_obj    = new StringPlus();
 			$length     = count($client_list);
@@ -34,7 +41,7 @@
 					'logo' => $this->config['logo']
 				]);
 				$remote_url  = $_SERVER['HTTP_HOST'].'/'.trim($qrcode_file, './');
-				$result      = $model->createRecord(array_merge([
+				$result      = $this->create(array_merge([
 					'cid'         => $val['id'],
 					'sign_qrcode' => $remote_url,
 					'sign_code'   => $str_obj->makeRandomString(8)
@@ -48,4 +55,5 @@
 			elseif($count == 0) return ['status' => false, 'message' => '数据没有成功导入'];
 			else return ['status' => false, 'message' => '数据部分未导入'];
 		}
+
 	}

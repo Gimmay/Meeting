@@ -2,7 +2,7 @@
  * Created by qyqy on 2016-9-13.
  */
 
-function  checkMeeting(){
+function  checkMeetingCreate(){
 	var $name = $('#meeting_name');
 	var $status = $('#meeting_status');
 	var $type = $('#meeting_type');
@@ -11,87 +11,62 @@ function  checkMeeting(){
 	var $place = $('#meeting_place');
 	var $start_time = $('#meeting_start_time');
 	var $end_time = $('#meeting_end_time');
+	var $director_id = $('#selected_director_id');
+	var $contacts_1_id = $('#selected_contacts_1_id');
+	var $contacts_2_id = $('#selected_contacts_2_id');
 	var $brief = $('#brief');
 	var $logo = $('#logo');
 	var $comment = $('#comment');
 
 	if($name.val() == ''){
-		$name.parents('.form-group').addClass('has-error');
+		MeetingCreateObject.object.toast.toast("会议名称不能为空");
+		$name.focus();
 		return false;
-	}else{
-		$name.parents('.form-group').removeClass('has-error');
-	}
-	if($status.val() == ''){
-		$status.parents('.form-group').addClass('has-error');
-		return false;
-	}else{
-		$status.parents('.form-group').removeClass('has-error');
-	}
-	if($type.val() == ''){
-		$type.parents('.form-group').addClass('has-error');
-		return false;
-	}else{
-		$type.parents('.form-group').removeClass('has-error');
 	}
 	if($host.val() == ''){
-		$host.parents('.form-group').addClass('has-error');
+		MeetingCreateObject.object.toast.toast("主办方不能为空");
+		$host.focus();
 		return false;
-	}else{
-		$host.parents('.form-group').removeClass('has-error');
 	}
 	if($plan.val() == ''){
-		$plan.parents('.form-group').addClass('has-error');
+		MeetingCreateObject.object.toast.toast("策划方不能为空");
+		$plan.focus();
 		return false;
-	}else{
-		$plan.parents('.form-group').removeClass('has-error');
-	}
-	if($place.val() == ''){
-		$place.parents('.form-group').addClass('has-error');
-		return false;
-	}else{
-		$place.parents('.form-group').removeClass('has-error');
 	}
 	if($start_time.val() == ''){
-		$start_time.parents('.form-group').addClass('has-error');
+		MeetingCreateObject.object.toast.toast("开始时间不能为空");
+		$start_time.focus();
 		return false;
-	}else{
-		$start_time.parents('.form-group').removeClass('has-error');
 	}
 	if($end_time.val() == ''){
-		$end_time.parents('.form-group').addClass('has-error');
+		MeetingCreateObject.object.toast.toast("结束时间不能为空");
+		$end_time.focus();
 		return false;
-	}else{
-		$end_time.parents('.form-group').removeClass('has-error');
 	}
-	if(CreateObject.object.directorIdSelect.getValue() == ''){
-		CreateObject.object.directorIdSelect.parents('.form-group').addClass('has-error');
+	if($director_id.text() == ''){
+		MeetingCreateObject.object.toast.toast("负责人不能为空");
+		$director_id.focus();
 		return false;
-	}else{
-		CreateObject.object.directorIdSelect.parents('.form-group').removeClass('has-error');
 	}
-	if(CreateObject.object.contacts1IdSelect.getValue() == ''){
-		CreateObject.object.contacts1IdSelect.parents('.form-group').addClass('has-error');
+	if($contacts_1_id.text() == ''){
+		MeetingCreateObject.object.toast.toast("联系人不能为空");
+		$contacts_1_id.focus();
 		return false;
-	}else{
-		CreateObject.object.contacts1IdSelect.parents('.form-group').removeClass('has-error');
 	}
-	if(CreateObject.object.contacts2IdSelect.getValue() == ''){
-		CreateObject.object.contacts2IdSelect.parents('.form-group').addClass('has-error');
+	if($contacts_2_id.text() == ''){
+		MeetingCreateObject.object.toast.toast("联系人2不能为空");
+		$contacts_2_id.focus();
 		return false;
-	}else{
-		CreateObject.object.contacts2IdSelect.parents('.form-group').removeClass('has-error');
 	}
 	if($brief.val() == ''){
-		$brief.parents('.form-group').addClass('has-error');
+		MeetingCreateObject.object.toast.toast("开始时间不能为空");
+		$brief.focus();
 		return false;
-	}else{
-		$brief.parents('.form-group').removeClass('has-error');
 	}
 	if($logo.val() == ''){
-		$logo.parents('.form-group').addClass('has-error');
+		MeetingCreateObject.object.toast.toast("LOGO图片地址不能为空");
+		$logo.focus();
 		return false;
-	}else{
-		$logo.parents('.form-group').removeClass('has-error');
 	}
 };
 

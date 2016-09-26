@@ -18,29 +18,6 @@
 			parent::_initialize();
 		}
 
-		public function isLogin(){
-			return isset($_SESSION['MANAGER_USER_ID']) && session('MANAGER_USER_ID') ? true : false;
-		}
-
-		public function checkLogin($name, $pwd){
-			$str_obj = new StringPlus();
-			$pwd     = $str_obj->makePassword($pwd, $name);
-			if($this->create()){
-				$user = $this->where([
-					'code'     => $name,
-					'password' => $pwd
-				])->find();
-				if($user){
-					session('MANAGER_USER_ID', $user['id']);
-					session('MANAGER_USER_CODE', $user['code']);
-
-					return ['status' => true, 'message' => '登入成功'];
-				}
-				else return ['status' => false, 'message' => '该用户不存在或用户名/密码错误'];
-			}
-			else return ['status' => false, 'message' => $this->getError()];
-		}
-
 		public function findEmployee($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
@@ -80,14 +57,14 @@
 				break;
 				case 2: // select
 				default:
-					if(!isset($filter['order'])) $filter['order'] = 'id desc';
+					if(!isset($filter['_order'])) $filter['_order'] = 'id desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['order'])->select();
-						else $result = $this->order($filter['order'])->select();
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
+						else $result = $this->order($filter['_order'])->select();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['order'])->where($where)->select();
-						else $result = $this->order($filter['order'])->where($where)->select();
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->where($where)->select();
+						else $result = $this->order($filter['_order'])->where($where)->select();
 					}
 				break;
 			}
@@ -96,24 +73,19 @@
 		}
 
 		public function createEmployee($data){
-			$str_obj = new StringPlus();
-			if($this->create()){
-				$data['status']      = $data['status'] == 1 ? 0 : (($data['status'] == 0) ? 1 : 1);
-				$data['creatime']    = time();
-				$data['creator']     = I('session.MANAGER_USER_ID', 0, 'int');
-				$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-				$data['password']    = $str_obj->makePassword($data['password'], $data['code']);
-				$data['birthday']    = date('Y-m-d', strtotime($data['birthday']));
+			if($this->create($data)){
 				try{
 					$result = $this->add($data);
 					if($result) return ['status' => true, 'message' => '创建员工成功', 'id' => $result];
-					else return ['status' => false, 'message' => $this->getError()];
+					else return ['status' => false, 'message' => '没有创建员工'];
 				}catch(Exception $error){
 					$message = $error->getMessage();
 					if(stripos($message, 'Duplicate entry')) return [
 						'status'  => false,
 						'message' => "$data[code]工号已存在"
 					];
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
 					else return ['status' => false, 'message' => $this->getError()];
 				}
 			}
@@ -122,17 +94,25 @@
 
 		public function deleteEmployee($ids){
 			if($this->create()){
-				$where['id'] = ['in', $ids];
-				$result      = $this->where($where)->save(['status' => 2]);
-				if($result) return ['status' => true, 'message' => '删除成功'];
-				else return ['status' => false, 'message' => $this->getError()];
+				try{
+					$where['id'] = ['in', $ids];
+					$result      = $this->where($where)->save(['status' => 2]);
+					if($result) return ['status' => true, 'message' => '删除成功'];
+					else return ['status' => false, 'message' => '没有删除任何员工'];
+				}catch(Exception $error){
+					$message = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
 		public function alterPassword($old_pwd, $new_pwd){
 			$str_obj = new StringPlus();
-			$code    = I('session.MANAGER_USER_CODE', 0);
+			$code    = I('session.MANAGER_EMPLOYEE_CODE', 0);
+			// todo
 			$old_pwd = $str_obj->makePassword($old_pwd, $code);
 			$new_pwd = $str_obj->makePassword($new_pwd, $code);
 			if($this->create()){
@@ -143,6 +123,18 @@
 					else return ['status' => false, 'message' => '密码未做修改'];
 				}
 				else return ['status' => false, 'message' => '该用户不存在或用户名/密码错误'];
+			}
+			else return ['status' => false, 'message' => $this->getError()];
+		}
+		public function alterEmployee($id, $data){
+			if($this->create($data)){
+
+				$result = $this->where(['id' => $id])->save($data);
+
+				return $result ? ['status' => true, 'message' => '修改成功'] : [
+					'status'  => false,
+					'message' => $this->getError()
+				];
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}
