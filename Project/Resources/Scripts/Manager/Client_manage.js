@@ -77,12 +77,115 @@ var tableToExcel = (function() {
 	}
 })()*/
 
-$(function(){
-	$('#import_excel').on('change',function(){
-		var id = $('body').attr('data-meeting-id');
-		var path = $('#import_excel').val();
-		Common.ajax({data:{requestType:'import_excel',mid:id},async:false, callback:function(data){
+var clientManage = {
+	optTemp  :'<option value="$numOpt">$name</option>',
+	tableTemp:'<tr>\n\t<td class="check_item_excel"><input type="checkbox" class="icheck_excel" value="$id"></td>\n\t<td>$num</td><td data-id="$id">$value</td>\n\t<td>\n\t\t<select name="client_info" id="" class="form-control">\n\t\t\t$opt\n\t\t</select>\n\t</td>\n</tr>'
+}
 
-		}});
+$(function(){
+	$('#excel_file').on('change',function(){
+		$('#import_sub').trigger('click');
+		var set = setInterval(function(){
+			$('#Excal_hide_btn').trigger('click')
+			getIframeData(set);
+		},2000)
 	});
-})
+
+	$('.receivables_btn').on('click',function(){
+		var id = $(this).parent('.btn-group').attr('data-id');
+		$('input[name=id]').val(id);
+	});
+	$('.review_btn').on('click', function(){
+		var id  = $(this).parent('.btn-group').attr('data-id');
+		var mid = $('body').attr('data-meeting-id');
+		Common.ajax({
+			data    :{requestType:'review', id:id, mid:mid},
+			callback:function(r){
+				if(r.status){
+					ManageObject.object.toast.onQuasarHidden(function(){
+						var url       = location.href;
+						location.href = url;
+					});
+					ManageObject.object.toast.toast('审核成功');
+				}
+			}
+		});
+	});
+});
+
+function getIframeData(set){
+	var data = document.getElementById('fileUpload_iframe').contentWindow.document
+					   .getElementsByTagName('body')[0].innerHTML;
+	if(data){
+		console.log(data);
+		var data = $.parseJSON(data);
+		console.log(data);
+		var str  = '';
+		var str2 = '';
+		$.each(data.data.dbHead, function(index, value){
+			console.log(value.desc);
+			str2 += clientManage.optTemp.replace('$name', value.desc).replace('$numOpt', index);
+		});
+		console.log(str2);
+		$.each(data.data.head, function(index, value){
+			var num = index+1;
+			console.log(str2);
+			//$('#ExcelHeadTable').append("<tr>\n\t<td class=\"check_item\"><input type=\"checkbox\" class=\"icheck_excel\"></td>\n\t<td>"+num+"</td><td>"+value+"</td>\n\t<td>\n\t\t<select name=\"client_info\" id=\"\" class=\"form-control\">\n\t\t\t<option value=\"\">姓名</option>\n\t\t\t<option value=\"\">性别</option>\n\t\t\t<option value=\"\">出生日期</option>\n\t\t\t<option value=\"\">地址</option>\n\t\t\t<option value=\"\">身份证号</option>\n\t\t\t<option value=\"\">职称</option>\n\t\t\t<option value=\"\">职务</option>\n\t\t\t<option value=\"\">手机号</option>\n\t\t\t<option value=\"\">电话号码</option>\n\t\t\t<option value=\"\">电子邮箱</option>\n\t\t\t<option value=\"\">状态</option>\n\t\t\t<option value=\"\">会所名称</option>\n\t\t\t<option value=\"\">开拓顾问</option>\n\t\t\t<option value=\"\">服务顾问</option>\n\t\t\t<option value=\"\">陪同人姓名</option>\n\t\t\t<option value=\"\">登记人ID</option>\n\t\t\t<option value=\"\">创建日期</option>\n\t\t\t<option value=\"\">备注</option>\n\t\t\t<option value=\"\">保留字段1</option>\n\t\t\t<option value=\"\">保留字段2</option>\n\t\t\t<option value=\"\">保留字段3</option>\n\t\t\t<option value=\"\">保留字段4</option>\n\t\t\t<option value=\"\">保留字段5</option>\n\t\t\t<option value=\"\">保留字段6</option>\n\t\t\t<option value=\"\">保留字段7</option>\n\t\t\t<option value=\"\">保留字段8</option>\n\t\t</select>\n\t</td>\n</tr>");
+			str += clientManage.tableTemp.replace('$num', num).replace('$value', value).replace('$opt', str2)
+							   .replace('$id', index);
+		});
+		$('#ExcelHeadTable').html(str);
+		$('.icheck_excel').iCheck({
+			checkboxClass:'icheckbox_square-green',
+			radioClass   :'iradio_square-green'
+		})
+		clearInterval(set);
+		// 全选checkbox
+		$('.all_check_excal').find('.iCheck-helper').on('click', function(){
+			if($(this).parent('.icheckbox_square-green').hasClass('checked')){
+				$('.check_item_excel').find('.icheckbox_square-green').addClass('checked');
+			}else{
+				$('.check_item_excel').find('.icheckbox_square-green').removeClass('checked');
+			}
+		});
+		/*$('select[name=client_info]').on('change',function(){
+		 $(this).find("option:selected").val();
+		 });*/
+		// Excel表头提交
+		$('.btn_save_excel').on('click', function(){
+			var str  = '';
+			var str2 = '';
+			$('.check_item_excel .icheckbox_square-green.checked').each(function(){
+				var id  = $(this).find('.icheck_excel').val();
+				str += id+',';
+
+				var id2 = $(this).parents('tr').find("option:selected").val();
+				str2 += id2+',';
+			});
+			var s, s2, newStr="", newStr2 = "";
+			s                          = str.charAt(str.length-1);
+			if(s == ","){
+				for(var i = 0; i<str.length-1; i++){
+					newStr += str[i];
+				}
+				console.log(newStr);
+			}
+			var newStr_arr = newStr.split(',')
+			console.log(newStr_arr);
+			s2 = str2.charAt(str2.length-1);
+			if(s2 == ","){
+				for(var i = 0; i<str2.length-1; i++){
+					newStr2 += str2[i];
+				}
+				console.log(newStr2);
+			}
+			var newStr_arr2 = newStr2.split(',')
+			Common.ajax({
+			 data:{requestType:'save_excel_data', excel:newStr,table:newStr2}, async:false, callback:function(data){
+				 /*	ManageObject.object.loading.complete();*/
+				 console.log(data);
+			 	}
+			 });
+		});
+	}
+};

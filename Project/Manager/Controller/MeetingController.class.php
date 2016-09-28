@@ -66,7 +66,6 @@
 			$employee_model = D('Core/Employee');
 			$setDirector    = function ($list) use ($employee_model){
 				foreach($list as $key => $val){
-
 					$tmp                         = $employee_model->findEmployee(1, ['id' => $val['director_id']]);
 					$list[$key]['director_name'] = $tmp['name'];
 				}
@@ -85,7 +84,7 @@
 			$meeting_list = $model->findMeeting(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'   => I('get.column', 'id').' '.I('get.sort', 'desc'),
+				'_order'   => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
 				'status'  => 'not deleted'
 			]); // 查出一页会议的内容
 			$meeting_list = $setDirector($meeting_list);

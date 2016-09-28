@@ -44,7 +44,7 @@
 				break;
 				case 2: // select
 				default:
-					if(!isset($filter['_order'])) $filter['_order'] = 'id desc';
+					if(!isset($filter['_order'])) $filter['_order'] = 'creatime desc';
 					if($where == []){
 						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
 						else $result = $this->order($filter['_order'])->select();
@@ -74,11 +74,11 @@
 				$permission = $this->query($sql);
 			}
 			else{
-				$sql         = "select `id`, `name`, 1 `type`, 0 `rid` from system_permission where id in (
+				$sql         = "select `id`, `name`, 1 `type` from system_permission where id in (
 	select pid from system_assign_permission WHERE type = 1 and oid = $eid -- 员工权限
 )
 union
-select `id`, `name`, 0 `type`, (select rid from user_assign_role where type = 0 and oid = $eid) `rid`
+select `id`, `name`, 0 `type`
 from system_permission where id in (
 	select pid from system_assign_permission where type = 0 and oid in ( -- 角色权限
 		select rid from user_assign_role where type = 0 and oid = $eid

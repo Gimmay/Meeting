@@ -57,7 +57,7 @@
 				break;
 				case 2: // select
 				default:
-					if(!isset($filter['_order'])) $filter['_order'] = 'id desc';
+					if(!isset($filter['_order'])) $filter['_order'] = 'creatime desc';
 					if($where == []){
 						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
 						else $result = $this->order($filter['_order'])->select();
@@ -127,8 +127,8 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 		public function alterEmployee($id, $data){
-			if($this->create($data)){
 
+			if($this->create(I('post.'))){
 				$result = $this->where(['id' => $id])->save($data);
 
 				return $result ? ['status' => true, 'message' => '修改成功'] : [

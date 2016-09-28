@@ -55,7 +55,7 @@
 			$role_list = $model->findRole(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'   => I('get.column', 'id').' '.I('get.sort', 'desc'),
+				'_order'   => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
 				'status'  => 'not deleted'
 			]);
 			$role_list = $setEmployeeCount($role_list);
@@ -78,7 +78,7 @@
 			/** @var \Core\Model\RoleModel $model */
 			$model = D('Core/Role');
 			if(IS_POST){
-				$result = $model->alterRole(I('get.id', 0, 'int'), I('post.')); //传值到model里面操作
+				$result = $model->alterRole(I('post.id', 0, 'int'), I('post.')); //传值到model里面操作
 				if($result['status']) $this->success('写入成功',U('manage')); //判断status存在
 				else $this->error($result['message']);			  //判断status不存在
 				exit;

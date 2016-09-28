@@ -10,6 +10,8 @@
 	<!--<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/custom.css">-->
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
@@ -20,6 +22,8 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -34,34 +38,42 @@
 						<header class="c_header">
 							<div class="function_list clearfix">
 								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
-									<a href="<{:U('Client/create')}>"> <i></i>
+									<a href="<{:U('Client/create',['mid'=>I('get.mid')])}>"> <i></i>
 										<p>新建客户</p>
 									</a>
 								</div>
-								<div class="function_btn bg-danger batch_delete_btn_confirm"  data-toggle="modal" data-target="#batch_delete_meeting" data-backdrop="static">
+								<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_client" data-backdrop="static">
 									<i></i>
 									<p>批量删除</p>
 								</div>
-								<div class="function_btn bg-success batch_delete_btn_confirm">
+								<div class="function_btn bg-success batch_alter_sign_point">
 									<i></i>
 									<p>批量签到</p>
 								</div>
 								<div class="function_btn bg-28B778 import_excel_btn">
-									<input type="file" id="import_excel" name="import_excel">
-									<i></i>
-									<p>导入Excel</p>
-								</div>
-								<!--<div class="function_btn bg-info batch_delete_btn_confirm">
-									<a href="<{:U('exportClientDataTemplate')}>">
+									<form action="" method="post" enctype="multipart/form-data" name="fileForm" target="fileUpload">
+										<input type="file" name="excel" accept=".xlsx, .xls" id="excel_file">
+										<input name="requestType" value="import_excel" type="hidden">
 										<i></i>
+										<button type="submit" id="import_sub">提交</button>
+										<p>导入Excel</p>
+									</form>
+								</div>
+								<!-- 导入EXCEL -->
+								<iframe name="fileUpload" id="fileUpload_iframe" width="0" height="0" style=" display: none;"></iframe>
+								<div class="function_btn bg-info batch_delete_btn_confirm">
+									<a href="<{:U('exportClientDataTemplate')}>"> <i></i>
 										<p>导出Excel</p>
 									</a>
-								</div>-->
+								</div>
 								<div class="function_btn bg-f63 batch_delete_btn_confirm">
-									<a href="<{:U('exportClientDataTemplate')}>">
-										<i></i>
+									<a href="<{:U('exportClientDataTemplate')}>"> <i></i>
 										<p>下载Excel模板</p>
 									</a>
+								</div>
+								<div class="function_btn bg-warning assigned_sign" data-toggle="modal" data-target="#batch_alter_sign_point" data-backdrop="static">
+									<i></i>
+									<p>分配签到点</p>
 								</div>
 							</div>
 						</header>
@@ -80,10 +92,13 @@
 									<input type="checkbox" class="icheck" placeholder="" value="">&nbsp;&nbsp;全部
 								</div>
 								<div class="input-group pull-left">
-									<input type="checkbox" class="icheck" placeholder="" value="">&nbsp;&nbsp;已签到
+									<input type="checkbox" class="icheck" placeholder="" value="">&nbsp;&nbsp;签到
 								</div>
 								<div class="input-group pull-left">
-									<input type="checkbox" class="icheck" placeholder="" value="">&nbsp;&nbsp;未签到
+									<input type="checkbox" class="icheck" placeholder="" value="">&nbsp;&nbsp;审核
+								</div>
+								<div class="input-group pull-left">
+									<input type="checkbox" class="icheck" placeholder="" value="">&nbsp;&nbsp;收款
 								</div>
 							</form>
 						</div>
@@ -95,48 +110,74 @@
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="10%">姓名</td>
-										<td width="10%">性别</td>
+										<td width="5%">性别</td>
 										<td width="10%">手机号</td>
 										<td width="10%">会所名称</td>
-										<td width="10%">开拓顾问</td>
-										<td width="10%">服务顾问</td>
 										<td width="10%">创建时间</td>
-										<td width="10%">备注</td>
-										<td width="15%">操作</td>
+										<td width="10%">状态</td>
+										<td width="10%">审核/签到/打印</td>
+										<td width="20%">操作</td>
 									</tr>
 								</thead>
 								<tbody>
+									<volist name="list" id="single">
 										<tr>
-											<td class="check_item"><input type="checkbox" class="icheck" value="<{$vo.id}>" placeholder=""></td>
-											<td><{$vo.name}></td>
-											<td>
-											<span class="color-info">
-												<switch name="vo.status">
-													<case value="1">新建</case>
-													<case value="2">进行中</case>
-												</switch>
-											</span>
+											<td class="check_item">
+												<input type="checkbox" class="icheck" value="<{$single.id}>" placeholder="">
 											</td>
-											<td>手机号码</td>
-											<td>会所名称</td>
-											<td>开拓顾问</td>
-											<td>服务顾问</td>
-											<td>创建时间</td>
-											<td>备注</td>
+											<td><{$single.name}></td>
 											<td>
-												<div class="btn-group" data-id="<{$vo.id}>">
-													<a href="" type="button" class="btn btn-default btn-xs modify_btn">签到</a>
-													<a href="<{:U('Client/alter',['id'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
-													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_meeting">删除</button>
+												<span class="color-info">
+													<switch name="single.gender">
+														<case value="0">未指定</case>
+														<case value="1">男</case>
+														<case value="2">女</case>
+													</switch>
+												</span>
+											</td>
+											<td><{$single.mobile}></td>
+											<td><{$single.club}></td>
+											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
+											<td>
+												<switch name="single.status">
+													<case value="0">禁用</case>
+													<case value="1">可用</case>
+												</switch>
+											</td>
+											<td>
+												<switch name="single.audit_status">
+													<case value="0">未审核</case>
+													<case value="1">已审核</case>
+												</switch>
+												/
+												<switch name="single.sign_status">
+													<case value="0">未签到</case>
+													<case value="1">已签到</case>
+												</switch>
+												/
+												<switch name="single.print_status">
+													<case value="0">未打印</case>
+													<case value="1">已打印</case>
+												</switch>
+											</td>
+											<td>
+												<div class="btn-group" data-id="<{$single.id}>">
+													<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
+													<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
+													<button type="button" class="btn btn-default btn-xs receivables_btn" data-toggle="modal" data-target="#receivables_modal">收款</button>
+													<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
+													<a href="<{:U('Client/alter',['id'=>$single['id']])}>" class="btn btn-default btn-xs modify_btn">修改</a>
+													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_client">删除</button>
 												</div>
 											</td>
 										</tr>
+									</volist>
 								</tbody>
 							</table>
 						</div>
 						<div class="page_wrap">
-							<ul class="pagination ">
-								<{$page}>
+							<ul class="pagination">
+								<{$page_show}>
 							</ul>
 						</div>
 					</section>
@@ -144,20 +185,143 @@
 			</div>
 		</div>
 	</div>
-	<!-- 删除会议 -->
-	<div class="modal fade" id="delete_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<input type="hidden" id="Excal_hide_btn" data-toggle="modal" data-target="#ExcelHead">
+	<!-- 单个修改签到点 -->
+	<div class="modal fade" id="alter_sign_point" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title">修改签到点</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="sign_place" class="col-sm-3 control-label">选择签到点：</label>
+							<div class="col-sm-9">
+								<div id="sign_place"></div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量修改签到点 -->
+	<div class="modal fade" id="batch_alter_sign_point" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title">批量修改签到点</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="sign_place" class="col-sm-3 control-label">选择签到点：</label>
+							<div class="col-sm-9">
+								<div id="batch_sign_place"></div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 收款 -->
+	<div class="modal fade" id="receivables_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="delete_role_title" value="<{$.content.id}>">删除会议</h2>
+					<h2 class="modal-title">收款</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="price" class="col-sm-2 control-label">收款金额：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control price" name="price" id="price">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="type" class="col-sm-2 control-label">收款类型：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control type" name="type" id="type">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="time" class="col-sm-2 control-label">收款时间：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control time" name="time" id="time">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="payee" class="col-sm-2 control-label">收款人：</label>
+							<div class="col-sm-10">
+								<div id="payee"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="coupon" class="col-sm-2 control-label">代金券：</label>
+							<div class="col-sm-10">
+								<div id="coupon"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="place" class="col-sm-2 control-label">收款地点：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control coupon" name="place" id="place">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="modify_role_status" class="col-sm-2 control-label">禁用：</label>
+							<div class="col-sm-10">
+								<select name="status" id="modify_role_status" class="form-control">
+									<option value="1">是</option>
+									<option value="0">否</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">收款</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 删除员工 -->
+	<div class="modal fade" id="delete_client" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="delete_role_title">删除员工</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否删除会议？
+						是否删除员工？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -167,34 +331,123 @@
 			</div>
 		</div>
 	</div>
-	<!-- 批量删除会议 -->
-	<div class="modal fade" id="batch_delete_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- 批量删除 -->
+	<div class="modal fade" id="batch_delete_client" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量删除会议</h2>
+					<h2 class="modal-title">批量删除员工</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否删除选中会议？
+						是否删除已选员工？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认删除</button>
+						<button type="submit" class="btn btn-primary batch_delete_btn">确认删除</button>
 					</div>
 				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Excel表头字段对比 -->
+	<div class="modal fade" id="ExcelHead" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title">Excel表头字段对比</h2>
+				</div>
+				<!--<form class="form-horizontal" role="form" method="post" action="">-->
+					<div class="modal-body" style="max-height: 800px; overflow-y: scroll">
+						<table class="table table-bordered" style="text-align: center">
+							<thead>
+								<tr>
+									<td width="10%" class="all_check_excal">
+										<input type="checkbox" class="icheck" placeholder="" value="">
+									</td>
+									<td width="20%">序号</td>
+									<td width=30">您的Excal中的表头字段</td>
+									<td width="40%">对应在系统中的字段</td>
+								</tr>
+							</thead>
+							<tbody id="ExcelHeadTable">
+							</tbody>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary btn_save_excel">保存字段</button>
+					</div>
+			<!--	</form>-->
 			</div>
 		</div>
 	</div>
 	<script>
 		var ManageObject = {
 			object:{
-				/*toast         :$().QuasarToast(),*/
-				icheck:$('.icheck').iCheck({
+				payeeSelect :$('#payee').QuasarSelect({
+					name        :'payee',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($dept)}>',
+					idInput     :'selected_payee',
+					idHidden    :'selected_payee_form',
+					placeholder :'',
+					justInput   :true,
+					hasEmptyItem:false
+				}),
+				couponSelect:$('#coupon').QuasarSelect({
+					name        :'coupon',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($dept)}>',
+					idInput     :'selected_coupon',
+					idHidden    :'selected_coupon_form',
+					placeholder :'',
+					justInput   :true,
+					hasEmptyItem:false
+				}),
+				signPlaceSelect:$('#sign_place').QuasarSelect({
+					name        :'sign_place',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($dept)}>',
+					idInput     :'selected_coupon',
+					idHidden    :'selected_coupon_form',
+					placeholder :'',
+					justInput   :true,
+					hasEmptyItem:false
+				}),
+				batchSignPlaceSelect:$('#batch_sign_place').QuasarSelect({
+					name        :'batch_sign_place',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($dept)}>',
+					idInput     :'selected_coupon',
+					idHidden    :'selected_coupon_form',
+					placeholder :'',
+					justInput   :true,
+					hasEmptyItem:false
+				}),
+				birthDate   :$('#birth_date').datetimepicker({
+					language          :'zh-CN',
+					todayBtn          :true,
+					autoclose         :true,
+					todayHighlight    :true,
+					keyboardNavigation:true,
+					forceParse        :true,
+					format            :'yyyy-mm-dd',
+					weekStart         :0,
+					startView         :4,
+					minView           :2,
+					maxView           :4,
+					minuteStep        :5
+				}),
+				toast       :$().QuasarToast(),
+				icheck      :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				})

@@ -49,7 +49,7 @@
 				break;
 				case 2: // select
 				default:
-					if(!isset($filter['_order'])) $filter['_order'] = 'id desc';
+					if(!isset($filter['_order'])) $filter['_order'] = 'creatime desc';
 					if($where == []){
 						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
 						else $result = $this->order($filter['_order'])->select();

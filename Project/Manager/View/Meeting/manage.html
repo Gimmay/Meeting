@@ -114,6 +114,7 @@
 											<td>
 												<div class="btn-group" data-id="<{$vo.id}>">
 													<a href="<{:U('SignPlace/manage',['mid'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">签到点</a>
+													<a href="<{:U('Client/manage',['mid'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a>
 													<a href="<{:U('Meeting/alter',['id'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
 													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_meeting">删除</button>
 												</div>

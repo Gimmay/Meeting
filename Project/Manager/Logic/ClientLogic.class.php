@@ -7,6 +7,7 @@
 	 */
 	namespace Manager\Logic;
 
+	use Core\Logic\WxCorpLogic;
 	use Quasar\StringPlus;
 
 	class ClientLogic extends ManagerLogic{
@@ -18,8 +19,62 @@
 		public function handlerRequest($type){
 			switch($type){
 				case 'import_excel':
-					echo 123;
+					$excel_logic = new ExcelLogic();
+					$result      = $excel_logic->importClientData($_FILES);
+					if(isset($result['data']['dbIndex'])){
+						/** @var \Manager\Model\ClientModel $model */
+						$model                    = D('Client');
+						$table_head               = $model->getSelfColumn();
+						$result['data']['dbHead'] = $table_head;
+					}
+					echo json_encode($result);
+
+					return -1;
+				break;
+				case 'review':
+					/** @var \Core\Model\ClientModel $model */
+					$model        = D('Core/Client');
+					$join_logic   = new JoinLogic();
+					$wxcorp_logic = new WxCorpLogic();
+					/** @var \Core\Model\WeixinIDModel $weixin_model */
+					$weixin_model = D('Core/WeixinID');
+					$client_id    = I('post.id', 0, 'int');
+					$meeting_id   = I('post.mid', 0, 'int');
+					C('TOKEN_ON', false);
+					$result1 = $model->alterClient([$client_id], ['audit_status' => 1]);
+					if(!$result1['status']){
+						echo json_encode($result1);
+
+						return -1;
+					}
+					$result2 = $join_logic->makeQRCode([
+						['id' => $client_id]
+					], [
+						'mid' => $meeting_id
+					]);
+					if(!$result2['status']){
+						echo json_encode($result2);
+
+						return -1;
+					}
+					$weixin_record = $weixin_model->findRecord(1, ['otype' => 1, 'oid' => $client_id]);
+					$result3       = $wxcorp_logic->sendMessage('news', [
+						[
+							'title'       => '会议信息提醒',
+							'description' => '123',
+							'url'         => 'www.baidu.com'
+						]
+					], ['user' => [$weixin_record['weixin_id']]]);
+					print_r($result3);
 					exit;
+
+					return -1;
+				break;
+				case 'anti_review':
+				break;
+				case 'multi_review':
+				break;
+				case 'multi_anti_review':
 				break;
 				default:
 					echo json_encode(['status' => false, 'message' => '参数错误']);
@@ -179,7 +234,6 @@
 				if($exist_client){
 					C('TOKEN_ON', false);
 					$join_data['cid'] = $exist_client['id'];
-					print_r($join_data);exit;
 					$join_result      = $join_model->createRecord($join_data);
 					if($join_result['status']) $count++;
 				}

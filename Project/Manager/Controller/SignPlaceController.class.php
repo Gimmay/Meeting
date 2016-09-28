@@ -40,7 +40,7 @@
 			}
 			$logic = new SignPlaceLogic();
 			/** @var \Core\Model\SignPlaceModel $model */
-			$model = D('Core/SignPlace');
+			$model       = D('Core/SignPlace');
 			$list_total  = $model->findRecord(0, ['keyword' => I('get.keyword', ''), 'status' => 'not deleted']);
 			$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
 			\ThinkPHP\Quasar\Page\setTheme1($page_object);
@@ -48,8 +48,9 @@
 			$record_list = $model->findRecord(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get.column', 'id').' '.I('get.sort', 'desc'),
-				'status'  => 'not deleted'
+				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+				'status'  => 'not deleted',
+				'mid'     => I('get.mid', 0, 'int')
 			]);
 			$record_list = $logic->setExtendColumn($record_list);
 			$this->assign('page_show', $page_show);

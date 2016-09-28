@@ -36,6 +36,7 @@
 		public function findRecord($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
+			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted') $where['status'] = ['neq', 2];
@@ -67,7 +68,7 @@
 				break;
 				case 2: // select
 				default:
-					if(!isset($filter['_order'])) $filter['_order'] = 'id desc';
+					if(!isset($filter['_order'])) $filter['_order'] = 'creatime desc';
 					if($where == []){
 						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
 						else $result = $this->order($filter['_order'])->select();

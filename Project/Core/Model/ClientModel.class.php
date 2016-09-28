@@ -58,7 +58,7 @@
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
-				if($status == 'not deleted') $where['status'] = ['neq', 3];
+				if($status == 'not deleted') $where['status'] = ['neq', 2];
 				else $where['status'] = $filter['status'];
 			};
 			if(isset($filter['keyword']) && $filter['keyword']){
@@ -91,7 +91,7 @@
 				break;
 				case 2: // select
 				default:
-					if(!isset($filter['_order'])) $filter['_order'] = 'id desc';
+					if(!isset($filter['_order'])) $filter['_order'] = 'creatime desc';
 					if($where == []){
 						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
 						else $result = $this->order($filter['_order'])->select();
@@ -99,6 +99,78 @@
 					else{
 						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['_order'])->select();
 						else $result = $this->where($where)->order($filter['_order'])->select();
+					}
+				break;
+			}
+
+			return $result;
+		}
+
+		public function alterClient($id, $data){
+			if($this->create($data)){
+				$where['id'] = ['in', $id];
+				$result = $this->where($where)->save($data);
+
+				return $result ? ['status' => true, 'message' => '修改成功'] : [
+					'status'  => false,
+					'message' => $this->getError()
+				];
+			}
+			else return ['status' => false, 'message' => $this->getError()];
+		}
+
+		public function listClient($type = 2, $filter = []){
+			$where = [];
+			if(isset($filter['id'])) $where['main.id'] = $filter['id'];
+			if(isset($filter['mid'])) $where['sub.mid'] = $filter['mid'];
+			if(isset($filter['join_status'])){
+				$status = strtolower($filter['join_status']);
+				if($status == 'not deleted') $where['sub.status'] = ['neq', 2];
+				else $where['sub.status'] = $filter['join_status'];
+			};
+			if(isset($filter['status'])){
+				$status = strtolower($filter['status']);
+				if($status == 'not deleted') $where['main.status'] = ['neq', 2];
+				else $where['main.status'] = $filter['status'];
+			};
+			if(isset($filter['keyword']) && $filter['keyword']){
+				$condition['mobile']      = ['like', "%$filter[keyword]%"];
+				$condition['name']        = ['like', "%$filter[keyword]%"];
+				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
+				$condition['_logic']      = 'or';
+				$where['_complex']        = $condition;
+			}
+			switch((int)$type){
+				case 0: // count
+					if($where == []){
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->count();
+						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->count();
+					}
+					else{
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->where($where)->count();
+						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->where($where)->count();
+					}
+				break;
+				case 1: // find
+					if($where == []){
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->field('main.*, sub.mid, sub.registration_time, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->find();
+						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->field('main.*, sub.mid, sub.registration_time, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->find();
+					}
+					else{
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->where($where)->field('main.*, sub.mid, sub.registration_time, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->find();
+						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->where($where)->field('main.*, sub.mid, sub.registration_time, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->find();
+					}
+				break;
+				case 2: // select
+				default:
+					if(!isset($filter['_order'])) $filter['_order'] = 'main.creatime desc';
+					if($where == []){
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->order($filter['_order'])->field('main.*, sub.mid, sub.registration_time, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_timess, sub.sign_time, sub.sign_status, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->select();
+						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->order($filter['_order'])->field('main.*, sub.mid, sub.registration_time, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->select();
+					}
+					else{
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->where($where)->order($filter['_order'])->field('main.*, sub.mid, sub.registration_time, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->select();
+						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->where($where)->order($filter['_order'])->field('main.*, sub.mid, sub.registration_time, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->select();
 					}
 				break;
 			}

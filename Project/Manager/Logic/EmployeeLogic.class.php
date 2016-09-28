@@ -137,7 +137,10 @@
 						$type                    = I('post.type', 1, 'int');
 						$result                  = ['status' => false, '参数错误'];
 						$assign_permission_logic = new AssignPermissionLogic();
-						if($type == 0) $result = $assign_permission_logic->antiAssignPermission(I('post.pid', 0, 'int'), I('post.rid', 0, 'int'), 0);
+						if($type == 0){
+							echo json_encode(['status'=>false, 'message'=>'不能取消角色授权']);
+							return -1;
+						}
 						if($type == 1) $result = $assign_permission_logic->antiAssignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 1);
 						echo json_encode($result);
 					}

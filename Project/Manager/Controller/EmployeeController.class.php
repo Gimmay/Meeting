@@ -36,19 +36,6 @@
 			$this->success('注销成功');
 		}
 
-		public function alterPassword(){
-			if(IS_POST){
-				/** @var \Core\Model\EmployeeModel $model */
-				$model   = D('Core/Employee');
-				$old_pwd = $_POST['old_password'];
-				$new_pwd = $_POST['new_password'];
-				$result  = $model->alterPassword($old_pwd, $new_pwd);
-				if($result['status']) $this->success($result['message']);
-				else $this->error($result['message'], '', 3);
-				exit;
-			}
-		}
-
 		public function manage(){
 			/** @var \Core\Model\EmployeeModel $model */
 			$model = D('Core/Employee');
@@ -81,7 +68,7 @@
 				$employee_list = $model->findEmployee(2, [
 					'keyword' => I('get.keyword', ''),
 					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-					'_order'  => I('get.column', 'id').' '.I('get.sort', 'desc'),
+					'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
 					'status'  => 'not deleted'
 				]);
 				$employee_list = $logic->writeExtendInformation($employee_list);
@@ -129,13 +116,13 @@
 			$model = D('Core/Employee');
 			if(IS_POST){
 				$result = $model->alterEmployee(I('get.id', 0, 'int'), I('post.')); //传值到model里面操作
-				if($result['status']) $this->success('写入成功',U('manage')); //判断status存在
-				else $this->error($result['message']);			  //判断status不存在
+				if($result['status']) $this->success('写入成功', U('manage')); //判断status存在
+				else $this->error($result['message']);              //判断status不存在
 				exit;
 			}
 			$logic = new EmployeeLogic();
-			$info    = $model->findEmployee(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
-			$info    = $logic->writeExtendInformation($info, true);
+			$info  = $model->findEmployee(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
+			$info  = $logic->writeExtendInformation($info, true);
 			/** @var \Core\Model\DepartmentModel $dept_model */
 			$dept_model = D('Core/Department');
 			/* 获取职位列表（for select插件） */
@@ -173,5 +160,26 @@
 		public function test(){
 			$str = new StringPlus();
 			echo $str->makePassword('123456', '0967');
+		}
+
+		public function alterPassword(){
+			$str         = new StringPlus();
+			$oldpassword = I('post.old_password'); // 旧密码
+			$id          = I('post.id');           // 账户ID
+			$newpassword = I('post.new_password'); // 新密码
+			/** @var \Core\Model\EmployeeModel $model */
+			$model       = D('Core/Employee');
+			$tmp         = $model->findEmployee(1, ['id' => $id]); //查询出这个ID的数据
+			$oldpassword = $str->makePassword($oldpassword, $tmp['code']);    //旧密码加密
+			$newpassword = $str->makePassword($newpassword, $tmp['code']);    //新密码加密
+			if($tmp['password'] == $oldpassword){    //判断加密过后的密码和数据库的密码是否匹配
+				/** @var \Core\Model\EmployeeModel $model */
+				$model = D('Core/Employee');
+				$model->alterEmployee($id, ['password' => $newpassword]); //成功后就更新到数据库
+				$this->success('修改完成,正在返回', U('manage'));
+			}
+			else{
+				$this->error('密码错误，请重新输入', U('manage'));
+			}
 		}
 	}

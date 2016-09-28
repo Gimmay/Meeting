@@ -93,7 +93,7 @@
 												<div class="btn-group" data-id="<{$single.id}>">
 													<if condition="$max_role_level elt $single['level']">
 														<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
-														<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#modify_role">修改</button>
+														<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_role">修改</button>
 														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_role">删除</button>
 													</if>
 												</div>
@@ -187,6 +187,8 @@
 					<h2 class="modal-title" id="modify_role_title">修改角色</h2>
 				</div>
 				<form class="form-horizontal" role="form" action="<{:U('alterRole')}>" method="post">
+					<input type="hidden" name="requestType" value="alter">
+					<input type="hidden" name="id">
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="modify_role_name" class="col-sm-2 control-label">名称：</label>

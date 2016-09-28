@@ -127,6 +127,12 @@ $(function(){
 		}
 	});
 
+	// 角色修改
+	$('.modify_btn').on('click',function(){
+		var id = $(this).parent('.btn-group').attr('data-id');
+		$('#modify_role').find('input[name=id]').val(id);
+	});
+
 	// 单个角色删除
 	$('.delete_btn').on('click',function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
