@@ -66,6 +66,20 @@
 
 					return $model->deleteRole(I('post.id'));
 				break;
+				case 'get_role':
+					/** @var \Core\Model\RoleModel $model */
+					$model = D('Core/Role');
+					/** @var \Core\Model\MeetingModel $meeting_model */
+					$meeting_model = D('Core/Meeting');
+					$role_record   = $model->findRole(1, ['id' => I('post.id', 0, 'int')]);
+					if($role_record['effect'] != 0){
+						$meeting_record         = $meeting_model->findMeeting(1, ['id' => $role_record['effect']]);
+						$role_record['meeting'] = $meeting_record['name'];
+					}
+					echo json_encode($role_record);
+
+					return -1;
+				break;
 				default:
 					echo json_encode(['status' => false, 'message' => '参数错误']);
 

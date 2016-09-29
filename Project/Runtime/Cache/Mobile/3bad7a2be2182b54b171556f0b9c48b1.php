@@ -1,0 +1,77 @@
+<?php if (!defined('THINK_PATH')) exit();?><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta id="viewport" name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>个人中心</title>
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/mobile_common.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE); ?>">
+	<link rel="stylesheet" href="<?php echo (SELF_STYLE); ?>">
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/bootstrap.min.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/mobile_rem.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT); ?>"></script>
+	<script src="<?php echo (SELF_SCRIPT); ?>"></script>
+</head>
+<body>
+	<div id="mb_wrap">
+		<div class="mb_body">
+			<div class="sign_btn">
+				<?php switch($info["sign_status"]): case "0": ?><button type="button" class="btn btn-default btn-lg btn-primary" id="sign">签到</button><?php break;?>
+					<?php case "1": ?><button type="button" class="btn btn-default btn-lg btn-primary" id="anti_sign">取消签到</button><?php break; endswitch;?>
+			</div>
+			<div class="my_infor">
+				<div class="title">
+					<p>客户信息：<?php echo ($info["meeting_name"]); ?> </p>
+				</div>
+				<div class="personal">
+					<p>
+						姓名：<?php echo ($info["name"]); ?>
+					</p>
+					<p>
+						性别：<?php switch($info["gender"]): case "0": ?>未指定<?php break;?>
+							<?php case "1": ?>男<?php break;?>
+							<?php case "2": ?>女<?php break; endswitch;?>
+					</p>
+					<p>
+						手机：<?php echo ($info["mobile"]); ?>
+					</p>
+				</div>
+				<div class="title">
+					<p>会议名称：<?php echo ($info["meeting_name"]); ?> </p>
+				</div>
+				<div class="personal">
+					<p>
+						会议简介：<?php echo ($info["meeting_brief"]); ?>
+					</p>
+					<p>
+						起始时间：<?php echo ($info["meeting_start_time"]); ?> — <?php echo ($info["meeting_end_time"]); ?>
+					</p>
+					<p>
+						会议地点：<?php echo ($info["meeting_place"]); ?>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+			object:{
+				toast:$().QuasarToast({
+					fadeDuration:0.1
+				}),
+				loading: $().QuasarLoading()
+			}
+		}
+	</script>
+</body>
+</html>

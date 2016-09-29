@@ -1,0 +1,10 @@
+.sign_btn {
+	padding: 0.6rem;
+	text-align: center;
+	border-bottom: 1px solid #e1e1e1;
+}
+
+#mb_wrap {
+	height: 100%;
+	overflow: hidden;
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta id="viewport" name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>个人中心</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/mobile_common.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/mobile_rem.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mb_wrap">
+		<div class="mb_body">
+			<div class="my_box">
+				<div class="my_title">
+					<div class="photo">
+						<img src="<{$info.avatar}>">
+					</div>
+					<p class="name"><{$info.name}></p>
+					<p class="address"><{$info.address}></p>
+				</div>
+
+				<div class="qr_code">
+					<img src="<{$info.sign_qrcode}>">
+				</div>
+			</div>
+
+			<div class="my_infor">
+				<div class="title">
+					<p>会议名称：<{$info.meeting_name}> </p>
+				</div>
+				<div class="personal">
+					<p>
+						会议简介：<{$info.meeting_brief}>
+					</p>
+					<p>
+						起始时间：<{$info.meeting_start_time}> — <{$info.meeting_end_time}>
+					</p>
+					<p>
+						会议地点：<{$info.meeting_place}>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		MyCenterObject = {
+			config:{
+				signStatus:'<{$info.sign_status}>'
+			},
+			object:{
+				toast:$().QuasarToast()
+			}
+		}
+	</script>
+</body>
+</html>

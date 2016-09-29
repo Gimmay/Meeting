@@ -13,7 +13,7 @@
 		private $_config = [
 			'corpID'     => 'wxbd62380696bb0201',
 			'corpSecret' => 'nS7-z8pbUzUwxwnImCoNCslbKSj6kRgDqYm8vn2oRD2kCE9aKpNNUAJVkPc9wlQb',
-			'appID'      => 24
+			'appID'      => 33
 		];
 
 		public function _initialize(){

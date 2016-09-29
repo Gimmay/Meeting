@@ -1,0 +1,31 @@
+.edit_box {
+	width: 50%;
+	float: left;
+	padding: 20px 20px 20px 0;
+}
+
+.edit_box textarea {
+	height: 250px;
+	max-height: 500px;
+}
+
+.field_box {
+	width: 50%;
+	float: left;
+	padding: 20px 20px 20px 0;
+}
+
+.field_box .filed_w {
+	padding: 20px 10px;
+}
+
+.field_box .filed_w button {
+	padding: 0 20px;
+	margin-bottom: 10px;
+}
+
+.words_num {
+	font-size: 14px;
+	font-weight: bold;
+	color : #fb5050;
+}

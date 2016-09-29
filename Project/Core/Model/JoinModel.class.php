@@ -84,7 +84,7 @@
 		}
 
 		public function alterRecord($id, $data){
-			if($this->create(I('post.'))){
+			if($this->create($data)){
 				$where['id'] = ['in', $id];
 				try{
 					$result = $this->where($where)->save($data);
@@ -92,6 +92,23 @@
 					else  return ['status' => true, 'message' => $this->getError()];
 				}catch(Exception $error){
 					return ['status' => false, 'message' => $error->getMessage()];
+				}
+			}
+			else return ['status' => false, 'message' => $this->getError()];
+		}
+
+		public function deleteRecord($ids){
+			if($this->create()){
+				try{
+					$where['id'] = ['in', $ids];
+					$result      = $this->where($where)->save(['status' => 2]);
+					if($result) return ['status' => true, 'message' => '删除成功'];
+					else return ['status' => false, 'message' => '删除失败'];
+				}catch(Exception $error){
+					$message = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
 				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];

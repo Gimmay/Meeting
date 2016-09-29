@@ -106,10 +106,27 @@
 			return $result;
 		}
 
+		public function deleteClient($ids){
+			if($this->create()){
+				try{
+					$where['id'] = ['in', $ids];
+					$result      = $this->where($where)->save(['status' => 2]);
+					if($result) return ['status' => true, 'message' => '删除成功'];
+					else return ['status' => false, 'message' => '没有删除任何员工'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
+			}
+			else return ['status' => false, 'message' => $this->getError()];
+		}
+
 		public function alterClient($id, $data){
 			if($this->create($data)){
 				$where['id'] = ['in', $id];
-				$result = $this->where($where)->save($data);
+				$result      = $this->where($where)->save($data);
 
 				return $result ? ['status' => true, 'message' => '修改成功'] : [
 					'status'  => false,

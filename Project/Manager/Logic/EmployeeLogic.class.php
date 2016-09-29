@@ -8,6 +8,7 @@
 	namespace Manager\Logic;
 
 	use Core\Logic\PermissionLogic;
+	use Core\Logic\WxCorpLogic;
 	use Quasar\StringPlus;
 
 	class EmployeeLogic extends ManagerLogic{
@@ -17,15 +18,44 @@
 
 		public function create($data){
 			/** @var \Core\Model\EmployeeModel $model */
-			$model = D('Core/Employee');
-			$str_obj = new StringPlus();
+			$model               = D('Core/Employee');
+			$str_obj             = new StringPlus();
 			$data['status']      = $data['status'] == 1 ? 0 : (($data['status'] == 0) ? 1 : 1);
 			$data['creatime']    = time();
 			$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 			$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
 			$data['password']    = $str_obj->makePassword($data['password'], $data['code']);
 			$data['birthday']    = date('Y-m-d', strtotime($data['birthday']));
-			return $model->createEmployee($data);
+			$result              = $model->createEmployee($data);
+			if($result['status']){
+				/** @var \Core\Model\WeixinIDModel $weixin_model */
+				$weixin_model = D('Core/WeixinID');
+				$logic        = new WxCorpLogic();
+				$wx_list      = $logic->getAllUserList(); //查出wx接口获取的所有用户信息
+				foreach($wx_list as $k1 => $v1){
+					if($v1['mobile'] == $data['mobile']){
+						C('TOKEN_ON', false);
+						$department = '';
+						foreach($v1['department'] as $v3) $department .= $v3.',';
+						$department         = trim($department, ',');
+						$data               = [];
+						$data['otype']      = 1;    //对象类型
+						$data['oid']        = $result['id'];    //对象ID
+						$data['userid']     = 1;    //
+						$data['department'] = $department;    //部门ID
+						$data['weixin_id']  = $v1['userid'];    //微信ID
+						$data['mobile']     = $v1['mobile'];    //手机号码
+						$data['avatar']     = $v1['avatar'];    //头像地址
+						$data['gender']     = $v1['gender'];    //性别
+						$data['nickname']   = $v1['name'];    //昵称
+						$data['creatime']   = time();    //创建时间
+						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+						$weixin_model->createRecord($data);    //插入数据
+					}
+				}
+			}
+
+			return $result;
 		}
 
 		public function getPermissionList(){
@@ -138,7 +168,8 @@
 						$result                  = ['status' => false, '参数错误'];
 						$assign_permission_logic = new AssignPermissionLogic();
 						if($type == 0){
-							echo json_encode(['status'=>false, 'message'=>'不能取消角色授权']);
+							echo json_encode(['status' => false, 'message' => '不能取消角色授权']);
+
 							return -1;
 						}
 						if($type == 1) $result = $assign_permission_logic->antiAssignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 1);

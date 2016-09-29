@@ -1,0 +1,45 @@
+
+.my_box {
+	width: 100%;
+	padding: 0.4rem 0.2rem;
+	border-bottom: 1px solid #e1e1e1;
+}
+
+.my_title {
+	width: 100%;
+}
+.my_title .photo {
+	width: 0.8rem;
+	float: left;
+	overflow: hidden;
+	border :1px solid #999;
+	border-radius: 4px;
+}
+
+.my_title .photo img {
+	width: 100%;
+	vertical-align: top;
+}
+
+
+.qr_code img {
+	width: 100%;
+	vertical-align: top;
+}
+
+
+.name{
+	margin-left: 1rem;
+	font-size: 0.30rem;
+	font-weight: bold;
+	margin-bottom: 0.1rem;
+}
+
+.address {
+	margin-left: 1rem;
+	font-size: 0.24rem;
+}
+
+.qr_code {
+	margin-top: 0.2rem;
+}

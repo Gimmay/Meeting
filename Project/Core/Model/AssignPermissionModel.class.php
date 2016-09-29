@@ -18,7 +18,6 @@
 		}
 
 		public function createRecord($data){
-			C('TOKEN_ON', false);
 			if($this->create($data)){
 				try{
 					$result = $this->add($data);
@@ -35,7 +34,6 @@
 		}
 
 		public function deleteRecord($condition){
-			C('TOKEN_ON', false);
 			if($this->create($condition)){
 				try{
 					$result = $this->where($condition)->delete();

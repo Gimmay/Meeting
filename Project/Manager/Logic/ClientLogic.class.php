@@ -35,9 +35,6 @@
 					/** @var \Core\Model\ClientModel $model */
 					$model        = D('Core/Client');
 					$join_logic   = new JoinLogic();
-					$wxcorp_logic = new WxCorpLogic();
-					/** @var \Core\Model\WeixinIDModel $weixin_model */
-					$weixin_model = D('Core/WeixinID');
 					$client_id    = I('post.id', 0, 'int');
 					$meeting_id   = I('post.mid', 0, 'int');
 					C('TOKEN_ON', false);
@@ -52,29 +49,105 @@
 					], [
 						'mid' => $meeting_id
 					]);
-					if(!$result2['status']){
-						echo json_encode($result2);
-
-						return -1;
-					}
-					$weixin_record = $weixin_model->findRecord(1, ['otype' => 1, 'oid' => $client_id]);
-					$result3       = $wxcorp_logic->sendMessage('news', [
-						[
-							'title'       => '会议信息提醒',
-							'description' => '123',
-							'url'         => 'www.baidu.com'
-						]
-					], ['user' => [$weixin_record['weixin_id']]]);
-					print_r($result3);
-					exit;
+					
+					echo json_encode($result2);
 
 					return -1;
 				break;
 				case 'anti_review':
+					/** @var \Core\Model\ClientModel $model */
+					$model     = D('Core/Client');
+					$client_id = I('post.id', 0, 'int');
+					C('TOKEN_ON', false);
+					$result1 = $model->alterClient([$client_id], ['audit_status' => 0]);
+					echo json_encode($result1);
+
+					return -1;
 				break;
 				case 'multi_review':
+					return -1;
 				break;
 				case 'multi_anti_review':
+					return -1;
+				break;
+				case 'sign':
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model  = D('Core/Join');
+					$join_record = $join_model->findRecord(1, [
+						'cid' => I('post.id', 0, 'int'),
+						'mid' => I('post.mid', 0, 'int')
+					]);
+					C('TOKEN_ON', false);
+					if(I('post.sid', 0, 'int') === 0){
+						$result = $join_model->alterRecord([$join_record['id']], [
+							'sign_status'      => 1,
+							'sign_time'        => time(),
+							'sign_director_id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+						]);
+					}
+					else{
+						$result = $join_model->alterRecord([$join_record['id']], [
+							'sign_status'      => 1,
+							'sign_time'        => time(),
+							'sign_director_id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+							'sign_place_id'    => I('post.sid', 0, 'int')
+						]);
+					}
+					echo json_encode($result);
+
+					return -1;
+				break;
+				case 'anti_sign':
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model  = D('Core/Join');
+					$join_record = $join_model->findRecord(1, [
+						'cid' => I('post.id', 0, 'int'),
+						'mid' => I('post.mid', 0, 'int')
+					]);
+					C('TOKEN_ON', false);
+					$result = $join_model->alterRecord([$join_record['id']], ['sign_status' => 0]);
+					echo json_encode($result);
+
+					return -1;
+				break;
+				case 'delete';
+					/** @var \Core\Model\ClientModel $model */
+					$model = D('Core/Client');
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model = D('Core/Join');
+					$result1    = $model->deleteClient(I('post.id'));
+					if($result1['status']){
+						$data['cid'] = I('post.id', 0, 'int');
+						$data['mid'] = I('get.mid', 0, 'int');
+						$join_find   = $join_model->findRecord(1, $data);
+						C('TOKEN_ON', false);
+						$result2 = $join_model->deleteRecord($join_find['id']);
+
+						return $result2;
+					}
+					else return $result1;
+				break;
+				case 'send_message':
+					$wxcorp_logic = new WxCorpLogic();
+					/** @var \Core\Model\WeixinIDModel $weixin_model */
+					/** @var \Core\Model\MeetingModel $meeting_model */
+					/** @var \Core\Model\ClientModel $client_model */
+					$client_id      = I('post.id', 0, 'int');
+					$meeting_id     = I('post.mid', 0, 'int');
+					$weixin_model   = D('Core/WeixinID');
+					$meeting_model  = D('Core/Meeting');
+					$client_model   = D('Core/Client');
+					$weixin_record  = $weixin_model->findRecord(1, ['otype' => 1, 'oid' => $client_id]);
+					$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
+					$client_record  = $client_model->findClient(1, ['id' => $client_id]);
+
+					return $wxcorp_logic->sendMessage('news', [
+						[
+							'title'       => "$meeting_record[name]",
+							'description' => "亲爱的$client_record[name] $meeting_record[host]诚挚邀请您参加$meeting_record[name]",
+							'url'         => "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/id/$client_id/mid/$meeting_id"
+						]
+					], ['user' => [$weixin_record['weixin_id']]]);
 				break;
 				default:
 					echo json_encode(['status' => false, 'message' => '参数错误']);
@@ -102,68 +175,12 @@
 			$data['creatime']    = time();
 			$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 			$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-			$data['password']    = $str_obj->makePassword($data['mobile'], '123456');
+			$data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
 			$data['birthday']    = date('Y-m-d', strtotime($data['birthday']));
 
 			return $model->createClient($data);
 		}
 
-		//		public function createClientFromExcelData($excel_data, $map){
-		//			$str_obj = new StringPlus();
-		//			/** @var \Manager\Model\ClientModel $model */
-		//			$model        = D('Client');
-		//			/** @var \Core\Model\ClientModel $core_model */
-		//			$core_model = D('Core/Client');
-		//			$table_column = $model->getColumn();
-		//			$data_list    = [];
-		//			foreach($excel_data as $key1 => $line){
-		//				$tmp    = [];
-		//				$mobile = '';
-		//				$name   = '';
-		//				foreach($line as $key2 => $val){
-		//					$column_index = null;
-		//					// 设定映射关系
-		//					if(in_array($key2, $map['data'])){
-		//						$map_index    = array_search($key2, $map['data']);
-		//						$column_index = $map['column'][$map_index];
-		//					}
-		//					// 过滤数据
-		//					switch(strtolower($table_column[$key2]['name'])){
-		//						case 'birthday':
-		//							$val = date('Y-m-d', strtotime($val));
-		//						break;
-		//						case 'gender':
-		//							$val = $val == '男' ? 1 : ($val == '女' ? 2 : 0);
-		//						break;
-		//						case 'develop_consultant':
-		//						case 'service_consultant':
-		//							$val = 1;
-		//						break;
-		//						case 'mobile':
-		//							$mobile = $val;
-		//						break;
-		//						case 'name':
-		//							$name = $val;
-		//						break;
-		//					}
-		//					// 指定特殊列的值
-		//					$tmp['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-		//					$tmp['creatime']    = time();
-		//					$tmp['password']    = $str_obj->makePassword('123456', $mobile);
-		//					$tmp['pinyin_code'] = $str_obj->makePinyinCode($name);
-		//					if($column_index === null) $tmp[$table_column[$key2]['name']] = $val; // 按顺序指定缺省值
-		//					else{ // 设定映射字段
-		//						$tmp[$table_column[$key2]['name']]         = $val;
-		//						$tmp[$table_column[$column_index]['name']] = $val;
-		//					}
-		//				}
-		//				// 判定是否存在该客户
-		//				if($core_model->isExist($mobile, $name)) continue;
-		//				else $data_list[] = $tmp;
-		//			}
-		//			if(!$data_list) return ['status' => false, 'message' => '重复数据无需导入'];
-		//			return $core_model->createMultiClient($data_list);
-		//		}
 		public function createClientFromExcelData($excel_data, $map){
 			$str_obj = new StringPlus();
 			/** @var \Manager\Model\ClientModel $model */
@@ -215,7 +232,7 @@
 					// 指定特殊列的值
 					$client_data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$client_data['creatime']    = time();
-					$client_data['password']    = $str_obj->makePassword('123456', $mobile);
+					$client_data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $mobile);
 					$client_data['pinyin_code'] = $str_obj->makePinyinCode($name);
 					if($column_index === null){
 						if(!in_array($table_column[$key2]['name'], ['registration_time'])) $client_data[$table_column[$key2]['name']] = $val;

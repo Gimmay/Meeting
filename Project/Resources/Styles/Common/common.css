@@ -281,6 +281,10 @@ html, body{
 	color       : red !important;
 	font-weight : bold;
 }
+.color-primary {
+	color       : #337ab7 !important;
+	font-weight : bold;
+}
 
 .btn_role{
 	background   : #F8AC59 !important;
@@ -498,6 +502,15 @@ html, body{
 	z-index    : 998;
 	box-shadow : 0 1px 4px rgba(0, 0, 0, .5);
 }
+.mt_wrapper .mt_topbar .return {
+	height: 30px;
+	line-height: 30px;
+	padding: 0 5px;
+	margin-left: 200px;
+	margin-top: 10px;
+	border-radius :5px;
+}
+
 
 .mt_wrapper .mt_topbar .nav_info{
 	color  : #000000;
@@ -531,6 +544,9 @@ html, body{
 
 .mt_wrapper .mian_body .content{
 	padding : 10px 0;
+}
+.mt_wrapper .mian_body .content .return {
+	padding: 0 10px;
 }
 
 .mt_wrapper .mian_body .content .c_header{
@@ -613,7 +629,7 @@ html, body{
 }
 
 .repertory .mian_search{
-	width       : 100px;
+/*	width       : 100px;*/
 	float       : left;
 	margin-left : 10px;
 }

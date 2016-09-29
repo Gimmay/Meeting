@@ -34,11 +34,14 @@
 				<include file="Public/header"/>
 				<div class="mian_body">
 					<section class="content" style="padding: 10px;">
+						<div class="return">
+							<a class="btn btn-default" href="<{:U('Meeting/manage')}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
+						</div>
 						<div class="modal-header">
 							<h2 class="modal-title" id="authorize_role_title">修改会议</h2>
 						</div>
 						<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkMeetingAlter()">
-							<div class="modal-body" style=" padding: 15px 20px 15px 0px;">
+							<div class="modal-body" style=" padding: 15px 20px 15px 0;">
 								<div class="form-group">
 									<label for="meeting_name" class="col-sm-1 control-label">会议名称：</label>
 									<div class="col-sm-11">

@@ -43,7 +43,7 @@
 			foreach($client_list as $val){
 				$file_name   = $str_obj->makeGuid('qrcode', false).'.png';
 				$file_path   = QRCODE_PATH.'/'.date('Y-m-d').'/'.$file_name;
-				$url         = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/manager/id/$val[id]";
+				$url         = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/manage/id/$val[id]/mid/$data[mid]";
 				$qrcode_file = $qrcode_obj->make($url, $file_path);
 				$remote_url  = '/'.trim($qrcode_file, './');
 				$join_record = $join_model->findRecord(1, ['cid' => $val['id'], 'mid' => $data['mid']]);

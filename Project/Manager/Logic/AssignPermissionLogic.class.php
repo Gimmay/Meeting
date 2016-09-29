@@ -16,7 +16,7 @@
 			$data['type']     = $type == 0 ? 0 : ($type == 1 ? 1 : ($type == 2 ? 2 : 0));
 			$data['creatime'] = time();
 			$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-
+			C('TOKEN_ON', false);
 			return $model->createRecord($data);
 		}
 
@@ -26,7 +26,7 @@
 			$condition['pid']  = (int)$pid;
 			$condition['oid']  = (int)$oid;
 			$condition['type'] = $type == 0 ? 0 : ($type == 1 ? 1 : ($type == 2 ? 2 : 0));
-
+			C('TOKEN_ON', false);
 			return $model->deleteRecord($condition);
 		}
 	}
