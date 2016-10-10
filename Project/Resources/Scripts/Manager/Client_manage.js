@@ -78,12 +78,9 @@
  })()*/
 var clientManage = {
 	optTemp  :'<option value="$numOpt">$name</option>',
-	tableTemp:'<tr>\n\t<td class="check_item_excel"><input type="checkbox" class="icheck_excel" value="$id"></td>\n\t<td>$num</td><td data-id="$id">$value</td>\n\t<td>\n\t\t<select name="client_info" id="" class="form-control">\n\t\t\t$opt\n\t\t</select>\n\t</td>\n</tr>'
+	tableTemp:'<tr>\n\t<td class="check_item_excel"><input type="checkbox" class="icheck_excel" value="$id"></td>\n\t<td>$num</td><td class="excel_name" data-id="$id">$value</td>\n\t<td>\n\t\t<select name="client_info" id="" class="form-control select_h">\n\t\t\t$opt\n\t\t</select>\n\t</td>\n</tr>'
 };
 $(function(){
-
-
-
 	// 全选checkbox
 	$('.all_check').find('.iCheck-helper').on('click', function(){
 		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
@@ -94,56 +91,49 @@ $(function(){
 	});
 	// 已签到客户列表
 	$('.check_sign').find('.iCheck-helper').on('click', function(){
-			var mvc    = $('#Quasar').attr('data-mvc-name');
-			var suffix = $('#Quasar').attr('data-page-suffix');
-			var link   = new Quasar.UrlClass(1, mvc, suffix);
-			var signed = link.getUrlParam('signed');
-			if(signed == 1){
-				var new_url = link.delUrlParam('signed');
-				location.replace(new_url);
-			}else{
-				var signed_url = link.setUrlParam('signed', 1, location.href, {
-					except:mvc,
-					suffix:suffix
-				});
-				location.href  = signed_url;
-			}
-	});
-	// 已审核客户列表
-	$('.check_review').find('.iCheck-helper').on('click', function(){
-			var mvc          = $('#Quasar').attr('data-mvc-name');
-			var suffix       = $('#Quasar').attr('data-page-suffix');
-			var link         = new Quasar.UrlClass(1, mvc, suffix);
-			var reviewed = link.getUrlParam('reviewed');
-			if(reviewed == 1){
-				var new_url = link.delUrlParam('reviewed');
-				location.replace(new_url);
-			}else{
-				var reviewed_url = link.setUrlParam('reviewed', 1, location.href, {
-					except:mvc,
-					suffix:suffix
-				});
-				location.href    = reviewed_url;
-			}
-	});
-	// 已收款客户列表
-	$('.check_receivables').find('.iCheck-helper').on('click', function(){
-		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
-			var mvc               = $('#Quasar').attr('data-mvc-name');
-			var suffix            = $('#Quasar').attr('data-page-suffix');
-			var link              = new Quasar.UrlClass(1, mvc, suffix);
-			var receivablesed_url = link.setUrlParam('reviewed', 1, location.href, {
+		var $quasar  = $('#Quasar');
+		var mvc    = $quasar.attr('data-mvc-name');
+		var suffix = $quasar.attr('data-page-suffix');
+		var link   = new Quasar.UrlClass(1, mvc, suffix);
+		var signed = link.getUrlParam('signed');
+		if(signed == 1){
+			var new_url = link.delUrlParam('signed');
+			location.replace(new_url);
+		}else{
+			var signed_url = link.setUrlParam('signed', 1, location.href, {
 				except:mvc,
 				suffix:suffix
 			});
-			location.href         = receivablesed_url;
+			location.replace(signed_url);
+		}
+	});
+	// 已审核客户列表
+	$('.check_review').find('.iCheck-helper').on('click', function(){
+		var $quasar  = $('#Quasar');
+		var mvc      = $quasar.attr('data-mvc-name');
+		var suffix   = $quasar.attr('data-page-suffix');
+		var link     = new Quasar.UrlClass(1, mvc, suffix);
+		var reviewed = link.getUrlParam('reviewed');
+		if(reviewed == 1){
+			var new_url = link.delUrlParam('reviewed');
+			location.replace(new_url);
 		}else{
-			var mvc       = $('#Quasar').attr('data-mvc-name');
-			var signedUrl = link.setUrlParam('receivablesed', 1, location.href, {
-				except:mvc,
-				suffix:".aspx"
-			});
-			location.href = signedUrl;
+			var reviewed_url = link.setUrlParam('reviewed', 1);
+			location.replace(reviewed_url);
+		}
+	});
+	// 已收款客户列表
+	$('.check_receivables').find('.iCheck-helper').on('click', function(){
+		var $quasar = $('#Quasar');
+		var mvc     = $quasar.attr('data-mvc-name');
+		var suffix  = $quasar.attr('data-page-suffix');
+		var link    = new Quasar.UrlClass(1, mvc, suffix);
+		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
+			var receivablesed_url = link.setUrlParam('reviewed', 1);
+			location.replace(receivablesed_url);
+		}else{
+			var signedUrl = link.setUrlParam('receivablesed', 1);
+			location.replace(signedUrl);
 		}
 	});
 	//导入excel
@@ -156,9 +146,12 @@ $(function(){
 	});
 	// 收款按钮
 	$('.receivables_btn').on('click', function(){
+		var name = $(this).parents('tr').find('.name').text();
 		var id = $(this).parent('.btn-group').attr('data-id');
-		$('input[name=id]').val(id);
+		$('#receivables_modal').find('input[name=id]').val(id);
+		$('#receivables_modal').find('input[name=name]').val(name);
 	});
+
 	//审核按钮
 	$('.review_btn').on('click', function(){
 		var id  = $(this).parent('.btn-group').attr('data-id');
@@ -191,6 +184,39 @@ $(function(){
 			}
 		});
 	});
+	// 批量审核客户
+	$('.batch_review_btn_confirm').on('click', function(){
+		var str = '';
+		$('.check_item .icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
+			str += id+','
+		});
+		var s, newStr = "";
+		s             = str.charAt(str.length-1);
+		if(s == ","){
+			for(var i = 0; i<str.length-1; i++){
+				newStr += str[i];
+			}
+		}
+		$('#batch_review_client').find('input[name=id]').val(newStr);
+	});
+	// 批量取消审核客户
+	$('.batch_anti_review_btn_confirm').on('click', function(){
+		var str = '';
+		$('.check_item .icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
+			str += id+','
+		});
+		var s, newStr = "";
+		s             = str.charAt(str.length-1);
+		if(s == ","){
+			for(var i = 0; i<str.length-1; i++){
+				newStr += str[i];
+			}
+		}
+		$('#batch_anti_review_client').find('input[name=id]').val(newStr);
+	});
+
 	// 签到按钮
 	$('.sign_btn').on('click', function(){
 		var $body = $('body');
@@ -229,6 +255,39 @@ $(function(){
 			}
 		});
 	});
+	// 批量签到
+	$('.batch_sign_point').on('click', function(){
+		var str = '';
+		$('.check_item .icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
+			str += id+','
+		});
+		var s, newStr = "";
+		s             = str.charAt(str.length-1);
+		if(s == ","){
+			for(var i = 0; i<str.length-1; i++){
+				newStr += str[i];
+			}
+		}
+		$('#batch_sign_point').find('input[name=id]').val(newStr);
+	});
+	// 批量取消签到
+	$('.batch_anti_sign_point ').on('click', function(){
+		var str = '';
+		$('.check_item .icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
+			str += id+','
+		});
+		var s, newStr = "";
+		s             = str.charAt(str.length-1);
+		if(s == ","){
+			for(var i = 0; i<str.length-1; i++){
+				newStr += str[i];
+			}
+		}
+		$('#batch_anti_sign_point').find('input[name=id]').val(newStr);
+	});
+
 	// 删除客户
 	$('.delete_btn').on('click', function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
@@ -247,10 +306,10 @@ $(function(){
 			for(var i = 0; i<str.length-1; i++){
 				newStr += str[i];
 			}
-			console.log(newStr);
 		}
 		$('#batch_delete_client').find('input[name=id]').val(newStr);
 	});
+
 	// 发送消息
 	$('.send_message_btn').on('click', function(){
 		var id  = $(this).parent('.btn-group').attr('data-id');
@@ -264,23 +323,39 @@ $(function(){
 					});
 					ManageObject.object.toast.toast('发送消息成功', 1);
 				}else{
-					ManageObject.object.toast.toast(r.message, 1);
+					ManageObject.object.toast.toast('发送消息失败', 1);
 				}
 			}
 		});
 	});
+	// 批量发送消息
+	$('.batch_send_message_btn_confirm').on('click', function(){
+		var str = '';
+		$('.check_item .icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
+			str += id+','
+		});
+		var s, newStr = "";
+		s             = str.charAt(str.length-1);
+		if(s == ","){
+			for(var i = 0; i<str.length-1; i++){
+				newStr += str[i];
+			}
+		}
+		$('#batch_send_message').find('input[name=id]').val(newStr);
+	});
+
+	// 人员状态列表（签到\审核\收款）
 	var mvc    = $('#Quasar').attr('data-mvc-name');
 	var suffix = $('#Quasar').attr('data-page-suffix');
 	var link   = new Quasar.UrlClass(1, mvc, suffix);
 	var signed = link.getUrlParam('signed');
-	console.log(signed);
 	if(signed == 1){
 		$('.check_sign').find('.icheckbox_square-green').addClass('checked');
 	}else{
 		$('.check_sign').find('.icheckbox_square-green').removeClass('checked');
 	}
 	var reviewed = link.getUrlParam('reviewed');
-	console.log(signed);
 	if(reviewed == 1){
 		$('.check_review').find('.icheckbox_square-green').addClass('checked');
 	}else{
@@ -294,8 +369,8 @@ function getIframeData(set){
 		data     = $.parseJSON(data);
 		var str  = '';
 		var str2 = '';
+		var dbIndex = data.data.dbIndex;
 		$.each(data.data.dbHead, function(index, value){
-			console.log(value.desc);
 			str2 += clientManage.optTemp.replace('$name', value.desc).replace('$numOpt', index);
 		});
 		$.each(data.data.head, function(index, value){
@@ -304,6 +379,29 @@ function getIframeData(set){
 							   .replace('$id', index);
 		});
 		$('#ExcelHeadTable').html(str);
+
+		// 遍历 Excel表头字段 和系统的对应的字段（映射）
+		$('.select_h').each(function(){
+			var name = $(this).parents('tr').find('.excel_name').text();
+			name = name.replace(/^\s+|\s+$/g,"");
+			$(this).find('option').each(function(){
+				var opt_name = $(this).text();
+				opt_name = opt_name.replace(/^\s+|\s+$/g,"");
+				if(name == opt_name) {
+					$(this).attr("selected",true);
+				}
+			});
+			// 将option 值 转换为数组
+			var str = [];
+			for(var i = 0;i<$(this).find('option').length;i++){
+				str[i] = $(this).find('option').eq(i).text();
+			}
+			// 如果数组里面 与 所定义值 存在 --返回 0 ，若不存在 返回 -1。
+			if(str.toString().indexOf(name) > -1){
+			}else{
+				$(this).find('option').eq('15').attr('selected',true);
+			}
+		});
 		$('.icheck_excel').iCheck({
 			checkboxClass:'icheckbox_square-green',
 			radioClass   :'iradio_square-green'
@@ -336,23 +434,26 @@ function getIframeData(set){
 				for(var i = 0; i<str.length-1; i++){
 					newStr += str[i];
 				}
-				console.log(newStr);
 			}
 			var newStr_arr = newStr.split(',');
-			console.log(newStr_arr);
 			s2 = str2.charAt(str2.length-1);
 			if(s2 == ","){
 				for(var i = 0; i<str2.length-1; i++){
 					newStr2 += str2[i];
 				}
-				console.log(newStr2);
 			}
 			var newStr_arr2 = newStr2.split(',');
 			Common.ajax({
-				data:{requestType:'save_excel_data', excel:newStr, table:newStr2}, async:false, callback:function(data){
-					/*	ManageObject.object.loading.complete();*/
+				data    :{requestType:'save_excel_data', excel:newStr, table:newStr2, dbIndex:dbIndex},
+				async   :false,
+				callback:function(data){
+					ManageObject.object.loading.complete();
+					console.log(data);
 				}
 			});
 		});
 	}
 }
+
+
+

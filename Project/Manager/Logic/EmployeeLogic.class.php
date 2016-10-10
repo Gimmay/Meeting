@@ -7,7 +7,6 @@
 	 */
 	namespace Manager\Logic;
 
-	use Core\Logic\PermissionLogic;
 	use Core\Logic\WxCorpLogic;
 	use Quasar\StringPlus;
 
@@ -40,8 +39,8 @@
 						$department         = trim($department, ',');
 						$data               = [];
 						$data['otype']      = 1;    //对象类型
+						$data['wtype']      = 1;    //微信ID类型 企业号
 						$data['oid']        = $result['id'];    //对象ID
-						$data['userid']     = 1;    //
 						$data['department'] = $department;    //部门ID
 						$data['weixin_id']  = $v1['userid'];    //微信ID
 						$data['mobile']     = $v1['mobile'];    //手机号码
@@ -58,140 +57,134 @@
 			return $result;
 		}
 
-		public function getPermissionList(){
-			$permission_logic = new PermissionLogic();
-
-			return [
-				'list'                    => $permission_logic->hasPermission(2, I('session.MANAGER_EMPLOYEE_ID', 0, 'int')),
-				'getAssignedRole'         => $permission_logic->hasPermission(7, I('session.MANAGER_EMPLOYEE_ID', 0, 'int')),
-				'getUnassignedRole'       => $permission_logic->hasPermission(8, I('session.MANAGER_EMPLOYEE_ID', 0, 'int')),
-				'assignRole'              => $permission_logic->hasPermission([
-					5,
-					6,
-					7,
-					8
-				], I('session.MANAGER_EMPLOYEE_ID', 0, 'int')),
-				'getAssignedPermission'   => $permission_logic->hasPermission(9, I('session.MANAGER_EMPLOYEE_ID', 0, 'int')),
-				'getUnassignedPermission' => $permission_logic->hasPermission(10, I('session.MANAGER_EMPLOYEE_ID', 0, 'int')),
-				'assignPermission'        => $permission_logic->hasPermission([
-					11,
-					12,
-					9,
-					10
-				], I('session.MANAGER_EMPLOYEE_ID', 0, 'int')),
-				'delete'                  => $permission_logic->hasPermission(3, I('session.MANAGER_EMPLOYEE_ID', 0, 'int')),
-				'alter'                   => $permission_logic->hasPermission(4, I('session.MANAGER_EMPLOYEE_ID', 0, 'int')),
-				'create'                  => $permission_logic->hasPermission(1, I('session.MANAGER_EMPLOYEE_ID', 0, 'int'))
-			];
-		}
-
 		public function handlerRequest($type){
-			$p_list = $this->getPermissionList();
 			switch($type){
 				case 'get_assigned_role':
-					if($p_list['getAssignedRole']){
+					if($this->permissionList['viewAssignedRoleForEmployee']){
 						/** @var \Core\Model\RoleModel $role_model */
 						$role_model = D('Core/Role');
 						$result     = $role_model->getRoleOfEmployee(I('post.id', 0, 'int'), null);
-						echo json_encode($result);
-					}
-					else echo json_encode(['status' => false, 'message' => '您没有查询已分配的角色的权限']);
 
-					return -1;
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有查询已分配的角色的权限', '__ajax__' => true];
 				break;
 				case 'get_unassigned_role':
-					if($p_list['getUnassignedRole']){
+					if($this->permissionList['viewUnassignedRoleForEmployee']){
 						/** @var \Core\Model\RoleModel $role_model */
 						$role_model = D('Core/Role');
 						$result     = $role_model->getRoleOfEmployee(I('post.id', 0, 'int'), null, true, I('post.keyword', ''));
-						echo json_encode($result);
-					}
-					else echo json_encode(['status' => false, 'message' => '您没有查询未分配角色的权限']);
 
-					return -1;
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有查询未分配角色的权限', '__ajax__' => true];
 				break;
 				case 'assign_role':
-					if($p_list['assignRole']){
+					if($this->permissionList['assignRoleForEmployee']){
 						$assign_role_logic = new AssignRoleLogic();
 						$result            = $assign_role_logic->assignRole(I('post.rid', 0, 'int'), I('post.id', 0, 'int'), 0);
-						echo json_encode($result);
-					}
-					else echo json_encode(['status' => false, 'message' => '您没有分配角色的权限']);
 
-					return -1;
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有分配角色的权限', '__ajax__' => true];
 				break;
 				case 'anti_assign_role':
-					if($p_list['assignRole']){
+					if($this->permissionList['assignRoleForEmployee']){
 						$assign_role_logic = new AssignRoleLogic();
 						$result            = $assign_role_logic->antiAssignRole(I('post.rid', 0, 'int'), I('post.id', 0, 'int'), 0);
-						echo json_encode($result);
-					}
-					else echo json_encode(['status' => false, 'message' => '您没有收回角色的权限']);
 
-					return -1;
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有收回角色的权限', '__ajax__' => true];
 				break;
 				case 'get_assigned_permission':
-					if($p_list['getAssignedPermission']){
+					if($this->permissionList['viewAssignedPermissionForEmployee']){
 						/** @var \Core\Model\PermissionModel $permission_model */
 						$permission_model = D('Core/Permission');
 						$result           = $permission_model->getPermissionOfEmployee(I('post.id', 0, 'int'), null);
-						echo json_encode($result);
-					}
-					else echo json_encode(['status' => false, 'message' => '您没有查询已分配权限的权限']);
 
-					return -1;
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有查询已分配权限的权限', '__ajax__' => true];
 				break;
 				case 'get_unassigned_permission':
-					if($p_list['getUnassignedPermission']){
+					if($this->permissionList['viewUnassignedPermissionForEmployee']){
 						/** @var \Core\Model\PermissionModel $permission_model */
 						$permission_model = D('Core/Permission');
 						$result           = $permission_model->getPermissionOfEmployee(I('post.id', 0, 'int'), null, true, I('post.keyword', ''));
-						echo json_encode($result);
-					}
-					else echo json_encode(['status' => false, 'message' => '您没有查询未分配权限的权限']);
 
-					return -1;
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有查询未分配权限的权限', '__ajax__' => true];
 				break;
 				case 'assign_permission':
-					if($p_list['assignPermission']){
+					if($this->permissionList['assignPermissionForEmployee']){
 						$assign_permission_logic = new AssignPermissionLogic();
 						$result                  = $assign_permission_logic->assignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 1);
-						echo json_encode($result);
-					}
-					else echo json_encode(['status' => false, 'message' => '您没有分配权限的权限']);
 
-					return -1;
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有分配权限的权限', '__ajax__' => true];
 				break;
 				case 'anti_assign_permission':
-					if($p_list['assignPermission']){
+					if($this->permissionList['assignPermissionForEmployee']){
 						$type                    = I('post.type', 1, 'int');
 						$result                  = ['status' => false, '参数错误'];
 						$assign_permission_logic = new AssignPermissionLogic();
-						if($type == 0){
-							echo json_encode(['status' => false, 'message' => '不能取消角色授权']);
-
-							return -1;
-						}
+						if($type == 0) return ['status' => false, 'message' => '不能取消角色授权', '__ajax__' => true];
 						if($type == 1) $result = $assign_permission_logic->antiAssignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 1);
-						echo json_encode($result);
-					}
-					else echo json_encode(['status' => false, 'message' => '您没有收回权限的权限']);
 
-					return -1;
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有收回权限的权限', '__ajax__' => true];
 				break;
 				case 'delete':
-					if($p_list['delete']){
+					if($this->permissionList['deleteEmployee']){
 						/** @var \Core\Model\EmployeeModel $model */
-						$model = D('Core/Employee');
+						$model  = D('Core/Employee');
+						$result = $model->deleteEmployee(I('post.id'));
 
-						return $model->deleteEmployee(I('post.id'));
+						return array_merge($result, ['__ajax__' => false]);
 					}
-					else return ['status' => false, 'message' => '您没有删除员工的权限'];
+					else return ['status' => false, 'message' => '您没有删除员工的权限', '__ajax__' => false];
+				break;
+				case 'reset_password':
+					if($this->permissionList['resetEmployeePassword']){
+						$str = new StringPlus();
+						/** @var \Core\Model\EmployeeModel $model */
+						$model        = D('Core/Employee');
+						$id           = I('post.id');           // 账户ID
+						$new_password = I('post.password'); // 新密码
+						$tmp          = $model->findEmployee(1, ['id' => $id]); //查询出这个ID的数据
+						$password     = $str->makePassword($new_password, $tmp['code']);    //新密码加密
+						$result       = $model->alterEmployee($id, ['password' => $password]); //成功后就更新到数据库
+						return array_merge($result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有重置密码的权限', '__ajax__' => false];
+				break;
+				case 'alter_password':
+					if($this->permissionList['alterEmployeePassword']){
+						$str = new StringPlus();
+						/** @var \Core\Model\EmployeeModel $model */
+						$model        = D('Core/Employee');
+						$old_password = I('post.old_password'); // 旧密码
+						$id           = I('post.id');           // 账户ID
+						$new_password = I('post.new_password'); // 新密码
+						$tmp          = $model->findEmployee(1, ['id' => $id]); //查询出这个ID的数据
+						$old_password = $str->makePassword($old_password, $tmp['code']);    //旧密码加密
+						$new_password = $str->makePassword($new_password, $tmp['code']);    //新密码加密
+						if($tmp['password'] == $old_password){    //判断加密过后的密码和数据库的密码是否匹配
+							/** @var \Core\Model\EmployeeModel $model */
+							$model  = D('Core/Employee');
+							$result = $model->alterEmployee($id, ['password' => $new_password]); //成功后就更新到数据库
+							return array_merge($result, ['__ajax__' => false]);
+						}
+						else return ['status' => false, 'message' => '密码错误', '__ajax__' => false];
+					}
+					else return ['status' => false, 'message' => '您没有修改密码的权限', '__ajax__' => false];
 				break;
 				default:
-					echo json_encode(['status' => false, 'message' => '参数错误']);
-
-					return -1;
+					return ['status' => false, 'message' => '参数错误'];
 				break;
 			}
 		}
@@ -217,5 +210,18 @@
 			}
 
 			return $list;
+		}
+
+		public function setMaxRoleLevel($list){
+			$result = [];
+			/** @var \Core\Model\RoleModel $model */
+			$model = D('Core/Role');
+			foreach($list as $val){
+				$tmp              = $model->getMaxRoleLevel($val['id']);
+				$val['roleLevel'] = $tmp ? $tmp : 5;
+				$result[]         = $val;
+			}
+
+			return $result;
 		}
 	}

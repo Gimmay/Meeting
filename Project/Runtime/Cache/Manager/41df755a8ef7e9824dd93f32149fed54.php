@@ -34,35 +34,32 @@
 			<!--会议系统左侧  导航栏 公用-->
 <div class="mt_navbar">
 	<div class="header">
+		<div class="logo">
+			<img src="<?php echo (COMMON_IMAGE_PATH); ?>/logo.png" alt="">
+		</div>
 		<a href="http://www.baidu.com">吉美会议</a>
 	</div>
 	<div class="sidenav">
 		<ul class="sidenav_list" id="side_menu">
-			<li class="side_item <?php if('Employee'==$c_name) echo 'active'; ?>">
-				<a href="<?php echo U('Employee/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">员工管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
-				<ul class="nav-second-level">
-					<li>
-						<a href="<?php echo U('Employee/create');?>">新建员工</a>
-					</li>
-				</ul>
-			</li>
-			<li class="side_item <?php if('Role'==$c_name) echo 'active'; ?>">
-				<a href="<?php echo U('Role/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">角色管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
-			</li>
+			<?php if($permission_list['viewEmployee'] == 1): ?><li class="side_item <?php if('Employee'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Employee/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">员工管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+					<ul class="nav-second-level">
+						<li>
+							<a href="<?php echo U('Employee/create');?>">新建员工</a>
+						</li>
+					</ul>
+				</li><?php endif; ?>
+			<?php if($permission_list['viewRole'] == 1): ?><li class="side_item <?php if('Role'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Role/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon glyphicon-star"></i> <span class="nav-label">角色管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li><?php endif; ?>
 			<li class="side_item <?php if('Meeting'==$c_name or 'SignPlace'==$c_name or 'Client'==$c_name) echo 'active'; ?>">
 				<a href="<?php echo U('Meeting/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">会议管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
+					<i class="icon_nav glyphicon glyphicon-th"></i> <span class="nav-label">会议管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				<ul class="nav-second-level">
 					<li>
 						<a href="<?php echo U('Meeting/create');?>">创建会议</a>
@@ -71,10 +68,28 @@
 			</li>
 			<li class="side_item <?php if('Message'==$c_name) echo 'active'; ?>">
 				<a href="<?php echo U('Message/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">消息管理</span>
+					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">消息管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item cls <?php if('Recycle'==$c_name) echo 'active'; ?>">
+				<div class="side-item-link no_link">
+					<i class="icon_nav glyphicon glyphicon-trash"></i> <span class="nav-label">回收站管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
+				</div>
+				<ul class="nav-second-level">
+					<li>
+						<a href="<?php echo U('Recycle/client');?>">客户列表</a>
+					</li>
+					<li>
+						<a href="<?php echo U('Recycle/employee');?>">员工列表</a>
+					</li>
+					<li>
+						<a href="<?php echo U('Recycle/role');?>">角色列表</a>
+					</li>
+					<li>
+						<a href="<?php echo U('Recycle/meeting');?>">会议列表</a>
+					</li>
+				</ul>
 			</li>
 		</ul>
 	</div>
@@ -94,7 +109,7 @@
 				<div class="mian_body">
 					<section class="content">
 						<div class="return">
-							<a class="btn btn-default" href="<?php echo U('Meeting/manage');?>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
+							<a class="btn btn-default" onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
 						</div>
 						<header class="c_header">
 							<div class="function_list clearfix">
@@ -158,7 +173,7 @@
 							<form action="" method="get">
 								<div class="input-group repertory_text">
 									<input name="p" type="hidden" value="1">
-									<input type="search" name="keyword" class="form-control" placeholder="客户名称/拼音简码" value="<?php echo I('get.keyword', '');?>">
+									<input type="search" name="keyword" class="form-control" placeholder="客户名称/手机号/会所名称/拼音简码" value="<?php echo I('get.keyword', '');?>">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default mian_search">搜索客户</button>
 									</span>
@@ -173,7 +188,7 @@
 									<input type="checkbox" class="icheck" >&nbsp;&nbsp;签到 (<?php echo ($statistics["signed"]); ?>)
 								</div>
 								<div class="input-group pull-left check_review">
-									<input type="checkbox" class="icheck">&nbsp;&nbsp;审核 (<?php echo ($statistics["audited"]); ?>)
+									<input type="checkbox" class="icheck">&nbsp;&nbsp;审核 (<?php echo ($statistics["reviewed"]); ?>)
 								</div>
 								<div class="input-group pull-left check_receivables">
 									<input type="checkbox" class="icheck">&nbsp;&nbsp;收款
@@ -187,14 +202,15 @@
 										<td width="5%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="10%">姓名</td>
-										<td width="5%">性别</td>
-										<td width="10%">手机号</td>
+										<td width="5%">姓名</td>
+										<td width="4%">性别</td>
+										<td width="5%">手机号</td>
 										<td width="10%">会所名称</td>
-										<td width="10%">创建时间</td>
-										<td width="5%">状态</td>
+										<td width="8%">创建时间</td>
+										<td width="8%">签到时间</td>
+										<td width="4%">状态</td>
 										<td width="10%">审核/签到/打印</td>
-										<td width="25%">操作</td>
+										<td width="31%">操作</td>
 									</tr>
 								</thead>
 								<tbody>
@@ -213,31 +229,32 @@
 											<td><?php echo ($single["mobile"]); ?></td>
 											<td><?php echo ($single["club"]); ?></td>
 											<td><?php echo date('Y-m-d H:i:s', $single['creatime']);?></td>
+											<td><?php if(!empty($single['sign_time'])): echo date('Y-m-d H:i:s', $single['sign_time']); endif; ?></td>
 											<td>
 												<?php switch($single["status"]): case "0": ?>禁用<?php break;?>
 													<?php case "1": ?>可用<?php break; endswitch;?>
 											</td>
 											<td>
-												<?php switch($single["audit_status"]): case "0": ?>未审核<?php break;?>
-													<?php case "1": ?>已审核<?php break; endswitch;?>
+												<?php switch($single["review_status"]): case "0": ?>未审核<?php break;?>
+													<?php case "1": ?><span class="color-info">已审核</span><?php break; endswitch;?>
 												/
 												<?php switch($single["sign_status"]): case "0": ?>未签到<?php break;?>
-													<?php case "1": ?>已签到<?php break; endswitch;?>
+													<?php case "1": ?><span class="color-danger">已签到</span><?php break; endswitch;?>
 												/
 												<?php switch($single["print_status"]): case "0": ?>未打印<?php break;?>
-													<?php case "1": ?>已打印<?php break; endswitch;?>
+													<?php case "1": ?><span class="color-warning">已打印</span><?php break; endswitch;?>
 											</td>
 											<td>
 												<div class="btn-group" data-id="<?php echo ($single["id"]); ?>">
-													<?php if(($single['audit_status'] == 1) and ($single['sign_status'] == 0)): ?><button type="button" class="btn btn-default btn-xs sign_btn">签到</button><?php endif; ?>
-													<?php if(($single['audit_status'] == 1) and ($single['sign_status'] == 1)): ?><button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button><?php endif; ?>
-													<?php if($single['audit_status'] == 1): ?><button type="button" class="btn btn-default btn-xs send_message_btn">发送消息</button><?php endif; ?>
-													<?php switch($single["audit_status"]): case "0": ?><button type="button" class="btn btn-default btn-xs review_btn">审核</button><?php break;?>
+													<?php if(($single['review_status'] == 1) and ($single['sign_status'] == 0)): ?><button type="button" class="btn btn-default btn-xs sign_btn">签到</button><?php endif; ?>
+													<?php if(($single['review_status'] == 1) and ($single['sign_status'] == 1)): ?><button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button><?php endif; ?>
+													<?php if($single['review_status'] == 1): ?><button type="button" class="btn btn-default btn-xs send_message_btn">发送邀请</button><?php endif; ?>
+													<?php switch($single["review_status"]): case "0": ?><button type="button" class="btn btn-default btn-xs review_btn">审核</button><?php break;?>
 														<?php case "1": ?><button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button><?php break; endswitch;?>
 
 													<button type="button" class="btn btn-default btn-xs receivables_btn" data-toggle="modal" data-target="#receivables_modal">收款</button>
 													<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
-													<a href="<?php echo U('Client/alter',['id'=>$single['id']]);?>" class="btn btn-default btn-xs modify_btn">修改</a>
+													<a href="<?php echo U('Client/alter',['id'=>$single['id'], 'mid'=>I('get.mid',0,'int')]);?>" class="btn btn-default btn-xs modify_btn">修改</a>
 													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_client">删除</button>
 												</div>
 											</td>
@@ -434,7 +451,7 @@
 					<h2 class="modal-title">批量审核客户</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete">
+					<input type="hidden" name="requestType" value="multi_review">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						是否审核选择客户？
@@ -457,7 +474,7 @@
 					<h2 class="modal-title">批量取消客户审核</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete">
+					<input type="hidden" name="requestType" value="multi_anti_review">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						是否取消已选客户审核？
@@ -480,7 +497,7 @@
 					<h2 class="modal-title">批量签到</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="sign">
+					<input type="hidden" name="requestType" value="multi_sign">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						选择客户签到？
@@ -503,7 +520,7 @@
 					<h2 class="modal-title">批量取消签到</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="sign">
+					<input type="hidden" name="requestType" value="multi_anti_sign">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						取消选择客户签到？
@@ -526,7 +543,7 @@
 					<h2 class="modal-title">批量发送消息</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="sign">
+					<input type="hidden" name="requestType" value="multi_send_message">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						选择客户发送消息？

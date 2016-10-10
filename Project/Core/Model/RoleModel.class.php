@@ -89,7 +89,7 @@
 
 		public function alterRole($id, $data){
 			if($this->create($data)){
-				$result = $this->where(['id' => $id])->save($data);
+				$result = $this->where(['id' => ['in', $id]])->save($data);
 
 				return $result ? ['status' => true, 'message' => '修改成功'] : [
 					'status'  => false,
@@ -111,9 +111,9 @@
 		public function getUserOfRole($id, $type = 'list'){
 			$type   = strtolower($type);
 			$result = [];
-			$sql    = "(select main.id, main.name, 'employee' type from user_employee main join user_assign_role sub on sub.oid = main.id and sub.type = 0 where sub.rid = $id)
+			$sql    = "(select main.id, main.name, 'employee' type from user_employee main join user_assign_role sub on sub.oid = main.id and sub.type = 0 where sub.rid = $id and main.status != 2)
 UNION
-(select main.id, main.name, 'client' type from user_client main join user_assign_role sub on sub.oid = main.id and sub.type = 1 where sub.rid = $id)";
+(select main.id, main.name, 'client' type from user_client main join user_assign_role sub on sub.oid = main.id and sub.type = 1 where sub.rid = $id and main.status != 2)";
 			$list   = $this->query($sql);
 			if($type == 'list') return $list;
 			foreach($list as $val) array_push($result, $val['id']);
@@ -130,10 +130,10 @@ UNION
 					$result = [];
 					if($not_assigned){
 						$keyword   = "%$keyword%";
-						$sql       = "select sub.id from system_role main where main.id not in (select sub.rid from user_assign_role sub where sub.type = 0 and sub.oid = $eid) and (main.name like '$keyword' or main.pinyin_code like '$keyword')";
+						$sql       = "select sub.id from system_role main where main.id not in (select sub.rid from user_assign_role sub where sub.type = 0 and sub.oid = $eid) and (main.name like '$keyword' or main.pinyin_code like '$keyword') and main.status != 2";
 						$role_list = $this->query($sql);
 					}
-					else $role_list = M('user_assign_role')->where(['oid' => $eid, 'type' => 0])->select();
+					else $role_list = M('system_role')->alias('main')->join('user_assign_role sub on main.id = sub.rid and sub.type = 0')->where('sub.oid = %d and main.status != 2', [$eid])->field('main.name name, main.id id')->select();
 					foreach($role_list as $val) array_push($result, $val['id']);
 					if($type == 'str') $result = implode(',', $result);
 				break;
@@ -141,10 +141,10 @@ UNION
 				default:
 					if($not_assigned){
 						$keyword = "%$keyword%";
-						$sql     = "select main.name name, main.id id from system_role main where main.id not in (select sub.rid from user_assign_role sub where sub.type = 0 and sub.oid = $eid) and (main.name like '$keyword' or main.pinyin_code like '$keyword')";
+						$sql     = "select main.name name, main.id id from system_role main where main.id not in (select sub.rid from user_assign_role sub where sub.type = 0 and sub.oid = $eid) and (main.name like '$keyword' or main.pinyin_code like '$keyword') and main.status != 2";
 						$result  = $this->query($sql);
 					}
-					else $result = M('user_assign_role')->alias('main')->join('system_role sub on sub.id = main.rid and main.type = 0')->where("main.oid = %d", [$eid])->field('sub.name name, sub.id id')->select();
+					else $result = M('system_role')->alias('main')->join('user_assign_role sub on main.id = sub.rid and sub.type = 0')->where("sub.oid = %d and main.status != 2", [$eid])->field('main.name name, main.id id')->select();
 				break;
 			}
 

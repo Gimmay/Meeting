@@ -57,7 +57,7 @@
 										<button type="submit" class="btn btn-default mian_search">搜索消息模板</button>
 									</span>
 								</div>
-								<a type="reset" class="btn btn-default mian_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
+								<a type="reset" class="btn btn-default mian_search" href="<{:U('manage')}>">查看所有</a>
 							</form>
 						</div>
 						<div class="table_wrap">
@@ -103,7 +103,7 @@
 												</switch>
 											</td>
 											<td>
-												<switch name="single.audit_status">
+												<switch name="single.review_status">
 													<case value="0">未审核</case>
 													<case value="1">已审核</case>
 												</switch>
@@ -120,13 +120,13 @@
 											</td>
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>">
-													<if condition="($single['audit_status'] eq 1) and ($single['sign_status'] eq 0)">
+													<if condition="($single['review_status'] eq 1) and ($single['sign_status'] eq 0)">
 														<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
 													</if>
-													<if condition="($single['audit_status'] eq 1) and ($single['sign_status'] eq 1)">
+													<if condition="($single['review_status'] eq 1) and ($single['sign_status'] eq 1)">
 														<button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button>
 													</if>
-													<switch name="single.audit_status">
+													<switch name="single.review_status">
 														<case value="0"><button type="button" class="btn btn-default btn-xs review_btn">审核</button></case>
 														<case value="1"><button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button></case>
 													</switch>

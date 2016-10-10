@@ -37,7 +37,7 @@
 				<div class="mian_body">
 					<section class="content">
 						<div class="return">
-							<a class="btn btn-default" href="<{:U('Meeting/manage')}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
+							<a class="btn btn-default" onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
 						</div>
 						<header class="c_header">
 							<div class="function_list clearfix">
@@ -101,7 +101,7 @@
 							<form action="" method="get">
 								<div class="input-group repertory_text">
 									<input name="p" type="hidden" value="1">
-									<input type="search" name="keyword" class="form-control" placeholder="客户名称/拼音简码" value="<{:I('get.keyword', '')}>">
+									<input type="search" name="keyword" class="form-control" placeholder="客户名称/手机号/会所名称/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default mian_search">搜索客户</button>
 									</span>
@@ -116,7 +116,7 @@
 									<input type="checkbox" class="icheck" >&nbsp;&nbsp;签到 (<{$statistics.signed}>)
 								</div>
 								<div class="input-group pull-left check_review">
-									<input type="checkbox" class="icheck">&nbsp;&nbsp;审核 (<{$statistics.audited}>)
+									<input type="checkbox" class="icheck">&nbsp;&nbsp;审核 (<{$statistics.reviewed}>)
 								</div>
 								<div class="input-group pull-left check_receivables">
 									<input type="checkbox" class="icheck">&nbsp;&nbsp;收款
@@ -130,14 +130,15 @@
 										<td width="5%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="10%">姓名</td>
-										<td width="5%">性别</td>
-										<td width="10%">手机号</td>
+										<td width="5%">姓名</td>
+										<td width="4%">性别</td>
+										<td width="5%">手机号</td>
 										<td width="10%">会所名称</td>
-										<td width="10%">创建时间</td>
-										<td width="5%">状态</td>
+										<td width="8%">创建时间</td>
+										<td width="8%">签到时间</td>
+										<td width="4%">状态</td>
 										<td width="10%">审核/签到/打印</td>
-										<td width="25%">操作</td>
+										<td width="31%">操作</td>
 									</tr>
 								</thead>
 								<tbody>
@@ -146,7 +147,7 @@
 											<td class="check_item">
 												<input type="checkbox" class="icheck" value="<{$single.id}>" placeholder="">
 											</td>
-											<td><{$single.name}></td>
+											<td class="name"><{$single.name}></td>
 											<td>
 												<span class="color-info">
 													<switch name="single.gender">
@@ -159,6 +160,7 @@
 											<td><{$single.mobile}></td>
 											<td><{$single.club}></td>
 											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
+											<td><notempty name="single['sign_time']"><{:date('Y-m-d H:i:s', $single['sign_time'])}></notempty></td>
 											<td>
 												<switch name="single.status">
 													<case value="0">禁用</case>
@@ -166,40 +168,40 @@
 												</switch>
 											</td>
 											<td>
-												<switch name="single.audit_status">
+												<switch name="single.review_status">
 													<case value="0">未审核</case>
-													<case value="1">已审核</case>
+													<case value="1"><span class="color-info">已审核</span></case>
 												</switch>
 												/
 												<switch name="single.sign_status">
 													<case value="0">未签到</case>
-													<case value="1">已签到</case>
+													<case value="1"><span class="color-danger">已签到</span></case>
 												</switch>
 												/
 												<switch name="single.print_status">
 													<case value="0">未打印</case>
-													<case value="1">已打印</case>
+													<case value="1"><span class="color-warning">已打印</span></case>
 												</switch>
 											</td>
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>">
-													<if condition="($single['audit_status'] eq 1) and ($single['sign_status'] eq 0)">
+													<if condition="($single['review_status'] eq 1) and ($single['sign_status'] eq 0)">
 														<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
 													</if>
-													<if condition="($single['audit_status'] eq 1) and ($single['sign_status'] eq 1)">
+													<if condition="($single['review_status'] eq 1) and ($single['sign_status'] eq 1)">
 														<button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button>
 													</if>
-													<if condition="$single['audit_status'] eq 1">
-														<button type="button" class="btn btn-default btn-xs send_message_btn">发送消息</button>
+													<if condition="$single['review_status'] eq 1">
+														<button type="button" class="btn btn-default btn-xs send_message_btn">发送邀请</button>
 													</if>
-													<switch name="single.audit_status">
+													<switch name="single.review_status">
 														<case value="0"><button type="button" class="btn btn-default btn-xs review_btn">审核</button></case>
 														<case value="1"><button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button></case>
 													</switch>
 
 													<button type="button" class="btn btn-default btn-xs receivables_btn" data-toggle="modal" data-target="#receivables_modal">收款</button>
 													<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
-													<a href="<{:U('Client/alter',['id'=>$single['id']])}>" class="btn btn-default btn-xs modify_btn">修改</a>
+													<a href="<{:U('Client/alter',['id'=>$single['id'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
 													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_client">删除</button>
 												</div>
 											</td>
@@ -288,6 +290,12 @@
 					<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="id">
 					<div class="modal-body">
 						<div class="form-group">
+							<label for="p_name" class="col-sm-2 control-label">姓名：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control name" name="name" id="p_name" disabled>
+							</div>
+						</div>
+						<div class="form-group">
 							<label for="price" class="col-sm-2 control-label">收款金额：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control price" name="price" id="price">
@@ -314,9 +322,13 @@
 						<div class="form-group">
 							<label for="coupon" class="col-sm-2 control-label">代金券：</label>
 							<div class="col-sm-10">
-								<div id="coupon"></div>
+								<div class="input-group">
+									<input type="text" name="coupon" id="coupon" class="form-control">
+									<span class="input-group-addon"><span class="glyphicon glyphicon-th-list choose_ticket" data-toggle="modal" data-target="#ticket_modal"></span></span>
+								</div>
 							</div>
 						</div>
+
 						<div class="form-group">
 							<label for="place" class="col-sm-2 control-label">收款地点：</label>
 							<div class="col-sm-10">
@@ -336,6 +348,31 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						<button type="submit" class="btn btn-primary">收款</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 券列表 -->
+	<div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">券列表</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete">
+					<input type="hidden" name="id" value="">
+					<div class="modal-body">
+						<section>
+							<div class="ticket_item"></div>
+						</section>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认删除</button>
 					</div>
 				</form>
 			</div>
@@ -397,7 +434,7 @@
 					<h2 class="modal-title">批量审核客户</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete">
+					<input type="hidden" name="requestType" value="multi_review">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						是否审核选择客户？
@@ -420,7 +457,7 @@
 					<h2 class="modal-title">批量取消客户审核</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete">
+					<input type="hidden" name="requestType" value="multi_anti_review">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						是否取消已选客户审核？
@@ -443,7 +480,7 @@
 					<h2 class="modal-title">批量签到</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="sign">
+					<input type="hidden" name="requestType" value="multi_sign">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						选择客户签到？
@@ -466,7 +503,7 @@
 					<h2 class="modal-title">批量取消签到</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="sign">
+					<input type="hidden" name="requestType" value="multi_anti_sign">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						取消选择客户签到？
@@ -489,7 +526,7 @@
 					<h2 class="modal-title">批量发送消息</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="sign">
+					<input type="hidden" name="requestType" value="multi_send_message">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						选择客户发送消息？

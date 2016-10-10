@@ -29,47 +29,72 @@
 			<!--会议系统左侧  导航栏 公用-->
 <div class="mt_navbar">
 	<div class="header">
+		<div class="logo">
+			<img src="<?php echo (COMMON_IMAGE_PATH); ?>/logo.png" alt="">
+		</div>
 		<a href="http://www.baidu.com">吉美会议</a>
 	</div>
 	<div class="sidenav">
 		<ul class="sidenav_list" id="side_menu">
-			<li class="side_item <?php if('Employee'==$c_name) echo 'active'; ?>">
-				<a href="<?php echo U('Employee/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">员工管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
-				<ul class="nav-second-level">
-					<li>
-						<a href="<?php echo U('Employee/create');?>">新建员工</a>
-					</li>
-				</ul>
-			</li>
-			<li class="side_item <?php if('Role'==$c_name) echo 'active'; ?>">
-				<a href="<?php echo U('Role/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">角色管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
-			</li>
+			<?php if($permission_list['viewEmployee'] == 1): ?><li class="side_item <?php if('Employee'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Employee/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">员工管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+					<ul class="nav-second-level">
+						<li>
+							<a href="<?php echo U('Employee/create');?>">新建员工</a>
+						</li>
+					</ul>
+				</li><?php endif; ?>
+			<?php if($permission_list['viewRole'] == 1): ?><li class="side_item <?php if('Role'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Role/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon glyphicon-star"></i> <span class="nav-label">角色管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li><?php endif; ?>
 			<li class="side_item <?php if('Meeting'==$c_name or 'SignPlace'==$c_name or 'Client'==$c_name) echo 'active'; ?>">
 				<a href="<?php echo U('Meeting/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">会议管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
+					<i class="icon_nav glyphicon glyphicon-th"></i> <span class="nav-label">会议管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				<ul class="nav-second-level">
 					<li>
 						<a href="<?php echo U('Meeting/create');?>">创建会议</a>
 					</li>
 				</ul>
 			</li>
+			<li class="side_item <?php if('Coupon'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Coupon/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">代金券管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
 			<li class="side_item <?php if('Message'==$c_name) echo 'active'; ?>">
 				<a href="<?php echo U('Message/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">消息管理</span>
+					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">消息管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Badge'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Badge/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">胸卡设计</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item cls <?php if('Recycle'==$c_name) echo 'active'; ?>">
+				<div class="side-item-link no_link">
+					<i class="icon_nav glyphicon glyphicon-trash"></i> <span class="nav-label">回收站管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
+				</div>
+				<ul class="nav-second-level">
+					<li>
+						<a href="<?php echo U('Recycle/client');?>">客户列表</a>
+					</li>
+					<li>
+						<a href="<?php echo U('Recycle/employee');?>">员工列表</a>
+					</li>
+					<li>
+						<a href="<?php echo U('Recycle/role');?>">角色列表</a>
+					</li>
+					<li>
+						<a href="<?php echo U('Recycle/meeting');?>">会议列表</a>
+					</li>
+				</ul>
 			</li>
 		</ul>
 	</div>
@@ -126,9 +151,9 @@
 										<td width="10%">策划方</td>
 										<td width="10%">举办地点</td>
 										<td width="10%">开始结束时间</td>
-										<td width="10%">负责人</td>
+										<td width="5%">负责人</td>
 										<td width="10%">创建时间</td>
-										<td width="25%">操作</td>
+										<td width="30%">操作</td>
 									</tr>
 								</thead>
 								<tbody>
@@ -154,7 +179,8 @@
 											<?php switch($vo["type"]): case "1": ?>成交会<?php break;?>
 												<?php case "2": ?>特训营<?php break;?>
 												<?php case "3": ?>优雅女子<?php break;?>
-												<?php case "4": ?>招商会<?php break; endswitch;?>
+												<?php case "4": ?>招商会<?php break;?>
+												<?php case "5": ?>启动大会<?php break; endswitch;?>
 											</span>
 											</td>
 											<td><?php echo ($vo["host"]); ?></td>
@@ -167,6 +193,8 @@
 												<div class="btn-group" data-id="<?php echo ($vo["id"]); ?>">
 													<a href="<?php echo U('SignPlace/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">签到点</a>
 													<a href="<?php echo U('Client/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a>
+													<a href="<?php echo U('Client/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">胸卡设计</a>
+													<a href="<?php echo U('Coupon/manage',['id'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs">代金券</a>
 													<a href="<?php echo U('Meeting/alter',['id'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
 													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_meeting">删除</button>
 												</div>
@@ -217,7 +245,7 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title">批量删除会议</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="<?php echo U('deleteMeeting');?>">
+				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">

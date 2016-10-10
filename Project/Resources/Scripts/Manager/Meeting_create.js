@@ -2,22 +2,15 @@
  * Created by qyqy on 2016-9-13.
  */
 
-function  checkMeetingCreate(){
+function  checkIsEmpty(){
 	var $name = $('#meeting_name');
-	var $status = $('#meeting_status');
-	var $type = $('#meeting_type');
 	var $host = $('#meeting_host');
 	var $plan = $('#meeting_plan');
-	var $place = $('#meeting_place');
 	var $start_time = $('#meeting_start_time');
 	var $end_time = $('#meeting_end_time');
 	var $director_id = $('#selected_director_id');
 	var $contacts_1_id = $('#selected_contacts_1_id');
 	var $contacts_2_id = $('#selected_contacts_2_id');
-	var $brief = $('#brief');
-	var $logo = $('#logo');
-	var $comment = $('#comment');
-
 	if($name.val() == ''){
 		CreateObject.object.toast.toast("会议名称不能为空");
 		$name.focus();
@@ -26,11 +19,6 @@ function  checkMeetingCreate(){
 	if($host.val() == ''){
 		CreateObject.object.toast.toast("主办方不能为空");
 		$host.focus();
-		return false;
-	}
-	if($plan.val() == ''){
-		CreateObject.object.toast.toast("策划方不能为空");
-		$plan.focus();
 		return false;
 	}
 	if($start_time.val() == ''){
@@ -49,27 +37,14 @@ function  checkMeetingCreate(){
 		return false;
 	}
 	if($contacts_1_id.text() == ''){
-		CreateObject.object.toast.toast("联系人不能为空");
+		CreateObject.object.toast.toast("负责人不能为空");
 		$contacts_1_id.focus();
 		return false;
 	}
 	if($contacts_2_id.text() == ''){
-		CreateObject.object.toast.toast("联系人2不能为空");
+		CreateObject.object.toast.toast("负责人不能为空");
 		$contacts_2_id.focus();
 		return false;
 	}
-	if($brief.val() == ''){
-		CreateObject.object.toast.toast("开始时间不能为空");
-		$brief.focus();
-		return false;
-	}
-	if($logo.val() == ''){
-		CreateObject.object.toast.toast("LOGO图片地址不能为空");
-		$logo.focus();
-		return false;
-	}
-};
-
-$(function(){
-
-});
+	return true;
+}

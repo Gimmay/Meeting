@@ -76,38 +76,32 @@
 
 		public function createMeeting($data){
 			if($this->create($data)){
-				$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-				$data['creatime'] = time();
-				if(I('post.city')){
-					$data['place'] = I('post.province')."-".I('post.city')."-".I('post.area')."-".I('post.address_detail');
-				}else{
-					$data['place'] = I('post.province')."-".I('post.area')."-".I('post.address.detail');
+				try{
+					$result = $this->add($data);
+					if($result) return ['status' => true, 'message' => '创建会议成功'];
+					else return ['status' => false, 'message' => '创建会议失败'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
 				}
-
-
-				$result           = $this->add($data);
-
-				return $result ? ['status' => true, 'message' => '创建成功'] : [
-					'status'  => false,
-					'message' => $this->getError()
-				];
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
 		public function alterMeeting($id, $data){
 			if($this->create($data)){
-				if(I('post.city')){
-					$data['place'] = I('post.province')."-".I('post.city')."-".I('post.area')."-".I('post.address_detail');
-				}else{
-					$data['place'] = I('post.province')."-".I('post.area')."-".I('post.address.detail');
+				try{
+					$result = $this->where(['id' => ['in', $id]])->save($data);
+					if($result) return ['status' => true, 'message' => '修改成功'];
+					else return ['status' => false, 'message' => '未做任何修改'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
 				}
-				$result = $this->where(['id' => $id])->save($data);
-
-				return $result ? ['status' => true, 'message' => '修改成功'] : [
-					'status'  => false,
-					'message' => $this->getError()
-				];
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}

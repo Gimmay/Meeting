@@ -4,3 +4,4 @@
 	include_once "WXCorpUniversalApi.php";
 	include_once "Curl.php";
 	include_once "Type.php";
+	include_once "SinaShortUrl.php";

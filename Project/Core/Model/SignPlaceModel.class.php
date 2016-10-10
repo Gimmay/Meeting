@@ -82,4 +82,40 @@
 
 			return $result;
 		}
+		public function alterRecord($id, $data,$info){
+			if($this->create($data)){
+				if(I('post.address_area')){
+					$data['place'] = I('post.address_province')."-".I('post.address_city')."-".I('post.address_area')."-".I('post.address_detail');
+				}elseif(I('post.address_city')){
+					$data['place'] = I('post.address_province')."-".I('post.address_area')."-".I('post.address_detail');
+				}else{
+					$data['place'] = $info;
+				}
+				$result = $this->where(['id' => ['in', $id]])->save($data);
+
+				return $result ? ['status' => true, 'message' => '修改成功'] : [
+					'status'  => false,
+					'message' => $this->getError()
+				];
+			}
+			else return ['status' => false, 'message' => $this->getError()];
+		}
+
+		public function deleteSignPlace($ids){
+			if($this->create()){
+				try{
+					$where['id'] = ['in', $ids];
+					$result      = $this->where($where)->save(['status' => 2]);
+					if($result) return ['status' => true, 'message' => '删除成功'];
+					else return ['status' => false, 'message' => '没有删除任何员工'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
+			}
+			else return ['status' => false, 'message' => $this->getError()];
+		}
+
 	}

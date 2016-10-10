@@ -13,6 +13,7 @@
 	class EmployeeModel extends CoreModel{
 		protected $tableName   = 'employee';
 		protected $tablePrefix = 'user_';
+		protected $autoCheckFields = true;
 
 		public function _initialize(){
 			parent::_initialize();
@@ -26,6 +27,7 @@
 				if($status == 'not deleted') $where['status'] = ['neq', 2];
 				else $where['status'] = $filter['status'];
 			}
+			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$condition['code']        = ['like', "%$filter[keyword]%"];
 				$condition['mobile']      = ['like', "%$filter[keyword]%"];
@@ -72,6 +74,56 @@
 			return $result;
 		}
 
+		public function listEmployee($type = 2, $filter = []){ // 与角色表做连表查询
+			$where = '0 = 0';
+			$where_1 = '';
+			$limit = '';
+			$order = '';
+			$field = '*';
+			if(isset($filter['id'])) $where .= " and id = $filter[id]";
+			if(isset($filter['rid'])) $where_1 .= " and system_role.id = $filter[rid]";
+			if(isset($filter['status'])){
+				$status = strtolower($filter['status']);
+				if($status == 'not deleted') $where .= " and status != 2";
+				else $where .= " and status = $filter[status]";
+			}
+			if(isset($filter['keyword']) && $filter['keyword']) $where .= " and (code like '%$filter[keyword]%' or mobile like '%$filter[keyword]%'  or name like '%$filter[keyword]%'  or pinyin_code like '%$filter[keyword]%')";
+			if(isset($filter['_limit'])) $limit = "limit $filter[_limit]";
+			if(isset($filter['_order'])) $order = "order by $filter[_order]";
+			if((int)$type==0) $field = 'count(*) count';
+
+			$sql = "SELECT
+	$field
+FROM(
+	SELECT * FROM user_employee
+	WHERE id IN (
+		SELECT oid FROM user_assign_role
+		join system_role on user_assign_role.rid = system_role.id
+		WHERE oid = user_employee.id AND type = 0 $where_1
+	)
+) main_table
+WHERE $where
+$order
+$limit
+";
+			switch((int)$type){
+				case 0: // count
+					$result = $this->query($sql);
+					$result = $result[0]['count'];
+				break;
+				case 1: // find
+					$result = $this->query($sql);
+					$result = $result[0];
+				break;
+				case 2: // select
+				default:
+					$result = $this->query($sql);
+				break;
+			}
+
+			return $result;
+		}
+
 		public function createEmployee($data){
 			if($this->create($data)){
 				try{
@@ -92,15 +144,14 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function deleteEmployee($ids){
+		public function deleteEmployee($id){
 			if($this->create()){
 				try{
-					$where['id'] = ['in', $ids];
-					$result      = $this->where($where)->save(['status' => 2]);
+					$result = $this->where(['id' => ['in', $id]])->save(['status' => 2]);
 					if($result) return ['status' => true, 'message' => '删除成功'];
 					else return ['status' => false, 'message' => '没有删除任何员工'];
 				}catch(Exception $error){
-					$message = $error->getMessage();
+					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);
 					if(!$exception['status']) return $exception;
 					else return ['status' => false, 'message' => $this->getError()];
@@ -109,32 +160,18 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function alterPassword($old_pwd, $new_pwd){
-			$str_obj = new StringPlus();
-			$code    = I('session.MANAGER_EMPLOYEE_CODE', 0);
-			// todo
-			$old_pwd = $str_obj->makePassword($old_pwd, $code);
-			$new_pwd = $str_obj->makePassword($new_pwd, $code);
-			if($this->create()){
-				$result = $this->where(['code' => $code, 'password' => $old_pwd])->find();
-				if($result){
-					$result = $this->where(['code' => $code, 'password' => $old_pwd])->save(['password' => $new_pwd]);
-					if($result) return ['status' => true, 'message' => '修改密码成功'];
-					else return ['status' => false, 'message' => '密码未做修改'];
-				}
-				else return ['status' => false, 'message' => '该用户不存在或用户名/密码错误'];
-			}
-			else return ['status' => false, 'message' => $this->getError()];
-		}
 		public function alterEmployee($id, $data){
-
-			if($this->create(I('post.'))){
-				$result = $this->where(['id' => $id])->save($data);
-
-				return $result ? ['status' => true, 'message' => '修改成功'] : [
-					'status'  => false,
-					'message' => $this->getError()
-				];
+			if($this->create()){
+				try{
+					$result = $this->where(['id' => ['in', $id]])->save($data);
+					if($result) return ['status' => true, 'message' => '修改成功'];
+					else return ['status' => false, 'message' => '未做任何修改'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}

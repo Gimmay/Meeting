@@ -1,4 +1,5 @@
-function checkClientCreate(){
+
+function checkIsEmpty(){
 	var $name   = $('#name');
 	var $mobile = $('#mobile');
 	var $club = $('#club');

@@ -64,24 +64,24 @@
 			$result = [];
 			if($not_assigned){
 				$keyword     = "%$keyword%";
-				$sql         = "select id, name from system_permission where id not in (
-	select pid from system_assign_permission WHERE type = 1 and oid = $eid -- 员工权限
+				$sql         = "select `id`, `code`, `name` from system_permission where id not in (
+	select pid from system_assign_permission WHERE `type` = 1 and `oid` = $eid -- 员工权限
 	UNION
-	select pid from system_assign_permission where type = 0 and oid in ( -- 角色权限
-		select rid from user_assign_role where type = 0 and oid = $eid
+	select pid from system_assign_permission where `type` = 0 and `oid` in ( -- 角色权限
+		select rid from user_assign_role join system_role on system_role.id = user_assign_role.rid where `type` = 0 and `oid` = $eid and system_role.status != 2
 	)
 ) and (system_permission.name like '$keyword' or system_permission.pinyin_code like '$keyword')";
 				$permission = $this->query($sql);
 			}
 			else{
-				$sql         = "select `id`, `name`, 1 `type` from system_permission where id in (
-	select pid from system_assign_permission WHERE type = 1 and oid = $eid -- 员工权限
+				$sql         = "select `id`, `code`, `name`, 1 `type` from system_permission where id in (
+	select pid from system_assign_permission WHERE `type` = 1 and `oid` = $eid -- 员工权限
 )
 union
-select `id`, `name`, 0 `type`
+select `id`, `code`, `name`, 0 `type`
 from system_permission where id in (
-	select pid from system_assign_permission where type = 0 and oid in ( -- 角色权限
-		select rid from user_assign_role where type = 0 and oid = $eid
+	select pid from system_assign_permission where `type` = 0 and `oid` in ( -- 角色权限
+		select rid from user_assign_role join system_role on system_role.id = user_assign_role.rid where `type` = 0 and `oid` = $eid and system_role.status != 2
 	)
 )";
 				$permission = $this->query($sql);
@@ -89,8 +89,9 @@ from system_permission where id in (
 			if($type == 'arr' || $type == 'str'){
 				foreach($permission as $val) array_push($result, $val['id']);
 				if($type == 'str') $result = implode(',', $result);
-			}
-			else $result = $permission;
+			}elseif($type == 'code'){
+				foreach($permission as $val) array_push($result, $val['code']);
+			}else $result = $permission;
 
 			return $result;
 		}

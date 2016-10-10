@@ -217,6 +217,11 @@ html, body{
 	bottom : 92% !important;
 }
 
+textarea{
+	min-width : 100%;
+	max-width : 100%;
+}
+
 /* 公共宽度*/
 .common_width{
 	width  : 1000px;
@@ -237,10 +242,12 @@ html, body{
 	background   : #F8AC59 !important;
 	border-color : #F8AC59 !important;
 }
-.bg-success {
+
+.bg-success{
 	background   : #2254A5 !important;
 	border-color : #2254A5 !important;
 }
+
 .bg-info{
 	background   : #23C6C8 !important;
 	border-color : #23C6C8 !important;
@@ -257,6 +264,11 @@ html, body{
 }
 
 /* 公共font color */
+
+.link{
+	text-decoration : underline;
+}
+
 .hs_color{
 	color : #EBEBEB !important;
 }
@@ -281,8 +293,9 @@ html, body{
 	color       : red !important;
 	font-weight : bold;
 }
-.color-primary {
-	color       : #337ab7 !important;
+
+.color-primary{
+	color       : #337AB7 !important;
 	font-weight : bold;
 }
 
@@ -404,9 +417,22 @@ html, body{
 	border-bottom : 1px solid red;
 }
 
+.mt_navbar > .header > .logo{
+	float  : left;
+	width  : 40px;
+	height : 40px;
+	margin : 12px 10px 8px 16px;
+}
+
+.mt_navbar > .header > .logo > img{
+	width          : 100%;
+	vertical-align : middle;
+}
+
 .mt_navbar > .header > a{
 	line-height : 60px;
 	text-align  : center;
+	float       : left;
 	display     : block;
 	font-size   : 22px;
 	color       : #FFFFFF;
@@ -421,6 +447,7 @@ html, body{
 
 .mt_navbar > .sidenav > .sidenav_list > .side_item{
 	position : relative;
+	cursor   : pointer;
 }
 
 .mt_navbar > .sidenav > .sidenav_list > .side_item.active .side-item-link, .mt_navbar > .sidenav > .sidenav_list > .side_item:hover .side-item-link{
@@ -487,14 +514,14 @@ html, body{
 	width      : 100%;
 	height     : 100%;
 	background : rgba(0, 0, 0, .1);
-	padding    : 60px 10px 10px 10px;
+	padding    : 70px 10px 10px 10px;
 	position   : relative;
 	overflow-y : auto;
 }
 
 .mt_wrapper .mt_topbar{
 	position   : fixed;
-	height     : 50px;
+	height     : 60px;
 	width      : 100%;
 	top        : 0;
 	left       : 0;
@@ -502,15 +529,15 @@ html, body{
 	z-index    : 998;
 	box-shadow : 0 1px 4px rgba(0, 0, 0, .5);
 }
-.mt_wrapper .mt_topbar .return {
-	height: 30px;
-	line-height: 30px;
-	padding: 0 5px;
-	margin-left: 200px;
-	margin-top: 10px;
-	border-radius :5px;
-}
 
+.mt_wrapper .mt_topbar .return{
+	height        : 30px;
+	line-height   : 30px;
+	padding       : 0 5px;
+	margin-left   : 200px;
+	margin-top    : 10px;
+	border-radius : 5px;
+}
 
 .mt_wrapper .mt_topbar .nav_info{
 	color  : #000000;
@@ -545,8 +572,9 @@ html, body{
 .mt_wrapper .mian_body .content{
 	padding : 10px 0;
 }
-.mt_wrapper .mian_body .content .return {
-	padding: 0 10px;
+
+.mt_wrapper .mian_body .content .return{
+	padding : 0 10px;
 }
 
 .mt_wrapper .mian_body .content .c_header{
@@ -629,7 +657,7 @@ html, body{
 }
 
 .repertory .mian_search{
-/*	width       : 100px;*/
+	/*	width       : 100px;*/
 	float       : left;
 	margin-left : 10px;
 }

@@ -25,34 +25,38 @@
 <body>
 	<div id="mb_wrap">
 		<div class="mb_body">
-			<div class="my_box">
-				<div class="my_title">
-					<div class="photo">
-						<img src="<{$info.avatar}>">
-					</div>
-					<p class="name"><{$info.name}></p>
-					<p class="address"><{$info.address}></p>
+			<div class="my_title">
+				<div class="photo">
+					<img src="<{$info.avatar}>">
 				</div>
-
-				<div class="qr_code">
-					<img src="<{$info.sign_qrcode}>">
-				</div>
+				<p class="name"><{$info.name}></p>
+				<p class="address"><{$info.club}></p>
 			</div>
-
-			<div class="my_infor">
+			<div class="my_infor" style=" margin-top: 0.3rem;">
 				<div class="title">
-					<p>会议名称：<{$info.meeting_name}> </p>
+					<p style="text-align: center"><{$info.meeting_name}> </p>
 				</div>
 				<div class="personal">
 					<p>
-						会议简介：<{$info.meeting_brief}>
+						<b>会议简介</b>：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<{$info.meeting_brief}>
 					</p>
 					<p>
-						起始时间：<{$info.meeting_start_time}> — <{$info.meeting_end_time}>
+						<b>备注</b>：<{$info.meeting_comment}>
 					</p>
 					<p>
-						会议地点：<{$info.meeting_place}>
+						<b>起始时间</b>：<br><{$info.meeting_start_time}> — <{$info.meeting_end_time}>
 					</p>
+					<p>
+						<b>会议地点</b>：<{$info.meeting_place}>
+					</p>
+					<p>
+						<b>签到负责人</b>：各公司人事部负责人
+					</p>
+				</div>
+			</div>
+			<div class="my_box">
+				<div class="qr_code">
+					<img src="<{$info.sign_qrcode}>">
 				</div>
 			</div>
 		</div>

@@ -33,47 +33,72 @@
 			<!--会议系统左侧  导航栏 公用-->
 <div class="mt_navbar">
 	<div class="header">
+		<div class="logo">
+			<img src="<?php echo (COMMON_IMAGE_PATH); ?>/logo.png" alt="">
+		</div>
 		<a href="http://www.baidu.com">吉美会议</a>
 	</div>
 	<div class="sidenav">
 		<ul class="sidenav_list" id="side_menu">
-			<li class="side_item <?php if('Employee'==$c_name) echo 'active'; ?>">
-				<a href="<?php echo U('Employee/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">员工管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
-				<ul class="nav-second-level">
-					<li>
-						<a href="<?php echo U('Employee/create');?>">新建员工</a>
-					</li>
-				</ul>
-			</li>
-			<li class="side_item <?php if('Role'==$c_name) echo 'active'; ?>">
-				<a href="<?php echo U('Role/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">角色管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
-			</li>
+			<?php if($permission_list['viewEmployee'] == 1): ?><li class="side_item <?php if('Employee'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Employee/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">员工管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+					<ul class="nav-second-level">
+						<li>
+							<a href="<?php echo U('Employee/create');?>">新建员工</a>
+						</li>
+					</ul>
+				</li><?php endif; ?>
+			<?php if($permission_list['viewRole'] == 1): ?><li class="side_item <?php if('Role'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Role/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon glyphicon-star"></i> <span class="nav-label">角色管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li><?php endif; ?>
 			<li class="side_item <?php if('Meeting'==$c_name or 'SignPlace'==$c_name or 'Client'==$c_name) echo 'active'; ?>">
 				<a href="<?php echo U('Meeting/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">会议管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
+					<i class="icon_nav glyphicon glyphicon-th"></i> <span class="nav-label">会议管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				<ul class="nav-second-level">
 					<li>
 						<a href="<?php echo U('Meeting/create');?>">创建会议</a>
 					</li>
 				</ul>
 			</li>
+			<li class="side_item <?php if('Coupon'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Coupon/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">代金券管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
 			<li class="side_item <?php if('Message'==$c_name) echo 'active'; ?>">
 				<a href="<?php echo U('Message/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">消息管理</span>
+					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">消息管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Badge'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Badge/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">胸卡设计</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item cls <?php if('Recycle'==$c_name) echo 'active'; ?>">
+				<div class="side-item-link no_link">
+					<i class="icon_nav glyphicon glyphicon-trash"></i> <span class="nav-label">回收站管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
+				</div>
+				<ul class="nav-second-level">
+					<li>
+						<a href="<?php echo U('Recycle/client');?>">客户列表</a>
+					</li>
+					<li>
+						<a href="<?php echo U('Recycle/employee');?>">员工列表</a>
+					</li>
+					<li>
+						<a href="<?php echo U('Recycle/role');?>">角色列表</a>
+					</li>
+					<li>
+						<a href="<?php echo U('Recycle/meeting');?>">会议列表</a>
+					</li>
+				</ul>
 			</li>
 		</ul>
 	</div>
@@ -114,7 +139,7 @@
 										<button type="submit" class="btn btn-default mian_search">搜索消息模板</button>
 									</span>
 								</div>
-								<a type="reset" class="btn btn-default mian_search" href="<?php echo U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']]);?>">查看所有</a>
+								<a type="reset" class="btn btn-default mian_search" href="<?php echo U('manage');?>">查看所有</a>
 							</form>
 						</div>
 						<div class="table_wrap">
@@ -155,7 +180,7 @@
 													<?php case "1": ?>可用<?php break; endswitch;?>
 											</td>
 											<td>
-												<?php switch($single["audit_status"]): case "0": ?>未审核<?php break;?>
+												<?php switch($single["review_status"]): case "0": ?>未审核<?php break;?>
 													<?php case "1": ?>已审核<?php break; endswitch;?>
 												/
 												<?php switch($single["sign_status"]): case "0": ?>未签到<?php break;?>
@@ -166,9 +191,9 @@
 											</td>
 											<td>
 												<div class="btn-group" data-id="<?php echo ($single["id"]); ?>">
-													<?php if(($single['audit_status'] == 1) and ($single['sign_status'] == 0)): ?><button type="button" class="btn btn-default btn-xs sign_btn">签到</button><?php endif; ?>
-													<?php if(($single['audit_status'] == 1) and ($single['sign_status'] == 1)): ?><button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button><?php endif; ?>
-													<?php switch($single["audit_status"]): case "0": ?><button type="button" class="btn btn-default btn-xs review_btn">审核</button><?php break;?>
+													<?php if(($single['review_status'] == 1) and ($single['sign_status'] == 0)): ?><button type="button" class="btn btn-default btn-xs sign_btn">签到</button><?php endif; ?>
+													<?php if(($single['review_status'] == 1) and ($single['sign_status'] == 1)): ?><button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button><?php endif; ?>
+													<?php switch($single["review_status"]): case "0": ?><button type="button" class="btn btn-default btn-xs review_btn">审核</button><?php break;?>
 														<?php case "1": ?><button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button><?php break; endswitch;?>
 
 													<button type="button" class="btn btn-default btn-xs receivables_btn" data-toggle="modal" data-target="#receivables_modal">收款</button>

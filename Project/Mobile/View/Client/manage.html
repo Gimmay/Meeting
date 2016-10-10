@@ -19,6 +19,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/mobile_rem.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="Quasar" data-mvc-name="<{:'/'.MODULE_NAME.'/'.CONTROLLER_NAME.'/'.ACTION_NAME}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -27,28 +28,30 @@
 		<div class="mb_body">
 			<div class="sign_btn">
 				<switch name="info.sign_status">
-					<case value="0"><button type="button" class="btn btn-default btn-lg btn-primary" id="sign">签到</button></case>
-					<case value="1"><button type="button" class="btn btn-default btn-lg btn-primary" id="anti_sign">取消签到</button></case>
+					<case value="0">
+						<button type="button" class="btn btn-default btn-lg btn-primary sign_btn sign">签到</button>
+					</case>
+					<case value="1">
+						<button type="button" class="btn btn-default btn-lg btn-primary sign_btn anti_sign">取消签到</button>
+					</case>
 				</switch>
 			</div>
 			<div class="my_infor">
 				<div class="title">
-					<p>客户信息：<{$info.meeting_name}> </p>
+					<p>客户信息： </p>
 				</div>
 				<div class="personal">
+					<p>姓名：<{$info.name}></p>
 					<p>
-						姓名：<{$info.name}>
-					</p>
-					<p>
-						性别：<switch name="info.gender">
+						性别：
+						<switch name="info.gender">
 							<case value="0">未指定</case>
 							<case value="1">男</case>
 							<case value="2">女</case>
 						</switch>
 					</p>
-					<p>
-						手机：<{$info.mobile}>
-					</p>
+					<p>手机：<{$info.mobile}></p>
+					<p>部门：<{$info.club}></p>
 				</div>
 				<div class="title">
 					<p>会议名称：<{$info.meeting_name}> </p>
@@ -69,11 +72,14 @@
 	</div>
 	<script>
 		var ManageObject = {
+			config:{
+				originUrl:(location.origin+"<{:U('Mobile/Client/manage')}>")
+			},
 			object:{
-				toast:$().QuasarToast({
+				toast  :$().QuasarToast({
 					fadeDuration:0.1
 				}),
-				loading: $().QuasarLoading()
+				loading:$().QuasarLoading()
 			}
 		}
 	</script>

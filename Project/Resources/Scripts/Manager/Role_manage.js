@@ -73,6 +73,20 @@ var roleManage = {
 			$('#authorize_all').html(str);
 		}});
 		roleManage.bindEvent();
+	},
+	checkIsEmpty:function(){
+		var $create_role_name = $('#create_role_name');
+		var $selected_meeting = $('#selected_meeting');
+		if($create_role_name.val() == ''){
+			ManageObject.object.toast.toast("角色名称不能为空");
+			$create_role_name.focus();
+			return false;
+		}
+		if($selected_meeting.text() == ''){
+			ManageObject.object.toast.toast("作用域不能为空");
+			$selected_meeting.focus();
+			return false;
+		}
 	}
 };
 $(function(){

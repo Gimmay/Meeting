@@ -29,22 +29,23 @@
 						foreach($v2['department'] as $v3) $department .= $v3.',';
 						$department         = trim($department, ',');
 						$data               = [];
-						$data['otype']      = 1;	//对象类型
-						$data['oid']        = $v1['id'];	//对象ID
-						$data['userid']     = 1;	//
-						$data['department'] = $department;	//部门ID
-						$data['weixin_id']  = $v2['userid'];	//微信ID
-						$data['mobile']     = $v2['mobile'];	//手机号码
-						$data['avatar']     = $v2['avatar'];	//头像地址
-						$data['gender']     = $v2['gender'];	//性别
-						$data['nickname']   = $v2['name'];	//昵称
-						$data['creatime']   = time();	//创建时间
-						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');	//当前创建者
-						$weixin_model->createRecord($data);	//插入数据
+						$data['otype']      = 1;    //对象类型
+						$data['oid']        = $v1['id'];    //对象ID
+						$data['wtype']      = 1;    //微信ID类型 企业号
+						$data['department'] = $department;    //部门ID
+						$data['weixin_id']  = $v2['userid'];    //微信ID
+						$data['mobile']     = $v2['mobile'];    //手机号码
+						$data['avatar']     = $v2['avatar'];    //头像地址
+						$data['gender']     = $v2['gender'];    //性别
+						$data['nickname']   = $v2['name'];    //昵称
+						$data['creatime']   = time();    //创建时间
+						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+						$weixin_model->createRecord($data);    //插入数据
 					}
 				}
 			}
 		}
+
 		public function test2(){
 			/** @var \Core\Model\WeixinIDModel $weixin_model */
 			$weixin_model = D('Core/WeixinID');
@@ -61,18 +62,18 @@
 						foreach($v2['department'] as $v3) $department .= $v3.',';
 						$department         = trim($department, ',');
 						$data               = [];
-						$data['otype']      = 0;	//对象类型
-						$data['oid']        = $v1['id'];	//对象ID
-						$data['userid']     = 1;	//
-						$data['department'] = $department;	//部门ID
-						$data['weixin_id']  = $v2['userid'];	//微信ID
-						$data['mobile']     = $v2['mobile'];	//手机号码
-						$data['avatar']     = $v2['avatar'];	//头像地址
-						$data['gender']     = $v2['gender'];	//性别
-						$data['nickname']   = $v2['name'];	//昵称
-						$data['creatime']   = time();	//创建时间
-						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');	//当前创建者
-						$weixin_model->createRecord($data);	//插入数据
+						$data['otype']      = 0;    //对象类型
+						$data['oid']        = $v1['id'];    //对象ID
+						$data['wtype']      = 1;    //微信ID类型 企业号
+						$data['department'] = $department;    //部门ID
+						$data['weixin_id']  = $v2['userid'];    //微信ID
+						$data['mobile']     = $v2['mobile'];    //手机号码
+						$data['avatar']     = $v2['avatar'];    //头像地址
+						$data['gender']     = $v2['gender'];    //性别
+						$data['nickname']   = $v2['name'];    //昵称
+						$data['creatime']   = time();    //创建时间
+						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+						$weixin_model->createRecord($data);    //插入数据
 					}
 				}
 			}

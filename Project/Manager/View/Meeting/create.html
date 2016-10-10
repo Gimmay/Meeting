@@ -20,6 +20,8 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/xheditor-1.2.2/xheditor-1.2.2.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/xheditor-1.2.2/xheditor_lang/zh-cn.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
@@ -35,15 +37,15 @@
 				<div class="mian_body">
 					<section class="content" style="padding: 10px;">
 						<div class="return">
-							<a class="btn btn-default" href="<{:U('Meeting/manage')}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
+							<a class="btn btn-default" href="<{:U('manage')}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
 						</div>
 						<div class="modal-header">
 							<h2 class="modal-title" id="authorize_role_title">新建会议</h2>
 						</div>
-						<form class="form-horizontal" role="form" method="post" action="<{:U('Meeting/addMeeting')}>" onsubmit="return checkMeetingCreate()">
-							<div class="modal-body" style=" padding: 15px 20px 15px 0px;">
+						<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+							<div class="modal-body" style=" padding: 15px 20px 15px 0;">
 								<div class="form-group">
-									<label for="meeting_name" class="col-sm-1 control-label">会议名称：</label>
+									<label for="meeting_name" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>会议名称：</label>
 									<div class="col-sm-11">
 										<input type="text" class="form-control meeting_name" name="name" id="meeting_name">
 									</div>
@@ -67,11 +69,12 @@
 											<option value="2">特训营</option>
 											<option value="3">优雅女子</option>
 											<option value="4">招商会</option>
+											<option value="5">启动大会</option>
 										</select>
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="meeting_host" class="col-sm-1 control-label">主办方：</label>
+									<label for="meeting_host" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>主办方：</label>
 									<div class="col-sm-11">
 										<input type="text" class="form-control meeting_host" name="host" id="meeting_host">
 									</div>
@@ -102,7 +105,7 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="meeting_start_time" class="col-sm-1 control-label">开始时间：</label>
+									<label for="meeting_start_time" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>开始时间：</label>
 									<div class="col-sm-11">
 										<!--<input type="text" class="form-control meeting_start_time" name="meeting_place" id="meeting_start_time">-->
 										<div class="input-group date form_datetime" id="meeting_start_time_wrap">
@@ -113,7 +116,7 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="meeting_end_time" class="col-sm-1 control-label">结束时间：</label>
+									<label for="meeting_end_time" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>结束时间：</label>
 									<div class="col-sm-11">
 										<div class="input-group date form_datetime" id="meeting_end_time_wrap">
 											<input class="form-control" id="meeting_end_time" name="end_time">
@@ -122,20 +125,20 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="director_id" class="col-sm-1 control-label">负责人：</label>
+									<label for="director_id" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>负责人：</label>
 									<div class="col-sm-11">
 										<div id="director_id"></div>
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="contacts_1_id" class="col-sm-1 control-label">联系人：</label>
+									<label for="contacts_1_id" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>联系人：</label>
 									<div class="col-sm-11">
 										<div id="contacts_1_id"></div>
 									</div>
 
 								</div>
 								<div class="form-group">
-									<label for="contacts_2_id" class="col-sm-1 control-label">联系人2：</label>
+									<label for="contacts_2_id" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>联系人2：</label>
 									<div class="col-sm-11">
 										<div id="contacts_2_id"></div>
 									</div>
@@ -143,7 +146,7 @@
 								<div class="form-group">
 									<label for="brief" class="col-sm-1 control-label">简介：</label>
 									<div class="col-sm-11">
-										<input type="text" class="form-control brief" name="brief" id="brief">
+										<textarea class="form-control brief xheditor" runat="server"  name="brief" id="brief" style="min-height: 200px"></textarea>
 									</div>
 								</div>
 								<div class="form-group">

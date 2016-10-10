@@ -34,14 +34,18 @@
 					<section class="content">
 						<header class="c_header">
 							<div class="function_list clearfix">
-								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_role">
-									<i></i>
-									<p>新增角色</p>
-								</div>
-								<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_employee">
-									<i></i>
-									<p>批量删除</p>
-								</div>
+								<if condition="$permission_list['createRole'] eq 1">
+									<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_role">
+										<i></i>
+										<p>新增角色</p>
+									</div>
+								</if>
+								<if condition="$permission_list['deleteRole'] eq 1">
+									<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_employee">
+										<i></i>
+										<p>批量删除</p>
+									</div>
+								</if>
 							</div>
 						</header>
 						<div class="repertory clearfix">
@@ -63,49 +67,63 @@
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="10%">名称</td>
-										<td width="10%">状态</td>
+										<td width="5%">状态</td>
 										<td width="5%">用户数</td>
 										<td width="5%">等级</td>
 										<td width="15%">会议</td>
-										<td width="5%">备注</td>
+										<td width="10%">备注</td>
 										<td width="15%">创建时间</td>
 										<td width="30%">操作</td>
 									</tr>
 								</thead>
-
 								<tbody>
 									<volist name="role_list" id="single">
-										<tr>
-											<td class="check_item">
-												<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
-											</td>
-											<td><{$single.name}></td>
-											<td>
-												<switch name="single.status">
-													<case value="0"><span class="color-danger">禁用</span></case>
-													<case value="1"><span class="color-info">可用</span></case>
-												</switch>
-											</td>
-											<td><{$single.count}></td>
-											<td><{$single.level}></td>
-											<td>
-												<if condition="$single[effect] eq 0">
-													(系统全局)
-													<else/><{$single.meeting}>
-												</if>
-											</td>
-											<td><{$single.comment}></td>
-											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
-											<td>
-												<div class="btn-group" data-id="<{$single.id}>">
-													<if condition="$max_role_level elt $single['level']">
-														<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
-														<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_role">修改</button>
-														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_role">删除</button>
+										<if condition="$max_role_level elt $single['level']">
+											<tr>
+												<td class="check_item">
+													<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
+												</td>
+												<td><{$single.name}></td>
+												<td>
+													<switch name="single.status">
+														<case value="0"><span class="color-danger">禁用</span></case>
+														<case value="1"><span class="color-info">可用</span></case>
+													</switch>
+												</td>
+												<td>
+													<if condition="$single['count'] eq 0">
+														<{$single.count}>
+														<else/>
+														<a href="<{:U('Employee/manage', ['rid'=>$single['id']])}>" class="link color-primary"><{$single.count}></a>
 													</if>
-												</div>
-											</td>
-										</tr>
+												</td>
+												<td><{$single.level}></td>
+												<td>
+													<if condition="$single[effect] eq 0">
+														(系统全局)
+														<else/>
+														<{$single.meeting}>
+													</if>
+												</td>
+												<td><{$single.comment}></td>
+												<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
+												<td>
+													<div class="btn-group" data-id="<{$single.id}>">
+														<if condition="$max_role_level elt $single['level']">
+															<if condition="$permission_list['assignPermissionForRole'] eq 1">
+																<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
+															</if>
+															<if condition="$permission_list['alterRole'] eq 1">
+																<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_role">修改</button>
+															</if>
+															<if condition="$permission_list['deleteRole'] eq 1">
+																<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_role">删除</button>
+															</if>
+														</if>
+													</div>
+												</td>
+											</tr>
+										</if>
 									</volist>
 								</tbody>
 							</table>
@@ -121,226 +139,236 @@
 		</div>
 	</div>
 	<!-- 新增角色 -->
-	<div class="modal fade" id="create_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="create_role_title">新增角色</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="create">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="create_role_name" class="col-sm-2 control-label">名称：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control name" name="name" id="create_role_name">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="authorize_role_level" class="col-sm-2 control-label">等级：</label>
-							<div class="col-sm-10">
-								<select class="form-control level" name="level" id="authorize_role_level">
-									<if condition="$max_role_level elt 1">
-										<option value="1">1</option>
-									</if>
-									<if condition="$max_role_level elt 2">
-										<option value="2">2</option>
-									</if>
-									<if condition="$max_role_level elt 3">
-										<option value="3">3</option>
-									</if>
-									<if condition="$max_role_level elt 4">
-										<option value="4">4</option>
-									</if>
-									<if condition="$max_role_level elt 5">
-										<option value="5">5</option>
-									</if>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="create_role_status" class="col-sm-2 control-label">状态：</label>
-							<div class="col-sm-10">
-								<select name="status" id="create_role_status" class="form-control">
-									<option value="1">可用</option>
-									<option value="0">禁用</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="meeting_select" class="col-sm-2 control-label">作用域：</label>
-							<div class="col-sm-10">
-								<div id="meeting_select"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="create_role_comment" class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-10">
-								<textarea class="form-control comment" name="comment" id="create_role_comment"></textarea>
-							</div>
-						</div>
+	<if condition="$permission_list['createRole'] eq 1">
+		<div class="modal fade" id="create_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title" id="create_role_title">新增角色</h2>
 					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">新增</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- 修改角色 -->
-	<div class="modal fade" id="modify_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="modify_role_title">修改角色</h2>
-				</div>
-				<form class="form-horizontal" role="form" action="<{:U('alterRole')}>" method="post">
-					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="modify_role_name" class="col-sm-2 control-label">名称：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control name" name="name" id="modify_role_name">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="modify_role_level" class="col-sm-2 control-label">等级：</label>
-							<div class="col-sm-10">
-								<select class="form-control level" name="level" id="modify_role_level">
-									<if condition="$max_role_level elt 1">
-										<option value="1">1</option>
-									</if>
-									<if condition="$max_role_level elt 2">
-										<option value="2">2</option>
-									</if>
-									<if condition="$max_role_level elt 3">
-										<option value="3">3</option>
-									</if>
-									<if condition="$max_role_level elt 4">
-										<option value="4">4</option>
-									</if>
-									<if condition="$max_role_level elt 5">
-										<option value="5">5</option>
-									</if>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="modify_role_status" class="col-sm-2 control-label">状态：</label>
-							<div class="col-sm-10">
-								<select name="status" id="modify_role_status" class="form-control">
-									<option value="1">可用</option>
-									<option value="0">禁用</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="modify_meeting_select" class="col-sm-2 control-label">作用域：</label>
-							<div class="col-sm-10">
-								<div id="modify_meeting_select"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="modify_role_comment" class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-10">
-								<textarea class="form-control comment" name="comment" id="modify_role_comment"></textarea>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">保存</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- 删除角色 -->
-	<div class="modal fade" id="delete_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="delete_role_title">删除角色</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
-					<div class="modal-body">
-						是否删除角色？
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认删除</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- 员工授权 -->
-	<div class="modal fade" id="authorize_role" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog" style="width: 80%">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="authorize_role_title">员工授权</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post">
-					<div class="modal-body role_body">
-						<div class="btn_rect">
-							<header><h3>已选择角色</h3></header>
-							<section class="select_area btn_green" id="authorize_select">
-							</section>
-						</div>
-						<div class="btn_rect but_wrap">
-							<header>
-								<div class="form-group">
-									<div class="input-group" id="authorize_search">
-										<input class="form-control" type="text" placeholder="角色名">
-										<div class="input-group-addon">搜索</div>
-									</div>
+					<form class="form-horizontal" role="form" method="post" action="">
+						<input type="hidden" name="requestType" value="create">
+						<div class="modal-body">
+							<div class="form-group">
+								<label for="create_role_name" class="col-sm-2 control-label">名称：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control name" name="name" id="create_role_name">
 								</div>
-							</header>
-							<section class="all_area" id="authorize_all">
-							</section>
+							</div>
+							<div class="form-group">
+								<label for="authorize_role_level" class="col-sm-2 control-label">等级：</label>
+								<div class="col-sm-10">
+									<select class="form-control level" name="level" id="authorize_role_level">
+										<if condition="$max_role_level elt 1">
+											<option value="1">1</option>
+										</if>
+										<if condition="$max_role_level elt 2">
+											<option value="2">2</option>
+										</if>
+										<if condition="$max_role_level elt 3">
+											<option value="3">3</option>
+										</if>
+										<if condition="$max_role_level elt 4">
+											<option value="4">4</option>
+										</if>
+										<if condition="$max_role_level elt 5">
+											<option value="5">5</option>
+										</if>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="create_role_status" class="col-sm-2 control-label">状态：</label>
+								<div class="col-sm-10">
+									<select name="status" id="create_role_status" class="form-control">
+										<option value="1">可用</option>
+										<option value="0">禁用</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="meeting_select" class="col-sm-2 control-label">作用域：</label>
+								<div class="col-sm-10">
+									<div id="meeting_select"></div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="create_role_comment" class="col-sm-2 control-label">备注：</label>
+								<div class="col-sm-10">
+									<textarea class="form-control comment" name="comment" id="create_role_comment"></textarea>
+								</div>
+							</div>
 						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					</div>
-					<input type="hidden" name="hide_employee_id">
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- 批量删除 -->
-	<div class="modal fade" id="batch_delete_employee" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量删除角色</h2>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary">新增</button>
+						</div>
+					</form>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
-					<div class="modal-body">
-						是否删除已选角色？
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary batch_delete_btn">确认删除</button>
-					</div>
-				</form>
 			</div>
 		</div>
-	</div>
+	</if>
+	<!-- 修改角色 -->
+	<if condition="$permission_list['alterRole'] eq 1">
+		<div class="modal fade" id="modify_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title" id="modify_role_title">修改角色</h2>
+					</div>
+					<form class="form-horizontal" role="form" action="" method="post">
+						<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
+						<div class="modal-body">
+							<div class="form-group">
+								<label for="modify_role_name" class="col-sm-2 control-label">名称：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control name" name="name" id="modify_role_name">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="modify_role_level" class="col-sm-2 control-label">等级：</label>
+								<div class="col-sm-10">
+									<select class="form-control level" name="level" id="modify_role_level">
+										<if condition="$max_role_level elt 1">
+											<option value="1">1</option>
+										</if>
+										<if condition="$max_role_level elt 2">
+											<option value="2">2</option>
+										</if>
+										<if condition="$max_role_level elt 3">
+											<option value="3">3</option>
+										</if>
+										<if condition="$max_role_level elt 4">
+											<option value="4">4</option>
+										</if>
+										<if condition="$max_role_level elt 5">
+											<option value="5">5</option>
+										</if>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="modify_role_status" class="col-sm-2 control-label">状态：</label>
+								<div class="col-sm-10">
+									<select name="status" id="modify_role_status" class="form-control">
+										<option value="1">可用</option>
+										<option value="0">禁用</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="modify_meeting_select" class="col-sm-2 control-label">作用域：</label>
+								<div class="col-sm-10">
+									<div id="modify_meeting_select"></div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="modify_role_comment" class="col-sm-2 control-label">备注：</label>
+								<div class="col-sm-10">
+									<textarea class="form-control comment" name="comment" id="modify_role_comment"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary">保存</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</if>
+	<!-- 删除角色 -->
+	<if condition="$permission_list['deleteRole'] eq 1">
+		<div class="modal fade" id="delete_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title" id="delete_role_title">删除角色</h2>
+					</div>
+					<form class="form-horizontal" role="form" method="post" action="">
+						<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+						<div class="modal-body">
+							是否删除角色？
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary">确认删除</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</if>
+	<!-- 角色授权 -->
+	<if condition="$permission_list['assignPermissionForRole'] eq 1">
+		<div class="modal fade" id="authorize_role" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" style="width: 80%">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title" id="authorize_role_title">角色授权</h2>
+					</div>
+					<form class="form-horizontal" role="form" method="post">
+						<div class="modal-body role_body">
+							<div class="btn_rect">
+								<header><h3>已分配的权限</h3></header>
+								<section class="select_area btn_green" id="authorize_select">
+								</section>
+							</div>
+							<div class="btn_rect but_wrap">
+								<header>
+									<div class="form-group">
+										<div class="input-group" id="authorize_search">
+											<input class="form-control" type="text" placeholder="权限名称">
+											<div class="input-group-addon">搜索</div>
+										</div>
+									</div>
+								</header>
+								<section class="all_area" id="authorize_all">
+								</section>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						</div>
+						<input type="hidden" name="hide_employee_id">
+					</form>
+				</div>
+			</div>
+		</div>
+	</if>
+	<!-- 批量删除 -->
+	<if condition="$permission_list['deleteRole'] eq 1">
+		<div class="modal fade" id="batch_delete_employee" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title">批量删除角色</h2>
+					</div>
+					<form class="form-horizontal" role="form" method="post" action="">
+						<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+						<div class="modal-body">
+							是否删除已选角色？
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary batch_delete_btn">确认删除</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</if>
 	<script>
 		var ManageObject = {
 			object:{

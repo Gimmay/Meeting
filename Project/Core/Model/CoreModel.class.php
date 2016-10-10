@@ -17,7 +17,7 @@
 		public function handlerException($message){
 			if(stripos($message, 'Duplicate entry')) return [
 				'status'  => false,
-				'message' => "部分字段违反唯一性约束"
+				'message' => "该记录已经存在"
 			];
 			if(stripos($message, 'a foreign key constraint fails')) return [
 				'status'  => false,

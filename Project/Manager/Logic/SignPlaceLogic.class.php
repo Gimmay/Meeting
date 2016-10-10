@@ -38,4 +38,22 @@
 			}
 			return $list;
 		}
+		public function alter($id, $data){
+			/** @var \Core\Model\SignPlaceModel $model */
+			$model               = D('Core/Sign_Place');
+			return $model->alterRecord($id, $data);
+		}
+
+		public function setExtendColumnForAlter($info){
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model                  = D('Core/Employee');
+			$develop_consultant              = $employee_model->findEmployee(1, ['id' => $info['director_id']]);
+			$service_consultant              = $employee_model->findEmployee(1, ['id' => $info['sign_director_id']]);
+			$info['develop_consultant_name'] = $develop_consultant['name'];
+			$info['develop_consultant_code'] = $develop_consultant['code'];
+			$info['service_consultant_name'] = $service_consultant['name'];
+			$info['service_consultant_code'] = $service_consultant['code'];
+
+			return $info;
+		}
 	}

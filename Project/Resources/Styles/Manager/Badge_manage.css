@@ -1,0 +1,64 @@
+.badge_content{
+	padding : 30px !important;
+}
+
+.badge_content > header{
+	margin-bottom : 20px;
+}
+
+.badge_box{
+	width : 100%;
+}
+
+.cart_view{
+	width         : 400px;
+	height        : 700px;
+	background    : #FFFFFF;
+	border        : 1px solid #E1E1E1;
+	border-radius : 5px;
+	float         : left;
+}
+
+.cart_set{
+	background : #ECF1F4;
+	float      : left;
+	padding    : 20px;
+}
+
+.cart_set h2 {
+	font-size: 18px;
+	font-weight: bold;
+	margin: 20px 0;
+}
+
+.choose_type {
+	padding: 10px;
+}
+
+.template {
+	padding: 10px;
+}
+
+
+.bg_up_file {
+	position :  relative;
+	width: 100%;
+	height :40px;
+	border :1px dashed  rgba(0,0,0,.2);
+	background: #fff;
+	margin: 10px 0;
+}
+
+#updateBackground {
+	position : absolute;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+}
+
+
+
+
+
+
+

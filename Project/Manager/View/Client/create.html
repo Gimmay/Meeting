@@ -38,14 +38,14 @@
 							<a class="btn btn-default" onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
 						</div>
 						<div class="table_wrap">
-							<form class="form-horizontal" role="form" method="post" id="form" action="" onsubmit="return checkClientCreate()">
+							<form class="form-horizontal" role="form" method="post" id="form" action="" onsubmit="return checkIsEmpty()">
 								<input type="hidden" name="requestType" value="create">
 								<div class="modal-header">
 									<h2 class="modal-title" id="delete_role_title">新建客户</h2>
 								</div>
 								<div class="modal-body">
 									<div class="form-group">
-										<label for="name" class="col-sm-1 control-label">姓名：</label>
+										<label for="name" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>姓名：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control name" name="name" id="name">
 										</div>
@@ -107,7 +107,7 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="mobile" class="col-sm-1 control-label">手机号：</label>
+										<label for="mobile" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>手机号：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control mobile" name="mobile" id="mobile">
 										</div>
@@ -125,7 +125,7 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="club" class="col-sm-1 control-label">会所名称：</label>
+										<label for="club" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>会所名称：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control club" name="club" id="club">
 										</div>
@@ -149,18 +149,18 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="comment" class="col-sm-1 control-label">备注：</label>
+										<label for="registration_date" class="col-sm-1 control-label">报名时间：</label>
 										<div class="col-sm-11">
-											<textarea class="form-control comment" name="comment" id="comment"></textarea>
+											<div class="input-group date form_datetime" id="registration_date_layout">
+												<input class="form-control" id="registration_date" name="registration_date">
+												<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+											</div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="birthdate" class="col-sm-1 control-label">创建日期：</label>
+										<label for="comment" class="col-sm-1 control-label">备注：</label>
 										<div class="col-sm-11">
-											<div class="input-group date form_datetime" id="create_date">
-												<input class="form-control" id="createDate" name="createDate">
-												<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-											</div>
+											<textarea class="form-control comment" name="comment" id="comment"></textarea>
 										</div>
 									</div>
 									<div class="form-group">
@@ -235,7 +235,7 @@
 					justInput   :true,
 					hasEmptyItem:false
 				}),
-				serviceConsultantSelect   :$('#service_consultant').QuasarSelect({
+				serviceConsultantSelect:$('#service_consultant').QuasarSelect({
 					name        :'service_consultant',
 					classStyle  :'form-control',
 					idInput     :'selected_service_consultant',
@@ -245,7 +245,7 @@
 					justInput   :true,
 					hasEmptyItem:false
 				}),
-				birthDate     :$('#birth_date').datetimepicker({
+				birthDate              :$('#birth_date').datetimepicker({
 					language          :'zh-CN',
 					todayBtn          :true,
 					autoclose         :true,
@@ -259,7 +259,7 @@
 					maxView           :4,
 					minuteStep        :5
 				}),
-				createDate     :$('#create_date').datetimepicker({
+				createDate             :$('#create_date').datetimepicker({
 					language          :'zh-CN',
 					todayBtn          :true,
 					autoclose         :true,
@@ -273,16 +273,28 @@
 					maxView           :4,
 					minuteStep        :5
 				}),
-				toast         :$().QuasarToast(),
-				loading: $().QuasarLoading()
+				registrationDate       :$('#registration_date_layout').datetimepicker({
+					language          :'zh-CN',
+					todayBtn          :true,
+					autoclose         :true,
+					todayHighlight    :true,
+					keyboardNavigation:true,
+					forceParse        :true,
+					format            :'yyyy-mm-dd',
+					weekStart         :0,
+					startView         :4,
+					minView           :2,
+					maxView           :4,
+					minuteStep        :5
+				}),
+				toast                  :$().QuasarToast(),
+				loading                :$().QuasarLoading(),
+				citySelect             :$("#address").citySelect({
+					nodata:"none",
+					url   :'<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/city.min.js'
+				})
 			}
 		};
-		$(function(){
-			$("#address").citySelect({
-				nodata:"none",
-				url   :'<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/city.min.js'
-			});
-		});
 	</script>
 </body>
 </html>

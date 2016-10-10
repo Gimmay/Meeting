@@ -323,4 +323,11 @@ $(function(){
 		}
 		return true;
 	});
+	// 员工密码重置
+	$('.btn_reset_password').on('click',function(){
+		var id = $(this).parent('.btn-group').attr('data-id');
+		var name = $(this).parent().parent().parent().find('td[data-id='+id+']').text();
+		$('#reset_password').find('input[name=id]').val(id);
+		$('#reset_password_employee_name').val(name).attr('value', name);
+	})
 });

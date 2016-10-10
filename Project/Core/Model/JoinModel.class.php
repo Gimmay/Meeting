@@ -21,8 +21,8 @@
 			if($this->create($data)){
 				try{
 					$result = $this->add($data);
-					if($result) return ['status' => true, 'message' => '记录成功', 'id' => $result];
-					else return ['status' => false, 'message' => '记录失败'];
+					if($result) return ['status' => true, 'message' => '创建成功', 'id' => $result];
+					else return ['status' => false, 'message' => '创建失败'];
 				}catch(Exception $error){
 					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);
@@ -85,11 +85,10 @@
 
 		public function alterRecord($id, $data){
 			if($this->create($data)){
-				$where['id'] = ['in', $id];
 				try{
-					$result = $this->where($where)->save($data);
+					$result = $this->where(['id' => ['in', $id]])->save($data);
 					if($result) return ['status' => true, 'message' => '操作成功'];
-					else  return ['status' => true, 'message' => $this->getError()];
+					else return ['status' => true, 'message' => $this->getError()];
 				}catch(Exception $error){
 					return ['status' => false, 'message' => $error->getMessage()];
 				}
@@ -105,7 +104,7 @@
 					if($result) return ['status' => true, 'message' => '删除成功'];
 					else return ['status' => false, 'message' => '删除失败'];
 				}catch(Exception $error){
-					$message = $error->getMessage();
+					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);
 					if(!$exception['status']) return $exception;
 					else return ['status' => false, 'message' => $this->getError()];

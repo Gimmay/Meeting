@@ -34,46 +34,25 @@
 				<div class="mian_body">
 					<section class="content">
 						<div class="return">
-							<a class="btn btn-default" href="<{:U('Employee/manage')}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
+							<a class="btn btn-default"  onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
 						</div>
 						<div class="table_wrap">
-							<form class="form-horizontal" role="form" method="post" id="form" action="" onsubmit="return employeeAlter.checkIsEmpty()">
+							<form class="form-horizontal" role="form" method="post" id="form" action="" onsubmit="return checkIsEmpty()">
 								<input type="hidden" name="requestType" value="create">
 								<div class="modal-header">
 									<h2 class="modal-title" id="delete_role_title">修改用户</h2>
 								</div>
 								<div class="modal-body">
 									<div class="form-group">
-										<label for="code" class="col-sm-1 control-label">工号：</label>
+										<label for="code" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>工号：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control code" name="code" id="code" value="<{$employee.code}>">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="name" class="col-sm-1 control-label">姓名：</label>
+										<label for="name" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>姓名：</label>
 										<div class="col-sm-11">
 											<input type="text" name="name" id="name" class="form-control name" value="<{$employee.name}>">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="password" class="col-sm-1 control-label">密码：</label>
-										<div class="col-sm-11">
-											<input type="password" class="form-control password" name="password" id="password" disabled value="<{$employee.password}>">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="status" class="col-sm-1 control-label">禁用：</label>
-										<div class="col-sm-11">
-											<select name="status" id="status" class="form-control">
-												<if condition="$employee['status'] eq 1">
-													<option value="0">否</option>
-													<option value="1" selected>是</option>
-												</if>
-												<if condition="$employee['status'] eq 0">
-													<option value="0" selected>否</option>
-													<option value="1">是</option>
-												</if>
-											</select>
 										</div>
 									</div>
 									<div class="form-group">
@@ -102,13 +81,13 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="position" class="col-sm-1 control-label">职位：</label>
+										<label for="position" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>职位：</label>
 										<div class="col-sm-11">
 											<div id="position"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="department" class="col-sm-1 control-label">部门：</label>
+										<label for="department" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>部门：</label>
 										<div class="col-sm-11">
 											<div id="department"></div>
 										</div>
@@ -120,7 +99,7 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="mobile" class="col-sm-1 control-label">手机：</label>
+										<label for="mobile" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>手机：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control mobile" name="mobile" id="mobile" value="<{$employee.mobile}>">
 										</div>
@@ -153,7 +132,7 @@
 		</div>
 	</div>
 	<script>
-		var ManageObject = {
+		var AlterObject = {
 			object:{
 				positionSelect:$('#position').QuasarSelect({
 					name        :'position',

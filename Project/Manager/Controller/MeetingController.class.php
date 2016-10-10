@@ -7,7 +7,7 @@
 	 */
 	namespace Manager\Controller;
 
-	use Manager\Model\ManagerModel;
+	use Manager\Logic\MeetingLogic;
 	use Think\Page;
 
 	class MeetingController extends ManagerController{
@@ -17,9 +17,11 @@
 
 		public function create(){
 			if(IS_POST){
-				$model  = D('Meeting');
-				$result = $model->createMeeting();
-				if($result['status']) $this->success($result['message']);
+				$logic  = new MeetingLogic();
+				$post = I('post.');
+				$post['brief'] = $_POST['brief'];
+				$result = $logic->create($post);
+				if($result['status']) $this->success($result['message'],U('manage'));
 				else $this->error($result['message'], '', 3);
 				exit;
 			}
@@ -40,17 +42,6 @@
 			}
 		}
 
-		public function addMeeting(){
-			if(IS_POST){
-				/** @var \Core\Model\MeetingModel $model */
-				$model  = D('Core/Meeting'); //实例化表
-				$data   = I('post.', '');         //获取表单数据
-				$result = $model->createMeeting($data); //用model 创建表插入数据
-				$this->success('创建成功',U('manage'));
-				exit;
-			}
-		}
-
 		public function deleteMeeting(){
 			if(IS_POST){
 				$id   = I('post.id'); //post到id
@@ -64,16 +55,19 @@
 		public function manage(){
 			/** @var \Core\Model\EmployeeModel $employee_model */
 			$employee_model = D('Core/Employee');
-			$setDirector    = function ($list) use ($employee_model){
-				foreach($list as $key => $val){
-					$tmp                         = $employee_model->findEmployee(1, ['id' => $val['director_id']]);
-					$list[$key]['director_name'] = $tmp['name'];
-				}
+			if(IS_POST){
+				/** @var \Core\Model\MeetingModel $meeting_model */
+				$meeting_model = D('Core/Meeting');
+				$meeting_data['id'] = I('post.id');
 
-				return $list;
-			};
+				$result = $meeting_model->deleteMeeting($meeting_data);
+				if($result['status']) $this->success($result['message'], U('manage')); // 判断status存在
+				else $this->error($result['message']); // 判断status不存在
+				exit;
+			}
 			/** @var \Core\Model\MeetingModel $model */
 			$model       = D('Core/Meeting'); // 实例化表模型
+			$meeting_logic = new MeetingLogic();
 			$list_total  = $model->findMeeting(0, [
 				'keyword' => I('get.keyword', ''),
 				'status'  => 'not deleted'
@@ -84,18 +78,16 @@
 			$meeting_list = $model->findMeeting(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'   => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
 				'status'  => 'not deleted'
 			]); // 查出一页会议的内容
-			$meeting_list = $setDirector($meeting_list);
+			$meeting_list = $meeting_logic->setExtendColumnForManage($meeting_list);
 			$this->assign('content', $meeting_list); // 赋值数据集
 			$this->assign('page', $show); // 赋值分页输出
 			$this->display();
 		}
 
 		public function alter(){
-			/** @var \Core\Model\MeetingModel $model */
-			$model = D('Core/Meeting');
 			/** @var \Core\Model\EmployeeModel $employee_model */
 			$employee_model = D('Core/Employee');
 			$setEmployee    = function ($data) use ($employee_model){
@@ -108,17 +100,23 @@
 
 				return $data;
 			};
+
+			/** @var \Core\Model\MeetingModel $model */
+			$model = D('Core/Meeting');
+			$info  = $model->findMeeting(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
+			$info  = $setEmployee($info);
+
 			if(IS_POST){
-				$result = $model->alterMeeting(I('get.id', 0, 'int'), I('post.')); //传值到model里面操作
-				if($result['status']) $this->success('写入成功',U('manage')); //判断status存在
-				else $this->error($result['message']);			  //判断status不存在
+				$logic  = new MeetingLogic();
+				$post = I('post.');
+				$post['brief'] = $_POST['brief'];
+				$result = $logic->alter(I('get.id', 0, 'int'), $post, $info);
+				if($result['status']) $this->success($result['message'], U('manage')); // 判断status存在
+				else $this->error($result['message']); // 判断status不存在
 				exit;
 			}
 
-			$info = $model->findMeeting(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
-			$info = $setEmployee($info);
 			$this->assign('info', $info);
-
 			/** @var \Manager\Model\EmployeeModel $employee_model */
 			$employee_model = D('Employee');
 			$employee_list  = $employee_model->getEmployeeSelectList();

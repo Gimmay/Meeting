@@ -16,6 +16,19 @@ $(function(){
 			$(this).find('.arrow').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-left');
 		}
 	});
+
+	$('.no_link').on('click',function(){
+		if($(this).parent('.side_item').hasClass('cls')){
+			$(this).parent('.side_item').find('.nav-second-level').css('height','auto');
+			$(this).find('.arrow').removeClass('glyphicon-chevron-left').addClass('glyphicon-chevron-down');
+			$(this).parent('.side_item').removeClass('cls');
+		}else{
+			$(this).parent('.side_item').find('.nav-second-level').css('height',0);
+			$(this).find('.arrow').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-left');
+			$(this).parent('.side_item').addClass('cls');
+		}
+	});
+
 	/*
 	 *  分配角色
 	 *  所有角色框中，点击成为已选角色

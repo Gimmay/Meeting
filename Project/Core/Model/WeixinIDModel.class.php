@@ -37,7 +37,10 @@
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['otype'])) $where['otype'] = $filter['otype'];
+			if(isset($filter['wtype'])) $where['wtype'] = $filter['wtype'];
+			if(isset($filter['weixinID'])) $where['weixin_id'] = $filter['weixinID'];
 			if(isset($filter['oid'])) $where['oid'] = $filter['oid'];
+			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);

@@ -32,13 +32,13 @@
 				<div class="mian_body">
 					<section class="content">
 						<div class="return">
-							<a class="btn btn-default" href="<{:U('Meeting/manage')}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回会议管理</a>
+							<a class="btn btn-default" href="<{:U('Meeting/manage')}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
 						</div>
 						<header class="c_header">
 							<div class="function_list clearfix">
 								<div class="function_btn bg-warning">
 									<a href="<{:U('SignPlace/create', ['mid'=>$_GET['mid']])}>"> <i></i>
-										<p>添加签到点</p>
+										<p>新建签到点</p>
 									</a>
 								</div>
 								<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_signPlace" data-backdrop="static">
@@ -55,7 +55,7 @@
 										<button type="submit" class="btn btn-default mian_search">搜索签到点</button>
 									</span>
 								</div>
-								<a type="reset" class="btn btn-default mian_search" href="<{:U('manage')}>">查看所有</a>
+								<a type="reset" class="btn btn-default mian_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
 							</form>
 						</div>
 						<div class="table_wrap">
@@ -94,7 +94,7 @@
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>">
 													<a href="<{:U('Client/manage',['mid'=>$_GET['mid'], 'sid'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a>
-													<a href="<{:U('SignPlace/alter')}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
+													<a href="<{:U('SignPlace/alter',['mid'=>$_GET['mid'], 'sid'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
 													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_signPlace">删除</button>
 												</div>
 											</td>

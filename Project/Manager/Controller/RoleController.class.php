@@ -35,60 +35,48 @@
 
 				return $result;
 			};
-			/** @var \Core\Model\RoleModel $model */
-			$model = D('Core/Role');
-			$logic = new RoleLogic();
+			$logic           = new RoleLogic();
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
 				$result = $logic->handlerRequest($type);
-				if($result === -1){
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
 				}
 				else{
+					unset($result['__ajax__']);
 					if($result['status']) $this->success($result['message']);
 					else $this->error($result['message'], '', 3);
 				}
 				exit;
 			}
-			$meeting_logic  = new MeetingLogic();
-			$max_role_level = $model->getMaxRoleLevel(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));
-			/* ↓↓↓↓↓ 获取列表数据 ↓↓↓↓↓ */
-			$list_total  = $model->findRole(0, ['keyword' => I('get.keyword', ''), 'status' => 'not deleted']);
-			$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
-			\ThinkPHP\Quasar\Page\setTheme1($page_object);
-			$page_show = $page_object->show();
-			$role_list = $model->findRole(2, [
-				'keyword' => I('get.keyword', ''),
-				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
-				'status'  => 'not deleted'
-			]);
-			$role_list = $setExtendColumn($role_list);
-			/* ↑↑↑↑↑ 获取列表数据 ↑↑↑↑↑ */
-			$meeting_record = $meeting_logic->getSelectListForRole();
-			$this->assign('meeting_list', $meeting_record);
-			$this->assign('role_list', $role_list);
-			$this->assign('page_show', $page_show);
-			$this->assign('max_role_level', $max_role_level ? $max_role_level : 5);
-			$this->display();
-		}
-
-		public function userListOfRole(){
-			$role_id = I('get.id', 0, 'int');
-			/** @var \Core\Model\RoleModel $model */
-			$model = D('Core/Role');
-			$list  = $model->getUserOfRole($role_id);
-			$this->assign('user_list', $list);
-		}
-
-		public function alterRole(){
-			/** @var \Core\Model\RoleModel $model */
-			$model = D('Core/Role');
-			if(IS_POST){
-				$result = $model->alterRole(I('post.id', 0, 'int'), I('post.')); //传值到model里面操作
-				if($result['status']) $this->success('写入成功', U('manage')); //判断status存在
-				else $this->error($result['message']);              //判断status不存在
-				exit;
+			if($this->permissionList['viewRole']){
+				/** @var \Core\Model\RoleModel $model */
+				$model          = D('Core/Role');
+				$meeting_logic  = new MeetingLogic();
+				$max_role_level = $model->getMaxRoleLevel(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));
+				/* ↓↓↓↓↓ 获取列表数据 ↓↓↓↓↓ */
+				$list_total  = $model->findRole(0, ['keyword' => I('get.keyword', ''), 'status' => 'not deleted']);
+				$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
+				\ThinkPHP\Quasar\Page\setTheme1($page_object);
+				$page_show = $page_object->show();
+				$role_list = $model->findRole(2, [
+					'keyword' => I('get.keyword', ''),
+					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
+					'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+					'status'  => 'not deleted'
+				]);
+				$role_list = $setExtendColumn($role_list);
+				/* ↑↑↑↑↑ 获取列表数据 ↑↑↑↑↑ */
+				$meeting_record = $meeting_logic->getSelectListForRole();
+				$this->assign('meeting_list', $meeting_record);
+				$this->assign('role_list', $role_list);
+				$this->assign('page_show', $page_show);
+				$this->assign('max_role_level', $max_role_level ? $max_role_level : 5);
+				$this->display();
+			}
+			else{
+				$this->error('您没有查看员工模块的权限');
 			}
 		}
-
 	}

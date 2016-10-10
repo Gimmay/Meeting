@@ -1,47 +1,76 @@
 <!--会议系统左侧  导航栏 公用-->
 <div class="mt_navbar">
 	<div class="header">
+		<div class="logo">
+			<img src="<{$Think.COMMON_IMAGE_PATH}>/logo.png" alt="">
+		</div>
 		<a href="http://www.baidu.com">吉美会议</a>
 	</div>
 	<div class="sidenav">
 		<ul class="sidenav_list" id="side_menu">
-			<li class="side_item <php>if('Employee'==$c_name) echo 'active';</php>">
-				<a href="<{:U('Employee/manage')}>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">员工管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
-				<ul class="nav-second-level">
-					<li>
-						<a href="<{:U('Employee/create')}>">新建员工</a>
-					</li>
-				</ul>
-			</li>
-			<li class="side_item <php>if('Role'==$c_name) echo 'active';</php>">
-				<a href="<{:U('Role/manage')}>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">角色管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
-			</li>
+			<if condition="$permission_list['viewEmployee'] eq 1">
+				<li class="side_item <php>if('Employee'==$c_name) echo 'active';</php>">
+					<a href="<{:U('Employee/manage')}>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">员工管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+					<ul class="nav-second-level">
+						<li>
+							<a href="<{:U('Employee/create')}>">新建员工</a>
+						</li>
+					</ul>
+				</li>
+			</if>
+			<if condition="$permission_list['viewRole'] eq 1">
+				<li class="side_item <php>if('Role'==$c_name) echo 'active';</php>">
+					<a href="<{:U('Role/manage')}>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon glyphicon-star"></i> <span class="nav-label">角色管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li>
+			</if>
 			<li class="side_item <php>if('Meeting'==$c_name or 'SignPlace'==$c_name or 'Client'==$c_name) echo 'active';</php>">
 				<a href="<{:U('Meeting/manage')}>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">会议管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
+					<i class="icon_nav glyphicon glyphicon-th"></i> <span class="nav-label">会议管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				<ul class="nav-second-level">
 					<li>
 						<a href="<{:U('Meeting/create')}>">创建会议</a>
 					</li>
 				</ul>
 			</li>
+			<li class="side_item <php>if('Coupon'==$c_name) echo 'active';</php>">
+				<a href="<{:U('Coupon/manage')}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">代金券管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
 			<li class="side_item <php>if('Message'==$c_name) echo 'active';</php>">
 				<a href="<{:U('Message/manage')}>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-home"></i>
-					<span class="nav-label">消息管理</span>
+					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">消息管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <php>if('Badge'==$c_name) echo 'active';</php>">
+				<a href="<{:U('Badge/manage')}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">胸卡设计</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item cls <php>if('Recycle'==$c_name) echo 'active';</php>">
+				<div class="side-item-link no_link">
+					<i class="icon_nav glyphicon glyphicon-trash"></i> <span class="nav-label">回收站管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
+				</div>
+				<ul class="nav-second-level">
+					<li>
+						<a href="<{:U('Recycle/client')}>">客户列表</a>
+					</li>
+					<li>
+						<a href="<{:U('Recycle/employee')}>">员工列表</a>
+					</li>
+					<li>
+						<a href="<{:U('Recycle/role')}>">角色列表</a>
+					</li>
+					<li>
+						<a href="<{:U('Recycle/meeting')}>">会议列表</a>
+					</li>
+				</ul>
 			</li>
 		</ul>
 	</div>

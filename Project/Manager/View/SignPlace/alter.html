@@ -34,53 +34,56 @@
 				<include file="Public/header"/>
 				<div class="mian_body">
 					<section class="content" style="padding: 10px;">
+						<div class="return">
+							<a class="btn btn-default" href="javascript:history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
+						</div>
 						<div class="modal-header">
 							<h2 class="modal-title" id="authorize_role_title">修改签到点</h2>
 						</div>
-						<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkSignPlaceAlter()">
-							<div class="modal-body" style=" padding: 15px 20px 15px 0px;">
+						<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+							<div class="modal-body" style=" padding: 15px 20px 15px 0;">
 								<div class="form-group">
-									<label for="mid" class="col-sm-1 control-label">会议：</label>
+									<label for="mid" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>会议：</label>
 									<div class="col-sm-11">
-										<div id="mid"></div>
+										<input type="text" class="form-control" name="mid" id="mid" value="<{$record_name.name}>" disabled>
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="name" class="col-sm-1 control-label">签到点名称：</label>
+									<label for="name" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>签到点名称：</label>
 									<div class="col-sm-11">
-										<input type="text" class="form-control name" name="name" id="name">
+										<input type="text" class="form-control name" name="name" id="name" value="<{$list.name}>">
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="place" class="col-sm-1 control-label">地址：</label>
+									<label for="place" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>地址：</label>
 									<div class="col-sm-11">
 										<div id="place" class="address_wrap clearfix">
 											<div class="address_item">
-												<select class="prov form-control" name="address.province"></select>
+												<select class="prov form-control" name="address_province"></select>
 											</div>
 											<div class="address_item">
-												<select class="city form-control" name="address.city" disabled="disabled"></select>
+												<select class="city form-control" name="address_city" disabled="disabled"></select>
 											</div>
 											<div class="address_item">
-												<select class="dist form-control" name="address.area" disabled="disabled"></select>
+												<select class="dist form-control" name="address_area" disabled="disabled"></select>
 											</div>
 											<div class="address_item address_details">
 												<input type="text" placeholder="具体街道或者村镇" class="form-control" name="address.detail">
 											</div>
 											<div class="address_item address_default">
-												原先地址：<span><{$info.place}></span>
+												原先地址：<span><{$list.place}></span>
 											</div>
 										</div>
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="director_id" class="col-sm-1 control-label">负责人：</label>
+									<label for="director_id" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>负责人：</label>
 									<div class="col-sm-11">
 										<div id="director_id"></div>
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="sign_director_id" class="col-sm-1 control-label">签到负责人：</label>
+									<label for="sign_director_id" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>签到负责人：</label>
 									<div class="col-sm-11">
 										<div id="sign_director_id"></div>
 									</div>
@@ -88,7 +91,7 @@
 								<div class="form-group">
 									<label for="comment" class="col-sm-1 control-label">备注：</label>
 									<div class="col-sm-11">
-										<textarea class="form-control comment" name="comment" id="comment"></textarea>
+										<textarea class="form-control comment" name="comment" id="comment"><{$list.comment}></textarea>
 									</div>
 								</div>
 							</div>
@@ -102,18 +105,8 @@
 		</div>
 	</div>
 	<script>
-		var SignPlaceObject = {
+		var AlterObject = {
 			object:{
-				midSelect :$('#mid').QuasarSelect({
-					name        :'mid',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting_list)}>',
-					idInput     :'selected_mid',
-					idHidden    :'selected_mid_form',
-					placeholder :'',
-					justInput   :true,
-					hasEmptyItem:false
-				}),
 				directorIdSelect:$('#director_id').QuasarSelect({
 					name        :'director_id',
 					classStyle  :'form-control',
@@ -122,7 +115,9 @@
 					idHidden    :'selected_director_id_form',
 					placeholder :'',
 					justInput   :true,
-					hasEmptyItem:false
+					hasEmptyItem:false,
+					defaultValue:'<{$list.director_id}>',
+					defaultHtml :'<{$info.develop_consultant_code}>'+" - "+'<{$info.develop_consultant_name}>'
 				}),
 				signDirectorIdSelect:$('#sign_director_id').QuasarSelect({
 					name        :'sign_director_id',
@@ -132,12 +127,14 @@
 					idHidden    :'selected_sign_director_id_form',
 					placeholder :'',
 					justInput   :true,
-					hasEmptyItem:false
+					hasEmptyItem:false,
+					defaultValue:'<{$list.sign_director_id}>',
+					defaultHtml :'<{$info.service_consultant_code}>'+" - "+'<{$info.service_consultant_name}>'
 				}),
 				toast            :$().QuasarToast(),
 				loading          :$().QuasarLoading()
 			}
-		}
+		};
 		// 三联地址
 		$(function(){
 			$("#place").citySelect({

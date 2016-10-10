@@ -63,13 +63,24 @@
 		}
 
 		public function getRoleByUser($oid, $type = 0){
-			$result        = $this->alias('main')->join("system_role sub on sub.id = main.rid")->where([
-				'main.type' => $type,
-				'main.oid'  => $oid
-			])->field('sub.name')->select();
-			$role_name_arr = [];
+			$where['main.type']  = $type;
+			$where['main.oid']   = $oid;
+			$where['sub.status'] = ['neq', 2];
+			$result              = $this->alias('main')->join("system_role sub on sub.id = main.rid")->where($where)->field('sub.name')->select();
+			$role_name_arr       = [];
 			foreach($result as $val) $role_name_arr[] = $val['name'];
 
 			return implode(',', $role_name_arr);
+		}
+
+		public function getRoleEffect($oid){
+			$where['main.type']  = 0;
+			$where['main.oid']   = $oid;
+			$where['sub.status'] = ['neq', 2];
+			$result          = $this->alias('main')->join("system_role sub on sub.id = main.rid")->where($where)->field('sub.effect')->select();
+			$role_effect_arr = [];
+			foreach($result as $val) $role_effect_arr[] = $val['effect'];
+
+			return $role_effect_arr;
 		}
 	}

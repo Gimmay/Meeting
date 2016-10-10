@@ -1,6 +1,46 @@
 /**
  * Created by qyqy on 2016-9-21.
  */
+function checkIsEmpty(){
+	var $code   = $('#code');
+	var $name   = $('#selected_name');
+	var $password = $('#password');
+	var $selected_position = $('#selected_position');
+	var $selected_department = $('#selected_department');
+	var $mobile = $('#mobile');
+	if($code.val() == ''){
+		CreateObject.object.toast.toast("工号不能为空");
+		$code.focus();
+		return false;
+	}
+	if($name.text() == ''){
+		CreateObject.object.toast.toast("姓名不能为空");
+		$name.focus();
+		return false;
+	}
+	if($password.val() == ''){
+		CreateObject.object.toast.toast("密码不能为空");
+		$password.focus();
+		return false;
+	}
+
+	if($selected_position.text() == ''){
+		CreateObject.object.toast.toast("职位不能为空");
+		$selected_position.focus();
+		return false;
+	}
+	if($selected_department.text() == ''){
+		CreateObject.object.toast.toast("部门不能为空");
+		$selected_department.focus();
+		return false;
+	}
+	if($mobile.val() == ''){
+		CreateObject.object.toast.toast("手机号不能为空");
+		$mobile.focus();
+		return false;
+	}
+	return true;
+};
 
 $(function(){
 	var $code          = $('#code');
@@ -19,7 +59,7 @@ $(function(){
 	var $mobile_tmp    = $('#oa_user_info_viewer_mobile');
 	var $birthday_tmp  = $('#oa_user_info_viewer_birthday');
 	var $modal         = $('#oa_user_info_viewer');
-	ManageObject.object.userSelect.onQuasarSelect(function(){
+	CreateObject.object.userSelect.onQuasarSelect(function(){
 		var data = $(this).attr('data-ext');
 		if(data){
 			var tmp = data.split('&');
@@ -70,16 +110,16 @@ $(function(){
 		}
 	});
 	$('#oa_user_info_viewer_submit').on('click', function(){
-		ManageObject.object.userSelect.setValue($name_tmp.html());
-		ManageObject.object.userSelect.setHtml($name_tmp.html());
+		CreateObject.object.userSelect.setValue($name_tmp.html());
+		CreateObject.object.userSelect.setHtml($name_tmp.html());
 		$code.val($code_tmp.html()).attr('value', $code_tmp.html());
 		$mobile.val($mobile_tmp.html()).attr('value', $mobile_tmp.html());
-		ManageObject.object.positionSelect.setValue($position_tmp.html());
-		ManageObject.object.positionSelect.setHtml($position_tmp.html());
-		ManageObject.object.titleSelect.setValue($position_tmp.html());
-		ManageObject.object.titleSelect.setHtml($position_tmp.html());
-		ManageObject.object.deptSelect.setValue($dept_code_tmp.val());
-		ManageObject.object.deptSelect.setHtml($dept_name_tmp.html());
+		CreateObject.object.positionSelect.setValue($position_tmp.html());
+		CreateObject.object.positionSelect.setHtml($position_tmp.html());
+		CreateObject.object.titleSelect.setValue($position_tmp.html());
+		CreateObject.object.titleSelect.setHtml($position_tmp.html());
+		CreateObject.object.deptSelect.setValue($dept_code_tmp.val());
+		CreateObject.object.deptSelect.setHtml($dept_name_tmp.html());
 		$birthday.val($birthday_tmp.html()).attr('value', $birthday_tmp.html());
 		$gender.find('option[value='+$gender_tmp.val()+']').prop('selected', true);
 		$status.find('option[value='+$status_tmp.val()+']').prop('selected', true);

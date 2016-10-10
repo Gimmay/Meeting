@@ -34,4 +34,10 @@
 			return $result;
 		}
 
+		public function getUserID(){
+			$wxcorp_object = new WXCorpUniversalApi($this->_config['corpID'], $this->_config['corpSecret']);
+
+			return $wxcorp_object->getID();
+		}
+
 	}
