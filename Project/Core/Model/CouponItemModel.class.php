@@ -30,9 +30,7 @@
 			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$condition['code']        = ['like', "%$filter[keyword]%"];
-				$condition['mobile']      = ['like', "%$filter[keyword]%"];
-				$condition['name']        = ['like', "%$filter[keyword]%"];
-				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
+
 				$condition['_logic']      = 'or';
 				$where['_complex']        = $condition;
 			}
@@ -151,21 +149,7 @@ $limit
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function createCoupon_item($data){
-			if($this->create($data)){
-				try{
-					$result = $this->add($data);
-					if($result) return ['status' => true, 'message' => '创建代金券成功', 'id' => $result];
-					else return ['status' => false, 'message' => '没有创建代金券'];
-				}catch(Exception $error){
-					$message = $error->getMessage();
-					$exception = $this->handlerException($message);
-					if(!$exception['status']) return $exception;
-					else return ['status' => false, 'message' => $this->getError()];
-				}
-			}
-			else return ['status' => false, 'message' => $this->getError()];
-		}
+
 
 		public function deleteCouponItem($id){
 			if($this->create()){
@@ -184,7 +168,7 @@ $limit
 		}
 
 		public function alterCouponItem($id, $data){
-			if($this->create(I('post.'))){
+			if($this->create($data)){
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save($data);
 					if($result) return ['status' => true, 'message' => '修改成功'];

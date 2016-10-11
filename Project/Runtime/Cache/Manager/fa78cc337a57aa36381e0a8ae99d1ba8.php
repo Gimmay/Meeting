@@ -76,7 +76,22 @@
 			</li>
 			<li class="side_item <?php if('Badge'==$c_name) echo 'active'; ?>">
 				<a href="<?php echo U('Badge/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">胸卡设计</span>
+					<i class="icon_nav glyphicon glyphicon-bookmark"></i> <span class="nav-label">胸卡设计</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Room'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Room/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-home"></i> <span class="nav-label">房间管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Car'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Car/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-plane"></i> <span class="nav-label">车辆管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('DiningBoard'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('DiningBoard/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 			</li>
 			<li class="side_item cls <?php if('Recycle'==$c_name) echo 'active'; ?>">
@@ -138,20 +153,6 @@
 								</div>
 								<a type="reset" class="btn btn-default mian_search" href="<?php echo U('manage');?>">查看所有</a>
 							</form>
-							<form action="" method="get" class="sign_check">
-								<div class="input-group pull-left">
-									<input type="radio"  name="iCheck" id="check_all_condition" class="icheck">&nbsp;&nbsp;全部
-								</div>
-								<div class="input-group pull-left unused">
-									<input type="radio"  name="iCheck" class="icheck" >&nbsp;&nbsp;未使用 (<?php echo ($statistics["signed"]); ?>)
-								</div>
-								<div class="input-group pull-left hasused">
-									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;已使用 (<?php echo ($statistics["reviewed"]); ?>)
-								</div>
-								<div class="input-group pull-left refund">
-									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;退费
-								</div>
-							</form>
 						</div>
 						<div class="table_wrap">
 							<table class="table table-bordered" style="text-align: center">
@@ -161,7 +162,7 @@
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="10%">代金券名称</td>
-										<td width="10%">会议名称</td>
+										<td width="10%">会议名称(张数)</td>
 										<td width="5%">数量</td>
 										<td width="10%">价格</td>
 										<td width="15%">开始时间</td>
@@ -171,25 +172,25 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
+									<?php if(is_array($coupon_list)): $i = 0; $__LIST__ = $coupon_list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$list): $mod = ($i % 2 );++$i;?><tr>
 										<td class="check_item">
-											<input type="checkbox" class="icheck" placeholder="" value="<?php echo ($single["id"]); ?>">
+											<input type="checkbox" class="icheck" placeholder="" value="<?php echo ($list["id"]); ?>">
 										</td>
-										<td>代金券名称</td>
+										<td><?php echo ($list["name"]); ?></td>
 										<td>会议名称</td>
-										<td><a href="javascript:void(0)" class="link color-primary">7</a></td>
-										<td>价格</td>
-										<td>开始时间</td>
-										<td>结束时间</td>
-										<td>备注</td>
+										<td><a href="javascript:void(0)" class="link color-primary"><?php echo ($list["number"]); ?></a></td>
+										<td><?php echo ($list["price"]); ?></td>
+										<td><?php echo ($list["start_time"]); ?></td>
+										<td><?php echo ($list["end_time"]); ?></td>
+										<td><?php echo ($list["comment"]); ?></td>
 										<td>
-											<div class="btn-group" data-id="<?php echo ($single["id"]); ?>">
-												<?php if($max_role_level <= $single['level']): ?><a href="<?php echo U('Coupon/details');?>" type="button" class="btn btn-default btn-xs seeList">查看</a>
+											<div class="btn-group" data-id="<?php echo ($list["id"]); ?>">
+												<?php if($max_role_level <= $single['level']): ?><a href="<?php echo U('Details',['id'=>$list['id']]);?>" type="button" class="btn btn-default btn-xs seeList">查看</a>
 													<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>
 													<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button><?php endif; ?>
 											</div>
 										</td>
-									</tr>
+									</tr><?php endforeach; endif; else: echo "" ;endif; ?>
 								</tbody>
 							</table>
 						</div>
@@ -330,19 +331,14 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title" id="modify_role_title">修改代金券</h2>
 				</div>
-				<form class="form-horizontal" role="form" action="<?php echo U('alterCoupon');?>" method="post" onsubmit="return checkAlter()">
+				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return checkAlter()">
 					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
 					<div class="modal-body">
-						<div class="form-group">
-							<label for="meeting_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle;color: red;">*</b>会议：</label>
-							<div class="col-sm-10">
-								<div id="meeting_a"></div>
-							</div>
-						</div>
+
 						<div class="form-group">
 							<label for="coupon_name_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle;color: red;">*</b>券名称：</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control name" name="name" id="coupon_name_a">
+								<input type="text" class="form-control name" name="name" id="coupon_name_a" value="">
 							</div>
 						</div>
 						<div class="form-group">
@@ -433,7 +429,7 @@
 		var ManageObject = {
 			object:{
 				meetingSelect:$('#meeting').QuasarSelect({
-					name        :'meeting_name',
+					name        :'mid',
 					classStyle  :'form-control',
 					data        :'<?php echo json_encode($meeting_list);?>',
 					idInput     :'selected_meeting',
@@ -442,7 +438,7 @@
 					hasEmptyItem:false
 				}),
 				meetingSelect:$('#meeting_a').QuasarSelect({
-					name        :'meeting_name_a',
+					name        :'mid',
 					classStyle  :'form-control',
 					data        :'<?php echo json_encode($meeting_list);?>',
 					idInput     :'selected_meeting_a',

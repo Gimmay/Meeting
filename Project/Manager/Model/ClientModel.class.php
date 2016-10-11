@@ -7,10 +7,10 @@
 	 */
 	namespace Manager\Model;
 
-
 	class ClientModel extends ManagerModel{
-		protected $tableName   = 'client';
-		protected $tablePrefix = 'user_';
+		protected $tableName       = 'client';
+		protected $tablePrefix     = 'user_';
+		protected $autoCheckFields = true;
 
 		public function _initialize(){
 			parent::_initialize();

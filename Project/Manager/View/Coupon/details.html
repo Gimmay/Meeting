@@ -23,6 +23,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="Quasar" data-mvc-name="<{:'/'.CONTROLLER_NAME.'/'.ACTION_NAME}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>" ></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -38,7 +39,7 @@
 							<div class="function_list clearfix">
 								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_coupon">
 									<i></i>
-									<p>新增代金券</p>
+									<p>添加代金券</p>
 								</div>
 								<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_coupon">
 									<i></i>
@@ -57,17 +58,14 @@
 								<a type="reset" class="btn btn-default mian_search" href="<{:U('manage')}>">查看所有</a>
 							</form>
 							<form action="" method="get" class="sign_check">
-								<div class="input-group pull-left">
-									<input type="radio"  name="iCheck" id="check_all_condition" class="icheck">&nbsp;&nbsp;全部
-								</div>
 								<div class="input-group pull-left unused">
-									<input type="radio"  name="iCheck" class="icheck" >&nbsp;&nbsp;未使用 (<{$statistics.signed}>)
+									<input type="radio"  name="iCheck" class="icheck" >&nbsp;&nbsp;未使用 (<{$statistics.unused}>)
 								</div>
 								<div class="input-group pull-left hasused">
-									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;已使用 (<{$statistics.reviewed}>)
+									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;已使用 (<{$statistics.hasused}>)
 								</div>
 								<div class="input-group pull-left refund">
-									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;退费
+									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;退费(<{$statistics.refund}>)
 								</div>
 							</form>
 						</div>
@@ -90,15 +88,20 @@
 								<tbody>
 									<tr>
 										<td class="check_item">
-											<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
+											<input type="checkbox" class="icheck" placeholder="" value="<{$info.id}>">
 										</td>
-										<td><{$coupon.name}></td>
-										<td><{$meeting.name}></td>
+										<td><{$info.couponName}></td>
+										<td><{$info.meetingName}></td>
 										<td><{$info.cid}></td>
 										<td><{$info.code}></td>
-										<td><{$info.status}></td>
 										<td>
-											<div class="btn-group" data-id="<{$single.id}>">
+										<switch name="info.status">
+											<case value="0">禁用</case>
+											<case value="1">可用</case>
+										</switch>
+										</td>
+										<td>
+											<div class="btn-group" data-id="<{$info.id}>">
 												<if condition="$max_role_level elt $single['level']">
 													<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>
 													<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button>
@@ -127,7 +130,7 @@
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="create_role_title">新增代金券</h2>
+					<h2 class="modal-title" id="create_role_title">添加代金券</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkCreate()">
 					<input type="hidden" name="requestType" value="create">
@@ -136,8 +139,8 @@
 							<label class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>方式：</label>
 							<div class="col-sm-10" style="margin:0">
 								<ul class="nav nav-pills" id="create_way">
-									<li role="presentation" class="active"><a href="#">单个新增</a></li>
-									<li role="presentation"><a href="#">批量新增</a></li>
+									<li role="presentation" class="active"><a href="#">单个添加</a></li>
+									<li role="presentation"><a href="#">批量添加</a></li>
 								</ul>
 							</div>
 						</div>
@@ -164,7 +167,7 @@
 							<div class="form-group">
 								<label class="col-sm-2 control-label"><b style="vertical-align: middle; color: red;">*</b>代金券号：</label>
 								<div class="col-sm-10">
-									<input type="text" name="number" class="number form-control">
+									<input type="text" name="coupon_area" class="coupon_area form-control">
 								</div>
 							</div>
 						</div>
@@ -200,6 +203,7 @@
 									<button type="button" class="btn btn-default auto_get_number">自动获取</button>
 									<ul class="list_coupon_number clearfix">
 									</ul>
+									<input type="hidden" name="coupon_area" value="">
 								</div>
 							</div>
 						</div>
@@ -246,7 +250,7 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title" id="modify_role_title">修改代金券</h2>
 				</div>
-				<form class="form-horizontal" role="form" action="<{:U('alterCoupon')}>" method="post" onsubmit="return checkAlter()">
+				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return checkAlter()">
 					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
 					<div class="modal-body">
 						<div class="form-group">

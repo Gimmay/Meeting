@@ -10,8 +10,9 @@
 	use Quasar\StringPlus;
 
 	class EmployeeModel extends ManagerModel{
-		protected $tableName   = 'employee';
-		protected $tablePrefix = 'user_';
+		protected $tableName       = 'employee';
+		protected $tablePrefix     = 'user_';
+		protected $autoCheckFields = true;
 
 		public function _initialize(){
 			parent::_initialize();

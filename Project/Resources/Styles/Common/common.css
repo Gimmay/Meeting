@@ -17,6 +17,7 @@ th, td, label, input[type=checkbox]{ /* table elements 表格元素 */
 body,
 button, input, select, textarea{ /* for ie */
 	font : 12px/1.2 Tahoma, Helvetica, Arial, "\5b8b\4f53", sans-serif, '微软雅黑'; /* 用 ascii 字符表示，使得在任何编码下都无问题 */
+	font-family: "Helvitica Neue",Helvetica,Arial,"Microsoft YaHei","Hiragino Sans GB",sans-serif;
 }
 
 h1{ font-size : 18px; /* 18px / 12px = 1.5 */ }

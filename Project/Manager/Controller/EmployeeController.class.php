@@ -67,7 +67,8 @@
 					$list_total = $model->listEmployee(0, [
 						'keyword' => I('get.keyword', ''),
 						'status'  => 'not deleted',
-						'rid'     => $role_id
+						'rid'     => $role_id,
+						'did'     => isset($_GET['did']) ? I('get.did', 0, 'int') : null
 					]);
 					/* 分页设置 */
 					$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
@@ -79,14 +80,16 @@
 						'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 						'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
 						'status'  => 'not deleted',
-						'rid'     => $role_id
+						'rid'     => $role_id,
+						'did'     => isset($_GET['did']) ? I('get.did', 0, 'int') : null
 					]);
 				}
 				else{
 					/* 获取当前条件下员工记录数 */
 					$list_total = $model->findEmployee(0, [
 						'keyword' => I('get.keyword', ''),
-						'status'  => 'not deleted'
+						'status'  => 'not deleted',
+						'did'     => isset($_GET['did']) ? I('get.did', 0, 'int') : null
 					]);
 					/* 分页设置 */
 					$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
@@ -97,7 +100,8 @@
 						'keyword' => I('get.keyword', ''),
 						'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 						'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
-						'status'  => 'not deleted'
+						'status'  => 'not deleted',
+						'did'     => isset($_GET['did']) ? I('get.did', 0, 'int') : null
 					]);
 				}
 				$employee_list = $logic->writeExtendInformation($employee_list);
@@ -163,6 +167,7 @@
 				$this->assign('dept', $dept);
 				$this->assign('employee', $info);
 				$this->display();
-			}else $this->error('您没有修改员工的权限');
+			}
+			else $this->error('您没有修改员工的权限');
 		}
 	}

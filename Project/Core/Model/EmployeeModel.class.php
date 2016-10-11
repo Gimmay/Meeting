@@ -11,8 +11,8 @@
 	use Think\Exception;
 
 	class EmployeeModel extends CoreModel{
-		protected $tableName   = 'employee';
-		protected $tablePrefix = 'user_';
+		protected $tableName       = 'employee';
+		protected $tablePrefix     = 'user_';
 		protected $autoCheckFields = true;
 
 		public function _initialize(){
@@ -22,6 +22,7 @@
 		public function findEmployee($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
+			if(isset($filter['did'])) $where['did'] = $filter['did'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted') $where['status'] = ['neq', 2];
@@ -75,12 +76,13 @@
 		}
 
 		public function listEmployee($type = 2, $filter = []){ // 与角色表做连表查询
-			$where = '0 = 0';
+			$where   = '0 = 0';
 			$where_1 = '';
-			$limit = '';
-			$order = '';
-			$field = '*';
+			$limit   = '';
+			$order   = '';
+			$field   = '*';
 			if(isset($filter['id'])) $where .= " and id = $filter[id]";
+			if(isset($filter['did'])) $where .= " and did = $filter[did]";
 			if(isset($filter['rid'])) $where_1 .= " and system_role.id = $filter[rid]";
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
@@ -90,8 +92,7 @@
 			if(isset($filter['keyword']) && $filter['keyword']) $where .= " and (code like '%$filter[keyword]%' or mobile like '%$filter[keyword]%'  or name like '%$filter[keyword]%'  or pinyin_code like '%$filter[keyword]%')";
 			if(isset($filter['_limit'])) $limit = "limit $filter[_limit]";
 			if(isset($filter['_order'])) $order = "order by $filter[_order]";
-			if((int)$type==0) $field = 'count(*) count';
-
+			if((int)$type == 0) $field = 'count(*) count';
 			$sql = "SELECT
 	$field
 FROM(
@@ -138,7 +139,7 @@ $limit
 					];
 					$exception = $this->handlerException($message);
 					if(!$exception['status']) return $exception;
-					else return ['status' => false, 'message' => $this->getError()];
+					else return ['status' => false, 'message' => $message];
 				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];

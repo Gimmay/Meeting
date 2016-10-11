@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>员工管理 - 会议系统</title>
+	<title>新建客户 - 会议系统</title>
 	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
@@ -17,6 +17,8 @@
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/bootstrap.min.js"></script>
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/cityselect/jquery.cityselect.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/jquery-position.js"></script>
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
@@ -75,7 +77,22 @@
 			</li>
 			<li class="side_item <?php if('Badge'==$c_name) echo 'active'; ?>">
 				<a href="<?php echo U('Badge/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">胸卡设计</span>
+					<i class="icon_nav glyphicon glyphicon-bookmark"></i> <span class="nav-label">胸卡设计</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Room'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Room/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-home"></i> <span class="nav-label">房间管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Car'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Car/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-plane"></i> <span class="nav-label">车辆管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('DiningBoard'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('DiningBoard/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 			</li>
 			<li class="side_item cls <?php if('Recycle'==$c_name) echo 'active'; ?>">
@@ -116,91 +133,53 @@
 				<div class="mian_body">
 					<section class="content">
 						<div class="return">
-							<a class="btn btn-default"  onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
+							<a class="btn btn-default" onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回消息管理</a>
 						</div>
 						<div class="table_wrap">
-							<form class="form-horizontal" role="form" method="post" id="form" action="" onsubmit="return checkIsEmpty()">
-								<input type="hidden" name="requestType" value="create">
-								<div class="modal-header">
-									<h2 class="modal-title" id="delete_role_title">修改用户</h2>
-								</div>
-								<div class="modal-body">
-									<div class="form-group">
-										<label for="code" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>工号：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control code" name="code" id="code" value="<?php echo ($employee["code"]); ?>">
+							<!-- Nav tabs -->
+							<ul class="nav nav-tabs" role="tablist">
+								<li role="presentation" class="active"><a href="#home" role="tab" data-toggle="tab">创建消息模板</a></li>
+								<li role="presentation"><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
+								<li role="presentation"><a href="#messages" role="tab" data-toggle="tab">Messages</a></li>
+								<li role="presentation"><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
+							</ul>
+
+							<!-- Tab panes -->
+							<div class="tab-content">
+								<div role="tabpanel" class="tab-pane active" id="home">
+									<div class="edit_box">
+										<textarea class="form-control" rows="3" id="textarea_edit"></textarea>
+										<p style=" margin-top: 5px;">已输入<span class="words_num"></span>个字，约1条短信（不含签名）</p>
+										<p style=" margin-top: 5px;">每60个字符计费1条，超过60个字将自动被运营商按多条计费，长短信最多230个字符</p>
+										<div class="btn-group" style=" margin-top: 10px;">
+											<button type="button" class="btn btn-default">保存</button>
+											<button type="button" class="btn btn-default">编辑</button>
+											<button type="button" class="btn btn-default">重置</button>
 										</div>
 									</div>
-									<div class="form-group">
-										<label for="name" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>姓名：</label>
-										<div class="col-sm-11">
-											<input type="text" name="name" id="name" class="form-control name" value="<?php echo ($employee["name"]); ?>">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="gender" class="col-sm-1 control-label">性别：</label>
-										<div class="col-sm-11">
-											<select name="gender" id="gender" class="form-control">
-												<?php if($employee["gender"] == 0): ?>1
-													<option value="0" selected>未指定</option>
-													<option value="1">男</option>
-													<option value="2">女</option><?php endif; ?>
-												<?php if($employee["gender"] == 1): ?>2
-													<option value="0">未指定</option>
-													<option value="1" selected>男</option>
-													<option value="2">女</option><?php endif; ?>
-												<?php if($employee["gender"] == 2): ?>3
-													<option value="0">未指定</option>
-													<option value="1">男</option>
-													<option value="2" selected>女</option><?php endif; ?>
-											</select>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="position" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>职位：</label>
-										<div class="col-sm-11">
-											<div id="position"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="department" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>部门：</label>
-										<div class="col-sm-11">
-											<div id="department"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="title" class="col-sm-1 control-label">职称：</label>
-										<div class="col-sm-11">
-											<div id="title"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="mobile" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>手机：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control mobile" name="mobile" id="mobile" value="<?php echo ($employee["mobile"]); ?>">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="birthday" class="col-sm-1 control-label">生日：</label>
-										<div class="col-sm-11">
-											<div class="input-group date form_datetime" id="birth_date">
-												<input class="form-control" id="birthday" name="birthday" value="<?php echo ($employee["birthday"]); ?>">
-												<!--<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>-->
-												<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-											</div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="comment" class="col-sm-1 control-label">备注：</label>
-										<div class="col-sm-11">
-											<textarea class="form-control comment" name="comment" id="comment"><?php echo ($employee["comment"]); ?></textarea>
+									<div class="field_box">
+										<h3>可插入字段</h3>
+										<div class="filed_w">
+											<button class="btn btn-xs btn-primary" >&lt;:姓名:&gt;</button>
+											<button class="btn btn-xs btn-primary" >&lt;性别&gt;</button>
+											<button class="btn btn-xs btn-primary" >&lt;电子&gt;</button>
+											<button class="btn btn-xs btn-primary" >&lt;321&gt;</button>
+											<button class="btn btn-xs btn-primary" >&lt;123&gt;</button>
+											<button class="btn btn-xs btn-primary" >&lt;姓2名&gt;</button>
+											<button class="btn btn-xs btn-primary" >&lt;2&gt;</button>
+											<button class="btn btn-xs btn-primary" >&lt;姓名&gt;</button>
+											<button class="btn btn-xs btn-primary" >&lt;姓名&gt;</button>
+											<button class="btn btn-xs btn-primary" >&lt;姓名&gt;</button>
+											<button class="btn btn-xs btn-primary" >&lt;姓名&gt;</button>
+											<button class="btn btn-xs btn-primary" >&lt;姓名&gt;</button>
+											<button class="btn btn-xs btn-primary" >&lt;姓名&gt;</button>
 										</div>
 									</div>
 								</div>
-								<div class="modal-footer text_center">
-									<button type="submit" class="btn btn-primary">提交</button>
-								</div>
-							</form>
+								<div role="tabpanel" class="tab-pane" id="profile">...</div>
+								<div role="tabpanel" class="tab-pane" id="messages">...</div>
+								<div role="tabpanel" class="tab-pane" id="settings">...</div>
+							</div>
 						</div>
 					</section>
 				</div>
@@ -208,45 +187,41 @@
 		</div>
 	</div>
 	<script>
-		var AlterObject = {
+		var CreateObject = {
 			object:{
-				positionSelect:$('#position').QuasarSelect({
-					name        :'position',
+				developConsultantSelect:$('#develop_consultant').QuasarSelect({
+					name        :'develop_consultant',
 					classStyle  :'form-control',
-					data        :'<?php echo json_encode($position);?>',
-					idInput     :'selected_position',
-					idHidden    :'selected_position_form',
+					idInput     :'selected_develop_consultant',
+					idHidden    :'selected_develop_consultant_form',
+					data        :'<?php echo json_encode($employee_list);?>',
 					placeholder :'',
-					justInput   :true,
-					hasEmptyItem:false,
-					defaultValue:'<?php echo ($employee["position"]); ?>',
-					defaultHtml:'<?php echo ($employee["position"]); ?>'
+					hasEmptyItem:false
 				}),
-				titleSelect   :$('#title').QuasarSelect({
-					name        :'title',
+				serviceConsultantSelect   :$('#service_consultant').QuasarSelect({
+					name        :'service_consultant',
 					classStyle  :'form-control',
-					data        :'<?php echo json_encode($position);?>',
-					idInput     :'selected_title',
-					idHidden    :'selected_title_form',
+					idInput     :'selected_service_consultant',
+					idHidden    :'selected_service_consultant_form',
 					placeholder :'',
-					justInput   :true,
-					hasEmptyItem:false,
-					defaultValue:'<?php echo ($employee["title"]); ?>',
-					defaultHtml:'<?php echo ($employee["title"]); ?>'
-				}),
-				deptSelect    :$('#department').QuasarSelect({
-					name        :'did',
-					classStyle  :'form-control',
-					data        :'<?php echo json_encode($dept);?>',
-					idInput     :'selected_department',
-					idHidden    :'selected_department_form',
-					placeholder :'',
-					justInput   :true,
-					hasEmptyItem:false,
-					defaultValue:'<?php echo ($employee["did"]); ?>',
-					defaultHtml:'<?php echo ($employee["did"]); ?>'
+					data        :'<?php echo json_encode($employee_list);?>',
+					hasEmptyItem:false
 				}),
 				birthDate     :$('#birth_date').datetimepicker({
+					language          :'zh-CN',
+					todayBtn          :true,
+					autoclose         :true,
+					todayHighlight    :true,
+					keyboardNavigation:true,
+					forceParse        :true,
+					format            :'yyyy-mm-dd',
+					weekStart         :0,
+					startView         :4,
+					minView           :2,
+					maxView           :4,
+					minuteStep        :5
+				}),
+				createDate     :$('#create_date').datetimepicker({
 					language          :'zh-CN',
 					todayBtn          :true,
 					autoclose         :true,
@@ -264,6 +239,12 @@
 				loading: $().QuasarLoading()
 			}
 		};
+		$(function(){
+			$("#address").citySelect({
+				nodata:"none",
+				url   :'<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/cityselect/city.min.js'
+			});
+		});
 	</script>
 </body>
 </html>

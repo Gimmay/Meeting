@@ -8,8 +8,9 @@
 	namespace Manager\Model;
 
 	class MeetingModel extends ManagerModel{
-		protected $tableName   = 'meeting';
-		protected $tablePrefix = 'workflow_';
+		protected $tableName       = 'meeting';
+		protected $tablePrefix     = 'workflow_';
+		protected $autoCheckFields = true;
 
 		public function _initialize(){
 			parent::_initialize();

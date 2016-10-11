@@ -2,6 +2,17 @@
 	padding : 30px !important;
 }
 
+.badge_content > header > h1 {
+	width: 135px;
+	height: 50px;
+	background: #00a0e8;
+	color: #fff;
+	text-align: center;
+	line-height: 50px;
+	font-size: 14px;
+	font-family: "Helvitica Neue",Helvetica,Arial,"Microsoft YaHei","Hiragino Sans GB",sans-serif;
+}
+
 .badge_content > header{
 	margin-bottom : 20px;
 }
@@ -11,51 +22,119 @@
 }
 
 .cart_view{
-	width         : 400px;
-	height        : 700px;
-	background    : #FFFFFF;
-	border        : 1px solid #E1E1E1;
-	border-radius : 5px;
-	float         : left;
+	overflow         : hidden;
+	position         : relative;
+	z-index          : 2;
+	line-height      : 1.6;
+	background-color : rgba(0,0,0,.2);
+	border           : 1px solid #E1E1E1;
+	border-radius    : 5px;
+	float            : left;
+/*	background-image : url("../../Images/Common/bg.jpg");*/
+	background-size  : 100% 100%;
+}
+
+.ui-widget-content{
+	background : none !important;
+	color      : #FFFFFF;
+	border     : none;
+}
+
+.ui-widget-content:hover{
+	border : 1px dashed rgba(0, 160, 232, 1) !important;
+	cursor : move;
 }
 
 .cart_set{
-	background : #ECF1F4;
-	float      : left;
-	padding    : 20px;
+	background    : #ECF1F4;
+	float         : left;
+	padding       : 20px;
+	border-radius : 5px;
+	margin-top    : 20px;
 }
 
-.cart_set h2 {
-	font-size: 18px;
-	font-weight: bold;
-	margin: 20px 0;
+.cart_set h2{
+	font-size   : 18px;
+	font-weight : bold;
+	margin      : 20px 0;
 }
 
-.choose_type {
-	padding: 10px;
+.choose_type{
+	padding : 10px;
 }
 
-.template {
-	padding: 10px;
+.template{
+	padding : 10px;
 }
 
-
-.bg_up_file {
-	position :  relative;
-	width: 100%;
-	height :40px;
-	border :1px dashed  rgba(0,0,0,.2);
-	background: #fff;
-	margin: 10px 0;
+.form_li{
+	margin : 10px 0;
 }
 
-#updateBackground {
+.form_li .title{
+	font-weight : bold;
+}
+
+.bg_up_file{
+	position    : relative;
+	text-align  : center;
+	line-height : 40px;
+	width       : 100%;
+	height      : 40px;
+	border      : 1px dashed rgba(0, 0, 0, .2);
+	background  : #FFFFFF;
+	margin      : 10px 0;
+}
+
+#updateBackground{
 	position : absolute;
-	width: 100%;
-	height: 100%;
+	width    : 100%;
+	height   : 100%;
+	opacity  : 0;
+}
+#submit_bg {
+	position : absolute;
 	opacity: 0;
 }
 
+.size input{
+	width      : 60px;
+	height     : 30px;
+	text-align : center;
+}
+
+.size_confirm{
+	margin-left : 20px;
+	margin-top  : -2px;
+}
+
+.vote_list li{
+	float      : left;
+	padding    : 10px;
+	margin     : 5px;
+	background : #FFFFFF;
+	cursor     : pointer;
+}
+
+.vote_list li.keyword{
+	color  : #428BCA;
+	border : 1px dotted #428BCA;
+}
+
+.vote_list li.no_choose{
+	color  : rgba(0, 0, 0, .3);
+	border : none;
+}
+
+.vote_list li.no_choose i{
+	display : none;
+}
+
+.vote_list i{
+	color       : rgba(0, 0, 0, .3);
+	font-weight : bold;
+	margin-left : 5px;
+}
 
 
 

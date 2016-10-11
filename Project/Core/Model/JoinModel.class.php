@@ -88,9 +88,13 @@
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save($data);
 					if($result) return ['status' => true, 'message' => '操作成功'];
-					else return ['status' => true, 'message' => $this->getError()];
+					else return ['status' => false, 'message' => '未做任何修改'];
 				}catch(Exception $error){
-					return ['status' => false, 'message' => $error->getMessage()];
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+
+					return ['status' => false, 'message' => $message];
 				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];
@@ -107,7 +111,7 @@
 					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);
 					if(!$exception['status']) return $exception;
-					else return ['status' => false, 'message' => $this->getError()];
+					else return ['status' => false, 'message' => $message];
 				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];

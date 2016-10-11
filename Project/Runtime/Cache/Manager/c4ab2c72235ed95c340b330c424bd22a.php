@@ -63,9 +63,19 @@
 					</li>
 				</ul>
 			</li>
+			<li class="side_item <?php if('Coupon'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Coupon/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">代金券管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
 			<li class="side_item <?php if('Message'==$c_name) echo 'active'; ?>">
 				<a href="<?php echo U('Message/manage');?>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">消息管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Badge'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Badge/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">胸卡设计</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 			</li>
 			<li class="side_item cls <?php if('Recycle'==$c_name) echo 'active'; ?>">
@@ -109,37 +119,28 @@
 							<a class="btn btn-default" onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
 						</div>
 						<div class="table_wrap">
-							<form class="form-horizontal" role="form" method="post" id="form" onsubmit="return CreateObject.func.checkIsEmpty()">
+							<form class="form-horizontal" role="form" method="post" id="form" onsubmit="return checkIsEmpty()">
 								<input type="hidden" name="requestType" value="create">
 								<div class="modal-header">
-									<h2 class="modal-title" id="delete_role_title">新建用户</h2>
+									<h2 class="modal-title" id="delete_role_title">新建员工</h2>
 								</div>
 								<div class="modal-body">
 									<div class="form-group">
-										<label for="code" class="col-sm-1 control-label">工号：</label>
+										<label for="code" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>工号：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control code" name="code" id="code">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="name" class="col-sm-1 control-label">姓名：</label>
+										<label for="name" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>姓名：</label>
 										<div class="col-sm-11">
 											<div id="name"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="password" class="col-sm-1 control-label">密码：</label>
+										<label for="password" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>密码：</label>
 										<div class="col-sm-11">
 											<input type="password" class="form-control password" name="password" id="password">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="status" class="col-sm-1 control-label">禁用：</label>
-										<div class="col-sm-11">
-											<select name="status" id="status" class="form-control">
-												<option value="0">否</option>
-												<option value="1">是</option>
-											</select>
 										</div>
 									</div>
 									<div class="form-group">
@@ -153,13 +154,13 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="position" class="col-sm-1 control-label">职位：</label>
+										<label for="position" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>职位：</label>
 										<div class="col-sm-11">
 											<div id="position"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="department" class="col-sm-1 control-label">部门：</label>
+										<label for="department" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>部门：</label>
 										<div class="col-sm-11">
 											<div id="department"></div>
 										</div>
@@ -171,7 +172,7 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="mobile" class="col-sm-1 control-label">手机：</label>
+										<label for="mobile" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>手机：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control mobile" name="mobile" id="mobile">
 										</div>
@@ -232,35 +233,6 @@
 	</div>
 	<script>
 		var CreateObject = {
-			func  :{
-				checkIsEmpty:function(){
-					var $code   = $('#code');
-					var $name   = $('#selected_name');
-					//var $password = $('#password');
-					var $mobile = $('#mobile');
-					if($code.val() == ''){
-						CreateObject.object.toast.toast("工号不能为空");
-						$code.focus();
-						return false;
-					}
-					if($name.text() == ''){
-						CreateObject.object.toast.toast("姓名不能为空");
-						$name.focus();
-						return false;
-					}
-					/*	if($password.val() == ''){
-					 ManageObject.object.toast.toast("密码不能为空");
-					 $password.focus();
-					 return false;
-					 }*/
-					if($mobile.val() == ''){
-						CreateObject.object.toast.toast("手机号不能为空");
-						$mobile.focus();
-						return false;
-					}
-					return true;
-				},
-			},
 			object:{
 				positionSelect:$('#position').QuasarSelect({
 					name        :'position',
@@ -299,7 +271,6 @@
 					idInput     :'selected_department',
 					idHidden    :'selected_department_form',
 					placeholder :'',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
 				birthDate     :$('#birth_date').datetimepicker({
@@ -317,7 +288,7 @@
 					minuteStep        :5
 				}),
 				toast         :$().QuasarToast(),
-				loading: $().QuasarLoading()
+				loading       :$().QuasarLoading()
 			}
 		};
 	</script>

@@ -24,6 +24,7 @@
 			$data['sha1']        = $upload_result['sha1'];
 			$data['size']        = $upload_result['size'];
 			$data['origin_name'] = $upload_result['name'];
+			C('TOKEN_ON', false);
 
 			return $model->createRecord($data);
 		}

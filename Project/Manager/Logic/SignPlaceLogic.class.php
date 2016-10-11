@@ -36,11 +36,17 @@
 				$list[$key]['director']      = $director['name'];
 				$list[$key]['sign_director'] = $sign_director['name'];
 			}
+
 			return $list;
 		}
-		public function alter($id, $data){
+
+		public function alter($id, $data, $old_place){
 			/** @var \Core\Model\SignPlaceModel $model */
-			$model               = D('Core/Sign_Place');
+			$model = D('Core/Sign_Place');
+			if(I('post.address_area')) $data['place'] = I('post.address_province')."-".I('post.address_city')."-".I('post.address_area')."-".I('post.address_detail');
+			elseif(I('post.address_city')) $data['place'] = I('post.address_province')."-".I('post.address_area')."-".I('post.address_detail');
+			else $data['place'] = $old_place;
+
 			return $model->alterRecord($id, $data);
 		}
 

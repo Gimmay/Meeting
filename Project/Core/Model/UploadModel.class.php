@@ -10,15 +10,15 @@
 	use Exception;
 
 	class UploadModel extends CoreModel{
-		protected $tableName   = 'upload';
-		protected $tablePrefix = 'system_';
+		protected $tableName       = 'upload';
+		protected $tablePrefix     = 'system_';
+		protected $autoCheckFields = true;
 
 		public function _initialize(){
 			parent::_initialize();
 		}
 
 		public function createRecord($data){
-			C('TOKEN_ON', false);
 			if($this->create($data)){
 				try{
 					$result = $this->add($data);

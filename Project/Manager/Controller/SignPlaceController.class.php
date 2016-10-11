@@ -76,10 +76,8 @@
 			$list_total = $model->findRecord(1, $data);
 			$info       = $logic->setExtendColumnForAlter($list_total);
 			if(IS_POST){
-				C('TOKEN_ON', false);
-				//				print_r($data['id']);exit;
-				$sign_alter = $model->alterRecord($data['id'], I('post.'), $info['place']);
-				if($sign_alter['status']) $this->success($sign_alter['message'],U('manage',['mid'=>I('get.mid',0,'int')]));
+				$sign_alter = $logic->alter($data['id'], I('post.'), $info['place']);
+				if($sign_alter['status']) $this->success($sign_alter['message'], U('manage', ['mid' => I('get.mid', 0, 'int')]));
 				else $this->error($sign_alter['message']);
 				exit;
 			}

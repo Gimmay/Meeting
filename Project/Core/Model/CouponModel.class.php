@@ -21,7 +21,6 @@
 
 		public function findCoupon($type = 2, $filter = []){
 			$where = [];
-			
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
@@ -30,10 +29,7 @@
 			}
 			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['keyword']) && $filter['keyword']){
-				$condition['code']        = ['like', "%$filter[keyword]%"];
-				$condition['mobile']      = ['like', "%$filter[keyword]%"];
 				$condition['name']        = ['like', "%$filter[keyword]%"];
-				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
 				$condition['_logic']      = 'or';
 				$where['_complex']        = $condition;
 			}
@@ -173,9 +169,10 @@ $limit
 		}
 
 		public function alterCoupon($id, $data){
-			if($this->create(I('post.'))){
+			if($this->create($data)){
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save($data);
+					
 					if($result) return ['status' => true, 'message' => '修改成功'];
 					else return ['status' => false, 'message' => '未做任何修改'];
 				}catch(Exception $error){

@@ -232,7 +232,6 @@
 					idHidden    :'selected_develop_consultant_form',
 					data        :'<{:json_encode($employee_list)}>',
 					placeholder :'',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
 				serviceConsultantSelect:$('#service_consultant').QuasarSelect({
@@ -242,7 +241,6 @@
 					idHidden    :'selected_service_consultant_form',
 					placeholder :'',
 					data        :'<{:json_encode($employee_list)}>',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
 				birthDate              :$('#birth_date').datetimepicker({

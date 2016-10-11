@@ -73,7 +73,22 @@
 			</li>
 			<li class="side_item <?php if('Badge'==$c_name) echo 'active'; ?>">
 				<a href="<?php echo U('Badge/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">胸卡设计</span>
+					<i class="icon_nav glyphicon glyphicon-bookmark"></i> <span class="nav-label">胸卡设计</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Room'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Room/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-home"></i> <span class="nav-label">房间管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Car'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Car/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-plane"></i> <span class="nav-label">车辆管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('DiningBoard'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('DiningBoard/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 			</li>
 			<li class="side_item cls <?php if('Recycle'==$c_name) echo 'active'; ?>">
@@ -222,7 +237,7 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title" id="delete_role_title">删除会议</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="<?php echo U('deleteMeeting');?>">
+				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">

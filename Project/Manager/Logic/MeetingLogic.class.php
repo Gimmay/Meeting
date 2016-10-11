@@ -21,6 +21,21 @@
 			return $result;
 		}
 
+		public function handlerRequest($type){
+			switch($type){
+				case 'delete':
+					/** @var \Core\Model\MeetingModel $model */
+					$model  = D('Core/Meeting');
+					$result = $model->deleteMeeting([I('post.id', 0, 'int')]);
+
+					return array_merge($result, ['__ajax__' => false]);
+				break;
+				default:
+					return ['status' => false, 'message' => '参数错误'];
+				break;
+			}
+		}
+
 		public function create($data){
 			/** @var \Core\Model\MeetingModel $model */
 			$model            = D('Core/Meeting');
@@ -35,15 +50,9 @@
 		public function alter($id, $data, $info){
 			/** @var \Core\Model\MeetingModel $model */
 			$model = D('Core/Meeting');
-			if(I('post.area')){
-				$data['place'] = I('post.province')."-".I('post.city')."-".I('post.area')."-".I('post.address_detail');
-			}
-			elseif(I('post.city')){
-				$data['place'] = I('post.province')."-".I('post.city')."-".I('post.address_detail');
-			}
-			else{
-				$data['place'] = $info['place'];
-			}
+			if(I('post.area')) $data['place'] = I('post.province')."-".I('post.city')."-".I('post.area')."-".I('post.address_detail');
+			elseif(I('post.city')) $data['place'] = I('post.province')."-".I('post.city')."-".I('post.address_detail');
+			else $data['place'] = $info['place'];
 
 			return $model->alterMeeting([$id], $data); //传值到model里面操作
 		}
@@ -52,11 +61,11 @@
 			/** @var \Core\Model\EmployeeModel $employee_model */
 			$employee_model = D('Core/Employee');
 			$new_list       = [];
-			$i = 0;
+			$i              = 0;
 			foreach($list as $key => $val){
 				if(in_array($val['id'], $this->meetingViewList)){
-					$tmp                             = $employee_model->findEmployee(1, ['id' => $val['director_id']]);
-					$new_list[]                      = $val;
+					$tmp                           = $employee_model->findEmployee(1, ['id' => $val['director_id']]);
+					$new_list[]                    = $val;
 					$new_list[$i]['director_name'] = $tmp['name'];
 					$i++;
 				}

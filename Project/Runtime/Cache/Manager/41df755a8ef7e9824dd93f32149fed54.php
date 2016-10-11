@@ -66,9 +66,34 @@
 					</li>
 				</ul>
 			</li>
+			<li class="side_item <?php if('Coupon'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Coupon/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">代金券管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
 			<li class="side_item <?php if('Message'==$c_name) echo 'active'; ?>">
 				<a href="<?php echo U('Message/manage');?>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">消息管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Badge'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Badge/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-bookmark"></i> <span class="nav-label">胸卡设计</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Room'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Room/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-home"></i> <span class="nav-label">房间管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Car'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Car/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-plane"></i> <span class="nav-label">车辆管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('DiningBoard'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('DiningBoard/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 			</li>
 			<li class="side_item cls <?php if('Recycle'==$c_name) echo 'active'; ?>">
@@ -181,17 +206,23 @@
 								<a type="reset" class="btn btn-default mian_search" href="<?php echo U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']]);?>">查看所有&nbsp;(<?php echo ($statistics["total"]); ?>人)</a>
 							</form>
 							<form action="" method="get" class="sign_check">
-								<!--<div class="input-group pull-left">
-									<input type="checkbox" id="check_all_condition" class="icheck">全部
-								</div>-->
-								<div class="input-group pull-left check_sign">
-									<input type="checkbox" class="icheck" >&nbsp;&nbsp;签到 (<?php echo ($statistics["signed"]); ?>)
+								<div class="input-group pull-left check_signed">
+									<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;签到 (<?php echo ($statistics["signed"]); ?>)
 								</div>
-								<div class="input-group pull-left check_review">
-									<input type="checkbox" class="icheck">&nbsp;&nbsp;审核 (<?php echo ($statistics["reviewed"]); ?>)
+								<div class="input-group pull-left check_not_signed">
+									<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;未签到 (<?php echo ($statistics["not_signed"]); ?>)
+								</div>
+								<div class="input-group pull-left check_reviewed">
+									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;审核 (<?php echo ($statistics["reviewed"]); ?>)
+								</div>
+								<div class="input-group pull-left check_not_reviewed">
+									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<?php echo ($statistics["not_reviewed"]); ?>)
 								</div>
 								<div class="input-group pull-left check_receivables">
-									<input type="checkbox" class="icheck">&nbsp;&nbsp;收款
+									<input type="radio" name="receivables" class="icheckRed">&nbsp;&nbsp;收款
+								</div>
+								<div class="input-group pull-left check_not_receivables">
+									<input type="radio" name="receivables" class="icheckRed">&nbsp;&nbsp;未收款
 								</div>
 							</form>
 						</div>
@@ -218,7 +249,7 @@
 											<td class="check_item">
 												<input type="checkbox" class="icheck" value="<?php echo ($single["id"]); ?>" placeholder="">
 											</td>
-											<td><?php echo ($single["name"]); ?></td>
+											<td class="name"><?php echo ($single["name"]); ?></td>
 											<td>
 												<span class="color-info">
 													<?php switch($single["gender"]): case "0": ?>未指定<?php break;?>
@@ -342,6 +373,12 @@
 					<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="id">
 					<div class="modal-body">
 						<div class="form-group">
+							<label for="p_name" class="col-sm-2 control-label">姓名：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control name" name="name" id="p_name" disabled>
+							</div>
+						</div>
+						<div class="form-group">
 							<label for="price" class="col-sm-2 control-label">收款金额：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control price" name="price" id="price">
@@ -368,9 +405,13 @@
 						<div class="form-group">
 							<label for="coupon" class="col-sm-2 control-label">代金券：</label>
 							<div class="col-sm-10">
-								<div id="coupon"></div>
+								<div class="input-group">
+									<input type="text" name="coupon" id="coupon" class="form-control">
+									<span class="input-group-addon"><span class="glyphicon glyphicon-th-list choose_ticket" data-toggle="modal" data-target="#ticket_modal"></span></span>
+								</div>
 							</div>
 						</div>
+
 						<div class="form-group">
 							<label for="place" class="col-sm-2 control-label">收款地点：</label>
 							<div class="col-sm-10">
@@ -390,6 +431,31 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						<button type="submit" class="btn btn-primary">收款</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 券列表 -->
+	<div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">券列表</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete">
+					<input type="hidden" name="id" value="">
+					<div class="modal-body">
+						<section>
+							<div class="ticket_item"></div>
+						</section>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认删除</button>
 					</div>
 				</form>
 			</div>
@@ -601,7 +667,6 @@
 					idInput     :'selected_payee',
 					idHidden    :'selected_payee_form',
 					placeholder :'',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
 				couponSelect:$('#coupon').QuasarSelect({
@@ -611,7 +676,6 @@
 					idInput     :'selected_coupon',
 					idHidden    :'selected_coupon_form',
 					placeholder :'',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
 				signPlaceSelect:$('#sign_place').QuasarSelect({
@@ -621,7 +685,6 @@
 					idInput     :'selected_coupon',
 					idHidden    :'selected_coupon_form',
 					placeholder :'',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
 				batchSignPlaceSelect:$('#batch_sign_place').QuasarSelect({
@@ -631,7 +694,6 @@
 					idInput     :'selected_coupon',
 					idHidden    :'selected_coupon_form',
 					placeholder :'',
-					justInput   :true,
 					hasEmptyItem:false
 				}),
 				birthDate   :$('#birth_date').datetimepicker({
@@ -652,6 +714,14 @@
 				icheck      :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
+				}),
+				icheckBlue      :$('.icheckBlue').iCheck({
+					checkboxClass:'icheckbox_square-blue',
+					radioClass   :'iradio_square-blue'
+				}),
+				icheckRed      :$('.icheckRed').iCheck({
+					checkboxClass:'icheckbox_square-red',
+					radioClass   :'iradio_square-red'
 				})
 			}
 		}

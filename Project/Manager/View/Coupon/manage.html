@@ -56,20 +56,6 @@
 								</div>
 								<a type="reset" class="btn btn-default mian_search" href="<{:U('manage')}>">查看所有</a>
 							</form>
-							<form action="" method="get" class="sign_check">
-								<div class="input-group pull-left">
-									<input type="radio"  name="iCheck" id="check_all_condition" class="icheck">&nbsp;&nbsp;全部
-								</div>
-								<div class="input-group pull-left unused">
-									<input type="radio"  name="iCheck" class="icheck" >&nbsp;&nbsp;未使用 (<{$statistics.signed}>)
-								</div>
-								<div class="input-group pull-left hasused">
-									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;已使用 (<{$statistics.reviewed}>)
-								</div>
-								<div class="input-group pull-left refund">
-									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;退费
-								</div>
-							</form>
 						</div>
 						<div class="table_wrap">
 							<table class="table table-bordered" style="text-align: center">
@@ -79,7 +65,7 @@
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="10%">代金券名称</td>
-										<td width="10%">会议名称</td>
+										<td width="10%">会议名称(张数)</td>
 										<td width="5%">数量</td>
 										<td width="10%">价格</td>
 										<td width="15%">开始时间</td>
@@ -92,19 +78,19 @@
 									<volist name="coupon_list" id="list">
 									<tr>
 										<td class="check_item">
-											<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
+											<input type="checkbox" class="icheck" placeholder="" value="<{$list.id}>">
 										</td>
 										<td><{$list.name}></td>
 										<td>会议名称</td>
-										<td><a href="javascript:void(0)" class="link color-primary">7</a></td>
+										<td><a href="javascript:void(0)" class="link color-primary"><{$list.number}></a></td>
 										<td><{$list.price}></td>
-										<td><{$list.start_time}></td>
-										<td><{$list.end_time}></td>
+										<td><{$list.start_time|date='Y-m-d',###}></td>
+										<td><{$list.end_time|date='Y-m-d',###}></td>
 										<td><{$list.comment}></td>
 										<td>
 											<div class="btn-group" data-id="<{$list.id}>">
 												<if condition="$max_role_level elt $single['level']">
-													<a href="<{:U('Details',['id'=>$list['id']])}>" type="button" class="btn btn-default btn-xs seeList">查看</a>
+													<a href="<{:U('Details',['id'=>$list['id']])}>" type="button" class="btn btn-default btn-xs seeList">查看列表</a>
 													<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>
 													<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button>
 												</if>
@@ -113,12 +99,8 @@
 									</tr>
 									</volist>
 								</tbody>
-
-
 							</table>
-
 						</div>
-
 						<div class="page_wrap">
 							<div class="pagination">
 								<{$page_show}>
@@ -198,7 +180,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="number" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>数量：</label>
+								<label for="number" class="col-sm-2 control-label">数量：</label>
 								<div class="col-sm-10">
 									<input type="number" class="form-control number" name="number" id="number">
 								</div>
@@ -256,19 +238,14 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title" id="modify_role_title">修改代金券</h2>
 				</div>
-				<form class="form-horizontal" role="form" action="<{:U('alterCoupon')}>" method="post" onsubmit="return checkAlter()">
+				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return checkAlter()">
 					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
 					<div class="modal-body">
-						<div class="form-group">
-							<label for="meeting_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle;color: red;">*</b>会议：</label>
-							<div class="col-sm-10">
-								<div id="meeting_a"></div>
-							</div>
-						</div>
+
 						<div class="form-group">
 							<label for="coupon_name_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle;color: red;">*</b>券名称：</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control name" name="name" id="coupon_name_a">
+								<input type="text" class="form-control name" name="name" id="coupon_name_a" value="">
 							</div>
 						</div>
 						<div class="form-group">
@@ -359,7 +336,7 @@
 		var ManageObject = {
 			object:{
 				meetingSelect:$('#meeting').QuasarSelect({
-					name        :'meeting_name',
+					name        :'mid',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting_list)}>',
 					idInput     :'selected_meeting',
@@ -368,7 +345,7 @@
 					hasEmptyItem:false
 				}),
 				meetingSelect:$('#meeting_a').QuasarSelect({
-					name        :'meeting_name_a',
+					name        :'mid',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting_list)}>',
 					idInput     :'selected_meeting_a',

@@ -10,8 +10,9 @@
 	use Exception;
 
 	class WeixinIDModel extends CoreModel{
-		protected $tableName   = 'weixin_id';
-		protected $tablePrefix = 'user_';
+		protected $tableName       = 'weixin_id';
+		protected $tablePrefix     = 'user_';
+		protected $autoCheckFields = true;
 
 		public function _initialize(){
 			parent::_initialize();

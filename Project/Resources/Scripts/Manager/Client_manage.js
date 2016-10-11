@@ -90,35 +90,62 @@ $(function(){
 		}
 	});
 	// 已签到客户列表
-	$('.check_sign').find('.iCheck-helper').on('click', function(){
-		var $quasar  = $('#Quasar');
-		var mvc    = $quasar.attr('data-mvc-name');
-		var suffix = $quasar.attr('data-page-suffix');
-		var link   = new Quasar.UrlClass(1, mvc, suffix);
-		var signed = link.getUrlParam('signed');
-		if(signed == 1){
+	$('.check_signed').find('.iCheck-helper').on('click', function(){
+		var $quasar = $('#Quasar');
+		var mvc     = $quasar.attr('data-mvc-name');
+		var suffix  = $quasar.attr('data-page-suffix');
+		var link    = new Quasar.UrlClass(1, mvc, suffix);
+		var param   = link.getUrlParam('signed');
+		if(param == 1){
 			var new_url = link.delUrlParam('signed');
 			location.replace(new_url);
 		}else{
-			var signed_url = link.setUrlParam('signed', 1, location.href, {
-				except:mvc,
-				suffix:suffix
-			});
+			var signed_url = link.setUrlParam('signed', 1);
+			location.replace(signed_url);
+		}
+	});
+	// 未签到客户列表
+	$('.check_not_signed').find('.iCheck-helper').on('click', function(){
+		var $quasar = $('#Quasar');
+		var mvc     = $quasar.attr('data-mvc-name');
+		var suffix  = $quasar.attr('data-page-suffix');
+		var link    = new Quasar.UrlClass(1, mvc, suffix);
+		var param   = link.getUrlParam('signed');
+		if(param == 0){
+			var new_url = link.delUrlParam('signed');
+			location.replace(new_url);
+		}else{
+			var signed_url = link.setUrlParam('signed', 0);
 			location.replace(signed_url);
 		}
 	});
 	// 已审核客户列表
-	$('.check_review').find('.iCheck-helper').on('click', function(){
-		var $quasar  = $('#Quasar');
-		var mvc      = $quasar.attr('data-mvc-name');
-		var suffix   = $quasar.attr('data-page-suffix');
-		var link     = new Quasar.UrlClass(1, mvc, suffix);
-		var reviewed = link.getUrlParam('reviewed');
-		if(reviewed == 1){
+	$('.check_reviewed').find('.iCheck-helper').on('click', function(){
+		var $quasar = $('#Quasar');
+		var mvc     = $quasar.attr('data-mvc-name');
+		var suffix  = $quasar.attr('data-page-suffix');
+		var link    = new Quasar.UrlClass(1, mvc, suffix);
+		var param   = link.getUrlParam('reviewed');
+		if(param == 1){
 			var new_url = link.delUrlParam('reviewed');
 			location.replace(new_url);
 		}else{
 			var reviewed_url = link.setUrlParam('reviewed', 1);
+			location.replace(reviewed_url);
+		}
+	});
+	// 未审核客户列表
+	$('.check_not_reviewed').find('.iCheck-helper').on('click', function(){
+		var $quasar = $('#Quasar');
+		var mvc     = $quasar.attr('data-mvc-name');
+		var suffix  = $quasar.attr('data-page-suffix');
+		var link    = new Quasar.UrlClass(1, mvc, suffix);
+		var param   = link.getUrlParam('reviewed');
+		if(param == 0){
+			var new_url = link.delUrlParam('reviewed');
+			location.replace(new_url);
+		}else{
+			var reviewed_url = link.setUrlParam('reviewed', 0);
 			location.replace(reviewed_url);
 		}
 	});
@@ -128,12 +155,28 @@ $(function(){
 		var mvc     = $quasar.attr('data-mvc-name');
 		var suffix  = $quasar.attr('data-page-suffix');
 		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
-			var receivablesed_url = link.setUrlParam('reviewed', 1);
-			location.replace(receivablesed_url);
+		var param   = link.getUrlParam('receivables');
+		if(param == 1){
+			var new_url = link.delUrlParam('receivables');
+			location.replace(new_url);
 		}else{
-			var signedUrl = link.setUrlParam('receivablesed', 1);
-			location.replace(signedUrl);
+			var reviewed_url = link.setUrlParam('receivables', 1);
+			location.replace(reviewed_url);
+		}
+	});
+	// 未收款客户列表
+	$('.check_not_receivables').find('.iCheck-helper').on('click', function(){
+		var $quasar = $('#Quasar');
+		var mvc     = $quasar.attr('data-mvc-name');
+		var suffix  = $quasar.attr('data-page-suffix');
+		var link    = new Quasar.UrlClass(1, mvc, suffix);
+		var param   = link.getUrlParam('receivables');
+		if(param == 0){
+			var new_url = link.delUrlParam('receivables');
+			location.replace(new_url);
+		}else{
+			var reviewed_url = link.setUrlParam('receivables', 0);
+			location.replace(reviewed_url);
 		}
 	});
 	//导入excel
@@ -147,11 +190,10 @@ $(function(){
 	// 收款按钮
 	$('.receivables_btn').on('click', function(){
 		var name = $(this).parents('tr').find('.name').text();
-		var id = $(this).parent('.btn-group').attr('data-id');
+		var id   = $(this).parent('.btn-group').attr('data-id');
 		$('#receivables_modal').find('input[name=id]').val(id);
 		$('#receivables_modal').find('input[name=name]').val(name);
 	});
-
 	//审核按钮
 	$('.review_btn').on('click', function(){
 		var id  = $(this).parent('.btn-group').attr('data-id');
@@ -216,7 +258,6 @@ $(function(){
 		}
 		$('#batch_anti_review_client').find('input[name=id]').val(newStr);
 	});
-
 	// 签到按钮
 	$('.sign_btn').on('click', function(){
 		var $body = $('body');
@@ -287,7 +328,6 @@ $(function(){
 		}
 		$('#batch_anti_sign_point').find('input[name=id]').val(newStr);
 	});
-
 	// 删除客户
 	$('.delete_btn').on('click', function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
@@ -309,7 +349,6 @@ $(function(){
 		}
 		$('#batch_delete_client').find('input[name=id]').val(newStr);
 	});
-
 	// 发送消息
 	$('.send_message_btn').on('click', function(){
 		var id  = $(this).parent('.btn-group').attr('data-id');
@@ -344,31 +383,27 @@ $(function(){
 		}
 		$('#batch_send_message').find('input[name=id]').val(newStr);
 	});
-
 	// 人员状态列表（签到\审核\收款）
-	var mvc    = $('#Quasar').attr('data-mvc-name');
-	var suffix = $('#Quasar').attr('data-page-suffix');
-	var link   = new Quasar.UrlClass(1, mvc, suffix);
-	var signed = link.getUrlParam('signed');
-	if(signed == 1){
-		$('.check_sign').find('.icheckbox_square-green').addClass('checked');
-	}else{
-		$('.check_sign').find('.icheckbox_square-green').removeClass('checked');
-	}
-	var reviewed = link.getUrlParam('reviewed');
-	if(reviewed == 1){
-		$('.check_review').find('.icheckbox_square-green').addClass('checked');
-	}else{
-		$('.check_review').find('.icheckbox_square-green').removeClass('checked');
-	}
+	var mvc         = $('#Quasar').attr('data-mvc-name');
+	var suffix      = $('#Quasar').attr('data-page-suffix');
+	var link        = new Quasar.UrlClass(1, mvc, suffix);
+	var signed      = link.getUrlParam('signed');
+	var reviewed    = link.getUrlParam('reviewed');
+	var receivables = link.getUrlParam('receivables');
+	if(signed == 1) $('.check_signed').find('.iradio_square-green').addClass('checked');
+	if(signed == 0) $('.check_not_signed').find('.iradio_square-green').addClass('checked');
+	if(reviewed == 1) $('.check_reviewed').find('.iradio_square-blue').addClass('checked');
+	if(reviewed == 0) $('.check_not_reviewed').find('.iradio_square-blue').addClass('checked');
+	if(receivables == 1) $('.check_receivables').find('.iradio_square-red').addClass('checked');
+	if(receivables == 0) $('.check_not_receivables').find('.iradio_square-red').addClass('checked');
 });
 function getIframeData(set){
 	var data = document.getElementById('fileUpload_iframe').contentWindow.document
 					   .getElementsByTagName('body')[0].innerHTML;
 	if(data){
-		data     = $.parseJSON(data);
-		var str  = '';
-		var str2 = '';
+		data        = $.parseJSON(data);
+		var str     = '';
+		var str2    = '';
 		var dbIndex = data.data.dbIndex;
 		$.each(data.data.dbHead, function(index, value){
 			str2 += clientManage.optTemp.replace('$name', value.desc).replace('$numOpt', index);
@@ -379,27 +414,26 @@ function getIframeData(set){
 							   .replace('$id', index);
 		});
 		$('#ExcelHeadTable').html(str);
-
 		// 遍历 Excel表头字段 和系统的对应的字段（映射）
 		$('.select_h').each(function(){
 			var name = $(this).parents('tr').find('.excel_name').text();
-			name = name.replace(/^\s+|\s+$/g,"");
+			name     = name.replace(/^\s+|\s+$/g, "");
 			$(this).find('option').each(function(){
 				var opt_name = $(this).text();
-				opt_name = opt_name.replace(/^\s+|\s+$/g,"");
-				if(name == opt_name) {
-					$(this).attr("selected",true);
+				opt_name     = opt_name.replace(/^\s+|\s+$/g, "");
+				if(name == opt_name){
+					$(this).attr("selected", true);
 				}
 			});
 			// 将option 值 转换为数组
 			var str = [];
-			for(var i = 0;i<$(this).find('option').length;i++){
+			for(var i = 0; i<$(this).find('option').length; i++){
 				str[i] = $(this).find('option').eq(i).text();
 			}
 			// 如果数组里面 与 所定义值 存在 --返回 0 ，若不存在 返回 -1。
-			if(str.toString().indexOf(name) > -1){
+			if(str.toString().indexOf(name)> -1){
 			}else{
-				$(this).find('option').eq('15').attr('selected',true);
+				$(this).find('option').eq('15').attr('selected', true);
 			}
 		});
 		$('.icheck_excel').iCheck({
@@ -436,7 +470,7 @@ function getIframeData(set){
 				}
 			}
 			var newStr_arr = newStr.split(',');
-			s2 = str2.charAt(str2.length-1);
+			s2             = str2.charAt(str2.length-1);
 			if(s2 == ","){
 				for(var i = 0; i<str2.length-1; i++){
 					newStr2 += str2[i];

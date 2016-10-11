@@ -147,9 +147,8 @@
 						$table_head               = $model->getSelfColumn();
 						$result['data']['dbHead'] = $table_head;
 					}
-					echo json_encode($result);
 
-					return -1;
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'save_excel_data':
 					$upload_record_id = I('post.dbIndex', 0, 'int');
@@ -159,9 +158,8 @@
 						'column' => explode(',', I('post.table'))
 					];
 					$result           = $logic->createClientFromExcel($upload_record_id, $map);
-					echo json_encode($result);
 
-					return -1;
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'review':
 					/** @var \Core\Model\JoinModel $join_model */
@@ -171,16 +169,11 @@
 					$join_record = $join_model->findRecord(1, ['mid' => $meeting_id, 'cid' => $client_id]);
 					C('TOKEN_ON', false);
 					$result1 = $join_model->alterRecord([$join_record['id']], ['review_status' => 1]);
-					if(!$result1['status']){
-						echo json_encode($result1);
-
-						return -1;
-					}
+					if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
 					$join_logic = new JoinLogic();
 					$result2    = $join_logic->makeQRCode([$client_id], ['mid' => $meeting_id]);
-					echo json_encode($result2);
 
-					return -1;
+					return array_merge($result2, ['__ajax__' => true]);
 				break;
 				case 'anti_review':
 					/** @var \Core\Model\JoinModel $join_model */
@@ -190,9 +183,8 @@
 					$join_record = $join_model->findRecord(1, ['mid' => $meeting_id, 'cid' => $client_id]);
 					C('TOKEN_ON', false);
 					$result = $join_model->alterRecord([$join_record['id']], ['review_status' => 0]);
-					echo json_encode($result);
 
-					return -1;
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'multi_review':
 					/** @var \Core\Model\JoinModel $join_model */
@@ -207,15 +199,11 @@
 					}
 					C('TOKEN_ON', false);
 					$result1 = $join_model->alterRecord($join_id, ['review_status' => 1]);
-					if(!$result1['status']){
-						echo json_encode($result1);
-
-						return -1;
-					}
+					if(!$result1['status']) return array_merge($result1, ['__ajax__' => false]);
 					$join_logic = new JoinLogic();
 					$result2    = $join_logic->makeQRCode($client_id_arr, ['mid' => $meeting_id]);
 
-					return $result2;
+					return array_merge($result2, ['__ajax__' => false]);
 				break;
 				case 'multi_anti_review':
 					/** @var \Core\Model\JoinModel $join_model */
@@ -231,7 +219,7 @@
 					C('TOKEN_ON', false);
 					$result = $join_model->alterRecord($join_id, ['review_status' => 0]);
 
-					return $result;
+					return array_merge($result, ['__ajax__' => false]);
 				break;
 				case 'sign':
 					/** @var \Core\Model\JoinModel $join_model */
@@ -269,17 +257,18 @@
 							$wxcorp_logic   = new WxCorpLogic();
 							$weixin_model   = D('Core/WeixinID');
 							$meeting_model  = D('Core/Meeting');
+							$sms_logic      = new SMSLogic();
 							$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
 							$record         = $model->findClient(1, ['id' => $id]);
 							$time           = date('Y-m-d H:i:s');
 							$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 							$wxcorp_logic->sendMessage('text', "您参加的<$meeting_record[name]>于[$time]成功签到", ['user' => [$weixin_record['weixin_id']]]);
+							$sms_logic->send("您参加的<$meeting_record[name]>于[$time]成功签到", [$record['mobile']]);
 						}
-						echo json_encode($result);
-					}
-					else echo json_encode(['status' => false, 'message' => '此客户信息还没有被审核']);
 
-					return -1;
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '此客户信息还没有被审核', '__ajax__' => true];
 				break;
 				case 'anti_sign':
 					/** @var \Core\Model\JoinModel $join_model */
@@ -300,15 +289,16 @@
 						$wxcorp_logic   = new WxCorpLogic();
 						$weixin_model   = D('Core/WeixinID');
 						$meeting_model  = D('Core/Meeting');
+						$sms_logic      = new SMSLogic();
 						$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
 						$record         = $model->findClient(1, ['id' => $id]);
 						$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 						$time           = date('Y-m-d H:i:s');
 						$wxcorp_logic->sendMessage('text', "您参加的<$meeting_record[name]>于[$time]取消签到", ['user' => [$weixin_record['weixin_id']]]);
+						$sms_logic->send("您参加的<$meeting_record[name]>于[$time]取消签到", $record['mobile']);
 					}
-					echo json_encode($result);
 
-					return -1;
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'delete';
 					/** @var \Core\Model\ClientModel $model */
@@ -323,9 +313,9 @@
 						C('TOKEN_ON', false);
 						$result2 = $join_model->deleteRecord($join_find['id']);
 
-						return $result2;
+						return array_merge($result2, ['__ajax__' => false]);
 					}
-					else return $result1;
+					else return array_merge($result1, ['__ajax__' => false]);
 				break;
 				case 'send_message':
 					$wxcorp_logic = new WxCorpLogic();
@@ -341,18 +331,18 @@
 					$record         = $client_model->findClient(1, ['id' => $client_id]);
 					$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 					$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
-
-					$url = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/id/$client_id/mid/$meeting_id";
-					$result1   = $wxcorp_logic->sendMessage('news', [
+					$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/id/$client_id/mid/$meeting_id";
+					$result1        = $wxcorp_logic->sendMessage('news', [
 						[
 							'title'       => "$meeting_record[name]",
 							'description' => "亲爱的$record[name]，请于$meeting_record[start_time]前点击\"查看全文\"后出示二维码提供给签到负责人进行签到",
 							'url'         => $url
 						]
 					], ['user' => [$weixin_record['weixin_id']]]);
-					$url = getShortUrl($url); // 使用新浪的t.cn短地址
-					$result2 = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
-					return $result2;
+					$url            = getShortUrl($url); // 使用新浪的t.cn短地址
+					$result2        = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
+
+					return array_merge($result2, ['__ajax__' => true]);
 				break;
 				case 'multi_send_message':
 					$wxcorp_logic = new WxCorpLogic();
@@ -364,26 +354,27 @@
 					$weixin_model  = D('Core/WeixinID');
 					$meeting_model = D('Core/Meeting');
 					$client_model  = D('Core/Client');
+					$sms_logic     = new SMSLogic();
 					$client_arr    = explode(',', $client_id);
 					foreach($client_arr as $v){
 						$record         = $client_model->findClient(1, ['id' => $v]);
 						$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 						$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
+						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/id/$v/mid/$meeting_id";
 						$wxcorp_logic->sendMessage('news', [
 							[
 								'title'       => "$meeting_record[name]", // todo just title
 								'description' => "亲爱的$record[name]，请于$meeting_record[start_time]前点击\"查看全文\"后出示二维码提供给签到负责人进行签到",
-								'url'         => "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/id/$v/mid/$meeting_id"
+								'url'         => $url
 							]
 						], ['user' => [$weixin_record['weixin_id']]]);
+						$sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
 					}
 
-					return ['status' => true, 'massage' => '发送成功'];
+					return ['status' => true, 'massage' => '发送成功', '__ajax__' => false];
 				break;
 				default:
-					echo json_encode(['status' => false, 'message' => '参数错误']);
-
-					return -1;
+					return ['status' => false, 'message' => '参数错误'];
 				break;
 			}
 		}

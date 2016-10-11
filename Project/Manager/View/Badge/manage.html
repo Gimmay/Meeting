@@ -33,23 +33,80 @@
 				<include file="Public/header"/>
 				<div class="mian_body">
 					<section class="content badge_content">
-						<header><h1>胸卡设计</h1></header>
+						<header>
+							<h1>胸卡设计</h1>
+						</header>
 						<div class="badge_box">
 							<div class="cart_view">
-
+								<div class="badge_muban" style="width: 400px; height: 700px;">
+									<img src="<{$Think.COMMON_IMAGE_PATH}>/bg.jpg" id="badge_bg" alt="" style="width: 100%; height: 100%; position: absolute;">
+									<div class="cart_view_item ui-widget-content hide" id="client_name" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 8%;">客户姓名</div>
+									<div class="cart_view_item ui-widget-content hide" id="QRcode" style=" position: absolute; width: 200px; font-size:14px; text-align: center; left: 50%; margin-left: -100px; top: 25%;;">
+										<img src="<{$Think.COMMON_IMAGE_PATH}>/CheckIn_Code.jpg" alt="" width="100%"></div>
+									<div class="cart_view_item ui-widget-content hide" id="meeting_name" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 60%;;">会议名称</div>
+									<div class="cart_view_item ui-widget-content hide" id="meeting_time" style=" position: absolute; width: 300px; font-size:14px; text-align: center; left: 50%; margin-left: -150px; top: 88%;;">会议时间</div>
+									<div class="cart_view_item ui-widget-content hide" id="sign_place" style=" position: absolute; width: 300px; font-size:14px; text-align: center; left: 50%; margin-left: -150px; top: 92%;;">签到点</div>
+									<div class="cart_view_item ui-widget-content hide" id="club" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 15%;;">会所</div>
+									<div class="cart_view_item ui-widget-content hide" id="brief" style=" position: absolute; width: 300px; font-size:14px; text-align: center; left: 50%; margin-left: -150px; top: 75%;;">会议简介</div>
+								</div>
 							</div>
 							<div class="cart_set">
 								<h2>自定义胸卡模板</h2>
 								<div class="choose_type">
-									<span>选择胸卡模板：</span>
-									<span><input type="radio"  name="iCheck" class="icheck" >&nbsp;&nbsp;使用系统模板</span>
-									<span><input type="radio"  name="iCheck" class="icheck" checked >&nbsp;&nbsp;自定义模板</span>
+									<span class="title">选择胸卡模板：</span>
+									<span><input type="radio" name="iCheck" class="icheck">&nbsp;&nbsp;使用系统模板</span>
+									<span><input type="radio" name="iCheck" class="icheck" checked>&nbsp;&nbsp;自定义模板</span>
 								</div>
 								<div class="template template_system hide">
-
 								</div>
 								<div class="template template_custom">
-									<span>背景</span>
+									<div class="form_li">
+										<p class="title">背景（宽度为400px，高度为700px的.png、.jpg图片，小于2M）</p>
+										<form action="" id="uploadBgForm">
+											<input type="hidden" name="requestType" value="upload_image">
+											<div class="bg_up_file">
+												<input type="file" class="filePrew" name="uploadImage" id="updateBackground">
+												<span class="text"><span class="glyphicon glyphicon-upload" style="margin-right: 5px;"></span><span>上传图片</span></span>
+												<button type="button" id="submit_bg" onclick="badgeManage.upLoadBg()"></button>
+											</div>
+										</form>
+										<div class="size">
+											<span>宽高（PX）：</span><span><input type="text" class="temp_width" value="400">&nbsp;&nbsp;×&nbsp;&nbsp;<input type="text" class="temp_height" value="700"></span>
+											<button type="button" class="btn btn-sm btn-info size_confirm">确认</button>
+										</div>
+									</div>
+									<div class="form_li">
+										<p class="title">内容（点击勾选添加到左侧界面中，点击删除，将从左侧界面中移除）</p>
+										<ul class="vote_list clearfix">
+											<li class="keyword no_choose client_name">
+												<span>客户姓名</span><i class="glyphicon glyphicon-trash"></i>
+											</li>
+											<li class="keyword no_choose QRcode">
+												<span>参会二维码</span><i class="glyphicon glyphicon-trash"></i>
+											</li>
+											<li class="keyword no_choose meeting_name">
+												<span>会议名称</span><i class="glyphicon glyphicon-trash"></i>
+											</li>
+											<li class="keyword no_choose time">
+												<span>会议时间</span><i class="glyphicon glyphicon-trash"></i>
+											</li>
+											<li class="keyword no_choose sign_place">
+												<span>签到点</span><i class="glyphicon glyphicon-trash"></i>
+											</li>
+											<li class="keyword no_choose club">
+												<span>会所</span><i class="glyphicon glyphicon-trash"></i>
+											</li>
+											<li class="keyword no_choose brief">
+												<span>简介</span><i class="glyphicon glyphicon-trash"></i>
+											</li>
+											<!--<li class="add">
+												<span class="glyphicon glyphicon-plus"></span>
+											</li>-->
+										</ul>
+									</div>
+									<div class="form_li text-center">
+										<button type="button" id="keep_badhge_temp" class="btn btn-primary">保存设置</button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -68,6 +125,14 @@
 				})
 			}
 		}
+		$(function(){
+			$(".cart_view_item ").resizable({
+				resize:function(event, ui){
+					var h = $(this).height();
+					$(this).css('font-size',h*0.6)
+				}
+			}).draggable();
+		});
 	</script>
 </body>
 </html>

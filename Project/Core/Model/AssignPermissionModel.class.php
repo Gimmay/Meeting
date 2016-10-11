@@ -10,8 +10,9 @@
 	use Exception;
 
 	class AssignPermissionModel extends CoreModel{
-		protected $tableName   = 'assign_permission';
-		protected $tablePrefix = 'system_';
+		protected $tableName       = 'assign_permission';
+		protected $tablePrefix     = 'system_';
+		protected $autoCheckFields = true;
 
 		public function _initialize(){
 			parent::_initialize();

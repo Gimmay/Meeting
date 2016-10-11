@@ -23,9 +23,12 @@
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
 				$result = $logic->handlerRequest($type);
-				if($result === -1){
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
 				}
 				else{
+					unset($result['__ajax__']);
 					if($result['status']) $this->success($result['message']);
 					else $this->error($result['message'], '', 3);
 				}
@@ -35,8 +38,8 @@
 			/** @var \Core\Model\ClientModel $core_model */
 			$core_model = D('Core/Client');
 			$options    = [];
-			if(I('get.signed', 0, 'int') == 1) $options['sign_status'] = 1;
-			if(I('get.reviewed', 0, 'int') == 1) $options['review_status'] = 1;
+			if(isset($_GET['signed'])) $options['sign_status'] = I('get.signed', 0, 'int') == 1 ? 1 : 0;
+			if(isset($_GET['reviewed'])) $options['review_status'] = I('get.reviewed', 0, 'int') == 1 ? 1 : 0;
 			$list_total = $core_model->listClient(0, array_merge([
 				'keyword' => I('get.keyword', ''),
 				'status'  => 'not deleted',
@@ -71,9 +74,11 @@
 				'status' => 'not deleted'
 			]);
 			$this->assign('statistics', [
-				'signed'   => $signed_count,
-				'reviewed' => $reviewed_count,
-				'total'    => $all_count,
+				'signed'       => $signed_count,
+				'not_signed'   => $all_count-$signed_count,
+				'reviewed'     => $reviewed_count,
+				'not_reviewed' => $all_count-$reviewed_count,
+				'total'        => $all_count,
 			]);
 			$this->assign('list', $client_list);
 			$this->assign('page_show', $page_show);
@@ -81,11 +86,10 @@
 		}
 
 		public function create(){
-
 			if(IS_POST){
 				$logic  = new ClientLogic();
 				$result = $logic->create(I('post.'));
-				if($result['status']) $this->success($result['message'],U('manage',['mid'=>I('get.mid')]));
+				if($result['status']) $this->success($result['message'], U('manage', ['mid' => I('get.mid')]));
 				else $this->error($result['message']);
 				exit;
 			}
@@ -129,7 +133,7 @@
 			if(IS_POST){
 				$logic  = new ClientLogic();
 				$result = $logic->alter(I('get.id', 0, 'int'), I('post.'));
-				if($result['status']) $this->success($result['message'],U('manage',['mid'=>I('get.mid')]));
+				if($result['status']) $this->success($result['message'], U('manage', ['mid' => I('get.mid')]));
 				else $this->error($result['message']);
 				exit;
 			}
