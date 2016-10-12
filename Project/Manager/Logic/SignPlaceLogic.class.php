@@ -23,7 +23,7 @@
 			return $model->createRecord($data);
 		}
 
-		public function setExtendColumn($list){
+		public function setExtendColumnForManage($list){
 			/** @var \Core\Model\MeetingModel $meeting_model */
 			$meeting_model = D('Core/Meeting');
 			/** @var \Core\Model\EmployeeModel $employee_model */
@@ -61,5 +61,21 @@
 			$info['service_consultant_code'] = $service_consultant['code'];
 
 			return $info;
+		}
+
+		public function handlerRequest($type){
+			switch($type){
+				case 'delete':
+					/** @var \Core\Model\SignPlaceModel $model */
+					$model  = D('Core/SignPlace');
+					$data   = I('post.id');
+					$result = $model->deleteRecord($data);
+
+					return array_merge($result, ['__ajax__' => false]);
+				break;
+				default:
+					return ['status' => false, 'message' => '参数错误'];
+				break;
+			}
 		}
 	}

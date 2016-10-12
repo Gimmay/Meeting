@@ -2,15 +2,15 @@
 	padding : 30px !important;
 }
 
-.badge_content > header > h1 {
-	width: 135px;
-	height: 50px;
-	background: #00a0e8;
-	color: #fff;
-	text-align: center;
-	line-height: 50px;
-	font-size: 14px;
-	font-family: "Helvitica Neue",Helvetica,Arial,"Microsoft YaHei","Hiragino Sans GB",sans-serif;
+.badge_content > header > h1{
+	width       : 135px;
+	height      : 50px;
+	background  : #00A0E8;
+	color       : #FFFFFF;
+	text-align  : center;
+	line-height : 50px;
+	font-size   : 14px;
+	font-family : "Helvitica Neue", Helvetica, Arial, "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
 }
 
 .badge_content > header{
@@ -26,11 +26,11 @@
 	position         : relative;
 	z-index          : 2;
 	line-height      : 1.6;
-	background-color : rgba(0,0,0,.2);
+	background-color : rgba(0, 0, 0, .2);
 	border           : 1px solid #E1E1E1;
 	border-radius    : 5px;
 	float            : left;
-/*	background-image : url("../../Images/Common/bg.jpg");*/
+	/*	background-image : url("../../Images/Common/bg.jpg");*/
 	background-size  : 100% 100%;
 }
 
@@ -54,9 +54,8 @@
 }
 
 .cart_set h2{
-	font-size   : 18px;
-	font-weight : bold;
-	margin      : 20px 0;
+	font-size : 18px;
+	margin    : 20px 0;
 }
 
 .choose_type{
@@ -92,9 +91,10 @@
 	height   : 100%;
 	opacity  : 0;
 }
-#submit_bg {
+
+#submit_bg{
 	position : absolute;
-	opacity: 0;
+	opacity  : 0;
 }
 
 .size input{
@@ -136,8 +136,47 @@
 	margin-left : 5px;
 }
 
+/** 默认的胸卡模板 **/
 
+.block_slide{
+	width      : 100%;
+	padding    : 10px;
+	background : #FFFFFF;
+	border     : 1px solid rgba(0, 0, 0, .25);
+	overflow-x : auto;
+}
 
+.block_slide .item{
+	position         : relative;
+	width            : 150px;
+	height           : 250px;
+	overflow         : hidden;
+	float            : left;
+	border           : 1px solid rgba(0, 0, 0, .12);
+	background-color : #FFFFFF;
+	margin-right     : 10px;
+}
+
+.block_slide .item.active{
+	border-color : #00A0E8;
+}
+
+.block_slide .item.active .select_icon{
+	display : block;;
+}
+
+.block_slide .item .select_icon{
+	display     : none;
+	width       : 25px;
+	height      : 25px;
+	position    : absolute;
+	line-height : 25px;
+	text-align  : center;
+	color       : #FFFFFF;
+	left        : 1px;
+	top         : 1px;
+	background  : #00A0E8;
+}
 
 
 

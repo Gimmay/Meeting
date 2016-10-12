@@ -7,10 +7,8 @@
 	 */
 	namespace Manager\Controller;
 
-	use Core\Logic\WxCorpLogic;
 	use Manager\Logic\ClientLogic;
 	use Manager\Logic\ExcelLogic;
-	use Manager\Logic\JoinLogic;
 	use Think\Page;
 
 	class ClientController extends ManagerController{
@@ -37,9 +35,12 @@
 			$mid = I('get.mid', 0, 'int');
 			/** @var \Core\Model\ClientModel $core_model */
 			$core_model = D('Core/Client');
-			$options    = [];
+			/** @var \Manager\Model\SignPlaceModel $sign_place_model */
+			$sign_place_model = D('Manager/SignPlace');
+			$options          = [];
 			if(isset($_GET['signed'])) $options['sign_status'] = I('get.signed', 0, 'int') == 1 ? 1 : 0;
 			if(isset($_GET['reviewed'])) $options['review_status'] = I('get.reviewed', 0, 'int') == 1 ? 1 : 0;
+			if(isset($_GET['sid'])) $options['sid'] = I('get.sid', 0, 'int');
 			$list_total = $core_model->listClient(0, array_merge([
 				'keyword' => I('get.keyword', ''),
 				'status'  => 'not deleted',
@@ -58,21 +59,25 @@
 				'mid'     => $mid
 			], $options));
 			$client_list = $logic->setExtendColumnForManage($client_list);
+			$options = [];
+			if(isset($_GET['sid'])) $options['sid'] = I('get.sid', 0, 'int');
 			/* 统计数据 */
-			$signed_count   = $core_model->listClient(0, [
+			$signed_count    = $core_model->listClient(0, array_merge([
 				'mid'         => $mid,
 				'sign_status' => 1,
 				'status'      => 'not deleted'
-			]);
-			$reviewed_count = $core_model->listClient(0, [
+			], $options));
+			$reviewed_count  = $core_model->listClient(0, array_merge([
 				'mid'           => $mid,
 				'review_status' => 1,
 				'status'        => 'not deleted'
-			]);
-			$all_count      = $core_model->listClient(0, [
+			], $options));
+			$all_count       = $core_model->listClient(0, array_merge([
 				'mid'    => $mid,
 				'status' => 'not deleted'
-			]);
+			], $options));
+			$sign_place_list = $sign_place_model->getRecordSelectList($mid);
+			$this->assign('sign_place_list', $sign_place_list);
 			$this->assign('statistics', [
 				'signed'       => $signed_count,
 				'not_signed'   => $all_count-$signed_count,

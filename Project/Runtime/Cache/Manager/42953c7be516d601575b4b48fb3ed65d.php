@@ -23,6 +23,7 @@
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/Quasar.js" id="Quasar" data-mvc-name="<?php echo '/'.CONTROLLER_NAME.'/'.ACTION_NAME;?>" data-page-suffix="<?php echo C('PAGE_SUFFIX');?>" ></script>
 	<script src="<?php echo (COMMON_SCRIPT); ?>"></script>
 	<script src="<?php echo (SELF_SCRIPT); ?>"></script>
 </head>
@@ -76,7 +77,22 @@
 			</li>
 			<li class="side_item <?php if('Badge'==$c_name) echo 'active'; ?>">
 				<a href="<?php echo U('Badge/manage');?>" class="side-item-link">
-					<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">胸卡设计</span>
+					<i class="icon_nav glyphicon glyphicon-bookmark"></i> <span class="nav-label">胸卡设计</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Room'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Room/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-home"></i> <span class="nav-label">房间管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('Car'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('Car/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-plane"></i> <span class="nav-label">车辆管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <?php if('DiningBoard'==$c_name) echo 'active'; ?>">
+				<a href="<?php echo U('DiningBoard/manage');?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 			</li>
 			<li class="side_item cls <?php if('Recycle'==$c_name) echo 'active'; ?>">
@@ -120,7 +136,7 @@
 							<div class="function_list clearfix">
 								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_coupon">
 									<i></i>
-									<p>新增代金券</p>
+									<p>添加代金券</p>
 								</div>
 								<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_coupon">
 									<i></i>
@@ -139,17 +155,14 @@
 								<a type="reset" class="btn btn-default mian_search" href="<?php echo U('manage');?>">查看所有</a>
 							</form>
 							<form action="" method="get" class="sign_check">
-								<div class="input-group pull-left">
-									<input type="radio"  name="iCheck" id="check_all_condition" class="icheck">&nbsp;&nbsp;全部
-								</div>
 								<div class="input-group pull-left unused">
-									<input type="radio"  name="iCheck" class="icheck" >&nbsp;&nbsp;未使用 (<?php echo ($statistics["signed"]); ?>)
+									<input type="radio"  name="iCheck" class="icheck" >&nbsp;&nbsp;未使用 (<?php echo ($statistics["unused"]); ?>)
 								</div>
 								<div class="input-group pull-left hasused">
-									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;已使用 (<?php echo ($statistics["reviewed"]); ?>)
+									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;已使用 (<?php echo ($statistics["hasused"]); ?>)
 								</div>
 								<div class="input-group pull-left refund">
-									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;退费
+									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;退费(<?php echo ($statistics["refund"]); ?>)
 								</div>
 							</form>
 						</div>
@@ -171,15 +184,18 @@
 								<?php if(is_array($info)): $i = 0; $__LIST__ = $info;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$info): $mod = ($i % 2 );++$i;?><tbody>
 									<tr>
 										<td class="check_item">
-											<input type="checkbox" class="icheck" placeholder="" value="<?php echo ($single["id"]); ?>">
+											<input type="checkbox" class="icheck" placeholder="" value="<?php echo ($info["id"]); ?>">
 										</td>
-										<td><?php echo ($coupon["name"]); ?></td>
-										<td><?php echo ($meeting["name"]); ?></td>
+										<td><?php echo ($info["couponName"]); ?></td>
+										<td><?php echo ($info["meetingName"]); ?></td>
 										<td><?php echo ($info["cid"]); ?></td>
 										<td><?php echo ($info["code"]); ?></td>
-										<td><?php echo ($info["status"]); ?></td>
 										<td>
-											<div class="btn-group" data-id="<?php echo ($single["id"]); ?>">
+										<?php switch($info["status"]): case "0": ?>禁用<?php break;?>
+											<?php case "1": ?>可用<?php break; endswitch;?>
+										</td>
+										<td>
+											<div class="btn-group" data-id="<?php echo ($info["id"]); ?>">
 												<?php if($max_role_level <= $single['level']): ?><button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>
 													<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button><?php endif; ?>
 											</div>
@@ -205,7 +221,7 @@
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="create_role_title">新增代金券</h2>
+					<h2 class="modal-title" id="create_role_title">添加代金券</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkCreate()">
 					<input type="hidden" name="requestType" value="create">
@@ -214,8 +230,8 @@
 							<label class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>方式：</label>
 							<div class="col-sm-10" style="margin:0">
 								<ul class="nav nav-pills" id="create_way">
-									<li role="presentation" class="active"><a href="#">单个新增</a></li>
-									<li role="presentation"><a href="#">批量新增</a></li>
+									<li role="presentation" class="active"><a href="#">单个添加</a></li>
+									<li role="presentation"><a href="#">批量添加</a></li>
 								</ul>
 							</div>
 						</div>
@@ -242,7 +258,7 @@
 							<div class="form-group">
 								<label class="col-sm-2 control-label"><b style="vertical-align: middle; color: red;">*</b>代金券号：</label>
 								<div class="col-sm-10">
-									<input type="text" name="number" class="number form-control">
+									<input type="text" name="coupon_area" class="coupon_area form-control">
 								</div>
 							</div>
 						</div>
@@ -278,6 +294,7 @@
 									<button type="button" class="btn btn-default auto_get_number">自动获取</button>
 									<ul class="list_coupon_number clearfix">
 									</ul>
+									<input type="hidden" name="coupon_area" value="">
 								</div>
 							</div>
 						</div>
@@ -324,7 +341,7 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title" id="modify_role_title">修改代金券</h2>
 				</div>
-				<form class="form-horizontal" role="form" action="<?php echo U('alterCoupon');?>" method="post" onsubmit="return checkAlter()">
+				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return checkAlter()">
 					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
 					<div class="modal-body">
 						<div class="form-group">

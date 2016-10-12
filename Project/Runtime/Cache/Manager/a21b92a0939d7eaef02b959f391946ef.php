@@ -139,7 +139,8 @@
 									<img src="<?php echo (COMMON_IMAGE_PATH); ?>/bg.jpg" id="badge_bg" alt="" style="width: 100%; height: 100%; position: absolute;">
 									<div class="cart_view_item ui-widget-content hide" id="client_name" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 8%;">客户姓名</div>
 									<div class="cart_view_item ui-widget-content hide" id="QRcode" style=" position: absolute; width: 200px; font-size:14px; text-align: center; left: 50%; margin-left: -100px; top: 25%;;">
-										<img src="<?php echo (COMMON_IMAGE_PATH); ?>/CheckIn_Code.jpg" alt="" width="100%"></div>
+										<img src="<?php echo (COMMON_IMAGE_PATH); ?>/CheckIn_Code.jpg" alt="" width="100%">
+									</div>
 									<div class="cart_view_item ui-widget-content hide" id="meeting_name" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 60%;;">会议名称</div>
 									<div class="cart_view_item ui-widget-content hide" id="meeting_time" style=" position: absolute; width: 300px; font-size:14px; text-align: center; left: 50%; margin-left: -150px; top: 88%;;">会议时间</div>
 									<div class="cart_view_item ui-widget-content hide" id="sign_place" style=" position: absolute; width: 300px; font-size:14px; text-align: center; left: 50%; margin-left: -150px; top: 92%;;">签到点</div>
@@ -148,15 +149,28 @@
 								</div>
 							</div>
 							<div class="cart_set">
-								<h2>自定义胸卡模板</h2>
+								<h2>请选择会议所用胸卡模板</h2>
 								<div class="choose_type">
 									<span class="title">选择胸卡模板：</span>
-									<span><input type="radio" name="iCheck" class="icheck">&nbsp;&nbsp;使用系统模板</span>
-									<span><input type="radio" name="iCheck" class="icheck" checked>&nbsp;&nbsp;自定义模板</span>
+									<span class="type"><input type="radio" name="iCheck" class="icheck" checked>&nbsp;&nbsp;使用系统模板</span>
+									<span class="type"><input type="radio" name="iCheck" class="icheck">&nbsp;&nbsp;自定义模板</span>
 								</div>
-								<div class="template template_system hide">
+								<div class="template template_system">
+									<div class="block_slide">
+										<ul class="slider_list clearfix">
+											<?php if(is_array($list)): $i = 0; $__LIST__ = $list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$single): $mod = ($i % 2 );++$i;?><li class="item active">
+													<div class="select_icon glyphicon glyphicon-ok"></div>
+													<div>
+														<?php echo ($single["data"]); ?>
+													</div>
+												</li><?php endforeach; endif; else: echo "" ;endif; ?>
+										</ul>
+									</div>
+									<div class="form_li text-center">
+										<button type="button" id="choose_badge_temp" class="btn btn-primary">保存设置</button>
+									</div>
 								</div>
-								<div class="template template_custom">
+								<div class="template template_custom hide">
 									<div class="form_li">
 										<p class="title">背景（宽度为400px，高度为700px的.png、.jpg图片，小于2M）</p>
 										<form action="" id="uploadBgForm">
@@ -202,7 +216,7 @@
 										</ul>
 									</div>
 									<div class="form_li text-center">
-										<button type="button" id="keep_badhge_temp" class="btn btn-primary">保存设置</button>
+										<button type="button" id="keep_badge_temp" class="btn btn-primary">保存设置</button>
 									</div>
 								</div>
 							</div>
@@ -217,8 +231,8 @@
 			object:{
 				/*toast         :$().QuasarToast(),*/
 				icheck:$('.icheck').iCheck({
-					checkboxClass:'icheckbox_square-green',
-					radioClass   :'iradio_square-green'
+					checkboxClass:'icheckbox_square-blue',
+					radioClass   :'iradio_square-blue'
 				})
 			}
 		}
@@ -226,7 +240,7 @@
 			$(".cart_view_item ").resizable({
 				resize:function(event, ui){
 					var h = $(this).height();
-					$(this).css('font-size',h*0.6)
+					$(this).css('font-size', h*0.6)
 				}
 			}).draggable();
 		});

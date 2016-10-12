@@ -373,6 +373,38 @@
 
 					return ['status' => true, 'massage' => '发送成功', '__ajax__' => false];
 				break;
+				case 'assign_sign_place':
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model  = D('Core/Join');
+					$cid         = I('post.cid', 0, 'int');
+					$mid         = I('get.mid', 0, 'int');
+					$sid         = I('post.sid', 0, 'int');
+					$join_record = $join_model->findRecord(1, ['cid' => $cid, 'mid' => $mid]);
+					C('TOKEN_ON', false);
+					// todo 1233333333333333333333333
+					$result = $join_model->alterRecord($join_record['id'], ['sid' => $sid]);
+
+					return array_merge($result, ['__ajax__' => false]);
+				break;
+				case 'multi_assign_sign_place':
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model = D('Core/Join');
+					$cid_str    = I('post.cid', 0, 'int');
+					$mid        = I('get.mid', 0, 'int');
+					$sid        = I('post.sid', 0, 'int');
+					$cid_arr    = explode(',', $cid_str);
+					C('TOKEN_ON', false);
+					$count = 0;
+					foreach($cid_arr as $key => $val){
+						// todo 1233333333333333333333333
+						$join_record = $join_model->findRecord(1, ['cid' => $val, 'mid' => $mid]);
+						$result      = $join_model->alterRecord($join_record['id'], ['sid' => $sid]);
+						if($result['status']) $count++;
+					}
+					if($count == count($cid_arr)) return ['status' => true, 'message' => '分配成功', '__ajax__' => false];
+					elseif($count == 0) return ['status' => false, 'message' => '分配失败', '__ajax__' => false];
+					else return ['status' => true, 'message' => '部分分配成功', '__ajax__' => false];
+				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
 				break;

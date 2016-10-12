@@ -37,7 +37,7 @@ var badgeManage = {
 			$('.cart_view .cart_view_item').eq(index).addClass('hide');
 		});
 		// 保存胸卡模板
-		$('#keep_badhge_temp').on('click', function(){
+		$('#keep_badge_temp').on('click', function(){
 			var tempHtml = $('.cart_view').html();
 			var width    = $('.temp_width').val();
 			var height   = $('.temp_height').val();
@@ -72,6 +72,19 @@ var badgeManage = {
 				}
 			});
 		});
+
+		// 系统模板 or 设计模板
+		$('.choose_type').find('.iCheck-helper').on('click',function(){
+			var index =  $(this).parents('.type').index();
+			$('.template').addClass('hide');
+			console.log(index);
+			$('.template').eq(index-1).removeClass('hide');
+		});
+		// 选择系统模板的选择
+		$('.slider_list .item').on('click',function(){
+			$('.slider_list .item').removeClass('active');
+			$(this).addClass('active');
+		})
 	},
 	// 计算胸卡设计（右侧）的宽度
 	setWidth     :function(){
@@ -103,6 +116,7 @@ var badgeManage = {
 		});
 		return false;
 	},
+	// 初始化关键字ID
 	initKeyDateId:function(){
 		var $vote_list = $('.vote_list');
 		if($vote_list.find('.client_name').hasClass('no_choose')){
@@ -141,7 +155,15 @@ var badgeManage = {
 			$vote_list.find('.brief').attr('data-id',1)
 		}
 	},
-	//模板
+	// 计算ul的宽度
+	setUlWidth:function(){
+		var $slider_list = $('.slider_list ');
+		var $item = $slider_list.find('.item');
+		var w = $item.outerWidth(true);
+		var len = $item.length;
+		$slider_list.width(w*len);
+	},
+	// 模板
 	voteTemp     :'<li><span>$name</span><i class="glyphicon glyphicon-trash"></i></li>',
 };
 $(window).resize(function(){
@@ -152,5 +174,5 @@ $(function(){
 	// 计算胸卡设计的宽度
 	badgeManage.setWidth();
 	badgeManage.bindEvent();
-
+	badgeManage.setUlWidth();
 });

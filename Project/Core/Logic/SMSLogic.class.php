@@ -13,8 +13,8 @@
 	class SMSLogic extends CoreLogic{
 		private $_config = [
 			'corpID'  => 122503, // 企业ID
-			'user'    => 'Admin', // 登入用户
-			'pass'    => 'gimmay0099', // 登入密码
+			'user'    => 'Ser01', // 登入用户
+			'pass'    => 'Ur763825', // 登入密码
 			'soapUrl' => 'http://sms.mobset.com:8080/Api?wsdl' // WebService接口地址
 		];
 

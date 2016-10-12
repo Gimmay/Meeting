@@ -64,7 +64,7 @@
 			$result = [];
 			if($not_assigned){
 				$keyword     = "%$keyword%";
-				$sql         = "select `id`, `code`, `name` from system_permission where id not in (
+				$sql         = "select `id`, `code`, `name`, `group` from system_permission where id not in (
 	select pid from system_assign_permission WHERE `type` = 1 and `oid` = $eid -- 员工权限
 	UNION
 	select pid from system_assign_permission where `type` = 0 and `oid` in ( -- 角色权限

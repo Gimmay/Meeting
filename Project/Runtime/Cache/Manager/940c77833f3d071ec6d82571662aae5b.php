@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>会议模块 - 会议系统</title>
+	<title>创建签到点 - 会议系统</title>
 	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
@@ -20,8 +20,6 @@
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/cityselect/jquery.cityselect.js"></script>
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/icheck-1.x/custom.min.js"></script>
-	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/xheditor-1.2.2/xheditor-1.2.2.min.js"></script>
-	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/xheditor-1.2.2/xheditor_lang/zh-cn.js"></script>
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
@@ -134,90 +132,41 @@
 				<div class="mian_body">
 					<section class="content" style="padding: 10px;">
 						<div class="return">
-							<a class="btn btn-default" href="<?php echo U('manage');?>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
+							<a class="btn btn-default" href="javascript:history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
 						</div>
 						<div class="modal-header">
-							<h2 class="modal-title" id="authorize_role_title">新建会议</h2>
+							<h2 class="modal-title" id="authorize_role_title">新建签到点</h2>
 						</div>
 						<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
-							<div class="modal-body" style=" padding: 15px 20px 15px 0;">
+							<div class="modal-body" style=" padding: 15px 20px 15px 0">
 								<div class="form-group">
-									<label for="meeting_name" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>会议名称：</label>
+									<label for="mid" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>会议：</label>
 									<div class="col-sm-11">
-										<input type="text" class="form-control meeting_name" name="name" id="meeting_name">
+										<input type="text" class="form-control" name="mid" value="<?php echo ($meeting_name["name"]); ?>" id="mid" disabled>
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="meeting_status" class="col-sm-1 control-label">状态：</label>
+									<label for="name" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>签到点名称：</label>
 									<div class="col-sm-11">
-										<select name="status" id="meeting_status" class="form-control">
-											<option value="1">新建</option>
-											<option value="2">进行中</option>
-											<option value="3">结束</option>
-											<option value="4">作废</option>
-										</select>
+										<input type="text" class="form-control name" name="name" id="name">
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="meeting_type" class="col-sm-1 control-label">类型：</label>
-									<div class="col-sm-11">
-										<select name="type" id="meeting_type" class="form-control">
-											<option value="1">成交会</option>
-											<option value="2">特训营</option>
-											<option value="3">优雅女子</option>
-											<option value="4">招商会</option>
-											<option value="5">启动大会</option>
-										</select>
-									</div>
-								</div>
-								<div class="form-group">
-									<label for="meeting_host" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>主办方：</label>
-									<div class="col-sm-11">
-										<input type="text" class="form-control meeting_host" name="host" id="meeting_host">
-									</div>
-								</div>
-								<div class="form-group">
-									<label for="meeting_plan" class="col-sm-1 control-label">策划方：</label>
-									<div class="col-sm-11">
-										<input type="text" class="form-control meeting_plan" name="plan" id="meeting_plan">
-									</div>
-								</div>
-								<div class="form-group">
-									<label for="place" class="col-sm-1 control-label">地址：</label>
+									<label for="place" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>地址：</label>
 									<div class="col-sm-11">
 										<div id="place" class="address_wrap clearfix">
 											<div class="address_item">
-												<select class="prov form-control" name="province"></select>
+												<select class="prov form-control" name="address.province"></select>
 											</div>
 											<div class="address_item">
-												<select class="city form-control" name="city" disabled="disabled"></select>
+												<select class="city form-control" name="address.city" disabled="disabled"></select>
 											</div>
 											<div class="address_item">
-												<select class="dist form-control" name="area" disabled="disabled"></select>
+												<select class="dist form-control" name="address.area" disabled="disabled"></select>
 											</div>
 											<div class="address_item address_details">
 												<input type="text" placeholder="具体街道或者村镇" class="form-control" name="address.detail">
 											</div>
-										</div>
-									</div>
-								</div>
-								<div class="form-group">
-									<label for="meeting_start_time" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>开始时间：</label>
-									<div class="col-sm-11">
-										<!--<input type="text" class="form-control meeting_start_time" name="meeting_place" id="meeting_start_time">-->
-										<div class="input-group date form_datetime" id="meeting_start_time_wrap">
-											<input class="form-control" id="meeting_start_time" name="start_time">
-											<!--<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>-->
-											<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-										</div>
-									</div>
-								</div>
-								<div class="form-group">
-									<label for="meeting_end_time" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>结束时间：</label>
-									<div class="col-sm-11">
-										<div class="input-group date form_datetime" id="meeting_end_time_wrap">
-											<input class="form-control" id="meeting_end_time" name="end_time">
-											<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
 										</div>
 									</div>
 								</div>
@@ -228,32 +177,11 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="contacts_1_id" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>联系人：</label>
+									<label for="sign_director_id" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>签到负责人：</label>
 									<div class="col-sm-11">
-										<div id="contacts_1_id"></div>
-									</div>
-
-								</div>
-								<div class="form-group">
-									<label for="contacts_2_id" class="col-sm-1 control-label color-red"><b style="vertical-align: middle">*</b>联系人2：</label>
-									<div class="col-sm-11">
-										<div id="contacts_2_id"></div>
+										<div id="sign_director_id"></div>
 									</div>
 								</div>
-								<div class="form-group">
-									<label for="brief" class="col-sm-1 control-label">简介：</label>
-									<div class="col-sm-11">
-										<textarea class="form-control brief xheditor" runat="server"  name="brief" id="brief" style="min-height: 200px"></textarea>
-									</div>
-								</div>
-								<div class="form-group">
-									<label for="logo" class="col-sm-1 control-label">LOGO图片地址：</label>
-									<div class="col-sm-11">
-										<input type="text" class="form-control logo" name="logo" id="logo">
-									</div>
-								</div>
-								<input type="hidden" name="creator" class="creator">
-								<input type="hidden" name="creatime" class="creatime">
 								<div class="form-group">
 									<label for="comment" class="col-sm-1 control-label">备注：</label>
 									<div class="col-sm-11">
@@ -273,26 +201,7 @@
 	<script>
 		var CreateObject = {
 			object:{
-				icheck           :$('.icheck').iCheck({
-					checkboxClass:'icheckbox_square-green',
-					radioClass   :'iradio_square-green'
-				}),
-				meetingTime      :$('#meeting_start_time_wrap , #meeting_end_time_wrap').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd hh:ii:ss',
-					weekStart         :0,
-					startView         :4,
-					minView           :0,
-					maxView           :4,
-					minuteStep        :5,
-					startDate         :new Date()
-				}),
-				directorIdSelect :$('#director_id').QuasarSelect({
+				directorIdSelect    :$('#director_id').QuasarSelect({
 					name        :'director_id',
 					classStyle  :'form-control',
 					data        :'<?php echo json_encode($employee_list);?>',
@@ -301,27 +210,18 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				contacts1IdSelect:$('#contacts_1_id').QuasarSelect({
-					name        :'contacts_1_id',
+				signDirectorIdSelect:$('#sign_director_id').QuasarSelect({
+					name        :'sign_director_id',
 					classStyle  :'form-control',
 					data        :'<?php echo json_encode($employee_list);?>',
-					idInput     :'selected_contacts_1_id',
-					idHidden    :'selected_contacts_1_id_form',
+					idInput     :'selected_sign_director_id',
+					idHidden    :'selected_sign_director_id_form',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				contacts2IdSelect:$('#contacts_2_id').QuasarSelect({
-					name        :'contacts_2_id',
-					classStyle  :'form-control',
-					data        :'<?php echo json_encode($employee_list);?>',
-					idInput     :'selected_contacts_2_id',
-					idHidden    :'selected_contacts_2_id_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				toast            :$().QuasarToast(),
-				loading          :$().QuasarLoading(),
-				citySelect       :$("#place").citySelect({
+				toast               :$().QuasarToast(),
+				loading             :$().QuasarLoading(),
+				citySelect          :$("#place").citySelect({
 					nodata:"none",
 					url   :'<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/cityselect/city.min.js'
 				})

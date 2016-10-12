@@ -178,24 +178,24 @@
 				break;
 				case 1: // find
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->find();
-						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->find();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.status join_status, sub.sign_type sign_type')->find();
+						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.status join_status, sub.sign_type sign_type')->find();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->where($where)->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->find();
-						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->where($where)->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->find();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->where($where)->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.status join_status, sub.sign_type sign_type')->find();
+						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->where($where)->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.status join_status, sub.sign_type sign_type')->find();
 					}
 				break;
 				case 2: // select
 				default:
 					if(!isset($filter['_order'])) $filter['_order'] = 'main.creatime desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->order($filter['_order'])->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->select();
-						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->order($filter['_order'])->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->select();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->order($filter['_order'])->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.status join_status, sub.sign_type sign_type')->select();
+						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->order($filter['_order'])->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.status join_status, sub.sign_type sign_type')->select();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->where($where)->order($filter['_order'])->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->select();
-						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->where($where)->order($filter['_order'])->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.sign_place_id, sub.sign_director_id, sub.status join_status')->select();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->limit($filter['_limit'])->where($where)->order($filter['_order'])->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.status join_status, sub.sign_type sign_type')->select();
+						else $result = $this->alias('main')->join('join workflow_join sub on sub.cid = main.id')->where($where)->order($filter['_order'])->field('main.*, sub.mid, sub.registration_date, sub.sign_code, sub.sign_qrcode, sub.print_status, sub.print_times, sub.sign_time, sub.sign_status, sub.review_status, sub.review_time, sub.status join_status, sub.sign_type sign_type')->select();
 					}
 				break;
 			}

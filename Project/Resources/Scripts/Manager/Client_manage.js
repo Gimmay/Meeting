@@ -383,6 +383,21 @@ $(function(){
 		}
 		$('#batch_send_message').find('input[name=id]').val(newStr);
 	});
+	// 修改签到点 (single)
+	$('.alter_sign_point_btn').on('click', function(){
+		var cid = $(this).parent().attr('data-id');
+		$('#alter_sign_place_cid').val(cid).attr('value', cid);
+	});
+	// 修改签到点 (multi)
+	$('.assign_sign_place').on('click', function(){
+		var str = '';
+		$('.check_item .icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
+			str += id+','
+		});
+		str = str.substr(0, str.length-1);
+		$('#alter_multi_sign_place_cid').val(str).attr('value', str);
+	});
 	// 人员状态列表（签到\审核\收款）
 	var mvc         = $('#Quasar').attr('data-mvc-name');
 	var suffix      = $('#Quasar').attr('data-page-suffix');

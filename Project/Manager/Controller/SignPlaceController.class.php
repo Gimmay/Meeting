@@ -43,6 +43,20 @@
 		public function manage(){
 			$logic = new SignPlaceLogic();
 			/** @var \Core\Model\SignPlaceModel $model */
+			if(IS_POST){
+				$type   = strtolower(I('post.requestType', ''));
+				$result = $logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']) $this->success($result['message']);
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
+			}
 			$model       = D('Core/SignPlace');
 			$list_total  = $model->findRecord(0, ['keyword' => I('get.keyword', ''), 'status' => 'not deleted']);
 			$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
@@ -55,14 +69,7 @@
 				'status'  => 'not deleted',
 				'mid'     => I('get.mid', 0, 'int')
 			]);
-			if(IS_POST){
-				$data       = I('post.id');
-				$data_total = $model->deleteSignPlace($data);
-				if($data_total['status']) $this->success($data_total['message']);
-				else $this->error($data_total['message'], '', 3);
-				exit;
-			}
-			$record_list = $logic->setExtendColumn($record_list);
+			$record_list = $logic->setExtendColumnForManage($record_list);
 			$this->assign('page_show', $page_show);
 			$this->assign('list', $record_list);
 			$this->display();

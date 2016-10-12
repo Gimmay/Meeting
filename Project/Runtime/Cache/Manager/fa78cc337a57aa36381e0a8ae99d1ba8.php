@@ -180,12 +180,12 @@
 										<td>会议名称</td>
 										<td><a href="javascript:void(0)" class="link color-primary"><?php echo ($list["number"]); ?></a></td>
 										<td><?php echo ($list["price"]); ?></td>
-										<td><?php echo ($list["start_time"]); ?></td>
-										<td><?php echo ($list["end_time"]); ?></td>
+										<td><?php echo (date('Y-m-d',$list["start_time"])); ?></td>
+										<td><?php echo (date('Y-m-d',$list["end_time"])); ?></td>
 										<td><?php echo ($list["comment"]); ?></td>
 										<td>
 											<div class="btn-group" data-id="<?php echo ($list["id"]); ?>">
-												<?php if($max_role_level <= $single['level']): ?><a href="<?php echo U('Details',['id'=>$list['id']]);?>" type="button" class="btn btn-default btn-xs seeList">查看</a>
+												<?php if($max_role_level <= $single['level']): ?><a href="<?php echo U('Details',['id'=>$list['id']]);?>" type="button" class="btn btn-default btn-xs seeList">查看列表</a>
 													<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>
 													<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button><?php endif; ?>
 											</div>
@@ -273,7 +273,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="number" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>数量：</label>
+								<label for="number" class="col-sm-2 control-label">数量：</label>
 								<div class="col-sm-10">
 									<input type="number" class="form-control number" name="number" id="number">
 								</div>

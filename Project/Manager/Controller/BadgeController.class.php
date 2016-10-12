@@ -30,6 +30,19 @@
 				}
 				exit;
 			}
+			/** @var \Core\Model\BadgeModel $model */
+			$model = D('Core/Badge');
+			$list  = $model->findBadge(2, ['status' => 'not deleted']);
+			$this->assign('list', $list);
+			$this->display();
+		}
+
+		public function preview(){
+			/** @var \Core\Model\BadgeModel $model */
+			$model = D('Core/Badge');
+			$id    = I('get.id', 0, 'int');
+			$info = $model->findBadge(1, ['id'=>$id]);
+			$this->assign('info', $info);
 			$this->display();
 		}
 	}

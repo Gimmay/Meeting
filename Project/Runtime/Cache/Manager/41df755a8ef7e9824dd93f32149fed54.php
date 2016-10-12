@@ -188,7 +188,7 @@
 										<p>下载Excel模板</p>
 									</a>
 								</div>
-								<div class="function_btn bg-warning assigned_sign" data-toggle="modal" data-target="#batch_alter_sign_point" data-backdrop="static">
+								<div class="function_btn bg-warning assign_sign_place" data-toggle="modal" data-target="#batch_alter_sign_point" data-backdrop="static">
 									<i></i>
 									<p>分配签到点</p>
 								</div>
@@ -239,9 +239,10 @@
 										<td width="10%">会所名称</td>
 										<td width="8%">创建时间</td>
 										<td width="8%">签到时间</td>
+										<td width="5%">签到方式</td>
 										<td width="4%">状态</td>
 										<td width="10%">审核/签到/打印</td>
-										<td width="31%">操作</td>
+										<td width="26%">操作</td>
 									</tr>
 								</thead>
 								<tbody>
@@ -261,6 +262,10 @@
 											<td><?php echo ($single["club"]); ?></td>
 											<td><?php echo date('Y-m-d H:i:s', $single['creatime']);?></td>
 											<td><?php if(!empty($single['sign_time'])): echo date('Y-m-d H:i:s', $single['sign_time']); endif; ?></td>
+											<td>
+												<?php switch($single["sign_type"]): case "0": ?>手动签到<?php break;?>
+													<?php case "1": ?>微信签到<?php break; endswitch;?>
+											</td>
 											<td>
 												<?php switch($single["status"]): case "0": ?>禁用<?php break;?>
 													<?php case "1": ?>可用<?php break; endswitch;?>
@@ -315,10 +320,10 @@
 					<h2 class="modal-title">修改签到点</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="id">
+					<input type="hidden" name="requestType" value="assign_sign_place"> <input type="hidden" name="cid" id="alter_sign_place_cid">
 					<div class="modal-body">
 						<div class="form-group">
-							<label for="sign_place" class="col-sm-3 control-label">选择签到点：</label>
+							<label class="col-sm-3 control-label">选择签到点：</label>
 							<div class="col-sm-9">
 								<div id="sign_place"></div>
 							</div>
@@ -343,10 +348,10 @@
 					<h2 class="modal-title">批量修改签到点</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="id">
+					<input type="hidden" name="requestType" value="multi_assign_sign_place"> <input type="hidden" name="cid" id="alter_multi_sign_place_cid">
 					<div class="modal-body">
 						<div class="form-group">
-							<label for="sign_place" class="col-sm-3 control-label">选择签到点：</label>
+							<label class="col-sm-3 control-label">选择签到点：</label>
 							<div class="col-sm-9">
 								<div id="batch_sign_place"></div>
 							</div>
@@ -679,20 +684,20 @@
 					hasEmptyItem:false
 				}),
 				signPlaceSelect:$('#sign_place').QuasarSelect({
-					name        :'sign_place',
+					name        :'sid',
 					classStyle  :'form-control',
-					data        :'<?php echo json_encode($dept);?>',
-					idInput     :'selected_coupon',
-					idHidden    :'selected_coupon_form',
+					data        :'<?php echo json_encode($sign_place_list);?>',
+					idInput     :'selected_sign_place',
+					idHidden    :'selected_sign_place_form',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
 				batchSignPlaceSelect:$('#batch_sign_place').QuasarSelect({
-					name        :'batch_sign_place',
+					name        :'sid',
 					classStyle  :'form-control',
-					data        :'<?php echo json_encode($dept);?>',
-					idInput     :'selected_coupon',
-					idHidden    :'selected_coupon_form',
+					data        :'<?php echo json_encode($sign_place_list);?>',
+					idInput     :'selected_sign_place_batch',
+					idHidden    :'selected_sign_place_batch_form',
 					placeholder :'',
 					hasEmptyItem:false
 				}),

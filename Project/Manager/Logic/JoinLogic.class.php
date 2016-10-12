@@ -28,10 +28,7 @@
 
 			return $model->createRecord($data);
 		}
-
-		public function alter(){
-			$id = I('get.id', 0, 'int');
-		}
+		
 
 		public function makeQRCode($client_list, $data){
 			$qrcode_obj = new QRCodeLogic();

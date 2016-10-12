@@ -28,7 +28,7 @@
 					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);
 					if(!$exception['status']) return $exception;
-					else return ['status' => false, 'message' => $this->getError()];
+					else return ['status' => false, 'message' => $message];
 				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];
@@ -94,13 +94,13 @@
 					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);
 					if(!$exception['status']) return $exception;
-					else return ['status' => false, 'message' => $this->getError()];
+					else return ['status' => false, 'message' => $message];
 				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function deleteSignPlace($ids){
+		public function deleteRecord($ids){
 			if($this->create()){
 				try{
 					$where['id'] = ['in', $ids];
@@ -111,7 +111,7 @@
 					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);
 					if(!$exception['status']) return $exception;
-					else return ['status' => false, 'message' => $this->getError()];
+					else return ['status' => false, 'message' => $message];
 				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];
