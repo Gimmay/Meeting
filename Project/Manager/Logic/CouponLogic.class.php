@@ -45,7 +45,7 @@
 				break;
 				case'delete';
 					/** @var \Core\Model\CouponModel $model */
-					$id = I('post.id', '');
+					$id     = I('post.id', '');
 					$model  = D('Core/Coupon');
 					$result = $model->deleteCoupon($id);
 
@@ -66,6 +66,40 @@
 					return -1;
 				break;
 			}
+		}
+
+		public function setExtendColumnForManage($list){
+			/** @var \Core\Model\CouponItemModel $coupon_item_model */
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$coupon_item_model = D('Core/CouponItem');
+			$meeting_model     = D('Core/Meeting');
+			foreach($list as $k1 => $v1){
+				$coupon_list        = $coupon_item_model->findCouponItem(2, ['coupon_id' => $v1['id']]);
+				$list[$k1]['count'] = count($coupon_list);
+				$meeting_arr        = [
+					'id'   => [],
+					'name' => []
+				];
+				foreach($coupon_list as $k2 => $v2){
+					if(in_array($v2['mid'], $meeting_arr['id'])) continue;
+					else{
+						array_push($meeting_arr['id'], $v2['mid']);
+						$meeting_record = $meeting_model->findMeeting(1, ['id' => $v2['mid']]);
+						$url = U('manage', ['mid'=>$meeting_record['id']]);
+						array_push($meeting_arr['name'], "<a href='$url'>$meeting_record[name]</a>");
+					}
+				}
+				if(isset($list[$k1]['meeting'])) $list[$k1]['meeting'] = implode(',', $meeting_arr['name']);
+				else{
+					$list[$k1]['meeting'] = '';
+					$list[$k1]['meeting'] = implode(',', $meeting_arr['name']);
+				}
+			}
+
+			return $list;
+		}
+
+		public function numberCoupon(){
 		}
 
 	}

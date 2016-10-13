@@ -15,10 +15,10 @@
 		}
 
 		public function client(){
-			/** @var \Core\Model\RecycleModel $recycle_model */
-			$recycle_model = D('Core/Recycle');
+			/** @var \Core\Model\RecycleModel $model */
+			$model = D('Core/Recycle');
 
-			$list_total = $recycle_model->findClient(0, [
+			$list_total = $model->findClient(0, [
 				'keyword' => I('get.keyword', ''),
 				'status'  => 2,
 			]);
@@ -27,7 +27,7 @@
 			\ThinkPHP\Quasar\Page\setTheme1($page_object);
 			$page_show = $page_object->show();
 			/* 当前页的员工记录列表 */
-			$client_list = $recycle_model->findClient(2, [
+			$client_list = $model->findClient(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
@@ -35,7 +35,7 @@
 			]);
 			if(IS_POST){
 				$client_id = I('post.id');
-				$recovery = $recycle_model->recoveryClient($client_id);
+				$recovery = $model->recoveryClient($client_id);
 				if($recovery['status']) $this->success($recovery['message'],U('client'));
 				else $this->error($recovery['message']);
 				exit;
@@ -46,10 +46,10 @@
 		}
 
 		public function employee(){
-			/** @var \Core\Model\RecycleModel $employee_model */
-			$employee_model = D('Core/Recycle');
+			/** @var \Core\Model\RecycleModel $model */
+			$model = D('Core/Recycle');
 
-			$list_total = $employee_model->findEmployee(0, [
+			$list_total = $model->findEmployee(0, [
 				'keyword' => I('get.keyword', ''),
 				'status'  => 2,
 			]);
@@ -58,7 +58,7 @@
 			\ThinkPHP\Quasar\Page\setTheme1($page_object);
 			$page_show = $page_object->show();
 			/* 当前页的员工记录列表 */
-			$client_list = $employee_model->findEmployee(2, [
+			$client_list = $model->findEmployee(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
@@ -66,7 +66,7 @@
 			]);
 			if(IS_POST){
 				$client_id = I('post.id');
-				$recovery = $employee_model->recoveryEmployee($client_id);
+				$recovery = $model->recoveryEmployee($client_id);
 				if($recovery['status']) $this->success($recovery['message'],U('employee'));
 				else $this->error($recovery['message']);
 				exit;
@@ -77,10 +77,10 @@
 		}
 
 		public function meeting(){
-			/** @var \Core\Model\RecycleModel $recycle_model */
-			$meeting_model = D('Core/Recycle');
+			/** @var \Core\Model\RecycleModel $model */
+			$model = D('Core/Recycle');
 
-			$list_total = $meeting_model->findMeeting(0, [
+			$list_total = $model->findMeeting(0, [
 				'keyword' => I('get.keyword', ''),
 				'status'  => 2,
 			]);
@@ -89,15 +89,15 @@
 			\ThinkPHP\Quasar\Page\setTheme1($page_object);
 			$page_show = $page_object->show();
 			/* 当前页的员工记录列表 */
-			$client_list = $meeting_model->findMeeting(2, [
+			$client_list = $model->findMeeting(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
-				'status'  => 2,
+				'status'  => 4,
 			]);
 			if(IS_POST){
 				$client_id = I('post.id');
-				$recovery = $meeting_model->recoveryClient($client_id);
+				$recovery = $model->recoveryClient($client_id);
 				if($recovery['status']) $this->success($recovery['message'],U('meeting'));
 				else $this->error($recovery['message']);
 				exit;
@@ -115,10 +115,10 @@
 		}
 
 		public function role(){
-			/** @var \Core\Model\RecycleModel $recycle_model */
-			$role_model = D('Core/Recycle');
+			/** @var \Core\Model\RecycleModel $model */
+			$model = D('Core/Recycle');
 
-			$list_total = $role_model->findRole(0, [
+			$list_total = $model->findRole(0, [
 				'keyword' => I('get.keyword', ''),
 				'status'  => 2,
 			]);
@@ -127,7 +127,7 @@
 			\ThinkPHP\Quasar\Page\setTheme1($page_object);
 			$page_show = $page_object->show();
 			/* 当前页的员工记录列表 */
-			$client_list = $role_model->findRole(2, [
+			$client_list = $model->findRole(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
@@ -135,7 +135,7 @@
 			]);
 			if(IS_POST){
 				$client_id = I('post.id');
-				$recovery = $role_model->recoveryRole($client_id);
+				$recovery = $model->recoveryRole($client_id);
 				if($recovery['status']) $this->success($recovery['message'],U('Role'));
 				else $this->error($recovery['message']);
 				exit;

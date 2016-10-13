@@ -31,7 +31,10 @@ UNION
 	 COLUMN_TYPE `TYPE`
 FROM information_schema.`COLUMNS`
 WHERE TABLE_SCHEMA = \'gimmay_meeting\' AND TABLE_NAME = \'workflow_join\'
-AND COLUMN_NAME IN (\'registration_date\'))');
+AND COLUMN_NAME IN (\'registration_date\', \'traffic_method\'))
+UNION(
+	SELECT \'price\', \'收款\', \'decimal(12, 2)\'
+)');
 			if($just_desc){
 				$list[0] = [];
 				foreach($result as $val) array_push($list[0], $val['desc']);

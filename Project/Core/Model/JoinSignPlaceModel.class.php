@@ -50,4 +50,63 @@
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}
+
+		public function findRecord($type = 2, $filter = []){
+			$where = [];
+			if(isset($filter['cid'])) $where['sub.id'] = $filter['cid'];
+			if(isset($filter['id'])) $where['main.id'] = $filter['id'];
+			if(isset($filter['sid'])) $where['sid'] = $filter['sid'];
+			if(isset($filter['status'])){
+				$status = strtolower($filter['status']);
+				if($status == 'not deleted') $where['sub.status'] = ['neq', 2];
+				else $where['sub.status'] = $filter['status'];
+			};
+			if(isset($filter['sign_status'])) $where['sign_status'] = $filter['sign_status'];
+			if(isset($filter['review_status'])) $where['review_status'] = $filter['review_status'];
+			if(isset($filter['keyword']) && $filter['keyword']){
+				$condition['club']        = ['like', "%$filter[keyword]%"];
+				$condition['mobile']      = ['like', "%$filter[keyword]%"];
+				$condition['name']        = ['like', "%$filter[keyword]%"];
+				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
+				$condition['_logic']      = 'or';
+				$where['_complex']        = $condition;
+			}
+			switch((int)$type){
+				case 0: // count
+					if($where == []){
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->count();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->count();
+					}
+					else{
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->where($where)->count();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->where($where)->count();
+					}
+				break;
+				case 1: // find
+					if($where == []){
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->field('sub.*, sign_time, sign_status, review_status, review_time, sign_type, main.id id, sub.id cid')->find();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->field('sub.*, sign_time, sign_status, review_status, review_time, sign_type, main.id id, sub.id cid')->find();
+					}
+					else{
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->where($where)->field('sub.*, sign_time, sign_status, review_status, review_time, sign_type, main.id id, sub.id cid')->find();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->where($where)->field('sub.*, sign_time, sign_status, review_status, review_time, sign_type, main.id id, sub.id cid')->find();
+					}
+				break;
+				case 2: // select
+				default:
+					if(!isset($filter['_order'])) $filter['_order'] = 'main.creatime desc';
+					if($where == []){
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->order($filter['_order'])->field('sub.*, sign_time, sign_status, review_status, review_time, sign_type, main.id id, sub.id cid')->select();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->order($filter['_order'])->field('sub.*, sign_time, sign_status, review_status, review_time, sign_type, main.id id, sub.id cid')->select();
+					}
+					else{
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->where($where)->order($filter['_order'])->field('sub.*, sign_time, sign_status, review_status, review_time, sign_type, main.id id, sub.id cid')->select();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->where($where)->order($filter['_order'])->field('sub.*, sign_time, sign_status, review_status, review_time, sign_type, main.id id, sub.id cid')->select();
+					}
+				break;
+			}
+
+			return $result;
+		}
+
 	}

@@ -14,8 +14,6 @@ var badgeManage = {
 		$('.size_confirm').on('click', function(){
 			var temp_width  = $('.temp_width').val();
 			var temp_height = $('.temp_height').val();
-			console.log(temp_width);
-			console.log(temp_height);
 			self.setTemplateWH(temp_width, temp_height);
 		});
 		// 胸卡内容关键字选择
@@ -31,59 +29,73 @@ var badgeManage = {
 		// 点击回收站按钮
 		$('.keyword i').on('click', function(e){
 			var index = $(this).parent('.keyword ').index();
-			console.log(index);
 			e.stopPropagation();
 			$(this).parent('.keyword').addClass('no_choose');
 			$('.cart_view .cart_view_item').eq(index).addClass('hide');
 		});
 		// 保存胸卡模板
 		$('#keep_badge_temp').on('click', function(){
-			var tempHtml = $('.cart_view').html();
-			var width    = $('.temp_width').val();
-			var height   = $('.temp_height').val();
-			var client_name_id = $('.vote_list').find('.client_name').attr('data-id');
-			var QRcode_id = $('.vote_list').find('.QRcode').attr('data-id');
+			var tempHtml        = $('.cart_view').html();
+			var width           = $('.temp_width').val();
+			var height          = $('.temp_height').val();
+			var client_name_id  = $('.vote_list').find('.client_name').attr('data-id');
+			var QRcode_id       = $('.vote_list').find('.QRcode').attr('data-id');
 			var meeting_name_id = $('.vote_list').find('.meeting_name').attr('data-id');
-			var time_id = $('.vote_list').find('.time').attr('data-id');
-			var sign_place_id = $('.vote_list').find('.sign_place').attr('data-id');
-			var club_id = $('.vote_list').find('.club').attr('data-id');
-			var brief_id = $('.vote_list').find('.brief').attr('data-id');
-			var data     = {
-
-				temp:tempHtml,
+			var time_id         = $('.vote_list').find('.time').attr('data-id');
+			var sign_place_id   = $('.vote_list').find('.sign_place').attr('data-id');
+			var club_id         = $('.vote_list').find('.club').attr('data-id');
+			var brief_id        = $('.vote_list').find('.brief').attr('data-id');
+			var badge_name = $('input[name=badge_name]').val();
+			alert(badge_name);
+			var data            = {
+				temp      :tempHtml,
 				attributes:{
-					width:width,
+					width :width,
 					height:height,
 					column:{
-						clientName:client_name_id,
-						qrcode:QRcode_id,
+						clientName :client_name_id,
+						qrcode     :QRcode_id,
 						meetingName:meeting_name_id,
 						meetingTime:time_id,
-						signPlace:sign_place_id,
-						club:club_id,
-						brief:brief_id,
+						signPlace  :sign_place_id,
+						club       :club_id,
+						brief      :brief_id,
+						name:badge_name
 					}
 				},
 			};
+			ManageObject.object.loading.loading();
 			Common.ajax({
 				data    :{requestType:'create', data:data},
 				callback:function(r){
-				console.log(r);
+					ManageObject.object.loading.complete();
+					if(r.status){
+						ManageObject.object.toast.toast("保存成功");
+						setTimeout(function(){
+							//location.replace(location.href);
+						},1000)
+
+					}else{
+						ManageObject.object.toast.toast("保存失败");
+					}
 				}
 			});
 		});
-
 		// 系统模板 or 设计模板
-		$('.choose_type').find('.iCheck-helper').on('click',function(){
-			var index =  $(this).parents('.type').index();
-			$('.template').addClass('hide');
+		$('.nav_tab').find('.nav_tab_li').on('click', function(){
+			$('.nav_tab').find('.nav_tab_li').removeClass('active');
+			$(this).addClass('active');
+			var index = $(this).index();
 			console.log(index);
-			$('.template').eq(index-1).removeClass('hide');
+			$('.tab_c').addClass('hide');
+			$('.tab_c').eq(index).removeClass('hide');
 		});
 		// 选择系统模板的选择
-		$('.slider_list .item').on('click',function(){
-			$('.slider_list .item').removeClass('active');
+		$('.system_tem_ul > li').on('click', function(){
+			$('.system_tem_ul > li').removeClass('active');
 			$(this).addClass('active');
+			var id = $(this).attr('data-id');
+			$('.system_tem').find('input[name=badge_id]').val(id);
 		})
 	},
 	// 计算胸卡设计（右侧）的宽度
@@ -120,48 +132,48 @@ var badgeManage = {
 	initKeyDateId:function(){
 		var $vote_list = $('.vote_list');
 		if($vote_list.find('.client_name').hasClass('no_choose')){
-			$vote_list.find('.client_name').attr('data-id',0)
+			$vote_list.find('.client_name').attr('data-id', 0)
 		}else{
-			$vote_list.find('.client_name').attr('data-id',1)
+			$vote_list.find('.client_name').attr('data-id', 1)
 		}
 		if($vote_list.find('.QRcode').hasClass('no_choose')){
-			$vote_list.find('.QRcode').attr('data-id',0)
+			$vote_list.find('.QRcode').attr('data-id', 0)
 		}else{
-			$vote_list.find('.QRcode').attr('data-id',1)
+			$vote_list.find('.QRcode').attr('data-id', 1)
 		}
 		if($vote_list.find('.meeting_name').hasClass('no_choose')){
-			$vote_list.find('.meeting_name').attr('data-id',0)
+			$vote_list.find('.meeting_name').attr('data-id', 0)
 		}else{
-			$vote_list.find('.meeting_name').attr('data-id',1)
+			$vote_list.find('.meeting_name').attr('data-id', 1)
 		}
 		if($vote_list.find('.time').hasClass('no_choose')){
-			$vote_list.find('.time').attr('data-id',0)
+			$vote_list.find('.time').attr('data-id', 0)
 		}else{
-			$vote_list.find('.time').attr('data-id',1)
+			$vote_list.find('.time').attr('data-id', 1)
 		}
 		if($vote_list.find('.sign_place').hasClass('no_choose')){
-			$vote_list.find('.sign_place').attr('data-id',0)
+			$vote_list.find('.sign_place').attr('data-id', 0)
 		}else{
-			$vote_list.find('.sign_place').attr('data-id',1)
+			$vote_list.find('.sign_place').attr('data-id', 1)
 		}
 		if($vote_list.find('.club').hasClass('no_choose')){
-			$vote_list.find('.club').attr('data-id',0)
+			$vote_list.find('.club').attr('data-id', 0)
 		}else{
-			$vote_list.find('.club').attr('data-id',1)
+			$vote_list.find('.club').attr('data-id', 1)
 		}
 		if($vote_list.find('.brief').hasClass('no_choose')){
-			$vote_list.find('.brief').attr('data-id',0)
+			$vote_list.find('.brief').attr('data-id', 0)
 		}else{
-			$vote_list.find('.brief').attr('data-id',1)
+			$vote_list.find('.brief').attr('data-id', 1)
 		}
 	},
 	// 计算ul的宽度
-	setUlWidth:function(){
-		var $slider_list = $('.slider_list ');
-		var $item = $slider_list.find('.item');
-		var w = $item.outerWidth(true);
-		var len = $item.length;
-		$slider_list.width(w*len);
+	setUlWidth   :function(){
+		var $system_tem_ul = $('.system_tem_ul');
+		var li             = $system_tem_ul.find('li');
+		var w              = li.outerWidth(true);
+		var len            = li.length;
+		$system_tem_ul.width(w*len);
 	},
 	// 模板
 	voteTemp     :'<li><span>$name</span><i class="glyphicon glyphicon-trash"></i></li>',

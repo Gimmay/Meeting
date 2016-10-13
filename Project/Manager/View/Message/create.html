@@ -39,49 +39,119 @@
 							<a class="btn btn-default" onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回消息管理</a>
 						</div>
 						<div class="table_wrap">
-							<!-- Nav tabs -->
-							<ul class="nav nav-tabs" role="tablist">
-								<li role="presentation" class="active"><a href="#home" role="tab" data-toggle="tab">创建消息模板</a></li>
-								<li role="presentation"><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
-								<li role="presentation"><a href="#messages" role="tab" data-toggle="tab">Messages</a></li>
-								<li role="presentation"><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
-							</ul>
-
-							<!-- Tab panes -->
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="javascript:void(0)">创建文本模板</a>
+								</div>
+							</div>
+							<div class="overage clearfix">
+								<div class="ti float-left">您当前的短信余额：<span style="font-size: 18px;font-weight: bold;color: #fb5050;">0</span>条</div>
+								<div class="float-right op">
+									<a href="#"><i class="icon records alm"></i><span class="alm">发送记录</span></a>
+								</div>
+							</div>
 							<div class="tab-content">
-								<div role="tabpanel" class="tab-pane active" id="home">
-									<div class="edit_box">
-										<textarea class="form-control" rows="3" id="textarea_edit"></textarea>
-										<p style=" margin-top: 5px;">已输入<span class="words_num"></span>个字，约1条短信（不含签名）</p>
-										<p style=" margin-top: 5px;">每60个字符计费1条，超过60个字将自动被运营商按多条计费，长短信最多230个字符</p>
-										<div class="btn-group" style=" margin-top: 10px;">
-											<button type="button" class="btn btn-default">保存</button>
-											<button type="button" class="btn btn-default">编辑</button>
-											<button type="button" class="btn btn-default">重置</button>
+								<div class="mes_form">
+									<form role="form" class="form-horizontal" method="post" action="">
+										<div class="edit_box">
+											<!--<div class="form-group">
+												<label for="addressee" class="col-sm-2 control-label">收件人：</label>
+												<div class="col-sm-10">
+													<select name="addressee" id="addressee" class="form-control">
+														<option value="0">&#45;&#45;请选择收件人&#45;&#45;</option>
+														<option value="1">正式参会人员</option>
+														<option value="2">选择参会人员</option>
+													</select>
+												</div>
+											</div>-->
+											<!--<div class="form-group">
+												<label for="meeting_name" class="col-sm-2 control-label">会议名称：</label>
+												<div class="col-sm-10">
+													<select name="mid" id="meeting_name" class="form-control">
+														<volist name="meeting" id="meeting">
+															<option value="<{$meeting.id}>"><{$meeting.name}></option>
+														</volist>
+													</select>
+												</div>
+											</div>-->
+											<div class="form-group">
+												<label for="name" class="col-sm-2 control-label">模板名称：</label>
+												<div class="col-sm-10">
+													<input type="text" class="form-control name" name="name" id="name">
+												</div>
+											</div>
+											<!--<div class="form-group">
+												<label for="mes_type" class="col-sm-2 control-label">模板类型：</label>
+												<div class="col-sm-10">
+													<select name="addressee" id="mes_type" class="form-control">
+														<option value="0">&#45;&#45;请选择模板类型&#45;&#45;</option>
+														<option value="1">会前通知</option>
+													</select>
+												</div>
+											</div>-->
+											<div class="form-group">
+												<label for="textarea_edit" class="col-sm-2 control-label">文本内容：</label>
+												<div class="col-sm-10">
+													<div class="input_box">
+														<div class="field_box">
+															<h3>选择系统字段：</h3>
+															<div class="filed_w">
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:参会人名称:&gt;</button>
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:参会人会所:&gt;</button>
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:参会人手机号:&gt;</button>
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:签到码:&gt;</button>
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:会议名称:&gt;</button>
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:会议主办方:&gt;</button>
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:会议策划方:&gt;</button>
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:会议开始时间:&gt;</button>
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:会议结束时间:&gt;</button>
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:会议负责人:&gt;</button>
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:会议联系人1:&gt;</button>
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:会议联系人2:&gt;</button>
+																<button type="button" class="btn btn-xs btn-primary" >&lt;:会议简介:&gt;</button>
+															</div>
+														</div>
+														<textarea class="form-control" rows="3" name="context" id="textarea_edit"></textarea>
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="name" class="col-sm-2 control-label"></label>
+												<div class="col-sm-10">
+													<p style=" margin-top: 5px;">已输入<span class="words_num">0</span>个字，约<span class="mes_num">0</span>条短信（不含签名）
+													</p>
+													<p style=" margin-top: 5px;">每60个字符计费1条，超过60个字将自动被运营商按多条计费，长短信最多230个字符</p>
+												</div>
+											</div>
+											<div class="form-group text-center">
+												<div style=" margin-top: 10px;">
+													<button type="submit" class="btn bg-00a0e8">发送</button>
+													<button type="reset" class="btn bg-00a0e8">重置</button>
+												</div>
+											</div>
 										</div>
-									</div>
-									<div class="field_box">
-										<h3>可插入字段</h3>
-										<div class="filed_w">
-											<button class="btn btn-xs btn-primary" >&lt;:姓名:&gt;</button>
-											<button class="btn btn-xs btn-primary" >&lt;性别&gt;</button>
-											<button class="btn btn-xs btn-primary" >&lt;电子&gt;</button>
-											<button class="btn btn-xs btn-primary" >&lt;321&gt;</button>
-											<button class="btn btn-xs btn-primary" >&lt;123&gt;</button>
-											<button class="btn btn-xs btn-primary" >&lt;姓2名&gt;</button>
-											<button class="btn btn-xs btn-primary" >&lt;2&gt;</button>
-											<button class="btn btn-xs btn-primary" >&lt;姓名&gt;</button>
-											<button class="btn btn-xs btn-primary" >&lt;姓名&gt;</button>
-											<button class="btn btn-xs btn-primary" >&lt;姓名&gt;</button>
-											<button class="btn btn-xs btn-primary" >&lt;姓名&gt;</button>
-											<button class="btn btn-xs btn-primary" >&lt;姓名&gt;</button>
-											<button class="btn btn-xs btn-primary" >&lt;姓名&gt;</button>
+									</form>
+								</div>
+								<div class="mes_view">
+									<div class="phone_model_bg">
+										<div class="phone_con">
+											<div class="face">
+												<div class="phone_title ellipsis">吉美会议</div>
+												<div class="p_fa">
+													<div class="mes_list">
+														<div class="m_li right">
+															<div class="show_sms_content_container hide">
+																<div class="text show_sms_content_text"></div>
+																<img src="<{$Think.COMMON_IMAGE_PATH}>/phone_mes_bubble.png">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
 										</div>
+										<img src="<{$Think.COMMON_IMAGE_PATH}>/phone_bg.png" alt="">
 									</div>
 								</div>
-								<div role="tabpanel" class="tab-pane" id="profile">...</div>
-								<div role="tabpanel" class="tab-pane" id="messages">...</div>
-								<div role="tabpanel" class="tab-pane" id="settings">...</div>
 							</div>
 						</div>
 					</section>
@@ -92,62 +162,10 @@
 	<script>
 		var CreateObject = {
 			object:{
-				developConsultantSelect:$('#develop_consultant').QuasarSelect({
-					name        :'develop_consultant',
-					classStyle  :'form-control',
-					idInput     :'selected_develop_consultant',
-					idHidden    :'selected_develop_consultant_form',
-					data        :'<{:json_encode($employee_list)}>',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				serviceConsultantSelect   :$('#service_consultant').QuasarSelect({
-					name        :'service_consultant',
-					classStyle  :'form-control',
-					idInput     :'selected_service_consultant',
-					idHidden    :'selected_service_consultant_form',
-					placeholder :'',
-					data        :'<{:json_encode($employee_list)}>',
-					hasEmptyItem:false
-				}),
-				birthDate     :$('#birth_date').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd',
-					weekStart         :0,
-					startView         :4,
-					minView           :2,
-					maxView           :4,
-					minuteStep        :5
-				}),
-				createDate     :$('#create_date').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd',
-					weekStart         :0,
-					startView         :4,
-					minView           :2,
-					maxView           :4,
-					minuteStep        :5
-				}),
-				toast         :$().QuasarToast(),
-				loading: $().QuasarLoading()
+				toast                  :$().QuasarToast(),
+				loading                :$().QuasarLoading()
 			}
 		};
-		$(function(){
-			$("#address").citySelect({
-				nodata:"none",
-				url   :'<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/city.min.js'
-			});
-		});
 	</script>
 </body>
 </html>

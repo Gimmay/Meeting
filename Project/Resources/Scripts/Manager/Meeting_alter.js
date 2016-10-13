@@ -35,7 +35,7 @@ function  checkIsEmpty(){
 		$director_id.focus();
 		return false;
 	}
-	if($contacts_1_id.text() == ''){
+/*	if($contacts_1_id.text() == ''){
 		AlterObject.object.toast.toast("联系人不能为空");
 		$contacts_1_id.focus();
 		return false;
@@ -44,5 +44,6 @@ function  checkIsEmpty(){
 		AlterObject.object.toast.toast("联系人2不能为空");
 		$contacts_2_id.focus();
 		return false;
-	}
+	}*/
+	return true;
 }

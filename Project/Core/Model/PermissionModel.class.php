@@ -74,11 +74,11 @@
 				$permission = $this->query($sql);
 			}
 			else{
-				$sql         = "select `id`, `code`, `name`, 1 `type` from system_permission where id in (
+				$sql         = "select `id`, `code`, `name`, 1 `type`, `group` from system_permission where id in (
 	select pid from system_assign_permission WHERE `type` = 1 and `oid` = $eid -- 员工权限
 )
 union
-select `id`, `code`, `name`, 0 `type`
+select `id`, `code`, `name`, 0 `type`, `group`
 from system_permission where id in (
 	select pid from system_assign_permission where `type` = 0 and `oid` in ( -- 角色权限
 		select rid from user_assign_role join system_role on system_role.id = user_assign_role.rid where `type` = 0 and `oid` = $eid and system_role.status != 2

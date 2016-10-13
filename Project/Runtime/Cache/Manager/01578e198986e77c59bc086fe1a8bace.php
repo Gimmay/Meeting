@@ -32,7 +32,7 @@
 		<div class="logo">
 			<img src="<?php echo (COMMON_IMAGE_PATH); ?>/logo.png" alt="">
 		</div>
-		<a href="http://www.baidu.com">吉美会议</a>
+		<a href="javascript:void(0)">吉美会议</a>
 	</div>
 	<div class="sidenav">
 		<ul class="sidenav_list" id="side_menu">
@@ -207,9 +207,10 @@
 											<td>
 												<div class="btn-group" data-id="<?php echo ($vo["id"]); ?>">
 													<a href="<?php echo U('SignPlace/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">签到点</a>
+													<a type="button" class="btn btn-default btn-xs mes_btn" data-toggle="modal" data-target="#choose_message">选择消息模板</a>
 													<a href="<?php echo U('Client/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a>
 													<a href="<?php echo U('Client/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">胸卡设计</a>
-													<a href="<?php echo U('Coupon/manage',['id'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs">代金券</a>
+													<!--<a href="<?php echo U('Coupon/manage',['id'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs">代金券</a>-->
 													<a href="<?php echo U('Meeting/alter',['id'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
 													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_meeting">删除</button>
 												</div>
@@ -274,9 +275,88 @@
 			</div>
 		</div>
 	</div>
+	<!-- 选择消息模板 -->
+	<div class="modal fade" id="choose_message" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">选择消息模板</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="message">
+					<input type="hidden" name="id" value="">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="sign_mes" class="col-sm-2 control-label">签到：</label>
+							<div class="col-sm-8">
+								<div id="sign_mes"></div>
+							</div>
+							<div class="col-sm-2">
+								<button type="button" class="btn btn-sm btn-primary mes_preview_btn">预览</button>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="unti_sign_mes" class="col-sm-2 control-label">取消签到：</label>
+							<div class="col-sm-8">
+								<div id="unti_sign_mes"></div>
+							</div>
+							<div class="col-sm-2">
+								<button type="button" class="btn btn-sm btn-primary mes_preview_btn">预览</button>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="receivables_mes" class="col-sm-2 control-label">收款：</label>
+							<div class="col-sm-8">
+								<div id="receivables_mes"></div>
+							</div>
+							<div class="col-sm-2">
+								<button type="button" class="btn btn-sm btn-primary mes_preview_btn">预览</button>
+							</div>
+						</div>
+						<div class="mes_preview">
+							我在马路
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 	<script>
 		var ManageObject = {
 			object:{
+				signMessageSelect:$('#sign_mes').QuasarSelect({
+					name        :'sign_mes',
+					classStyle  :'form-control',
+					idInput     :'selected_develop_consultant',
+					idHidden    :'selected_develop_consultant_form',
+					data        :'<?php echo json_encode($message);?>',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				antiSignMessageSelect:$('#unti_sign_mes').QuasarSelect({
+					name        :'anti_sign',
+					classStyle  :'form-control',
+					idInput     :'selected_develop_consultant',
+					idHidden    :'selected_develop_consultant_form',
+					data        :'<?php echo json_encode($message);?>',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				receivablesMessageSelect:$('#receivables_mes').QuasarSelect({
+					name        :'receivables_mes',
+					classStyle  :'form-control',
+					idInput     :'selected_develop_consultant',
+					idHidden    :'selected_develop_consultant_form',
+					data        :'<?php echo json_encode($message);?>',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
 				/*toast         :$().QuasarToast(),*/
 				icheck:$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',

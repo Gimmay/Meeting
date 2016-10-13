@@ -2,21 +2,6 @@
  * Created by qyqy on 2016-9-12.
  */
 $(function(){
-	var $meeting_name = $('#meeting_name');
-	var $meeting_status = $('#meeting_status');
-	var $meeting_type = $('#meeting_type');
-	var $meeting_host = $('#meeting_host');
-	var $meeting_plan = $('#meeting_plan');
-	var $meeting_place = $('#meeting_place');
-	var $meeting_start_time = $('#meeting_start_time');
-	var $meeting_end_time = $('#meeting_end_time');
-	var $director_id = $('#director_id');
-	var $contacts_1_id = $('#contacts_1_id');
-	var $contacts_2_id = $('#contacts_2_id');
-	var $brief = $('#brief');
-	var $logo = $('#logo');
-	var $comment = $('#comment');
-
 	// 单个会议删除
 	$('.delete_btn').on('click',function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
@@ -48,6 +33,38 @@ $(function(){
 		}else{
 			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
 		}
+	});
+	// 选择消息模板做提交获取数据
+	$('.mes_btn').on('click', function(){
+		var mid = $(this).parent().attr('data-id');
+		$('#choose_message').find('input[name=id]').attr('value', mid).val(mid);
+		Common.ajax({
+			data:{requestType:'get_message_temp', id:mid},
+			callback:function(data){
+				ManageObject.object.signMessageSelect.setValue(0);
+				ManageObject.object.signMessageSelect.setHtml('');
+				ManageObject.object.antiSignMessageSelect.setValue(0);
+				ManageObject.object.antiSignMessageSelect.setHtml('');
+				ManageObject.object.receivablesMessageSelect.setValue(0);
+				ManageObject.object.receivablesMessageSelect.setHtml('');
+				for(var i = 0; i<data.length; i++){
+					switch(parseInt(data[i]['assign_type'])){
+						case 1:
+							ManageObject.object.signMessageSelect.setValue(data[i]['id']);
+							ManageObject.object.signMessageSelect.setHtml(data[i]['name']);
+							break;
+						case 2:
+							ManageObject.object.antiSignMessageSelect.setValue(data[i]['id']);
+							ManageObject.object.antiSignMessageSelect.setHtml(data[i]['name']);
+							break;
+						case 3:
+							ManageObject.object.receivablesMessageSelect.setValue(data[i]['id']);
+							ManageObject.object.receivablesMessageSelect.setHtml(data[i]['name']);
+							break;
+					}
+				}
+			}
+		});
 	});
 });
 

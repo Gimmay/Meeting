@@ -67,13 +67,12 @@
 										<td width="5%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="10%">姓名</td>
-										<td width="5%">性别</td>
-										<td width="10%">手机号</td>
-										<td width="10%">会所名称</td>
-										<td width="10%">创建时间</td>
+										<td width="10%">消息内容</td>
+										<td width="5%">类型</td>
 										<td width="10%">状态</td>
-										<td width="10%">审核/签到/打印</td>
+										<td width="10%">备注</td>
+										<td width="10%">创建者</td>
+										<td width="10%">创建时间</td>
 										<td width="20%">操作</td>
 									</tr>
 								</thead>
@@ -83,41 +82,29 @@
 											<td class="check_item">
 												<input type="checkbox" class="icheck" value="<{$single.id}>" placeholder="">
 											</td>
-											<td><{$single.name}></td>
+											<td><{$single.context}></td>
 											<td>
 												<span class="color-info">
-													<switch name="single.gender">
-														<case value="0">未指定</case>
-														<case value="1">男</case>
-														<case value="2">女</case>
+													<switch name="single.type">
+														<case value="1">短信</case>
+														<case value="2">邮件</case>
+														<case value="3">微信</case>
+														<case value="4">其他</case>
 													</switch>
 												</span>
 											</td>
-											<td><{$single.mobile}></td>
-											<td><{$single.club}></td>
-											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
 											<td>
 												<switch name="single.status">
 													<case value="0">禁用</case>
 													<case value="1">可用</case>
+													<case value="2">删除</case>
 												</switch>
 											</td>
-											<td>
-												<switch name="single.review_status">
-													<case value="0">未审核</case>
-													<case value="1">已审核</case>
-												</switch>
-												/
-												<switch name="single.sign_status">
-													<case value="0">未签到</case>
-													<case value="1">已签到</case>
-												</switch>
-												/
-												<switch name="single.print_status">
-													<case value="0">未打印</case>
-													<case value="1">已打印</case>
-												</switch>
-											</td>
+											<td><{$single.comment}></td>
+											<td><{$single.creator}></td>
+											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
+
+
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>">
 													<if condition="($single['review_status'] eq 1) and ($single['sign_status'] eq 0)">
@@ -127,12 +114,15 @@
 														<button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button>
 													</if>
 													<switch name="single.review_status">
-														<case value="0"><button type="button" class="btn btn-default btn-xs review_btn">审核</button></case>
-														<case value="1"><button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button></case>
+														<case value="0">
+															<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
+														</case>
+														<case value="1">
+															<button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button>
+														</case>
 													</switch>
 
-													<button type="button" class="btn btn-default btn-xs receivables_btn" data-toggle="modal" data-target="#receivables_modal">收款</button>
-													<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
+
 													<a href="<{:U('Client/alter',['id'=>$single['id']])}>" class="btn btn-default btn-xs modify_btn">修改</a>
 													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_client">删除</button>
 												</div>
@@ -285,8 +275,7 @@
 					<h2 class="modal-title">删除客户</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete">
-					<input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
 						是否删除客户？
 					</div>
@@ -308,8 +297,7 @@
 					<h2 class="modal-title">批量删除客户</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete">
-					<input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
 						是否删除已选客户？
 					</div>
@@ -331,8 +319,7 @@
 					<h2 class="modal-title">批量审核客户</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete">
-					<input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
 						是否审核选择客户？
 					</div>
@@ -354,8 +341,7 @@
 					<h2 class="modal-title">批量签到</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="sign">
-					<input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="sign"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
 						选择客户签到？
 					</div>
@@ -377,8 +363,7 @@
 					<h2 class="modal-title">批量取消签到</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="sign">
-					<input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="sign"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
 						取消选择客户签到？
 					</div>
@@ -428,7 +413,7 @@
 	<script>
 		var ManageObject = {
 			object:{
-				payeeSelect :$('#payee').QuasarSelect({
+				payeeSelect         :$('#payee').QuasarSelect({
 					name        :'payee',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($dept)}>',
@@ -437,7 +422,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				couponSelect:$('#coupon').QuasarSelect({
+				couponSelect        :$('#coupon').QuasarSelect({
 					name        :'coupon',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($dept)}>',
@@ -446,7 +431,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				signPlaceSelect:$('#sign_place').QuasarSelect({
+				signPlaceSelect     :$('#sign_place').QuasarSelect({
 					name        :'sign_place',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($dept)}>',
@@ -464,7 +449,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				birthDate   :$('#birth_date').datetimepicker({
+				birthDate           :$('#birth_date').datetimepicker({
 					language          :'zh-CN',
 					todayBtn          :true,
 					autoclose         :true,
@@ -478,8 +463,8 @@
 					maxView           :4,
 					minuteStep        :5
 				}),
-				toast       :$().QuasarToast(),
-				icheck      :$('.icheck').iCheck({
+				toast               :$().QuasarToast(),
+				icheck              :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				})

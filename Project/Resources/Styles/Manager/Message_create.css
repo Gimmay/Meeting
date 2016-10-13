@@ -1,5 +1,13 @@
+/*** 短信剩余条数 ***/
+.overage {
+	background: #ecf1f4;
+	padding: 20px;
+	margin: 10px 0;
+	font-size: 14px;
+}
+
 .edit_box {
-	width: 50%;
+	width: 100%;
 	float: left;
 	padding: 20px 20px 20px 0;
 }
@@ -10,13 +18,12 @@
 }
 
 .field_box {
-	width: 50%;
-	float: left;
-	padding: 20px 20px 20px 0;
+	width: 100%;
+	padding: 10px 10px 0 0;
 }
 
 .field_box .filed_w {
-	padding: 20px 10px;
+	padding-top: 10px;
 }
 
 .field_box .filed_w button {
@@ -24,8 +31,109 @@
 	margin-bottom: 10px;
 }
 
-.words_num {
-	font-size: 14px;
+.words_num ,.mes_num{
+	font-size: 18px;
 	font-weight: bold;
 	color : #fb5050;
 }
+
+
+.tab-content {
+	position : relative;
+	padding-right: 550px;
+}
+/** 左侧form 编辑 **/
+.mes_form {
+	width: 100%;
+
+}
+/** 消息模板预览 **/
+
+.mes_view {
+	position : absolute;
+	top: 8px;
+	right :80px;
+	width: 462px;
+}
+
+.mes_view .phone_model_bg {
+	display: inline-block;
+	position: relative;
+	width: 462px;
+}
+
+.mes_view .phone_model_bg > img {
+	width: 462px;
+	vertical-align: top;
+}
+
+.phone_model_bg .phone_con {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	left: 0;
+	z-index: 10;
+}
+
+.phone_model_bg .face {
+	background: #fff;
+	width: 376px;
+	height: 668px;
+	margin: 82px 0 0 44px;
+	background: url('../../Images/Common/phone_top_mes.png') #fff;
+	background-size: contain;
+	overflow: hidden;
+	font-size: 13px;
+}
+.phone_model_bg .phone_title {
+	color: #fff;
+	text-align: center;
+	font-size: 18px;
+	padding-top: 24px;
+	height: 64px;
+	line-height: 40px;
+	font-weight: 600;
+	width: 60%;
+	margin: 0 auto;
+	word-wrap: normal;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: #202020;
+}
+
+.phone_model_bg .p_fa {
+	height: 604px;
+	width: 100%;
+	overflow: hidden;
+}
+
+.phone_model_bg .m_li.right {
+	margin: 32px 16px 0 72px;
+	position: relative;
+	padding-bottom: 2px;
+	padding-right: 6px;
+}
+
+.phone_model_bg .m_li.right .text {
+	background: #4dda66;
+	color: #fff;
+	border-radius: 8px;
+	padding: 8px;
+	font-size: 16px;
+	line-height: 1.6;
+	word-break: break-all;
+	word-wrap:break-word
+}
+
+.phone_model_bg .m_li.right img {
+	width: 18px;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+
+
+
+
+

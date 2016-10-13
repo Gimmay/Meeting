@@ -46,7 +46,7 @@
 		 * 发送短信
 		 *
 		 * @param string $message  发送的短信信息
-		 * @param array  $receiver 接收者的手机号
+		 * @param array  $receiver 接收者的手机号（数量不能超过50条）
 		 * @param bool   $long     是否为长短信
 		 *
 		 * @return array data索引的数据为Sms_ID数组

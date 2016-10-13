@@ -8,6 +8,7 @@
 	namespace Manager\Controller;
 
 	use Manager\Logic\MeetingLogic;
+	use Manager\Logic\MessageLogic;
 	use Think\Page;
 
 	class MeetingController extends ManagerController{
@@ -48,6 +49,9 @@
 				}
 				exit;
 			}
+			/** @var \Manager\Model\MessageModel $message_logic */
+			$message_logic = D('Message');
+			$message = $message_logic->getMessageSelectList();
 			/** @var \Core\Model\MeetingModel $model */
 			$model       = D('Core/Meeting'); // 实例化表模型
 			$list_total  = $model->findMeeting(0, [
@@ -66,6 +70,7 @@
 			$meeting_list = $meeting_logic->setExtendColumnForManage($meeting_list);
 			$this->assign('content', $meeting_list); // 赋值数据集
 			$this->assign('page', $show); // 赋值分页输出
+			$this->assign('message',$message);
 			$this->display();
 		}
 

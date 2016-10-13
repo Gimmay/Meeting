@@ -24,7 +24,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="Quasar" data-mvc-name="<{:'/'.CONTROLLER_NAME.'/'.ACTION_NAME}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>" ></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="Quasar" data-mvc-name="<{:'/'.CONTROLLER_NAME.'/'.ACTION_NAME}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -58,11 +58,11 @@
 									<i></i>
 									<p>取消审核</p>
 								</div>
-								<div class="function_btn bg-success batch_sign_point"  data-toggle="modal" data-target="#batch_sign_point" data-backdrop="static">
+								<div class="function_btn bg-success batch_sign_point" data-toggle="modal" data-target="#batch_sign_point" data-backdrop="static">
 									<i></i>
 									<p>批量签到</p>
 								</div>
-								<div class="function_btn bg-success batch_anti_sign_point"  data-toggle="modal" data-target="#batch_anti_sign_point" data-backdrop="static">
+								<div class="function_btn bg-success batch_anti_sign_point" data-toggle="modal" data-target="#batch_anti_sign_point" data-backdrop="static">
 									<i></i>
 									<p>取消签到</p>
 								</div>
@@ -73,8 +73,7 @@
 								<div class="function_btn bg-28B778 import_excel_btn">
 									<form action="" method="post" enctype="multipart/form-data" name="fileForm" target="fileUpload">
 										<input type="file" name="excel" accept=".xlsx, .xls" id="excel_file">
-										<input name="requestType" value="import_excel" type="hidden">
-										<i></i>
+										<input name="requestType" value="import_excel" type="hidden"> <i></i>
 										<button type="submit" id="import_sub">提交</button>
 										<p>导入Excel</p>
 									</form>
@@ -152,7 +151,7 @@
 									<volist name="list" id="single">
 										<tr>
 											<td class="check_item">
-												<input type="checkbox" class="icheck" value="<{$single.id}>" placeholder="">
+												<input type="checkbox" class="icheck" value="<{$single.cid}>" data-join-value="<{$single.id}>" placeholder="">
 											</td>
 											<td class="name"><{$single.name}></td>
 											<td>
@@ -167,7 +166,9 @@
 											<td><{$single.mobile}></td>
 											<td><{$single.club}></td>
 											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
-											<td><notempty name="single['sign_time']"><{:date('Y-m-d H:i:s', $single['sign_time'])}></notempty></td>
+											<td>
+												<notempty name="single['sign_time']"><{:date('Y-m-d H:i:s', $single['sign_time'])}></notempty>
+											</td>
 											<td>
 												<switch name="single.sign_type">
 													<case value="0">手动签到</case>
@@ -197,7 +198,7 @@
 												</switch>
 											</td>
 											<td>
-												<div class="btn-group" data-id="<{$single.id}>">
+												<div class="btn-group" data-id="<{$single.cid}>" data-join-id="<{$single.id}>">
 													<if condition="($single['review_status'] eq 1) and ($single['sign_status'] eq 0)">
 														<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
 													</if>
@@ -208,13 +209,17 @@
 														<button type="button" class="btn btn-default btn-xs send_message_btn">发送邀请</button>
 													</if>
 													<switch name="single.review_status">
-														<case value="0"><button type="button" class="btn btn-default btn-xs review_btn">审核</button></case>
-														<case value="1"><button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button></case>
+														<case value="0">
+															<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
+														</case>
+														<case value="1">
+															<button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button>
+														</case>
 													</switch>
 
 													<button type="button" class="btn btn-default btn-xs receivables_btn" data-toggle="modal" data-target="#receivables_modal">收款</button>
 													<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
-													<a href="<{:U('Client/alter',['id'=>$single['id'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
+													<a href="<{:U('Client/alter',['id'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
 													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_client">删除</button>
 												</div>
 											</td>
@@ -245,10 +250,11 @@
 					<h2 class="modal-title">修改签到点</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="assign_sign_place"> <input type="hidden" name="cid" id="alter_sign_place_cid">
+					<input type="hidden" name="requestType" value="assign_sign_place">
+					<input type="hidden" name="cid" id="alter_sign_place_cid">
 					<div class="modal-body">
 						<div class="form-group">
-							<label class="col-sm-3 control-label">选择签到点：</label>
+							<label for="sign_place" class="col-sm-3 control-label">选择签到点：</label>
 							<div class="col-sm-9">
 								<div id="sign_place"></div>
 							</div>
@@ -273,10 +279,11 @@
 					<h2 class="modal-title">批量修改签到点</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="multi_assign_sign_place"> <input type="hidden" name="cid" id="alter_multi_sign_place_cid">
+					<input type="hidden" name="requestType" value="multi_assign_sign_place">
+					<input type="hidden" name="cid" id="alter_multi_sign_place_cid">
 					<div class="modal-body">
 						<div class="form-group">
-							<label class="col-sm-3 control-label">选择签到点：</label>
+							<label for="sign_place" class="col-sm-3 control-label">选择签到点：</label>
 							<div class="col-sm-9">
 								<div id="batch_sign_place"></div>
 							</div>
@@ -292,7 +299,7 @@
 	</div>
 	<!-- 收款 -->
 	<div class="modal fade" id="receivables_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
+		<div class="modal-dialog" style="width: 60%">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
@@ -300,7 +307,7 @@
 					<h2 class="modal-title">收款</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="id">
+					<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="cid">
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="p_name" class="col-sm-2 control-label">姓名：</label>
@@ -333,11 +340,30 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="coupon" class="col-sm-2 control-label">代金券：</label>
+							<label class="col-sm-2 control-label">代金券：</label>
 							<div class="col-sm-10">
-								<div class="input-group">
+								<!--<div class="input-group" id="show_coupon">
 									<input type="text" name="coupon" id="coupon" class="form-control">
-									<span class="input-group-addon"><span class="glyphicon glyphicon-th-list choose_ticket" data-toggle="modal" data-target="#ticket_modal"></span></span>
+									<span class="input-group-addon"><span class="glyphicon glyphicon-th-list choose_ticket"></span></span>
+								</div>-->
+
+								<div class="number_list_box selected">
+									<div class="col-sm-12 title">
+										<h3>已选择代金券</h3>
+									</div>
+									<div class=" number_list clearfix">
+									</div>
+									<input type="hidden" name="code" id="code" value="">
+								</div>
+								<div class="number_list_box unselected">
+									<div class="col-sm-12 title">
+										<h3>可用代金券</h3>
+									</div>
+									<div class=" number_list clearfix">
+										<volist name="coupon_code_list" id="single">
+											<a data-id="<{$single.id}>"><{$single.code}></a>
+										</volist>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -376,8 +402,7 @@
 					<h2 class="modal-title">券列表</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete">
-					<input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
 						<section>
 							<div class="ticket_item"></div>
@@ -401,8 +426,7 @@
 					<h2 class="modal-title">删除客户</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete">
-					<input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
 						是否删除客户？
 					</div>
@@ -424,8 +448,8 @@
 					<h2 class="modal-title">批量删除客户</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete">
-					<input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<input type="hidden" name="join_id" value="">
 					<div class="modal-body">
 						是否删除已选客户？
 					</div>
@@ -493,8 +517,7 @@
 					<h2 class="modal-title">批量签到</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="multi_sign">
-					<input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="multi_sign"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
 						选择客户签到？
 					</div>
@@ -563,43 +586,43 @@
 					<h2 class="modal-title">Excel表头字段对比</h2>
 				</div>
 				<!--<form class="form-horizontal" role="form" method="post" action="">-->
-					<div class="modal-body" style="max-height: 600px; overflow-y: scroll">
-						<table class="table table-bordered" style="text-align: center">
-							<thead>
-								<tr>
-									<th width="10%" class="all_check_excal">
-										<input type="checkbox" class="icheck" placeholder="" value="">
-									</th>
-									<th width="20%">序号</th>
-									<th width=30">您的Excal中的表头字段</th>
-									<th width="40%">对应在系统中的字段</th>
-								</tr>
-							</thead>
-							<tbody id="ExcelHeadTable">
-							</tbody>
-						</table>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary btn_save_excel">保存字段</button>
-					</div>
-			<!--	</form>-->
+				<div class="modal-body" style="max-height: 600px; overflow-y: scroll">
+					<table class="table table-bordered" style="text-align: center">
+						<thead>
+							<tr>
+								<th width="10%" class="all_check_excal">
+									<input type="checkbox" class="icheck" placeholder="" value="">
+								</th>
+								<th width="20%">序号</th>
+								<th width=30">您的Excal中的表头字段</th>
+								<th width="40%">对应在系统中的字段</th>
+							</tr>
+						</thead>
+						<tbody id="ExcelHeadTable">
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="submit" class="btn btn-primary btn_save_excel">保存字段</button>
+				</div>
+				<!--	</form>-->
 			</div>
 		</div>
 	</div>
 	<script>
 		var ManageObject = {
 			object:{
-				payeeSelect :$('#payee').QuasarSelect({
+				payeeSelect         :$('#payee').QuasarSelect({
 					name        :'payee',
 					classStyle  :'form-control',
-					data        :'<{:json_encode($dept)}>',
+					data        :'<{:json_encode($employee_list)}>',
 					idInput     :'selected_payee',
 					idHidden    :'selected_payee_form',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				couponSelect:$('#coupon').QuasarSelect({
+				couponSelect        :$('#coupon').QuasarSelect({
 					name        :'coupon',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($dept)}>',
@@ -608,7 +631,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				signPlaceSelect:$('#sign_place').QuasarSelect({
+				signPlaceSelect     :$('#sign_place').QuasarSelect({
 					name        :'sid',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($sign_place_list)}>',
@@ -626,7 +649,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				birthDate   :$('#birth_date').datetimepicker({
+				birthDate           :$('#birth_date').datetimepicker({
 					language          :'zh-CN',
 					todayBtn          :true,
 					autoclose         :true,
@@ -640,16 +663,17 @@
 					maxView           :4,
 					minuteStep        :5
 				}),
-				toast       :$().QuasarToast(),
-				icheck      :$('.icheck').iCheck({
+				toast               :$().QuasarToast(),
+				loading             :$().QuasarLoading(),
+				icheck              :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				}),
-				icheckBlue      :$('.icheckBlue').iCheck({
+				icheckBlue          :$('.icheckBlue').iCheck({
 					checkboxClass:'icheckbox_square-blue',
 					radioClass   :'iradio_square-blue'
 				}),
-				icheckRed      :$('.icheckRed').iCheck({
+				icheckRed           :$('.icheckRed').iCheck({
 					checkboxClass:'icheckbox_square-red',
 					radioClass   :'iradio_square-red'
 				})

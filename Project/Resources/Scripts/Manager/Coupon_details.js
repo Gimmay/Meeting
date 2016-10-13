@@ -111,11 +111,11 @@ function checkCreate(){
 		$price.focus();
 		return false;
 	}
-	if($number.val() == ''){
+	/*if($number.val() == ''){
 		ManageObject.object.toast.toast("数量不能为空");
 		$number.focus();
 		return false;
-	}
+	}*/
 	if($start_time.val() == ''){
 		ManageObject.object.toast.toast("开始时间不能为空");
 		$start_time.focus();

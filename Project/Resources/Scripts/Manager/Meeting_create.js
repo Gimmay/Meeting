@@ -2,6 +2,12 @@
  * Created by qyqy on 2016-9-13.
  */
 
+$(function(){
+	$('#updateBackground').on('change',function(){
+		$('#submit_logo').trigger('click');
+	});
+});
+
 function  checkIsEmpty(){
 	var $name = $('#meeting_name');
 	var $host = $('#meeting_host');
@@ -36,7 +42,7 @@ function  checkIsEmpty(){
 		$director_id.focus();
 		return false;
 	}
-	if($contacts_1_id.text() == ''){
+/*	if($contacts_1_id.text() == ''){
 		CreateObject.object.toast.toast("负责人不能为空");
 		$contacts_1_id.focus();
 		return false;
@@ -45,6 +51,22 @@ function  checkIsEmpty(){
 		CreateObject.object.toast.toast("负责人不能为空");
 		$contacts_2_id.focus();
 		return false;
-	}
+	}*/
 	return true;
+}
+
+function upLoadLogo(){
+	var data = new FormData($('#uploadLogoForm')[0]);
+	$.ajax({
+		url        :'',
+		type       :'POST',
+		data       :data,
+		dataType   :'JSON',
+		cache      :false,
+		processData:false,
+		contentType:false
+	}).done(function(data){
+		console.log(data);
+	});
+	return false;
 }

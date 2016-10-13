@@ -76,9 +76,10 @@
  window.location.href = uri + base64(format(template, ctx))
  }
  })()*/
-var clientManage = {
+var ThisObject = {
 	optTemp  :'<option value="$numOpt">$name</option>',
-	tableTemp:'<tr>\n\t<td class="check_item_excel"><input type="checkbox" class="icheck_excel" value="$id"></td>\n\t<td>$num</td><td class="excel_name" data-id="$id">$value</td>\n\t<td>\n\t\t<select name="client_info" id="" class="form-control select_h">\n\t\t\t$opt\n\t\t</select>\n\t</td>\n</tr>'
+	tableTemp:'<tr>\n\t<td class="check_item_excel"><input type="checkbox" class="icheck_excel" value="$id"></td>\n\t<td>$num</td><td class="excel_name" data-id="$id">$value</td>\n\t<td>\n\t\t<select name="client_info" id="" class="form-control select_h">\n\t\t\t$opt\n\t\t</select>\n\t</td>\n</tr>',
+	uploadInterval:null
 };
 $(function(){
 	// 全选checkbox
@@ -181,26 +182,29 @@ $(function(){
 	});
 	//导入excel
 	$('#excel_file').on('change', function(){
+		ManageObject.object.loading.loading();
 		$('#import_sub').trigger('click');
-		var set = setInterval(function(){
-			$('#Excal_hide_btn').trigger('click');
-			getIframeData(set);
-		}, 2000)
+		ThisObject.uploadInterval = setInterval(function(){
+			$('#ExcelHead').modal('show');
+			getIframeData();
+		}, 2000);
 	});
 	// 收款按钮
 	$('.receivables_btn').on('click', function(){
 		var name = $(this).parents('tr').find('.name').text();
 		var id   = $(this).parent('.btn-group').attr('data-id');
-		$('#receivables_modal').find('input[name=id]').val(id);
+		$('#receivables_modal').find('input[name=cid]').val(id);
 		$('#receivables_modal').find('input[name=name]').val(name);
 	});
 	//审核按钮
 	$('.review_btn').on('click', function(){
 		var id  = $(this).parent('.btn-group').attr('data-id');
 		var mid = $('body').attr('data-meeting-id');
+		ManageObject.object.loading.loading();
 		Common.ajax({
 			data    :{requestType:'review', id:id, mid:mid},
 			callback:function(r){
+				ManageObject.object.loading.complete();
 				if(r.status){
 					ManageObject.object.toast.onQuasarHidden(function(){
 						location.reload(true);
@@ -214,9 +218,11 @@ $(function(){
 	$('.anti_review_btn').on('click', function(){
 		var id  = $(this).parent('.btn-group').attr('data-id');
 		var mid = $('body').attr('data-meeting-id');
+		ManageObject.object.loading.loading();
 		Common.ajax({
 			data    :{requestType:'anti_review', id:id, mid:mid},
 			callback:function(r){
+				ManageObject.object.loading.complete();
 				if(r.status){
 					ManageObject.object.toast.onQuasarHidden(function(){
 						location.reload(true);
@@ -264,9 +270,11 @@ $(function(){
 		var id    = $(this).parent('.btn-group').attr('data-id');
 		var mid   = $body.attr('data-meeting-id');
 		var sid   = $body.attr('data-place-id');
+		ManageObject.object.loading.loading();
 		Common.ajax({
 			data    :{requestType:'sign', id:id, mid:mid, sid:sid},
 			callback:function(r){
+				ManageObject.object.loading.complete();
 				if(r.status){
 					ManageObject.object.toast.onQuasarHidden(function(){
 						location.reload(true);
@@ -282,9 +290,11 @@ $(function(){
 	$('.anti_sign_btn').on('click', function(){
 		var id  = $(this).parent('.btn-group').attr('data-id');
 		var mid = $('body').attr('data-meeting-id');
+		ManageObject.object.loading.loading();
 		Common.ajax({
 			data    :{requestType:'anti_sign', id:id, mid:mid},
 			callback:function(r){
+				ManageObject.object.loading.complete();
 				if(r.status){
 					ManageObject.object.toast.onQuasarHidden(function(){
 						location.reload(true);
@@ -331,31 +341,35 @@ $(function(){
 	// 删除客户
 	$('.delete_btn').on('click', function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
-		$('#delete_client').find('input[name=id]').val(id);
+		var join_id = $(this).parent('.btn-group').attr('data-join-id');
+		var $object= $('#delete_client');
+		$object.find('input[name=id]').val(id);
+		$object.find('input[name=join_id]').val(join_id);
 	});
 	// 批量删除客户
 	$('.batch_delete_btn_confirm').on('click', function(){
-		var str = '';
+		var str = '', str_join = '';
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
-			str += id+','
+			var join_id =  $(this).find('.icheck').attr('data-join-value');
+			str += id+',';
+			str_join += join_id+',';
 		});
-		var s, newStr = "";
-		s             = str.charAt(str.length-1);
-		if(s == ","){
-			for(var i = 0; i<str.length-1; i++){
-				newStr += str[i];
-			}
-		}
-		$('#batch_delete_client').find('input[name=id]').val(newStr);
+		str = str.substr(0, str.length-1);
+		str_join = str_join.substr(0, str_join.length-1);
+		var $object = $('#batch_delete_client');
+		$object.find('input[name=id]').val(str);
+		$object.find('input[name=join_id]').val(str_join);
 	});
 	// 发送消息
 	$('.send_message_btn').on('click', function(){
 		var id  = $(this).parent('.btn-group').attr('data-id');
 		var mid = $('body').attr('data-meeting-id');
+		ManageObject.object.loading.loading();
 		Common.ajax({
 			data    :{requestType:'send_message', id:id, mid:mid},
 			callback:function(r){
+				ManageObject.object.loading.complete();
 				if(r.status){
 					ManageObject.object.toast.onQuasarHidden(function(){
 						location.reload(true);
@@ -383,12 +397,12 @@ $(function(){
 		}
 		$('#batch_send_message').find('input[name=id]').val(newStr);
 	});
-	// 修改签到点 (single)
+	// 分配签到点 (single)
 	$('.alter_sign_point_btn').on('click', function(){
 		var cid = $(this).parent().attr('data-id');
 		$('#alter_sign_place_cid').val(cid).attr('value', cid);
 	});
-	// 修改签到点 (multi)
+	// 分配签到点 (multi)
 	$('.assign_sign_place').on('click', function(){
 		var str = '';
 		$('.check_item .icheckbox_square-green.checked').each(function(){
@@ -397,6 +411,27 @@ $(function(){
 		});
 		str = str.substr(0, str.length-1);
 		$('#alter_multi_sign_place_cid').val(str).attr('value', str);
+	});
+	// 收款
+	$('.unselected .number_list a').on('click', function(){
+		var id   = $(this).attr('data-id');
+		var text = $(this).text();
+		var arr  = [];
+		//$(this).addClass('selected');
+		$('.number_list_box.selected .number_list a').each(function(){
+			var s_id = $(this).attr('data-id');
+			arr.push(s_id);
+		});
+		var status = arr.indexOf(id)
+		if(status == -1){
+			$('.number_list_box.selected .number_list').append('<a data-id='+id+'>'+text+'</a>');
+			keepCode();
+		}
+		$('.number_list_box.selected .number_list a').on('click', function(){
+			$(this).remove();
+			keepCode();
+
+		})
 	});
 	// 人员状态列表（签到\审核\收款）
 	var mvc         = $('#Quasar').attr('data-mvc-name');
@@ -412,7 +447,7 @@ $(function(){
 	if(receivables == 1) $('.check_receivables').find('.iradio_square-red').addClass('checked');
 	if(receivables == 0) $('.check_not_receivables').find('.iradio_square-red').addClass('checked');
 });
-function getIframeData(set){
+function getIframeData(){
 	var data = document.getElementById('fileUpload_iframe').contentWindow.document
 					   .getElementsByTagName('body')[0].innerHTML;
 	if(data){
@@ -421,14 +456,15 @@ function getIframeData(set){
 		var str2    = '';
 		var dbIndex = data.data.dbIndex;
 		$.each(data.data.dbHead, function(index, value){
-			str2 += clientManage.optTemp.replace('$name', value.desc).replace('$numOpt', index);
+			str2 += ThisObject.optTemp.replace('$name', value.desc).replace('$numOpt', index);
 		});
 		$.each(data.data.head, function(index, value){
 			var num = index+1;
-			str += clientManage.tableTemp.replace('$num', num).replace('$value', value).replace('$opt', str2)
+			str += ThisObject.tableTemp.replace('$num', num).replace('$value', value).replace('$opt', str2)
 							   .replace('$id', index);
 		});
 		$('#ExcelHeadTable').html(str);
+		ManageObject.object.loading.complete();
 		// 遍历 Excel表头字段 和系统的对应的字段（映射）
 		$('.select_h').each(function(){
 			var name = $(this).parents('tr').find('.excel_name').text();
@@ -455,7 +491,8 @@ function getIframeData(set){
 			checkboxClass:'icheckbox_square-green',
 			radioClass   :'iradio_square-green'
 		});
-		clearInterval(set);
+		//noinspection JSCheckFunctionSignatures
+		clearInterval(ThisObject.uploadInterval);
 		// 全选checkbox
 		$('.all_check_excal').find('.iCheck-helper').on('click', function(){
 			if($(this).parent('.icheckbox_square-green').hasClass('checked')){
@@ -492,6 +529,7 @@ function getIframeData(set){
 				}
 			}
 			var newStr_arr2 = newStr2.split(',');
+			ManageObject.object.loading.loading();
 			Common.ajax({
 				data    :{requestType:'save_excel_data', excel:newStr, table:newStr2, dbIndex:dbIndex},
 				async   :false,
@@ -502,6 +540,22 @@ function getIframeData(set){
 			});
 		});
 	}
+}
+// 保存选择的代金券Value
+function keepCode(){
+	var str = '';
+	$('.number_list_box.selected .number_list a').each(function(){
+		var id = $(this).attr('data-id');
+		str += id+','
+	});
+	var s, newStr = "";
+	s             = str.charAt(str.length-1);
+	if(s == ","){
+		for(var i = 0; i<str.length-1; i++){
+			newStr += str[i];
+		}
+	}
+	$('#receivables_modal').find('input[name=code]').val(newStr);
 }
 
 

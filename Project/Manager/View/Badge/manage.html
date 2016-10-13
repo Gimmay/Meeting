@@ -10,6 +10,8 @@
 	<!--<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/custom.css">-->
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/jquery-ui-base.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
@@ -21,6 +23,8 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
@@ -34,17 +38,25 @@
 				<div class="mian_body">
 					<section class="content badge_content">
 						<header>
-							<h1>胸卡设计</h1>
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="javascript:void(0)">自定义胸卡模板</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="javascript:void(0)">系统胸卡模板列表</a>
+								</div>
+							</div>
 						</header>
-						<div class="badge_box">
+						<!--自定义胸卡模板-->
+						<div class="badge_box custom_temp tab_c clearfix">
 							<div class="cart_view">
-								<div class="badge_muban" style="width: 400px; height: 700px;">
+								<div class="badge_muban" style="width: 300px; height: 400px;">
 									<img src="<{$Think.COMMON_IMAGE_PATH}>/bg.jpg" id="badge_bg" alt="" style="width: 100%; height: 100%; position: absolute;">
-									<div class="cart_view_item ui-widget-content hide" id="client_name" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 8%;">客户姓名</div>
-									<div class="cart_view_item ui-widget-content hide" id="QRcode" style=" position: absolute; width: 200px; font-size:14px; text-align: center; left: 50%; margin-left: -100px; top: 25%;;">
+									<div class="cart_view_item ui-widget-content hide" id="client_name" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 5%;">客户姓名</div>
+									<div class="cart_view_item ui-widget-content hide" id="QRcode" style=" position: absolute; width: 150px; font-size:14px; text-align: center; left: 50%; margin-left: -75px; top: 25%;;">
 										<img src="<{$Think.COMMON_IMAGE_PATH}>/CheckIn_Code.jpg" alt="" width="100%">
 									</div>
-									<div class="cart_view_item ui-widget-content hide" id="meeting_name" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 60%;;">会议名称</div>
+									<div class="cart_view_item ui-widget-content hide" id="meeting_name" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 65%;;">会议名称</div>
 									<div class="cart_view_item ui-widget-content hide" id="meeting_time" style=" position: absolute; width: 300px; font-size:14px; text-align: center; left: 50%; margin-left: -150px; top: 88%;;">会议时间</div>
 									<div class="cart_view_item ui-widget-content hide" id="sign_place" style=" position: absolute; width: 300px; font-size:14px; text-align: center; left: 50%; margin-left: -150px; top: 92%;;">签到点</div>
 									<div class="cart_view_item ui-widget-content hide" id="club" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 15%;;">会所</div>
@@ -52,30 +64,14 @@
 								</div>
 							</div>
 							<div class="cart_set">
-								<h2>请选择会议所用胸卡模板</h2>
-								<div class="choose_type">
-									<span class="title">选择胸卡模板：</span>
-									<span class="type"><input type="radio" name="iCheck" class="icheck" checked>&nbsp;&nbsp;使用系统模板</span>
-									<span class="type"><input type="radio" name="iCheck" class="icheck">&nbsp;&nbsp;自定义模板</span>
-								</div>
-								<div class="template template_system">
-									<div class="block_slide">
-										<ul class="slider_list clearfix">
-											<volist name="list" id="single">
-												<li class="item active">
-													<div class="select_icon glyphicon glyphicon-ok"></div>
-													<div>
-														<iframe src="<{:U('preview', ['id'=>$single['id']])}>"></iframe>
-													</div>
-												</li>
-											</volist>
-										</ul>
+								<h2>请设计会议所用胸卡模板</h2>
+								<div class="template template_custom">
+									<div class="form_li">
+										<p class="title">胸卡名称</p>
+										<div class="name">
+											<input type="text" name="badge_name" class="form-control">
+										</div>
 									</div>
-									<div class="form_li text-center">
-										<button type="button" id="choose_badge_temp" class="btn btn-primary">保存设置</button>
-									</div>
-								</div>
-								<div class="template template_custom hide">
 									<div class="form_li">
 										<p class="title">背景（宽度为400px，高度为700px的.png、.jpg图片，小于2M）</p>
 										<form action="" id="uploadBgForm">
@@ -126,6 +122,36 @@
 								</div>
 							</div>
 						</div>
+						<!--系统模板	-->
+						<div class="badge_box system_tem tab_c hide">
+							<form role="form" class="form-horizontal" method="post" action="">
+								<div class="form-group">
+									<label for="meeting_name_s" class="col-sm-1 control-label"><b style="vertical-align: middle;color: red;">*</b>选择会议：</label>
+									<div class="col-sm-5">
+										<div id="meeting_name_s"></div>
+									</div>
+								</div>
+								<div class="system_tem_list">
+									<ul class="clearfix system_tem_ul">
+										<volist name="list" id='single'>
+											<li data-id="<{$single.id}>">
+												<div class="layer"></div>
+												<i class="select_icon glyphicon glyphicon-ok"></i>
+												<div class="system_ontent">
+													<{$single.data}>
+												</div>
+												<p class="title">胸卡名称</p>
+											</li>
+										</volist>
+									</ul>
+								</div>
+								<input type="hidden" name="badge_id">
+								<input type="hidden" name="requestType" value="keep">
+								<div class="form_li text-center">
+									<button type="submit" id="choose_system_badge" class="btn btn-primary">确认</button>
+								</div>
+							</form>
+						</div>
 					</section>
 				</div>
 			</div>
@@ -134,7 +160,17 @@
 	<script>
 		var ManageObject = {
 			object:{
-				/*toast         :$().QuasarToast(),*/
+				meetingNamesSelect:$('#meeting_name_s').QuasarSelect({
+					name        :'mid',
+					classStyle  :'form-control',
+					idInput     :'selected_develop_consultant',
+					idHidden    :'selected_develop_consultant_form',
+					data        :'<{:json_encode($meeting_list)}>',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				loading                :$().QuasarLoading(),
+				toast         :$().QuasarToast(),
 				icheck:$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-blue',
 					radioClass   :'iradio_square-blue'

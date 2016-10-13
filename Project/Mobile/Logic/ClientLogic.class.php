@@ -16,13 +16,13 @@
 		}
 
 		public function getInformation($id, $mid){
-			/** @var \Core\Model\ClientModel $model */
-			$model = D('Core/Client');
 			/** @var \Core\Model\WeixinIDModel $weixin_model */
 			$weixin_model = D('Core/WeixinID');
 			/** @var \Core\Model\MeetingModel $meeting_model */
-			$meeting_model                = D('Core/Meeting');
-			$record                       = $model->listClient(1, ['id' => $id, 'mid' => $mid]);
+			$meeting_model = D('Core/Meeting');
+			/** @var \Core\Model\JoinModel $join_model */
+			$join_model                   = D('Core/Join');
+			$record                       = $join_model->findRecord(1, ['id' => $id, 'mid' => $mid]);
 			$weixin_record                = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 			$meeting_record               = $meeting_model->findMeeting(1, ['id' => $record['mid']]);
 			$record['avatar']             = $weixin_record['avatar'];

@@ -22,15 +22,14 @@
 		public function findCouponItem($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['coupon_id'])) $where['coupon_id'] = $filter['coupon_id'];
+			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
-				if($status == 'not deleted') $where['status'] = ['neq', 2];
+				if($status == 'not deleted') $where['status'] = ['neq', 3];
 				else $where['status'] = $filter['status'];
 			}
-			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$condition['code']        = ['like', "%$filter[keyword]%"];
-
 				$condition['_logic']      = 'or';
 				$where['_complex']        = $condition;
 			}

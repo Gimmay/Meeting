@@ -9,6 +9,7 @@
 
 	use Manager\Logic\ClientLogic;
 	use Manager\Logic\ExcelLogic;
+	use stdClass;
 	use Think\Page;
 
 	class ClientController extends ManagerController{
@@ -18,6 +19,7 @@
 
 		public function manage(){
 			$logic = new ClientLogic();
+			/* 处理POST提交请求 */
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
 				$result = $logic->handlerRequest($type);
@@ -32,51 +34,70 @@
 				}
 				exit;
 			}
+			if(!isset($_GET['mid']) && !isset($_GET['sid'])) $this->error('URL参数错误');
 			$mid = I('get.mid', 0, 'int');
-			/** @var \Core\Model\ClientModel $core_model */
-			$core_model = D('Core/Client');
+			/* 获取签到点列表(for select component) */
 			/** @var \Manager\Model\SignPlaceModel $sign_place_model */
 			$sign_place_model = D('Manager/SignPlace');
-			$options          = [];
+			/** @var \Core\Model\CouponItemModel $coupon_item_model */
+			$coupon_item_model = D('Core/Coupon_item');
+			/** @var \Manager\Model\EmployeeModel $employee_model */
+			$employee_model  = D('Employee');
+			$employee_list   = $employee_model->getEmployeeSelectList();
+			$sign_place_list = $sign_place_model->getRecordSelectList($mid);
+			$options         = [];
+			$sid             = 0;
+			$main_model      = new stdClass();
+			/* 处理URL参数 */
 			if(isset($_GET['signed'])) $options['sign_status'] = I('get.signed', 0, 'int') == 1 ? 1 : 0;
 			if(isset($_GET['reviewed'])) $options['review_status'] = I('get.reviewed', 0, 'int') == 1 ? 1 : 0;
-			if(isset($_GET['sid'])) $options['sid'] = I('get.sid', 0, 'int');
-			$list_total = $core_model->listClient(0, array_merge([
+			if(isset($_GET['mid'])){
+				/** @var \Core\Model\JoinModel $main_model */
+				$main_model     = D('Core/Join');
+				$options['mid'] = $mid;
+			}
+			if(isset($_GET['sid'])){
+				$sid = I('get.sid', 0, 'int');
+				/** @var \Core\Model\JoinSignPlaceModel $main_model */
+				$main_model     = D('Core/JoinSignPlace');
+				$options['sid'] = $sid;
+			}
+			/* 获取记录总数 */
+			$list_total = $main_model->findRecord(0, array_merge([
 				'keyword' => I('get.keyword', ''),
-				'status'  => 'not deleted',
-				'mid'     => $mid
+				'status'  => 'not deleted'
 			], $options));
 			/* 分页设置 */
 			$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
 			\ThinkPHP\Quasar\Page\setTheme1($page_object);
 			$page_show = $page_object->show();
-			/* 当前页的员工记录列表 */
-			$client_list = $core_model->listClient(2, array_merge([
+			/* 当前页记录 */
+			$client_list = $main_model->findRecord(2, array_merge([
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 				'_order'  => I('get.column', 'main.creatime').' '.I('get.sort', 'desc'),
-				'status'  => 'not deleted',
-				'mid'     => $mid
+				'status'  => 'not deleted'
 			], $options));
-			$client_list = $logic->setExtendColumnForManage($client_list);
+			/* 设定额外字段 */
 			$options = [];
-			if(isset($_GET['sid'])) $options['sid'] = I('get.sid', 0, 'int');
+			$client_list = $logic->setExtendColumnForManage($client_list);
+			if(isset($_GET['mid'])) $options['mid'] = $mid;
+			if(isset($_GET['sid'])) $options['sid'] = $sid;
 			/* 统计数据 */
-			$signed_count    = $core_model->listClient(0, array_merge([
-				'mid'         => $mid,
+			$signed_count   = $main_model->findRecord(0, array_merge([
 				'sign_status' => 1,
 				'status'      => 'not deleted'
 			], $options));
-			$reviewed_count  = $core_model->listClient(0, array_merge([
-				'mid'           => $mid,
+			$reviewed_count = $main_model->findRecord(0, array_merge([
 				'review_status' => 1,
 				'status'        => 'not deleted'
 			], $options));
-			$all_count       = $core_model->listClient(0, array_merge([
-				'mid'    => $mid,
+			$all_count      = $main_model->findRecord(0, array_merge([
 				'status' => 'not deleted'
 			], $options));
-			$sign_place_list = $sign_place_model->getRecordSelectList($mid);
+			/* 会议对应的券记录 */
+			$coupon_item_result = $coupon_item_model->findCouponItem(2, ['mid' => $mid, 'status' => 1]);
+			/* 向视图输出数据 */
 			$this->assign('sign_place_list', $sign_place_list);
 			$this->assign('statistics', [
 				'signed'       => $signed_count,
@@ -85,6 +106,8 @@
 				'not_reviewed' => $all_count-$reviewed_count,
 				'total'        => $all_count,
 			]);
+			$this->assign('employee_list', $employee_list);
+			$this->assign('coupon_code_list', $coupon_item_result);
 			$this->assign('list', $client_list);
 			$this->assign('page_show', $page_show);
 			$this->display();
@@ -118,20 +141,6 @@
 				'company'     => '吉美集团',
 				'hasHead'     => true
 			]);
-		}
-
-		public function createClientTest(){
-			$logic            = new ClientLogic();
-			$upload_record_id = 75;
-			//$upload_record_id = I('post.id', 0, 'int');
-			//$map    = I('post.map', '');
-			$map    = [
-				'data'   => [15, 13],
-				'column' => [20, 21]
-			];
-			$result = $logic->createClientFromExcel($upload_record_id, $map);
-			print_r($result);
-			exit;
 		}
 
 		public function alter(){

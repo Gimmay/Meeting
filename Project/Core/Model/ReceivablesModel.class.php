@@ -28,7 +28,7 @@
 					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);
 					if(!$exception['status']) return $exception;
-					else return ['status' => false, 'message' => $this->getError()];
+					else return ['status' => false, 'message' => $message];
 				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];

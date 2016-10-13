@@ -1,0 +1,21 @@
+.bg_up_file{
+	position    : relative;
+	text-align  : center;
+	line-height : 40px;
+	width       : 100%;
+	height      : 40px;
+	border      : 1px dashed rgba(0, 0, 0, .2);
+	background  : #FFFFFF;
+}
+
+#updateBackground{
+	position : absolute;
+	width    : 100%;
+	height   : 100%;
+	opacity  : 0;
+}
+
+#submit_logo{
+	position : absolute;
+	opacity  : 0;
+}

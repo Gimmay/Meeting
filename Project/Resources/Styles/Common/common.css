@@ -253,6 +253,11 @@ textarea{
 	background   : #23C6C8 !important;
 	border-color : #23C6C8 !important;
 }
+.bg-00a0e8 {
+	background   : #00a0e8 !important;
+	border-color : #00a0e8 !important;
+	color : #fff;
+}
 
 .bg-danger{
 	background   : #ED5565 !important;
@@ -661,6 +666,35 @@ textarea{
 	/*	width       : 100px;*/
 	float       : left;
 	margin-left : 10px;
+}
+/** title nav**/
+.nav_tab{
+	background : #ECF1F4;
+}
+
+.nav_tab .nav_tab_li{
+	line-height : 50px;
+	float       : left;
+	width       : 135px;
+	height      : 50px;
+	color       : #FFFFFF;
+	text-align  : center;
+	line-height : 50px;
+	font-size   : 14px;
+	font-family : "Helvitica Neue", Helvetica, Arial, "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+}
+
+.nav_tab .nav_tab_li.active{
+	background : #00A0E8;
+}
+
+.nav_tab .nav_tab_li a{
+	color      : rgba(0, 0, 0, .85);
+	text-align : center;
+}
+
+.nav_tab .nav_tab_li.active a{
+	color : #FFFFFF;
 }
 
 

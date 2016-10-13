@@ -32,8 +32,12 @@
 			}
 			/** @var \Core\Model\BadgeModel $model */
 			$model = D('Core/Badge');
-			$list  = $model->findBadge(2, ['status' => 'not deleted']);
+			/** @var \Manager\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Meeting');
+			$meeting_list  = $meeting_model->getMeetingForSelect();
+			$list          = $model->findBadge(2, ['status' => 'not deleted']);
 			$this->assign('list', $list);
+			$this->assign('meeting_list', $meeting_list);
 			$this->display();
 		}
 
@@ -41,7 +45,7 @@
 			/** @var \Core\Model\BadgeModel $model */
 			$model = D('Core/Badge');
 			$id    = I('get.id', 0, 'int');
-			$info = $model->findBadge(1, ['id'=>$id]);
+			$info  = $model->findBadge(1, ['id' => $id]);
 			$this->assign('info', $info);
 			$this->display();
 		}

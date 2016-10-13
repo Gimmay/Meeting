@@ -300,22 +300,39 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
+				case 'receivables': {
+					$id        = I('post.code', '');
+					$coupon_id = explode(',', $id);
+					C('TOKEN_ON', false);
+					/** @var \Core\Model\ReceivablesModel $receivables_model */
+					$receivables_model  = D('Core/Receivables');
+					$data               = I('post.');
+					$data['mid']        = I('get.mid', 0, 'int');
+					$data['cid']        = I('post.cid');
+					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$data['creatime']   = time();
+					$data['coupon_ids'] = I('post.code');
+					$result_receivables = $receivables_model->createRecord($data);
+					foreach($coupon_id as $v){
+						/** @var \Core\Model\CouponItemModel $model */
+						$model  = D('Core/CouponItem');
+						$result = $model->alterCouponItem($v, ['status' => 2, 'cid' => $data['cid']]);
+					}
+
+					return $result_receivables;
+				}
+				break;
 				case 'delete';
 					/** @var \Core\Model\ClientModel $model */
-					$model = D('Core/Client');
+					//$model = D('Core/Client');
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model = D('Core/Join');
-					$result1    = $model->deleteClient(I('post.id'));
-					if($result1['status']){
-						$data['cid'] = I('post.id', 0, 'int');
-						$data['mid'] = I('get.mid', 0, 'int');
-						$join_find   = $join_model->findRecord(1, $data);
-						C('TOKEN_ON', false);
-						$result2 = $join_model->deleteRecord($join_find['id']);
+					//$id_arr     = explode(',', I('post.id'));
+					$join_id_arr = explode(',', I('post.join_id'));
+					//$result    = $model->deleteClient($id_arr);
+					$result = $join_model->deleteRecord($join_id_arr);
 
-						return array_merge($result2, ['__ajax__' => false]);
-					}
-					else return array_merge($result1, ['__ajax__' => false]);
+					return array_merge($result, ['__ajax__' => false]);
 				break;
 				case 'send_message':
 					$wxcorp_logic = new WxCorpLogic();
@@ -374,34 +391,51 @@
 					return ['status' => true, 'massage' => '发送成功', '__ajax__' => false];
 				break;
 				case 'assign_sign_place':
-					/** @var \Core\Model\JoinModel $join_model */
-					$join_model  = D('Core/Join');
-					$cid         = I('post.cid', 0, 'int');
-					$mid         = I('get.mid', 0, 'int');
-					$sid         = I('post.sid', 0, 'int');
-					$join_record = $join_model->findRecord(1, ['cid' => $cid, 'mid' => $mid]);
+					/** @var \Core\Model\JoinSignPlaceModel $join_sign_place_model */
+					$join_sign_place_model = D('Core/JoinSignPlace');
+					$cid                   = I('post.cid', 0, 'int');
+					$sid_str               = I('post.sid', 0, 'int');
+					$sid_arr               = explode(',', $sid_str);
+					$count                 = 0;
 					C('TOKEN_ON', false);
-					// todo 1233333333333333333333333
-					$result = $join_model->alterRecord($join_record['id'], ['sid' => $sid]);
-
-					return array_merge($result, ['__ajax__' => false]);
-				break;
-				case 'multi_assign_sign_place':
-					/** @var \Core\Model\JoinModel $join_model */
-					$join_model = D('Core/Join');
-					$cid_str    = I('post.cid', 0, 'int');
-					$mid        = I('get.mid', 0, 'int');
-					$sid        = I('post.sid', 0, 'int');
-					$cid_arr    = explode(',', $cid_str);
-					C('TOKEN_ON', false);
-					$count = 0;
-					foreach($cid_arr as $key => $val){
-						// todo 1233333333333333333333333
-						$join_record = $join_model->findRecord(1, ['cid' => $val, 'mid' => $mid]);
-						$result      = $join_model->alterRecord($join_record['id'], ['sid' => $sid]);
+					foreach($sid_arr as $key => $val){
+						$result = $join_sign_place_model->createRecord([
+							'cid'      => $cid,
+							'sid'      => $val,
+							'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+							'creatime' => time()
+						]);
 						if($result['status']) $count++;
 					}
-					if($count == count($cid_arr)) return ['status' => true, 'message' => '分配成功', '__ajax__' => false];
+					if($count == count($sid_arr)) return ['status' => true, 'message' => '分配成功', '__ajax__' => false];
+					elseif($count == 0) return ['status' => false, 'message' => '分配失败', '__ajax__' => false];
+					else return ['status' => true, 'message' => '部分分配成功', '__ajax__' => false];
+				break;
+				case 'multi_assign_sign_place':
+					/** @var \Core\Model\JoinSignPlaceModel $join_sign_place_model */
+					$join_sign_place_model = D('Core/JoinSignPlace');
+					$cid_str               = I('post.cid', '');
+					$sid_str               = I('post.sid', '');
+					$cid_arr               = explode(',', $cid_str);
+					$sid_arr               = explode(',', $sid_str);
+					C('TOKEN_ON', false);
+					$count = 0;
+					foreach($cid_arr as $c_key => $c_val){
+						foreach($sid_arr as $s_key => $s_val){
+							$result = $join_sign_place_model->createRecord([
+								'cid'      => $c_val,
+								'sid'      => $s_val,
+								'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'creatime' => time()
+							]);
+							if($result['status']) $count++;
+						}
+					}
+					if($count == count($cid_arr)*count($sid_arr)) return [
+						'status'   => true,
+						'message'  => '分配成功',
+						'__ajax__' => false
+					];
 					elseif($count == 0) return ['status' => false, 'message' => '分配失败', '__ajax__' => false];
 					else return ['status' => true, 'message' => '部分分配成功', '__ajax__' => false];
 				break;
@@ -428,15 +462,24 @@
 			/** @var \Core\Model\ClientModel $core_model */
 			$core_model = D('Core/Client');
 			/** @var \Core\Model\JoinModel $join_model */
-			$join_model   = D('Core/Join');
-			$table_column = $model->getColumn();
-			$count        = 0;
+			$join_model = D('Core/Join');
+			/** @var \Core\Model\ReceivablesModel $receivables_model */
+			$receivables_model    = D('Core/Receivables');
+			$table_column         = $model->getColumn();
+			$count                = 0;
+			$mid                  = I('get.mid', 0, 'int');
+			$cur_employee_id      = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+			$client_data_arr      = [];
+			$join_data_arr        = [];
+			$receivables_data_arr = [];
 			foreach($excel_data as $key1 => $line){
 				$client_data       = [];
 				$mobile            = '';
 				$name              = '';
 				$registration_date = '';
 				$invitor           = '';
+				$price             = 0;
+				$traffic_method    = '';
 				foreach($line as $key2 => $val){
 					$column_index = null;
 					// 设定映射关系
@@ -468,6 +511,12 @@
 						case 'inviter':
 							// todo
 						break;
+						case 'price':
+							$price = $val;
+						break;
+						case 'traffic_method':
+							$traffic_method = $val;
+						break;
 					}
 					// 指定特殊列的值
 					$client_data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
@@ -484,15 +533,24 @@
 				}
 				// 判定是否存在该客户
 				$exist_client                   = $core_model->isExist($mobile, $name);
-				$join_data['creator']           = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+				$join_data['creator']           = $cur_employee_id;
 				$join_data['creatime']          = time();
 				$join_data['registration_date'] = $registration_date;
-				$join_data['mid']               = I('get.mid', 0, 'int');
+				$join_data['mid']               = $mid;
 				if($exist_client){
 					C('TOKEN_ON', false);
 					$join_data['cid'] = $exist_client['id'];
 					$join_result      = $join_model->createRecord($join_data);
-					if($join_result['status']) $count++;
+					if($join_result['status']){
+						$count++;
+						if(((int)$price)>0) $receivables_model->createRecord([
+							'cid'      => $join_data['cid'],
+							'mid'      => $mid,
+							'creator'  => $cur_employee_id,
+							'creatime' => time(),
+							'price'    => $price,
+						]);
+					}
 				}
 				else{
 					C('TOKEN_ON', false);
@@ -500,11 +558,20 @@
 					if($client_result['status']){
 						$join_data['cid'] = $client_result['id'];
 						$join_result      = $join_model->createRecord($join_data);
-						if($join_result['status']) $count++;
+						if($join_result['status']){
+							$count++;
+							if(((int)$price)>0) $receivables_model->createRecord([
+								'cid'      => $join_data['cid'],
+								'mid'      => $mid,
+								'creator'  => $cur_employee_id,
+								'creatime' => time(),
+								'price'    => $price,
+							]);
+						}
 					}
 				}
 			}
-			if($count === 0) return ['status' => false, 'message' => '无需导入任何数据'];
+			if($count === 0) return ['status' => false, 'message' => '没有导入任何数据'];
 			if($count == count($excel_data)) return ['status' => true, 'message' => '全部导入成功'];
 			else return ['status' => true, 'message' => '部分数据无需导入'];
 		}
