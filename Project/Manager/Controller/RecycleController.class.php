@@ -7,6 +7,7 @@
 	 */
 	namespace Manager\Controller;
 
+	use Manager\Logic\RecycleLogic;
 	use Think\Page;
 
 	class RecycleController extends ManagerController{
@@ -105,10 +106,8 @@
 			foreach($client_list as $k => $v){
 				$aa['id'] = $client_list[$k]['id'];
 			}
-			/** @var \Core\Model\EmployeeModel $employee_model */
-			$employee_model = D('Core/employee');
-			$employee_direactor = $employee_model->findEmployee(2,$aa);
-			
+			$recycle_logic = new RecycleLogic();
+			$client_list = $recycle_logic->FindEmployee($client_list);	
 			$this->assign('list',$client_list);
 			$this->assign('page_list',$page_show);
 			$this->display();

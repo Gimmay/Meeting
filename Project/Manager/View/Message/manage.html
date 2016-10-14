@@ -67,10 +67,10 @@
 										<td width="5%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="10%">消息内容</td>
+										<td width="10%">模板名称</td>
 										<td width="5%">类型</td>
+										<td width="10%">模板内容</td>
 										<td width="10%">状态</td>
-										<td width="10%">备注</td>
 										<td width="10%">创建者</td>
 										<td width="10%">创建时间</td>
 										<td width="20%">操作</td>
@@ -82,7 +82,7 @@
 											<td class="check_item">
 												<input type="checkbox" class="icheck" value="<{$single.id}>" placeholder="">
 											</td>
-											<td><{$single.context}></td>
+											<td><{$single.name}></td>
 											<td>
 												<span class="color-info">
 													<switch name="single.type">
@@ -93,6 +93,7 @@
 													</switch>
 												</span>
 											</td>
+											<td><{$single.context}></td>
 											<td>
 												<switch name="single.status">
 													<case value="0">禁用</case>
@@ -100,11 +101,8 @@
 													<case value="2">删除</case>
 												</switch>
 											</td>
-											<td><{$single.comment}></td>
 											<td><{$single.creator}></td>
 											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
-
-
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>">
 													<if condition="($single['review_status'] eq 1) and ($single['sign_status'] eq 0)">

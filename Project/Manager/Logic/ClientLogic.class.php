@@ -250,20 +250,8 @@
 							]);
 						}
 						if($result['status']){
-							/** @var \Core\Model\ClientModel $model */
-							/** @var \Core\Model\WeixinIDModel $weixin_model */
-							/** @var \Core\Model\MeetingModel $meeting_model */
-							$model          = D('Core/Client');
-							$wxcorp_logic   = new WxCorpLogic();
-							$weixin_model   = D('Core/WeixinID');
-							$meeting_model  = D('Core/Meeting');
-							$sms_logic      = new SMSLogic();
-							$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
-							$record         = $model->findClient(1, ['id' => $id]);
-							$time           = date('Y-m-d H:i:s');
-							$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
-							$wxcorp_logic->sendMessage('text', "您参加的<$meeting_record[name]>于[$time]成功签到", ['user' => [$weixin_record['weixin_id']]]);
-							$sms_logic->send("您参加的<$meeting_record[name]>于[$time]成功签到", [$record['mobile']]);
+							$message_logic = new MessageLogic();
+							$message_logic->send($meeting_id, 1, [$id]);
 						}
 
 						return array_merge($result, ['__ajax__' => true]);
@@ -282,20 +270,8 @@
 					C('TOKEN_ON', false);
 					$result = $join_model->alterRecord([$join_record['id']], ['sign_status' => 0]);
 					if($result['status']){
-						/** @var \Core\Model\ClientModel $model */
-						/** @var \Core\Model\WeixinIDModel $weixin_model */
-						/** @var \Core\Model\MeetingModel $meeting_model */
-						$model          = D('Core/Client');
-						$wxcorp_logic   = new WxCorpLogic();
-						$weixin_model   = D('Core/WeixinID');
-						$meeting_model  = D('Core/Meeting');
-						$sms_logic      = new SMSLogic();
-						$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
-						$record         = $model->findClient(1, ['id' => $id]);
-						$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
-						$time           = date('Y-m-d H:i:s');
-						$wxcorp_logic->sendMessage('text', "您参加的<$meeting_record[name]>于[$time]取消签到", ['user' => [$weixin_record['weixin_id']]]);
-						$sms_logic->send("您参加的<$meeting_record[name]>于[$time]取消签到", $record['mobile']);
+						$message_logic = new MessageLogic();
+						$message_logic->send($meeting_id, 2, [$id]);
 					}
 
 					return array_merge($result, ['__ajax__' => true]);
@@ -464,22 +440,23 @@
 			/** @var \Core\Model\JoinModel $join_model */
 			$join_model = D('Core/Join');
 			/** @var \Core\Model\ReceivablesModel $receivables_model */
-			$receivables_model    = D('Core/Receivables');
-			$table_column         = $model->getColumn();
-			$count                = 0;
-			$mid                  = I('get.mid', 0, 'int');
-			$cur_employee_id      = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-			$client_data_arr      = [];
-			$join_data_arr        = [];
-			$receivables_data_arr = [];
+			$receivables_model = D('Core/Receivables');
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model  = D('Core/Employee');
+			$table_column    = $model->getColumn();
+			$count           = 0;
+			$mid             = I('get.mid', 0, 'int');
+			$cur_employee_id = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 			foreach($excel_data as $key1 => $line){
-				$client_data       = [];
-				$mobile            = '';
-				$name              = '';
-				$registration_date = '';
-				$invitor           = '';
-				$price             = 0;
-				$traffic_method    = '';
+				$client_data        = [];
+				$mobile             = '';
+				$name               = '';
+				$registration_date  = '';
+				$invitor            = null;
+				$service_consultant = null;
+				$develop_consultant = null;
+				$price              = 0;
+				$traffic_method     = '';
 				foreach($line as $key2 => $val){
 					$column_index = null;
 					// 设定映射关系
@@ -496,8 +473,20 @@
 							$val = $val == '男' ? 1 : ($val == '女' ? 2 : 0);
 						break;
 						case 'develop_consultant':
+							$service_consultant = $val;
+							if($service_consultant){
+								$record = $employee_model->findEmployee(1, ['keyword' => $service_consultant]);
+								if($record) $service_consultant = $record['id'];
+								else $service_consultant = null;
+							}
+						break;
 						case 'service_consultant':
-							$val = 1; // todo
+							$develop_consultant = $val;
+							if($develop_consultant){
+								$record = $employee_model->findEmployee(1, ['keyword' => $develop_consultant]);
+								if($record) $develop_consultant = $record['id'];
+								else $develop_consultant = null;
+							}
 						break;
 						case 'mobile':
 							$mobile = $val;
@@ -508,8 +497,13 @@
 						case 'registration_date':
 							$registration_date = date('Y-m-d', strtotime($val));
 						break;
-						case 'inviter':
-							// todo
+						case 'inviter_id':
+							$invitor = $val;
+							if($invitor){
+								$record = $employee_model->findEmployee(1, ['keyword' => $invitor]);
+								if($record) $invitor = $record['id'];
+								else $invitor = null;
+							}
 						break;
 						case 'price':
 							$price = $val;
@@ -519,10 +513,12 @@
 						break;
 					}
 					// 指定特殊列的值
-					$client_data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					$client_data['creatime']    = time();
-					$client_data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $mobile);
-					$client_data['pinyin_code'] = $str_obj->makePinyinCode($name);
+					$client_data['creator']            = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$client_data['service_consultant'] = $service_consultant;
+					$client_data['develop_consultant'] = $develop_consultant;
+					$client_data['creatime']           = time();
+					$client_data['password']           = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $mobile);
+					$client_data['pinyin_code']        = $str_obj->makePinyinCode($name);
 					if($column_index === null){
 						if(!in_array($table_column[$key2]['name'], ['registration_date'])) $client_data[$table_column[$key2]['name']] = $val;
 					} // 按顺序指定缺省值
@@ -536,7 +532,9 @@
 				$join_data['creator']           = $cur_employee_id;
 				$join_data['creatime']          = time();
 				$join_data['registration_date'] = $registration_date;
-				$join_data['mid']               = $mid;
+				$join_data['traffic_method']    = $traffic_method;
+				if($invitor != null) $join_data['inviter_id'] = $invitor;
+				$join_data['mid'] = $mid;
 				if($exist_client){
 					C('TOKEN_ON', false);
 					$join_data['cid'] = $exist_client['id'];

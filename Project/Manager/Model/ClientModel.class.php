@@ -31,7 +31,7 @@ UNION
 	 COLUMN_TYPE `TYPE`
 FROM information_schema.`COLUMNS`
 WHERE TABLE_SCHEMA = \'gimmay_meeting\' AND TABLE_NAME = \'workflow_join\'
-AND COLUMN_NAME IN (\'registration_date\', \'traffic_method\'))
+AND COLUMN_NAME IN (\'registration_date\', \'traffic_method\', \'inviter_id\'))
 UNION(
 	SELECT \'price\', \'收款\', \'decimal(12, 2)\'
 )');

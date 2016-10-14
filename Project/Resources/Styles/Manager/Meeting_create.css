@@ -19,3 +19,15 @@
 	position : absolute;
 	opacity  : 0;
 }
+
+.upload_prompt {
+	margin-right: 10px;
+}
+
+#see_logo_modal .modal-dialog {
+	width: 50%
+}
+
+#see_logo_modal .modal-dialog > img {
+	width: 100%
+}

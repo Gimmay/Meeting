@@ -14,6 +14,23 @@
 			parent::_initialize();
 		}
 
+		private function getNextColumn($column, $index = 0){
+			$column = strrev($column);
+			if($column[$index] == 'Z'){
+				$column[$index] = 'A';
+
+				return $this->getNextColumn($column, $index+1);
+			}
+			else{
+				if($column[$index]){
+					$column[$index] = chr(ord($column[$index])+1);
+
+					return strrev($column);
+				}
+				else return strrev('A'.$column);
+			}
+		}
+
 		public function exportCustomData($list, $options = []){
 			$defaults = [
 				'fileName'     => 'excel',
@@ -46,7 +63,7 @@
 						$excel_obj->getActiveSheet()->getStyle("$column$i")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER)->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
 						$excel_obj->getActiveSheet()->getColumnDimension($column)->setWidth(15);
 					}
-					$column = chr(ord($column)+1);
+					$column = $this->getNextColumn($column);
 				}
 			}
 			header('Content-Type: "application/vnd.ms-excel"');

@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
 	<!--<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/custom.css">-->
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
@@ -19,6 +20,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
@@ -193,7 +195,7 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title">选择消息模板</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
 					<input type="hidden" name="requestType" value="message">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
@@ -242,17 +244,17 @@
 				signMessageSelect:$('#sign_mes').QuasarSelect({
 					name        :'sign_mes',
 					classStyle  :'form-control',
-					idInput     :'selected_develop_consultant',
-					idHidden    :'selected_develop_consultant_form',
+					idInput     :'selected_sign_mes',
+					idHidden    :'selected_sign_mes_form',
 					data        :'<{:json_encode($message)}>',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
 				antiSignMessageSelect:$('#unti_sign_mes').QuasarSelect({
-					name        :'anti_sign',
+					name        :'anti_sign_mes',
 					classStyle  :'form-control',
-					idInput     :'selected_develop_consultant',
-					idHidden    :'selected_develop_consultant_form',
+					idInput     :'selected_unti_sign_mes',
+					idHidden    :'selected_unti_sign_mes_form',
 					data        :'<{:json_encode($message)}>',
 					placeholder :'',
 					hasEmptyItem:false
@@ -260,13 +262,13 @@
 				receivablesMessageSelect:$('#receivables_mes').QuasarSelect({
 					name        :'receivables_mes',
 					classStyle  :'form-control',
-					idInput     :'selected_develop_consultant',
-					idHidden    :'selected_develop_consultant_form',
+					idInput     :'selected_receivables_mes',
+					idHidden    :'selected_receivables_mes_form',
 					data        :'<{:json_encode($message)}>',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				/*toast         :$().QuasarToast(),*/
+				toast         :$().QuasarToast(),
 				icheck:$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'

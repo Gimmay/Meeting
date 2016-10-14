@@ -7,6 +7,8 @@
 	 */
 	namespace Core\Model;
 
+	use Exception;
+
 	class AssignMessageModel extends CoreModel{
 		protected $tableName       = 'assign_message';
 		protected $tablePrefix     = 'workflow_';
@@ -21,8 +23,8 @@
 			if(isset($filter['message_id'])) $where['sub.id'] = $filter['cid'];
 			if(isset($filter['id'])) $where['main.id'] = $filter['id'];
 			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
-			if(isset($filter['type'])) $where['sub.type'] = $filter['type'];
-			if(isset($filter['assign_type'])) $where['main.type'] = $filter['assign_type'];
+			if(isset($filter['message_type'])) $where['sub.type'] = $filter['message_type'];
+			if(isset($filter['type'])) $where['main.type'] = $filter['type'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted'){
@@ -49,24 +51,24 @@
 				break;
 				case 1: // find
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->limit($filter['_limit'])->field('sub.*, mid, main.type assign_type')->find();
-						else $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->field('sub.*, mid, main.type assign_type')->find();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->limit($filter['_limit'])->field('sub.*, mid, main.type assign_type, main.id id, sub.id message_id ')->find();
+						else $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->field('sub.*, mid, main.type assign_type, main.id id, sub.id message_id')->find();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->limit($filter['_limit'])->where($where)->field('sub.*, mid, main.type assign_type')->find();
-						else $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->where($where)->field('sub.*, mid, main.type assign_type')->find();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->limit($filter['_limit'])->where($where)->field('sub.*, mid, main.type assign_type, main.id id, sub.id message_id')->find();
+						else $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->where($where)->field('sub.*, mid, main.type assign_type, main.id id, sub.id message_id')->find();
 					}
 				break;
 				case 2: // select
 				default:
 					if(!isset($filter['_order'])) $filter['_order'] = 'main.creatime desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->limit($filter['_limit'])->order($filter['_order'])->field('sub.*, mid, main.type assign_type')->select();
-						else $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->order($filter['_order'])->field('sub.*, mid, main.type assign_type')->select();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->limit($filter['_limit'])->order($filter['_order'])->field('sub.*, mid, main.type assign_type, main.id id, sub.id message_id')->select();
+						else $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->order($filter['_order'])->field('sub.*, mid, main.type assign_type, main.id id, sub.id message_id')->select();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->limit($filter['_limit'])->where($where)->order($filter['_order'])->field('sub.*, mid, main.type assign_type')->select();
-						else $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->where($where)->order($filter['_order'])->field('sub.*, mid, main.type assign_type')->select();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->limit($filter['_limit'])->where($where)->order($filter['_order'])->field('sub.*, mid, main.type assign_type, main.id id, sub.id message_id')->select();
+						else $result = $this->alias('main')->join('join workflow_message sub on main.message_id = sub.id')->where($where)->order($filter['_order'])->field('sub.*, mid, main.type assign_type, main.id id, sub.id message_id')->select();
 					}
 				break;
 			}
@@ -74,10 +76,11 @@
 			return $result;
 		}
 
-		public function createAssignMessage($data){
+		public function createRecord($data){
 			if($this->create($data)){
 				try{
 					$result = $this->add($data);
+
 					if($result) return ['status' => true, 'message' => '创建会议成功'];
 					else return ['status' => false, 'message' => '创建会议失败'];
 				}catch(Exception $error){
@@ -90,9 +93,10 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function alterAssignMessage($id, $data){
+		public function alterRecord($id, $data){
 			if($this->create($data)){
 				try{
+
 					$result = $this->where(['id' => ['in', $id]])->save($data);
 					if($result) return ['status' => true, 'message' => '修改成功'];
 					else return ['status' => false, 'message' => '未做任何修改'];
@@ -106,7 +110,7 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function deleteAssignMessage($ids){
+		public function deleteRecord($ids){
 			if($this->create()){
 				try{
 					$where['id'] = ['in', $ids];

@@ -422,7 +422,7 @@ $(function(){
 			var s_id = $(this).attr('data-id');
 			arr.push(s_id);
 		});
-		var status = arr.indexOf(id)
+		var status = arr.indexOf(id);
 		if(status == -1){
 			$('.number_list_box.selected .number_list').append('<a data-id='+id+'>'+text+'</a>');
 			keepCode();
@@ -534,8 +534,11 @@ function getIframeData(){
 				data    :{requestType:'save_excel_data', excel:newStr, table:newStr2, dbIndex:dbIndex},
 				async   :false,
 				callback:function(data){
+					ManageObject.object.toast.onQuasarHidden(function(){
+						location.reload(true);
+					});
 					ManageObject.object.loading.complete();
-					console.log(data);
+					ManageObject.object.toast.toast(data.message);
 				}
 			});
 		});

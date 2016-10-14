@@ -42,7 +42,7 @@
 						<div class="modal-header">
 							<h2 class="modal-title" id="authorize_role_title">修改会议</h2>
 						</div>
-						<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+						<form class="form-horizontal" role="form" method="post" action="" id="form">
 							<div class="modal-body" style=" padding: 15px 20px 15px 0;">
 								<div class="form-group">
 									<label for="meeting_name" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>会议名称：</label>
@@ -215,12 +215,25 @@
 									</div>
 
 								</div>
-								<div class="form-group">
+								<!--<div class="form-group">
 									<label for="logo" class="col-sm-1 control-label">LOGO图片地址：</label>
 									<div class="col-sm-11">
 										<input type="text" class="form-control logo" name="logo" id="logo" value="<{$info.logo}>">
 									</div>
-
+								</div>-->
+								<div class="form-group">
+									<label for="updateBackground" class="col-sm-1 control-label">LOGO图片地址：</label>
+									<div class="col-sm-5">
+										<div class="bg_up_file">
+											<input type="hidden" name="logo" value="<{$info.logo}>">
+											<input type="file" class="filePrew" name="logo_upload" id="updateBackground">
+											<span class="text"><span class="glyphicon glyphicon-upload" style="margin-right: 5px;"></span><span>上传图片</span></span>
+											<button type="button" id="submit_logo" onclick="upLoadLogo()"></button>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<button type="button" class="btn btn-sm btn-success mes_preview_btn" data-toggle="modal" data-target="#see_logo_modal">预览</button>
+									</div>
 								</div>
 								<div class="form-group">
 									<label for="comment" class="col-sm-1 control-label">备注：</label>
@@ -230,13 +243,20 @@
 
 								</div>
 							</div>
+							<input type="hidden" name="requestType" value="alter">
 							<div class="modal-footer text_center">
-								<button type="submit" class="btn btn-primary">保存</button>
+								<button type="submit" class="btn btn-primary" onclick="return checkIsEmpty()">保存</button>
 							</div>
 						</form>
 					</section>
 				</div>
 			</div>
+		</div>
+	</div>
+	<!--预览logo-->
+	<div class="modal fade" id="see_logo_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<img id="logo_src" src="<{$info.logo}>">
 		</div>
 	</div>
 	<script>

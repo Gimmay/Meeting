@@ -42,7 +42,7 @@
 						<div class="modal-header">
 							<h2 class="modal-title" id="authorize_role_title">新建会议</h2>
 						</div>
-						<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+						<form class="form-horizontal" role="form" method="post" action="" id="form">
 							<div class="modal-body" style=" padding: 15px 20px 15px 0;">
 								<div class="form-group">
 									<label for="meeting_name" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>会议名称：</label>
@@ -152,20 +152,18 @@
 								<div class="form-group">
 									<label for="updateBackground" class="col-sm-1 control-label">LOGO图片地址：</label>
 									<div class="col-sm-5">
-										<form action="" id="uploadLogoForm">
 											<div class="bg_up_file">
-												<input type="file" class="filePrew" name="logo" id="updateBackground">
+												<input type="hidden" name="logo" value="">
+												<input type="file" class="filePrew" name="logo_upload" id="updateBackground">
 												<span class="text"><span class="glyphicon glyphicon-upload" style="margin-right: 5px;"></span><span>上传图片</span></span>
 												<button type="button" id="submit_logo" onclick="upLoadLogo()"></button>
 											</div>
-										</form>
 									</div>
 									<div class="col-sm-6">
-										<button type="button" class="btn btn-sm btn-success mes_preview_btn">预览</button>
+										<span class="upload_prompt">(Logo未上传)</span>
+										<button type="button" class="btn btn-sm btn-success mes_preview_btn hide" data-toggle="modal" data-target="#see_logo_modal">预览</button>
 									</div>
 								</div>
-								<input type="hidden" name="creator" class="creator">
-								<input type="hidden" name="creatime" class="creatime">
 								<div class="form-group">
 									<label for="comment" class="col-sm-1 control-label">备注：</label>
 									<div class="col-sm-11">
@@ -173,13 +171,20 @@
 									</div>
 								</div>
 							</div>
+							<input type="hidden" name="requestType" value="create">
 							<div class="modal-footer text_center">
-								<button type="submit" class="btn btn-primary">保存</button>
+								<button type="submit" class="btn btn-primary"  onclick="return checkIsEmpty()">保存</button>
 							</div>
 						</form>
 					</section>
 				</div>
 			</div>
+		</div>
+	</div>
+	<!--预览logo-->
+	<div class="modal fade" id="see_logo_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<img id="logo_src" src="" alt="">
 		</div>
 	</div>
 	<script>

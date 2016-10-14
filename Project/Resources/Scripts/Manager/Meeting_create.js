@@ -4,6 +4,7 @@
 
 $(function(){
 	$('#updateBackground').on('change',function(){
+		$('input[name=requestType]').val('upload_image');
 		$('#submit_logo').trigger('click');
 	});
 });
@@ -56,7 +57,7 @@ function  checkIsEmpty(){
 }
 
 function upLoadLogo(){
-	var data = new FormData($('#uploadLogoForm')[0]);
+	var data = new FormData($('#form')[0]);
 	$.ajax({
 		url        :'',
 		type       :'POST',
@@ -67,6 +68,17 @@ function upLoadLogo(){
 		contentType:false
 	}).done(function(data){
 		console.log(data);
+		if(data.status){
+			CreateObject.object.toast.toast("Logo上传成功");
+			$('.upload_prompt').text('上传成功！');
+			$('.mes_preview_btn').removeClass('hide');
+			$('input[name=logo]').val(data.imageUrl);
+			$('#logo_src').attr('src',data.imageUrl);
+
+		}else{
+			CreateObject.object.toast.toast("Logo上传失败");
+		}
 	});
+	$('input[name=requestType]').val('create');
 	return false;
 }

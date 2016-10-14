@@ -69,3 +69,25 @@ $(function(){
 });
 
 
+function checkIsEmpty(){
+	var $selected_sign_mes   = $('#selected_sign_mes');
+	var $selected_unti_sign_mes = $('#selected_unti_sign_mes');
+	var $selected_receivables_mes = $('#selected_receivables_mes');
+	if($selected_sign_mes.text() == ''){
+		ManageObject.object.toast.toast("请选择签到消息模板");
+		$selected_sign_mes.focus();
+		return false;
+	}
+	if($selected_unti_sign_mes.text() == ''){
+		ManageObject.object.toast.toast("请选择取消签到消息模板");
+		$selected_unti_sign_mes.focus();
+		return false;
+	}
+	if($selected_receivables_mes.text() == ''){
+		ManageObject.object.toast.toast("请选择收款消息模板");
+		$selected_receivables_mes.focus();
+		return false;
+	}
+	return true;
+}
+

@@ -99,7 +99,4 @@
 			return $list;
 		}
 
-		public function numberCoupon(){
-		}
-
 	}

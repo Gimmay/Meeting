@@ -1,6 +1,14 @@
 /**
  * Created by qyqy on 2016-9-22.
  */
+
+$(function(){
+	$('#updateBackground').on('change',function(){
+		$('input[name=requestType]').val('upload_image');
+		$('#submit_logo').trigger('click');
+	});
+});
+
 function  checkIsEmpty(){
 	var $name = $('#meeting_name');
 	var $host = $('#meeting_host');
@@ -46,4 +54,28 @@ function  checkIsEmpty(){
 		return false;
 	}*/
 	return true;
+}
+function upLoadLogo(){
+	var data = new FormData($('#form')[0]);
+	$.ajax({
+		url        :'',
+		type       :'POST',
+		data       :data,
+		dataType   :'JSON',
+		cache      :false,
+		processData:false,
+		contentType:false
+	}).done(function(data){
+		console.log(data);
+		if(data.status){
+			AlterObject.object.toast.toast("Logo上传成功");
+			$('input[name=logo]').val(data.imageUrl);
+			$('#logo_src').attr('src',data.imageUrl);
+
+		}else{
+			AlterObject.object.toast.toast("Logo上传失败");
+		}
+	});
+	$('input[name=requestType]').val('alter');
+	return false;
 }
