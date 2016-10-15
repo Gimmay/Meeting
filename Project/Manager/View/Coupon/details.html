@@ -33,7 +33,7 @@
 			<include file="Public/menu"/>
 			<div class="mt_wrapper">
 				<include file="Public/header"/>
-				<div class="mian_body">
+				<div class="main_body">
 					<section class="content">
 						<header class="c_header">
 							<div class="function_list clearfix">
@@ -155,13 +155,13 @@
 						<div class="form-group">
 							<label for="coupon_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>代金券名称：</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control name" name="name" id="coupon_name">
+								<input type="text" class="form-control name" name="name" id="coupon_name" value="<{$coupon.name}>">
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="price" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>价格：</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control price" name="price" id="price">
+								<input type="text" class="form-control price" name="price" id="price" value="<{$coupon.price}>">
 							</div>
 						</div>
 						<!-- 单个新增 -->
@@ -213,7 +213,7 @@
 							<label for="start_time" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>开始时间：</label>
 							<div class="col-sm-10">
 								<div class="input-group date form_datetime" id="start_time_wp">
-									<input type="text" class="form-control start_time" name="start_time" id="start_time">
+									<input type="text" class="form-control start_time" name="start_time" id="start_time" value="<{$coupon.start_time|date='Y-m-d',###}>">
 									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
 								</div>
 							</div>
@@ -222,7 +222,7 @@
 							<label for="end_time" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>结束时间：</label>
 							<div class="col-sm-10">
 								<div class="input-group date form_datetime" id="end_time_wp">
-									<input type="text" class="form-control end_time" name="end_time" id="end_time">
+									<input type="text" class="form-control end_time" name="end_time" id="end_time" value="<{$coupon.end_time|date='Y-m-d',###}>">
 									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
 								</div>
 							</div>

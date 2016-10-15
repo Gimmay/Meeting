@@ -26,11 +26,14 @@
 		public function handlerRequest($type, $ext = []){
 			switch($type){
 				case 'delete':
-					/** @var \Core\Model\MeetingModel $model */
-					$model  = D('Core/Meeting');
-					$result = $model->deleteMeeting([I('post.id', 0, 'int')]);
+					if($this->permissionList['MEETING.DELETE']){
+						/** @var \Core\Model\MeetingModel $model */
+						$model  = D('Core/Meeting');
+						$result = $model->deleteMeeting([I('post.id', 0, 'int')]);
 
-					return array_merge($result, ['__ajax__' => false]);
+						return array_merge($result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有删除会议的权限', '__ajax__' => false];
 				break;
 				case 'message':
 					/** @var \Core\Model\AssignMessageModel $assign_message_model */
@@ -90,17 +93,20 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'create':
-					/** @var \Core\Model\MeetingModel $model */
-					$model            = D('Core/Meeting');
-					$data             = I('post.');
-					$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					$data['creatime'] = time();
-					$data['brief']    = $_POST['brief'];
-					if(I('post.city')) $data['place'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
-					else $data['place'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
-					$result = $model->createMeeting($data);
+					if($this->permissionList['MEETING.CREATE']){
+						/** @var \Core\Model\MeetingModel $model */
+						$model            = D('Core/Meeting');
+						$data             = I('post.');
+						$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$data['creatime'] = time();
+						$data['brief']    = $_POST['brief'];
+						if(I('post.city')) $data['place'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
+						else $data['place'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
+						$result = $model->createMeeting($data);
 
-					return array_merge($result, ['__ajax__' => false]);
+						return array_merge($result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有创建会议的权限', '__ajax__' => false];
 				break;
 				case 'upload_image':
 					$getSavePath          = function ($data){
@@ -118,26 +124,25 @@
 					return array_merge($result2, ['__ajax__' => true, 'imageUrl' => trim($getSavePath($result1), '.')]);
 				break;
 				case 'alter':
-					$post          = I('post.');
-					$post['brief'] = $_POST['brief'];
-					$result        = $this->alter(I('get.id', 0, 'int'), $post, $ext['info']);
+					if($this->permissionList['MEETING.ALTER']){
+						/** @var \Core\Model\MeetingModel $model */
+						$model         = D('Core/Meeting');
+						$id            = I('get.id', 0, 'int');
+						$data          = I('post.');
+						$data['brief'] = $_POST['brief'];
+						if(I('post.area')) $data['place'] = I('post.province')."-".I('post.city')."-".I('post.area')."-".I('post.address_detail');
+						elseif(I('post.city')) $data['place'] = I('post.province')."-".I('post.city')."-".I('post.address_detail');
+						else $data['place'] = $ext['info']['place'];
+						$result = $model->alterMeeting([$id], $data);
 
-					return array_merge($result, ['__ajax__' => false]);
+						return array_merge($result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有修改会议的权限', '__ajax__' => false];
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
 				break;
 			}
-		}
-
-		public function alter($id, $data, $info){
-			/** @var \Core\Model\MeetingModel $model */
-			$model = D('Core/Meeting');
-			if(I('post.area')) $data['place'] = I('post.province')."-".I('post.city')."-".I('post.area')."-".I('post.address_detail');
-			elseif(I('post.city')) $data['place'] = I('post.province')."-".I('post.city')."-".I('post.address_detail');
-			else $data['place'] = $info['place'];
-
-			return $model->alterMeeting([$id], $data); //传值到model里面操作
 		}
 
 		public function setExtendColumnForManage($list){

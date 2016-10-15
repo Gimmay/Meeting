@@ -6,6 +6,8 @@ var ThisObject = {
 };
 
 $(function(){
+
+//计算消息文本字数
 	$('.filed_w').find('button').on('click', function(){
 		var text = $(this).text();
 		$('#textarea_edit').insertContent(text);
@@ -38,10 +40,12 @@ $(function(){
 			$('.mes_people').removeClass('hide');
 			$('.save_mes').addClass('hide');
 			$('.send_mes').removeClass('hide');
+			$('input[name=requestType]').val('send');
 		}else{
 			$('.mes_people').addClass('hide');
 			$('.save_mes').removeClass('hide');
 			$('.send_mes').addClass('hide');
+			$('input[name=requestType]').val('create');
 		}
 	});
 
@@ -99,6 +103,7 @@ $(function(){
 				});
 
 				$('.btn_save').on('click',function(){
+					var n1 = 0;
 					 $('.check_item').find('.icheckbox_square-green.checked').each(function(){
 						var str = '';
 						$('.check_item .icheckbox_square-green.checked').each(function(){
@@ -111,16 +116,19 @@ $(function(){
 							for(var i = 0; i<str.length-1; i++){
 								newStr += str[i];
 							}
-						}
+						};
+						 n1++;
 						 $('input[name=selected_p]').val(newStr);
 						 CreateObject.object.toast.toast("添加成功");
 						 $('#add_recipient').modal('hide')
+						 $('#selected_attendee_count_by_0').text(n1);
 
 					});
 				});
 			}
 		});
 	});
+
 });
 function relationMes(txt){
 	$('.show_sms_content_container').removeClass('hide').find('.show_sms_content_text').text(txt);

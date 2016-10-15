@@ -28,60 +28,60 @@
 					$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
 					$data['creatime'] = time(); //当前时间
 					$result           = $model->createMessage($data);
-					//			$data['mid']      = I('post.mid');
-					//			/** @var \Core\Model\JoinModel $join_model */
-					//			$join_model = D('Core/Join');
-					//			$result_join = $join_model->findRecord(2,['mid'=>I('post.mid'),'review_status'=>1]);
-					//			print_r($result_join);exit;
-					//			foreach ($result_join as $k=>$v){
-					//				$mobile = $result_join[$k]['mobile'];
-					//				$sms_logic = new SMSLogic();
-					//				$sms_send = $sms_logic->send($data['context'],[$mobile]);  //发送短信 第一个参数填内容， 第二个参数填手机号数组
-					//			}
+					$data['mid']      = I('post.mid');
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model  = D('Core/Join');
+					$result_join = $join_model->findRecord(2, ['mid' => I('post.mid'), 'review_status' => 1]);
+					foreach($result_join as $k => $v){
+						$mobile    = $result_join[$k]['mobile'];
+						$sms_logic = new SMSLogic();
+						$sms_send  = $sms_logic->send($data['context'], [$mobile]);  //发送短信 第一个参数填内容， 第二个参数填手机号数组
+					}
+
 					return array_merge($result, ['__ajax__' => false]);
 				break;
 				case 'search';
 					$mid      = I('post.meeting_name'); //会议id
 					$sign     = I('post.sign');//签到状态
 					$reviewed = I('post.reviewed'); // 审核状态
-					$print    = I('print');//打印状态
 					if($sign == 1){
-						$sign = 0;
+						$data['sign_status'] = 0;
 					}
 					elseif($sign == 2){
-						$sign = 1;
+						$data['sign_status'] = 1;
 					}
 					else{
-						$sign = '';
 					}
 					if($reviewed == 1){
-						$reviewed = 0;
+						$data['review_status'] = 0;
 					}
 					elseif($reviewed == 2){
-						$reviewed = 1;
+						$data['review_status'] = 1;
 					}
 					else{
-						$reviewed = '';
 					}
-					if($print == 1){
-						$print = 0;
-					}
-					elseif($print == 2){
-						$print = 1;
-					}
-					else{
-						$print = '';
-					}
+					$data['mid']    = $mid;
+					$data['status'] = 1;
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
-					$result_join = $join_model->findRecord(2, [
-						'mid'           => $mid,
-						'sign_status'   => $sign,
-						'review_status' => $reviewed,
-						'status'        => 1
-					]);
+					$result_join = $join_model->findRecord(2, $data);
 
 					return array_merge($result_join, ['__ajax__' => true]);
+				break;
+				case 'send';
+					$id              = I('post.selected_p');
+					$user_id         = explode(',', $id);
+					$data['context'] = I('post.context', '');
+					/** @var \Core\Model\ClientModel $user_model */
+					$user_model = D('Core/Client');
+					foreach($user_id as $k => $v){
+						$user_result = $user_model->findClient(1, ['id' => $v]);
+						$mobile = $user_result['mobile'];
+						$sms_logic   = new SMSLogic();
+						$sms_send    = $sms_logic->send($data['context'], [$mobile]);  //发送短信 第一个参数填内容， 第二个参数填手机号数组
+					}
+					return $sms_send;
+
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
@@ -114,13 +114,32 @@
 			$employee_model = D('Core/Employee');
 			/** @var \Core\Model\MessageModel $message_model */
 			$message_model = D('Core/Message');
-			$list          = $message_model->findMessage(2);
+			$list          = $message_model->findMessage(2,['status'=>'not deleted','keyword' => I('get.keyword', '')]);
 			foreach($list as $k => $v){
-				$employee_result              = $employee_model->findEmployee(1, ['id' => $list[$k]['creator']]);
-				$manage_result[$k]['creator'] = $employee_result['name'];
+				$employee_result     = $employee_model->findEmployee(1, ['id' => $list[$k]['creator']]);
+				$list[$k]['creator'] = $employee_result['name'];
 			}
 
 			return $list;
+		}
+
+		public function alterMessage(){
+			/** @var \Core\Model\MessageModel $message_model */
+			$message_model = D('Core/Message');
+			$id            = I('get.id', 0, 'int');
+			$result_alter  = $message_model->alterMessage(['id' => $id], [
+				'name'    => I('post.name', ''),
+				'context' => I('post.context', '')
+			]);
+
+			return $result_alter;
+		}
+
+		public function deleteMessage($data){
+			/** @var \Core\Model\MessageModel $message_model */
+			$message_model = D('Core/Message');
+			$result = $message_model->deleteMessage($data);
+			return $result;
 		}
 
 		public function send($mid, $type, $client_id_list = []){

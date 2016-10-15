@@ -15,6 +15,12 @@ $(function(){
 		$(this).addClass('active');
 		$('.c_way').addClass('hide');
 		$('.c_way').eq(index).removeClass('hide');
+		if(index == 0){
+			$('#create_coupon').find('input[name=requestType]').val('create');
+		}
+		if(index == 1){
+			$('#create_coupon').find('input[name=requestType]').val('batch_create');
+		}
 	});
 	// 全选checkbox
 	$('.all_check').find('.iCheck-helper').on('click', function(){
@@ -23,6 +29,10 @@ $(function(){
 		}else{
 			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
 		}
+	});
+	$('.coupon_area').on('change',function(){
+		var id = $(this).val();
+		$('#create_coupon').find('input[name=coupon_area]').val(id);
 	});
 	// 修改代金券
 	$('.modify_btn').on('click', function(){

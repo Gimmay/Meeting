@@ -11,14 +11,17 @@
 			parent::_initialize();
 		}
 
-		public function Manage(){
+		public function manage(){
 			$coupon_logic = new CouponLogic();
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
 				$result = $coupon_logic->handlerRequest($type);
-				if($result === -1){
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
 				}
 				else{
+					unset($result['__ajax__']);
 					if($result['status']) $this->success($result['message']);
 					else $this->error($result['message'], '', 3);
 				}
@@ -85,6 +88,10 @@
 			/** @var \Manager\Model\MeetingModel $employee_model */
 			$employee_model = D('Meeting');
 			$employee_list  = $employee_model->getMeetingForSelect();
+			/** @var \Core\Model\CouponModel $coupon_model */
+			$coupon_model = D('Core/Coupon');
+			$coupon_result = $coupon_model->findCoupon(1,['id'=>I('get.id',0,'int')]);
+			$this->assign('coupon',$coupon_result);
 			$this->assign('meeting_list', $employee_list);
 			$this->assign('info', $info);
 			$this->assign('page_show', $page_show);

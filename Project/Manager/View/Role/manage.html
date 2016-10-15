@@ -30,17 +30,17 @@
 			<include file="Public/menu"/>
 			<div class="mt_wrapper">
 				<include file="Public/header"/>
-				<div class="mian_body">
+				<div class="main_body">
 					<section class="content">
 						<header class="c_header">
 							<div class="function_list clearfix">
-								<if condition="$permission_list['createRole'] eq 1">
+								<if condition="$permission_list['ROLE.CREATE'] eq 1">
 									<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_role">
 										<i></i>
 										<p>新增角色</p>
 									</div>
 								</if>
-								<if condition="$permission_list['deleteRole'] eq 1">
+								<if condition="$permission_list['ROLE.DELETE'] eq 1">
 									<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_employee">
 										<i></i>
 										<p>批量删除</p>
@@ -110,13 +110,13 @@
 												<td>
 													<div class="btn-group" data-id="<{$single.id}>">
 														<if condition="$max_role_level elt $single['level']">
-															<if condition="$permission_list['assignPermissionForRole'] eq 1">
+															<if condition="$permission_list['ROLE.ASSIGN-PERMISSION'] eq 1">
 																<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
 															</if>
-															<if condition="$permission_list['alterRole'] eq 1">
+															<if condition="$permission_list['ROLE.ALTER'] eq 1">
 																<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_role">修改</button>
 															</if>
-															<if condition="$permission_list['deleteRole'] eq 1">
+															<if condition="$permission_list['ROLE.DELETE'] eq 1">
 																<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_role">删除</button>
 															</if>
 														</if>
@@ -139,7 +139,7 @@
 		</div>
 	</div>
 	<!-- 新增角色 -->
-	<if condition="$permission_list['createRole'] eq 1">
+	<if condition="$permission_list['ROLE.CREATE'] eq 1">
 		<div class="modal fade" id="create_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -211,7 +211,7 @@
 		</div>
 	</if>
 	<!-- 修改角色 -->
-	<if condition="$permission_list['alterRole'] eq 1">
+	<if condition="$permission_list['ROLE.ALTER'] eq 1">
 		<div class="modal fade" id="modify_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -283,7 +283,7 @@
 		</div>
 	</if>
 	<!-- 删除角色 -->
-	<if condition="$permission_list['deleteRole'] eq 1">
+	<if condition="$permission_list['ROLE.DELETE'] eq 1">
 		<div class="modal fade" id="delete_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -307,7 +307,7 @@
 		</div>
 	</if>
 	<!-- 角色授权 -->
-	<if condition="$permission_list['assignPermissionForRole'] eq 1">
+	<if condition="$permission_list['ROLE.ASSIGN-PERMISSION'] eq 1">
 		<div class="modal fade" id="authorize_role" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog" style="width: 80%">
 				<div class="modal-content">
@@ -332,7 +332,15 @@
 										</div>
 									</div>
 								</header>
-								<section class="all_area" id="authorize_all">
+								<section class="all_area clearfix" id="authorize_all">
+									<!--<div class="pannel_n" data-group="aaa">
+										<div>
+											<header class="title">什么权限</header>
+											<section>
+												<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="41" data-type="$type">取消签到</a>
+											</section>
+										</div>
+									</div>-->
 								</section>
 							</div>
 						</div>
@@ -346,7 +354,7 @@
 		</div>
 	</if>
 	<!-- 批量删除 -->
-	<if condition="$permission_list['deleteRole'] eq 1">
+	<if condition="$permission_list['ROLE.DELETE'] eq 1">
 		<div class="modal fade" id="batch_delete_employee" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">

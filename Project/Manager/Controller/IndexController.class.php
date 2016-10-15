@@ -2,6 +2,7 @@
 	namespace Manager\Controller;
 
 	use Core\Logic\WxCorpLogic;
+	use Quasar\StringPlus;
 	use Think\Controller;
 
 	class IndexController extends ManagerController{
@@ -14,6 +15,22 @@
 		}
 
 		public function test(){
+			$post = [];
+			$post['EMPLOYEE.VIEW-ASSIGNED-PERMISSION'] = 123;
+			print_r($post['EMPLOYEE.VIEW-ASSIGNED-PERMISSION']);
+		}
+
+		public function updatePermissionPinyin(){
+			$str_obj = new StringPlus();
+			/** @var \Think\Model $permission_model */
+			$permission_model = M('system_permission');
+			$record = $permission_model->select();
+			foreach($record as $val){
+				if(!$val['pinyin_code']) $permission_model->where(['id'=>$val['id']])->save(['pinyin_code'=>$str_obj->makePinyinCode($val['name'])]);
+			}
+		}
+
+		public function updateClientWeixinInfo(){
 			/** @var \Core\Model\WeixinIDModel $weixin_model */
 			$weixin_model = D('Core/WeixinID');
 			$logic        = new WxCorpLogic();
@@ -46,7 +63,7 @@
 			}
 		}
 
-		public function test2(){
+		public function updateEmployeeWeixinInfo(){
 			/** @var \Core\Model\WeixinIDModel $weixin_model */
 			$weixin_model = D('Core/WeixinID');
 			$logic        = new WxCorpLogic();

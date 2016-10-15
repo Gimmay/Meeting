@@ -16,26 +16,22 @@
 		public function handlerRequest($type){
 			switch($type){
 				case 'create':
-					if(IS_POST){
+					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+					$coupon_item_model = D('Core/CouponItem');//实例化表
+					/** @var \Core\Model\CouponModel $coupon_model */
+					$code   = I('post.coupon_area'); //代金券码
+					$request = explode(',',$code);    //打散代金券码
 
-						/** @var \Core\Model\CouponItemModel $coupon_item_model */
-						$coupon_item_model = D('Core/CouponItem');//实例化表
-						/** @var \Core\Model\CouponModel $coupon_model */
-						$code   = I('post.coupon_area'); //代金券码
-						$request = explode(',',$code);    //打散代金券码
-
-						foreach($request as $v){
-							C('TOKEN_ON', false);            //令牌
-							$date['coupon_id'] = I('get.id','');  //代金券ID
-							$date['mid']       = I('post.meeting_name');   //会议ID
-							$date['code']      = $v;                        //代金券码
-							$date['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); //创建者
-							$date['creatime'] = time();//创建时间
-							$coupon_item_model->createCouponItem($date); //插入到数据库
-						}
-						return['status' => true, 'message' => '创建代金券成功'];
+					foreach($request as $v){
+						C('TOKEN_ON', false);            //令牌
+						$date['coupon_id'] = I('get.id','');  //代金券ID
+						$date['mid']       = I('post.meeting_name');   //会议ID
+						$date['code']      = $v;                        //代金券码
+						$date['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); //创建者
+						$date['creatime'] = time();//创建时间
+						$coupon_item_model->createCouponItem($date); //插入到数据库
 					}
-					exit;
+					return['status' => true, 'message' => '创建代金券成功'];
 				break;
 				case'delete';
 					$id = I('post.id','');

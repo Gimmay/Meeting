@@ -44,6 +44,16 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
+				case 'assign_badge_for_meeting':
+					/** @var \Core\Model\MeetingModel $meeting_model */
+					$meeting_model = D('Core/Meeting');
+					$data          = I('post.');
+					$data['bid']   = I('post.id', 0, 'int');
+					$mid           = I('post.mid', 0, 'int');
+					$result        = $meeting_model->alterMeeting([$mid], $data);
+
+					return array_merge($result, ['__ajax__' => false]);
+				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
 				break;

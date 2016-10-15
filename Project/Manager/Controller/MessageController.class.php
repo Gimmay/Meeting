@@ -7,6 +7,7 @@
 	 */
 	namespace Manager\Controller;
 
+	use Core\Logic\SMSLogic;
 	use Manager\Logic\MessageLogic;
 
 	class MessageController extends ManagerController{
@@ -17,6 +18,13 @@
 		public function manage(){
 			$logic = new MessageLogic();
 			$list  = $logic->getAllMessage();
+			if(IS_POST){
+				$data = I('post.id','');
+				$result = $logic->deleteMessage($data);
+				if($result['status']) $this->success($result['message']);
+				else $this->error($result['message'], '', 3);
+				exit;
+			}
 			$this->assign('list', $list);
 			$this->display();
 		}
@@ -37,11 +45,29 @@
 				}
 				exit;
 			}
+			$sms_logic = new SMSLogic();
+			$number  = $sms_logic->getBalance();  //发送短信 第一个参数填内容， 第二个参数填手机号数组
+
 			/** @var \Manager\Model\MeetingModel $meeting_model */
 			$meeting_model = D('Meeting');
 			$meeting_list  = $meeting_model->getMeetingForSelect();
+			$this->assign('number',$number);
 			$this->assign('meeting', $meeting_list);
 			$this->display();
 		}
 
+		public function alter(){
+			/** @var \Core\Model\MessageModel $message_model */
+			$message_model  = D('Core/Message');
+			$result_message = $message_model->findMessage(1, ['id' => I('get.id', 0, 'int')]);
+			if(IS_POST){
+				$logic  = new MessageLogic();
+				$result = $logic->alterMessage();
+				if($result['status']) $this->success($result['message'],U('Message/manage'));
+				else $this->error($result['message'], '', 3);
+				exit;
+			}
+			$this->assign('info', $result_message);
+			$this->display();
+		}
 	}

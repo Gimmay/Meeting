@@ -148,7 +148,17 @@ $limit
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
+		public function createMultiRecord($data){
+			try{
+				$result = $this->addAll($data);
+				if($result) return ['status' => true, 'message' => '创建代金券成功'];
+				else return ['status' => false, 'message' => '创建代金券失败'];
+			}catch(Exception $error){
+				$message = $error->getMessage();
 
+				return ['status' => false, 'message' => $message];
+			}
+		}
 
 		public function deleteCouponItem($id){
 			if($this->create()){

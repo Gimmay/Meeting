@@ -62,7 +62,7 @@ var badgeManage = {
 						brief      :brief_id,
 						name:badge_name
 					}
-				},
+				}
 			};
 			ManageObject.object.loading.loading();
 			Common.ajax({
@@ -95,7 +95,7 @@ var badgeManage = {
 			$('.system_tem_ul > li').removeClass('active');
 			$(this).addClass('active');
 			var id = $(this).attr('data-id');
-			$('.system_tem').find('input[name=badge_id]').val(id);
+			$('.system_tem').find('input[name=id]').val(id);
 		})
 	},
 	// 计算胸卡设计（右侧）的宽度

@@ -30,8 +30,7 @@
 			}
 			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['keyword']) && $filter['keyword']){
-				$condition['code']        = ['like', "%$filter[keyword]%"];
-				$condition['mobile']      = ['like', "%$filter[keyword]%"];
+				$condition['context']      = ['like', "%$filter[keyword]%"];
 				$condition['name']        = ['like', "%$filter[keyword]%"];
 				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
 				$condition['_logic']      = 'or';

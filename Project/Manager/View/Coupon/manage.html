@@ -32,7 +32,7 @@
 			<include file="Public/menu"/>
 			<div class="mt_wrapper">
 				<include file="Public/header"/>
-				<div class="mian_body">
+				<div class="main_body">
 					<section class="content">
 						<header class="c_header">
 							<div class="function_list clearfix">
@@ -127,8 +127,8 @@
 							<label class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>方式：</label>
 							<div class="col-sm-10" style="margin:0">
 								<ul class="nav nav-pills" id="create_way">
-									<li role="presentation" class="active"><a href="#">单个新增</a></li>
-									<li role="presentation"><a href="#">批量新增</a></li>
+									<li role="presentation" class="single active"><a href="#">单个新增</a></li>
+									<li role="presentation" class="mutil"><a href="#">批量新增</a></li>
 								</ul>
 							</div>
 						</div>
@@ -155,7 +155,7 @@
 							<div class="form-group">
 								<label class="col-sm-2 control-label"><b style="vertical-align: middle; color: red;">*</b>代金券号：</label>
 								<div class="col-sm-10">
-									<input type="text" name="coupon_area" class="coupon_area form-control">
+									<input type="text" name="coupon_c" class="coupon_area form-control">
 								</div>
 							</div>
 						</div>
@@ -191,7 +191,6 @@
 									<button type="button" class="btn btn-default auto_get_number">自动获取</button>
 									<ul class="list_coupon_number clearfix">
 									</ul>
-									<input type="hidden" name="coupon_area" value="">
 								</div>
 							</div>
 						</div>
@@ -221,6 +220,7 @@
 						</div>
 
 					</div>
+					<input type="hidden" name="coupon_area" value="">
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						<button type="submit" class="btn btn-primary">确认</button>

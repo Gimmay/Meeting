@@ -50,7 +50,7 @@
 				}
 				exit;
 			}
-			if($this->permissionList['viewRole']){
+			if($this->permissionList['ROLE.VIEW']){
 				/** @var \Core\Model\RoleModel $model */
 				$model          = D('Core/Role');
 				$meeting_logic  = new MeetingLogic();

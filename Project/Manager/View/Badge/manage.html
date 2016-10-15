@@ -35,7 +35,7 @@
 			<include file="Public/menu"/>
 			<div class="mt_wrapper">
 				<include file="Public/header"/>
-				<div class="mian_body">
+				<div class="main_body">
 					<section class="content badge_content">
 						<header>
 							<div class="nav_tab clearfix">
@@ -125,6 +125,7 @@
 						<!--系统模板	-->
 						<div class="badge_box system_tem tab_c hide">
 							<form role="form" class="form-horizontal" method="post" action="">
+								<input type="hidden" name="requestType" value="assign_badge_for_meeting">
 								<div class="form-group">
 									<label for="meeting_name_s" class="col-sm-1 control-label"><b style="vertical-align: middle;color: red;">*</b>选择会议：</label>
 									<div class="col-sm-5">
@@ -145,8 +146,7 @@
 										</volist>
 									</ul>
 								</div>
-								<input type="hidden" name="badge_id">
-								<input type="hidden" name="requestType" value="keep">
+								<input type="hidden" name="id">
 								<div class="form_li text-center">
 									<button type="submit" id="choose_system_badge" class="btn btn-primary">确认</button>
 								</div>
@@ -176,7 +176,7 @@
 					radioClass   :'iradio_square-blue'
 				})
 			}
-		}
+		};
 		$(function(){
 			$(".cart_view_item ").resizable({
 				resize:function(event, ui){

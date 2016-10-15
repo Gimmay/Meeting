@@ -7,7 +7,7 @@
 	 */
 	namespace Manager\Logic;
 
-	class DiningBoardLogic extends ManagerLogic{
+	class DiningTableLogic extends ManagerLogic{
 		public function _initialize(){
 			parent::_initialize();
 		}

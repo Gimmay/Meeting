@@ -57,7 +57,7 @@
 				}
 				exit;
 			}
-			if($this->permissionList['viewEmployee']){
+			if($this->permissionList['EMPLOYEE.VIEW']){
 				$logic = new EmployeeLogic();
 				/* 获取当前员工角色的最大等级 */
 				$max_role_level = $role_model->getMaxRoleLevel(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));
@@ -116,7 +116,7 @@
 		}
 
 		public function create(){
-			if($this->permissionList['createEmployee']){
+			if($this->permissionList['EMPLOYEE.CREATE']){
 				/** @var \Core\Model\EmployeeModel $model */
 				$model = D('Core/Employee');
 				$logic = new EmployeeLogic();
@@ -145,7 +145,7 @@
 		}
 
 		public function alter(){
-			if($this->permissionList['alterEmployee']){
+			if($this->permissionList['EMPLOYEE.ALTER']){
 				/** @var \Core\Model\EmployeeModel $model */
 				$model = D('Core/Employee');
 				if(IS_POST){

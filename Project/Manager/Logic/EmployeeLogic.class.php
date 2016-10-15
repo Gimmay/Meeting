@@ -60,7 +60,7 @@
 		public function handlerRequest($type){
 			switch($type){
 				case 'get_assigned_role':
-					if($this->permissionList['viewAssignedRoleForEmployee']){
+					if($this->permissionList['EMPLOYEE.VIEW-ASSIGNED-ROLE']){
 						/** @var \Core\Model\RoleModel $role_model */
 						$role_model = D('Core/Role');
 						$result     = $role_model->getRoleOfEmployee(I('post.id', 0, 'int'), null);
@@ -70,7 +70,7 @@
 					else return ['status' => false, 'message' => '您没有查询已分配的角色的权限', '__ajax__' => true];
 				break;
 				case 'get_unassigned_role':
-					if($this->permissionList['viewUnassignedRoleForEmployee']){
+					if($this->permissionList['EMPLOYEE.VIEW-UNASSIGNED-ROLE']){
 						/** @var \Core\Model\RoleModel $role_model */
 						$role_model = D('Core/Role');
 						$result     = $role_model->getRoleOfEmployee(I('post.id', 0, 'int'), null, true, I('post.keyword', ''));
@@ -80,7 +80,7 @@
 					else return ['status' => false, 'message' => '您没有查询未分配角色的权限', '__ajax__' => true];
 				break;
 				case 'assign_role':
-					if($this->permissionList['assignRoleForEmployee']){
+					if($this->permissionList['EMPLOYEE.ASSIGN-ROLE']){
 						$assign_role_logic = new AssignRoleLogic();
 						$result            = $assign_role_logic->assignRole(I('post.rid', 0, 'int'), I('post.id', 0, 'int'), 0);
 
@@ -89,7 +89,7 @@
 					else return ['status' => false, 'message' => '您没有分配角色的权限', '__ajax__' => true];
 				break;
 				case 'anti_assign_role':
-					if($this->permissionList['assignRoleForEmployee']){
+					if($this->permissionList['EMPLOYEE.ANTI-ASSIGN-ROLE']){
 						$assign_role_logic = new AssignRoleLogic();
 						$result            = $assign_role_logic->antiAssignRole(I('post.rid', 0, 'int'), I('post.id', 0, 'int'), 0);
 
@@ -98,7 +98,7 @@
 					else return ['status' => false, 'message' => '您没有收回角色的权限', '__ajax__' => true];
 				break;
 				case 'get_assigned_permission':
-					if($this->permissionList['viewAssignedPermissionForEmployee']){
+					if($this->permissionList['EMPLOYEE.VIEW-ASSIGNED-PERMISSION']){
 						/** @var \Core\Model\PermissionModel $permission_model */
 						$permission_model = D('Core/Permission');
 						$result           = $permission_model->getPermissionOfEmployee(I('post.id', 0, 'int'), null);
@@ -108,7 +108,7 @@
 					else return ['status' => false, 'message' => '您没有查询已分配权限的权限', '__ajax__' => true];
 				break;
 				case 'get_unassigned_permission':
-					if($this->permissionList['viewUnassignedPermissionForEmployee']){
+					if($this->permissionList['EMPLOYEE.VIEW-UNASSIGNED-PERMISSION']){
 						/** @var \Core\Model\PermissionModel $permission_model */
 						$permission_model = D('Core/Permission');
 						$result           = $permission_model->getPermissionOfEmployee(I('post.id', 0, 'int'), null, true, I('post.keyword', ''));
@@ -118,7 +118,7 @@
 					else return ['status' => false, 'message' => '您没有查询未分配权限的权限', '__ajax__' => true];
 				break;
 				case 'assign_permission':
-					if($this->permissionList['assignPermissionForEmployee']){
+					if($this->permissionList['EMPLOYEE.ASSIGN-PERMISSION']){
 						$assign_permission_logic = new AssignPermissionLogic();
 						$result                  = $assign_permission_logic->assignPermission(I('post.pid', 0, 'int'), I('post.id', 0, 'int'), 1);
 
@@ -127,7 +127,7 @@
 					else return ['status' => false, 'message' => '您没有分配权限的权限', '__ajax__' => true];
 				break;
 				case 'anti_assign_permission':
-					if($this->permissionList['assignPermissionForEmployee']){
+					if($this->permissionList['EMPLOYEE.ANTI-ASSIGN-PERMISSION']){
 						$type                    = I('post.type', 1, 'int');
 						$result                  = ['status' => false, '参数错误'];
 						$assign_permission_logic = new AssignPermissionLogic();
@@ -139,7 +139,7 @@
 					else return ['status' => false, 'message' => '您没有收回权限的权限', '__ajax__' => true];
 				break;
 				case 'delete':
-					if($this->permissionList['deleteEmployee']){
+					if($this->permissionList['EMPLOYEE.DELETE']){
 						/** @var \Core\Model\EmployeeModel $model */
 						$model  = D('Core/Employee');
 						$result = $model->deleteEmployee(I('post.id'));
@@ -149,7 +149,7 @@
 					else return ['status' => false, 'message' => '您没有删除员工的权限', '__ajax__' => false];
 				break;
 				case 'reset_password':
-					if($this->permissionList['resetEmployeePassword']){
+					if($this->permissionList['EMPLOYEE.RESET-PASSWORD']){
 						$str = new StringPlus();
 						/** @var \Core\Model\EmployeeModel $model */
 						$model        = D('Core/Employee');
@@ -163,7 +163,7 @@
 					else return ['status' => false, 'message' => '您没有重置密码的权限', '__ajax__' => false];
 				break;
 				case 'alter_password':
-					if($this->permissionList['alterEmployeePassword']){
+					if($this->permissionList['EMPLOYEE.ALTER-PASSWORD']){
 						$str = new StringPlus();
 						/** @var \Core\Model\EmployeeModel $model */
 						$model        = D('Core/Employee');

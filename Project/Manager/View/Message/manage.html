@@ -33,7 +33,7 @@
 			<include file="Public/menu"/>
 			<div class="mt_wrapper">
 				<include file="Public/header"/>
-				<div class="mian_body">
+				<div class="main_body">
 					<section class="content">
 						<header class="c_header">
 							<div class="function_list clearfix">
@@ -42,7 +42,7 @@
 										<p>新建消息模板</p>
 									</a>
 								</div>
-								<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_client" data-backdrop="static">
+								<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_message_modal" data-backdrop="static">
 									<i></i>
 									<p>批量删除</p>
 								</div>
@@ -93,7 +93,7 @@
 													</switch>
 												</span>
 											</td>
-											<td><{$single.context}></td>
+											<td><p style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><{$single.context}></p></td>
 											<td>
 												<switch name="single.status">
 													<case value="0">禁用</case>
@@ -105,24 +105,8 @@
 											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>">
-													<if condition="($single['review_status'] eq 1) and ($single['sign_status'] eq 0)">
-														<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
-													</if>
-													<if condition="($single['review_status'] eq 1) and ($single['sign_status'] eq 1)">
-														<button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button>
-													</if>
-													<switch name="single.review_status">
-														<case value="0">
-															<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
-														</case>
-														<case value="1">
-															<button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button>
-														</case>
-													</switch>
-
-
-													<a href="<{:U('Client/alter',['id'=>$single['id']])}>" class="btn btn-default btn-xs modify_btn">修改</a>
-													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_client">删除</button>
+													<a href="<{:U('Message/alter',['id'=>$single['id']])}>" class="btn btn-default btn-xs modify_btn">修改</a>
+													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_message_modal">删除</button>
 												</div>
 											</td>
 										</tr>
@@ -140,142 +124,19 @@
 			</div>
 		</div>
 	</div>
-	<input type="hidden" id="Excal_hide_btn" data-toggle="modal" data-target="#ExcelHead">
-	<!-- 单个修改签到点 -->
-	<div class="modal fade" id="alter_sign_point" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-					</button>
-					<h2 class="modal-title">修改签到点</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="id">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="sign_place" class="col-sm-3 control-label">选择签到点：</label>
-							<div class="col-sm-9">
-								<div id="sign_place"></div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- 批量修改签到点 -->
-	<div class="modal fade" id="batch_alter_sign_point" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-					</button>
-					<h2 class="modal-title">批量修改签到点</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="id">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="sign_place" class="col-sm-3 control-label">选择签到点：</label>
-							<div class="col-sm-9">
-								<div id="batch_sign_place"></div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- 收款 -->
-	<div class="modal fade" id="receivables_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">收款</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="id">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="price" class="col-sm-2 control-label">收款金额：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control price" name="price" id="price">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="type" class="col-sm-2 control-label">收款类型：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control type" name="type" id="type">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="time" class="col-sm-2 control-label">收款时间：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control time" name="time" id="time">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="payee" class="col-sm-2 control-label">收款人：</label>
-							<div class="col-sm-10">
-								<div id="payee"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="coupon" class="col-sm-2 control-label">代金券：</label>
-							<div class="col-sm-10">
-								<div id="coupon"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="place" class="col-sm-2 control-label">收款地点：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control coupon" name="place" id="place">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="modify_role_status" class="col-sm-2 control-label">禁用：</label>
-							<div class="col-sm-10">
-								<select name="status" id="modify_role_status" class="form-control">
-									<option value="1">是</option>
-									<option value="0">否</option>
-								</select>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">收款</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
 	<!-- 删除客户 -->
-	<div class="modal fade" id="delete_client" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="delete_message_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">删除客户</h2>
+					<h2 class="modal-title">删除消息模板</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否删除客户？
+						是否删除消息模板？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -286,18 +147,18 @@
 		</div>
 	</div>
 	<!-- 批量删除 -->
-	<div class="modal fade" id="batch_delete_client" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="batch_delete_message_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量删除客户</h2>
+					<h2 class="modal-title">批量删除消息模板</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否删除已选客户？
+						是否删除已选消息模板？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -307,160 +168,9 @@
 			</div>
 		</div>
 	</div>
-	<!-- 批量审核 -->
-	<div class="modal fade" id="batch_review_client" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量审核客户</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
-					<div class="modal-body">
-						是否审核选择客户？
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary batch_delete_btn">确认审核</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- 批量签到 -->
-	<div class="modal fade" id="batch_sign_point" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量签到</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="sign"> <input type="hidden" name="id" value="">
-					<div class="modal-body">
-						选择客户签到？
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- 批量取消签到 -->
-	<div class="modal fade" id="batch_anti_sign_point" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量取消签到</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="sign"> <input type="hidden" name="id" value="">
-					<div class="modal-body">
-						取消选择客户签到？
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- Excel表头字段对比 -->
-	<div class="modal fade" id="ExcelHead" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-					</button>
-					<h2 class="modal-title">Excel表头字段对比</h2>
-				</div>
-				<!--<form class="form-horizontal" role="form" method="post" action="">-->
-				<div class="modal-body" style="max-height: 600px; overflow-y: scroll">
-					<table class="table table-bordered" style="text-align: center">
-						<thead>
-							<tr>
-								<th width="10%" class="all_check_excal">
-									<input type="checkbox" class="icheck" placeholder="" value="">
-								</th>
-								<th width="20%">序号</th>
-								<th width=30">您的Excal中的表头字段</th>
-								<th width="40%">对应在系统中的字段</th>
-							</tr>
-						</thead>
-						<tbody id="ExcelHeadTable">
-						</tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="submit" class="btn btn-primary btn_save_excel">保存字段</button>
-				</div>
-				<!--	</form>-->
-			</div>
-		</div>
-	</div>
 	<script>
 		var ManageObject = {
 			object:{
-				payeeSelect         :$('#payee').QuasarSelect({
-					name        :'payee',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($dept)}>',
-					idInput     :'selected_payee',
-					idHidden    :'selected_payee_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				couponSelect        :$('#coupon').QuasarSelect({
-					name        :'coupon',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($dept)}>',
-					idInput     :'selected_coupon',
-					idHidden    :'selected_coupon_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				signPlaceSelect     :$('#sign_place').QuasarSelect({
-					name        :'sign_place',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($dept)}>',
-					idInput     :'selected_coupon',
-					idHidden    :'selected_coupon_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				batchSignPlaceSelect:$('#batch_sign_place').QuasarSelect({
-					name        :'batch_sign_place',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($dept)}>',
-					idInput     :'selected_coupon',
-					idHidden    :'selected_coupon_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				birthDate           :$('#birth_date').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd',
-					weekStart         :0,
-					startView         :4,
-					minView           :2,
-					maxView           :4,
-					minuteStep        :5
-				}),
 				toast               :$().QuasarToast(),
 				icheck              :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',

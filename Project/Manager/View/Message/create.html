@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>新建客户 - 会议系统</title>
+	<title>创建消息模板 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
@@ -33,7 +33,7 @@
 			<include file="Public/menu"/>
 			<div class="mt_wrapper">
 				<include file="Public/header"/>
-				<div class="mian_body">
+				<div class="main_body" style="overflow: hidden;">
 					<section class="content">
 						<div class="return">
 							<a class="btn btn-default" onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回消息管理</a>
@@ -41,17 +41,17 @@
 						<div class="table_wrap">
 							<div class="nav_tab clearfix">
 								<div class="nav_tab_li active">
-									<a href="javascript:void(0)">创建文本模板</a>
+									<a href="javascript:void(0)">创建消息模板</a>
 								</div>
 							</div>
 							<div class="overage clearfix">
-								<div class="ti float-left">您当前的短信余额：<span style="font-size: 18px;font-weight: bold;color: #FB5050;">0</span>条
+								<div class="ti float-left">您当前的短信余额：<span style="font-size: 18px;font-weight: bold;color: #FB5050;"><{$number}></span>条
 								</div>
 								<div class="float-right op">
 									<a href="#"><i class="icon records alm"></i><span class="alm">发送记录</span></a>
 								</div>
 							</div>
-							<div class="tab-content">
+							<div class="tab-content clearfix">
 								<div class="mes_form">
 									<form role="form" class="form-horizontal" method="post" action="">
 										<input type="hidden" name="requestType" value="create"> <input type="hidden" name="id">
@@ -60,8 +60,8 @@
 												<label for="style" class="col-sm-1 control-label">创建方式：</label>
 												<div class="col-sm-11">
 													<select name="style" id="style" class="form-control">
-														<option value="0">仅创建消息文本</option>
-														<option value="1">创建消息文本并选择收件人</option>
+														<option value="0">仅创建消息模板</option>
+														<option value="1">创建消息模板并选择收件人</option>
 													</select>
 												</div>
 											</div>

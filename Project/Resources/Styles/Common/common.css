@@ -567,22 +567,22 @@ textarea{
 .mt_wrapper .mt_topbar .nav_info{
 }
 
-.mt_wrapper .mian_body{
+.mt_wrapper .main_body{
 	background    : #FFFFFF;
 	min-height    : 100%;
 	border-radius : 4px;
 	box-shadow    : 0 3px 7px rgba(0, 0, 0, .5);
 }
 
-.mt_wrapper .mian_body .content{
+.mt_wrapper .main_body .content{
 	padding : 10px 0;
 }
 
-.mt_wrapper .mian_body .content .return{
+.mt_wrapper .main_body .content .return{
 	padding : 0 10px;
 }
 
-.mt_wrapper .mian_body .content .c_header{
+.mt_wrapper .main_body .content .c_header{
 	padding : 0 30px;
 }
 

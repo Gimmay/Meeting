@@ -55,29 +55,31 @@
 				}
 				exit;
 			}
-			/** @var \Manager\Model\MessageModel $message_logic */
-			$message_logic = D('Message');
-			$message = $message_logic->getMessageSelectList();
-			/** @var \Core\Model\MeetingModel $model */
-			$model       = D('Core/Meeting'); // 实例化表模型
-			$list_total  = $model->findMeeting(0, [
-				'keyword' => I('get.keyword', ''),
-				'status'  => 'not deleted'
-			]); // 查处所有的会议的个数
-			$page_object = new Page($list_total, C('PAGE_RECORD_COUNT')); // 实例化分页类 传入总记录数和每页显示的记录数
-			\ThinkPHP\Quasar\Page\setTheme1($page_object);
-			$show         = $page_object->show();// 分页显示输出
-			$meeting_list = $model->findMeeting(2, [
-				'keyword' => I('get.keyword', ''),
-				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
-				'status'  => 'not deleted'
-			]); // 查出一页会议的内容
-			$meeting_list = $meeting_logic->setExtendColumnForManage($meeting_list);
-			$this->assign('content', $meeting_list); // 赋值数据集
-			$this->assign('page', $show); // 赋值分页输出
-			$this->assign('message',$message);
-			$this->display();
+			if($this->permissionList['MEETING.VIEW']){
+				/** @var \Manager\Model\MessageModel $message_logic */
+				$message_logic = D('Message');
+				$message       = $message_logic->getMessageSelectList();
+				/** @var \Core\Model\MeetingModel $model */
+				$model       = D('Core/Meeting'); // 实例化表模型
+				$list_total  = $model->findMeeting(0, [
+					'keyword' => I('get.keyword', ''),
+					'status'  => 'not deleted'
+				]); // 查处所有的会议的个数
+				$page_object = new Page($list_total, C('PAGE_RECORD_COUNT')); // 实例化分页类 传入总记录数和每页显示的记录数
+				\ThinkPHP\Quasar\Page\setTheme1($page_object);
+				$show         = $page_object->show();// 分页显示输出
+				$meeting_list = $model->findMeeting(2, [
+					'keyword' => I('get.keyword', ''),
+					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
+					'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+					'status'  => 'not deleted'
+				]); // 查出一页会议的内容
+				$meeting_list = $meeting_logic->setExtendColumnForManage($meeting_list);
+				$this->assign('content', $meeting_list); // 赋值数据集
+				$this->assign('page', $show); // 赋值分页输出
+				$this->assign('message', $message);
+				$this->display();
+			}else $this->error('您没有查看会议模块的权限');
 		}
 
 		public function alter(){

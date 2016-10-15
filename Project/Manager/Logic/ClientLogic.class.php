@@ -529,15 +529,20 @@
 				}
 				// 判定是否存在该客户
 				$exist_client                   = $core_model->isExist($mobile, $name);
+				$join_data = [];
 				$join_data['creator']           = $cur_employee_id;
 				$join_data['creatime']          = time();
 				$join_data['registration_date'] = $registration_date;
 				$join_data['traffic_method']    = $traffic_method;
 				if($invitor != null) $join_data['inviter_id'] = $invitor;
 				$join_data['mid'] = $mid;
-				if($exist_client){
-					C('TOKEN_ON', false);
-					$join_data['cid'] = $exist_client['id'];
+				C('TOKEN_ON', false);
+				if($exist_client) $join_data['cid'] = $exist_client['id'];
+				else{
+					$client_result = $core_model->createClient($client_data);
+					if($client_result['status']) $join_data['cid'] = $client_result['id'];
+				}
+				if($join_data['cid']){
 					$join_result      = $join_model->createRecord($join_data);
 					if($join_result['status']){
 						$count++;
@@ -550,27 +555,12 @@
 						]);
 					}
 				}
-				else{
-					C('TOKEN_ON', false);
-					$client_result = $core_model->createClient($client_data);
-					if($client_result['status']){
-						$join_data['cid'] = $client_result['id'];
-						$join_result      = $join_model->createRecord($join_data);
-						if($join_result['status']){
-							$count++;
-							if(((int)$price)>0) $receivables_model->createRecord([
-								'cid'      => $join_data['cid'],
-								'mid'      => $mid,
-								'creator'  => $cur_employee_id,
-								'creatime' => time(),
-								'price'    => $price,
-							]);
-						}
-					}
-				}
 			}
 			if($count === 0) return ['status' => false, 'message' => '没有导入任何数据'];
-			if($count == count($excel_data)) return ['status' => true, 'message' => '全部导入成功'];
-			else return ['status' => true, 'message' => '部分数据无需导入'];
+			elseif($count == count($excel_data)) return ['status' => true, 'message' => '全部导入成功'];
+			else return ['status' => true, 'message' => "部分数据无需导入<br>
+已导入：$count<br>
+未导入：".(count($excel_data)-$count)
+			];
 		}
 	}
