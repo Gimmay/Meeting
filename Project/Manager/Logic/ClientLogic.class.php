@@ -122,18 +122,34 @@
 			return $info;
 		}
 
-		public function setExtendColumnForManage($list){
-			/** @var \Core\Model\JoinModel $join_model */
-			$join_model = D('Core/Join');
+		public function getReceivablesList($list, $receivables = 1, $new = true){
+			/** @var \Core\Model\ReceivablesModel $receivables_model */
+			$receivables_model = D('Core/Receivables');
+			$new_list          = [];
+			$mid               = I('get.mid', 0, 'int');
 			foreach($list as $key => $val){
-				$join_record             = $join_model->findRecord(1, [
-					'cid' => $val['id'],
-					'mid' => I('get.mid', 0, 'int')
-				]);
-				$list[$key]['sign_time'] = $join_record['sign_time'];
+				$receivables_record = $receivables_model->findRecord(1, ['cid' => $val['cid'], 'mid' => $mid]);
+				if($receivables == 1 && $receivables_record){
+					if($val['receivables']) $val['receivables'] += $receivables_record['price'];
+					else{
+						$val['receivables'] = 0;
+						$val['receivables'] += $receivables_record['price'];
+					}
+					if($new) $new_list[] = $val;
+					else{
+						if($list[$key]['receivables']) $val['receivables'] += $receivables_record['price'];
+						else{
+							$list[$key]['receivables'] = 0;
+							$list[$key]['receivables'] += $receivables_record['price'];
+						}
+					}
+				}
+				if($receivables == 0 && !$receivables_record){
+					$new_list[] = $val;
+				}
 			}
 
-			return $list;
+			return $new ? $new_list : $list;
 		}
 
 		public function handlerRequest($type){
@@ -238,7 +254,7 @@
 								'sign_status'      => 1,
 								'sign_time'        => time(),
 								'sign_director_id' => $sign_director,
-								'sign_type'        => 0
+								'sign_type'        => 1
 							]);
 						}
 						else{
@@ -268,7 +284,11 @@
 						'mid' => $meeting_id
 					]);
 					C('TOKEN_ON', false);
-					$result = $join_model->alterRecord([$join_record['id']], ['sign_status' => 0]);
+					$result = $join_model->alterRecord([$join_record['id']], [
+						'sign_status' => 2,
+						'sign_time'   => null,
+						'sign_type'   => 0
+					]);
 					if($result['status']){
 						$message_logic = new MessageLogic();
 						$message_logic->send($meeting_id, 2, [$id]);
@@ -285,28 +305,38 @@
 					$data               = I('post.');
 					$data['mid']        = I('get.mid', 0, 'int');
 					$data['cid']        = I('post.cid');
+					$data['time']       = strtotime(I('post.time'));
+					$data['payee_id']   = $_POST['payee_id'] ? I('post.payee_id', 0, 'int') : I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$data['creatime']   = time();
 					$data['coupon_ids'] = I('post.code');
-					$result_receivables = $receivables_model->createRecord($data);
+					$receivables_result = $receivables_model->createRecord($data);
 					foreach($coupon_id as $v){
 						/** @var \Core\Model\CouponItemModel $model */
 						$model  = D('Core/CouponItem');
 						$result = $model->alterCouponItem($v, ['status' => 2, 'cid' => $data['cid']]);
 					}
 
-					return $result_receivables;
+					return $receivables_result;
 				}
 				break;
 				case 'delete';
-					/** @var \Core\Model\ClientModel $model */
+					///** @var \Core\Model\ClientModel $model */
 					//$model = D('Core/Client');
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model = D('Core/Join');
 					//$id_arr     = explode(',', I('post.id'));
 					$join_id_arr = explode(',', I('post.join_id'));
 					//$result    = $model->deleteClient($id_arr);
-					$result = $join_model->deleteRecord($join_id_arr);
+					/* 监测是否已审核 */
+					$delete_id_arr = [];
+					foreach($join_id_arr as $val){
+						$record = $join_model->findRecord(1, ['id' => $val]);
+						if($record['review_status'] == 1) continue;
+						$delete_id_arr[] = $val;
+					}
+					if(!$delete_id_arr) return ['status' => false, 'message' => '客户已审核不能删除', '__ajax__' => false];
+					$result = $join_model->deleteRecord($delete_id_arr);
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
@@ -325,15 +355,15 @@
 					$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 					$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
 					$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/id/$client_id/mid/$meeting_id";
-					$result1        = $wxcorp_logic->sendMessage('news', [
+					$wxcorp_logic->sendMessage('news', [
 						[
 							'title'       => "$meeting_record[name]",
 							'description' => "亲爱的$record[name]，请于$meeting_record[start_time]前点击\"查看全文\"后出示二维码提供给签到负责人进行签到",
 							'url'         => $url
 						]
 					], ['user' => [$weixin_record['weixin_id']]]);
-					$url            = getShortUrl($url); // 使用新浪的t.cn短地址
-					$result2        = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
+					$url     = getShortUrl($url); // 使用新浪的t.cn短地址
+					$result2 = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
 
 					return array_merge($result2, ['__ajax__' => true]);
 				break;
@@ -529,7 +559,7 @@
 				}
 				// 判定是否存在该客户
 				$exist_client                   = $core_model->isExist($mobile, $name);
-				$join_data = [];
+				$join_data                      = [];
 				$join_data['creator']           = $cur_employee_id;
 				$join_data['creatime']          = time();
 				$join_data['registration_date'] = $registration_date;
@@ -543,7 +573,7 @@
 					if($client_result['status']) $join_data['cid'] = $client_result['id'];
 				}
 				if($join_data['cid']){
-					$join_result      = $join_model->createRecord($join_data);
+					$join_result = $join_model->createRecord($join_data);
 					if($join_result['status']){
 						$count++;
 						if(((int)$price)>0) $receivables_model->createRecord([
@@ -558,7 +588,9 @@
 			}
 			if($count === 0) return ['status' => false, 'message' => '没有导入任何数据'];
 			elseif($count == count($excel_data)) return ['status' => true, 'message' => '全部导入成功'];
-			else return ['status' => true, 'message' => "部分数据无需导入<br>
+			else return [
+				'status'  => true,
+				'message' => "部分数据无需导入<br>
 已导入：$count<br>
 未导入：".(count($excel_data)-$count)
 			];

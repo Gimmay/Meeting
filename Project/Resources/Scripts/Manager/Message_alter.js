@@ -34,7 +34,12 @@ $(function(){
 			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
 		}
 	});
+
+	var textarea = $('#textarea_edit').val();
+	
 });
 function relationMes(txt){
 	$('.show_sms_content_container').removeClass('hide').find('.show_sms_content_text').text(txt);
-};
+}
+
+

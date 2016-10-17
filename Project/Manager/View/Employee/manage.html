@@ -107,12 +107,10 @@
 											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>">
-													<if condition="$max_role_level elt $single['roleLevel']">
-														<if condition="$permission_list['EMPLOYEE.ASSIGN-ROLE'] eq 1">
-															<button type="button" class="btn btn-default btn-xs btn_distribution_role" data-toggle="modal" data-target="#distribution_role">分配角色</button>
-														</if>
+													<if condition="($max_role_level elt $single['roleLevel']) and ($permission_list['EMPLOYEE.ASSIGN-ROLE'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-ROLE'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-ROLE'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-ROLE'] eq 1)">
+														<button type="button" class="btn btn-default btn-xs btn_distribution_role" data-toggle="modal" data-target="#distribution_role">分配角色</button>
 													</if>
-													<if condition="$permission_list['EMPLOYEE.ASSIGN-PERMISSION'] eq 1">
+													<if condition="($max_role_level elt $single['roleLevel']) and ($permission_list['EMPLOYEE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-PERMISSION'] eq 1)">
 														<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
 													</if>
 													<if condition="$permission_list['EMPLOYEE.ALTER'] eq 1">
@@ -193,7 +191,7 @@
 		</div>
 	</if>
 	<!-- 分配角色 -->
-	<if condition="$permission_list['EMPLOYEE.ASSIGN-ROLE'] eq 1">
+	<if condition="($permission_list['EMPLOYEE.ASSIGN-ROLE'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-ROLE'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-ROLE'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-ROLE'] eq 1)">
 		<div class="modal fade" id="distribution_role" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog" style="width: 80%">
 				<div class="modal-content">
@@ -232,7 +230,7 @@
 		</div>
 	</if>
 	<!-- 员工授权 -->
-	<if condition="$permission_list['EMPLOYEE.ASSIGN-PERMISSION'] eq 1">
+	<if condition="($permission_list['EMPLOYEE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-PERMISSION'] eq 1)">
 		<div class="modal fade" id="authorize_role" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog" style="width: 80%">
 				<div class="modal-content">

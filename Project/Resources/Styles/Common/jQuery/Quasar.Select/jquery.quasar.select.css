@@ -1,57 +1,26 @@
 /*
 	Create by Quasar on 2016/5/10 18:01
 */
-div.quasar-select-data{
-	-moz-user-select    : none;
-	-webkit-user-select : none;
-	-ms-user-select     : none;
-	user-select         : none;
-	display             : none;
-	box-shadow          : rgba(90, 90, 90, 0.1) 0 3px 3px 3px;
-	position            : absolute;
-	width               : 100%;
-	z-index             : 10;
+
+ul.quasar-select-data-list{
+	overflow                   : auto;
+	list-style                 : none;
+	margin                     : 0;
+	padding                    : 0;
+	box-shadow                 : rgba(90, 90, 90, 0.1) 0 3px 3px 3px;
+	position                   : absolute;
+	width                      : 100%;
+	z-index                    : 10;
+	-moz-user-select           : none;
+	-webkit-user-select        : none;
+	-ms-user-select            : none;
+	user-select                : none;
+	display                    : none;
+	border-bottom-left-radius  : 7px;
+	border-bottom-right-radius : 7px;
 }
 
-div.quasar-select-data > div.quasar-select-data-operation{
-	background : #EFEFEF;
-}
-
-div.quasar-select-data > div.quasar-select-data-operation > span.quasar-select-data-operation-close{
-	display            : inline-block;
-	width              : 30px;
-	height             : 30px;
-	text-align         : center;
-	line-height        : 27px;
-	color              : #0F0F0F;
-	box-shadow         : 0 0 3px 3px rgba(90, 90, 90, 0.1) inset;
-	cursor             : pointer;
-	transition         : all 0.5s ease;
-	-moz-transition    : all 0.5s ease;
-	-webkit-transition : all 0.5s ease;
-	-o-transition      : all 0.5s ease;
-	float              : right;
-	font-family        : "Consolas", serif !important;
-	font-size          : 30px;
-	font-weight        : lighter;
-}
-
-div.quasar-select-data > div.quasar-select-data-operation > span.quasar-select-data-operation-close:hover{
-	background : rgba(25, 25, 25, 0.75);
-	color      : white;
-}
-
-div.quasar-select-data > div.quasar-select-data-operation > span.quasar-select-data-operation-close:active{
-	background : rgba(15, 15, 15, 0.85);
-	color      : white;
-}
-
-div.quasar-select-data > ul.quasar-select-data-list{
-	overflow   : auto;
-	list-style : none;
-}
-
-div.quasar-select-data > ul.quasar-select-data-list > li.quasar-select-data-item{
+ul.quasar-select-data-list > li.quasar-select-data-item{
 	height             : 30px;
 	line-height        : 30px;
 	background         : white;
@@ -68,14 +37,14 @@ div.quasar-select-data > ul.quasar-select-data-list > li.quasar-select-data-item
 	cursor             : default;
 }
 
-div.quasar-select-data > ul.quasar-select-data-list > li.quasar-select-data-item:hover{
+ul.quasar-select-data-list > li.quasar-select-data-item:hover{
 	background  : rgba(25, 25, 25, 0.75);
 	color       : white;
 	font-size   : 15px;
 	font-weight : bold;
 }
 
-div.quasar-select-data > ul.quasar-select-data-list > li.quasar-select-data-item:active{
+ul.quasar-select-data-list > li.quasar-select-data-item:active{
 	background  : rgba(15, 15, 15, 0.85);
 	color       : white;
 	font-size   : 16px;

@@ -2,6 +2,7 @@
  * Created by qyqy on 2016-9-12.
  */
 $(function(){
+
 	// 单个会议删除
 	$('.delete_btn').on('click',function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
@@ -41,6 +42,7 @@ $(function(){
 		Common.ajax({
 			data:{requestType:'get_message_temp', id:mid},
 			callback:function(data){
+				console.log(data);
 				ManageObject.object.signMessageSelect.setValue(0);
 				ManageObject.object.signMessageSelect.setHtml('');
 				ManageObject.object.antiSignMessageSelect.setValue(0);
@@ -50,15 +52,15 @@ $(function(){
 				for(var i = 0; i<data.length; i++){
 					switch(parseInt(data[i]['assign_type'])){
 						case 1:
-							ManageObject.object.signMessageSelect.setValue(data[i]['id']);
+							ManageObject.object.signMessageSelect.setValue(data[i]['message_id']);
 							ManageObject.object.signMessageSelect.setHtml(data[i]['name']);
 							break;
 						case 2:
-							ManageObject.object.antiSignMessageSelect.setValue(data[i]['id']);
+							ManageObject.object.antiSignMessageSelect.setValue(data[i]['message_id']);
 							ManageObject.object.antiSignMessageSelect.setHtml(data[i]['name']);
 							break;
 						case 3:
-							ManageObject.object.receivablesMessageSelect.setValue(data[i]['id']);
+							ManageObject.object.receivablesMessageSelect.setValue(data[i]['message_id']);
 							ManageObject.object.receivablesMessageSelect.setHtml(data[i]['name']);
 							break;
 					}
@@ -66,9 +68,23 @@ $(function(){
 			}
 		});
 	});
+
+	// 预览
+	$('.mes_preview_btn').on('click',function(){
+		var id =$(this).parents('.form-group').find('input[type=hidden]').val();
+		Common.ajax({
+			data:{requestType:'get_message', id: id},
+			callback:function(data){
+				console.log(data);
+				$('.mes_preview').show().text(data.data.context);
+			}
+		});
+	});
+	
 });
 
 
+/*
 function checkIsEmpty(){
 	var $selected_sign_mes   = $('#selected_sign_mes');
 	var $selected_unti_sign_mes = $('#selected_unti_sign_mes');
@@ -90,4 +106,5 @@ function checkIsEmpty(){
 	}
 	return true;
 }
+*/
 

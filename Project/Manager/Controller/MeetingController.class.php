@@ -17,26 +17,28 @@
 		}
 
 		public function create(){
-			$meeting_logic = new MeetingLogic();
-			if(IS_POST){
-				$type   = strtolower(I('post.requestType', ''));
-				$result = $meeting_logic->handlerRequest($type);
-				if($result['__ajax__']){
-					unset($result['__ajax__']);
-					echo json_encode($result);
+			if($this->permissionList['MEETING.CREATE']){
+				$meeting_logic = new MeetingLogic();
+				if(IS_POST){
+					$type   = strtolower(I('post.requestType', ''));
+					$result = $meeting_logic->handlerRequest($type);
+					if($result['__ajax__']){
+						unset($result['__ajax__']);
+						echo json_encode($result);
+					}
+					else{
+						unset($result['__ajax__']);
+						if($result['status']) $this->success($result['message'], U('manage'));
+						else $this->error($result['message'], '', 3);
+					}
+					exit;
 				}
-				else{
-					unset($result['__ajax__']);
-					if($result['status']) $this->success($result['message'], U('manage'));
-					else $this->error($result['message'], '', 3);
-				}
-				exit;
-			}
-			/** @var \Manager\Model\EmployeeModel $employee_model */
-			$employee_model = D('Employee');
-			$employee_list  = $employee_model->getEmployeeSelectList();
-			$this->assign('employee_list', $employee_list);
-			$this->display();
+				/** @var \Manager\Model\EmployeeModel $employee_model */
+				$employee_model = D('Employee');
+				$employee_list  = $employee_model->getEmployeeSelectList();
+				$this->assign('employee_list', $employee_list);
+				$this->display();
+			}else $this->error('您没有创建会议的权限');
 		}
 
 		public function manage(){
@@ -79,46 +81,48 @@
 				$this->assign('page', $show); // 赋值分页输出
 				$this->assign('message', $message);
 				$this->display();
-			}else $this->error('您没有查看会议模块的权限');
+			}else $this->error('您没有查看会议的权限');
 		}
 
 		public function alter(){
-			$setEmployee    = function ($data){
-				/** @var \Core\Model\EmployeeModel $employee_model */
-				$employee_model = D('Core/Employee');
-				$tmp                     = $employee_model->findEmployee(1, ['id' => $data['director_id']]);
-				$tmp_one                 = $employee_model->findEmployee(1, ['id' => $data['contacts_1_id']]);
-				$tmp_two                 = $employee_model->findEmployee(1, ['id' => $data['contacts_2_id']]);
-				$data['director_name']   = $tmp['name'];
-				$data['contacts_1_name'] = $tmp_one['name'];
-				$data['contacts_2_name'] = $tmp_two['name'];
+			if($this->permissionList['MEETING.ALTER']){
+				$setEmployee   = function ($data){
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model          = D('Core/Employee');
+					$tmp                     = $employee_model->findEmployee(1, ['id' => $data['director_id']]);
+					$tmp_one                 = $employee_model->findEmployee(1, ['id' => $data['contacts_1_id']]);
+					$tmp_two                 = $employee_model->findEmployee(1, ['id' => $data['contacts_2_id']]);
+					$data['director_name']   = $tmp['name'];
+					$data['contacts_1_name'] = $tmp_one['name'];
+					$data['contacts_2_name'] = $tmp_two['name'];
 
-				return $data;
-			};
-			$meeting_logic = new MeetingLogic();
-			/** @var \Core\Model\MeetingModel $model */
-			$model = D('Core/Meeting');
-			$info  = $model->findMeeting(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
-			$info  = $setEmployee($info);
-			if(IS_POST){
-				$type   = strtolower(I('post.requestType', ''));
-				$result = $meeting_logic->handlerRequest($type, ['info'=>$info]);
-				if($result['__ajax__']){
-					unset($result['__ajax__']);
-					echo json_encode($result);
+					return $data;
+				};
+				$meeting_logic = new MeetingLogic();
+				/** @var \Core\Model\MeetingModel $model */
+				$model = D('Core/Meeting');
+				$info  = $model->findMeeting(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
+				$info  = $setEmployee($info);
+				if(IS_POST){
+					$type   = strtolower(I('post.requestType', ''));
+					$result = $meeting_logic->handlerRequest($type, ['info' => $info]);
+					if($result['__ajax__']){
+						unset($result['__ajax__']);
+						echo json_encode($result);
+					}
+					else{
+						unset($result['__ajax__']);
+						if($result['status']) $this->success($result['message']);
+						else $this->error($result['message'], '', 3);
+					}
+					exit;
 				}
-				else{
-					unset($result['__ajax__']);
-					if($result['status']) $this->success($result['message']);
-					else $this->error($result['message'], '', 3);
-				}
-				exit;
-			}
-			/** @var \Manager\Model\EmployeeModel $employee_model */
-			$employee_model = D('Employee');
-			$employee_list  = $employee_model->getEmployeeSelectList();
-			$this->assign('info', $info);
-			$this->assign('employee_list', $employee_list);
-			$this->display();
+				/** @var \Manager\Model\EmployeeModel $employee_model */
+				$employee_model = D('Employee');
+				$employee_list  = $employee_model->getEmployeeSelectList();
+				$this->assign('info', $info);
+				$this->assign('employee_list', $employee_list);
+				$this->display();
+			}else $this->error('您没有修改会议的权限');
 		}
 	}

@@ -37,7 +37,18 @@ $(function(){
 	// 修改代金券
 	$('.modify_btn').on('click', function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
+		var name = $(this).parents('tr').find('.name').text();
+		var price = $(this).parents('tr').find('.price').text();
+		var start_time = $(this).parents('tr').find('.start_time').text();
+		var end_time = $(this).parents('tr').find('.end_time').text();
+		var comment = $(this).parents('tr').find('.comment').text();
+
 		$('#modify_coupon').find('input[name=id]').val(id);
+		$('#modify_coupon').find('input[name=name]').val(name);
+		$('#modify_coupon').find('input[name=price]').val(price);
+		$('#modify_coupon').find('input[name=start_time]').val(start_time);
+		$('#modify_coupon').find('input[name=end_time]').val(end_time);
+		$('#modify_coupon').find('input[name=comment]').val(comment);
 	});
 	// 删除代金券
 	$('.delete_btn').on('click', function(){

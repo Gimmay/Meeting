@@ -15,7 +15,7 @@
 
 		public function handlerRequest($type){
 			switch($type){
-				case 'create':
+				case 'batch_create':
 					$data               = I('post.');//表单数据
 					$creator            = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$data['start_time'] = strtotime(I('post.start_time', ''));
@@ -61,6 +61,28 @@
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
+				case 'create';
+					C('TOKEN_ON', false);            //令牌
+					/** @var \Core\Model\CouponModel $model */
+					$model            = D('Core/Coupon');
+					$data             = I('post.', '');
+					$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$data['creatime'] = time();//当前时间
+					$result           = $model->createCoupon($data);
+					if(I('post.coupon_c')){
+						/** @var \Core\Model\CouponItemModel $coupon_item_model */
+						$coupon_item_model = D('Core/Coupon_item');
+						$info['coupon_id'] = $result['id'];
+						$info['mid'] = I('post.mid','');
+						$info['code'] = I('post.coupon_c','');
+						$info['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$info['creatime'] = time();//当前时间
+						$result_coupon_item = $coupon_item_model->createCouponItem($info);
+					}
+
+
+					return $result;
+				break;
 				default:
 					return (['status' => false, 'message' => '参数错误']);
 				break;
@@ -73,7 +95,7 @@
 			$coupon_item_model = D('Core/CouponItem');
 			$meeting_model     = D('Core/Meeting');
 			foreach($list as $k1 => $v1){
-				$coupon_list        = $coupon_item_model->findCouponItem(2, ['coupon_id' => $v1['id']]);
+				$coupon_list        = $coupon_item_model->findCouponItem(2, ['coupon_id' => $v1['id'],'status'=>'not delete']);
 				$list[$k1]['count'] = count($coupon_list);
 				$meeting_arr        = [
 					'id'   => [],

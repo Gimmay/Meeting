@@ -46,8 +46,22 @@
 				}
 				else $where['main.status'] = $filter['status']; // todo 是否要client表也要处理
 			};
-			if(isset($filter['sign_status'])) $where['sign_status'] = $filter['sign_status'];
-			if(isset($filter['review_status'])) $where['review_status'] = $filter['review_status'];
+			if(isset($filter['sign_status'])){
+				$status = strtolower($filter['sign_status']);
+				if($status == 'not signed'){
+					$where['sign_status'] = ['neq', 1];
+					$where['sign_status'] = ['neq', 1];
+				}
+				else $where['sign_status'] = $filter['sign_status'];
+			}
+			if(isset($filter['review_status'])){
+				$status = strtolower($filter['review_status']);
+				if($status == 'not reviewed'){
+					$where['review_status'] = ['neq', 1];
+					$where['review_status'] = ['neq', 1];
+				}
+				else $where['review_status'] = $filter['review_status'];
+			}
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$condition['club']        = ['like', "%$filter[keyword]%"];
 				$condition['mobile']      = ['like', "%$filter[keyword]%"];

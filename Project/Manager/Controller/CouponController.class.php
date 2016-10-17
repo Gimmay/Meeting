@@ -74,7 +74,7 @@
 			/** @var \Core\Model\CouponItemModel $model */
 			$model       = D('Core/CouponItem');
 			$id          = I('get.id', 0, 'int');
-			$result      = $model->findCouponItem(0, ['coupon_id' => $id]);
+			$result      = $model->findCouponItem(0, ['coupon_id' => $id,'status'=>'not delete']);
 			$page_object = new Page($result, 10);
 			$page_show   = $page_object->show();
 			$info = $model->findCouponItem(2, [

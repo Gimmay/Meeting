@@ -109,19 +109,7 @@
 			return $message;
 		}
 
-		public function getAllMessage(){
-			/** @var \Core\Model\EmployeeModel $employee_model */
-			$employee_model = D('Core/Employee');
-			/** @var \Core\Model\MessageModel $message_model */
-			$message_model = D('Core/Message');
-			$list          = $message_model->findMessage(2,['status'=>'not deleted','keyword' => I('get.keyword', '')]);
-			foreach($list as $k => $v){
-				$employee_result     = $employee_model->findEmployee(1, ['id' => $list[$k]['creator']]);
-				$list[$k]['creator'] = $employee_result['name'];
-			}
-
-			return $list;
-		}
+		
 
 		public function alterMessage(){
 			/** @var \Core\Model\MessageModel $message_model */

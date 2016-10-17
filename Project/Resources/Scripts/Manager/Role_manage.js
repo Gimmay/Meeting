@@ -134,6 +134,7 @@ $(function(){
 			data:{requestType:'get_unassigned_permission', id:data_id}, async:false, callback:function(data){
 				ManageObject.object.loading.complete();
 				var str = '', htm = '';
+				$('#authorize_all').empty();
 				if(data){
 					$.each(data, function(index, value){
 						var group_code= value.group_code.replace(/(^\s*)|(\s*$)/g, "");

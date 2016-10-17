@@ -26,11 +26,10 @@
 					'code'     => $name,
 					'password' => $pwd
 				])->find();
-				if($user['status'] != 1) return ['status' => false, 'message' => '该用户已删除或者被禁用'];
 				if($user){
+					if($user['status'] != 1) return ['status' => false, 'message' => '该用户已删除或者被禁用'];
 					session('MANAGER_EMPLOYEE_ID', $user['id']);
 					session('MANAGER_EMPLOYEE_CODE', $user['code']);
-
 					return ['status' => true, 'message' => '登入成功'];
 				}
 				else return ['status' => false, 'message' => '该用户不存在或用户名/密码错误'];

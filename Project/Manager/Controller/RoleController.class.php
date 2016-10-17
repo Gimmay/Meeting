@@ -76,7 +76,7 @@
 				$this->display();
 			}
 			else{
-				$this->error('您没有查看员工模块的权限');
+				$this->error('您没有查看角色的权限');
 			}
 		}
 	}

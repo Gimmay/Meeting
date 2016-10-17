@@ -1,37 +1,134 @@
-<!DOCTYPE html>
+<?php if (!defined('THINK_PATH')) exit();?><!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<title>新建客户 - 会议系统</title>
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
-	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT}>"></script>
-	<script src="<{$Think.SELF_SCRIPT}>"></script>
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE_PATH); ?>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<?php echo (COMMON_STYLE); ?>">
+	<link rel="stylesheet" href="<?php echo (SELF_STYLE); ?>">
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/bootstrap.min.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/cityselect/jquery.cityselect.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<?php echo (COMMON_SCRIPT); ?>"></script>
+	<script src="<?php echo (SELF_SCRIPT); ?>"></script>
 </head>
 <body>
 	<div id="mt_container">
 		<div class="mt_content">
-			<include file="Public/menu"/>
+			<!--会议系统左侧  导航栏 公用-->
+<div class="mt_navbar">
+	<div class="header">
+		<div class="logo">
+			<img src="<?php echo (COMMON_IMAGE_PATH); ?>/logo.png" alt="">
+		</div>
+		<a href="javascript:void(0)">吉美会议</a>
+	</div>
+	<div class="sidenav">
+		<ul class="sidenav_list" id="side_menu">
+			<?php if($permission_list['EMPLOYEE.VIEW'] == 1): ?><li class="side_item <?php if('Employee'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Employee/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">员工管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+					<ul class="nav-second-level">
+						<?php if($permission_list['EMPLOYEE.CREATE'] == 1): ?><li>
+								<a href="<?php echo U('Employee/create');?>">新建员工</a>
+							</li><?php endif; ?>
+					</ul>
+				</li><?php endif; ?>
+			<?php if($permission_list['ROLE.VIEW'] == 1): ?><li class="side_item <?php if('Role'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Role/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon glyphicon-star"></i> <span class="nav-label">角色管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li><?php endif; ?>
+			<?php if($permission_list['MEETING.VIEW'] == 1): ?><li class="side_item <?php if('Meeting'==$c_name or 'SignPlace'==$c_name or 'Client'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Meeting/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-th"></i> <span class="nav-label">会议管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+					<ul class="nav-second-level">
+						<?php if($permission_list['MEETING.CREATE'] == 1): ?><li>
+								<a href="<?php echo U('Meeting/create');?>">创建会议</a>
+							</li><?php endif; ?>
+					</ul>
+				</li><?php endif; ?>
+			<?php if($permission_list['COUPON.VIEW'] == 1): ?><li class="side_item <?php if('Coupon'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Coupon/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">券管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li><?php endif; ?>
+			<?php if($permission_list['MESSAGE.VIEW'] == 1): ?><li class="side_item <?php if('Message'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Message/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">消息管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li><?php endif; ?>
+			<?php if($permission_list['BADGE.VIEW'] == 1): ?><li class="side_item <?php if('Badge'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Badge/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-bookmark"></i> <span class="nav-label">胸卡设计</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li><?php endif; ?>
+			<?php if($permission_list['ROOM.VIEW'] == 1): ?><li class="side_item <?php if('Room'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Room/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-home"></i> <span class="nav-label">房间管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li><?php endif; ?>
+			<?php if($permission_list['CAR.VIEW'] == 1): ?><li class="side_item <?php if('Car'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('Car/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-plane"></i> <span class="nav-label">车辆管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li><?php endif; ?>
+			<?php if($permission_list['DINING_TABLE.VIEW'] == 1): ?><li class="side_item <?php if('DiningTable'==$c_name) echo 'active'; ?>">
+					<a href="<?php echo U('DiningTable/manage');?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li><?php endif; ?>
+			<?php if(($permission_list['RECYCLE.VIEW-CLIENT'] == 1) OR ($permission_list['RECYCLE.VIEW-EMPLOYEE'] == 1) OR ($permission_list['RECYCLE.VIEW-ROLE'] == 1) OR ($permission_list['RECYCLE.VIEW-MEETING'] == 1)): ?><li class="side_item cls <?php if('Recycle'==$c_name) echo 'active'; ?>">
+					<div class="side-item-link no_link">
+						<i class="icon_nav glyphicon glyphicon-trash"></i> <span class="nav-label">回收站管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span>
+					</div>
+					<ul class="nav-second-level">
+						<?php if($permission_list['RECYCLE.VIEW-CLIENT'] == 1): ?><li>
+								<a href="<?php echo U('Recycle/client');?>">客户列表</a>
+							</li><?php endif; ?>
+						<?php if($permission_list['RECYCLE.VIEW-EMPLOYEE'] == 1): ?><li>
+								<a href="<?php echo U('Recycle/employee');?>">员工列表</a>
+							</li><?php endif; ?>
+						<?php if($permission_list['RECYCLE.VIEW-ROLE'] == 1): ?><li>
+								<a href="<?php echo U('Recycle/role');?>">角色列表</a>
+							</li><?php endif; ?>
+						<?php if($permission_list['RECYCLE.VIEW-MEETING'] == 1): ?><li>
+								<a href="<?php echo U('Recycle/meeting');?>">会议列表</a>
+							</li><?php endif; ?>
+					</ul>
+				</li><?php endif; ?>
+		</ul>
+	</div>
+</div>
 			<div class="mt_wrapper">
-				<include file="Public/header"/>
+				<!--会议系统头部  公用-->
+<div class="mt_topbar clearfix">
+	<ul class="nav_info clearfix">
+		<li class="name">
+			<i class="glyphicon glyphicon-user"></i> <span><?php echo ($curname); ?></span>
+		</li>
+		<li class="logout">
+			<a href="<?php echo U('Employee/logout');?>"> <i class="glyphicon glyphicon-log-out"></i> <span>注销</span> </a>
+		</li>
+	</ul>
+</div>
 				<div class="main_body">
 					<section class="content">
 						<div class="return">
@@ -230,7 +327,7 @@
 					classStyle   :'form-control',
 					idInput      :'selected_develop_consultant',
 					idHidden     :'selected_develop_consultant_form',
-					data         :'<{:json_encode($employee_list)}>',
+					data         :'<?php echo json_encode($employee_list);?>',
 					placeholder  :'',
 					hasEmptyItem :true,
 					emptyItemHtml:'---空---'
@@ -241,7 +338,7 @@
 					idInput      :'selected_service_consultant',
 					idHidden     :'selected_service_consultant_form',
 					placeholder  :'',
-					data         :'<{:json_encode($employee_list)}>',
+					data         :'<?php echo json_encode($employee_list);?>',
 					hasEmptyItem :true,
 					emptyItemHtml:'---空---'
 				}),
@@ -291,7 +388,7 @@
 				loading                :$().QuasarLoading(),
 				citySelect             :$("#address").citySelect({
 					nodata:"none",
-					url   :'<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/city.min.js'
+					url   :'<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/cityselect/city.min.js'
 				})
 			}
 		};

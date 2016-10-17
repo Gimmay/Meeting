@@ -60,6 +60,17 @@
 	background-color: #edf9ff;
 }
 
+.jcalculator_wrap {
+	text-align: center;
+	z-index: 999;
+	box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+}
+.jcalculator {
+	top :34px;
+	border :none;
+}
+
 
 
 

@@ -17,7 +17,7 @@
 		}
 
 		public function getMessageSelectList(){
-			return $this->field('name html, id value, name keyword')->where("status = 1 or status = 2")->select();
+			return $this->field('name html, id value, name keyword')->where("status = 1")->select();
 		}
 
 	}

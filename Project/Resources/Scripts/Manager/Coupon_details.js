@@ -18,6 +18,12 @@ $(function(){
 		$(this).addClass('active');
 		$('.c_way').addClass('hide');
 		$('.c_way').eq(index).removeClass('hide');
+		if(index == 0){
+			$('#create_coupon').find('input[name=requestType]').val('create');
+		}
+		if(index == 1){
+			$('#create_coupon').find('input[name=requestType]').val('batch_create');
+		}
 	});
 	// 全选checkbox
 	$('.all_check').find('.iCheck-helper').on('click', function(){
@@ -27,17 +33,22 @@ $(function(){
 			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
 		}
 	});
-	// 修改代金券
+	// 单个创建券
+	$('.coupon_area').on('change',function(){
+		var id = $(this).val();
+		$('#create_coupon').find('input[name=hide_coupon_area]').val(id);
+	});
+	// 修改券
 	$('.modify_btn').on('click', function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
 		$('#modify_coupon').find('input[name=id]').val(id);
 	});
-	// 删除代金券
+	// 删除券
 	$('.delete_btn').on('click', function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
 		$('#delete_coupon').find('input[name=id]').val(id);
 	});
-	// 批量删除代金券
+	// 批量删除券
 	$('.batch_delete_btn_confirm ').on('click', function(){
 		var str = '';
 		$('.check_item .icheckbox_square-green.checked').each(function(){
@@ -79,16 +90,35 @@ $(function(){
 				newStr += str[i];
 			}
 		}
-		$('#create_coupon').find('input[name=coupon_area]').val(newStr);
+		console.log(newStr);
+		$('#create_coupon').find('input[name=hide_coupon_area]').val(newStr);
 	});
-	// 券的状态
-	/*	$('')*/
+	
+	/////// 券的筛选
+	//未使用
+	$('.sign_check').find('.iCheck-helper').on('click',function(){
+		var $quasar = $('#Quasar');
+		var mvc     = $quasar.attr('data-mvc-name');
+		var suffix  = $quasar.attr('data-page-suffix');
+		var link    = new Quasar.UrlClass(1, mvc, suffix);
+		var param   = link.getUrlParam('status');
+		if(param == 0){
+			var new_url = link.delUrlParam('unused');
+			location.replace(new_url);
+		}else if(param == 1){
+			var new_url = link.setUrlParam('unused', 1);
+			location.replace(new_url);
+		}else{
+			var new_url = link.setUrlParam('unused', 2);
+			location.replace(new_url);
+		}
+	});
 });
 //  num传入的数字，n需要的字符长度
 function PrefixInteger(num, n){
 	return (Array(n).join(0)+num).slice(-n);
 }
-// 新增代金券限制
+// 新增券限制
 function checkCreate(){
 	var $selected_meeting = $('#selected_meeting');
 	var $coupon_name      = $('#coupon_name');
@@ -102,7 +132,7 @@ function checkCreate(){
 		return false;
 	}
 	if($coupon_name.val() == ''){
-		ManageObject.object.toast.toast("代金券名不能为空");
+		ManageObject.object.toast.toast("券名不能为空");
 		$coupon_name.focus();
 		return false;
 	}
@@ -127,7 +157,7 @@ function checkCreate(){
 		return false;
 	}
 }
-// 修改代金券限制
+// 修改券限制
 function checkAlter(){
 	var $selected_meeting = $('#selected_meeting_a');
 	var $coupon_name      = $('#coupon_name_a');
@@ -140,7 +170,7 @@ function checkAlter(){
 		return false;
 	}
 	if($coupon_name.val() == ''){
-		ManageObject.object.toast.toast("代金券名不能为空");
+		ManageObject.object.toast.toast("券名不能为空");
 		$coupon_name.focus();
 		return false;
 	}

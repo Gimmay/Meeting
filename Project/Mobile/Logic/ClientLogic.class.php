@@ -56,7 +56,7 @@
 							'sign_status'      => 1,
 							//'sign_place_id'=>1,
 							'sign_director_id' => I('session.MOBILE_EMPLOYEE_ID', 0, 'int'),
-							'sign_type'        => 1
+							'sign_type'        => 2
 						]);
 						if($result['status']){
 							/** @var \Core\Model\ClientModel $model */
@@ -89,7 +89,9 @@
 					]);
 					C('TOKEN_ON', false);
 					$result = $join_model->alterRecord($join_record['id'], [
-						'sign_status' => 0
+						'sign_status' => 0,
+						'sign_time'   => null,
+						'sign_type'   => 0
 					]);
 					if($result['status']){
 						/** @var \Core\Model\ClientModel $model */

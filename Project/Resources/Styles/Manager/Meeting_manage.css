@@ -7,7 +7,7 @@
 }
 
 .mes_preview {
-	display: block;
+	display: none;
 	position : absolute;
 	right :-410px;
 	top :0;

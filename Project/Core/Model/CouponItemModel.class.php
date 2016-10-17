@@ -163,7 +163,7 @@ $limit
 		public function deleteCouponItem($id){
 			if($this->create()){
 				try{
-					$result = $this->where(['id' => ['in', $id]])->save(['status' => 2]);
+					$result = $this->where(['id' => ['in', $id]])->save(['status' => 3]);
 					if($result) return ['status' => true, 'message' => '删除成功'];
 					else return ['status' => false, 'message' => '没有删除任何代金券'];
 				}catch(Exception $error){

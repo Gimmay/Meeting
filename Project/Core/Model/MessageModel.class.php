@@ -32,7 +32,6 @@
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$condition['context']      = ['like', "%$filter[keyword]%"];
 				$condition['name']        = ['like', "%$filter[keyword]%"];
-				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
 				$condition['_logic']      = 'or';
 				$where['_complex']        = $condition;
 			}

@@ -65,7 +65,7 @@
 				</li><?php endif; ?>
 			<?php if($permission_list['COUPON.VIEW'] == 1): ?><li class="side_item <?php if('Coupon'==$c_name) echo 'active'; ?>">
 					<a href="<?php echo U('Coupon/manage');?>" class="side-item-link">
-						<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">代金券管理</span>
+						<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">券管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li><?php endif; ?>
 			<?php if($permission_list['MESSAGE.VIEW'] == 1): ?><li class="side_item <?php if('Message'==$c_name) echo 'active'; ?>">
@@ -132,15 +132,15 @@
 					<section class="content">
 						<header class="c_header">
 							<div class="function_list clearfix">
-								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
-									<a href="<?php echo U('Meeting/create');?>"> <i></i>
-										<p>创建会议</p>
-									</a>
-								</div>
-								<div class="function_btn bg-danger batch_delete_btn_confirm"  data-toggle="modal" data-target="#batch_delete_meeting" data-backdrop="static">
-									<i></i>
-									<p>批量删除</p>
-								</div>
+								<?php if($permission_list['MEETING.CREATE'] == 1): ?><div class="function_btn bg-warning" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
+										<a href="<?php echo U('Meeting/create');?>"> <i></i>
+											<p>创建会议</p>
+										</a>
+									</div><?php endif; ?>
+								<?php if($permission_list['MEETING.DELETE'] == 1): ?><div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_meeting" data-backdrop="static">
+										<i></i>
+										<p>批量删除</p>
+									</div><?php endif; ?>
 							</div>
 						</header>
 						<div class="repertory clearfix">
@@ -175,7 +175,9 @@
 								</thead>
 								<tbody>
 									<?php if(is_array($content)): $i = 0; $__LIST__ = $content;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-											<td class="check_item"><input type="checkbox" class="icheck" value="<?php echo ($vo["id"]); ?>" placeholder=""></td>
+											<td class="check_item">
+												<input type="checkbox" class="icheck" value="<?php echo ($vo["id"]); ?>" placeholder="">
+											</td>
 											<td><?php echo ($vo["name"]); ?></td>
 											<td>
 											<span class="color-info">
@@ -208,13 +210,12 @@
 											<td><?php echo date('Y-m-d H:i:s', $vo['creatime']);?></td>
 											<td>
 												<div class="btn-group" data-id="<?php echo ($vo["id"]); ?>">
-													<a href="<?php echo U('SignPlace/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">签到点</a>
-													<a type="button" class="btn btn-default btn-xs mes_btn" data-toggle="modal" data-target="#choose_message">选择消息模板</a>
-													<a href="<?php echo U('Client/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a>
-													<a href="<?php echo U('Client/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">胸卡设计</a>
-													<!--<a href="<?php echo U('Coupon/manage',['id'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs">代金券</a>-->
-													<a href="<?php echo U('Meeting/alter',['id'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
-													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_meeting">删除</button>
+													<?php if($permission_list['SIGN_PLACE.VIEW'] == 1): ?><a href="<?php echo U('SignPlace/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">签到点</a><?php endif; ?>
+													<?php if($permission_list['MEETING.SELECT-MESSAGE'] == 1): ?><a type="button" class="btn btn-default btn-xs mes_btn" data-toggle="modal" data-target="#choose_message">选择消息模板</a><?php endif; ?>
+													<?php if($permission_list['CLIENT.VIEW'] == 1): ?><a href="<?php echo U('Client/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a><?php endif; ?>
+													<?php if($permission_list['MEETING.SELECT-BADGE'] == 1): ?><a href="<?php echo U('Client/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">胸卡设计</a><?php endif; ?>
+													<?php if($permission_list['MEETING.ALTER'] == 1): ?><a href="<?php echo U('Meeting/alter',['id'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">修改</a><?php endif; ?>
+													<?php if($permission_list['MEETING.DELETE'] == 1): ?><button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_meeting">删除</button><?php endif; ?>
 												</div>
 											</td>
 										</tr><?php endforeach; endif; else: echo "" ;endif; ?>
@@ -231,52 +232,50 @@
 			</div>
 		</div>
 	</div>
-	<!-- 删除会议 -->
-	<div class="modal fade" id="delete_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="delete_role_title">删除会议</h2>
+	<?php if($permission_list['MEETING.DELETE'] == 1): ?><!-- 删除会议 -->
+		<div class="modal fade" id="delete_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title" id="delete_role_title">删除会议</h2>
+					</div>
+					<form class="form-horizontal" role="form" method="post" action="">
+						<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+						<div class="modal-body">
+							是否删除会议？
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary">确认删除</button>
+						</div>
+					</form>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete">
-					<input type="hidden" name="id" value="">
-					<div class="modal-body">
-						是否删除会议？
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认删除</button>
-					</div>
-				</form>
 			</div>
 		</div>
-	</div>
-	<!-- 批量删除会议 -->
-	<div class="modal fade" id="batch_delete_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量删除会议</h2>
+		<!-- 批量删除会议 -->
+		<div class="modal fade" id="batch_delete_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title">批量删除会议</h2>
+					</div>
+					<form class="form-horizontal" role="form" method="post" action="">
+						<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+						<div class="modal-body">
+							是否删除选中会议？
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary">确认删除</button>
+						</div>
+					</form>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete">
-					<input type="hidden" name="id" value="">
-					<div class="modal-body">
-						是否删除选中会议？
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认删除</button>
-					</div>
-				</form>
 			</div>
-		</div>
-	</div>
+		</div><?php endif; ?>
 	<!-- 选择消息模板 -->
 	<div class="modal fade" id="choose_message" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -287,8 +286,7 @@
 					<h2 class="modal-title">选择消息模板</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
-					<input type="hidden" name="requestType" value="message">
-					<input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="message"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="sign_mes" class="col-sm-2 control-label">签到：</label>
@@ -332,7 +330,7 @@
 	<script>
 		var ManageObject = {
 			object:{
-				signMessageSelect:$('#sign_mes').QuasarSelect({
+				signMessageSelect       :$('#sign_mes').QuasarSelect({
 					name        :'sign_mes',
 					classStyle  :'form-control',
 					idInput     :'selected_sign_mes',
@@ -341,7 +339,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				antiSignMessageSelect:$('#unti_sign_mes').QuasarSelect({
+				antiSignMessageSelect   :$('#unti_sign_mes').QuasarSelect({
 					name        :'anti_sign_mes',
 					classStyle  :'form-control',
 					idInput     :'selected_unti_sign_mes',
@@ -359,8 +357,8 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				toast         :$().QuasarToast(),
-				icheck:$('.icheck').iCheck({
+				toast                   :$().QuasarToast(),
+				icheck                  :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				})

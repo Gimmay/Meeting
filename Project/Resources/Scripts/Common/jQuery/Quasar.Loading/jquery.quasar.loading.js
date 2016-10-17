@@ -1,28 +1,28 @@
-/*
- * 更新日志
- *
- * Version 1.00 2016-09-17 16:25
- * 初始版本
- *
- * Version 1.01 2016-09-18 19:12
- * 统一抛出异常类型
- *
- */
 try{
-	/**
-	 * Loading
+	/*
+	 * 更新日志
 	 *
-	 * @author Quasar
-	 * @version 1.01
+	 * Version 1.00 2016-09-17 16:25
+	 * 初始版本
 	 *
-	 * Created by Quasar on 2016-09-06
-	 * Updated by Quasar on 2016-09-18 19:12
+	 * Version 1.01 2016-09-18 19:12
+	 * 统一抛出异常类型
+	 *
 	 */
 	(function($){
 		/**
 		 * loading提示
 		 *
-		 * @param options 组件参数。须满足 {theme: val1, size: val2} 的格式。theme 参数控制加载组件主题风格，可选值[0, 47]，默认值 0；size 参数控制加载组件区域大小，默认值 150。
+		 * 参数说明。
+		 *   theme int  指定 loading 显示的主题风格，取值范围为 [0, 47]，默认值为 0。
+		 *   size int  指定 loading 区域大小（废弃），默认值 150。
+		 *
+		 * Created by Quasar on 2016-09-06
+		 * Updated by Quasar on 2016-09-18 19:12
+		 *
+		 * @author Quasar
+		 * @version 1.01
+		 * @param options 组件参数（JSON对象，索引值详见以上的参数说明）
 		 * @returns {$.fn.QuasarLoading}
 		 * @constructor
 		 */
@@ -31,11 +31,11 @@ try{
 				theme:0,
 				size :150
 			};
-			var self            = this;
+			//var self            = this;
 			var $layout         = null, $background = null;
 			var opts            = $.extend(defaults, options);
 			// 模板
-			var template        = [
+			var _template        = [
 				"<div class=\"loading-0\">\n\t<div>wait...</div>\n\t<div></div>\n\t<div></div>\n</div>",
 				"<div class=\"loading-1\">\n\t<div class=\"rect1\"></div>\n\t<div class=\"rect2\"></div>\n\t<div class=\"rect3\"></div>\n\t<div class=\"rect4\"></div>\n\t<div class=\"rect5\"></div>\n</div>",
 				"<div class=\"loading-2\"></div>",
@@ -89,8 +89,9 @@ try{
 			 * 获取窗口可视域大小
 			 *
 			 * @returns {{width: number, height: number}}
+			 * @private
 			 */
-			var getPageViewSize = function(){
+			var _getPageViewSize = function(){
 				var winWidth  = 0;
 				var winHeight = 0;
 				if(window.innerWidth) winWidth = window.innerWidth;
@@ -104,11 +105,18 @@ try{
 				return {width:winWidth, height:winHeight};
 			};
 			/**
-			 * 页面初始化时以及窗口大小改变时重置布局层大小
+			 * 页面初始化时以及窗口大小改变时重设布局层大小
+			 *
+			 * @private
 			 */
-			var resize          = function(){
+			var _setLayoutSize          = function(){
+				/**
+				 * 重设布局层大小
+				 *
+				 * @private
+				 */
 				var _resize = function(){
-					var view    = getPageViewSize();
+					var view    = _getPageViewSize();
 					$background = $('#quasar-loading-background');
 					$layout     = $background.find('#quasar-loading-layout');
 					$background.css('height', view.height);
@@ -122,15 +130,15 @@ try{
 			 *
 			 * @private
 			 */
-			var makeComponent   = function(){
+			var _makeComponent   = function(){
 				var $bg = $('#quasar-loading-background');
 				$bg.remove();
-				var html = "<div id=\'quasar-loading-background\'>\n\t<div id=\'quasar-loading-layout\'>::template::</div>\n</div>";
-				html     = html.replace('::template::', template[opts.theme]);
+				var html = "<div id=\'quasar-loading-background\'>\n\t<div id=\'quasar-loading-layout\'>::TEMPLATE::</div>\n</div>";
+				html     = html.replace('::TEMPLATE::', _template[opts.theme]);
 				$('body').append(html);
-				resize();
+				_setLayoutSize();
 			};
-			makeComponent();
+			_makeComponent();
 			/**
 			 * 开始显示加载组件
 			 *
@@ -138,9 +146,9 @@ try{
 			 */
 			this.loading     = function(alterTheme){
 				if(alterTheme){
-					var max = template.length;
+					var max = _template.length;
 					var ram = parseInt(max*Math.random());
-					$layout.html(template[ram]);
+					$layout.html(_template[ram]);
 				}
 				$background.fadeIn(250);
 			};
@@ -158,8 +166,8 @@ try{
 			this.changeTheme = function(id){
 				$layout.addClass('quasar-loading-switch-theme-hide');
 				setTimeout(function(){
-					id = id%template.length;
-					$layout.html(template[id]).removeClass('quasar-loading-switch-theme-hide')
+					id = id%_template.length;
+					$layout.html(_template[id]).removeClass('quasar-loading-switch-theme-hide')
 						   .addClass('quasar-loading-switch-theme-show');
 					setTimeout(function(){
 						$layout.removeClass('quasar-loading-switch-theme-show');

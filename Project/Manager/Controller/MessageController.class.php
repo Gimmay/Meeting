@@ -9,6 +9,7 @@
 
 	use Core\Logic\SMSLogic;
 	use Manager\Logic\MessageLogic;
+	use Think\Page;
 
 	class MessageController extends ManagerController{
 		public function _initialize(){
@@ -17,7 +18,29 @@
 
 		public function manage(){
 			$logic = new MessageLogic();
-			$list  = $logic->getAllMessage();
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			/** @var \Core\Model\MessageModel $message_model */
+			$message_model = D('Core/Message');
+			$list_count = $message_model->findMessage(0, [
+				'keyword' => I('get.keyword', ''),
+				'status'  => 'not deleted',
+
+			]);
+			/* 分页设置 */
+			$page_object = new Page($list_count, C('PAGE_RECORD_COUNT'));
+			\ThinkPHP\Quasar\Page\setTheme1($page_object);
+			$page_show = $page_object->show();
+			$list          = $message_model->findMessage(2,[
+				'status'=>'not deleted',
+				'keyword' => I('get.keyword', ''),
+				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
+				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+			]);
+			foreach($list as $k => $v){
+				$employee_result     = $employee_model->findEmployee(1, ['id' => $list[$k]['creator']]);
+				$list[$k]['creator'] = $employee_result['name'];
+			}
 			if(IS_POST){
 				$data = I('post.id','');
 				$result = $logic->deleteMessage($data);
@@ -26,6 +49,7 @@
 				exit;
 			}
 			$this->assign('list', $list);
+			$this->assign('page_show', $page_show);
 			$this->display();
 		}
 

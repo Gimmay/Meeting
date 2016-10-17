@@ -20,7 +20,7 @@
 
 		public function findRecord($type = 2, $filter = []){
 			$where = [];
-			if(isset($filter['message_id'])) $where['sub.id'] = $filter['cid'];
+			if(isset($filter['message_id'])) $where['sub.id'] = $filter['message_id'];
 			if(isset($filter['id'])) $where['main.id'] = $filter['id'];
 			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
 			if(isset($filter['message_type'])) $where['sub.type'] = $filter['message_type'];

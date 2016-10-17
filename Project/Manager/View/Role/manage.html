@@ -110,7 +110,7 @@
 												<td>
 													<div class="btn-group" data-id="<{$single.id}>">
 														<if condition="$max_role_level elt $single['level']">
-															<if condition="$permission_list['ROLE.ASSIGN-PERMISSION'] eq 1">
+															<if condition="($permission_list['ROLE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['ROLE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['ROLE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['ROLE.VIEW-UNASSIGNED-PERMISSION'] eq 1)">
 																<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
 															</if>
 															<if condition="$permission_list['ROLE.ALTER'] eq 1">
@@ -307,7 +307,7 @@
 		</div>
 	</if>
 	<!-- 角色授权 -->
-	<if condition="$permission_list['ROLE.ASSIGN-PERMISSION'] eq 1">
+	<if condition="($permission_list['ROLE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['ROLE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['ROLE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['ROLE.VIEW-UNASSIGNED-PERMISSION'] eq 1)">
 		<div class="modal fade" id="authorize_role" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog" style="width: 80%">
 				<div class="modal-content">

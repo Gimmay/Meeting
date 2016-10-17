@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>代金券模块 - 会议系统</title>
+	<title>券模块 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
@@ -38,7 +38,7 @@
 							<div class="function_list clearfix">
 								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_coupon">
 									<i></i>
-									<p>新增代金券</p>
+									<p>新增券</p>
 								</div>
 								<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_coupon">
 									<i></i>
@@ -49,9 +49,9 @@
 						<div class="repertory clearfix">
 							<form action="" method="get">
 								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="代金券/拼音简码" value="<{:I('get.keyword', '')}>">
+									<input type="search" name="keyword" class="form-control" placeholder="券/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default mian_search">搜索代金券</button>
+										<button type="submit" class="btn btn-default mian_search">搜索券</button>
 									</span>
 								</div>
 								<a type="reset" class="btn btn-default mian_search" href="<{:U('manage')}>">查看所有</a>
@@ -64,7 +64,7 @@
 										<td width="5%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="10%">代金券名称</td>
+										<td width="10%">券名称</td>
 										<td width="10%">会议名称(张数)</td>
 										<td width="5%">数量</td>
 										<td width="10%">价格</td>
@@ -80,13 +80,13 @@
 										<td class="check_item">
 											<input type="checkbox" class="icheck" placeholder="" value="<{$list.id}>">
 										</td>
-										<td><{$list.name}></td>
+										<td class="name"><{$list.name}></td>
 										<td><{$list.meeting}></td>
 										<td><a href="javascript:void(0)" class="link color-primary"><{$list.count}></a></td>
-										<td><{$list.price}></td>
-										<td><{$list.start_time|date='Y-m-d',###}></td>
-										<td><{$list.end_time|date='Y-m-d',###}></td>
-										<td><{$list.comment}></td>
+										<td class="price"><{$list.price}></td>
+										<td class="start_time"><{$list.start_time|date='Y-m-d',###}></td>
+										<td class="end_time"><{$list.end_time|date='Y-m-d',###}></td>
+										<td class="comment"><{$list.comment}></td>
 										<td>
 											<div class="btn-group" data-id="<{$list.id}>">
 												<if condition="$max_role_level elt $single['level']">
@@ -111,14 +111,14 @@
 			</div>
 		</div>
 	</div>
-	<!-- 新增代金券 -->
+	<!-- 新增券 -->
 	<div class="modal fade" id="create_coupon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog" style="width: 60%">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="create_role_title">新增代金券</h2>
+					<h2 class="modal-title" id="create_role_title">新增券</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkCreate()">
 					<input type="hidden" name="requestType" value="create">
@@ -139,7 +139,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="coupon_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>代金券名称：</label>
+							<label for="coupon_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>券名称：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control name" name="name" id="coupon_name">
 							</div>
@@ -153,7 +153,7 @@
 						<!-- 单个新增 -->
 						<div class="single_box c_way">
 							<div class="form-group">
-								<label class="col-sm-2 control-label"><b style="vertical-align: middle; color: red;">*</b>代金券号：</label>
+								<label class="col-sm-2 control-label"><b style="vertical-align: middle; color: red;">*</b>券号：</label>
 								<div class="col-sm-10">
 									<input type="text" name="coupon_c" class="coupon_area form-control">
 								</div>
@@ -186,7 +186,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label"><b style="vertical-align: middle; color: red;">*</b>代金券号：</label>
+								<label class="col-sm-2 control-label"><b style="vertical-align: middle; color: red;">*</b>券号：</label>
 								<div class="col-sm-10">
 									<button type="button" class="btn btn-default auto_get_number">自动获取</button>
 									<ul class="list_coupon_number clearfix">
@@ -229,33 +229,33 @@
 			</div>
 		</div>
 	</div>
-	<!-- 修改代金券 -->
+	<!-- 修改券 -->
 	<div class="modal fade" id="modify_coupon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="modify_role_title">修改代金券</h2>
+					<h2 class="modal-title" id="modify_role_title">修改券</h2>
 				</div>
 				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return checkAlter()">
 					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
 					<div class="modal-body">
 
 						<div class="form-group">
-							<label for="coupon_name_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle;color: red;">*</b>券名称：</label>
+							<label for="coupon_name_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>券名称：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control name" name="name" id="coupon_name_a" value="">
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="price_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle;color: red;">*</b>价格：</label>
+							<label for="price_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>价格：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control price" name="price" id="price_a">
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="start_time_wp_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle;color: red;">*</b>开始时间：</label>
+							<label for="start_time_wp_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>开始时间：</label>
 							<div class="col-sm-10">
 								<div class="input-group date form_datetime" id="start_time_wp_a">
 									<input type="text" class="form-control start_time" name="start_time" id="start_time_a">
@@ -264,7 +264,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="end_time_wp_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle;color: red;">*</b>结束时间：</label>
+							<label for="end_time_wp_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>结束时间：</label>
 							<div class="col-sm-10">
 								<div class="input-group date form_datetime" id="end_time_wp_a">
 									<input type="text" class="form-control end_time" name="end_time" id="end_time_a">
@@ -287,7 +287,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- 删除代金券 -->
+	<!-- 删除券 -->
 	<div class="modal fade" id="delete_coupon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -295,12 +295,12 @@
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 					</button>
-					<h2 class="modal-title">删除代金券</h2>
+					<h2 class="modal-title">删除券</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否删除代金券？
+						是否删除券？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -310,19 +310,19 @@
 			</div>
 		</div>
 	</div>
-	<!-- 批量删除 代金券-->
+	<!-- 批量删除 券-->
 	<div class="modal fade" id="batch_delete_coupon" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量删除代金券</h2>
+					<h2 class="modal-title">批量删除券</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否删除已选代金券？
+						是否删除已选券？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -344,15 +344,6 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				meetingSelect:$('#meeting_a').QuasarSelect({
-					name        :'mid',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting_list)}>',
-					idInput     :'selected_meeting_a',
-					idHidden    :'selected_meeting_a_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
 				time   :$('#start_time_wp,#end_time_wp,#start_time_wp_a,#end_time_wp_a').datetimepicker({
 					language          :'zh-CN',
 					todayBtn          :true,
@@ -362,11 +353,13 @@
 					forceParse        :true,
 					format            :'yyyy-mm-dd',
 					weekStart         :0,
-					startView         :4,
-					minView           :2,
+					startView         :2,
+					minView           :0,
 					maxView           :4,
-					minuteStep        :5
+					minuteStep        :5,
+					startDate         :new Date()
 				}),
+
 				icheck       :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'

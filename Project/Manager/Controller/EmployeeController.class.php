@@ -112,7 +112,7 @@
 				$this->assign('max_role_level', $max_role_level ? $max_role_level : 5);
 				$this->display();
 			}
-			else $this->error('您没有查看员工模块的权限');
+			else $this->error('您没有查看员工的权限');
 		}
 
 		public function create(){
