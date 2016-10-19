@@ -22,7 +22,7 @@
 			$meeting_model = D('Core/Meeting');
 			/** @var \Core\Model\JoinModel $join_model */
 			$join_model                   = D('Core/Join');
-			$record                       = $join_model->findRecord(1, ['id' => $id, 'mid' => $mid]);
+			$record                       = $join_model->findRecord(1, ['cid' => $id, 'mid' => $mid]);
 			$weixin_record                = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 			$meeting_record               = $meeting_model->findMeeting(1, ['id' => $record['mid']]);
 			$record['avatar']             = $weixin_record['avatar'];

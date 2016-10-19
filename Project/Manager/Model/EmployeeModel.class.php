@@ -50,4 +50,12 @@ WHERE status = 1";
 
 			return $this->query($sql);
 		}
+
+		public function getPositionSelectList(){
+			return $this->field("distinct position as value, position as keyword, position as html")->select();
+		}
+
+		public function getTitleSelectList(){
+			return $this->field("distinct title as value, title as keyword, title as html")->select();
+		}
 	}

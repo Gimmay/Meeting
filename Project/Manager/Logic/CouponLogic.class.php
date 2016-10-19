@@ -54,11 +54,12 @@
 				break;
 				case 'alter';
 					/** @var \Core\Model\CouponModel $model */
-					$model    = D('Core/Coupon');
-					$id['id'] = I('post.id', 0, 'int');
-					$data     = I('post.', '');
-					$result   = $model->alterCoupon($id, $data);
-
+					$model              = D('Core/Coupon');
+					$id['id']           = I('post.id', 0, 'int');
+					$data               = I('post.', '');
+					$data['start_time'] = strtotime(I('post.start_time', ''));
+					$data['end_time']   = strtotime(I('post.end_time', ''));
+					$result             = $model->alterCoupon($id, $data);
 					return array_merge($result, ['__ajax__' => false]);
 				break;
 				case 'create';
@@ -71,15 +72,14 @@
 					$result           = $model->createCoupon($data);
 					if(I('post.coupon_c')){
 						/** @var \Core\Model\CouponItemModel $coupon_item_model */
-						$coupon_item_model = D('Core/Coupon_item');
-						$info['coupon_id'] = $result['id'];
-						$info['mid'] = I('post.mid','');
-						$info['code'] = I('post.coupon_c','');
-						$info['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-						$info['creatime'] = time();//当前时间
+						$coupon_item_model  = D('Core/Coupon_item');
+						$info['coupon_id']  = $result['id'];
+						$info['mid']        = I('post.mid', '');
+						$info['code']       = I('post.coupon_c', '');
+						$info['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$info['creatime']   = time();//当前时间
 						$result_coupon_item = $coupon_item_model->createCouponItem($info);
 					}
-
 
 					return $result;
 				break;
@@ -95,7 +95,10 @@
 			$coupon_item_model = D('Core/CouponItem');
 			$meeting_model     = D('Core/Meeting');
 			foreach($list as $k1 => $v1){
-				$coupon_list        = $coupon_item_model->findCouponItem(2, ['coupon_id' => $v1['id'],'status'=>'not delete']);
+				$coupon_list        = $coupon_item_model->findCouponItem(2, [
+					'coupon_id' => $v1['id'],
+					'status'    => 'not deleted'
+				]);
 				$list[$k1]['count'] = count($coupon_list);
 				$meeting_arr        = [
 					'id'   => [],

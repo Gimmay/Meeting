@@ -193,6 +193,13 @@ $(function(){
 	$('.receivables_btn').on('click', function(){
 		var name = $(this).parents('tr').find('.name').text();
 		var id   = $(this).parent('.btn-group').attr('data-id');
+		var mid   = $('body').attr('data-meeting-id');
+		Common.ajax({
+			data:{requestType:'get_receivables', cid:id, mid:mid},
+			callback:function(result){
+				console.log(result)
+			}
+		});
 		$('#receivables_modal').find('input[name=cid]').val(id);
 		$('#receivables_modal').find('input[name=name]').val(name);
 	});
@@ -374,10 +381,8 @@ $(function(){
 					ManageObject.object.toast.onQuasarHidden(function(){
 						location.reload(true);
 					});
-					ManageObject.object.toast.toast('发送消息成功', 1);
-				}else{
-					ManageObject.object.toast.toast('发送消息失败', 1);
 				}
+				ManageObject.object.toast.toast(r.message, 1);
 			}
 		});
 	});
@@ -560,6 +565,3 @@ function keepCode(){
 	}
 	$('#receivables_modal').find('input[name=code]').val(newStr);
 }
-
-
-

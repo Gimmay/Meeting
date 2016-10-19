@@ -111,6 +111,15 @@
 						<?php if($permission_list['RECYCLE.VIEW-MEETING'] == 1): ?><li>
 								<a href="<?php echo U('Recycle/meeting');?>">会议列表</a>
 							</li><?php endif; ?>
+						<li>
+							<a href="<?php echo U('Recycle/coupon');?>">代金券</a>
+						</li>
+						<li>
+							<a href="<?php echo U('Recycle/coupon_item');?>">代金券码</a>
+						</li>
+						<li>
+							<a href="<?php echo U('Recycle/message');?>">消息管理</a>
+						</li>
 					</ul>
 				</li><?php endif; ?>
 		</ul>
@@ -213,7 +222,7 @@
 													<?php if($permission_list['SIGN_PLACE.VIEW'] == 1): ?><a href="<?php echo U('SignPlace/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">签到点</a><?php endif; ?>
 													<?php if($permission_list['MEETING.SELECT-MESSAGE'] == 1): ?><a type="button" class="btn btn-default btn-xs mes_btn" data-toggle="modal" data-target="#choose_message">选择消息模板</a><?php endif; ?>
 													<?php if($permission_list['CLIENT.VIEW'] == 1): ?><a href="<?php echo U('Client/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a><?php endif; ?>
-													<?php if($permission_list['MEETING.SELECT-BADGE'] == 1): ?><a href="<?php echo U('Client/manage',['mid'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">胸卡设计</a><?php endif; ?>
+													<?php if($permission_list['MEETING.SELECT-BADGE'] == 1): ?><a href="<?php echo U('Badge/manage');?>" type="button" class="btn btn-default btn-xs modify_btn">胸卡设计</a><?php endif; ?>
 													<?php if($permission_list['MEETING.ALTER'] == 1): ?><a href="<?php echo U('Meeting/alter',['id'=>$vo['id']]);?>" type="button" class="btn btn-default btn-xs modify_btn">修改</a><?php endif; ?>
 													<?php if($permission_list['MEETING.DELETE'] == 1): ?><button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_meeting">删除</button><?php endif; ?>
 												</div>

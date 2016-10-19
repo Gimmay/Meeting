@@ -16,10 +16,13 @@ $(function(){
 				if(old_status != new_status){
 					switch(new_status){
 						case 0:
+						case 2:
 							MyCenterObject.object.toast.toast('已经取消签到', 1);
+							$('.sign_type').removeClass('signed').addClass('unsigned').text('未签到');
 							break;
 						case 1:
 							MyCenterObject.object.toast.toast('签到成功', 1);
+							$('.sign_type').removeClass('unsigned').addClass('signed').text('已签到');
 							break;
 					}
 					MyCenterObject.config.signStatus = data;

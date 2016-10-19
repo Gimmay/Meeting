@@ -37,14 +37,14 @@ ul.quasar-select-data-list > li.quasar-select-data-item{
 	cursor             : default;
 }
 
-ul.quasar-select-data-list > li.quasar-select-data-item:hover{
+ul.quasar-select-data-list > li.quasar-select-data-item.hover{
 	background  : rgba(25, 25, 25, 0.75);
 	color       : white;
 	font-size   : 15px;
 	font-weight : bold;
 }
 
-ul.quasar-select-data-list > li.quasar-select-data-item:active{
+ul.quasar-select-data-list > li.quasar-select-data-item.selected{
 	background  : rgba(15, 15, 15, 0.85);
 	color       : white;
 	font-size   : 16px;
@@ -52,10 +52,19 @@ ul.quasar-select-data-list > li.quasar-select-data-item:active{
 }
 
 div.quasar-select-input{
-	overflow    : hidden;
-	word-break  : keep-all;
-	white-space : nowrap;
-	word-wrap   : normal;
+	overflow           : hidden;
+	word-break         : keep-all;
+	white-space        : nowrap;
+	word-wrap          : normal;
+	background         : #faffbd;
+	transition         : all 0.5s ease;
+	-moz-transition    : all 0.5s ease;
+	-webkit-transition : all 0.5s ease;
+	-o-transition      : all 0.5s ease;
+}
+
+div.quasar-select-input.insert-mode{
+	background : white;
 }
 
 div.quasar-select-input > span.quasar-select-input-placeholder{

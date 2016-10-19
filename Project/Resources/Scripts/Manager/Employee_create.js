@@ -40,7 +40,7 @@ function checkIsEmpty(){
 		return false;
 	}
 	return true;
-};
+}
 
 $(function(){
 	var $code          = $('#code');
@@ -124,5 +124,13 @@ $(function(){
 		$gender.find('option[value='+$gender_tmp.val()+']').prop('selected', true);
 		$status.find('option[value='+$status_tmp.val()+']').prop('selected', true);
 		$modal.modal('hide');
+	});
+	CreateObject.object.deptSelect.onQuasarSelect(function(){
+		var dept = CreateObject.object.deptSelect.getHtml();
+		var end = dept.lastIndexOf(')');
+		var start = dept.lastIndexOf('(');
+		var company = dept.substr(start+1, end-start-1);
+		CreateObject.object.companySelect.setValue(company);
+		CreateObject.object.companySelect.setHtml(company);
 	});
 });

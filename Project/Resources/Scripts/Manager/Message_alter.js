@@ -36,7 +36,10 @@ $(function(){
 	});
 
 	var textarea = $('#textarea_edit').val();
-	
+	if(textarea!=''){
+		$('.show_sms_content_container').removeClass('hide');
+		$('.show_sms_content_text').text(textarea);
+	}
 });
 function relationMes(txt){
 	$('.show_sms_content_container').removeClass('hide').find('.show_sms_content_text').text(txt);

@@ -117,8 +117,8 @@
 
 		public function create(){
 			if($this->permissionList['EMPLOYEE.CREATE']){
-				/** @var \Core\Model\EmployeeModel $model */
-				$model = D('Core/Employee');
+				/** @var \Manager\Model\EmployeeModel $model */
+				$model = D('Manager/Employee');
 				$logic = new EmployeeLogic();
 				if(IS_POST){
 					$result = $logic->create(I('post.'));
@@ -146,16 +146,18 @@
 
 		public function alter(){
 			if($this->permissionList['EMPLOYEE.ALTER']){
-				/** @var \Core\Model\EmployeeModel $model */
-				$model = D('Core/Employee');
+				/** @var \Manager\Model\EmployeeModel $model */
+				$model = D('Manager/Employee');
+				/** @var \Core\Model\EmployeeModel $core_model */
+				$core_model = D('Core/Employee');
 				if(IS_POST){
-					$result = $model->alterEmployee(I('get.id', ''), I('post.')); //传值到model里面操作
+					$result = $core_model->alterEmployee(I('get.id', ''), I('post.')); //传值到model里面操作
 					if($result['status']) $this->success('写入成功', U('manage')); //判断status存在
 					else $this->error($result['message']);              //判断status不存在
 					exit;
 				}
 				$logic = new EmployeeLogic();
-				$info  = $model->findEmployee(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
+				$info  = $core_model->findEmployee(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
 				$info  = $logic->writeExtendInformation($info, true);
 				/** @var \Core\Model\DepartmentModel $dept_model */
 				$dept_model = D('Core/Department');

@@ -13,6 +13,7 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/miniColors/jquery.minicolors.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
@@ -26,6 +27,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/miniColors/jquery.minicolors.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -116,10 +118,10 @@
 											</li>-->
 										</ul>
 									</div>
-									<div class="form_li">
-										<div class="color">
-
-										</div>
+									<div class="form-group">
+										<label>字体颜色</label>
+										<br>
+										<input type="text" id="position-bottom-left" class="demo choose-color form-control" data-position="bottom left" value="#fff">
 									</div>
 									<div class="form_li text-center">
 										<button type="button" id="keep_badge_temp" class="btn btn-primary">保存设置</button>
@@ -189,6 +191,27 @@
 					$(this).css('font-size', h*0.6)
 				}
 			}).draggable();
+			$('.demo').minicolors(
+				$.minicolors = {
+					defaults: {
+						animationSpeed: 50,
+						animationEasing: 'swing',
+						change: null,
+						changeDelay: 0,
+						control: 'hue',
+						defaultValue: '',
+						hide: null,
+						hideSpeed: 100,
+						inline: false,
+						letterCase: 'lowercase',
+						opacity: false,
+						position: 'bottom left',
+						show: null,
+						showSpeed: 100,
+						theme: 'default'
+					}
+				}
+			);
 		});
 	</script>
 </body>

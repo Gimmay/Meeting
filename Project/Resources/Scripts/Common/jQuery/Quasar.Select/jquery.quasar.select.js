@@ -65,6 +65,22 @@ try{
 	 *
 	 * Version 2.00 2016-10-16 20:29
 	 * 删除操作栏以及关闭按钮
+	 *
+	 * Version 2.10 2016-10-17 23:41
+	 * 1、重新定义触发列表隐藏事件为 body 点击事件
+	 * 2、输入框 focus 事件被 click 事件取代并阻止事件冒泡
+	 *
+	 * Version 2.22 2016-10-18 15:23
+	 * 1、添加键盘的上、下、回车键事件，用于键盘控制插件
+	 * 2、添加 getIndex() 方法用于获取列表项的索引值
+	 * 3、添加 setItemByIndex() 方法用于根据索引值设定列表项
+	 * 4、添加 isHidden() 方法用于检测列表是否隐藏
+	 * 5、输入框回车事件会触发名为 quasar.select.enter 的事件，被选取 hover 的列表项动作捕获
+	 *
+	 * Version 2.30 2016-10-19 01:37
+	 * 1、删除 justInput 参数
+	 * 2、添加 insert 按键事件，用于控制插件是否可任意键入值
+	 * 3、新增 inputObject 属性，用于指向输入框对象
 	 */
 	(function($){
 		/**
@@ -86,7 +102,6 @@ try{
 		 *    defaultHtml String  指定搜索框的值，默认值为空字符串 ''。
 		 *    hasEmptyItem boolean  指定是否在列表头添加一条空项目，默认值为 true。
 		 *    emptyItemHtml String  指定列表头添加的空项目的显示值，默认值为 '---请选择列表项---'。
-		 *    justInput boolean  指定该插件是否具有输入值修正或者当作 input 使用，默认值为 false。
 		 *    listNumber int  指定列表可显示的最大项目条数，默认值为 10。
 		 *    request JSON  请求数据的设定参数，详情在以下第三条说明。
 		 * 3、request 参数可在 request 方法调用时被重写，也可在组件初始化时便设定好。
@@ -96,11 +111,10 @@ try{
 		 *    async boolean  指明请求是异步还同步，可用值为 true 或 false，默认值为 true。
 		 *    callback function()  在请求成功后被首先调用的匿名函数，并将请求的返回数据传入匿名函数的第一个参数。
 		 *
-		 * Updated on 2016-10-16 20:29
-		 * Created on 2016-05-10
-		 *
+		 * @updated 2016-10-19 01:37
+		 * @created 2016-05-10
 		 * @author Quasar
-		 * @version 2.00
+		 * @version 2.30
 		 * @param options 组件参数（JSON对象，索引值详见以上说明）
 		 * @returns {$.fn.QuasarSelect}
 		 * @constructor
@@ -118,7 +132,6 @@ try{
 				defaultHtml  :'',
 				hasEmptyItem :true,
 				emptyItemHtml:'---Select item---',
-				justInput    :false,
 				listNumber   :10,
 				request      :{
 					url     :'',
@@ -136,7 +149,7 @@ try{
 			var $_dataItems         = null;
 			var $_inputVisible      = null;
 			var $_inputHidden       = null;
-			var in_component        = false;
+			var _insertMode         = false;
 			/**
 			 * 处理提示语的显隐
 			 *
@@ -210,21 +223,21 @@ try{
 						var handler    = function(index){
 							$_inputVisible.text(opts.data[index].html);
 							if(opts.data[i].value != value_form){
-								$_inputHidden.val(opts.data[index].value).attr('value', opts.data[index].value);
+								$_inputHidden.val(opts.data[index].value);
 								if(opts.data[index].hasOwnProperty('ext')){ //noinspection JSUnresolvedVariable
 									$_inputVisible.attr('data-ext', opts.data[index].ext);
 								}
 								self.selectedItem = $(self)
-									.find('li.quasar-select-data-item[data-value='+opts.data[index].value+']')[0];
+								.find('li.quasar-select-data-item[data-value='+opts.data[index].value+']')[0];
 								$(self).find('li.quasar-select-data-item').removeClass('selected');
 								$(self).find('li.quasar-select-data-item[data-value='+opts.data[index].value+']')
-									   .addClass('selected').trigger('quasar.event.select');
+									   .addClass('selected');
 							}
 						};
-						if(opts.justInput){
+						if(_insertMode){
 							$(self).find('li.quasar-select-data-item').removeClass('selected');
 							self.selectedItem = null;
-							$_inputHidden.val(value).attr('value', value);
+							$_inputHidden.val(value);
 						}else{
 							for(var i = 0; i<opts.data.length; i++){
 								//noinspection JSUnresolvedVariable
@@ -238,7 +251,7 @@ try{
 								}
 							}
 							$(self).find('li.quasar-select-data-item').removeClass('selected');
-							$_inputHidden.val('').attr('value', '');
+							$_inputHidden.val('');
 							$_inputVisible.text('').attr({'data-ext':''});
 							self.selectedItem = null;
 						}
@@ -246,27 +259,63 @@ try{
 					/**
 					 * 为输入框添加聚焦、键入、失焦事件
 					 */
-					$_inputVisible.on('focus', function(){
+					$_inputVisible.on('click', function(e){
+						e.stopPropagation(); // 主要用于配合body的click事件
 						_handlerPlaceholder(false);
 						self.showList();
-					}).on('keyup', function(){
+					}).on('keyup', function(e){
 						var keyword = self.getHtml();
 						self.search(keyword);
 					}).on('keydown', function(e){
-						if(e.keyCode == 13){
-							return false;
+						switch(parseInt(e.keyCode)){
+							case 45:
+								_insertMode = !_insertMode;
+								if(_insertMode) $_inputVisible.addClass('insert-mode');
+								else $_inputVisible.removeClass('insert-mode');
+								break;
+							case 38: // up
+								_moveToLast();
+								break;
+							case 40: // down
+								_moveToNext();
+								break;
+							case 13: // enter
+								e.preventDefault();
+								$(self).trigger('quasar.select.enter');
+								return false;
+								break;
 						}
 					}).on('blur', function(){
 						_handlerPlaceholder(true);
 						_handlerInput();
+					});
+					/**
+					 * 添加点击非插件区域事件
+					 */
+					$('body').on('click touchend', function(){
 						self.hideList();
 					});
-					$_dataList.on('mouseenter', function(){
-						in_component = true;
-						$_inputVisible.blur();
-					}).on('mouseleave', function(){
-						in_component = false;
-						self.hideList();
+					$_dataList.on('keydown', function(e){
+						switch(parseInt(e.keyCode)){
+							case 45:
+								_insertMode = !_insertMode;
+								if(_insertMode) $_inputVisible.addClass('insert-mode');
+								else $_inputVisible.removeClass('insert-mode');
+								break;
+							case 38: // up
+								_moveToLast();
+								break;
+							case 40: // down
+								_moveToNext();
+								break;
+							case 13: // enter
+								e.preventDefault();
+								return _selectHoverItem();
+								break;
+						}
+					});
+					$(self).on('quasar.select.enter', function(){
+						_selectHoverItem();
 					});
 					/**
 					 * 为列表项添加点击、触摸事件
@@ -278,13 +327,17 @@ try{
 					$(self).find('li.quasar-select-data-item').on('click touchend', function(){
 						var value = $(this).attr('data-value'), html = $(this).html(), ext = $(this).attr('data-ext');
 						$_inputVisible.text(html).attr({'data-ext':ext ? ext : ''});
-						$_inputHidden.val(value).attr('value', value);
-						in_component = false;
+						$_inputHidden.val(value);
 						self.hideList();
 						$(self).find('li.quasar-select-data-item').removeClass('selected');
 						self.selectedItem = this;
 						$(this).addClass('selected');
 						$(this).trigger('quasar.event.select');
+					}).on('mouseenter', function(){
+						$_dataItems.removeClass('hover');
+						$(this).addClass('hover');
+					}).on('mouseleave', function(){
+						$_dataItems.removeClass('hover');
 					});
 				});
 			};
@@ -294,9 +347,55 @@ try{
 			 * @private
 			 */
 			var _unbindEvent        = function(){
-				$(self).find('#'+opts.idInput).off('focus keydown keyup blur');
-				$(self).find('li.quasar-select-data-item').off('click touchend quasar.event.select');
+				$(self).find('#'+opts.idInput).off('click keydown keyup blur');
+				$(self).find('li.quasar-select-data-item')
+					   .off('click touchend quasar.event.select mouseenter mouseleave');
+				$(self).find('ul.quasar-select-data-list').off('keydown');
 				$(self).find('span.quasar-select-data-operation-close').off('click touchend');
+				$(self).off('quasar.select.enter');
+			};
+			/**
+			 * 移动到下一个选取项
+			 *
+			 * @private
+			 */
+			var _moveToNext         = function(){
+				var hidden_mode = self.isHidden();
+				var index       = hidden_mode ? self.getIndex() : self.getIndex(true);
+				var result      = hidden_mode ? self.setItemByIndex(index+1) : self.setItemByIndex(index+1, true);
+				$_dataList.scrollTop(30*(index-opts.listNumber+2));
+				return result;
+			};
+			/**
+			 * 移动到上一个选取项
+			 *
+			 * @private
+			 */
+			var _moveToLast         = function(){
+				var index;
+				index = self.isHidden() ? self.getIndex() : self.getIndex(true);
+				if(index === 0) return false;
+				else{
+					var result = self.isHidden() ? self.setItemByIndex(index-1) : self.setItemByIndex(index-1, true);
+					$_dataList.scrollTop(30*(index-1));
+					return result;
+				}
+			};
+			/**
+			 * 选择hover的选择项
+			 *
+			 * @private
+			 */
+			var _selectHoverItem    = function(){
+				var $object = $(self).find('li.quasar-select-data-item.hover'), ext = $(this).attr('data-ext');
+				$_inputHidden.val($object.attr('data-value'));
+				$_inputVisible.text($object.text()).attr({'data-ext':ext ? ext : ''});
+				self.hideList();
+				$(self).find('li.quasar-select-data-item').removeClass('selected');
+				self.selectedItem = $object;
+				$object.addClass('selected');
+				$object.trigger('quasar.event.select');
+				return false;
 			};
 			/**
 			 * 更新数据
@@ -393,18 +492,78 @@ try{
 			 * 显示列表
 			 */
 			this.showList = function(){
-				var status     = $_dataList.css('display').toString().toLocaleLowerCase();
-				if(status == 'none') $_dataList.slideDown();
+				$_dataList.slideDown();
 			};
 			/**
 			 * 隐藏列表
 			 */
 			this.hideList = function(){
-				if(!in_component){
-
-					var status     = $_dataList.css('display').toString().toLocaleLowerCase();
-					if(status != 'none') $_dataList.slideUp();
+				$_dataList.slideUp();
+			};
+			/**
+			 * 获取选择项相对列表的索引位置
+			 *
+			 * @param hover hover模式而非selected模式
+			 * @returns {number}
+			 */
+			this.getIndex = function(hover){
+				if(hover == undefined) hover = false;
+				var cur_value = hover ? $(self).find('li.quasar-select-data-item.hover')
+											   .attr('data-value') : $_inputHidden.val();
+				var result    = -1;
+				if(cur_value == '' || cur_value == undefined){
+					if(opts.hasEmptyItem) return 0;
+					else return -1;
 				}
+				if(self.isHidden()){
+					$.each(opts.data, function(key, value){
+						var object_value = value.value.toString();
+						if(object_value == cur_value) result = key;
+					});
+				}
+				else{
+					$(self).find('li.quasar-select-data-item:visible').each(function(index, element){
+						var li_value = element.getAttribute('data-value');
+						if(cur_value == li_value) result = index;
+					});
+				}
+				return result;
+			};
+			/**
+			 * 将插件选取项设定为索引值对应的列表项
+			 *
+			 * @param index 索引值
+			 * @param hover 设定为hover而非selected
+			 * @returns {boolean}
+			 */
+			this.setItemByIndex = function(index, hover){
+				if(hover == undefined) hover = false;
+				var data = [];
+				if(self.isHidden()){
+					$_dataItems.removeClass('hover');
+					data = opts.data[index];
+					if(data == undefined) return false;
+					$_inputHidden.val(data.value);
+					$_inputVisible.text(data.html).attr({'data-ext':data['ext'] ? data['ext'] : ''});
+					$_dataItems.trigger('quasar.event.select');
+					$(self).find('li.quasar-select-data-item').removeClass('selected');
+				}else{
+					if(!hover){
+						data = $(self).find('li.quasar-select-data-item:visible')[index];
+						if(data == undefined) return false;
+						$_dataItems.removeClass('selected');
+						$_inputHidden.val(data.getAttribute('data-value'));
+						$_inputVisible.text(data.innerText);
+						$(data).addClass('selected');
+						self.hideList();
+					}else{
+						data = $(self).find('li.quasar-select-data-item:visible')[index];
+						if(data == undefined) return false;
+						$_dataItems.removeClass('hover');
+						$(data).addClass('hover');
+					}
+				}
+				return true;
 			};
 			/**
 			 * 获取值
@@ -412,7 +571,7 @@ try{
 			 * @returns string
 			 */
 			this.getValue = function(){
-				return $(self).find('input#'+opts.idHidden).val();
+				return $_inputHidden.val();
 			};
 			/**
 			 * 获取显示字符
@@ -420,7 +579,7 @@ try{
 			 * @returns string
 			 */
 			this.getHtml = function(){
-				var html = $(self).find('#'+opts.idInput).html();
+				var html = $_inputVisible.html();
 				html     = html.replace(new RegExp('<span[A-Za-z=\"\'_\\-:; ]+>'+opts.placeholder+'</span>'), '');
 				html     = html.replace(new RegExp('<[A-Za-z=\"\'_\\-:;/ ]+>'), '');
 				return html;
@@ -431,7 +590,7 @@ try{
 			 * @returns string
 			 */
 			this.getExtend = function(){
-				return $(self).find('#'+opts.idInput).attr('data-ext');
+				return $_inputVisible.attr('data-ext');
 			};
 			/**
 			 * 设定值
@@ -439,7 +598,7 @@ try{
 			 * @param val
 			 */
 			this.setValue = function(val){
-				$(self).find('input#'+opts.idHidden).val(val).attr('value', val);
+				$_inputHidden.val(val);
 			};
 			/**
 			 * 设定显示字符
@@ -447,7 +606,7 @@ try{
 			 * @param html
 			 */
 			this.setHtml = function(html){
-				$(self).find('#'+opts.idInput).text(html);
+				$_inputVisible.text(html);
 			};
 			/**
 			 * 设定扩展字符
@@ -455,39 +614,7 @@ try{
 			 * @param extend
 			 */
 			this.setExtend = function(extend){
-				$(self).find('#'+opts.idInput).attr('data-ext', extend);
-			};
-			/**
-			 * 获取列表对象
-			 *
-			 * @returns {*}
-			 */
-			this.getDataListObject = function(){
-				return $_dataList;
-			};
-			/**
-			 * 获取列表项集合对象
-			 *
-			 * @returns {*}
-			 */
-			this.getDataItemsObject = function(){
-				return $_dataItems;
-			};
-			/**
-			 * 获取搜索框对象
-			 *
-			 * @returns {*}
-			 */
-			this.getInputObject = function(){
-				return $_inputVisible;
-			};
-			/**
-			 * 获取隐藏域对象
-			 *
-			 * @returns {*}
-			 */
-			this.getHiddenObject = function(){
-				return $_inputHidden;
+				$_inputVisible.attr('data-ext', extend);
 			};
 			/**
 			 * 获取数据源
@@ -498,6 +625,12 @@ try{
 				return opts.data;
 			};
 			/**
+			 * 判断列表是否隐藏
+			 */
+			this.isHidden = function(){
+				return $(self).find('ul.quasar-select-data-list:visible').length == 0
+			};
+			/**
 			 * 定义选择列表事件
 			 *
 			 * @param callback 自定义回调函数
@@ -505,6 +638,10 @@ try{
 			this.onQuasarSelect = function(callback){
 				$_dataItems.off('quasar.event.select').on('quasar.event.select', callback);
 			};
+			/**
+			 * 输入框对象
+			 */
+			this.inputObject = $_inputVisible;
 			return this;
 		};
 	})(jQuery);

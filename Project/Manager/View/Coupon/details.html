@@ -55,17 +55,17 @@
 										<button type="submit" class="btn btn-default mian_search">搜索券</button>
 									</span>
 								</div>
-								<a type="reset" class="btn btn-default mian_search" href="<{:U('manage')}>">查看所有</a>
+								<a type="reset" class="btn btn-default mian_search" href="<{:U('details',['id'=>$list['id']])}>">查看所有</a>
 							</form>
-							<form action="" method="get" class="sign_check">
-								<div class="input-group pull-left unused">
-									<input type="radio"  name="iCheck" class="icheck" >&nbsp;&nbsp;未使用 (<{$statistics.unused}>)
+							<form action="" method="get" class="checkbox_filter">
+								<div class="input-group pull-left unused_filter">
+									<input type="radio"  name="iCheck" class="icheck" >&nbsp;&nbsp;未使用 (<{$count_status0}>)
 								</div>
-								<div class="input-group pull-left hasused">
-									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;已使用 (<{$statistics.hasused}>)
+								<div class="input-group pull-left used_filter">
+									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;已使用 (<{$count_status1}>)
 								</div>
-								<div class="input-group pull-left refund">
-									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;退费(<{$statistics.refund}>)
+								<div class="input-group pull-left refund_filter">
+									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;退费(<{$count_status2}>)
 								</div>
 							</form>
 						</div>
@@ -76,11 +76,13 @@
 										<td width="5%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="10%">券名称</td>
+										<td width="5%">券名称</td>
 										<td width="10%">会议名称</td>
-										<td width="10%">客户名称</td>
-										<td width="15%">券码</td>
-										<td width="15%">状态</td>
+										<td width="10%">客户姓名</td>
+										<td width="10%">券码</td>
+										<td width="15%">开始时间</td>
+										<td width="15%">结束时间</td>
+										<td width="10%">状态</td>
 										<td width="20%">操作</td>
 									</tr>
 								</thead>
@@ -90,10 +92,12 @@
 										<td class="check_item">
 											<input type="checkbox" class="icheck" placeholder="" value="<{$info.id}>">
 										</td>
-										<td><{$info.couponName}></td>
+										<td class="name"><{$info.couponName}></td>
 										<td><{$info.meetingName}></td>
 										<td><{$info.cid}></td>
-										<td><{$info.code}></td>
+										<td class="coupon_code"><{$info.code}></td>
+										<td class="start_time"><{$coupon.start_time|date='Y-m-d',###}></td>
+										<td class="end_time"><{$coupon.end_time|date='Y-m-d',###}></td>
 										<td>
 										<switch name="info.status">
 											<case value="0">未使用</case>
@@ -212,25 +216,26 @@
 						<div class="form-group">
 							<label for="start_time" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>开始时间：</label>
 							<div class="col-sm-10">
-								<div class="input-group date form_datetime" id="start_time_wp">
-									<input type="text" class="form-control start_time" name="start_time" id="start_time" value="<{$coupon.start_time|date='Y-m-d',###}>">
-									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-								</div>
+								<input type="text" class="form-control start_time" name="start_time" id="start_time" value="<{$coupon.start_time|date='Y-m-d',###}>" disabled>
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="end_time" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>结束时间：</label>
 							<div class="col-sm-10">
-								<div class="input-group date form_datetime" id="end_time_wp">
-									<input type="text" class="form-control end_time" name="end_time" id="end_time" value="<{$coupon.end_time|date='Y-m-d',###}>">
-									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-								</div>
+								<input type="text" class="form-control end_time" name="end_time" id="end_time" value="<{$coupon.end_time|date='Y-m-d',###}>" disabled>
 							</div>
 						</div>
-						<div class="form-group">
+						<!--<div class="form-group">
 							<label for="create_role_comment" class="col-sm-2 control-label">备注：</label>
 							<div class="col-sm-10">
 								<textarea class="form-control comment" name="comment" id="create_role_comment"></textarea>
+							</div>
+						</div>-->
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-10">
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;灰色输入框默认不可编写，券模板自动带出。</p>
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、开始段、长度、数量等字段可自动获取券号。</p>
 							</div>
 						</div>
 						<input type="hidden" name="hide_coupon_area" id="hide_coupon_area" value="">
@@ -256,45 +261,28 @@
 					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
 					<div class="modal-body">
 						<div class="form-group">
-							<label for="meeting_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle">*</b>会议：</label>
-							<div class="col-sm-10">
-								<div id="meeting_a"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="coupon_name_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle">*</b>券名称：</label>
+							<label for="coupon_name_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>券名称：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control name" name="name" id="coupon_name_a" disabled>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="price_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle">*</b>价格：</label>
+							<label for="coupon_code" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>券码：</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control price" name="price" id="price_a" disabled>
+								<input type="text" class="form-control coupon_code" name="coupon_code" id="coupon_code" disabled>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="start_time_wp_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle">*</b>开始时间：</label>
+							<label for="meeting_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>会议：</label>
 							<div class="col-sm-10">
-								<div class="input-group date form_datetime" id="start_time_wp_a">
-									<input type="text" class="form-control start_time" name="start_time" id="start_time_a">
-									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-								</div>
+								<div id="meeting_a"></div>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="end_time_wp_a" class="col-sm-2 control-label color-red"><b style="vertical-align: middle">*</b>结束时间：</label>
+							<label class="col-sm-2 control-label"></label>
 							<div class="col-sm-10">
-								<div class="input-group date form_datetime" id="end_time_wp_a">
-									<input type="text" class="form-control end_time" name="end_time" id="end_time_a">
-									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="create_role_comment" class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-10">
-								<textarea class="form-control comment" name="comment"></textarea>
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;灰色输入框默认不可编写，券模板自动带出。</p>
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、开始段、长度、数量等字段可自动获取券号。</p>
 							</div>
 						</div>
 					</div>
@@ -370,21 +358,8 @@
 					idInput     :'selected_meeting_a',
 					idHidden    :'selected_meeting_a_form',
 					placeholder :'',
+					defaultValue :'<{:json_encode($meeting_list)}>',
 					hasEmptyItem:false
-				}),
-				time   :$('#start_time_wp,#end_time_wp,#start_time_wp_a,#end_time_wp_a').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd',
-					weekStart         :0,
-					startView         :2,
-					minView           :0,
-					maxView           :4,
-					minuteStep        :5
 				}),
 				icheck       :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',

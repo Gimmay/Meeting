@@ -40,7 +40,7 @@
 			]);
 			/* 分页设置 */
 			$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
-			$page_show = $page_object->show();
+			$page_show   = $page_object->show();
 			/* 当前页的员工记录列表 */
 			$coupon_list = $coupon_model->findCoupon(2, [
 				'keyword' => I('get.keyword', ''),
@@ -63,9 +63,12 @@
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
 				$result = $coupon_item_logic->handlerRequest($type);
-				if($result === -1){
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
 				}
 				else{
+					unset($result['__ajax__']);
 					if($result['status']) $this->success($result['message']);
 					else $this->error($result['message'], '', 3);
 				}
@@ -74,24 +77,41 @@
 			/** @var \Core\Model\CouponItemModel $model */
 			$model       = D('Core/CouponItem');
 			$id          = I('get.id', 0, 'int');
-			$result      = $model->findCouponItem(0, ['coupon_id' => $id,'status'=>'not delete']);
+			$result      = $model->findCouponItem(0, ['coupon_id' => $id, 'status' => 'not delete']);
 			$page_object = new Page($result, 10);
 			$page_show   = $page_object->show();
-			$info = $model->findCouponItem(2, [
-				'keyword'   => I('get.keyword', ''),
-				'_limit'    => $page_object->firstRow.','.$page_object->listRows,
-				'_order'    => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
-				'status'    => 'not deleted',
-				'coupon_id' => I('get.id', 0, 'int')
-			]);
+			if(isset($_GET['status'])){
+				$info = $model->findCouponItem(2, [
+					'keyword'   => I('get.keyword', ''),
+					'_limit'    => $page_object->firstRow.','.$page_object->listRows,
+					'_order'    => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+					'status'    => I('get.status', 0, 'int'),
+					'coupon_id' => I('get.id', 0, 'int'),
+				]);
+			}
+			else{
+				$info = $model->findCouponItem(2, [
+					'keyword'   => I('get.keyword', ''),
+					'_limit'    => $page_object->firstRow.','.$page_object->listRows,
+					'_order'    => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+					'status'    => 'not deleted',
+					'coupon_id' => I('get.id', 0, 'int'),
+				]);
+			}
+			$count_status0 = $model->findCouponItem(0, ['status' => 0, 'coupon_id' => I('get.id', 0, 'int')]);
+			$count_status1 = $model->findCouponItem(0, ['status' => 1, 'coupon_id' => I('get.id', 0, 'int')]);
+			$count_status2 = $model->findCouponItem(0, ['status' => 2, 'coupon_id' => I('get.id', 0, 'int')]);
+			$this->assign('count_status0', $count_status0);
+			$this->assign('count_status1', $count_status1);
+			$this->assign('count_status2', $count_status2);
 			$info = $coupon_item_logic->setExtendColumnForManage($info);
 			/** @var \Manager\Model\MeetingModel $employee_model */
 			$employee_model = D('Meeting');
 			$employee_list  = $employee_model->getMeetingForSelect();
 			/** @var \Core\Model\CouponModel $coupon_model */
-			$coupon_model = D('Core/Coupon');
-			$coupon_result = $coupon_model->findCoupon(1,['id'=>I('get.id',0,'int')]);
-			$this->assign('coupon',$coupon_result);
+			$coupon_model  = D('Core/Coupon');
+			$coupon_result = $coupon_model->findCoupon(1, ['id' => I('get.id', 0, 'int')]);
+			$this->assign('coupon', $coupon_result);
 			$this->assign('meeting_list', $employee_list);
 			$this->assign('info', $info);
 			$this->assign('page_show', $page_show);

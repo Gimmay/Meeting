@@ -1,65 +1,23 @@
 /** 系统默认列表 **/
-.system_tem{
-	width : 100%;
+html,body{
+	position : relative;
+	width: 100%;
+	height: 100%;
+	overflow : hidden;
 }
 
-.system_tem_list{
-	overflow   : hidden;
-	width      : 100%;
-	padding    : 10px;
-	background : #FFFFFF;
-	border     : 1px solid rgba(0, 0, 0, .25);
-	overflow-x : auto;
-}
-
-.system_tem_list ul{
-
-}
-
-.system_tem_list ul li{
-	width            : 300px;
-	height           : 400px;
-	float            : left;
-	position         : relative;
-	overflow         : hidden;
-	float            : left;
-	border           : 1px solid rgba(0, 0, 0, .12);
-	background-color : #FFFFFF;
-	margin-right     : 10px;
-}
-
-.system_tem_list ul li.active{
-	border-color : #00A0E8;
-}
-
-.system_tem_list ul li .system_ontent{
-	width  : 100%;
-	height : 100%;
-}
-
-.system_tem_list ul li.active .select_icon{
-	display : block;;
-}
-
-.system_tem_list ul li .select_icon{
-	display     : none;
-	width       : 25px;
-	height      : 25px;
-	position    : absolute;
-	line-height : 25px;
-	text-align  : center;
-	color       : #FFFFFF;
-	left        : 1px;
-	top         : 1px;
-	background  : #00A0E8;
-	z-index: 11;
-}
-
-.layer{
+#badge_box {
+	width: 300px;
+	height: 400px;
 	position : absolute;
-	top      : 0;
-	left     : 0;
-	width    : 100%;
-	height   : 100%;
-	z-index  : 11;
+	top :50%;
+	left :50%;
+	margin-top: -200px;
+	margin-left: -150px;
+}
+
+.ui-widget-content {
+	background: none !important;
+	color: #FFFFFF;
+	border: none;
 }

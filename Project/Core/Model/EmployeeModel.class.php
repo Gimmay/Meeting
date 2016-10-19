@@ -177,11 +177,5 @@ $limit
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function getPositionSelectList(){
-			return $this->field("position as keyword, position as value, position as html")->select();
-		}
 
-		public function getTitleSelectList(){
-			return $this->field("position as keyword, position as value, position as html")->select();
-		}
 	}

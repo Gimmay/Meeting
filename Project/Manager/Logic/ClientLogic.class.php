@@ -122,6 +122,123 @@
 			return $info;
 		}
 
+		public function alterColumnForExportExcel($list, $except_column = []){
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			foreach($list as $key1 => $val1){
+				// 排除字段
+				foreach($except_column as $val2) unset($list[$key1][$val2]);
+				// 性别
+				switch($val1['gender']){
+					case 0:
+					default:
+						$list[$key1]['gender'] = '未指定';
+					break;
+					case 1:
+						$list[$key1]['gender'] = '男';
+					break;
+					case 2:
+						$list[$key1]['gender'] = '女';
+					break;
+				}
+				// 开拓顾问
+				$develop_consultant_record         = $employee_model->findEmployee(1, ['id' => $val1['develop_consultant']]);
+				$list[$key1]['develop_consultant'] = $develop_consultant_record['name'];
+				// 服务顾问
+				$service_consultant_record         = $employee_model->findEmployee(1, ['id' => $val1['service_consultant']]);
+				$list[$key1]['service_consultant'] = $service_consultant_record['name'];
+				// 签到状态
+				switch($val1['sign_status']){
+					case 0:
+						$list[$key1]['sign_status'] = '未签到';
+					break;
+					case 1:
+						$list[$key1]['sign_status'] = '已签到';
+					break;
+					case 2:
+						$list[$key1]['sign_status'] = '取消签到';
+					break;
+				}
+				// 审核状态
+				switch($val1['review_status']){
+					case 0:
+						$list[$key1]['review_status'] = '未审核';
+					break;
+					case 1:
+						$list[$key1]['review_status'] = '已审核';
+					break;
+					case 2:
+						$list[$key1]['review_status'] = '取消审核';
+					break;
+				}
+				// 审核时间
+				$list[$key1]['review_time'] = $val1['review_time'] ? date('Y-m-d H:i:s', $val1['review_time']) : 0;
+				// 签到时间
+				$list[$key1]['sign_time'] = $val1['sign_time'] ? date('Y-m-d H:i:s', $val1['sign_time']) : 0;
+				// 签到类型
+				switch($val1['sign_type']){
+					case 0:
+					default:
+						$list[$key1]['sign_type'] = '未签到';
+					break;
+					case 1:
+						$list[$key1]['sign_type'] = '手动签到';
+					break;
+					case 2:
+						$list[$key1]['sign_type'] = '微信扫码签到';
+					break;
+				}
+				// 签到打印状态
+				switch($val1['print_status']){
+					case 0:
+					default:
+						$list[$key1]['print_status'] = '未打印';
+					break;
+					case 1:
+						$list[$key1]['print_status'] = '已打印';
+					break;
+				}
+			}
+			$list = array_merge([
+				[
+					'name'               => '姓名',
+					'gender'             => '性别',
+					'mobile'             => '电话',
+					'club'               => '会所',
+					'birthday'           => '生日',
+					'email'              => '邮箱',
+					'title'              => '职务',
+					'position'           => '职称',
+					'address'            => '地址',
+					'id_card_number'     => '身份证号',
+					'develop_consultant' => '开拓顾问',
+					'service_consultant' => '服务顾问',
+					'accompany'          => '陪同',
+					'accompany_mobile'   => '陪同手机',
+					'comment'            => '备注',
+					'column1'            => '备选字段1',
+					'column2'            => '备选字段2',
+					'column3'            => '备选字段3',
+					'column4'            => '备选字段4',
+					'column5'            => '备选字段5',
+					'column6'            => '备选字段6',
+					'column7'            => '备选字段7',
+					'column8'            => '备选字段8',
+					'registration_date'  => '报名时间',
+					'review_status'      => '审核状态',
+					'review_time'        => '审核时间',
+					'sign_code'          => '签到码',
+					'sign_time'          => '签到时间',
+					'sign_status'        => '签到状态',
+					'sign_type'          => '签到类型',
+					'print_status'       => '打印状态',
+					'print_times'        => '打印时间'
+				]
+			], $list);
+
+			return $list;
+		}
+
 		public function getReceivablesList($list, $receivables = 1, $new = true){
 			/** @var \Core\Model\ReceivablesModel $receivables_model */
 			$receivables_model = D('Core/Receivables');
@@ -184,7 +301,10 @@
 					$meeting_id  = I('post.mid', 0, 'int');
 					$join_record = $join_model->findRecord(1, ['mid' => $meeting_id, 'cid' => $client_id]);
 					C('TOKEN_ON', false);
-					$result1 = $join_model->alterRecord([$join_record['id']], ['review_status' => 1]);
+					$result1 = $join_model->alterRecord([$join_record['id']], [
+						'review_status' => 1,
+						'review_time'   => time()
+					]);
 					if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
 					$join_logic = new JoinLogic();
 					$result2    = $join_logic->makeQRCode([$client_id], ['mid' => $meeting_id]);
@@ -198,7 +318,7 @@
 					$meeting_id  = I('post.mid', 0, 'int');
 					$join_record = $join_model->findRecord(1, ['mid' => $meeting_id, 'cid' => $client_id]);
 					C('TOKEN_ON', false);
-					$result = $join_model->alterRecord([$join_record['id']], ['review_status' => 0]);
+					$result = $join_model->alterRecord([$join_record['id']], ['review_status' => 2]);
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
@@ -214,7 +334,7 @@
 						$join_id[]   = $join_record['id'];
 					}
 					C('TOKEN_ON', false);
-					$result1 = $join_model->alterRecord($join_id, ['review_status' => 1]);
+					$result1 = $join_model->alterRecord($join_id, ['review_status' => 1, 'review_time' => time()]);
 					if(!$result1['status']) return array_merge($result1, ['__ajax__' => false]);
 					$join_logic = new JoinLogic();
 					$result2    = $join_logic->makeQRCode($client_id_arr, ['mid' => $meeting_id]);
@@ -233,7 +353,7 @@
 						$join_id[]   = $join_record['id'];
 					}
 					C('TOKEN_ON', false);
-					$result = $join_model->alterRecord($join_id, ['review_status' => 0]);
+					$result = $join_model->alterRecord($join_id, ['review_status' => 2]);
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
@@ -355,7 +475,7 @@
 					$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 					$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
 					$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/id/$client_id/mid/$meeting_id";
-					$wxcorp_logic->sendMessage('news', [
+					$result1 = $wxcorp_logic->sendMessage('news', [
 						[
 							'title'       => "$meeting_record[name]",
 							'description' => "亲爱的$record[name]，请于$meeting_record[start_time]前点击\"查看全文\"后出示二维码提供给签到负责人进行签到",
@@ -364,8 +484,9 @@
 					], ['user' => [$weixin_record['weixin_id']]]);
 					$url     = getShortUrl($url); // 使用新浪的t.cn短地址
 					$result2 = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
-
-					return array_merge($result2, ['__ajax__' => true]);
+					if(!$result1['status']) return ['status'=>false, 'message'=>'微信推送信息失败', '__ajax__'=>true];
+					if(!$result2['status']) return ['status'=>false, 'message'=>'短信发送失败', '__ajax__'=>true];
+					return ['status'=>true, 'message'=>'发送消息成功', '__ajax__' => true];
 				break;
 				case 'multi_send_message':
 					$wxcorp_logic = new WxCorpLogic();
@@ -444,6 +565,22 @@
 					];
 					elseif($count == 0) return ['status' => false, 'message' => '分配失败', '__ajax__' => false];
 					else return ['status' => true, 'message' => '部分分配成功', '__ajax__' => false];
+				break;
+				case 'get_receivables':
+					/** @var \Core\Model\ReceivablesModel $receivables_model */
+					$receivables_model = D('Core/Receivables');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model = D('Core/Employee');
+					$record         = $receivables_model->findRecord(2, [
+						'cid' => I('post.cid', 0, 'int'),
+						'mid' => I('post.mid', 0, 'int')
+					]);
+					foreach($record as $key => $val){
+						$employee_record       = $employee_model->findEmployee(1, ['id' => $val['payee_id']]);
+						$record[$key]['payee'] = $employee_record['name'];
+					}
+
+					return ['data' => $record, '__ajax__' => true];
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];

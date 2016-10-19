@@ -1,8 +1,8 @@
-.sign_check {
+.checkbox_filter {
 	margin-left: 100px;
 }
 
-.sign_check > div {
+.checkbox_filter > div {
 	margin-left: 20px;
 	line-height: 34px;
 }

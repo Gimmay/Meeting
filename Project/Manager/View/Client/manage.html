@@ -98,17 +98,15 @@
 									</div>
 									<iframe name="fileUpload" id="fileUpload_iframe" width="0" height="0" style=" display: none;"></iframe>
 								</if>
-
 								<if condition="$permission_list['CLIENT.EXPORT-EXCEL'] eq 1">
-									<div class="function_btn bg-info batch_delete_btn_confirm">
-										<a href="<{:U('exportClientDataTemplate')}>"> <i></i>
+									<div class="function_btn bg-info export_excel_btn">
+										<a href="<{:U('exportClientData', ['mid'=>I('get.mid', 0, 'int')])}>"> <i></i>
 											<p>导出Excel</p>
 										</a>
 									</div>
 								</if>
 								<if condition="$permission_list['CLIENT.DOWNLOAD-IMPORT-EXCEL-TEMPLATE'] eq 1">
-
-									<div class="function_btn bg-f63 batch_delete_btn_confirm">
+									<div class="function_btn bg-f63 download_excel_temp">
 										<a href="<{:U('exportClientDataTemplate')}>"> <i></i>
 											<p>下载Excel模板</p>
 										</a>
@@ -273,11 +271,12 @@
 														</case>
 													</switch>
 													<if condition="$permission_list['CLIENT.EARN-PAYMENT']">
-														<button type="button" class="btn btn-default btn-xs receivables_btn" data-toggle="modal" data-target="#receivables_modal">收款</button>
+														<a href="<{:U('Receivables/manage')}>" class="btn btn-default btn-xs">收款</a>
 													</if>
 													<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE']">
 														<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
 													</if>
+													<a href="<{:U('Badge/preview')}>" class="btn btn-default btn-xs print_badge">打印胸卡</a>
 													<if condition="$permission_list['CLIENT.ALTER']">
 														<a href="<{:U('Client/alter',['id'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
 													</if>
@@ -317,9 +316,15 @@
 						<input type="hidden" name="cid" id="alter_sign_place_cid">
 						<div class="modal-body">
 							<div class="form-group">
-								<label for="sign_place" class="col-sm-3 control-label">选择签到点：</label>
+								<label class="col-sm-3 control-label">选择签到点：</label>
 								<div class="col-sm-9">
-									<div id="sign_place"></div>
+									<div class="number_list_box selected">
+										<div class="col-sm-12 title">
+											<h3>已选择签到点</h3>
+										</div>
+										<div class=" number_list clearfix">
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -435,20 +440,10 @@
 									</div>
 								</div>
 							</div>
-
 							<div class="form-group">
 								<label for="place" class="col-sm-2 control-label">收款地点：</label>
 								<div class="col-sm-10">
 									<input type="text" class="form-control coupon" name="place" id="place">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="modify_role_status" class="col-sm-2 control-label">禁用：</label>
-								<div class="col-sm-10">
-									<select name="status" id="modify_role_status" class="form-control">
-										<option value="1">是</option>
-										<option value="0">否</option>
-									</select>
 								</div>
 							</div>
 						</div>

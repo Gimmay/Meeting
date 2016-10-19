@@ -45,3 +45,22 @@
 	width: 60%;
 	margin: 0.2rem auto;
 }
+
+.sign_type {
+	width: 50px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	border-radius :20%;
+	color : #fff;
+	position : absolute;
+	top :10px;
+	right :10px;
+}
+.sign_type.signed {
+	background: #23C6C8;
+}
+
+.sign_type.unsigned {
+	background:silver
+}

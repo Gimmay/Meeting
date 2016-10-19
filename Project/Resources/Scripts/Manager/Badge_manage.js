@@ -19,7 +19,6 @@ var badgeManage = {
 		// 胸卡内容关键字选择
 		$('.keyword').on('click', function(){
 			var index = $(this).index();
-			//console.log(index);
 			if($(this).hasClass('no_choose')){
 				$(this).removeClass('no_choose');
 				$('.cart_view .cart_view_item').eq(index).removeClass('hide');
@@ -46,7 +45,6 @@ var badgeManage = {
 			var club_id         = $('.vote_list').find('.club').attr('data-id');
 			var brief_id        = $('.vote_list').find('.brief').attr('data-id');
 			var badge_name = $('input[name=badge_name]').val();
-			alert(badge_name);
 			var data            = {
 				temp      :tempHtml,
 				attributes:{
@@ -86,7 +84,6 @@ var badgeManage = {
 			$('.nav_tab').find('.nav_tab_li').removeClass('active');
 			$(this).addClass('active');
 			var index = $(this).index();
-			console.log(index);
 			$('.tab_c').addClass('hide');
 			$('.tab_c').eq(index).removeClass('hide');
 		});
@@ -97,6 +94,11 @@ var badgeManage = {
 			var id = $(this).attr('data-id');
 			$('.system_tem').find('input[name=id]').val(id);
 		})
+		// 选择胸卡字体颜色
+		$('.choose-color').on('change',function(){
+			var color = $(this).val();
+			$('.badge_muban').find('.cart_view_item').css('color',color);
+		});
 	},
 	// 计算胸卡设计（右侧）的宽度
 	setWidth     :function(){

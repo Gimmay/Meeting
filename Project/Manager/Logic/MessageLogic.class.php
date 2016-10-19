@@ -116,8 +116,8 @@
 			$message_model = D('Core/Message');
 			$id            = I('get.id', 0, 'int');
 			$result_alter  = $message_model->alterMessage(['id' => $id], [
-				'name'    => I('post.name', ''),
-				'context' => I('post.context', '')
+				'name'    => I('post.name',''),
+				'context' => $_POST['context']
 			]);
 
 			return $result_alter;

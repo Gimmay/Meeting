@@ -116,6 +116,15 @@
 						<?php if($permission_list['RECYCLE.VIEW-MEETING'] == 1): ?><li>
 								<a href="<?php echo U('Recycle/meeting');?>">会议列表</a>
 							</li><?php endif; ?>
+						<li>
+							<a href="<?php echo U('Recycle/coupon');?>">代金券</a>
+						</li>
+						<li>
+							<a href="<?php echo U('Recycle/coupon_item');?>">代金券码</a>
+						</li>
+						<li>
+							<a href="<?php echo U('Recycle/message');?>">消息管理</a>
+						</li>
 					</ul>
 				</li><?php endif; ?>
 		</ul>
@@ -179,13 +188,12 @@
 										</form>
 									</div>
 									<iframe name="fileUpload" id="fileUpload_iframe" width="0" height="0" style=" display: none;"></iframe><?php endif; ?>
-
-								<?php if($permission_list['CLIENT.EXPORT-EXCEL'] == 1): ?><div class="function_btn bg-info batch_delete_btn_confirm">
-										<a href="<?php echo U('exportClientDataTemplate');?>"> <i></i>
+								<?php if($permission_list['CLIENT.EXPORT-EXCEL'] == 1): ?><div class="function_btn bg-info export_excel_btn">
+										<a href="<?php echo U('exportClientData', ['mid'=>I('get.mid', 0, 'int')]);?>"> <i></i>
 											<p>导出Excel</p>
 										</a>
 									</div><?php endif; ?>
-								<?php if($permission_list['CLIENT.DOWNLOAD-IMPORT-EXCEL-TEMPLATE'] == 1): ?><div class="function_btn bg-f63 batch_delete_btn_confirm">
+								<?php if($permission_list['CLIENT.DOWNLOAD-IMPORT-EXCEL-TEMPLATE'] == 1): ?><div class="function_btn bg-f63 download_excel_temp">
 										<a href="<?php echo U('exportClientDataTemplate');?>"> <i></i>
 											<p>下载Excel模板</p>
 										</a>

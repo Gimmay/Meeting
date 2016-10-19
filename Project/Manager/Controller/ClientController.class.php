@@ -41,12 +41,12 @@
 			/** @var \Core\Model\CouponItemModel $coupon_item_model */
 			$coupon_item_model = D('Core/Coupon_item');
 			/** @var \Manager\Model\EmployeeModel $employee_model */
-			$employee_model  = D('Employee');
+			$employee_model = D('Employee');
 			/** @var \Manager\Model\ReceivablesModel $receivables_model */
 			$receivables_model = D('Receivables');
-			$options         = [];
-			$sid             = 0;
-			$main_model      = new stdClass();
+			$options           = [];
+			$sid               = 0;
+			$main_model        = new stdClass();
 			/* 处理URL参数 */
 			if(isset($_GET['signed'])) $options['sign_status'] = I('get.signed', 0, 'int') == 1 ? 1 : 'not signed';
 			if(isset($_GET['reviewed'])) $options['review_status'] = I('get.reviewed', 0, 'int') == 1 ? 1 : 'not reviewed';
@@ -80,19 +80,19 @@
 				'status'  => 'not deleted'
 			], $options));
 			/* 设定额外字段 */
-			$options     = [];
+			$options = [];
 			if(isset($_GET['mid'])) $options['mid'] = $mid;
 			if(isset($_GET['sid'])) $options['sid'] = $sid;
 			/* 统计数据 */
-			$signed_count      = $main_model->findRecord(0, array_merge([
+			$signed_count   = $main_model->findRecord(0, array_merge([
 				'sign_status' => 1,
 				'status'      => 'not deleted'
 			], $options));
-			$reviewed_count    = $main_model->findRecord(0, array_merge([
+			$reviewed_count = $main_model->findRecord(0, array_merge([
 				'review_status' => 1,
 				'status'        => 'not deleted'
 			], $options));
-			$all_count         = $main_model->findRecord(0, array_merge([
+			$all_count      = $main_model->findRecord(0, array_merge([
 				'status' => 'not deleted'
 			], $options));
 			/* 特殊处理收款列表和统计 */
@@ -109,18 +109,33 @@
 				}
 			}
 			else{
-				$receivables_list      = $logic->getReceivablesList($total_list, 1);
-				$not_receivables_list  = $logic->getReceivablesList($total_list, 0);
-				$receivables_count     = count($receivables_list);
-				$not_receivables_count = count($not_receivables_list);
-				$client_list      = $logic->getReceivablesList($total_list, 1, false);
+				$options = [];
+				if(isset($_GET['mid'])){
+					/** @var \Core\Model\JoinModel $main_model */
+					$main_model     = D('Core/Join');
+					$options['mid'] = $mid;
+				}
+				if(isset($_GET['sid'])){
+					$sid = I('get.sid', 0, 'int');
+					/** @var \Core\Model\JoinSignPlaceModel $main_model */
+					$main_model     = D('Core/JoinSignPlace');
+					$options['sid'] = $sid;
+				}
+				/* 获取记录总数 */
+				$temp_total_list       = $main_model->findRecord(2, array_merge([
+					'keyword' => I('get.keyword', ''),
+					'status'  => 'not deleted'
+				], $options));
+				$receivables_count     = count($logic->getReceivablesList($temp_total_list, 1));
+				$not_receivables_count = count($logic->getReceivablesList($temp_total_list, 0));
+				$client_list           = $logic->getReceivablesList($total_list, 1, false);
 			}
 			/* 会议对应的券记录 */
-			$coupon_item_result = $coupon_item_model->findCouponItem(2, ['mid' => $mid, 'status' => 1]);
+			$coupon_item_result = $coupon_item_model->findCouponItem(2, ['mid' => $mid, 'status' => 0]);
 			/* 收款类型列表(for select component) */
 			$receivables_type_list = $receivables_model->getReceivablesTypeSelectList();
 			/* 员工列表(for select component) */
-			$employee_list   = $employee_model->getEmployeeSelectList();
+			$employee_list = $employee_model->getEmployeeSelectList();
 			/* 获取签到点列表(for select component) */
 			$sign_place_list = $sign_place_model->getRecordSelectList($mid);
 			/* 向视图输出数据 */
@@ -161,12 +176,49 @@
 			/** @var \Manager\Model\ClientModel $client_model */
 			$client_model = D('Client');
 			$header       = $client_model->getColumn(true);
-			$logic        = new ExcelLogic();
-			$logic->exportCustomData($header, [
+			$excel_logic  = new ExcelLogic();
+			$excel_logic->exportCustomData($header, [
 				'fileName'    => '导入客户数据模板',
 				'title'       => '导入客户数据模板',
 				'subject'     => '导入客户数据模板',
 				'description' => '吉美会议系统导入客户数据模板',
+				'company'     => '吉美集团',
+				'hasHead'     => true
+			]);
+		}
+
+		public function exportClientData(){
+			/** @var \Core\Model\JoinModel $main_model */
+			$main_model  = D('Core/Join');
+			$excel_logic = new ExcelLogic();
+			$logic       = new ClientLogic();
+			$options     = [];
+			$mid         = I('get.mid', 0, 'int');
+			/* 处理URL参数 */
+			if(isset($_GET['signed'])) $options['sign_status'] = I('get.signed', 0, 'int') == 1 ? 1 : 'not signed';
+			if(isset($_GET['reviewed'])) $options['review_status'] = I('get.reviewed', 0, 'int') == 1 ? 1 : 'not reviewed';
+			if(isset($_GET['mid'])) $options['mid'] = $mid;
+			$client_list = $main_model->findRecord(2, array_merge([
+				'keyword' => I('get.keyword', ''),
+				'_order'  => I('get.column', 'main.creatime').' '.I('get.sort', 'desc'),
+				'status'  => 'not deleted'
+			], $options));
+			$client_list = $logic->alterColumnForExportExcel($client_list, [
+				'password',
+				'mid',
+				'id',
+				'pinyin_code',
+				'status',
+				'creator',
+				'sign_qrcode',
+				'cid',
+				'creatime'
+			]);
+			$excel_logic->exportCustomData($client_list, [
+				'fileName'    => '参会人员客户列表',
+				'title'       => '参会人员客户列表',
+				'subject'     => '参会人员客户列表',
+				'description' => '吉美会议系统导出客户数据',
 				'company'     => '吉美集团',
 				'hasHead'     => true
 			]);

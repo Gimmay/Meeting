@@ -19,7 +19,7 @@
 					/** @var \Core\Model\CouponItemModel $coupon_item_model */
 					$coupon_item_model = D('Core/CouponItem');//实例化表
 					/** @var \Core\Model\CouponModel $coupon_model */
-					$code    = I('post.coupon_area'); //代金券码
+					$code    = I('post.hide_coupon_area'); //代金券码
 					$request = explode(',', $code);    //打散代金券码
 					foreach($request as $v){
 						C('TOKEN_ON', false);            //令牌
@@ -31,7 +31,18 @@
 						$coupon_item_model->createCouponItem($date); //插入到数据库
 					}
 
-					return ['status' => true, 'message' => '创建代金券成功'];
+					return ['status' => true, 'message' => '创建代金券成功', '__ajax__'=>false];
+				break;
+				case 'alter_coupon':
+						$id = I('post.id','');
+						/** @var \Core\Model\MeetingModel $meeting_model */
+						$meeting_model = D('Core/Meeting');
+						/** @var \Core\Model\CouponItemModel $coupon_item_model */
+						$coupon_item_model = D('Core/CouponItem');
+						$coupon_item_result = $coupon_item_model->findCouponItem(1,['id'=>$id]);
+						$meeting_result = $meeting_model->findMeeting(1,['id'=>$coupon_item_result['mid']]);
+
+					return array_merge($meeting_result, ['__ajax__' => true]);
 				break;
 				case'delete';
 					$id = I('post.id', '');
@@ -39,7 +50,7 @@
 					$model  = D('Core/CouponItem');
 					$result = $model->deleteCouponItem($id);
 
-					return $result;
+					return array_merge($result, ['__ajax__'=>false]);
 				break;
 				case'alter';
 					$id['id'] = I('post.id', '');
@@ -49,7 +60,7 @@
 					$model = D('Core/CouponItem');
 					$result = $model->alterCouponItem($id, $mid);
 
-					return $result;
+					return array_merge($result, ['__ajax__'=>false]);
 				break;
 				case'create';
 					/** @var \Core\Model\CouponItemModel $model */
@@ -62,12 +73,10 @@
 					$data['creatime']  = time();//创建时间
 					$result            = $model->createCouponItem($data);
 
-					return $result;
+					return array_merge($result, ['__ajax__'=>false]);
 				break;
 				default:
-					echo json_encode(['status' => false, 'message' => '参数错误']);
-
-					return -1;
+					return ['status' => false, 'message' => '参数错误'];
 				break;
 			}
 		}

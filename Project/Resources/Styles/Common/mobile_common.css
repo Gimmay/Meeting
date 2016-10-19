@@ -10,6 +10,7 @@
 	height: 100%;
 	background: #fff;
 	border-radius: 5px;
+	position : relative;
 }
 
 .my_infor {
@@ -30,5 +31,4 @@
 .my_infor .personal p {
 	margin-bottom: 0.1rem;
 }
-
 

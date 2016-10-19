@@ -39,7 +39,7 @@
 					/** @var \Core\Model\AssignMessageModel $assign_message_model */
 					$assign_message_model = D('Core/Assign_Message');
 					$data                 = I('post.mid');
-					$count = 0 ;
+					$count                = 0;
 					$result_message       = $assign_message_model->findRecord(2, ['mid' => I('post.id', 0, 'int')]);
 					if(I('post.sign_mes')){
 						$data['message_id'] = I('post.sign_mes', '');
@@ -50,7 +50,7 @@
 						$data['status']     = 1;
 						C('TOKEN_ON', false);
 						/** @var \Core\Model\AssignMessageModel $message_model */
-						$message_model = D('Core/Assign_Message');
+						$message_model  = D('Core/Assign_Message');
 						$message_result = $message_model->findRecord(1, ['mid' => I('post.id'), 'type' => 1]);
 						if($message_result){
 							$sign_result = $assign_message_model->alterRecord([$message_result['id']], ['message_id' => I('post.sign_mes', 0, 'int')]);
@@ -59,7 +59,7 @@
 							$sign_result = $assign_message_model->createRecord($data);
 						}
 						if($sign_result['status']){
-							$count ++;
+							$count++;
 						}
 					}
 					if(I('post.anti_sign_mes')){
@@ -71,16 +71,19 @@
 						$data['status']     = 1;
 						C('TOKEN_ON', false);
 						/** @var \Core\Model\AssignMessageModel $message_model */
-						$message_model = D('Core/Assign_Message');
+						$message_model  = D('Core/Assign_Message');
 						$message_result = $message_model->findRecord(1, ['mid' => I('post.id'), 'type' => 2]);
 						if($message_result){
-							$anti_sign_result = $assign_message_model->alterRecord([$message_result['id']], ['message_id' => I('post.anti_sign_mes', 0, 'int'),['type'=>2]]);
+							$anti_sign_result = $assign_message_model->alterRecord([$message_result['id']], [
+								'message_id' => I('post.anti_sign_mes', 0, 'int'),
+								'type'       => 2
+							]);
 						}
 						else{
 							$anti_sign_result = $assign_message_model->createRecord($data);
 						}
 						if($anti_sign_result['status']){
-							$count ++;
+							$count++;
 						}
 					}
 					if(I('post.receivables_mes')){
@@ -92,27 +95,27 @@
 						$data['status']     = 1;
 						C('TOKEN_ON', false);
 						/** @var \Core\Model\AssignMessageModel $message_model */
-						$message_model = D('Core/Assign_Message');
+						$message_model  = D('Core/Assign_Message');
 						$message_result = $message_model->findRecord(1, ['mid' => I('post.id'), 'type' => 3]);
 						if($message_result){
-							$receivables_result = $assign_message_model->alterRecord([$message_result['id']], ['message_id' => I('post.receivables_mes', 0, 'int'),'type'=>3]);
-
+							$receivables_result = $assign_message_model->alterRecord([$message_result['id']], [
+								'message_id' => I('post.receivables_mes', 0, 'int'),
+								'type'       => 3
+							]);
 						}
 						else{
 							$receivables_result = $assign_message_model->createRecord($data);
-
 						}
 						if($receivables_result['status']){
-							$count  ++;
+							$count++;
 						}
 					}
-				if($count > 0){
-						return ['status'=>true,'message'=>'保存成功','__ajax__'=>false];
-				}else{
-					return ['status'=>false,'message'=>'保存失败','__ajax__'=>false];
-				}
-
-
+					if($count>0){
+						return ['status' => true, 'message' => '保存成功', '__ajax__' => false];
+					}
+					else{
+						return ['status' => false, 'message' => '保存失败', '__ajax__' => false];
+					}
 					//					elseif(I('post.sign_mes')){
 					//						$data['message_id'] = I('post.sign_mes', '');
 					//						$data['mid']        = I('post.id');
@@ -162,7 +165,6 @@
 					//						elseif($count == 0) return ['status' => false, 'message' => '修改失败', '__ajax__' => false];
 					//						else return ['status' => true, 'message' => '部分修改', '__ajax__' => false];
 					//					}
-
 				break;
 				case 'get_message_temp':
 					/** @var \Core\Model\AssignMessageModel $message_model */
@@ -173,13 +175,12 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'get_message':
-					$id  = I('post.id','');
-					/** @var \Core\Model\AssignMessageModel $message_model */
-					$message_model = D('Core/AssignMessage');
-					$assign_message_result = $message_model->findRecord(1,['message_id'=>$id]);
-					
+					$id = I('post.id', '');
+					/** @var \Core\Model\MessageModel $message_model */
+					$message_model         = D('Core/Message');
+					$assign_message_result = $message_model->findMessage(1, ['id' => $id]);
 
-					return ['data'=>$assign_message_result, '__ajax__' => true];
+					return ['data' => $assign_message_result, '__ajax__' => true];
 				break;
 				case 'create':
 					if($this->permissionList['MEETING.CREATE']){

@@ -132,7 +132,7 @@
 														<a href="<{:U('Client/manage',['mid'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a>
 													</if>
 													<if condition="$permission_list['MEETING.SELECT-BADGE'] eq 1">
-														<a href="<{:U('Client/manage',['mid'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">胸卡设计</a>
+														<a href="<{:U('Badge/manage')}>" type="button" class="btn btn-default btn-xs modify_btn">胸卡设计</a>
 													</if>
 													<if condition="$permission_list['MEETING.ALTER'] eq 1">
 														<a href="<{:U('Meeting/alter',['id'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
