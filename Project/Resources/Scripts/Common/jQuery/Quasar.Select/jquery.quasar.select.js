@@ -81,6 +81,15 @@ try{
 	 * 1、删除 justInput 参数
 	 * 2、添加 insert 按键事件，用于控制插件是否可任意键入值
 	 * 3、新增 inputObject 属性，用于指向输入框对象
+	 *
+	 * Version 2.40 2016-10-21 17:12
+	 * 1、将输入框由可编辑的 div 替换成 textarea，以便能够通过 tab 键切换表单元素
+	 * 2、重写 setHtml() 和 getHtml() 方法
+	 * 3、在插件值更改时添加设定扩展数据的动作
+	 * 4、输入框指定固定高度(34px)
+	 *
+	 * Version 2.41 2016-10-21 18:33
+	 * 输入框点击事件同时触发聚焦事件
 	 */
 	(function($){
 		/**
@@ -111,10 +120,10 @@ try{
 		 *    async boolean  指明请求是异步还同步，可用值为 true 或 false，默认值为 true。
 		 *    callback function()  在请求成功后被首先调用的匿名函数，并将请求的返回数据传入匿名函数的第一个参数。
 		 *
-		 * @updated 2016-10-19 01:37
+		 * @updated 2016-10-21 18:33
 		 * @created 2016-05-10
 		 * @author Quasar
-		 * @version 2.30
+		 * @version 2.41
 		 * @param options 组件参数（JSON对象，索引值详见以上说明）
 		 * @returns {$.fn.QuasarSelect}
 		 * @constructor
@@ -151,32 +160,6 @@ try{
 			var $_inputHidden       = null;
 			var _insertMode         = false;
 			/**
-			 * 处理提示语的显隐
-			 *
-			 * @param show 是否显示
-			 * @private
-			 */
-			var _handlerPlaceholder = function(show){
-				/**
-				 * 创建提示语元素
-				 *
-				 * @private
-				 */
-				var _createDom = function(){
-					$_inputVisible.find('span.quasar-select-input-placeholder').remove();
-					var length            = $_inputVisible.text().length;
-					var placeholder_style = (length<=0) ? "" : "style='display: none'";
-					$_inputVisible.prepend("<span class='quasar-select-input-placeholder' "+placeholder_style+">"+opts.placeholder+"</span>");
-				};
-				_createDom();
-				var length = $_inputVisible.text().length-$_inputVisible.find('span.quasar-select-input-placeholder')
-																		.html().length;
-				if(show){
-					if(length>0) $_inputVisible.find('span.quasar-select-input-placeholder').hide();
-					else $_inputVisible.find('span.quasar-select-input-placeholder').show();
-				}else $_inputVisible.find('span.quasar-select-input-placeholder').hide();
-			};
-			/**
 			 * 初始化组件
 			 *
 			 * @private
@@ -186,8 +169,7 @@ try{
 				$(self).html('');
 				$(self).css('position', 'relative');
 				// make input
-				var placeholder_style = (opts.defaultHtml == '') ? "" : "style='display: none'";
-				var input_visible     = "<div contenteditable='true' tabindex='1' class=\'quasar-select-input "+opts.classStyle+"\' id=\'"+opts.idInput+"\' data-ext=\'\'><span class='quasar-select-input-placeholder' "+placeholder_style+">"+opts.placeholder+"</span>"+opts.defaultHtml+"</div>";
+				var input_visible     = "<textarea class=\'quasar-select-input "+opts.classStyle+"\' id=\'"+opts.idInput+"\' placeholder='"+opts.placeholder+"' data-ext=\'\'>"+opts.defaultHtml+"</textarea>";
 				var input_hidden      = "<input type=\'hidden\' name=\'"+opts.name+"\' id=\'"+opts.idHidden+"\' value='"+opts.defaultValue+"'>";
 				$(self).append(input_hidden);
 				$(self).append(input_visible);
@@ -221,14 +203,14 @@ try{
 						 * @param index
 						 */
 						var handler    = function(index){
-							$_inputVisible.text(opts.data[index].html);
+							self.setHtml(opts.data[index].html);
 							if(opts.data[i].value != value_form){
 								$_inputHidden.val(opts.data[index].value);
 								if(opts.data[index].hasOwnProperty('ext')){ //noinspection JSUnresolvedVariable
 									$_inputVisible.attr('data-ext', opts.data[index].ext);
 								}
 								self.selectedItem = $(self)
-								.find('li.quasar-select-data-item[data-value='+opts.data[index].value+']')[0];
+									.find('li.quasar-select-data-item[data-value='+opts.data[index].value+']')[0];
 								$(self).find('li.quasar-select-data-item').removeClass('selected');
 								$(self).find('li.quasar-select-data-item[data-value='+opts.data[index].value+']')
 									   .addClass('selected');
@@ -252,18 +234,18 @@ try{
 							}
 							$(self).find('li.quasar-select-data-item').removeClass('selected');
 							$_inputHidden.val('');
-							$_inputVisible.text('').attr({'data-ext':''});
+							self.setHtml('');
+							$_inputVisible.attr({'data-ext':''});
 							self.selectedItem = null;
 						}
 					};
 					/**
 					 * 为输入框添加聚焦、键入、失焦事件
 					 */
-					$_inputVisible.on('click', function(e){
+					$_inputVisible.on('click focus', function(e){
 						e.stopPropagation(); // 主要用于配合body的click事件
-						_handlerPlaceholder(false);
 						self.showList();
-					}).on('keyup', function(e){
+					}).on('keyup', function(){
 						var keyword = self.getHtml();
 						self.search(keyword);
 					}).on('keydown', function(e){
@@ -286,7 +268,6 @@ try{
 								break;
 						}
 					}).on('blur', function(){
-						_handlerPlaceholder(true);
 						_handlerInput();
 					});
 					/**
@@ -326,7 +307,8 @@ try{
 					 */
 					$(self).find('li.quasar-select-data-item').on('click touchend', function(){
 						var value = $(this).attr('data-value'), html = $(this).html(), ext = $(this).attr('data-ext');
-						$_inputVisible.text(html).attr({'data-ext':ext ? ext : ''});
+						$_inputVisible.attr({'data-ext':ext ? ext : ''});
+						self.setHtml(html);
 						$_inputHidden.val(value);
 						self.hideList();
 						$(self).find('li.quasar-select-data-item').removeClass('selected');
@@ -389,7 +371,8 @@ try{
 			var _selectHoverItem    = function(){
 				var $object = $(self).find('li.quasar-select-data-item.hover'), ext = $(this).attr('data-ext');
 				$_inputHidden.val($object.attr('data-value'));
-				$_inputVisible.text($object.text()).attr({'data-ext':ext ? ext : ''});
+				self.setHtml($object.text());
+				$_inputVisible.attr({'data-ext':ext ? ext : ''});
 				self.hideList();
 				$(self).find('li.quasar-select-data-item').removeClass('selected');
 				self.selectedItem = $object;
@@ -544,7 +527,8 @@ try{
 					data = opts.data[index];
 					if(data == undefined) return false;
 					$_inputHidden.val(data.value);
-					$_inputVisible.text(data.html).attr({'data-ext':data['ext'] ? data['ext'] : ''});
+					self.setHtml(data.html);
+					$_inputVisible.attr({'data-ext':data['ext'] ? data['ext'] : ''});
 					$_dataItems.trigger('quasar.event.select');
 					$(self).find('li.quasar-select-data-item').removeClass('selected');
 				}else{
@@ -553,7 +537,8 @@ try{
 						if(data == undefined) return false;
 						$_dataItems.removeClass('selected');
 						$_inputHidden.val(data.getAttribute('data-value'));
-						$_inputVisible.text(data.innerText);
+						self.setHtml(data.innerText);
+						$_inputVisible.attr('data-ext', data.getAttribute('data-ext'));
 						$(data).addClass('selected');
 						self.hideList();
 					}else{
@@ -579,10 +564,9 @@ try{
 			 * @returns string
 			 */
 			this.getHtml = function(){
-				var html = $_inputVisible.html();
-				html     = html.replace(new RegExp('<span[A-Za-z=\"\'_\\-:; ]+>'+opts.placeholder+'</span>'), '');
-				html     = html.replace(new RegExp('<[A-Za-z=\"\'_\\-:;/ ]+>'), '');
-				return html;
+				// html     = html.replace(new RegExp('<span[A-Za-z=\"\'_\\-:; ]+>'+opts.placeholder+'</span>'), '');
+				// html     = html.replace(new RegExp('<[A-Za-z=\"\'_\\-:;/ ]+>'), '');
+				return $_inputVisible.val();
 			};
 			/**
 			 * 获取扩展字符
@@ -607,6 +591,7 @@ try{
 			 */
 			this.setHtml = function(html){
 				$_inputVisible.text(html);
+				$_inputVisible.val(html);
 			};
 			/**
 			 * 设定扩展字符

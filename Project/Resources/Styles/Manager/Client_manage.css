@@ -72,6 +72,49 @@
 }
 
 
+.coupon_area{
+	padding: 0 0 10px 0;
+}
+
+.coupon_area .coupon_box{
+	border :1px solid rgba(0,0,0,.12);
+	padding: 12px 8px 0 8px;
+}
+
+.coupon_area .coupon_box .coupon_list {
+	font-size: 0;
+}
+
+.coupon_area .coupon_box .coupon_list a {
+	font-size: 14px;
+	margin-bottom: 8px;
+	margin-right: 8px;
+	text-shadow: none;
+}
+
+.coupon_area .coupon_box .coupon_list a.active {
+	background: #00A0E8;
+	border-color: #00A0E8;
+	color : #fff;
+}
+
+.coupon_footer {
+	border :1px solid rgba(0,0,0,.12);
+	border-top: none;
+	padding: 5px;
+	text-align: center;
+}
+.coupon_footer .confirm {
+	border-radius: 0;
+	padding: 5px 13px ;
+	background: #00A0E8;
+	border-color: #00A0E8;
+	color : #fff;
+	text-shadow: none;
+}
+
+
+
 
 
 

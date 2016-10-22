@@ -34,3 +34,14 @@ function checkIsEmpty(){
 	}
 	return true;
 }
+
+$(function(){
+	AlterObject.object.deptSelect.onQuasarSelect(function(){
+		var dept = AlterObject.object.deptSelect.getHtml();
+		var end = dept.lastIndexOf(')');
+		var start = dept.lastIndexOf('(');
+		var company = dept.substr(start+1, end-start-1);
+		AlterObject.object.companySelect.setValue(company);
+		AlterObject.object.companySelect.setHtml(company);
+	});
+});

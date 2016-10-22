@@ -45,6 +45,13 @@
 			</if>
 			<if condition="$permission_list['COUPON.VIEW'] eq 1">
 				<li class="side_item <php>if('Coupon'==$c_name) echo 'active';</php>">
+					<a href="<{:U('Receivables/manage')}>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-usd"></i> <span class="nav-label">收款管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li>
+			</if>
+			<if condition="$permission_list['COUPON.VIEW'] eq 1">
+				<li class="side_item <php>if('Coupon'==$c_name) echo 'active';</php>">
 					<a href="<{:U('Coupon/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">券管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
@@ -85,6 +92,17 @@
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
+			<li class="side_item cls <php>if('Report'==$c_name) echo 'active';</php>">
+				<div class="side-item-link no_link">
+					<i class="icon_nav glyphicon glyphicon-trash"></i> <span class="nav-label">报表查询</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</div>
+				<ul class="nav-second-level">
+					<li>
+						<a href="<{:U('Report/joinReceivables')}>">报名收款数据</a>
+					</li>
+				</ul>
+			</li>
 			<if condition="($permission_list['RECYCLE.VIEW-CLIENT'] eq 1) OR ($permission_list['RECYCLE.VIEW-EMPLOYEE'] eq 1) OR ($permission_list['RECYCLE.VIEW-ROLE'] eq 1) OR ($permission_list['RECYCLE.VIEW-MEETING'] eq 1)">
 				<li class="side_item cls <php>if('Recycle'==$c_name) echo 'active';</php>">
 					<div class="side-item-link no_link">

@@ -48,16 +48,37 @@ $(function(){
 		$('#modify_coupon').find('#coupon_name_a').val(coupon_name);
 		$('#modify_coupon').find('input[name=comment]').val(comment);
 		$('#modify_coupon').find('input[name=coupon_code]').val(coupon_code);
-		ManageObject.object.loading.loading();
+		DetailsObject.object.loading.loading();
 		Common.ajax({
 			data:{requestType:'alter_coupon', id:id}, async:false, callback:function(data){
-				ManageObject.object.loading.complete();
+				DetailsObject.object.loading.complete();
 				console.log(data);
 				if(data){
-					ManageObject.object.meetingSelect.setHtml(data.name);
+					DetailsObject.object.meetingSelectAlter.setHtml(data.name);
 				}
 			}
 		});
+	});
+	// 批量修改券
+	$('.batch_alter_btn_confirm').on('click', function(){
+		var str = '';
+		$('.check_item .icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
+			str += id+','
+		});
+		var s, newStr = "";
+		s             = str.charAt(str.length-1);
+		if(s == ","){
+			for(var i = 0; i<str.length-1; i++){
+				newStr += str[i];
+			}
+		}
+		if(str!=''){
+			$('#batch_modify_coupon').modal('show')
+		}else{
+			DetailsObject.object.toast.toast('请选择券！');
+		}
+		$('#batch_modify_coupon').find('input[name=id]').val(newStr);
 	});
 	// 删除券
 	$('.delete_btn').on('click', function(){
@@ -77,6 +98,11 @@ $(function(){
 			for(var i = 0; i<str.length-1; i++){
 				newStr += str[i];
 			}
+		}
+		if(str!=''){
+			$('#batch_delete_coupon').modal('show')
+		}else{
+			DetailsObject.object.toast.toast('请选择券！');
 		}
 		$('#batch_delete_coupon').find('input[name=id]').val(newStr);
 	});
@@ -177,32 +203,32 @@ function checkCreate(){
 	var $start_time       = $('#start_time');
 	var $end_time         = $('#end_time');
 	if($selected_meeting.text() == ''){
-		ManageObject.object.toast.toast("会议不能为空");
+		DetailsObject.object.toast.toast("会议不能为空");
 		$selected_meeting.focus();
 		return false;
 	}
 	if($coupon_name.val() == ''){
-		ManageObject.object.toast.toast("券名不能为空");
+		DetailsObject.object.toast.toast("券名不能为空");
 		$coupon_name.focus();
 		return false;
 	}
 	if($price.val() == ''){
-		ManageObject.object.toast.toast("价格不能为空");
+		DetailsObject.object.toast.toast("价格不能为空");
 		$price.focus();
 		return false;
 	}
 	/*if($number.val() == ''){
-	 ManageObject.object.toast.toast("数量不能为空");
+	 DetailsObject.object.toast.toast("数量不能为空");
 	 $number.focus();
 	 return false;
 	 }*/
 	if($start_time.val() == ''){
-		ManageObject.object.toast.toast("开始时间不能为空");
+		DetailsObject.object.toast.toast("开始时间不能为空");
 		$start_time.focus();
 		return false;
 	}
 	if($end_time.val() == ''){
-		ManageObject.object.toast.toast("结束时间不能为空");
+		DetailsObject.object.toast.toast("结束时间不能为空");
 		$end_time.focus();
 		return false;
 	}
@@ -215,27 +241,27 @@ function checkAlter(){
 	var $start_time       = $('#start_time_a');
 	var $end_time         = $('#end_time_a');
 	if($selected_meeting.text() == ''){
-		ManageObject.object.toast.toast("会议不能为空");
+		DetailsObject.object.toast.toast("会议不能为空");
 		$selected_meeting.focus();
 		return false;
 	}
 	if($coupon_name.val() == ''){
-		ManageObject.object.toast.toast("券名不能为空");
+		DetailsObject.object.toast.toast("券名不能为空");
 		$coupon_name.focus();
 		return false;
 	}
 	if($price.val() == ''){
-		ManageObject.object.toast.toast("价格不能为空");
+		DetailsObject.object.toast.toast("价格不能为空");
 		$price.focus();
 		return false;
 	}
 	if($start_time.val() == ''){
-		ManageObject.object.toast.toast("开始时间不能为空");
+		DetailsObject.object.toast.toast("开始时间不能为空");
 		$start_time.focus();
 		return false;
 	}
 	if($end_time.val() == ''){
-		ManageObject.object.toast.toast("结束时间不能为空");
+		DetailsObject.object.toast.toast("结束时间不能为空");
 		$end_time.focus();
 		return false;
 	}

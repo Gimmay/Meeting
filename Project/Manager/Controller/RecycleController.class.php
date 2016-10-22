@@ -30,7 +30,7 @@
 			$client_list = $model->findClient(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 				'status'  => 2,
 			]);
 			if(IS_POST){
@@ -60,7 +60,7 @@
 			$client_list = $model->findEmployee(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 				'status'  => 2,
 			]);
 			if(IS_POST){
@@ -90,7 +90,7 @@
 			$client_list = $model->findMeeting(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 				'status'  => 4,
 			]);
 			if(IS_POST){
@@ -125,7 +125,7 @@
 			$client_list = $model->findRole(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 				'status'  => 2,
 			]);
 			if(IS_POST){
@@ -157,7 +157,7 @@
 			$client_list = $coupon_model->findCoupon(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 				'status'  => 2,
 			]);
 			foreach($client_list as $k => $v){
@@ -187,17 +187,17 @@
 			$coupon_item_model  = D('Core/Recycle');
 			$list_total = $coupon_item_model->findCouponItem(0, [
 				'keyword' => I('get.keyword', ''),
-				'status'  => 2,
+				'status'  => 3,
 			]);
 			/* 分页设置 */
 			$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
 			\ThinkPHP\Quasar\Page\setTheme1($page_object);
 			$page_show = $page_object->show();
 			/* 当前页的员工记录列表 */
-			$coupon_item_result = $coupon_model->findCoupon(2, [
+			$coupon_item_result = $coupon_item_model->findCouponItem(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 				'status'  => 3,
 			]);
 			foreach($coupon_item_result as $k => $v){
@@ -209,6 +209,7 @@
 				$coupon_item_result[$k]['creator']   = $employee_result['name'];
 			}
 			$this->assign('coupon_item', $coupon_item_result);
+			$this->assign('page_show',$page_show);
 			$this->display();
 		}
 

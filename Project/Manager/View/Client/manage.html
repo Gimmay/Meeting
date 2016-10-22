@@ -26,7 +26,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jcalculator/jcalculator.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="Quasar" data-mvc-name="<{:'/'.CONTROLLER_NAME.'/'.ACTION_NAME}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="Quasar" data-mvc-name="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -44,44 +44,44 @@
 						<header class="c_header">
 							<div class="function_list clearfix">
 								<if condition="$permission_list['CLIENT.CREATE'] eq 1">
-									<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
+									<div class="function_btn bg-warning">
 										<a href="<{:U('Client/create',['mid'=>I('get.mid')])}>"> <i></i>
 											<p>新建客户</p>
 										</a>
 									</div>
 								</if>
 								<if condition="$permission_list['CLIENT.DELETE'] eq 1">
-									<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_client" data-backdrop="static">
+									<div class="function_btn bg-danger batch_delete_btn_confirm">
 										<i></i>
 										<p>批量删除</p>
 									</div>
 								</if>
 								<if condition="$permission_list['CLIENT.REVIEW'] eq 1">
-									<div class="function_btn bg-f63	 batch_review_btn_confirm" data-toggle="modal" data-target="#batch_review_client" data-backdrop="static">
+									<div class="function_btn bg-f63	 batch_review_btn_confirm">
 										<i></i>
 										<p>批量审核</p>
 									</div>
 								</if>
 								<if condition="$permission_list['CLIENT.ANTI-REVIEW'] eq 1">
-									<div class="function_btn bg-f63	 batch_anti_review_btn_confirm" data-toggle="modal" data-target="#batch_anti_review_client" data-backdrop="static">
+									<div class="function_btn bg-f63	 batch_anti_review_btn_confirm">
 										<i></i>
 										<p>取消审核</p>
 									</div>
 								</if>
 								<if condition="$permission_list['CLIENT.SIGN'] eq 1">
-									<div class="function_btn bg-success batch_sign_point" data-toggle="modal" data-target="#batch_sign_point" data-backdrop="static">
+									<div class="function_btn bg-success batch_sign_point">
 										<i></i>
 										<p>批量签到</p>
 									</div>
 								</if>
 								<if condition="$permission_list['CLIENT.ANTI-SIGN'] eq 1">
-									<div class="function_btn bg-success batch_anti_sign_point" data-toggle="modal" data-target="#batch_anti_sign_point" data-backdrop="static">
+									<div class="function_btn bg-success batch_anti_sign_point">
 										<i></i>
 										<p>取消签到</p>
 									</div>
 								</if>
 								<if condition="$permission_list['CLIENT.SEND-INVITATION'] eq 1">
-									<div class="function_btn bg-f63	 batch_send_message_btn_confirm" data-toggle="modal" data-target="#batch_send_message" data-backdrop="static">
+									<div class="function_btn bg-f63	 batch_send_message_btn_confirm">
 										<i></i>
 										<p>批量发送消息</p>
 									</div>
@@ -113,7 +113,7 @@
 									</div>
 								</if>
 								<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE'] eq 1">
-									<div class="function_btn bg-warning assign_sign_place" data-toggle="modal" data-target="#batch_alter_sign_point" data-backdrop="static">
+									<div class="function_btn bg-warning assign_sign_place">
 										<i></i>
 										<p>分配签到点</p>
 									</div>
@@ -156,16 +156,17 @@
 							<table class="table table-bordered" id="tableExcel" style="text-align: center">
 								<thead>
 									<tr>
-										<td width="5%" class="all_check">
+										<td width="2%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
+										<td width="3%">序号</td>
 										<td width="5%">姓名</td>
 										<td width="4%">性别</td>
 										<td width="5%">手机号</td>
-										<td width="8%">会所名称</td>
+										<td width="9%">会所名称</td>
 										<td width="7%">签到时间</td>
 										<td width="5%">签到方式</td>
-										<td width="5%">收款</td>
+										<td width="4%">收款</td>
 										<td width="4%">状态</td>
 										<td width="10%">审核/签到/打印</td>
 										<td width="7%">创建时间</td>
@@ -178,6 +179,7 @@
 											<td class="check_item">
 												<input type="checkbox" class="icheck" value="<{$single.cid}>" data-join-value="<{$single.id}>" placeholder="">
 											</td>
+											<td><{$i}></td>
 											<td class="name"><{$single.name}></td>
 											<td>
 												<span class="color-info">
@@ -271,7 +273,7 @@
 														</case>
 													</switch>
 													<if condition="$permission_list['CLIENT.EARN-PAYMENT']">
-														<a href="<{:U('Receivables/manage')}>" class="btn btn-default btn-xs">收款</a>
+														<a href="<{:U('Receivables/manage',['mid'=>I('get.mid', 0, 'int'), 'cid'=>$single['cid']])}>" class="btn btn-default btn-xs">收款</a>
 													</if>
 													<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE']">
 														<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
@@ -301,7 +303,7 @@
 		</div>
 	</div>
 	<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE']">
-		<!-- 单个修改签到点 -->
+		<!-- 单个分配签到点 -->
 		<div class="modal fade" id="alter_sign_point" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -309,25 +311,23 @@
 						<button type="button" class="close" data-dismiss="modal">
 							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 						</button>
-						<h2 class="modal-title">修改签到点</h2>
+						<h2 class="modal-title">分配签到点</h2>
 					</div>
 					<form class="form-horizontal" role="form" method="post" action="">
 						<input type="hidden" name="requestType" value="assign_sign_place">
 						<input type="hidden" name="cid" id="alter_sign_place_cid">
 						<div class="modal-body">
-							<div class="form-group">
-								<label class="col-sm-3 control-label">选择签到点：</label>
-								<div class="col-sm-9">
-									<div class="number_list_box selected">
-										<div class="col-sm-12 title">
-											<h3>已选择签到点</h3>
-										</div>
-										<div class=" number_list clearfix">
-										</div>
+							<div class="coupon_area">
+								<div class="coupon_box">
+									<div class="coupon_list">
+										<volist name="sign_place_list" id="single">
+											<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="<{$single.value}>"><{$single.html}></a>
+										</volist>
 									</div>
 								</div>
 							</div>
 						</div>
+						<input type="hidden" name="sign_place">
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 							<button type="submit" class="btn btn-primary">确认</button>
@@ -344,19 +344,23 @@
 						<button type="button" class="close" data-dismiss="modal">
 							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 						</button>
-						<h2 class="modal-title">批量修改签到点</h2>
+						<h2 class="modal-title">分配签到点</h2>
 					</div>
 					<form class="form-horizontal" role="form" method="post" action="">
-						<input type="hidden" name="requestType" value="multi_assign_sign_place">
+						<input type="hidden" name="requestType" value="batch_assign_sign_place">
 						<input type="hidden" name="cid" id="alter_multi_sign_place_cid">
 						<div class="modal-body">
-							<div class="form-group">
-								<label for="sign_place" class="col-sm-3 control-label">选择签到点：</label>
-								<div class="col-sm-9">
-									<div id="batch_sign_place"></div>
+							<div class="coupon_area">
+								<div class="coupon_box">
+									<div class="coupon_list">
+										<volist name="sign_place_list" id="single">
+											<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="<{$single.value}>"><{$single.html}></a>
+										</volist>
+									</div>
 								</div>
 							</div>
 						</div>
+						<input type="hidden" name="sign_place">
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 							<button type="submit" class="btn btn-primary">确认</button>
@@ -366,8 +370,8 @@
 			</div>
 		</div>
 	</if>
-	<if condition="$permission_list['CLIENT.EARN-PAYMENT']">
-		<!-- 收款 -->
+<!--	<if condition="$permission_list['CLIENT.EARN-PAYMENT']">
+		&lt;!&ndash; 收款 &ndash;&gt;
 		<div class="modal fade" id="receivables_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog" style="width: 50%">
 				<div class="modal-content">
@@ -415,10 +419,10 @@
 							<div class="form-group">
 								<label class="col-sm-2 control-label">代金券：</label>
 								<div class="col-sm-10">
-									<!--<div class="input-group" id="show_coupon">
+									&lt;!&ndash;<div class="input-group" id="show_coupon">
 										<input type="text" name="coupon" id="coupon" class="form-control">
 										<span class="input-group-addon"><span class="glyphicon glyphicon-th-list choose_ticket"></span></span>
-									</div>-->
+									</div>&ndash;&gt;
 
 									<div class="number_list_box selected">
 										<div class="col-sm-12 title">
@@ -455,31 +459,7 @@
 				</div>
 			</div>
 		</div>
-	</if>
-	<!-- 券列表 -->
-	<div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">券列表</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
-					<div class="modal-body">
-						<section>
-							<div class="ticket_item"></div>
-						</section>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认删除</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+	</if>-->
 	<if condition="$permission_list['CLIENT.DELETE'] eq 1">
 		<!-- 删除客户 -->
 		<div class="modal fade" id="delete_client" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -721,15 +701,6 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				signPlaceSelect      :$('#sign_place').QuasarSelect({
-					name        :'sid',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($sign_place_list)}>',
-					idInput     :'selected_sign_place',
-					idHidden    :'selected_sign_place_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
 				batchSignPlaceSelect :$('#batch_sign_place').QuasarSelect({
 					name        :'sid',
 					classStyle  :'form-control',
@@ -738,34 +709,6 @@
 					idHidden    :'selected_sign_place_batch_form',
 					placeholder :'',
 					hasEmptyItem:false
-				}),
-				birthDate            :$('#birth_date').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd',
-					weekStart         :0,
-					startView         :4,
-					minView           :2,
-					maxView           :4,
-					minuteStep        :5
-				}),
-				timeDate            :$('#time_layout').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd',
-					weekStart         :0,
-					startView         :2,
-					minView           :2,
-					maxView           :4,
-					minuteStep        :5
 				}),
 				toast               :$().QuasarToast(),
 				loading             :$().QuasarLoading(),

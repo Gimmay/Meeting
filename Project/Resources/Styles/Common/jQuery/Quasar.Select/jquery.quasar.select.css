@@ -51,19 +51,21 @@ ul.quasar-select-data-list > li.quasar-select-data-item.selected{
 	font-weight : bolder;
 }
 
-div.quasar-select-input{
+textarea.quasar-select-input{
 	overflow           : hidden;
 	word-break         : keep-all;
 	white-space        : nowrap;
 	word-wrap          : normal;
-	background         : #faffbd;
+	background         : #EEEEEE;
 	transition         : all 0.5s ease;
 	-moz-transition    : all 0.5s ease;
 	-webkit-transition : all 0.5s ease;
 	-o-transition      : all 0.5s ease;
+	resize             : none;
+	height             : 34px;
 }
 
-div.quasar-select-input.insert-mode{
+textarea.quasar-select-input.insert-mode{
 	background : white;
 }
 

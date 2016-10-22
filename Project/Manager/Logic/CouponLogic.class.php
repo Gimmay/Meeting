@@ -109,7 +109,7 @@
 					else{
 						array_push($meeting_arr['id'], $v2['mid']);
 						$meeting_record = $meeting_model->findMeeting(1, ['id' => $v2['mid']]);
-						$url            = U('manage', ['mid' => $meeting_record['id']]);
+						$url            = U('couponlist', ['mid' => $meeting_record['id'],'id'=> $coupon_list[$k2]['coupon_id']]);
 						array_push($meeting_arr['name'], "<a href='$url'>$meeting_record[name]</a>");
 					}
 				}

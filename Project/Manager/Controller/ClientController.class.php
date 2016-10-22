@@ -76,7 +76,7 @@
 			$client_list = $main_model->findRecord(2, array_merge([
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get.column', 'main.creatime').' '.I('get.sort', 'desc'),
+				'_order'  => I('get._column', 'main.creatime').' '.I('get._sort', 'desc'),
 				'status'  => 'not deleted'
 			], $options));
 			/* 设定额外字段 */
@@ -200,7 +200,7 @@
 			if(isset($_GET['mid'])) $options['mid'] = $mid;
 			$client_list = $main_model->findRecord(2, array_merge([
 				'keyword' => I('get.keyword', ''),
-				'_order'  => I('get.column', 'main.creatime').' '.I('get.sort', 'desc'),
+				'_order'  => I('get._column', 'main.creatime').' '.I('get._sort', 'desc'),
 				'status'  => 'not deleted'
 			], $options));
 			$client_list = $logic->alterColumnForExportExcel($client_list, [

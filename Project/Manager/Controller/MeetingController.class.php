@@ -73,7 +73,7 @@
 				$meeting_list = $model->findMeeting(2, [
 					'keyword' => I('get.keyword', ''),
 					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-					'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+					'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 					'status'  => 'not deleted'
 				]); // 查出一页会议的内容
 				$meeting_list = $meeting_logic->setExtendColumnForManage($meeting_list);

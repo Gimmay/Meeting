@@ -1,2 +1,5 @@
 # Created by .ignore support plugin (hsz.mobi)
+# 永久禁止
 .idea/
+Project/Runtime/
+Project/Uploads/

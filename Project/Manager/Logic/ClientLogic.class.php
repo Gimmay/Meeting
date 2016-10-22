@@ -322,12 +322,11 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'multi_review':
+				case 'multi_review': // 批量审核
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model    = D('Core/Join');
-					$data['id']    = I('post.id', '');
 					$meeting_id    = I('get.mid');
-					$client_id_arr = explode(',', $data['id']);
+					$client_id_arr = explode(',', I('post.id', ''));
 					$join_id       = [];
 					foreach($client_id_arr as $v){
 						$join_record = $join_model->findRecord(1, ['cid' => $v, 'mid' => $meeting_id]);
@@ -341,7 +340,7 @@
 
 					return array_merge($result2, ['__ajax__' => false]);
 				break;
-				case 'multi_anti_review':
+				case 'multi_anti_review': // 批量反审核
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model    = D('Core/Join');
 					$data['id']    = I('post.id', '');
@@ -357,7 +356,7 @@
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
-				case 'sign':
+				case 'sign': // 签到
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model    = D('Core/Join');
 					$id            = I('post.id', 0, 'int');
@@ -369,22 +368,12 @@
 					]);
 					if($join_record['review_status'] == 1){
 						C('TOKEN_ON', false);
-						if(I('post.sid', 0, 'int') === 0){
-							$result = $join_model->alterRecord([$join_record['id']], [
-								'sign_status'      => 1,
-								'sign_time'        => time(),
-								'sign_director_id' => $sign_director,
-								'sign_type'        => 1
-							]);
-						}
-						else{
-							$result = $join_model->alterRecord([$join_record['id']], [
-								'sign_status'      => 1,
-								'sign_time'        => time(),
-								'sign_director_id' => $sign_director,
-								'sign_place_id'    => I('post.sid', 0, 'int')
-							]);
-						}
+						$result = $join_model->alterRecord([$join_record['id']], [
+							'sign_status'      => 1,
+							'sign_time'        => time(),
+							'sign_director_id' => $sign_director,
+							'sign_type'        => 1
+						]);
 						if($result['status']){
 							$message_logic = new MessageLogic();
 							$message_logic->send($meeting_id, 1, [$id]);
@@ -393,7 +382,7 @@
 						return array_merge($result, ['__ajax__' => true]);
 					}
 					else return ['status' => false, 'message' => '此客户信息还没有被审核', '__ajax__' => true];
-				break;
+				break; // 取消签到
 				case 'anti_sign':
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
@@ -416,30 +405,107 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'receivables': {
-					$id        = I('post.code', '');
-					$coupon_id = explode(',', $id);
-					C('TOKEN_ON', false);
-					/** @var \Core\Model\ReceivablesModel $receivables_model */
-					$receivables_model  = D('Core/Receivables');
-					$data               = I('post.');
-					$data['mid']        = I('get.mid', 0, 'int');
-					$data['cid']        = I('post.cid');
-					$data['time']       = strtotime(I('post.time'));
-					$data['payee_id']   = $_POST['payee_id'] ? I('post.payee_id', 0, 'int') : I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					$data['creatime']   = time();
-					$data['coupon_ids'] = I('post.code');
-					$receivables_result = $receivables_model->createRecord($data);
-					foreach($coupon_id as $v){
-						/** @var \Core\Model\CouponItemModel $model */
-						$model  = D('Core/CouponItem');
-						$result = $model->alterCouponItem($v, ['status' => 2, 'cid' => $data['cid']]);
+				case 'multi_sign': // 批量签到
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model    = D('Core/Join');
+					$message_logic = new MessageLogic();
+					$id_arr        = explode(',', I('post.id', ''));
+					$meeting_id    = I('get.mid', 0, 'int');
+					$sign_director = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$count         = 0;
+					$send_list     = [];
+					foreach($id_arr as $val){
+						$join_record = $join_model->findRecord(1, [
+							'cid' => $val,
+							'mid' => $meeting_id
+						]);
+						if($join_record['review_status'] == 1){
+							C('TOKEN_ON', false);
+							$result = $join_model->alterRecord([$join_record['id']], [
+								'sign_status'      => 1,
+								'sign_time'        => time(),
+								'sign_director_id' => $sign_director,
+								'sign_type'        => 1
+							]);
+							if($result['status']){
+								$send_list[] = $val;
+								$count++;
+							}
+						}
+						if($count%50 == 0 && $count != 0){
+							$message_logic->send($meeting_id, 1, $send_list);
+							$send_list = [];
+						}
 					}
-
-					return $receivables_result;
-				}
+					if($count<50 && $count>0) $message_logic->send($meeting_id, 1, $send_list);
+					if($count == 0) return ['status' => false, 'message' => '批量签到失败', '__ajax__' => false];
+					elseif($count == count($id_arr)) return [
+						'status'   => true,
+						'message'  => '批量签到成功',
+						'__ajax__' => false
+					];
+					else return ['status' => true, 'message' => '部分批量签到成功', '__ajax__' => false];
 				break;
+				case 'multi_anti_sign':
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model    = D('Core/Join');
+					$message_logic = new MessageLogic();
+					$id_arr        = explode(',', I('post.id', ''));
+					$meeting_id    = I('get.mid', 0, 'int');
+					$count         = 0;
+					$send_list     = [];
+					foreach($id_arr as $val){
+						$join_record = $join_model->findRecord(1, [
+							'cid' => $val,
+							'mid' => $meeting_id
+						]);
+						C('TOKEN_ON', false);
+						$result = $join_model->alterRecord([$join_record['id']], [
+							'sign_status'      => 2,
+							'sign_time'        => null,
+							'sign_type'        => 0
+						]);
+						if($result['status']){
+							$send_list[] = $val;
+							$count++;
+						}
+						if($count%50 == 0 && $count != 0){
+							$message_logic->send($meeting_id, 2, $send_list);
+							$send_list = [];
+						}
+					}
+					if($count<50 && $count>0) $message_logic->send($meeting_id, 1, $send_list);
+					if($count == 0) return ['status' => false, 'message' => '批量取消签到失败', '__ajax__' => false];
+					elseif($count == count($id_arr)) return [
+						'status'   => true,
+						'message'  => '批量取消签到成功',
+						'__ajax__' => false
+					];
+					else return ['status' => true, 'message' => '部分批量取消签到成功', '__ajax__' => false];
+				break;
+				//				case 'receivables':
+				//					$id        = I('post.code', '');
+				//					$coupon_id = explode(',', $id);
+				//					C('TOKEN_ON', false);
+				//					/** @var \Core\Model\ReceivablesModel $receivables_model */
+				//					$receivables_model  = D('Core/Receivables');
+				//					$data               = I('post.');
+				//					$data['mid']        = I('get.mid', 0, 'int');
+				//					$data['cid']        = I('post.cid');
+				//					$data['time']       = strtotime(I('post.time'));
+				//					$data['payee_id']   = $_POST['payee_id'] ? I('post.payee_id', 0, 'int') : I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+				//					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+				//					$data['creatime']   = time();
+				//					$data['coupon_ids'] = I('post.code');
+				//					$receivables_result = $receivables_model->createRecord($data);
+				//					foreach($coupon_id as $v){
+				//						/** @var \Core\Model\CouponItemModel $model */
+				//						$model  = D('Core/CouponItem');
+				//						$result = $model->alterCouponItem($v, ['status' => 2, 'cid' => $data['cid']]);
+				//					}
+				//
+				//					return $receivables_result;
+				//				break;
 				case 'delete';
 					///** @var \Core\Model\ClientModel $model */
 					//$model = D('Core/Client');
@@ -475,18 +541,19 @@
 					$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 					$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
 					$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/id/$client_id/mid/$meeting_id";
-					$result1 = $wxcorp_logic->sendMessage('news', [
+					$result1        = $wxcorp_logic->sendMessage('news', [
 						[
 							'title'       => "$meeting_record[name]",
 							'description' => "亲爱的$record[name]，请于$meeting_record[start_time]前点击\"查看全文\"后出示二维码提供给签到负责人进行签到",
 							'url'         => $url
 						]
 					], ['user' => [$weixin_record['weixin_id']]]);
-					$url     = getShortUrl($url); // 使用新浪的t.cn短地址
-					$result2 = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
-					if(!$result1['status']) return ['status'=>false, 'message'=>'微信推送信息失败', '__ajax__'=>true];
-					if(!$result2['status']) return ['status'=>false, 'message'=>'短信发送失败', '__ajax__'=>true];
-					return ['status'=>true, 'message'=>'发送消息成功', '__ajax__' => true];
+					$url            = getShortUrl($url); // 使用新浪的t.cn短地址
+					$result2        = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
+					if(!$result1['status']) return ['status' => false, 'message' => '微信推送信息失败', '__ajax__' => true];
+					if(!$result2['status']) return ['status' => false, 'message' => '短信发送失败', '__ajax__' => true];
+
+					return ['status' => true, 'message' => '发送消息成功', '__ajax__' => true];
 				break;
 				case 'multi_send_message':
 					$wxcorp_logic = new WxCorpLogic();
@@ -521,7 +588,7 @@
 					/** @var \Core\Model\JoinSignPlaceModel $join_sign_place_model */
 					$join_sign_place_model = D('Core/JoinSignPlace');
 					$cid                   = I('post.cid', 0, 'int');
-					$sid_str               = I('post.sid', 0, 'int');
+					$sid_str               = I('post.sign_place', '');
 					$sid_arr               = explode(',', $sid_str);
 					$count                 = 0;
 					C('TOKEN_ON', false);
@@ -533,22 +600,23 @@
 							'creatime' => time()
 						]);
 						if($result['status']) $count++;
+						echo 1;
 					}
 					if($count == count($sid_arr)) return ['status' => true, 'message' => '分配成功', '__ajax__' => false];
 					elseif($count == 0) return ['status' => false, 'message' => '分配失败', '__ajax__' => false];
 					else return ['status' => true, 'message' => '部分分配成功', '__ajax__' => false];
 				break;
-				case 'multi_assign_sign_place':
+				case 'batch_assign_sign_place':
 					/** @var \Core\Model\JoinSignPlaceModel $join_sign_place_model */
 					$join_sign_place_model = D('Core/JoinSignPlace');
 					$cid_str               = I('post.cid', '');
-					$sid_str               = I('post.sid', '');
+					$sid_str               = I('post.sign_place', '');
 					$cid_arr               = explode(',', $cid_str);
 					$sid_arr               = explode(',', $sid_str);
 					C('TOKEN_ON', false);
 					$count = 0;
-					foreach($cid_arr as $c_key => $c_val){
-						foreach($sid_arr as $s_key => $s_val){
+					foreach($cid_arr as $c_val){
+						foreach($sid_arr as $s_val){
 							$result = $join_sign_place_model->createRecord([
 								'cid'      => $c_val,
 								'sid'      => $s_val,

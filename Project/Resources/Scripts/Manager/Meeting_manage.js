@@ -22,7 +22,11 @@ $(function(){
 			for(var i=0;i<str.length-1;i++){
 				newStr+=str[i];
 			}
-			console.log(newStr);
+		}
+		if(str!=''){
+			$('#batch_delete_meeting').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择会议！');
 		}
 		$('#batch_delete_meeting').find('input[name=id]').val(newStr);
 	});

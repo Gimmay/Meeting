@@ -78,7 +78,7 @@
 					$employee_list = $model->listEmployee(2, [
 						'keyword' => I('get.keyword', ''),
 						'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-						'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+						'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 						'status'  => 'not deleted',
 						'rid'     => $role_id,
 						'did'     => isset($_GET['did']) ? I('get.did', 0, 'int') : null
@@ -99,7 +99,7 @@
 					$employee_list = $model->findEmployee(2, [
 						'keyword' => I('get.keyword', ''),
 						'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-						'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+						'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 						'status'  => 'not deleted',
 						'did'     => isset($_GET['did']) ? I('get.did', 0, 'int') : null
 					]);
@@ -128,17 +128,19 @@
 				}
 				/** @var \Manager\Model\TDOAUserModel $oa_user_model */
 				$oa_user_model = D('TDOAUser');
-				/** @var \Core\Model\DepartmentModel $dept_model */
-				$dept_model = D('Core/Department');
+				/** @var \Manager\Model\DepartmentModel $dept_model */
+				$dept_model = D('Manager/Department');
 				/* 获取职位列表（for select插件） */
 				$position = $model->getPositionSelectList();
 				/* 获取OA用户列表（for select插件） */
 				$oa_user = $oa_user_model->getUserSelectList();
 				/* 获取部门列表（for select插件） */
 				$dept = $dept_model->getDepartmentSelectList();
+				$company=$dept_model->getCompanySelectList();
 				$this->assign('position', $position);
 				$this->assign('oa_user', $oa_user);
 				$this->assign('dept', $dept);
+				$this->assign('company', $company);
 				$this->display();
 			}
 			else $this->error('您没有创建员工的权限');
@@ -159,14 +161,16 @@
 				$logic = new EmployeeLogic();
 				$info  = $core_model->findEmployee(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
 				$info  = $logic->writeExtendInformation($info, true);
-				/** @var \Core\Model\DepartmentModel $dept_model */
-				$dept_model = D('Core/Department');
+				/** @var \Manager\Model\DepartmentModel $dept_model */
+				$dept_model = D('Manager/Department');
 				/* 获取职位列表（for select插件） */
 				$position = $model->getPositionSelectList();
 				/* 获取部门列表（for select插件） */
 				$dept = $dept_model->getDepartmentSelectList();
+				$company = $dept_model->getCompanySelectList();
 				$this->assign('position', $position);
 				$this->assign('dept', $dept);
+				$this->assign('company', $company);
 				$this->assign('employee', $info);
 				$this->display();
 			}

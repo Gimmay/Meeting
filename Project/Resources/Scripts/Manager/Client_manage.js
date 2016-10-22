@@ -189,20 +189,6 @@ $(function(){
 			getIframeData();
 		}, 2000);
 	});
-	// 收款按钮
-	$('.receivables_btn').on('click', function(){
-		var name = $(this).parents('tr').find('.name').text();
-		var id   = $(this).parent('.btn-group').attr('data-id');
-		var mid   = $('body').attr('data-meeting-id');
-		Common.ajax({
-			data:{requestType:'get_receivables', cid:id, mid:mid},
-			callback:function(result){
-				console.log(result)
-			}
-		});
-		$('#receivables_modal').find('input[name=cid]').val(id);
-		$('#receivables_modal').find('input[name=name]').val(name);
-	});
 	//审核按钮
 	$('.review_btn').on('click', function(){
 		var id  = $(this).parent('.btn-group').attr('data-id');
@@ -253,6 +239,11 @@ $(function(){
 				newStr += str[i];
 			}
 		}
+		if(newStr!=''){
+			$('#batch_review_client').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择客户！');
+		}
 		$('#batch_review_client').find('input[name=id]').val(newStr);
 	});
 	// 批量取消审核客户
@@ -268,6 +259,11 @@ $(function(){
 			for(var i = 0; i<str.length-1; i++){
 				newStr += str[i];
 			}
+		}
+		if(newStr!=''){
+			$('#batch_anti_review_client').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择客户！');
 		}
 		$('#batch_anti_review_client').find('input[name=id]').val(newStr);
 	});
@@ -327,6 +323,11 @@ $(function(){
 				newStr += str[i];
 			}
 		}
+		if(newStr!=''){
+			$('#batch_sign_point').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择客户！');
+		}
 		$('#batch_sign_point').find('input[name=id]').val(newStr);
 	});
 	// 批量取消签到
@@ -342,6 +343,11 @@ $(function(){
 			for(var i = 0; i<str.length-1; i++){
 				newStr += str[i];
 			}
+		}
+		if(newStr!=''){
+			$('#batch_anti_sign_point').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择客户！');
 		}
 		$('#batch_anti_sign_point').find('input[name=id]').val(newStr);
 	});
@@ -363,6 +369,11 @@ $(function(){
 			str_join += join_id+',';
 		});
 		str = str.substr(0, str.length-1);
+		if(str!=''){
+			$('#batch_delete_client').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择客户！');
+		}
 		str_join = str_join.substr(0, str_join.length-1);
 		var $object = $('#batch_delete_client');
 		$object.find('input[name=id]').val(str);
@@ -400,12 +411,30 @@ $(function(){
 				newStr += str[i];
 			}
 		}
+		if(newStr!=''){
+			$('#batch_send_message').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择客户！');
+		}
 		$('#batch_send_message').find('input[name=id]').val(newStr);
 	});
 	// 分配签到点 (single)
 	$('.alter_sign_point_btn').on('click', function(){
 		var cid = $(this).parent().attr('data-id');
 		$('#alter_sign_place_cid').val(cid).attr('value', cid);
+	});
+	$('#alter_sign_point .coupon_list a').on('click',function(){
+		if($(this).hasClass('active')){
+			$(this).removeClass('active');
+		}else{
+			$(this).addClass('active');
+		}
+		var arr=[];
+		$('.coupon_list a.active').each(function(){
+			var id= $(this).attr('data-id');
+			arr.push(id);
+		});
+		$('#alter_sign_point').find('input[name=sign_place]').val(arr);
 	});
 	// 分配签到点 (multi)
 	$('.assign_sign_place').on('click', function(){
@@ -415,29 +444,27 @@ $(function(){
 			str += id+','
 		});
 		str = str.substr(0, str.length-1);
+		if(str!=''){
+			$('#batch_alter_sign_point').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择客户！');
+		}
 		$('#alter_multi_sign_place_cid').val(str).attr('value', str);
 	});
-	// 收款
-	$('.unselected .number_list a').on('click', function(){
-		var id   = $(this).attr('data-id');
-		var text = $(this).text();
-		var arr  = [];
-		//$(this).addClass('selected');
-		$('.number_list_box.selected .number_list a').each(function(){
-			var s_id = $(this).attr('data-id');
-			arr.push(s_id);
-		});
-		var status = arr.indexOf(id);
-		if(status == -1){
-			$('.number_list_box.selected .number_list').append('<a data-id='+id+'>'+text+'</a>');
-			keepCode();
+	$('#batch_alter_sign_point .coupon_list a').on('click',function(){
+		if($(this).hasClass('active')){
+			$(this).removeClass('active');
+		}else{
+			$(this).addClass('active');
 		}
-		$('.number_list_box.selected .number_list a').on('click', function(){
-			$(this).remove();
-			keepCode();
-
-		})
+		var arr=[];
+		$('.coupon_list a.active').each(function(){
+			var id= $(this).attr('data-id');
+			arr.push(id);
+		});
+		$('#batch_alter_sign_point').find('input[name=sign_place]').val(arr);
 	});
+
 	// 人员状态列表（签到\审核\收款）
 	var mvc         = $('#Quasar').attr('data-mvc-name');
 	var suffix      = $('#Quasar').attr('data-page-suffix');

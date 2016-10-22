@@ -34,7 +34,7 @@
 				<div class="main_body">
 					<section class="content">
 						<div class="return">
-							<a class="btn btn-default"  onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
+							<a class="btn btn-default" onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
 						</div>
 						<div class="table_wrap">
 							<form class="form-horizontal" role="form" method="post" id="form" action="" onsubmit="return checkIsEmpty()">
@@ -93,6 +93,12 @@
 										</div>
 									</div>
 									<div class="form-group">
+										<label for="company" class="col-sm-1 control-label"><b style="vertical-align: middle;color: red;">*</b>公司：</label>
+										<div class="col-sm-11">
+											<div id="company"></div>
+										</div>
+									</div>
+									<div class="form-group">
 										<label for="title" class="col-sm-1 control-label">职称：</label>
 										<div class="col-sm-11">
 											<div id="title"></div>
@@ -144,7 +150,7 @@
 					justInput   :true,
 					hasEmptyItem:false,
 					defaultValue:'<{$employee.position}>',
-					defaultHtml:'<{$employee.position}>'
+					defaultHtml :'<{$employee.position}>'
 				}),
 				titleSelect   :$('#title').QuasarSelect({
 					name        :'title',
@@ -156,7 +162,7 @@
 					justInput   :true,
 					hasEmptyItem:false,
 					defaultValue:'<{$employee.title}>',
-					defaultHtml:'<{$employee.title}>'
+					defaultHtml :'<{$employee.title}>'
 				}),
 				deptSelect    :$('#department').QuasarSelect({
 					name        :'did',
@@ -167,7 +173,18 @@
 					placeholder :'',
 					hasEmptyItem:false,
 					defaultValue:'<{$employee.did}>',
-					defaultHtml:'<{$employee.did}>'
+					defaultHtml :'<{$employee.department}>'
+				}),
+				companySelect :$('#company').QuasarSelect({
+					name        :'company',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($company)}>',
+					idInput     :'selected_company',
+					idHidden    :'selected_company_form',
+					placeholder :'',
+					hasEmptyItem:false,
+					defaultValue:'<{$employee.company}>',
+					defaultHtml :'<{$employee.company}>'
 				}),
 				birthDate     :$('#birth_date').datetimepicker({
 					language          :'zh-CN',
@@ -184,7 +201,7 @@
 					minuteStep        :5
 				}),
 				toast         :$().QuasarToast(),
-				loading: $().QuasarLoading()
+				loading       :$().QuasarLoading()
 			}
 		};
 	</script>

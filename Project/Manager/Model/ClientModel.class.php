@@ -61,4 +61,14 @@ AND COLUMN_NAME NOT IN (\'id\', \'password\', \'status\', \'creatime\', \'creato
 			else return $result;
 		}
 
+		public function getClientSelectList(){
+			$sql = "SELECT
+	CONCAT(`name`) `html`, CONCAT(`name`, ',', pinyin_code) `keyword`,
+	`id` `value`
+FROM user_client
+WHERE STATUS = 1";
+
+			return $this->query($sql);
+		}
+
 	}

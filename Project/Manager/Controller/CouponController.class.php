@@ -45,7 +45,7 @@
 			$coupon_list = $coupon_model->findCoupon(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 				'status'  => 'not deleted',
 			]);
 			$coupon_list = $coupon_logic->setExtendColumnForManage($coupon_list);
@@ -75,16 +75,21 @@
 				exit;
 			}
 			/** @var \Core\Model\CouponItemModel $model */
-			$model       = D('Core/CouponItem');
-			$id          = I('get.id', 0, 'int');
-			$result      = $model->findCouponItem(0, ['coupon_id' => $id, 'status' => 'not delete']);
+			$model = D('Core/CouponItem');
+			$id    = I('get.id', 0, 'int');
+			if(isset($_GET['status'])){
+				$result = $model->findCouponItem(0, ['coupon_id' => $id, 'status' => I('get.status', 0, 'int')]);
+			}
+			else{
+				$result = $model->findCouponItem(0, ['coupon_id' => $id, 'status' => 'not deleted']);
+			}
 			$page_object = new Page($result, 10);
 			$page_show   = $page_object->show();
 			if(isset($_GET['status'])){
 				$info = $model->findCouponItem(2, [
 					'keyword'   => I('get.keyword', ''),
 					'_limit'    => $page_object->firstRow.','.$page_object->listRows,
-					'_order'    => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+					'_order'    => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 					'status'    => I('get.status', 0, 'int'),
 					'coupon_id' => I('get.id', 0, 'int'),
 				]);
@@ -93,7 +98,7 @@
 				$info = $model->findCouponItem(2, [
 					'keyword'   => I('get.keyword', ''),
 					'_limit'    => $page_object->firstRow.','.$page_object->listRows,
-					'_order'    => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+					'_order'    => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 					'status'    => 'not deleted',
 					'coupon_id' => I('get.id', 0, 'int'),
 				]);
@@ -114,6 +119,39 @@
 			$this->assign('coupon', $coupon_result);
 			$this->assign('meeting_list', $employee_list);
 			$this->assign('info', $info);
+			$this->assign('page_show', $page_show);
+			$this->display();
+		}
+
+		public function couponList(){
+			/** @var \Core\Model\CouponItemModel $coupon_item_model */
+			$coupon_item_model = D('Core/CouponItem');
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			/** @var \Core\Model\CouponModel $coupon_model */
+			$coupon_model      = D('Core/Coupon');
+			$coupon_item_count = $coupon_item_model->findCouponItem(0, [
+				'mid'       => I('get.mid', 0, 'int'),
+				'coupon_id' => I('get.id', 0, 'int'),
+				'keyword'   => I('get.keyword', '')
+			]);
+			/* 分页设置 */
+			$page_object        = new Page($coupon_item_count, C('PAGE_RECORD_COUNT'));
+			$page_show          = $page_object->show();
+			$coupon_item_result = $coupon_item_model->findCouponItem(2, [
+				'keyword'   => I('get.keyword', ''),
+				'_limit'    => $page_object->firstRow.','.$page_object->listRows,
+				'_order'    => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+				'mid'       => I('get.mid', 0, 'int'),
+				'coupon_id' => I('get.id', 0, 'int')
+			]);
+			foreach($coupon_item_result as $k => $v){
+				$coupon_result                       = $coupon_model->findCoupon(1, ['id' => $coupon_item_result[$k]['coupon_id']]);
+				$meeting_result                      = $meeting_model->findMeeting(1, ['id' => $coupon_item_result[$k]['mid']]);
+				$coupon_item_result[$k]['coupon_id'] = $coupon_result['name'];
+				$coupon_item_result[$k]['mid']       = $meeting_result['name'];
+			}
+			$this->assign('coupon', $coupon_item_result);
 			$this->assign('page_show', $page_show);
 			$this->display();
 		}

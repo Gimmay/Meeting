@@ -63,7 +63,7 @@
 				$role_list = $model->findRole(2, [
 					'keyword' => I('get.keyword', ''),
 					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-					'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+					'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 					'status'  => 'not deleted'
 				]);
 				$role_list = $setExtendColumn($role_list);

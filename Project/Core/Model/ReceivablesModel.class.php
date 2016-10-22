@@ -78,4 +78,14 @@
 
 			return $result;
 		}
+
+		public function sumPrice($filter = []){
+			$where = [];
+			if(isset($filter['cid']) && $filter['cid']) $where['cid'] = $filter['cid'];
+			if(isset($filter['mid']) && $filter['mid']) $where['mid'] = $filter['mid'];
+			if($where == []) $result = $this->sum('price');
+			else $result = $this->where($where)->sum('price');
+
+			return $result;
+		}
 	}

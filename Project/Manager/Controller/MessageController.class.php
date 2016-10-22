@@ -35,7 +35,7 @@
 				'status'=>'not deleted',
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
+				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 			]);
 			foreach($list as $k => $v){
 				$employee_result     = $employee_model->findEmployee(1, ['id' => $list[$k]['creator']]);

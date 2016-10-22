@@ -256,6 +256,7 @@ textarea{
 	background   : #00a0e8 !important;
 	border-color : #00a0e8 !important;
 	color : #fff;
+	text-shadow: none;
 }
 
 .bg-danger{

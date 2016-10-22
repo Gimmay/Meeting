@@ -69,6 +69,11 @@ $(function(){
 				newStr += str[i];
 			}
 		}
+		if(str!=''){
+			$('#batch_delete_coupon').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择券！');
+		}
 		$('#batch_delete_coupon').find('input[name=id]').val(newStr);
 	});
 	// 自动批量获取卡号

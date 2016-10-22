@@ -22,6 +22,7 @@
 		public function findCouponItem($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['coupon_id'])) $where['coupon_id'] = $filter['coupon_id'];
+			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);

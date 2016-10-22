@@ -63,10 +63,4 @@
 
 			return $result;
 		}
-
-		public function getDepartmentSelectList(){
-			$sql = "select main.name as keyword, main.id as value, concat(main.name, ' (', ifnull((select sub.name from user_department sub where sub.id = main.parent_id), '吉美集团'), ')') html from user_department main";
-
-			return $this->query($sql);
-		}
 	}

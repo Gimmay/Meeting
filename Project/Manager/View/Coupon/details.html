@@ -23,7 +23,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="Quasar" data-mvc-name="<{:'/'.CONTROLLER_NAME.'/'.ACTION_NAME}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>" ></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="Quasar" data-mvc-name="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>" ></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -41,9 +41,13 @@
 									<i></i>
 									<p>添加券</p>
 								</div>
-								<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_coupon">
+								<div class="function_btn bg-danger batch_delete_btn_confirm">
 									<i></i>
 									<p>批量删除</p>
+								</div>
+								<div class="function_btn bg-danger batch_alter_btn_confirm">
+									<i></i>
+									<p>批量修改</p>
 								</div>
 							</div>
 						</header>
@@ -101,7 +105,7 @@
 										<td>
 										<switch name="info.status">
 											<case value="0">未使用</case>
-											<case value="1">已使用</case>
+											<case value="1"><span style="color: red">已使用</span></case>
 											<case value="2">退费</case>
 											<case value="3">删除</case>
 										</switch>
@@ -294,6 +298,40 @@
 			</div>
 		</div>
 	</div>
+	<!-- 批量修改券 -->
+	<div class="modal fade" id="batch_modify_coupon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">修改券</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return checkAlter()">
+					<input type="hidden" name="requestType" value="muti_alter"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="meeting_b" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>会议：</label>
+							<div class="col-sm-10">
+								<div id="meeting_b"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-10">
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;灰色输入框默认不可编写，券模板自动带出。</p>
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、开始段、长度、数量等字段可自动获取券号。</p>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">保存</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 	<!-- 删除券 -->
 	<div class="modal fade" id="delete_coupon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -340,9 +378,9 @@
 		</div>
 	</div>
 	<script>
-		var ManageObject = {
+		var DetailsObject = {
 			object:{
-				meetingSelect:$('#meeting').QuasarSelect({
+				meetingSelectCreate:$('#meeting').QuasarSelect({
 					name        :'meeting_name',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting_list)}>',
@@ -351,14 +389,13 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				meetingSelect:$('#meeting_a').QuasarSelect({
+				meetingSelectAlter:$('#meeting_a').QuasarSelect({
 					name        :'meeting_name_a',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting_list)}>',
 					idInput     :'selected_meeting_a',
 					idHidden    :'selected_meeting_a_form',
 					placeholder :'',
-					defaultValue :'<{:json_encode($meeting_list)}>',
 					hasEmptyItem:false
 				}),
 				icheck       :$('.icheck').iCheck({

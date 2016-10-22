@@ -18,7 +18,7 @@ $(function(){
 		$('.mes_num').text(mes_num);
 		relationMes(text);
 	});
-	$('#textarea_edit').on('keyup', function(){
+	$('#textarea_edit').on('keyup,change', function(){
 		var textarea_length = $('#textarea_edit').val().length;
 		$('.words_num').text(textarea_length);
 		var text    = $('#textarea_edit').val();

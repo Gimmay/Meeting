@@ -31,7 +31,11 @@ $(function(){
 			for(var i = 0; i<str.length-1; i++){
 				newStr += str[i];
 			}
-			console.log(newStr);
+		}
+		if(str!=''){
+			$('#batch_delete_signPlace').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择签到点！');
 		}
 		$('#batch_delete_signPlace').find('input[name=id]').val(newStr);
 	});
