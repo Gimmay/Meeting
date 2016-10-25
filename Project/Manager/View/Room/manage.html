@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>酒店列表 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<!--<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/custom.css">-->
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/menu"/>
+			<div class="mt_wrapper">
+				<include file="Public/header"/>
+				<div class="main_body">
+					<section class="content">
+						<header class="c_header">
+							<div class="function_list clearfix">
+								<if condition="$permission_list['ROLE.CREATE'] eq 1">
+									<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_room">
+										<i></i>
+										<p>添加酒店</p>
+									</div>
+								</if>
+								<if condition="$permission_list['ROLE.DELETE'] eq 1">
+									<div class="function_btn bg-danger batch_delete_btn_confirm">
+										<i></i>
+										<p>批量删除</p>
+									</div>
+								</if>
+							</div>
+						</header>
+						<div class="repertory clearfix">
+							<form action="" method="get">
+								<div class="input-group repertory_text">
+									<input type="search" name="keyword" class="form-control" placeholder="酒店/拼音简码" value="">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default mian_search">搜索</button>
+									</span>
+								</div>
+								<a type="reset" class="btn btn-default mian_search" href="<{:U('manage')}>">查看所有</a>
+							</form>
+						</div>
+						<div class="table_wrap">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="4%" class="all_check">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</td>
+										<td width="3%">序号</td>
+										<td width="10%">酒店名称</td>
+										<td width="13%">会议名称</td>
+										<td width="10%">入住情况</td>
+										<td width="10%">管理人员(联系方式)</td>
+										<td width="10%">类型</td>
+										<td width="10%">备注</td>
+										<td width="30%">操作</td>
+									</tr>
+								</thead>
+								<volist name="info" id="info">
+									<tbody>
+										<tr>
+											<td class="check_item">
+												<input type="checkbox" class="icheck" placeholder="" value="<{$info.id}>">
+											</td>
+											<td><{$i}></td>
+											<td class="hotel_name"><{$info.hotel_name}></td>
+											<td class="meeting_name"><{$info.meeting_name}></td>
+											<td>
+												满（100人） 未满（入住50人 未入住20人） 空
+											</td>
+											<td><{$info.client_name}>（<{$info.mobile}>）</td>
+											<td>类型</td>
+											<td><{$info.comment}></td>
+											<td>
+												<div class="btn-group" data-id="<{$info.id}>">
+													<a href="" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#distribution_room">分配房间</a>
+													<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_hotel">修改</button>
+													<button class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_hotel">删除</button>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</volist>
+							</table>
+
+						</div>
+						<div class="page_wrap">
+							<div class="pagination">
+								<{$page_show}>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加酒店 -->
+	<div class="modal fade" id="create_room" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">添加酒店</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="create">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="hotel_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>酒店名称：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control hotel_name" name="hotel_name" id="hotel_name">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="meeting_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>会议名称：</label>
+							<div class="col-sm-10">
+								<div id="meeting_name"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="room_comment" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" id="room_comment"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 修改酒店 -->
+	<if condition="$permission_list['ROLE.ALTER'] eq 1">
+		<div class="modal fade" id="alter_hotel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title">修改酒店</h2>
+					</div>
+					<form class="form-horizontal" role="form" action="" method="post">
+						<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
+						<div class="modal-body">
+							<div class="form-group">
+								<label for="hotel_name_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>酒店名称：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control hotel_name" name="hotel_name" id="hotel_name_a">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="meeting_name_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>会议名称：</label>
+								<div class="col-sm-10">
+									<div id="meeting_name_a"></div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="room_comment_a" class="col-sm-2 control-label">备注：</label>
+								<div class="col-sm-10">
+									<textarea class="form-control comment" name="comment" id="room_comment_a"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary">确认</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</if>
+	<!-- 删除酒店 -->
+	<if condition="$permission_list['ROLE.DELETE'] eq 1">
+		<div class="modal fade" id="delete_hotel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title">删除记录</h2>
+					</div>
+					<form class="form-horizontal" role="form" method="post" action="">
+						<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+						<div class="modal-body">
+							是否删除？
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary">确认</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</if>
+	<!-- 批量删除 -->
+	<if condition="$permission_list['ROLE.DELETE'] eq 1">
+		<div class="modal fade" id="batch_delete_hotel" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title">批量删除角色</h2>
+					</div>
+					<form class="form-horizontal" role="form" method="post" action="">
+						<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+						<div class="modal-body">
+							是否删除已选<span class="sAmount"></span>项？
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary batch_delete_btn">确认删除</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</if>
+	<script>
+		var ManageObject = {
+			object:{
+				//　酒店分配
+				meetingSelect:$('#meeting_name,#meeting_name_a').QuasarSelect({
+					name        :'meeting_name',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($meeting)}>',
+					idInput     :'selected_meeting_name',
+					idHidden    :'selected_meeting_name_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				toast        :$().QuasarToast(),
+				icheck       :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				}),
+				loading      :$().QuasarLoading()
+			}
+		}
+	</script>
+</body>
+</html>

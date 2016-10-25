@@ -219,8 +219,11 @@ canvas{
 }
 
 .add{
+	position   : absolute;
+	right      : 0;
+	top        : 0;
 	text-align : center;
-	padding    : 16px 0;
+	padding    : 4px;
 	border     : 0;
 }
 
@@ -235,73 +238,89 @@ canvas{
 }
 
 .coupon_area{
-	padding-bottom: 8px;
+	padding-bottom : 8px;
 }
 
 .coupon_area .coupon_box{
-	border :1px solid rgba(0,0,0,.12);
-	padding: 12px 8px 0 8px;
+	border  : 1px solid rgba(0, 0, 0, .12);
+	padding : 12px 8px 0 8px;
 }
 
-.coupon_area .coupon_box .coupon_list {
-	font-size: 0;
-}
-.coupon_area .coupon_box .coupon_list a {
-	margin-bottom: 8px;
-	margin-left: 8px;
-	text-shadow: none;
-	font-size: 14px;
+.coupon_area .coupon_box .coupon_list{
+	font-size : 0;
 }
 
-.coupon_area .coupon_box .coupon_list a.active {
-	background: #00A0E8;
-	border-color: #00A0E8;
-	color : #fff;
+.coupon_area .coupon_box .coupon_list a{
+	margin-bottom : 8px;
+	margin-left   : 8px;
+	text-shadow   : none;
+	font-size     : 14px;
 }
 
-.coupon_footer {
-	border :1px solid rgba(0,0,0,.12);
-	border-top: none;
-	padding: 5px;
-	text-align: center;
-}
-.coupon_footer .confirm {
-	border-radius: 0;
-	padding: 5px 13px ;
-	background: #00A0E8;
-	border-color: #00A0E8;
-	color : #fff;
-	text-shadow: none;
+.coupon_area .coupon_box .coupon_list a.active{
+	background   : #00A0E8;
+	border-color : #00A0E8;
+	color        : #FFFFFF;
 }
 
-
-.no_record {
-	text-align: center;
-	padding: 30px !important;
-	font-size: 16px;
+.coupon_footer{
+	border     : 1px solid rgba(0, 0, 0, .12);
+	border-top : none;
+	padding    : 5px;
+	text-align : center;
 }
 
-.n_search {
-	padding: 16px;
-	background: #ecf1f4;
-	margin-top: 16px;
-	border :1px solid rgba(0,0,0,.12);
-}
-.n_search .search_li {
-	float: left;
-	margin-right: 20px;
+.coupon_footer .confirm{
+	border-radius : 0;
+	padding       : 5px 13px;
+	background    : #00A0E8;
+	border-color  : #00A0E8;
+	color         : #FFFFFF;
+	text-shadow   : none;
 }
 
-.n_search .search_li label {
-	float: left;
-	vertical-align: middle;
-	margin-top: 12px;
-	font-size: 14px;
-	font-weight: normal;
+.no_record{
+	text-align : center;
+	padding    : 30px !important;
+	font-size  : 16px;
 }
-.n_search .search_li > div {
-	float: left;
-	width: 200px;
+
+.n_search{
+	padding    : 16px;
+	background : rgba(0,0,0,0.02);
+	margin-top : 16px;
+	border     : 1px solid rgba(0, 0, 0, .12);
+}
+
+.n_search .search_li{
+	float        : left;
+	margin-right : 20px;
+}
+
+.n_search .search_li label{
+	float          : left;
+	vertical-align : middle;
+	margin-top     : 12px;
+	font-size      : 14px;
+	font-weight    : normal;
+}
+
+.n_search .search_li > div{
+	float : left;
+	width : 200px;
+}
+#idCalculadora {
+	position : absolute;
+	z-index :99;
+	right :0;
+}
+#calcuator {
+	float: right;
+}
+
+.repertory {
+	border: none;
+	padding: 0;
 }
 
 

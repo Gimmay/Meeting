@@ -176,4 +176,12 @@
 			}
 			else $this->error('您没有修改员工的权限');
 		}
+		
+		public function personalCenter(){
+			$this->display();
+		}
+
+		public function forgetPassword(){
+			$this->display();
+		}
 	}

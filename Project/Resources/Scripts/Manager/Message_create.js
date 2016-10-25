@@ -51,6 +51,7 @@ $(function(){
 
 	// 搜索条件的收件人
 	$('.btn_search_add').on('click',function(){
+		$('.selected_attendee').text('0');
 		var data = $('#search_attendee_form').serialize();
 		console.log(data);
 		data+='&requestType=search';
@@ -64,7 +65,6 @@ $(function(){
 				var number =0;
 				$.each(data,function(index,value){
 					var gender='';
-
 					if(value.gender == 0){
 						gender ='未知'
 					}else if(value.gender == 1){

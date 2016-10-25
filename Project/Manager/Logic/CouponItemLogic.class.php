@@ -51,6 +51,20 @@
 					$result = $model->deleteCouponItem($id);
 					return array_merge($result, ['__ajax__' => false]);
 				break;
+				case'multi_alter';
+					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+					$coupon_item_model = D('Core/CouponItem');
+					C('TOKEN_ON', false);
+					$mid = I('post.meeting_name_a', '');
+					$ids = I('post.id', '');
+					$id  = explode(',', $ids);
+					foreach ($id as $v){
+						$coupon_item_result = $coupon_item_model->alterCouponItem($v,['mid'=>$mid]);
+					}
+
+
+					return array_merge($coupon_item_result, ['__ajax__' => false]);
+				break;
 				case'alter';
 					$id['id'] = I('post.id', '');
 					C('TOKEN_ON', false);            //令牌

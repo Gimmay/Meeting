@@ -3,9 +3,20 @@
 	<ul class="nav_info clearfix">
 		<li class="name">
 			<i class="glyphicon glyphicon-user"></i> <span><{$curname}></span>
+			<div class="hidden_dropDown hide">
+				<div class="dropDown_item">
+					<a href="<{:U('Employee/personalCenter')}>">个人信息</a>
+				</div>
+				<!--<div class="dropDown_item">
+					<a href="#">修改密码</a>
+				</div>-->
+				<div class="dropDown_item">
+					<a href="<{:U('Employee/logout')}>">注销</a>
+				</div>
+			</div>
 		</li>
-		<li class="logout">
+		<!--<li class="logout">
 			<a href="<{:U('Employee/logout')}>"> <i class="glyphicon glyphicon-log-out"></i> <span>注销</span> </a>
-		</li>
+		</li>-->
 	</ul>
 </div>

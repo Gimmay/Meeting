@@ -167,7 +167,9 @@
 			}
 			/** @var \Manager\Model\EmployeeModel $employee_model */
 			$employee_model = D('Employee');
+			$employee_name_list = $employee_model->getEmployeeNameSelectList();
 			$employee_list  = $employee_model->getEmployeeSelectList();
+			$this->assign('employee_name_list', $employee_name_list);
 			$this->assign('employee_list', $employee_list);
 			$this->display();
 		}
@@ -239,8 +241,10 @@
 			$info       = $model->findClient(1, $data);
 			/** @var \Manager\Model\EmployeeModel $employee_model */
 			$employee_model = D('Employee');
-			$employee_list  = $employee_model->getEmployeeSelectList();
 			$info           = $logic->setExtendColumnForAlter($info);
+			$employee_name_list = $employee_model->getEmployeeNameSelectList();
+			$employee_list  = $employee_model->getEmployeeSelectList();
+			$this->assign('employee_name_list', $employee_name_list);
 			$this->assign('employee_list', $employee_list);
 			$this->assign('info', $info);
 			$this->display();

@@ -20,12 +20,19 @@ $(function(){
 
 	// 批量删除
 	$('.batch_delete_btn_confirm').on('click', function(){
-		var str = '';
+		var str = '',i = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
 			str += id+',';
+			i++;
 		});
+		$('#batch_delete_message_modal').find('.sAmount').text(i);
 		str = str.substr(0, str.length-1);
+		if(str!=''){
+			$('#batch_delete_message_modal').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择模板！');
+		}
 		var $object = $('#batch_delete_message_modal');
 		$object.find('input[name=id]').val(str);
 	});

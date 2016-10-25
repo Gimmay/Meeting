@@ -20,12 +20,29 @@
 					$data             = I('post.');
 					$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$data['creatime'] = time();
-					$result           = $model->createRecord($data);
+					$result           = $model->createCar($data);
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
+				case 'alter':
+					
+				break;
+				case 'delete':
+
+				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
+				break;
+			}
+		}
+
+		public function setData($type, $data, $option = []){
+			switch($type){
+				case '':
+					return $data;
+				break;
+				default:
+					return $data;
 				break;
 			}
 		}

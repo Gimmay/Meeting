@@ -16,8 +16,8 @@ th, td, label, input[type=checkbox]{ /* table elements 表格元素 */
 /* 设置默认字体 */
 body,
 button, input, select, textarea{ /* for ie */
-	font : 12px/1.2 Tahoma, Helvetica, Arial, "\5b8b\4f53", sans-serif, '微软雅黑'; /* 用 ascii 字符表示，使得在任何编码下都无问题 */
-	font-family: "Helvitica Neue",Helvetica,Arial,"Microsoft YaHei","Hiragino Sans GB",sans-serif;
+	font        : 12px/1.2 Tahoma, Helvetica, Arial, "\5b8b\4f53", sans-serif, '微软雅黑'; /* 用 ascii 字符表示，使得在任何编码下都无问题 */
+	font-family : "Helvitica Neue", Helvetica, Arial, "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
 }
 
 h1{ font-size : 18px; /* 18px / 12px = 1.5 */ }
@@ -252,11 +252,12 @@ textarea{
 	background   : #23C6C8 !important;
 	border-color : #23C6C8 !important;
 }
-.bg-00a0e8 {
-	background   : #00a0e8 !important;
-	border-color : #00a0e8 !important;
-	color : #fff;
-	text-shadow: none;
+
+.bg-00a0e8{
+	background   : #00A0E8 !important;
+	border-color : #00A0E8 !important;
+	color        : #FFFFFF;
+	text-shadow  : none;
 }
 
 .bg-danger{
@@ -418,9 +419,9 @@ textarea{
 }
 
 .mt_navbar > .header{
-	width         : 100%;
-	height        : 60px;
-	border-bottom : 1px solid red;
+	width      : 100%;
+	height     : 60px;
+	box-shadow : 0 1px 4px rgba(0, 0, 0, .5);
 }
 
 .mt_navbar > .header > .logo{
@@ -468,7 +469,7 @@ textarea{
 	content    : '';
 	width      : 3px;
 	height     : 20px;
-	background : red;
+	background : #FB5050;
 }
 
 .mt_navbar > .sidenav > .sidenav_list > .side_item > .side-item-link{
@@ -478,13 +479,18 @@ textarea{
 }
 
 .mt_navbar > .sidenav > .sidenav_list > .side_item > .side-item-link > .icon_nav{
-	margin-right : 6px;
+	margin-right : 15px;
 	color        : rgba(255, 255, 255, .8);
 }
 
 .mt_navbar > .sidenav > .sidenav_list > .side_item > .side-item-link > .nav-label{
-	color     : rgba(255, 255, 255, .8);
+	color     : rgba(255, 255, 255, .7);
 	font-size : 13px;
+}
+
+.mt_navbar > .sidenav > .sidenav_list > .side_item:hover .side-item-link .icon_nav{
+	-webkit-animation : rotate 0.5s linear;
+	animation         : rotate 0.5s linear;
 }
 
 .mt_navbar > .sidenav > .sidenav_list > .side_item > .side-item-link > .arrow{
@@ -552,17 +558,52 @@ textarea{
 }
 
 .mt_wrapper .mt_topbar .nav_info > li{
+	position     : relative;
 	float        : left;
-	height       : inherit;
-	line-height  : 50px;
-	margin-right : 40px;
+	height       : 40px;
+	text-align   : center;
+	border       : 1px solid #00A0E8;
+	margin-top   : 10px;
+	line-height  : 40px;
+	padding      : 0 30px;
 	font-size    : 14px;
 	color        : #666666;
 	cursor       : pointer;
+	color        : #00A0E8;
+	margin-right : 20px;
 }
 
 .mt_wrapper .mt_topbar .nav_info > li > span{
 	margin-left : 5px;
+}
+
+.mt_wrapper .mt_topbar .nav_info > li .hidden_dropDown{
+	text-align  : left;
+	padding     : 10px 0;
+	z-index     : 99;
+	width       : 140px;
+	text-indent : 20px;
+	position    : absolute;
+	top         : 39px;
+	right       : 0;
+	background  : #FFFFFF;
+	box-shadow  : 0 1px 8px 0 rgba(0, 0, 0, .2), 0 3px 4px 0 rgba(0, 0, 0, .14), 0 3px 3px -2px rgba(0, 0, 0, .12);
+}
+
+.mt_wrapper .mt_topbar .nav_info > li .hidden_dropDown .dropDown_item{
+	height      : 40px;
+	width       : 100%;
+	line-height : 40px;
+}
+
+.mt_wrapper .mt_topbar .nav_info > li .hidden_dropDown .dropDown_item a{
+	width   : 100%;
+	height  : 100%;
+	display : block;
+}
+
+.mt_wrapper .mt_topbar .nav_info > li .hidden_dropDown .dropDown_item:hover{
+	background : rgba(0, 0, 0, .1);
 }
 
 .mt_wrapper .mt_topbar .nav_info{
@@ -624,7 +665,7 @@ textarea{
 
 /* 多色小方块 */
 .border_but{
-/ / border-bottom: 1 px solid #fb5050;
+	border-bottom : 1px solid #FB5050;
 }
 
 .function_list{
@@ -667,9 +708,11 @@ textarea{
 	float       : left;
 	margin-left : 10px;
 }
+
 /** title nav**/
 .nav_tab{
 	background : #ECF1F4;
+	position   : relative;
 }
 
 .nav_tab .nav_tab_li{
@@ -697,9 +740,21 @@ textarea{
 	color : #FFFFFF;
 }
 
+.sAmount{
+	font-size : 16px;
+	color     : red;
+}
 
+/* css3 keyframes */
+@-webkit-keyframes rotate{
+	from{ transform : rotate(0deg); }
+	to{ transform : rotate(360deg) }
+}
 
-
+@keyframes rotate{
+	from{ transform : rotate(0deg); }
+	to{ transform : rotate(360deg) }
+}
 
 
 

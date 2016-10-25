@@ -74,23 +74,15 @@
 		}
 
 		public function importClientData($files){
-			$getSavePath = function ($data){
-				return UPLOAD_PATH.$data['data']['excel']['savepath'].$data['data']['excel']['savename'];
-			};
-			$getResult   = function ($data){
-				return $data['data']['excel'];
-			};
 			vendor('PHPExcel.PHPExcel');
 			$core_upload_logic = new UploadLogic();
-			$upload_logic      = new \Manager\Logic\UploadLogic();
-			$result1           = $core_upload_logic->upload($files, '/Excel/');
-			$result2           = $upload_logic->create($getSavePath($result1), $getResult($result1));
-			if($result2['status']){
+			$result           = $core_upload_logic->upload($files, '/Excel/');
+			if($result['status']){
 				$header       = [];
 				$content      = [];
-				$excel_reader = \PHPExcel_IOFactory::createReaderForFile($getSavePath($result1));
+				$excel_reader = \PHPExcel_IOFactory::createReaderForFile($result['data']['filePath']);
 				/** @var \PHPExcel $excel_object */
-				$excel_object = $excel_reader->load($getSavePath($result1));
+				$excel_object = $excel_reader->load($result['data']['filePath']);
 				$excel_object->setActiveSheetIndex(0);
 				$line_number = 0;
 				foreach($excel_object->getActiveSheet()->getRowIterator() as $val){
@@ -115,11 +107,11 @@
 					'data'    => [
 						'head'    => $header,
 						'body'    => $content,
-						'dbIndex' => $result2['id']
+						'dbIndex' => $result['data']['logID']
 					]
 				];
 			}
-			else return $result2;
+			else return $result;
 		}
 
 		public function readClientData($path){

@@ -45,6 +45,16 @@
 			$this->display();
 		}
 
+		public function receivablesDetail(){
+			$cid = I('get.cid', 0, 'int');
+			$mid = I('get.mid', 0, 'int');
+			/** @var \Core\Model\ReceivablesModel $receivables_model */
+			$receivables_model = D('Core/Receivables');
+			$list = $receivables_model->findRecord(2, ['cid'=>$cid, 'mid'=>$mid]);
+			print_r($list);exit;
+			$this->display();
+		}
+
 		/**
 		 * 接收GET参数: type / mid / keyword / _column / _sort
 		 */

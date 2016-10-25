@@ -228,10 +228,13 @@ $(function(){
 	// 批量审核客户
 	$('.batch_review_btn_confirm').on('click', function(){
 		var str = '';
+		var i = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
-			str += id+','
+			str += id+',';
+			i++;
 		});
+		$('#batch_review_client').find('.sAmount').text(i);
 		var s, newStr = "";
 		s             = str.charAt(str.length-1);
 		if(s == ","){
@@ -249,10 +252,13 @@ $(function(){
 	// 批量取消审核客户
 	$('.batch_anti_review_btn_confirm').on('click', function(){
 		var str = '';
+		var i = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
-			str += id+','
+			str += id+',';
+			i++;
 		});
+		$('#batch_anti_review_client').find('.sAmount').text(i);
 		var s, newStr = "";
 		s             = str.charAt(str.length-1);
 		if(s == ","){
@@ -312,10 +318,13 @@ $(function(){
 	// 批量签到
 	$('.batch_sign_point').on('click', function(){
 		var str = '';
+		var i = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
-			str += id+','
+			str += id+',';
+			i++;
 		});
+		$('#batch_sign_point').find('.sAmount').text(i);
 		var s, newStr = "";
 		s             = str.charAt(str.length-1);
 		if(s == ","){
@@ -333,10 +342,13 @@ $(function(){
 	// 批量取消签到
 	$('.batch_anti_sign_point ').on('click', function(){
 		var str = '';
+		var i = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
-			str += id+','
+			str += id+',';
+			i++;
 		});
+		$('#batch_anti_sign_point').find('.sAmount').text(i);
 		var s, newStr = "";
 		s             = str.charAt(str.length-1);
 		if(s == ","){
@@ -361,13 +373,15 @@ $(function(){
 	});
 	// 批量删除客户
 	$('.batch_delete_btn_confirm').on('click', function(){
-		var str = '', str_join = '';
+		var str = '', str_join = '',i=0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
 			var join_id =  $(this).find('.icheck').attr('data-join-value');
 			str += id+',';
 			str_join += join_id+',';
+			i++;
 		});
+		$('#batch_delete_client').find('.sAmount').text(i);
 		str = str.substr(0, str.length-1);
 		if(str!=''){
 			$('#batch_delete_client').modal('show')
@@ -399,11 +413,13 @@ $(function(){
 	});
 	// 批量发送消息
 	$('.batch_send_message_btn_confirm').on('click', function(){
-		var str = '';
+		var str = '',i = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
-			str += id+','
+			str += id+',';
+			i++;
 		});
+		$('#batch_send_message').find('.sAmount').text(i);
 		var s, newStr = "";
 		s             = str.charAt(str.length-1);
 		if(s == ","){

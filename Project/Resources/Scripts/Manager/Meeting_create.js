@@ -73,7 +73,8 @@ function upLoadLogo(){
 			$('.upload_prompt').text('上传成功！');
 			$('.mes_preview_btn').removeClass('hide');
 			$('input[name=logo]').val(data.imageUrl);
-			$('#logo_src').attr('src',data.imageUrl);
+			$('.logo_not').hide();
+			$('.logo_wp img').attr('src',data.imageUrl);
 
 		}else{
 			CreateObject.object.toast.toast("Logo上传失败");

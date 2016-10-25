@@ -116,7 +116,7 @@
 					placeholder :'',
 					hasEmptyItem:false,
 					defaultValue:'<{$list.director_id}>',
-					defaultHtml :'<{$info.develop_consultant_code}>'+" - "+'<{$info.develop_consultant_name}>'
+					defaultHtml :'<{$info.develop_consultant}>'
 				}),
 				signDirectorIdSelect:$('#sign_director_id').QuasarSelect({
 					name        :'sign_director_id',
@@ -127,7 +127,7 @@
 					placeholder :'',
 					hasEmptyItem:false,
 					defaultValue:'<{$list.sign_director_id}>',
-					defaultHtml :'<{$info.service_consultant_code}>'+" - "+'<{$info.service_consultant_name}>'
+					defaultHtml :'<{$info.code}>'+" - "+'<{$info.name}>'
 				}),
 				toast            :$().QuasarToast(),
 				loading          :$().QuasarLoading()

@@ -44,7 +44,7 @@
 				</li>
 			</if>
 			<if condition="$permission_list['COUPON.VIEW'] eq 1">
-				<li class="side_item <php>if('Coupon'==$c_name) echo 'active';</php>">
+				<li class="side_item <php>if('Receivables'==$c_name) echo 'active';</php>">
 					<a href="<{:U('Receivables/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-usd"></i> <span class="nav-label">收款管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
@@ -73,7 +73,7 @@
 			</if>
 			<if condition="$permission_list['ROOM.VIEW'] eq 1">
 				<li class="side_item <php>if('Room'==$c_name) echo 'active';</php>">
-					<a href="<{:U('Room/manage')}>" class="side-item-link">
+					<a href="<{:U('Room/hotel')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-home"></i> <span class="nav-label">房间管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
@@ -94,7 +94,7 @@
 			</if>
 			<li class="side_item cls <php>if('Report'==$c_name) echo 'active';</php>">
 				<div class="side-item-link no_link">
-					<i class="icon_nav glyphicon glyphicon-trash"></i> <span class="nav-label">报表查询</span>
+					<i class="icon_nav glyphicon glyphicon-list-alt"></i> <span class="nav-label">报表查询</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span>
 				</div>
 				<ul class="nav-second-level">

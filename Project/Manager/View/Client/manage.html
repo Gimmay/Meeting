@@ -278,7 +278,7 @@
 													<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE']">
 														<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
 													</if>
-													<a href="<{:U('Badge/preview')}>" class="btn btn-default btn-xs print_badge">打印胸卡</a>
+													<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int'), 'cid'=>$single['cid']])}>" class="btn btn-default btn-xs print_badge">打印胸卡</a>
 													<if condition="$permission_list['CLIENT.ALTER']">
 														<a href="<{:U('Client/alter',['id'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
 													</if>
@@ -370,96 +370,6 @@
 			</div>
 		</div>
 	</if>
-<!--	<if condition="$permission_list['CLIENT.EARN-PAYMENT']">
-		&lt;!&ndash; 收款 &ndash;&gt;
-		<div class="modal fade" id="receivables_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog" style="width: 50%">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">
-							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-						<h2 class="modal-title">收款</h2>
-					</div>
-					<form class="form-horizontal" role="form" method="post" action="">
-						<input type="hidden" name="requestType" value="receivables"> <input type="hidden" name="cid">
-						<div class="modal-body">
-							<div class="form-group">
-								<label for="p_name" class="col-sm-2 control-label">姓名：</label>
-								<div class="col-sm-10">
-									<input type="text" class="form-control name" name="name" id="p_name" disabled>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="price" class="col-sm-2 control-label">收款金额：</label>
-								<div class="col-sm-10">
-									<input type="number" class="form-control price" name="price" id="price">
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label">收款类型：</label>
-								<div class="col-sm-10">
-									<div id="receivables_type"></div>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="time" class="col-sm-2 control-label">收款时间：</label>
-								<div class="col-sm-10">
-									<div class="input-group date form_datetime" id="time_layout">
-										<input class="form-control" id="time" name="time">
-										<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="payee" class="col-sm-2 control-label">收款人：</label>
-								<div class="col-sm-10">
-									<div id="payee"></div>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label">代金券：</label>
-								<div class="col-sm-10">
-									&lt;!&ndash;<div class="input-group" id="show_coupon">
-										<input type="text" name="coupon" id="coupon" class="form-control">
-										<span class="input-group-addon"><span class="glyphicon glyphicon-th-list choose_ticket"></span></span>
-									</div>&ndash;&gt;
-
-									<div class="number_list_box selected">
-										<div class="col-sm-12 title">
-											<h3>已选择代金券</h3>
-										</div>
-										<div class=" number_list clearfix">
-										</div>
-										<input type="hidden" name="code" id="code" value="">
-									</div>
-									<div class="number_list_box unselected">
-										<div class="col-sm-12 title">
-											<h3>可用代金券</h3>
-										</div>
-										<div class=" number_list clearfix">
-											<volist name="coupon_code_list" id="single">
-												<a data-id="<{$single.id}>"><{$single.code}></a>
-											</volist>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="place" class="col-sm-2 control-label">收款地点：</label>
-								<div class="col-sm-10">
-									<input type="text" class="form-control coupon" name="place" id="place">
-								</div>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-							<button type="submit" class="btn btn-primary">收款</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</if>-->
 	<if condition="$permission_list['CLIENT.DELETE'] eq 1">
 		<!-- 删除客户 -->
 		<div class="modal fade" id="delete_client" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -497,7 +407,7 @@
 						<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 						<input type="hidden" name="join_id" value="">
 						<div class="modal-body">
-							是否删除已选客户？
+							是否删除已选<span class="sAmount"></span>位客户？
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -522,7 +432,7 @@
 						<input type="hidden" name="requestType" value="multi_review">
 						<input type="hidden" name="id" value="">
 						<div class="modal-body">
-							是否审核选择客户？
+							是否审核已选<span class="sAmount"></span>位客户？
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -547,7 +457,7 @@
 						<input type="hidden" name="requestType" value="multi_anti_review">
 						<input type="hidden" name="id" value="">
 						<div class="modal-body">
-							是否取消已选客户审核？
+							是否取消已选<span class="sAmount"></span>位客户审核？
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -572,7 +482,7 @@
 						<input type="hidden" name="requestType" value="multi_sign">
 						<input type="hidden" name="id" value="">
 						<div class="modal-body">
-							选择客户签到？
+							是否签到已选<span class="sAmount"></span>项？
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -597,7 +507,7 @@
 						<input type="hidden" name="requestType" value="multi_anti_sign">
 						<input type="hidden" name="id" value="">
 						<div class="modal-body">
-							取消选择客户签到？
+							取消已选<span class="sAmount"></span>项签到？
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -622,7 +532,7 @@
 						<input type="hidden" name="requestType" value="multi_send_message">
 						<input type="hidden" name="id" value="">
 						<div class="modal-body">
-							选择客户发送消息？
+							选择<span class="sAmount"></span>位客户发送消息？
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>

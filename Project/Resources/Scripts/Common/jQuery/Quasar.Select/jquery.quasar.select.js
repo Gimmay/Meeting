@@ -90,6 +90,9 @@ try{
 	 *
 	 * Version 2.41 2016-10-21 18:33
 	 * 输入框点击事件同时触发聚焦事件
+	 *
+	 * Version 2.42 2016-10-24 10:42
+	 * quasar.event.select 事件由对列表触发更改为对插件触发
 	 */
 	(function($){
 		/**
@@ -120,10 +123,10 @@ try{
 		 *    async boolean  指明请求是异步还同步，可用值为 true 或 false，默认值为 true。
 		 *    callback function()  在请求成功后被首先调用的匿名函数，并将请求的返回数据传入匿名函数的第一个参数。
 		 *
-		 * @updated 2016-10-21 18:33
+		 * @updated 2016-10-24 10:42
 		 * @created 2016-05-10
 		 * @author Quasar
-		 * @version 2.41
+		 * @version 2.42
 		 * @param options 组件参数（JSON对象，索引值详见以上说明）
 		 * @returns {$.fn.QuasarSelect}
 		 * @constructor
@@ -221,22 +224,24 @@ try{
 							self.selectedItem = null;
 							$_inputHidden.val(value);
 						}else{
-							for(var i = 0; i<opts.data.length; i++){
-								//noinspection JSUnresolvedVariable
-								if(opts.data[i].keyword.indexOf(value) != -1){
-									handler(i);
-									return true;
+							if(opts.data){
+								for(var i = 0; i<opts.data.length; i++){
+									//noinspection JSUnresolvedVariable
+									if(opts.data[i].keyword.indexOf(value) != -1){
+										handler(i);
+										return true;
+									}
+									if(opts.data[i].html.indexOf(value) != -1){
+										handler(i);
+										return true;
+									}
 								}
-								if(opts.data[i].html.indexOf(value) != -1){
-									handler(i);
-									return true;
-								}
+								$(self).find('li.quasar-select-data-item').removeClass('selected');
+								$_inputHidden.val('');
+								self.setHtml('');
+								$_inputVisible.attr({'data-ext':''});
+								self.selectedItem = null;
 							}
-							$(self).find('li.quasar-select-data-item').removeClass('selected');
-							$_inputHidden.val('');
-							self.setHtml('');
-							$_inputVisible.attr({'data-ext':''});
-							self.selectedItem = null;
 						}
 					};
 					/**
@@ -314,7 +319,7 @@ try{
 						$(self).find('li.quasar-select-data-item').removeClass('selected');
 						self.selectedItem = this;
 						$(this).addClass('selected');
-						$(this).trigger('quasar.event.select');
+						$(self).trigger('quasar.event.select');
 					}).on('mouseenter', function(){
 						$_dataItems.removeClass('hover');
 						$(this).addClass('hover');
@@ -331,10 +336,10 @@ try{
 			var _unbindEvent        = function(){
 				$(self).find('#'+opts.idInput).off('click keydown keyup blur');
 				$(self).find('li.quasar-select-data-item')
-					   .off('click touchend quasar.event.select mouseenter mouseleave');
+					   .off('click touchend mouseenter mouseleave');
 				$(self).find('ul.quasar-select-data-list').off('keydown');
 				$(self).find('span.quasar-select-data-operation-close').off('click touchend');
-				$(self).off('quasar.select.enter');
+				$(self).off('quasar.select.enter quasar.event.select');
 			};
 			/**
 			 * 移动到下一个选取项
@@ -529,7 +534,7 @@ try{
 					$_inputHidden.val(data.value);
 					self.setHtml(data.html);
 					$_inputVisible.attr({'data-ext':data['ext'] ? data['ext'] : ''});
-					$_dataItems.trigger('quasar.event.select');
+					$(self).trigger('quasar.event.select');
 					$(self).find('li.quasar-select-data-item').removeClass('selected');
 				}else{
 					if(!hover){
@@ -621,7 +626,7 @@ try{
 			 * @param callback 自定义回调函数
 			 */
 			this.onQuasarSelect = function(callback){
-				$_dataItems.off('quasar.event.select').on('quasar.event.select', callback);
+				$(self).off('quasar.event.select').on('quasar.event.select', callback);
 			};
 			/**
 			 * 输入框对象

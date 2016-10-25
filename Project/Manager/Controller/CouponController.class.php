@@ -110,14 +110,14 @@
 			$this->assign('count_status1', $count_status1);
 			$this->assign('count_status2', $count_status2);
 			$info = $coupon_item_logic->setExtendColumnForManage($info);
-			/** @var \Manager\Model\MeetingModel $employee_model */
-			$employee_model = D('Meeting');
-			$employee_list  = $employee_model->getMeetingForSelect();
+			/** @var \Manager\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Meeting');
+			$meeting_list  = $meeting_model->getMeetingForSelect();
 			/** @var \Core\Model\CouponModel $coupon_model */
 			$coupon_model  = D('Core/Coupon');
 			$coupon_result = $coupon_model->findCoupon(1, ['id' => I('get.id', 0, 'int')]);
 			$this->assign('coupon', $coupon_result);
-			$this->assign('meeting_list', $employee_list);
+			$this->assign('meeting_list', $meeting_list);
 			$this->assign('info', $info);
 			$this->assign('page_show', $page_show);
 			$this->display();

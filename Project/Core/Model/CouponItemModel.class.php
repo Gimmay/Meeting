@@ -30,9 +30,9 @@
 				else $where['status'] = $filter['status'];
 			}
 			if(isset($filter['keyword']) && $filter['keyword']){
-				$condition['code']        = ['like', "%$filter[keyword]%"];
-				$condition['_logic']      = 'or';
-				$where['_complex']        = $condition;
+				$condition['code']   = ['like', "%$filter[keyword]%"];
+				$condition['_logic'] = 'or';
+				$where['_complex']   = $condition;
 			}
 			switch((int)$type){
 				case 0: // count
@@ -140,7 +140,7 @@ $limit
 					if($result) return ['status' => true, 'message' => '创建代金券成功', 'id' => $result];
 					else return ['status' => false, 'message' => '没有创建代金券'];
 				}catch(Exception $error){
-					$message = $error->getMessage();
+					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);
 					if(!$exception['status']) return $exception;
 					else return ['status' => false, 'message' => $this->getError()];
@@ -155,7 +155,9 @@ $limit
 				if($result) return ['status' => true, 'message' => '创建代金券成功'];
 				else return ['status' => false, 'message' => '创建代金券失败'];
 			}catch(Exception $error){
-				$message = $error->getMessage();
+				$message   = $error->getMessage();
+				$exception = $this->handlerException($message);
+				if(!$exception['status']) return $exception;
 
 				return ['status' => false, 'message' => $message];
 			}

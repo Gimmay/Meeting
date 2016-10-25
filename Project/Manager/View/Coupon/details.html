@@ -307,8 +307,8 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title">修改券</h2>
 				</div>
-				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return checkAlter()">
-					<input type="hidden" name="requestType" value="muti_alter"> <input type="hidden" name="id">
+				<form class="form-horizontal" role="form" action="" method="post">
+					<input type="hidden" name="requestType" value="multi_alter"> <input type="hidden" name="id">
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="meeting_b" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>会议：</label>
@@ -389,7 +389,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				meetingSelectAlter:$('#meeting_a').QuasarSelect({
+				meetingSelectAlter:$('#meeting_a,#meeting_b').QuasarSelect({
 					name        :'meeting_name_a',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting_list)}>',

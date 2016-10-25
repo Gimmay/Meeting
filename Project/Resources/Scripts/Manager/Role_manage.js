@@ -216,16 +216,24 @@ $(function(){
 	// 批量删除角色
 	$('.batch_delete_btn_confirm').on('click', function(){
 		var str = '';
+		var i =0;
 		$('.check_item  .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
-			str += id+','
+			str += id+',';
+			i++;
 		});
+		$('#batch_delete_employee').find('.sAmount').text(i);
 		var s, newStr = "";
 		s             = str.charAt(str.length-1);
 		if(s == ","){
 			for(var i = 0; i<str.length-1; i++){
 				newStr += str[i];
 			}
+		}
+		if(newStr!=''){
+			$('#batch_delete_employee').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择客户！');
 		}
 		$('#batch_delete_employee').find('input[name=id]').val(newStr);
 	});

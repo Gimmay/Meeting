@@ -1,0 +1,27 @@
+
+#calcuator{     box-sizing: content-box; -web-box-sizing: content-box; width : 200px; height : 255px; padding : 10px; border : 1px solid rgba(0,0,0,.2); background : #F8F8F8; -moz-border-radius : 3px; -webkit-border-radius : 3px; border-radius : 3px; box-shadow : 0px 0px 10px #F2F2F2; -moz-box-shadow : 0px 0px 10px #F2F2F2; -webkit-box-shadow : 0px 0px 10px #F2F2F2; margin : 0px auto; }
+
+#calcuator #input-box{ margin : 0; width : 187px; padding : 9px 5px; height : 14px; border : 1px solid #E5E5E5; border-radius : 3px; -webkit-border-radius : 3px; -moz-border-radius : 3px; background : #FFFFFF; text-align : right; line-height : 14px; font-size : 12px; font-family : Verdana, Geneva, sans-serif; color : #666666; outline : none; text-transform : uppercase; }
+
+#calcuator #btn-list{ width : 200px; overflow : hidden; }
+
+#calcuator #btn-list .btn-radius{ border-radius : 2px; -webkit-border-radius : 2px; -moz-border-radius : 2px; border : 1px solid #E5E5E5; background : -webkit-gradient(linear, 0 0, 0 100%, from(#F7F7F7), to(#EBEBEB)); background : -moz-linear-gradient(top, #F7F7F7, #EBEBEB); filter : progid:DXImageTransform.Microsoft.gradient(startColorstr=#F7F7F7, endColorstr=#EBEBEB, grandientType=1); line-height : 29px; text-align : center; text-shadow : 0px 1px 1px #FFFFFF; font-weight : bold; font-family : Verdana, Geneva, sans-serif; color : #666666; float : left; margin-left : 11px; margin-top : 11px; font-size : 12px; cursor : pointer; }
+
+#calcuator #btn-list .btn-radius:active{ background : #FFFFFF; }
+
+#calcuator #btn-list .clear-marginleft{ margin-left : 0; }
+
+#calcuator #btn-list .font-14{ font-size : 14px; }
+
+#calcuator #btn-list .color-red{ color : #FF5050 }
+
+#calcuator #btn-list .color-blue{ color : #00B4FF }
+
+#calcuator #btn-list .btn-30{ width : 29px; height : 29px; }
+
+#calcuator #btn-list .btn-70{ width : 70px; height : 29px; }
+
+.close_calcuator {
+	text-align: center;
+	padding-top: 10px;
+}

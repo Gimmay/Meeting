@@ -7,7 +7,9 @@
 	 */
 	namespace Manager\Logic;
 
+	use Core\Logic\QRCodeLogic;
 	use Core\Logic\UploadLogic;
+	use Quasar\StringPlus;
 
 	class MeetingLogic extends ManagerLogic{
 		public function _initialize(){
@@ -193,25 +195,28 @@
 						if(I('post.city')) $data['place'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
 						else $data['place'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
 						$result = $model->createMeeting($data);
-
+						if($result['status']){
+							$qrcode_obj = new QRCodeLogic();
+							/** @var \Core\Model\MeetingModel $model */
+							$model       = D('Core/Meeting');
+							$url         = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/my/mid/$result[id].aspx";
+							$qrcode_file = $qrcode_obj->make($url);
+							$remote_url  = '/'.trim($qrcode_file, './');
+							$record      = $model->findMeeting(1, ['id' => $result['id']]);
+							C('TOKEN_ON', false);
+							$model->alterMeeting([$record['id']], [
+								'qrcode' => $remote_url
+							]);
+						}
 						return array_merge($result, ['__ajax__' => false]);
 					}
 					else return ['status' => false, 'message' => '您没有创建会议的权限', '__ajax__' => false];
 				break;
 				case 'upload_image':
-					$getSavePath          = function ($data){
-						return UPLOAD_PATH.$data['data']['logo_upload']['savepath'].$data['data']['logo_upload']['savename'];
-					};
-					$getResult            = function ($data){
-						return $data['data']['logo_upload'];
-					};
 					$core_upload_logic    = new UploadLogic();
-					$manager_upload_logic = new \Manager\Logic\UploadLogic();
-					$result1              = $core_upload_logic->upload($_FILES, '/Image/');
-					if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
-					$result2 = $manager_upload_logic->create($getSavePath($result1), $getResult($result1));
+					$result              = $core_upload_logic->upload($_FILES, '/Image/');
 
-					return array_merge($result2, ['__ajax__' => true, 'imageUrl' => trim($getSavePath($result1), '.')]);
+					return array_merge($result, ['__ajax__' => true, 'imageUrl' => $result['data']['filePath']]);
 				break;
 				case 'alter':
 					if($this->permissionList['MEETING.ALTER']){

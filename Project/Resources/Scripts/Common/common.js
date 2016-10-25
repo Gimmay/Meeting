@@ -43,6 +43,15 @@ $(function(){
 		}else{
 		}
 	});
+
+	/*
+	*	个人中心下拉列表显示/隐藏
+	 */
+	$('.nav_info .name').hover(function(){
+		$(this).find('.hidden_dropDown').removeClass('hide');
+	},function(){
+		$(this).find('.hidden_dropDown').addClass('hide');
+	});
 });
 var Common = {
 	ajax:function(options){

@@ -136,22 +136,6 @@ $limit
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function createCoupon_item($data){
-			if($this->create($data)){
-				try{
-					$result = $this->add($data);
-					if($result) return ['status' => true, 'message' => '创建代金券成功', 'id' => $result];
-					else return ['status' => false, 'message' => '没有创建代金券'];
-				}catch(Exception $error){
-					$message = $error->getMessage();
-					$exception = $this->handlerException($message);
-					if(!$exception['status']) return $exception;
-					else return ['status' => false, 'message' => $this->getError()];
-				}
-			}
-			else return ['status' => false, 'message' => $this->getError()];
-		}
-
 		public function deleteCoupon($id){
 			if($this->create()){
 				try{

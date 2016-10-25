@@ -17,19 +17,10 @@
 		public function handlerRequest($type){
 			switch($type){
 				case 'upload_image':
-					$getSavePath          = function ($data){
-						return UPLOAD_PATH.$data['data']['uploadImage']['savepath'].$data['data']['uploadImage']['savename'];
-					};
-					$getResult            = function ($data){
-						return $data['data']['uploadImage'];
-					};
 					$core_upload_logic    = new UploadLogic();
-					$manager_upload_logic = new \Manager\Logic\UploadLogic();
-					$result1              = $core_upload_logic->upload($_FILES, '/Image/');
-					if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
-					$result2 = $manager_upload_logic->create($getSavePath($result1), $getResult($result1));
+					$result              = $core_upload_logic->upload($_FILES, '/Image/');
 
-					return array_merge($result2, ['__ajax__' => true, 'imageUrl' => trim($getSavePath($result1), '.')]);
+					return array_merge($result, ['__ajax__' => true, 'imageUrl' => $result['data']['filePath']]);
 				break;
 				case 'create':
 					/** @var \Core\Model\BadgeModel $model */
@@ -52,10 +43,28 @@
 					$mid           = I('post.mid', 0, 'int');
 					$result        = $meeting_model->alterMeeting([$mid], $data);
 
-					return array_merge($result, ['__ajax__' => false]);
+					return array_merge($result, ['__ajax__' => false, '__return__'=>U('meeting/manage')]);
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
+				break;
+			}
+		}
+		
+		public function setData($type, $data, $option = []){
+			switch($type){
+				case 'preview:init_temp':
+					$data['data'] = str_replace('客户姓名', $option['client']['name'], $data['data']);
+					$data['data'] = str_replace('会议名称', $option['meeting']['name'], $data['data']);
+					$data['data'] = str_replace('会议名称', $option['meeting']['name'], $data['data']);
+					$data['data'] = str_replace('会所', $option['client']['club'], $data['data']);
+					$data['data'] = str_replace('会议简介', $option['meeting']['brief'], $data['data']);
+					$data['data'] = str_replace('会议时间', $option['meeting']['start_time'].' - '.$option['meeting']['end_time'], $data['data']);
+					$data['data'] = str_replace(COMMON_IMAGE_PATH.'/CheckIn_Code.jpg', $option['client']['sign_qrcode'], $data['data']);
+					return $data;
+				break;
+				default:
+					return $data;
 				break;
 			}
 		}

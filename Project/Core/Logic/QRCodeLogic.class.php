@@ -9,24 +9,34 @@
 
 	use /** @noinspection PhpUndefinedClassInspection */
 		QRcode;
+	use Quasar\StringPlus;
 
 	class QRCodeLogic extends CoreLogic{
+		private $_config = [
+			'path' => null
+		];
+
 		public function _initialize(){
 			parent::_initialize();
+			$str_obj               = new StringPlus();
+			$file_name             = $str_obj->makeGuid('qrcode', false).'.png';
+			$this->_config['path'] = UPLOAD_PATH.'/QRCode/'.date('Y-m-d')."/$file_name";
 		}
 
-		public function make($value, $file_path, $config = []){
+		public function make($value, $config = []){
 			$defaults = [
-				'level'  => 'H',
-				'size'   => 6,
-				'margin' => 2,
-				'logo'   => null
+				'level'    => 'H',
+				'size'     => 6,
+				'margin'   => 2,
+				'logo'     => null,
+				'filePath' => null
 			];
 			$conf     = array_merge($defaults, $config);
 			vendor('phpqrcode.phpqrcode');
 			/** @noinspection PhpUndefinedClassInspection */
 			$qrcode_obj = new \QRcode();
-			if(!is_dir(dirname($file_path))) mkdir(dirname($file_path));
+			$file_path  = $conf['filePath'] ? $conf['filePath'] : $this->_config['path'];
+			if(!is_dir(dirname($file_path))) mkdir(dirname($file_path), 0777, true);
 			$qrcode_obj->png($value, $file_path, $conf['level'], $conf['size'], $conf['margin']);
 			if(file_exists($conf['logo'])){
 				$qrcode       = imagecreatefromstring(file_get_contents($file_path));

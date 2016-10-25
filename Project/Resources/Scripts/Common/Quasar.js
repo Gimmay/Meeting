@@ -1,46 +1,62 @@
 /*
  =============================================================
- V1.36 2016/04/22 12:12
+ V1.36 2016-04-22 12:12
  正式版
 
- V1.37 2016/04/22 16:22
+ V1.37 2016-04-22 16:22
  更新UrlClass的参数设定与删除对页面后缀的添加与参数
 
- V1.38 2016/04/22 17:45
+ V1.38 2016-04-22 17:45
  更新注释
 
- V1.52 2016/04/23 12:22
+ V1.52 2016-04-23 12:22
  1、修复UrlClass设定自定义Url操作时的bug
  2、更新部分注释
  3、传参严格化
  4、_StateObject对应的操作方法更名
 
- V1.53 2016/04/23 15:45
+ V1.53 2016-04-23 15:45
  修复传参判断逻辑bug
 
- V1.54 2016/04/23 17:24
+ V1.54 2016-04-23 17:24
  1、将CookieClass中的addCookie方法改为setCookie
  2、修改CookieClass中的getCookie方法的返回值
 
- V1.80 2016/05/28 11:05
+ V1.80 2016-05-28 11:05
  1、合并PageScrollClass和PageWidthHeight，统一为PageClass
  2、对页面位置获取和设定做了浏览器兼容处理
  3、新增获取页面宽高的方法，并重命名部分方法
  4、修正bug
 
- V1.90 2016/05/28 11:40
+ V1.90 2016-05-28 11:40
  1、新增生成GUID码的方法
  2、使用通用获取随机位置的算法
 
- V2.00 2016/06/02 14:05
+ V2.00 2016-06-02 14:05
  扩展Date对象，增加format函数来格式化时间字符串
 
- V2.01 2016/06/09 10:22
+ V2.01 2016-06-09 10:22
  更新注释
 
- V2.03 2016/06/21 11:34
+ V2.03 2016-06-21 11:34
  1、修复UrlClass处理默认Url调用相关函数无法执行的问题
  2、修复已有参数情况下跳转不会携带后缀的情况
+
+ V2.04 2016-07-23 15:13
+ 修复构造函数的bug
+
+ V2.06 2016-08-21 22:32
+ 1、CookieClass各方法添加参数传递的异常处理
+ 2、若方法调用出错，则输出相关错误信息到控制台
+ 3、CookieClass增加域设定
+
+ V2.10 2016-08-30 01:08
+ PageClass 添加 goTop 方法
+
+ V2.20 2016-10-16 21:34
+ UrlClass重构
+
+
  =============================================================
  */
 //noinspection JSUnusedGlobalSymbols
@@ -49,10 +65,10 @@
  * *若需要用到UrlClass并且URL模式为PATHINFO的话，可以在载入该js文件的标签内写入data-mvc-name的属性键入需要排除的关键值
  *
  * @author Quasar
- * @version 2.03
+ * @version 2.20
  *
- * Updated on 2016/06/21 11:34
- * Created on 2016/01/09 10:00
+ * Updated on 2016-10-16 21:34
+ * Created on 2016-01-09 10:00
  */
 var Quasar = {
 	/**
@@ -86,6 +102,7 @@ var Quasar = {
 		Quasar._Error.from   = arguments[3];
 		if(arguments[4]) Quasar._Error.data = arguments[4];
 		else Quasar._Error.data = null;
+		if(!status) console.log(from+': '+'['+code+'] '+info);
 		return true;
 	},
 	/**
@@ -210,14 +227,21 @@ var Quasar = {
 		 * @param name 添加Cookie的名称
 		 * @param value 添加Cookie的值
 		 * @param expiresHours 添加Cookie的过期时间(单位：小时)
+		 * @param path 添加Cookie的域
 		 */
-		this.setCookie = function(name, value, expiresHours){
+		this.setCookie = function(name, value, expiresHours, path){
+			if(arguments.length == 1){
+				Quasar._setError(false, 11, '函数缺少必要参数', 'CookieClass/setCookie()');
+				return false;
+			}
+			if(arguments.length == 2) expiresHours = 0;
+			if(arguments.length == 3) path = '/';
 			var cookieString = name+"="+encodeURI(value);
 			// 判断是否设置过期时间
 			if(expiresHours>0){
 				var date = new Date();
 				date.setTime(date.getTime()+expiresHours*3600*1000);
-				cookieString = cookieString+"; expires="+date.toUTCString();
+				cookieString = cookieString+"; expires="+date.toUTCString()+"; path="+path;
 			}
 			document.cookie = cookieString;
 		};
@@ -226,9 +250,13 @@ var Quasar = {
 		 * 获取Cookie
 		 * @param name 获取Cookie的名称
 		 *
-		 * @returns string|null 返回Cookie的值，无对应name的Cookie则返回null
+		 * @returns string|null|boolean 返回Cookie的值，无对应name的Cookie则返回null
 		 */
 		this.getCookie = function(name){
+			if(arguments.length<=0){
+				Quasar._setError(false, 11, '函数缺少必要参数', 'CookieClass/getCookie()');
+				return false;
+			}
 			var strCookie = document.cookie;
 			var arrCookie = strCookie.split("; ");
 			for(var i = 0; i<arrCookie.length; i++){
@@ -243,6 +271,10 @@ var Quasar = {
 		 * @param name 删除Cookie的名称
 		 */
 		this.delCookie = function(name){
+			if(arguments.length<=0){
+				Quasar._setError(false, 11, '函数缺少必要参数', 'CookieClass/delCookie()');
+				return false;
+			}
 			var date = new Date();
 			date.setTime(date.getTime()-10000);
 			document.cookie = name+"=''; expires="+date.toUTCString();
@@ -435,19 +467,24 @@ var Quasar = {
 		/**
 		 * 获取URL参数且以json对象形式{"params":{"key": "value"}, "length": length}返回
 		 * @param url 传入的URL字符串，默认值为当前页面的URL
-		 * @param [opt] 若传入自定义URL且当前URL模式不为0，则必须传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
+		 * @param [opt] 若传入自定义URL且当前URL模式不为0，可传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
 		 *
 		 * @returns null|Object 返回URL的参数值JSON数据，若无参数则返回NULL，有则返回参数的json对象
 		 */
 		this.getUrlParamsJSON = function(url, opt){
-			if(arguments.length<1) url = _StateObject.url.toString();
+			if(arguments.length<1){
+				url = _StateObject.url.toString();
+				if(_Config.mode!=0){
+					opt = {};
+					opt.except = _Config.except;
+					opt.suffix = _Config.suffix;
+				}
+			}
 			else{
 				if(arguments.length == 1 && _Config.mode != 0){
-					Quasar._setError(false, 11, '函数缺少必要参数', 'UrlClass/getUrlParamsJSON()');
-					return null;
-				}else if(!opt.except || !opt.suffix){
-					Quasar._setError(false, 12, '参数类型错误', 'UrlClass/getUrlParamsJSON()');
-					return null;
+					opt = {};
+					opt.except = _Config.except;
+					opt.suffix = _Config.suffix;
 				}
 			}
 			var result;
@@ -536,7 +573,7 @@ var Quasar = {
 		 * 获取URL的指定参数名的值
 		 * @param key 参数名
 		 * @param [url] 传入的URL字符串，默认值为当前页面的URL
-		 * @param [opt] 若传入自定义URL且当前URL模式不为0，则必须传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
+		 * @param [opt] 若传入自定义URL且当前URL模式不为0，可传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
 		 *
 		 * @returns null|string 返回参数名的参数值，若无参数名则返回NULL，有则返回参数值
 		 */
@@ -544,11 +581,8 @@ var Quasar = {
 			if(arguments.length<2) url = _StateObject.url.toString();
 			else{
 				if(arguments.length == 2 && _Config.mode != 0){
-					Quasar._setError(false, 11, '函数缺少必要参数', 'UrlClass/getUrlParam()');
-					return null;
-				}else if(!opt.except || !opt.suffix){
-					Quasar._setError(false, 12, '参数类型错误', 'UrlClass/getUrlParamsJSON()');
-					return null;
+					opt.except = _Config.except;
+					opt.suffix = _Config.suffix;
 				}
 			}
 			var list = (arguments.length<2) ? this.getUrlParamsJSON() : this.getUrlParamsJSON(url, opt);
@@ -572,23 +606,28 @@ var Quasar = {
 		 * *调用该函数会修改对应的URL配置，若不及时跳转页面可能造成实际页面和配置不一致的情况
 		 * @param key 参数名
 		 * @param [url] 传入的URL字符串，默认值为当前页面的URL
-		 * @param [opt] 若传入自定义URL且当前URL模式不为0，则必须传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
+		 * @param [opt] 若传入自定义URL且当前URL模式不为0，可传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
 		 *
 		 * @returns boolean|string 操作失败返回false，操作成功返回删除参数后的url字符串
 		 */
 		this.delUrlParam = function(key, url, opt){
-			if(arguments.length<2) url = _StateObject.url.toString();
-			else{
-				if((arguments.length == 2 && _Config.mode != 0) || arguments.length == 0){
-					Quasar._setError(false, 11, '函数缺少必要参数', 'UrlClass/delUrlParam()');
-					return false;
-				}else if(!opt.except || !opt.suffix){
-					Quasar._setError(false, 12, '参数类型错误', 'UrlClass/delUrlParam()');
-					return false;
+			if(arguments.length<2){
+				url = _StateObject.url.toString();
+				if(_Config.mode != 0){
+					opt = {};
+					opt.except = _Config.except;
+					opt.suffix = _Config.suffix;
 				}
 			}
-			var urllist = (arguments.length<2) ? this.getUrlParamsJSON() : this.getUrlParamsJSON(url, opt);
-			if(urllist == null){
+			else{
+				if((arguments.length == 2 && _Config.mode != 0) || arguments.length == 0){
+					opt = {};
+					opt.except = _Config.except;
+					opt.suffix = _Config.suffix;
+				}
+			}
+			var url_list = (arguments.length<2) ? this.getUrlParamsJSON() : this.getUrlParamsJSON(url, opt);
+			if(url_list == null){
 				Quasar._setError(false, 3001, 'URL不存在参数', 'UrlClass/delUrlParam()', key);
 				return false;
 			}
@@ -597,48 +636,14 @@ var Quasar = {
 				Quasar._setError(false, 3002, '指定的Key在URL中不存在', 'UrlClass/delUrlParam()', key);
 				return false;
 			}
-			delete urllist.params[key];
+			delete url_list.params[key];
 			if(_Config.mode == 0){
-				_StateObject.url = url.substr(0, url.indexOf('?'))+this.parseJSONtoParamsString(urllist);
+				_StateObject.url = url.substr(0, url.indexOf('?'))+this.parseJSONtoParamsString(url_list);
 				Quasar._setError(true, 0, '删除URL指定的参数操作成功', 'UrlClass/delUrlParam()', key);
 				return _StateObject.url;
-				// var index = url.indexOf('?'+key+'=');
-				// var newurl;
-				// //2、key为唯一的参数
-				// if(index != -1 && urllist.length == 1){
-				// 	newurl = url.substr(0, index);
-				// 	_StateObject.url = newurl;
-				// 	return {status:true, code:0, data:newurl};
-				// }
-				// //3、存在若干参数，且key在第一位
-				// if(index != -1 && urllist.length>1){
-				// 	var pl = url.substr(index+key.length+2, url.length);
-				// 	newurl = url.substr(0, index+1)+pl.substr((pl.indexOf('&'))+1, pl.length);
-				// 	_StateObject.url = newurl;
-				// 	return {status:true, code:0, data:newurl};
-				// }
-				// index = url.indexOf('&'+key+'=');
-				// if(index != -1){
-				// 	var front = url.substr(0, index);
-				// 	var behind = url.substr(index+key.length+2, url.length);
-				// 	var bindex = behind.indexOf('&');
-				// 	//4、key不在第一位同时不为最后一个参数
-				// 	if(bindex != -1){
-				// 		newurl = front+behind.substr(bindex, behind.length);
-				// 		_StateObject.url = newurl;
-				// 		return {status:true, code:0, data:newurl};
-				// 	}
-				// 	//5、key不在第一位同时为最后一个参数
-				// 	else{
-				// 		newurl = front;
-				// 		_StateObject.url = newurl;
-				// 		return {status:true, code:0, data:front};
-				// 	}
-				// }
-				// return {status:false, code:3999, data:url};
 			}else{
-				if(arguments.length<2) _StateObject.url = url.substr(0, url.indexOf(_Config.except)+_Config.except.length)+this.parseJSONtoParamsString(urllist)+_Config.suffix;
-				else _StateObject.url = url.substr(0, url.indexOf(opt.except)+opt.except.length)+this.parseJSONtoParamsString(urllist)+opt.suffix;
+				if(arguments.length<2) _StateObject.url = url.substr(0, url.indexOf(_Config.except)+_Config.except.length)+this.parseJSONtoParamsString(url_list)+_Config.suffix;
+				else _StateObject.url = url.substr(0, url.indexOf(opt.except)+opt.except.length)+this.parseJSONtoParamsString(url_list)+opt.suffix;
 				Quasar._setError(true, 0, '删除URL指定的参数操作成功', 'UrlClass/delUrlParam()', key);
 				return _StateObject.url;
 			}
@@ -649,19 +654,24 @@ var Quasar = {
 		 * @param key 设定的参数名
 		 * @param val 设定的参数值
 		 * @param [url] 传入的URL字符串，默认值为当前页面的URL
-		 * @param [opt] 若传入自定义URL且当前URL模式不为0，则必须传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
+		 * @param [opt] 若传入自定义URL且当前URL模式不为0，可传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
 		 *
 		 * @returns boolean|string 操作失败返回false，操作成功返回设定参数后的URL
 		 */
 		this.setUrlParam = function(key, val, url, opt){
-			if(arguments.length<2 || (arguments.length == 3 && _Config.mode != 0)){
+			if(arguments.length<2){
 				Quasar._setError(false, 11, '函数缺少必要参数', 'UrlClass/setUrlParam()');
 				return false;
+			}else if(arguments.length == 3 && _Config.mode != 0){
+				opt = {};
+				opt.except = _Config.except;
+				opt.suffix = _Config.suffix;
 			}else{
-				if(arguments.length == 2) url = _StateObject.url.toString();
-				else if(!opt.except || !opt.suffix){
-					Quasar._setError(false, 12, '参数类型错误', 'UrlClass/setUrlParam()', opt);
-					return false;
+				if(arguments.length == 2){
+					url        = _StateObject.url.toString();
+					opt = {};
+					opt.except = _Config.except;
+					opt.suffix = _Config.suffix;
 				}
 			}
 			if(typeof key != 'number' && typeof key != 'string'){
@@ -697,19 +707,24 @@ var Quasar = {
 		/**
 		 * 获取URL的参数字符串
 		 * @param [url] 传入的URL字符串，默认值为当前页面的URL
-		 * @param [opt] 若传入自定义URL且当前URL模式不为0，则必须传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
+		 * @param [opt] 若传入自定义URL且当前URL模式不为0，可传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
 		 *
 		 * @returns null|string 返回参数字符串，若无则返回NULL，有则返回参数的字符串
 		 */
 		this.getUrlParamsString = function(url, opt){
-			if(arguments.length<1) url = _StateObject.url.toString();
+			if(arguments.length<1){
+				url = _StateObject.url.toString();
+				if(_Config.mode != 0){
+					opt = {};
+					opt.except = _Config.except;
+					opt.suffix = _Config.suffix;
+				}
+			}
 			else{
 				if(arguments.length == 1 && _Config.mode != 0){
-					Quasar._setError(false, 11, '函数缺少必要参数', 'UrlClass/getUrlParamsString()');
-					return null;
-				}else if(!opt.except || !opt.suffix){
-					Quasar._setError(false, 12, '参数类型错误', 'UrlClass/getUrlParamsString()');
-					return null;
+					opt = {};
+					opt.except = _Config.except;
+					opt.suffix = _Config.suffix;
 				}
 			}
 			if(_Config.mode == 0){
@@ -718,35 +733,43 @@ var Quasar = {
 				if(index == -1) return null;
 				else return url.substr(index, url.length);
 			}else{
-				//noinspection JSDuplicatedDeclaration
-				var index = arguments.length == 1 ? (url.indexOf(_Config.except)+_Config.except.length) : (url.indexOf(opt.except)+opt.except.length);
-				if(index>=url.length) return null;
-				else return url.substr(index, url.length);
+
+				if(url.indexOf(opt.except) != -1){
+					//noinspection JSDuplicatedDeclaration
+					var index = arguments.length == 1 ? (url.indexOf(_Config.except)+_Config.except.length) : (url.indexOf(opt.except)+opt.except.length);
+					if(index>=url.length) return null;
+					else return url.substr(index, url.length);
+				}else return url;
 			}
 		};
 		/**
 		 * 判断URL的参数是否存在
 		 * @param key URL的参数
 		 * @param [url] 传入的URL字符串，默认值为当前页面的URL
-		 * @param [opt] 若传入自定义URL且当前URL模式不为0，则必须传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
+		 * @param [opt] 若传入自定义URL且当前URL模式不为0，可传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
 		 *
 		 * @returns boolean 若存在则返回true，不存在则返回false
 		 */
 		this.isTheUrlParamExist = function(key, url, opt){
-			if(arguments.length<2) url = _StateObject.url;
+			if(arguments.length<2){
+				url = _StateObject.url;
+				if(_Config.mode != 0){
+					opt = {};
+					opt.except = _Config.except;
+					opt.suffix = _Config.suffix;
+				}
+			}
 			else{
 				if(arguments.length == 2 && _Config.mode != 0){
-					Quasar._setError(false, 11, '函数缺少必要参数', 'UrlClass/isTheUrlParamExist()');
-					return false;
-				}else if(!opt.except || !opt.suffix){
-					Quasar._setError(false, 12, '参数类型错误', 'UrlClass/isTheUrlParamExist()');
-					return false;
+					opt = {};
+					opt.except = _Config.except;
+					opt.suffix = _Config.suffix;
 				}
 			}
 			if(_Config.mode == 0){
-				var paramstr = (arguments.length<2) ? this.getUrlParamsString() : this.getUrlParamsString(url, opt);
-				if(paramstr.indexOf('?'+key+'=') != -1) return true;
-				if(paramstr.indexOf('&'+key+'=') != -1){
+				var param_str = (arguments.length<2) ? this.getUrlParamsString() : this.getUrlParamsString(url, opt);
+				if(param_str.indexOf('?'+key+'=') != -1) return true;
+				if(param_str.indexOf('&'+key+'=') != -1){
 					Quasar._setError(true, 0, '指定参数存在', 'UrlClass/isTheUrlParamExist()', key);
 					return true;
 				}else{
@@ -754,12 +777,12 @@ var Quasar = {
 					return false;
 				}
 			}else{
-				var paramjson = (arguments.length<2) ? this.getUrlParamsJSON() : this.getUrlParamsJSON(url, opt);
-				if(paramjson == null){
+				var param_json = (arguments.length<2) ? this.getUrlParamsJSON() : this.getUrlParamsJSON(url, opt);
+				if(param_json == null){
 					Quasar._setError(false, 3002, '指定的Key在URL中不存在', 'UrlClass/isTheUrlParamExist()', key);
 					return false;
 				}
-				for(var pjkey in paramjson['params']){
+				for(var pjkey in param_json['params']){
 					if(key == pjkey){
 						Quasar._setError(true, 0, '指定参数存在', 'UrlClass/isTheUrlParamExist()', key);
 						return true;
@@ -869,28 +892,21 @@ var Quasar = {
 		 * @returns undefined|Object
 		 * @private
 		 */
-		function _init(obj){
+		var _init = function(obj){
 			if(mode == undefined || mode == null) return obj;
 			else{
 				mode = parseInt(mode);
 				if(mode == 0) return obj;
 				if(mode == 1){
 					_Config.mode = 1;
-					if("undefined" == typeof except){
-						Quasar._setError(false, 9991, '缺少排除参数', 'UrlClass/_init()');
-						return undefined;
-					}else except = except.toString();
-					_Config.except = except;
-					if("undefined" == typeof suffix){
-						Quasar._setError(false, 9993, '缺少页面后缀', 'UrlClass/_init()');
-						return undefined;
-					}else suffix = suffix.toString();
-					_Config.suffix = suffix;
+					if("undefined" == typeof except) Quasar._setError(false, 9991, '缺少排除参数', 'UrlClass/_init()');
+					else _Config.except = except.toString();
+					if("undefined" == typeof suffix) Quasar._setError(false, 9993, '缺少页面后缀', 'UrlClass/_init()');
+					else _Config.suffix = suffix.toString();
 				}
 			}
 			return obj;
-		}
-
+		};
 		return _init(this);
 	},
 	/**
@@ -1007,7 +1023,25 @@ var Quasar = {
 		 */
 		this.getPageSize = function(){
 			return {width:document.body.offsetWidth, height:document.body.offsetHeight};
-		}
+		};
+		/**
+		 * 回到顶部
+		 *
+		 * @param speed 移动速度
+		 */
+		this.goTop = function(speed){
+			if(arguments[0] == undefined) speed = 5;
+			var interval_obj = null;
+			var handler      = function(){
+				var pos = _getPagePosition();
+				if(pos == 0) clearInterval(interval_obj);
+				else interval_obj = setTimeout(function(){
+					_setPagePosition(pos-(speed*10));
+					handler();
+				}, speed);
+			};
+			handler();
+		};
 	},
 	/**
 	 * 字符处理类
@@ -1026,12 +1060,7 @@ var Quasar = {
 		this.makeRandomString = function(length, type){
 			length    = arguments[0] ? arguments[0] : 8;
 			type      = arguments[1] ? arguments[1] : 'NW';
-			var chars = [
-				'abcdefghijklmnopqrstuvwxyz',
-				'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-				'0123456789',
-				'~!@#$%^&()[]{}_+=-;.,'
-			];
+			var chars = ['abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', '0123456789', '~!@#$%^&()[]{}_+=-;.,'];
 			switch(type.toUpperCase()){
 				case 'N':
 					chars = chars[2];
@@ -1206,18 +1235,7 @@ Date.prototype.format = function(pattern){
 					'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
 				],
 				full        :[
-					'January',
-					'February',
-					'March',
-					'April',
-					'May',
-					'June',
-					'July',
-					'August',
-					'September',
-					'October',
-					'November',
-					'December'
+					'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
 				]
 			};
 			switch(len){

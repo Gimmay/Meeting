@@ -18,8 +18,6 @@
 
 		public function _buildConstVariables(){
 			define('UPLOAD_PATH', APP_PATH.'Uploads');
-			//			define('EXCEL_PATH', UPLOAD_PATH.'/Excel');
-			define('QRCODE_PATH', UPLOAD_PATH.'/QRCode');
 		}
 
 	}

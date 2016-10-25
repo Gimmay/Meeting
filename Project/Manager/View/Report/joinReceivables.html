@@ -25,7 +25,6 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="Quasar" data-mvc-name="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -77,6 +76,7 @@
 											<label><input type="checkbox" checked>年龄&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>电话&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>会所&nbsp;&nbsp;</label>
+											<label><input type="checkbox" checked>收款金额&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>陪同人&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>陪同电话&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>团队&nbsp;&nbsp;</label>
@@ -85,7 +85,7 @@
 											<label><input type="checkbox" checked>类型&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>状态&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>报名方式&nbsp;&nbsp;</label>
-											<label><input type="checkbox" checked>收款金额&nbsp;&nbsp;</label>
+
 											<label><input type="checkbox" checked>备注&nbsp;&nbsp;</label>
 										</div>
 									</div>
@@ -101,6 +101,7 @@
 													<th style=" width: 60px;" data-column="age">年龄</th>
 													<th style=" width: 80px;" data-column="mobile">电话</th>
 													<th style=" width: 100px;" data-column="club">会所</th>
+													<th style=" width: 100px;" data-column="price">收款金额</th>
 													<th style=" width: 90px;" data-column="accompany">陪同人</th>
 													<th style=" width: 100px;" data-column="accompany_mobile">陪同电话</th>
 													<th style=" width: 90px;" data-column="team">团队</th>
@@ -109,7 +110,6 @@
 													<th style=" width: 60px;" data-column="type">类型</th>
 													<th style=" width: 60px;" data-column="status">状态</th>
 													<th style=" width: 80px;" data-column="registration_type">报名方式</th>
-													<th style=" width: 100px;" data-column="price">收款金额</th>
 													<th style=" width: 150px;" data-column="comment">备注</th>
 												</tr>
 											</thead>
@@ -130,6 +130,12 @@
 														<td><{$single.age}></td>
 														<td><{$single.mobile}></td>
 														<td><{$single.club}></td>
+														<td>
+															<present name="single.price">
+																<a href="<{:U('receivablesDetail', ['cid'=>$single['cid'], 'mid'=>$single['mid']])}>" class="link color-red">￥<{$single.price}></a>
+																<else/>未收款
+															</present>
+														</td>
 														<td><{$single.accompany}></td>
 														<td><{$single.accompany_mobile}></td>
 														<td><{$single.team}></td>
@@ -143,7 +149,6 @@
 															</switch>
 														</td>
 														<td><{$single.registration_type}></td>
-														<td>￥<{$single.price}></td>
 														<td><{$single.comment}></td>
 													</tr>
 												</volist>

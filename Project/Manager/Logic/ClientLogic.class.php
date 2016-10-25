@@ -40,45 +40,58 @@
 			}
 			else $client_id = $result1['id'];
 			/* 2.创建参会记录 */
-			$join_model                = D('Core/Join');
-			$mobile                    = $data['mobile'];
-			$registration_date         = date('Y-m-d', strtotime($data['registration_date']));
-			$data                      = [];
-			$data['cid']               = $client_id;
-			$data['mid']               = I('get.mid', 0, 'int');
-			$data['creatime']          = time();
-			$data['creator']           = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-			$data['registration_date'] = $registration_date;
-			C('TOKEN_ON', false);
-			$result2 = $join_model->createRecord($data);
-			if(!$result2['status']) return $result2;
-			/* 3.试图根据手机号创建微信用户记录 */
-			$weixin_logic     = new WxCorpLogic();
-			$weixin_user_list = $weixin_logic->getAllUserList();
-			foreach($weixin_user_list as $val){
-				if($val['mobile'] == $mobile){
-					$weixin_model = D('Core/WeixinID');
-					$department   = '';
-					foreach($val['department'] as $val2) $department .= $val2.',';
-					$department         = trim($department, ',');
-					$data               = [];
-					$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
-					$data['oid']        = $client_id; // 对象ID
-					$data['wtype']      = 1; // 微信ID类型 企业号
-					$data['weixin_id']  = $val['userid']; // 微信ID
-					$data['department'] = $department; // 部门ID
-					$data['mobile']     = $val['mobile']; // 手机号码
-					$data['avatar']     = $val['avatar']; // 头像地址
-					$data['gender']     = $val['gender']; // 性别
-					$data['nickname']   = $val['name']; // 昵称
-					$data['creatime']   = time(); // 创建时间
-					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); // 当前创建者
-					$weixin_model->createRecord($data); // 插入数据
-					break;
-				}
-			}
 
-			return $result2;
+			$mid               = I('get.mid', 0, 'int');
+			$join_model                = D('Core/Join');
+			$join_record = $join_model->findRecord(1,['mid'=>$mid,'cid'=>$client_id]);
+			if($join_record){
+				C('TOKEN_ON',false);
+				$join_result=$join_model->alterRecord([$join_record['id']],['status'=>1]);
+				if($join_result['status']){
+					return ['status'=>true,'message'=>'创建成功'];
+				}else{
+					return ['status'=>false,'message'=>'创建失败'];
+				}
+			}else{
+				$mobile                    = $data['mobile'];
+				$registration_date         = date('Y-m-d', strtotime($data['registration_date']));
+				$data                      = [];
+				$data['cid']               = $client_id;
+				$data['mid']               = $mid;
+				$data['creatime']          = time();
+				$data['creator']           = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+				$data['registration_date'] = $registration_date;
+				C('TOKEN_ON', false);
+				$result2 = $join_model->createRecord($data);
+				if(!$result2['status']) return $result2;
+				/* 3.试图根据手机号创建微信用户记录 */
+				$weixin_logic     = new WxCorpLogic();
+				$weixin_user_list = $weixin_logic->getAllUserList();
+				foreach($weixin_user_list as $val){
+					if($val['mobile'] == $mobile){
+						$weixin_model = D('Core/WeixinID');
+						$department   = '';
+						foreach($val['department'] as $val2) $department .= $val2.',';
+						$department         = trim($department, ',');
+						$data               = [];
+						$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
+						$data['oid']        = $client_id; // 对象ID
+						$data['wtype']      = 1; // 微信ID类型 企业号
+						$data['weixin_id']  = $val['userid']; // 微信ID
+						$data['department'] = $department; // 部门ID
+						$data['mobile']     = $val['mobile']; // 手机号码
+						$data['avatar']     = $val['avatar']; // 头像地址
+						$data['gender']     = $val['gender']; // 性别
+						$data['nickname']   = $val['name']; // 昵称
+						$data['creatime']   = time(); // 创建时间
+						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); // 当前创建者
+						$weixin_model->createRecord($data); // 插入数据
+						break;
+					}
+				}
+
+				return $result2;
+			}
 		}
 
 		public function alter($id, $data){
@@ -110,13 +123,7 @@
 			$id                              = I('get.id', 0, 'int');
 			$employee_model                  = D('Core/Employee');
 			$join_model                      = D('Core/Join');
-			$develop_consultant              = $employee_model->findEmployee(1, ['id' => $info['develop_consultant']]);
-			$service_consultant              = $employee_model->findEmployee(1, ['id' => $info['service_consultant']]);
 			$join_record                     = $join_model->findRecord(1, ['mid' => $meeting_id, 'cid' => $id]);
-			$info['develop_consultant_name'] = $develop_consultant['name'];
-			$info['develop_consultant_code'] = $develop_consultant['code'];
-			$info['service_consultant_name'] = $service_consultant['name'];
-			$info['service_consultant_code'] = $service_consultant['code'];
 			$info['registration_date']       = $join_record['registration_date'];
 
 			return $info;
@@ -141,12 +148,6 @@
 						$list[$key1]['gender'] = '女';
 					break;
 				}
-				// 开拓顾问
-				$develop_consultant_record         = $employee_model->findEmployee(1, ['id' => $val1['develop_consultant']]);
-				$list[$key1]['develop_consultant'] = $develop_consultant_record['name'];
-				// 服务顾问
-				$service_consultant_record         = $employee_model->findEmployee(1, ['id' => $val1['service_consultant']]);
-				$list[$key1]['service_consultant'] = $service_consultant_record['name'];
 				// 签到状态
 				switch($val1['sign_status']){
 					case 0:
@@ -461,9 +462,9 @@
 						]);
 						C('TOKEN_ON', false);
 						$result = $join_model->alterRecord([$join_record['id']], [
-							'sign_status'      => 2,
-							'sign_time'        => null,
-							'sign_type'        => 0
+							'sign_status' => 2,
+							'sign_time'   => null,
+							'sign_type'   => 0
 						]);
 						if($result['status']){
 							$send_list[] = $val;
@@ -483,29 +484,6 @@
 					];
 					else return ['status' => true, 'message' => '部分批量取消签到成功', '__ajax__' => false];
 				break;
-				//				case 'receivables':
-				//					$id        = I('post.code', '');
-				//					$coupon_id = explode(',', $id);
-				//					C('TOKEN_ON', false);
-				//					/** @var \Core\Model\ReceivablesModel $receivables_model */
-				//					$receivables_model  = D('Core/Receivables');
-				//					$data               = I('post.');
-				//					$data['mid']        = I('get.mid', 0, 'int');
-				//					$data['cid']        = I('post.cid');
-				//					$data['time']       = strtotime(I('post.time'));
-				//					$data['payee_id']   = $_POST['payee_id'] ? I('post.payee_id', 0, 'int') : I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-				//					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-				//					$data['creatime']   = time();
-				//					$data['coupon_ids'] = I('post.code');
-				//					$receivables_result = $receivables_model->createRecord($data);
-				//					foreach($coupon_id as $v){
-				//						/** @var \Core\Model\CouponItemModel $model */
-				//						$model  = D('Core/CouponItem');
-				//						$result = $model->alterCouponItem($v, ['status' => 2, 'cid' => $data['cid']]);
-				//					}
-				//
-				//					return $receivables_result;
-				//				break;
 				case 'delete';
 					///** @var \Core\Model\ClientModel $model */
 					//$model = D('Core/Client');
@@ -707,22 +685,6 @@
 						case 'gender':
 							$val = $val == '男' ? 1 : ($val == '女' ? 2 : 0);
 						break;
-						case 'develop_consultant':
-							$service_consultant = $val;
-							if($service_consultant){
-								$record = $employee_model->findEmployee(1, ['keyword' => $service_consultant]);
-								if($record) $service_consultant = $record['id'];
-								else $service_consultant = null;
-							}
-						break;
-						case 'service_consultant':
-							$develop_consultant = $val;
-							if($develop_consultant){
-								$record = $employee_model->findEmployee(1, ['keyword' => $develop_consultant]);
-								if($record) $develop_consultant = $record['id'];
-								else $develop_consultant = null;
-							}
-						break;
 						case 'mobile':
 							$mobile = $val;
 						break;
@@ -749,8 +711,6 @@
 					}
 					// 指定特殊列的值
 					$client_data['creator']            = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					$client_data['service_consultant'] = $service_consultant;
-					$client_data['develop_consultant'] = $develop_consultant;
 					$client_data['creatime']           = time();
 					$client_data['password']           = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $mobile);
 					$client_data['pinyin_code']        = $str_obj->makePinyinCode($name);
@@ -782,11 +742,12 @@
 					if($join_result['status']){
 						$count++;
 						if(((int)$price)>0) $receivables_model->createRecord([
-							'cid'      => $join_data['cid'],
-							'mid'      => $mid,
-							'creator'  => $cur_employee_id,
-							'creatime' => time(),
-							'price'    => $price,
+							'cid'         => $join_data['cid'],
+							'mid'         => $mid,
+							'source_type' => 0,
+							'creator'     => $cur_employee_id,
+							'creatime'    => time(),
+							'price'       => $price,
 						]);
 					}
 				}

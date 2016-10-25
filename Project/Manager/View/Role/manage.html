@@ -10,6 +10,7 @@
 	<!--<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/custom.css">-->
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
@@ -20,6 +21,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
@@ -41,7 +43,7 @@
 									</div>
 								</if>
 								<if condition="$permission_list['ROLE.DELETE'] eq 1">
-									<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_employee">
+									<div class="function_btn bg-danger batch_delete_btn_confirm">
 										<i></i>
 										<p>批量删除</p>
 									</div>
@@ -63,16 +65,17 @@
 							<table class="table table-bordered" style="text-align: center">
 								<thead>
 									<tr>
-										<td width="5%" class="all_check">
+										<td width="4%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
+										<td width="3%">序号</td>
 										<td width="10%">名称</td>
 										<td width="5%">状态</td>
 										<td width="5%">用户数</td>
 										<td width="5%">等级</td>
 										<td width="15%">会议</td>
 										<td width="10%">备注</td>
-										<td width="15%">创建时间</td>
+										<td width="8%">创建时间</td>
 										<td width="30%">操作</td>
 									</tr>
 								</thead>
@@ -83,6 +86,7 @@
 												<td class="check_item">
 													<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
 												</td>
+												<td><{$i}></td>
 												<td><{$single.name}></td>
 												<td>
 													<switch name="single.status">
@@ -366,7 +370,7 @@
 					<form class="form-horizontal" role="form" method="post" action="">
 						<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 						<div class="modal-body">
-							是否删除已选角色？
+							是否删除已选<span class="sAmount"></span>项？
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -400,6 +404,7 @@
 					defaultHtml :0,
 					defaultValue:0
 				}),
+				toast  :$().QuasarToast(),
 				icheck             :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'

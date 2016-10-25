@@ -51,6 +51,16 @@ WHERE status = 1";
 			return $this->query($sql);
 		}
 
+		public function getEmployeeNameSelectList(){
+			$sql = "SELECT
+	`name` `html`, concat(`code`, ',', `name`, ',', pinyin_code) `keyword`,
+	`name` `value`
+FROM user_employee
+WHERE status = 1";
+
+			return $this->query($sql);
+		}
+
 		public function getPositionSelectList(){
 			return $this->field("distinct position as value, position as keyword, position as html")->select();
 		}

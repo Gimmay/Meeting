@@ -43,7 +43,7 @@
 									</div>
 								</if>
 								<if condition="$permission_list['EMPLOYEE.DELETE'] eq 1">
-									<div class="function_btn bg-danger batch_delete_btn_confirm" data-toggle="modal" data-target="#batch_delete_employee">
+									<div class="function_btn bg-danger batch_delete_btn_confirm">
 										<i></i>
 										<p>批量删除</p>
 									</div>
@@ -66,11 +66,12 @@
 							<table class="table table-bordered" style="text-align: center">
 								<thead>
 									<tr>
-										<td width="5%" class="all_check">
+										<td width="4%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
+										<td width="3%">序号</td>
 										<td width="5%">工号</td>
-										<td width="10%">名称</td>
+										<td width="8%">名称</td>
 										<td width="5%">性别</td>
 										<td width="5%">状态</td>
 										<td width="10%">手机</td>
@@ -86,6 +87,7 @@
 											<td class="check_item">
 												<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
 											</td>
+											<td><{$i}></td>
 											<td><{$single.code}></td>
 											<td data-id="<{$single.id}>"><{$single.name}></td>
 											<td>
@@ -179,7 +181,7 @@
 					<form class="form-horizontal" role="form" method="post" action="">
 						<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 						<div class="modal-body">
-							是否删除已选员工？
+							是否删除已选<span class="sAmount"></span>项？
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>

@@ -112,7 +112,7 @@
 					}
 					else{
 						unset($result['__ajax__']);
-						if($result['status']) $this->success($result['message']);
+						if($result['status']) $this->success($result['message'], U('manage'));
 						else $this->error($result['message'], '', 3);
 					}
 					exit;

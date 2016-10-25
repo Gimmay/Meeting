@@ -70,7 +70,8 @@ function upLoadLogo(){
 		if(data.status){
 			AlterObject.object.toast.toast("Logo上传成功");
 			$('input[name=logo]').val(data.imageUrl);
-			$('#logo_src').attr('src',data.imageUrl);
+			$('.logo_not').hide();
+			$('.logo_wp img').attr('src',data.imageUrl);
 
 		}else{
 			AlterObject.object.toast.toast("Logo上传失败");

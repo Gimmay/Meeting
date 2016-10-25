@@ -11,9 +11,11 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/calculator/calculator.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
@@ -21,6 +23,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-position.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/calculator/calculator.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
@@ -43,21 +46,28 @@
 								<div class="nav_tab_li active">
 									<a href="javascript:void(0)">收款列表</a>
 								</div>
+								<div class="add">
+									<a data-toggle="modal" data-target="#add_receivables" data-backdrop="static"><i class="glyphicon glyphicon-plus"></i>&nbsp;添加收款</a>
+								</div>
 							</div>
 							<div class="n_search clearfix">
-								<form class="form-horizontal" role="form" method="post" id="form" action="">
-									<input type="hidden" name="requestType" value="search">
-									<input type="hidden" name="id" value="">
+								<form class="form-horizontal" role="form" method="get" id="form" action="">
 									<div class="search_li">
-										<label><span>会议：<{$meeting_info.mid}></span></label>
-										<div id="meeting_name"></div>
+										<present name="_GET[mid]">
+											<label><span>会议：<{$meeting_info.meeting_name}></span></label>
+											<else/>
+											<label><span>会议：</span></label>
+											<div id="meeting_name"></div>
+										</present>
 									</div>
-									<div class="search_li">
-										<label><span>客户姓名：<{$meeting_info.name}></span></label>
-										<div id="client_name"></div>
-									</div>
-									<div class="search_li">
-										<button type="submit" class="btn btn-primary btn-sm bg-00a0e8">搜索</button>
+									<div class="repertory clearfix">
+										<div class="input-group repertory_text">
+											<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
+											<span class="input-group-btn">
+												<button type="submit" class="btn btn-default mian_search">搜索</button>
+											</span>
+										</div>
+										<a type="reset" class="btn btn-default mian_search" href="<{:U('manage')}>">查看所有</a>
 									</div>
 								</form>
 							</div>
@@ -77,14 +87,15 @@
 												<th>收款地点</th>
 												<th>来源状态</th>
 												<th>备注</th>
+												<th>操作</th>
 											</tr>
 										</thead>
 										<tbody>
 											<volist name="info" id="list" key="k">
 												<tr>
 													<td><{$k}></td>
-													<td><{$list.cid}></td>
-													<td><{$list.mid}></td>
+													<td><{$list.client_name}></td>
+													<td><{$list.meeting_name}></td>
 													<td><{$list.price}></td>
 													<td><{$list.type}></td>
 													<td><{$list.method}></td>
@@ -99,13 +110,16 @@
 														</switch>
 													</td>
 													<td><{$list.comment}></td>
+													<td>
+														<div class="btn-group" data-id="<{$single.id}>">
+															<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_role">修改</button>
+															<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_role">删除</button>
+														</div>
+													</td>
 												</tr>
 											</volist>
 										</tbody>
 									</table>
-									<div class="add">
-										<a data-toggle="modal" data-target="#add_receivables" data-backdrop="static"><i class="glyphicon glyphicon-plus"></i>&nbsp;添加收款</a>
-									</div>
 								</div>
 							</div>
 						</div>
@@ -124,12 +138,52 @@
 					<h2 class="modal-title" id="delete_role_title">收款</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
-					<input type="hidden" name="requestType" value="message"> <input type="hidden" name="mid" value="">
+					<input type="hidden" name="requestType" value="create">
+					<input type="hidden" name="mid" value="">
+					<input type="hidden" name="cid" value="">
 					<div class="modal-body">
+						<div class="form-group">
+							<label for="client_name" class="col-sm-2 control-label">客户姓名：</label>
+							<div class="col-sm-10">
+								<input type="text" id="client_name" class="form-control" disabled>
+							</div>
+						</div>
 						<div class="form-group">
 							<label for="price" class="col-sm-2 control-label">金额：</label>
 							<div class="col-sm-10">
 								<input type="number" name="price" id="price" class="form-control">
+								<div id="idCalculadora" class="hide clearfix">
+									<div id="calcuator">
+										<input type="text" id="input-box" value="0" size="21" maxlength="21" readonly="readonly" />
+										<div id="btn-list">
+											<div onclick="operator('clear')" class=" btn-30 btn-radius color-red clear-marginleft">C</div>
+											<div onclick="operator('opposite')" class=" btn-30 btn-radius color-blue">+/-</div>
+											<div onclick="operator('percent')" class=" btn-30 btn-radius color-blue">%</div>
+											<div onclick="operator('backspace')" class=" btn-70 btn-radius color-red font-14">←</div>
+											<div onclick="typetoinput('7')" class=" btn-30 btn-radius clear-marginleft">7</div>
+											<div onclick="typetoinput('8')" class=" btn-30 btn-radius">8</div>
+											<div onclick="typetoinput('9')" class=" btn-30 btn-radius">9</div>
+											<div onclick="operator('plus')" class=" btn-30 btn-radius color-blue font-14">+</div>
+											<div onclick="operator('minus')" class=" btn-30 btn-radius color-blue font-14">-</div>
+											<div onclick="typetoinput('4')" class=" btn-30 btn-radius clear-marginleft">4</div>
+											<div onclick="typetoinput('5')" class=" btn-30 btn-radius">5</div>
+											<div onclick="typetoinput('6')" class=" btn-30 btn-radius">6</div>
+											<div onclick="operator('multiply')" class=" btn-30 btn-radius color-blue font-14">×</div>
+											<div onclick="operator('divide')" class=" btn-30 btn-radius color-blue font-12">÷</div>
+											<div onclick="typetoinput('1')" class=" btn-30 btn-radius clear-marginleft">1</div>
+											<div onclick="typetoinput('2')" class=" btn-30 btn-radius">2</div>
+											<div onclick="typetoinput('3')" class=" btn-30 btn-radius">3</div>
+											<div onclick="operator('pow')" class=" btn-30 btn-radius color-blue font-14">×²</div>
+											<div onclick="operator('sqrt')" class=" btn-30 btn-radius color-blue font-12">√</div>
+											<div onclick="typetoinput('0')" class=" btn-70 btn-radius clear-marginleft">0</div>
+											<div onclick="typetoinput('.')" class=" btn-30 btn-radius">.</div>
+											<div onclick="operator('result')" class=" btn-70 btn-radius color-red font-14 equal">=</div>
+										</div>
+										<div class="close_calcuator">
+											<button type="button" class="btn btn-default btn-sm">关闭</button>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 						<div class="form-group">
@@ -184,6 +238,15 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<label for="time" class="col-sm-2 control-label">收款时间：</label>
+							<div class="col-sm-10">
+								<div class="input-group date form_datetime" id="time">
+									<input class="form-control" id="receivables_time" name="receivables_time">
+									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
 							<label for="comment" class="col-sm-2 control-label">备注：</label>
 							<div class="col-sm-10">
 								<textarea class="form-control comment" name="comment" id="comment"></textarea>
@@ -199,9 +262,9 @@
 		</div>
 	</div>
 	<script>
-		var CreateObject = {
+		var ManageObject = {
 			object:{
-				method   :$('#method').QuasarSelect({
+				method     :$('#method').QuasarSelect({
 					name        :'method',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting)}>',
@@ -210,7 +273,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				type     :$('#type').QuasarSelect({
+				type       :$('#type').QuasarSelect({
 					name        :'type',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting)}>',
@@ -219,8 +282,8 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				meetingName     :$('#meeting_name').QuasarSelect({
-					name        :'type',
+				meetingName:$('#meeting_name').QuasarSelect({
+					name        :'mid',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting_list)}>',
 					idInput     :'selected_meeting_name',
@@ -228,7 +291,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				clientName     :$('#client_name').QuasarSelect({
+				clientName :$('#client_name').QuasarSelect({
 					name        :'client_name',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($client_list)}>',
@@ -237,8 +300,8 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				payeeName:$('#payee_id').QuasarSelect({
-					name        :'payeeName',
+				payeeName  :$('#payee_id').QuasarSelect({
+					name        :'payee_id',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($client_list)}>',
 					idInput     :'selected_payeeName',
@@ -246,9 +309,23 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				toast    :$().QuasarToast(),
-				loading  :$().QuasarLoading(),
-				icheck   :$('.icheck').iCheck({
+				time       :$('#time').datetimepicker({
+					language          :'zh-CN',
+					todayBtn          :true,
+					autoclose         :true,
+					todayHighlight    :true,
+					keyboardNavigation:true,
+					forceParse        :true,
+					format            :'yyyy-mm-dd hh:ii:ss',
+					weekStart         :0,
+					startView         :2,
+					minView           :0,
+					maxView           :4,
+					minuteStep        :5
+				}),
+				toast      :$().QuasarToast(),
+				loading    :$().QuasarLoading(),
+				icheck     :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				})
