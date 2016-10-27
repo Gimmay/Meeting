@@ -44,14 +44,14 @@
 
 					return array_merge($meeting_result, ['__ajax__' => true]);
 				break;
-				case'delete';
+				case 'delete';
 					$id = I('post.id', '');
 					/** @var \Core\Model\CouponItemModel $model */
 					$model  = D('Core/CouponItem');
 					$result = $model->deleteCouponItem($id);
 					return array_merge($result, ['__ajax__' => false]);
 				break;
-				case'multi_alter';
+				case 'multi_alter';
 					/** @var \Core\Model\CouponItemModel $coupon_item_model */
 					$coupon_item_model = D('Core/CouponItem');
 					C('TOKEN_ON', false);
@@ -65,7 +65,7 @@
 
 					return array_merge($coupon_item_result, ['__ajax__' => false]);
 				break;
-				case'alter';
+				case 'alter';
 					$id['id'] = I('post.id', '');
 					C('TOKEN_ON', false);            //令牌
 					$mid['mid'] = I('post.meeting_name_a', '');
@@ -75,7 +75,7 @@
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
-				case'create';
+				case 'create';
 					/** @var \Core\Model\CouponItemModel $model */
 					$model = D('Core/Coupon_item');
 					C('TOKEN_ON', false);            //令牌

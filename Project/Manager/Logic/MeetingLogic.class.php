@@ -199,7 +199,7 @@
 							$qrcode_obj = new QRCodeLogic();
 							/** @var \Core\Model\MeetingModel $model */
 							$model       = D('Core/Meeting');
-							$url         = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/my/mid/$result[id].aspx";
+							$url         = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/mid/$result[id].aspx";
 							$qrcode_file = $qrcode_obj->make($url);
 							$remote_url  = '/'.trim($qrcode_file, './');
 							$record      = $model->findMeeting(1, ['id' => $result['id']]);
@@ -208,23 +208,29 @@
 								'qrcode' => $remote_url
 							]);
 						}
+
 						return array_merge($result, ['__ajax__' => false]);
 					}
 					else return ['status' => false, 'message' => '您没有创建会议的权限', '__ajax__' => false];
 				break;
 				case 'upload_image':
-					$core_upload_logic    = new UploadLogic();
-					$result              = $core_upload_logic->upload($_FILES, '/Image/');
+					$core_upload_logic = new UploadLogic();
+					$result            = $core_upload_logic->upload($_FILES, '/Image/');
 
 					return array_merge($result, ['__ajax__' => true, 'imageUrl' => $result['data']['filePath']]);
 				break;
 				case 'alter':
 					if($this->permissionList['MEETING.ALTER']){
 						/** @var \Core\Model\MeetingModel $model */
-						$model         = D('Core/Meeting');
-						$id            = I('get.id', 0, 'int');
-						$data          = I('post.');
-						$data['brief'] = $_POST['brief'];
+						$model          = D('Core/Meeting');
+						$qrcode_obj     = new QRCodeLogic();
+						$id             = I('get.id', 0, 'int');
+						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/mid/$id.aspx";
+						$qrcode_file    = $qrcode_obj->make($url);
+						$remote_url     = '/'.trim($qrcode_file, './');
+						$data           = I('post.');
+						$data['brief']  = $_POST['brief'];
+						$data['qrcode'] = $remote_url;
 						if(I('post.area')) $data['place'] = I('post.province')."-".I('post.city')."-".I('post.area')."-".I('post.address_detail');
 						elseif(I('post.city')) $data['place'] = I('post.province')."-".I('post.city')."-".I('post.address_detail');
 						else $data['place'] = $ext['info']['place'];

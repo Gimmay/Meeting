@@ -39,9 +39,8 @@
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
-				if($status == 'not deleted') $where['status'] = ['neq', 5];
-				elseif($status == 'available') $where['status'] = ['in', [0, 1]];
-				elseif($status == 'not available') $where['status'] = ['in', [2, 3, 4]];
+				if($status == 'not deleted') $where['status'] = ['neq', 3];
+				elseif($status == 'not available') $where['status'] = ['in', [2, 3, 0]];
 				else $where['status'] = $filter['status'];
 			}
 			if(isset($filter['keyword']) && $filter['keyword']){

@@ -628,7 +628,86 @@ textarea{
 	padding : 0 30px;
 }
 
-/* 分页外部 */
+.mt_wrapper .right_details{
+	position   : fixed;
+	top        : 60px;
+	right      : 0;
+	bottom     : 0;
+	background : #FFFFFF;
+	box-shadow : 0 0 8px 0 rgba(0, 0, 0, 0.137);
+	width      : 0;
+	z-index    : 996;
+	overflow   : hidden;
+}
+
+.mt_wrapper .right_details .d_con{
+	width    : 480px;
+	height   : 100%;
+	padding  : 24px;
+	position : relative;
+}
+
+.mt_wrapper .right_details .d_con .close_btn{
+	position      : absolute;
+	right         : 30px;
+	top           : 20px;
+	display       : block;
+	width         : 30px;
+	height        : 30px;
+	border-radius : 50%;
+	border        : 2px solid rgba(0, 0, 0, .3);
+	color         : rgba(0, 0, 0, .3);
+	text-align    : center;
+	line-height   : 26px;
+}
+
+.mt_wrapper .right_details .d_con .close_btn:hover{
+	border : 2px solid rgba(0, 0, 0, .6);
+	color  : rgba(0, 0, 0, .6);
+}
+
+.mt_wrapper .right_details .d_con .title{
+	font-size     : 20px;
+	margin-bottom : 16px;
+}
+
+.mt_wrapper .right_details .d_con .info{
+	position : relative;
+}
+
+.mt_wrapper .right_details .d_con .info .li{
+	margin-bottom : 8px;
+	font-size     : 14px;
+	padding-left  : 5px;
+}
+
+.mt_wrapper .right_details .d_con .btn_fun{
+	padding-top : 10px;
+	overflow    : hidden;
+}
+
+.mt_wrapper .right_details .d_con .btn_fun a{
+	float        : left;
+	display      : inline-block;
+	margin-right : 10px;
+	padding      : 8px 20px;
+	color        : #FFFFFF;
+	background   : #00A0E8;
+}
+
+.mt_wrapper .right_details .d_con .d_list{
+}
+
+.mt_wrapper .right_details .d_con .d_list .list_title{
+	background    : #ECF1F4;
+	padding       : 6px 8px;
+	margin-top    : 16px;
+	margin-bottom : 8px;
+	font-size     : 14px;
+}
+
+.mt_wrapper
+	/* 分页外部 */
 .page_wrap{
 	text-align : center;
 }
@@ -709,6 +788,31 @@ textarea{
 	margin-left : 10px;
 }
 
+/** tabs **/
+
+.tabs{
+	width      : 100%;
+	padding    : 0 30px;
+	border-top : 1px solid #E1E1E1;
+}
+
+.tabs .tabsUl{
+	width : 100%;
+}
+
+.tabs .tabsUl li{
+	float       : left;
+	width       : 70px;
+	height      : 50px;
+	font-size   : 14px;
+	text-align  : center;
+	line-height : 50px;
+}
+
+.tabs .tabsUl li.active{
+	border-bottom : 3px solid #00A0E8;
+}
+
 /** title nav**/
 .nav_tab{
 	background : #ECF1F4;
@@ -734,6 +838,7 @@ textarea{
 .nav_tab .nav_tab_li a{
 	color      : rgba(0, 0, 0, .85);
 	text-align : center;
+	display    : block;
 }
 
 .nav_tab .nav_tab_li.active a{
@@ -743,6 +848,11 @@ textarea{
 .sAmount{
 	font-size : 16px;
 	color     : red;
+}
+
+/** 时间插件层级 **/
+#jedatebox{
+	z-index : 2222 !important;
 }
 
 /* css3 keyframes */

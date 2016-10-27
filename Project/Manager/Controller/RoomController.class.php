@@ -1,6 +1,7 @@
 <?php
 	namespace Manager\Controller;
 
+	use Manager\Logic\HotelLogic;
 	use Manager\Logic\RoomLogic;
 
 	class RoomController extends ManagerController{
@@ -11,7 +12,7 @@
 		public function manage(){
 			$room_logic = new RoomLogic();
 			if(IS_POST){
-				$type   = I('post.requestType');
+				$type = I('post.requestType');
 				$result = $room_logic->handlerRequest($type);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);
@@ -24,13 +25,12 @@
 				}
 				exit;
 			}
-			$find_room = $room_logic->findHotel();
-			/** @var \Manager\Model\MeetingModel $meeting_model */
-			$meeting_model = D('Meeting');
-			$meeting_list  = $meeting_model->getMeetingForSelect();
-			$this->assign('info', $find_room);
-			$this->assign('meeting', $meeting_list);
+			$room_result = $room_logic->findRoom();
+			$meeting_result = $room_logic->findMeeting();
+			$join_result = $room_logic->selectMeetingJoin();
+			$this->assign('list',$join_result);
+			$this->assign('room_info',$room_result);
+			$this->assign('info',$meeting_result);
 			$this->display();
 		}
-
 	}

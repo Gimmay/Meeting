@@ -13,7 +13,7 @@ function checkIsEmpty(){
 		$code.focus();
 		return false;
 	}
-	if($name.text() == ''){
+	if(CreateObject.object.userSelect.getValue() == ''){
 		CreateObject.object.toast.toast("姓名不能为空");
 		$name.focus();
 		return false;

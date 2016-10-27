@@ -20,6 +20,8 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/xheditor-1.2.2/xheditor-1.2.2.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/xheditor-1.2.2/xheditor_lang/zh-cn.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
@@ -50,6 +52,19 @@
 								</if>
 							</div>
 						</header>
+						<div class="tabs">
+							<ul class="tabsUl clearfix">
+								<li class="active">
+									<a href="#">进行中</a>
+								</li>
+								<li>
+									<a href="#">已完成</a>
+								</li>
+								<li>
+									<a href="#">取消</a>
+								</li>
+							</ul>
+						</div>
 						<div class="repertory clearfix">
 							<form action="" method="get">
 								<div class="input-group repertory_text">
@@ -70,10 +85,12 @@
 										</td>
 										<td width="3%">序号</td>
 										<td width="10%">酒店名称</td>
-										<td width="13%">会议名称</td>
-										<td width="10%">入住情况</td>
-										<td width="10%">管理人员(联系方式)</td>
-										<td width="10%">类型</td>
+										<td width="8%">会议名称</td>
+										<td width="7%">星级</td>
+										<td width="8%">类型</td>
+										<td width="8%">地址</td>
+										<td width="8%">价格</td>
+										<td width="8%">联系方式</td>
 										<td width="10%">备注</td>
 										<td width="30%">操作</td>
 									</tr>
@@ -86,16 +103,16 @@
 											</td>
 											<td><{$i}></td>
 											<td class="hotel_name"><{$info.hotel_name}></td>
-											<td class="meeting_name"><{$info.meeting_name}></td>
-											<td>
-												满（100人） 未满（入住50人 未入住20人） 空
-											</td>
-											<td><{$info.client_name}>（<{$info.mobile}>）</td>
-											<td>类型</td>
-											<td><{$info.comment}></td>
+											<td class="meeting_name"><{$info.name}></td>
+											<td><{$info.level}></td>
+											<td><{$info.type}></td>
+											<td><{$info.address}></td>
+											<td><{$info.price}></td>
+											<td><{$info.contact}></td>
+											<td><{$info.brief}></td>
 											<td>
 												<div class="btn-group" data-id="<{$info.id}>">
-													<a href="" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#distribution_room">分配房间</a>
+													<a href="<{:U('Room/manage',['id'=>$info['id'],'hid'=>$info['hid']])}>" class="btn btn-default btn-xs delete_btn">房间管理</a>
 													<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_hotel">修改</button>
 													<button class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_hotel">删除</button>
 												</div>
@@ -118,7 +135,7 @@
 	</div>
 	<!-- 添加酒店 -->
 	<div class="modal fade" id="create_room" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
+		<div class="modal-dialog" style="width: 50%">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
@@ -129,15 +146,46 @@
 					<input type="hidden" name="requestType" value="create">
 					<div class="modal-body">
 						<div class="form-group">
-							<label for="hotel_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>酒店名称：</label>
+							<label for="name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>酒店名称：</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control hotel_name" name="hotel_name" id="hotel_name">
+								<input type="text" class="form-control" name="name" id="name">
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="meeting_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>会议名称：</label>
+							<label for="level" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>星级：</label>
 							<div class="col-sm-10">
-								<div id="meeting_name"></div>
+								<input type="text" class="form-control level" name="level" id="level">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>类型：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control type" name="type" id="type">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="address" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>地址：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control address" name="address" id="address">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="price" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>价格：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control price" name="price" id="price">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="contact" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>联系方式：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control contact" name="contact" id="contact">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="brief" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>简介：</label>
+							<div class="col-sm-10">
+								<!--	<input type="text" class="form-control brief" name="brief" id="brief">-->
+								<textarea class="form-control brief xheditor" runat="server"  name="brief" id="brief" style="min-height: 200px"></textarea>
 							</div>
 						</div>
 						<div class="form-group">
@@ -158,32 +206,63 @@
 	<!-- 修改酒店 -->
 	<if condition="$permission_list['ROLE.ALTER'] eq 1">
 		<div class="modal fade" id="alter_hotel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
+			<div class="modal-dialog" style=" width: 50%">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">
 							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 						<h2 class="modal-title">修改酒店</h2>
 					</div>
-					<form class="form-horizontal" role="form" action="" method="post">
-						<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
+					<form class="form-horizontal" role="form" method="post" action="">
+						<input type="hidden" name="requestType" value="alter"><input type="hidden" name="id">
 						<div class="modal-body">
 							<div class="form-group">
-								<label for="hotel_name_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>酒店名称：</label>
+								<label for="name_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>酒店名称：</label>
 								<div class="col-sm-10">
-									<input type="text" class="form-control hotel_name" name="hotel_name" id="hotel_name_a">
+									<input type="text" class="form-control" name="name_a" id="name_a">
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="meeting_name_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>会议名称：</label>
+								<label for="level_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>星级：</label>
 								<div class="col-sm-10">
-									<div id="meeting_name_a"></div>
+									<input type="text" class="form-control level_a" name="level_a" id="level_a">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="type_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>类型：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control type" name="type_a" id="type_a">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="address_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>地址：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control address_a" name="address_a" id="address_a">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="price_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>价格：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control price_a" name="price_a" id="price_a">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="contact_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>联系方式：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control contact_a" name="contact_a" id="contact_a">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="brief_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>简介：</label>
+								<div class="col-sm-10">
+									<!--	<input type="text" class="form-control brief" name="brief" id="brief">-->
+									<textarea class="form-control brief xheditor" runat="server"  name="brief_a" id="brief_a" style="min-height: 200px"></textarea>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="room_comment_a" class="col-sm-2 control-label">备注：</label>
 								<div class="col-sm-10">
-									<textarea class="form-control comment" name="comment" id="room_comment_a"></textarea>
+									<textarea class="form-control room_comment_a" name="room_comment_a" id="room_comment_a"></textarea>
 								</div>
 							</div>
 						</div>

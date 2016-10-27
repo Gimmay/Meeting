@@ -42,6 +42,7 @@
 			foreach($client_list as $k1 => $v1){ //循环输出当前系统的客户名单
 				foreach($wx_list as $k2 => $v2){//循环输出微信获取的所有用户信息
 					if($v1['mobile'] == $v2['mobile']){//判断 当前系统的手机和微信获取的用户信息的手机做匹配
+						//$weixin_model->deleteRecord(['weixin_id'=>$v2['userid'], 'otype'=>1]);
 						$department = '';
 						foreach($v2['department'] as $v3) $department .= $v3.',';
 						$department         = trim($department, ',');
@@ -75,6 +76,7 @@
 			foreach($client_list as $k1 => $v1){ //循环输出当前系统的员工名单
 				foreach($wx_list as $k2 => $v2){//循环输出微信获取的所有用户信息
 					if($v1['mobile'] == $v2['mobile']){//判断 当前系统的手机和微信获取的用户信息的手机做匹配
+						//$weixin_model->deleteRecord(['weixin_id'=>$v2['userid'], 'otype'=>0]);
 						$department = '';
 						foreach($v2['department'] as $v3) $department .= $v3.',';
 						$department         = trim($department, ',');

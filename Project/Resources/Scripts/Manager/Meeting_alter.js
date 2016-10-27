@@ -7,6 +7,27 @@ $(function(){
 		$('input[name=requestType]').val('upload_image');
 		$('#submit_logo').trigger('click');
 	});
+	// 全选checkbox
+	$('.all_check').find('.iCheck-helper').on('click',function(){
+		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
+			$('.check_item').find('.icheckbox_square-green').addClass('checked');
+		}else{
+			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
+		}
+	});
+	$('.btn_save_hotel').on('click',function(){
+		var arr=[],hotel=[];
+		$('.check_item .icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
+			var hotel_name = $(this).parents('tr').find('.hotel_name').text();
+			arr.push(id);
+			hotel.push(hotel_name);
+		});
+		$('#choose_hotel').modal('hide')
+		$('input[name=hotel]').val(arr);
+		$('.c_hotel').removeClass('hide');
+		$('.c_hotel').find('span').text(hotel);
+	})
 });
 
 function  checkIsEmpty(){

@@ -44,7 +44,8 @@
 				else $where['status'] = $filter['status'];
 			}
 			if(isset($filter['keyword']) && $filter['keyword']){
-				$condition['hotel_name']   = ['like', "%$filter[keyword]%"];
+				$condition['code']   = ['like', "%$filter[keyword]%"];
+				$condition['type']   = ['like', "%$filter[keyword]%"];
 				$condition['_logic'] = 'or';
 				$where['_complex']   = $condition;
 			}
@@ -91,7 +92,7 @@
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save(['status' => 3]);
 					if($result) return ['status' => true, 'message' => '删除成功'];
-					else return ['status' => false, 'message' => '没有删除任何代金券'];
+					else return ['status' => false, 'message' => '删除失败'];
 				}catch(Exception $error){
 					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);

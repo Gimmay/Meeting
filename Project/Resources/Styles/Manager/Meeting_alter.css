@@ -37,9 +37,9 @@
 
 .logo_wp{
 	position : relative;
-	overflow: hidden;
-	width    : 550px;
-	height   : 350px;
+	overflow : hidden;
+	width    : 300px;
+	height   : 200px;
 	float    : left;
 	border   : 1px solid rgba(0, 0, 0, .2);
 }

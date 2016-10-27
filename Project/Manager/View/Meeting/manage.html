@@ -65,20 +65,23 @@
 							<table class="table table-bordered" style="text-align: center">
 								<thead>
 									<tr>
-										<td width="4%" class="all_check">
+										<td width="2%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="3%">序号</td>
-										<td width="10%">名称</td>
-										<td width="5%">状态</td>
+										<td width="2%">序号</td>
+										<td width="8%">名称</td>
+										<td width="3%">状态</td>
 										<td width="5%">类型</td>
-										<td width="10%">主办方</td>
-										<td width="10%">策划方</td>
-										<td width="10%">举办地点</td>
+										<td width="10%">二维码</td>
+										<td width="5%">主办方</td>
+										<td width="5%">策划方</td>
+										<td width="6%">举办地点</td>
+										<td width="8%">会议酒店</td>
+										<td width="8%">会议车辆</td>
 										<td width="10%">开始结束时间</td>
 										<td width="5%">负责人</td>
 										<td width="8%">创建时间</td>
-										<td width="30%">操作</td>
+										<td width="25%">操作</td>
 									</tr>
 								</thead>
 								<tbody>
@@ -90,28 +93,31 @@
 											<td><{$i}></td>
 											<td><{$vo.name}></td>
 											<td>
-											<span class="color-info">
-												<switch name="vo.status">
-													<case value="0">禁用</case>
-													<case value="1">新建</case>
-													<case value="2">进行中</case>
-													<case value="3">结束</case>
-												</switch>
-											</span>
+												<span class="color-info">
+													<switch name="vo.status">
+														<case value="0">禁用</case>
+														<case value="1">新建</case>
+														<case value="2">进行中</case>
+														<case value="3">结束</case>
+													</switch>
+												</span>
 											</td>
 											<td>
-											<span class="color-info ">
-											<switch name="vo.type">
-												<case value="1">成交会</case>
-												<case value="2">特训营</case>
-												<case value="3">优雅女子</case>
-												<case value="4">招商会</case>
-												<case value="5">启动大会</case>
-											</switch>
-											</span>
+												<span class="color-info">
+													<switch name="vo.type">
+														<case value="1">成交会</case>
+														<case value="2">特训营</case>
+														<case value="3">优雅女子</case>
+														<case value="4">招商会</case>
+														<case value="5">启动大会</case>
+													</switch>
+												</span>
 											</td>
+											<td><img src="<{$vo.qrcode}>" width="150px"></td>
 											<td><{$vo.host}></td>
 											<td><{$vo.plan}></td>
+											<td><{$vo.place}></td>
+											<td><{$vo.place}></td>
 											<td><{$vo.place}></td>
 											<td><{$vo.start_time}><br>至<br><{$vo.end_time}></td>
 											<td><{$vo.director_name}></td>

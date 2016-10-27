@@ -15,21 +15,34 @@
 
 		public function handlerRequest($type){
 			switch($type){
-				case'create';
-					/** @var \Core\Model\RoomModel $room_model */
-					$room_model = D('Core/Room');
+				case 'create';
 					C('TOKEN_ON', false);
-					$data['comment']    = I('post.comment');
-					$data['hotel_name'] = I('post.hotel_name', '');
-					$data['creatime']   = time();    //创建时间
-					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
-					$data['status']     = 1;
-					$data['mid']        = I('post.meeting_name', '');
-					$room_result        = $room_model->createRecord($data);
+					/** @var \Core\Model\RoomModel $room_model */
+					$room_model       = D('Core/Room');
+					$data             = I('post.', '');
+					$data['type']     = I('post.room_type', '');
+					$data['code']     = I('post.room_number', '');
+					$data['mid']      = I('get.id', 0, 'int');
+					$data['hid']      = I('get.hid', 0, 'int');
+					$data['creatime'] = time();    //创建时间
+					$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+					$data['person']   = I('post.person', '');
+					$room_result      = $room_model->createRecord($data);
+					/** @var \Core\Model\AssignRoomModel $assign_room_model */
+					$assign_room_model = D('Core/AssignRoom');
+					$person_id         = explode(',', $data['person']);
+					foreach($person_id as $v){
+						$data['rid']        = $room_result['id'];
+						$data['jid']        = $v;
+						$data['come_time']  = strtotime(I('post.come_time'));
+						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$data['creatime']   = time();
+						$assign_room_result = $assign_room_model->createRecord($data);
+					}
 
 					return array_merge($room_result, ['__ajax__' => false]);
 				break;
-				case'delete';
+				case 'delete';
 					/** @var \Core\Model\RoomModel $room_model */
 					$room_model = D('Core/Room');
 					C('TOKEN_ON', false);
@@ -37,7 +50,17 @@
 
 					return array_merge($room_result, ['__ajax__' => false]);
 				break;
-				case'alter';
+				case 'details';
+					/** @var \Core\Model\AssignRoomModel $assign_room_model */
+					$assign_room_model = D('Core/AssignRoom');
+					$assign_room_result = $assign_room_model->findAssignRoom(2,['id'=>I('post.id','')]);
+				print_r($assign_room_result);exit;
+//					/** @var \Core\Model\JoinModel $jion_model */
+//					$jion_model = D('Core/Join');
+//					$join_result = $jion_model->findRecord(2,['id'=>$assign_room_result['jid']]);
+//					print_r($join_result);exit;
+				break;
+				case 'alter';
 					/** @var \Core\Model\RoomModel $room_model */
 					$room_model = D('Core/Room');
 					C('TOKEN_ON', false);
@@ -73,5 +96,46 @@
 			}
 
 			return $room_result;
+		}
+
+		public function findMeeting(){
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			/** @var \Core\Model\HotelModel $hotel_model */
+			$hotel_model    = D('Core/Hotel');
+			$meeting_result = $meeting_model->findMeeting(1, [
+				'id'  => I('get.id', 0, 'int'),
+				'hid' => I('get.hid', 0, 'int')
+			]);
+			foreach($meeting_result as $k => $v){
+				$hotel_result                 = $hotel_model->findHotel(1, ['id' => $meeting_result]['hid']);
+				$meeting_result['hotel_name'] = $hotel_result['name'];
+			}
+
+			return $meeting_result;
+		}
+
+		public function findRoom(){
+			/** @var \Core\Model\AssignRoomModel $assign_room_model */
+			$assign_room_model = D('Core/AssignRoom');
+			/** @var \Core\Model\RoomModel $room_model */
+			$room_model  = D('Core/Room');
+			$room_result = $room_model->findRoom(2, [
+				'status'  => 'not deleted',
+				'keyword' => I('get.keyword', 0, 'int')
+			]);
+			foreach($room_result as $k => $v){
+				$room_result[$k]['count'] = $assign_room_model->findAssignRoom(0, ['rid' => $room_result[$k]['id']]);
+			}
+
+			return $room_result;
+		}
+
+		public function selectMeetingJoin(){
+			/** @var \Core\Model\JoinModel $join_model */
+			$join_model  = D('Core/Join');
+			$join_result = $join_model->findRecord(2, ['mid' => I('get.id', 0, 'int')]);
+
+			return $join_result;
 		}
 	}

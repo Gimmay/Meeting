@@ -93,6 +93,10 @@ try{
 	 *
 	 * Version 2.42 2016-10-24 10:42
 	 * quasar.event.select 事件由对列表触发更改为对插件触发
+	 *
+	 * Version 2.45 2016-10-27 18:36
+	 * 1、新增内部事件 _private.event.change 用于处理检测输入框值的改变事件
+	 * 2、添加处理检测输入框值的改变代码段的限制条件为数据不能为空
 	 */
 	(function($){
 		/**
@@ -132,8 +136,8 @@ try{
 		 * @constructor
 		 */
 		$.fn.QuasarSelect = function(options){
-			var self                = this;
-			var defaults            = {
+			var self             = this;
+			var defaults         = {
 				data         :[],
 				name         :'quasarSelect',
 				classStyle   :'',
@@ -154,26 +158,41 @@ try{
 					}
 				}
 			};
-			var opts                = $.extend(defaults, options);
+			var opts             = $.extend(defaults, options);
 			// save selector
-			this.selectedItem       = null;
-			var $_dataList          = null;
-			var $_dataItems         = null;
-			var $_inputVisible      = null;
-			var $_inputHidden       = null;
-			var _insertMode         = false;
+			this.selectedItem    = null;
+			var $_dataList       = null;
+			var $_dataItems      = null;
+			var $_inputVisible   = null;
+			var $_inputHidden    = null;
+			/**
+			 * 记录插件的输入模式
+			 *
+			 * @type {boolean} true: 自由输入模式 false: 只能选取列表项
+			 * @private
+			 */
+			var _insertMode      = false;
+			/**
+			 * *因为 blur 时间发生在其他元素的点击事件之前
+			 * *因此该属性用于记录 blur 事件后是否有点击事件
+			 *
+			 * @type {boolean}
+			 * @private
+			 */
+			var _blurThenClick =  false;
 			/**
 			 * 初始化组件
 			 *
 			 * @private
 			 */
-			var _makeComponent      = function(){
+
+			var _makeComponent   = function(){
 				// init
 				$(self).html('');
 				$(self).css('position', 'relative');
 				// make input
-				var input_visible     = "<textarea class=\'quasar-select-input "+opts.classStyle+"\' id=\'"+opts.idInput+"\' placeholder='"+opts.placeholder+"' data-ext=\'\'>"+opts.defaultHtml+"</textarea>";
-				var input_hidden      = "<input type=\'hidden\' name=\'"+opts.name+"\' id=\'"+opts.idHidden+"\' value='"+opts.defaultValue+"'>";
+				var input_visible = "<textarea class=\'quasar-select-input "+opts.classStyle+"\' id=\'"+opts.idInput+"\' placeholder='"+opts.placeholder+"' data-ext=\'\'>"+opts.defaultHtml+"</textarea>";
+				var input_hidden  = "<input type=\'hidden\' name=\'"+opts.name+"\' id=\'"+opts.idHidden+"\' value='"+opts.defaultValue+"'>";
 				$(self).append(input_hidden);
 				$(self).append(input_visible);
 				// make ul+li data list (include bind event)
@@ -184,7 +203,7 @@ try{
 			 *
 			 * @private
 			 */
-			var _initSelector       = function(){
+			var _initSelector    = function(){
 				$_dataItems    = $(self).find('li.quasar-select-data-item');
 				$_dataList     = $(self).find('ul.quasar-select-data-list');
 				$_inputVisible = $(self).find('#'+opts.idInput);
@@ -195,7 +214,7 @@ try{
 			 *
 			 * @private
 			 */
-			var _bindEvent          = function(){
+			var _bindEvent       = function(){
 				$(function(){
 					var _handlerInput = function(){
 						var value      = self.getHtml();
@@ -213,7 +232,7 @@ try{
 									$_inputVisible.attr('data-ext', opts.data[index].ext);
 								}
 								self.selectedItem = $(self)
-									.find('li.quasar-select-data-item[data-value='+opts.data[index].value+']')[0];
+								.find('li.quasar-select-data-item[data-value='+opts.data[index].value+']')[0];
 								$(self).find('li.quasar-select-data-item').removeClass('selected');
 								$(self).find('li.quasar-select-data-item[data-value='+opts.data[index].value+']')
 									   .addClass('selected');
@@ -238,7 +257,7 @@ try{
 								}
 								$(self).find('li.quasar-select-data-item').removeClass('selected');
 								$_inputHidden.val('');
-								self.setHtml('');
+								self.setHtml(opts.hasEmptyItem ? opts.emptyItemHtml : '');
 								$_inputVisible.attr({'data-ext':''});
 								self.selectedItem = null;
 							}
@@ -273,13 +292,17 @@ try{
 								break;
 						}
 					}).on('blur', function(){
-						_handlerInput();
+						_blurThenClick = true;
+						$(self).trigger('_private.event.change');
 					});
 					/**
 					 * 添加点击非插件区域事件
 					 */
 					$('body').on('click touchend', function(){
 						self.hideList();
+						// _blurThenClick = true;
+						// $(self).trigger('_private.event.change');
+
 					});
 					$_dataList.on('keydown', function(e){
 						switch(parseInt(e.keyCode)){
@@ -319,12 +342,19 @@ try{
 						$(self).find('li.quasar-select-data-item').removeClass('selected');
 						self.selectedItem = this;
 						$(this).addClass('selected');
-						$(self).trigger('quasar.event.select');
+						_blurThenClick = true;
+						$(self).trigger('quasar.event.select').trigger('_private.event.change');
 					}).on('mouseenter', function(){
 						$_dataItems.removeClass('hover');
 						$(this).addClass('hover');
 					}).on('mouseleave', function(){
 						$_dataItems.removeClass('hover');
+					});
+					$(self).off('_private.event.change').on('_private.event.change', function(){
+						if(_blurThenClick){
+							_handlerInput();
+							_blurThenClick = false;
+						}
 					});
 				});
 			};
@@ -333,7 +363,7 @@ try{
 			 *
 			 * @private
 			 */
-			var _unbindEvent        = function(){
+			var _unbindEvent     = function(){
 				$(self).find('#'+opts.idInput).off('click keydown keyup blur');
 				$(self).find('li.quasar-select-data-item')
 					   .off('click touchend mouseenter mouseleave');
@@ -346,7 +376,7 @@ try{
 			 *
 			 * @private
 			 */
-			var _moveToNext         = function(){
+			var _moveToNext      = function(){
 				var hidden_mode = self.isHidden();
 				var index       = hidden_mode ? self.getIndex() : self.getIndex(true);
 				var result      = hidden_mode ? self.setItemByIndex(index+1) : self.setItemByIndex(index+1, true);
@@ -358,7 +388,7 @@ try{
 			 *
 			 * @private
 			 */
-			var _moveToLast         = function(){
+			var _moveToLast      = function(){
 				var index;
 				index = self.isHidden() ? self.getIndex() : self.getIndex(true);
 				if(index === 0) return false;
@@ -373,7 +403,7 @@ try{
 			 *
 			 * @private
 			 */
-			var _selectHoverItem    = function(){
+			var _selectHoverItem = function(){
 				var $object = $(self).find('li.quasar-select-data-item.hover'), ext = $(this).attr('data-ext');
 				$_inputHidden.val($object.attr('data-value'));
 				self.setHtml($object.text());

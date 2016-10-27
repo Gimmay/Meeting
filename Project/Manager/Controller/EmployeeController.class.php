@@ -135,8 +135,8 @@
 				/* 获取OA用户列表（for select插件） */
 				$oa_user = $oa_user_model->getUserSelectList();
 				/* 获取部门列表（for select插件） */
-				$dept = $dept_model->getDepartmentSelectList();
-				$company=$dept_model->getCompanySelectList();
+				$dept    = $dept_model->getDepartmentSelectList();
+				$company = $dept_model->getCompanySelectList();
 				$this->assign('position', $position);
 				$this->assign('oa_user', $oa_user);
 				$this->assign('dept', $dept);
@@ -166,7 +166,7 @@
 				/* 获取职位列表（for select插件） */
 				$position = $model->getPositionSelectList();
 				/* 获取部门列表（for select插件） */
-				$dept = $dept_model->getDepartmentSelectList();
+				$dept    = $dept_model->getDepartmentSelectList();
 				$company = $dept_model->getCompanySelectList();
 				$this->assign('position', $position);
 				$this->assign('dept', $dept);
@@ -176,12 +176,58 @@
 			}
 			else $this->error('您没有修改员工的权限');
 		}
-		
+
 		public function personalCenter(){
 			$this->display();
 		}
 
 		public function forgetPassword(){
+			$this->display();
+		}
+
+		public function personalInfor(){
+			/** @var \Manager\Model\EmployeeModel $model */
+			$model = D('Manager/Employee');
+			/** @var \Core\Model\EmployeeModel $core_model */
+			$core_model = D('Core/Employee');
+			if(IS_POST){
+				$result = $core_model->alterEmployee(session('MANAGER_EMPLOYEE_ID'), I('post.')); //传值到model里面操作
+				if($result['status']) $this->success('写入成功', U('personalInfor')); //判断status存在
+				else $this->error($result['message']);              //判断status不存在
+				exit;
+			}
+			$logic = new EmployeeLogic();
+			$info  = $core_model->findEmployee(1, ['id' => session('MANAGER_EMPLOYEE_ID'), 'status' => 'not deleted']);
+			$info = $logic->writeExtendInformation($info, true);
+			/** @var \Manager\Model\DepartmentModel $dept_model */
+			$dept_model = D('Manager/Department');
+			/* 获取职位列表（for select插件） */
+			$position = $model->getPositionSelectList();
+			/* 获取部门列表（for select插件） */
+			$dept    = $dept_model->getDepartmentSelectList();
+			$company = $dept_model->getCompanySelectList();
+			$this->assign('position', $position);
+			$this->assign('dept', $dept);
+			$this->assign('company', $company);
+			$this->assign('employee', $info);
+			$this->display();
+		}
+
+		public function alterPass(){
+			$employee_logic = new EmployeeLogic();
+			if(IS_POST){
+				$result = $employee_logic->alterPassword();
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']) $this->success($result['message']);
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
+			}
 			$this->display();
 		}
 	}

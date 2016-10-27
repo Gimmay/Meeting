@@ -39,10 +39,9 @@
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['otype'])) $where['otype'] = $filter['otype'];
 			if(isset($filter['wtype'])) $where['wtype'] = $filter['wtype'];
-			if(isset($filter['weixinID'])) $where['weixin_id'] = $filter['weixinID'];
+			if(isset($filter['weixin_id'])) $where['weixin_id'] = $filter['weixin_id'];
 			if(isset($filter['oid'])) $where['oid'] = $filter['oid'];
 			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
-			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted') $where['status'] = ['neq', 2];
@@ -90,5 +89,18 @@
 			}
 
 			return $result;
+		}
+
+		public function deleteRecord($filter){
+			try{
+				$result = $this->where($filter)->delete();
+				if($result) return ['status' => true, 'message' => '删除成功'];
+				else return ['status' => false, 'message' => '删除失败'];
+			}catch(Exception $error){
+				$message   = $error->getMessage();
+				$exception = $this->handlerException($message);
+				if(!$exception['status']) return $exception;
+				else return ['status' => false, 'message' => $this->getError()];
+			}
 		}
 	}

@@ -30,7 +30,7 @@
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
-				if($status == 'not deleted') $where['status'] = ['neq', 4];
+				if($status == 'not deleted') $where['status'] = ['neq', 5];
 				else $where['status'] = $filter['status'];
 			}
 			if(isset($filter['keyword']) && $filter['keyword']){

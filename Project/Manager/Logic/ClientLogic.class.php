@@ -518,7 +518,7 @@
 					$record         = $client_model->findClient(1, ['id' => $client_id]);
 					$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 					$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
-					$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/id/$client_id/mid/$meeting_id";
+					$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/cid/$client_id/mid/$meeting_id";
 					$result1        = $wxcorp_logic->sendMessage('news', [
 						[
 							'title'       => "$meeting_record[name]",
@@ -527,9 +527,9 @@
 						]
 					], ['user' => [$weixin_record['weixin_id']]]);
 					$url            = getShortUrl($url); // 使用新浪的t.cn短地址
-					$result2        = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
+					//$result2        = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
 					if(!$result1['status']) return ['status' => false, 'message' => '微信推送信息失败', '__ajax__' => true];
-					if(!$result2['status']) return ['status' => false, 'message' => '短信发送失败', '__ajax__' => true];
+					//if(!$result2['status']) return ['status' => false, 'message' => '短信发送失败', '__ajax__' => true];
 
 					return ['status' => true, 'message' => '发送消息成功', '__ajax__' => true];
 				break;
@@ -549,7 +549,7 @@
 						$record         = $client_model->findClient(1, ['id' => $v]);
 						$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 						$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
-						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/id/$v/mid/$meeting_id";
+						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/cid/$v/mid/$meeting_id";
 						$wxcorp_logic->sendMessage('news', [
 							[
 								'title'       => "$meeting_record[name]", // todo just title
@@ -557,7 +557,7 @@
 								'url'         => $url
 							]
 						], ['user' => [$weixin_record['weixin_id']]]);
-						$sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
+						//$sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
 					}
 
 					return ['status' => true, 'massage' => '发送成功', '__ajax__' => false];

@@ -7,12 +7,17 @@ $(function(){
 		var elem = this;
 		ManageObject.object.loading.loading();
 		Common.ajax({
-			data:{requestType:'sign'}, async:false, callback:function(data){
+			data:{requestType:'manage:sign'}, async:false, callback:function(data){
 				ManageObject.object.loading.complete();
 				if(data.status){
 					ManageObject.object.toast.onQuasarHidden(function(){
-						//noinspection JSUnresolvedVariable
-						WeixinJSBridge.call('closeWindow');
+						try{
+							//noinspection JSUnresolvedVariable
+							WeixinJSBridge.call('closeWindow');
+						}catch(ReferenceError){
+							window.close();
+							window.location.href="about:blank";
+						}
 					});
 					ManageObject.object.toast.toast("签到成功！", 1);
 				}else ManageObject.object.toast.toast(data.message);
@@ -23,12 +28,17 @@ $(function(){
 		var elem = this;
 		ManageObject.object.loading.loading();
 		Common.ajax({
-			data:{requestType:'anti_sign'}, async:false, callback:function(data){
+			data:{requestType:'manage:anti_sign'}, async:false, callback:function(data){
 				ManageObject.object.loading.complete();
 				if(data.status){
 					ManageObject.object.toast.onQuasarHidden(function(){
-						//noinspection JSUnresolvedVariable
-						WeixinJSBridge.call('closeWindow');
+						try{
+							//noinspection JSUnresolvedVariable
+							WeixinJSBridge.call('closeWindow');
+						}catch(ReferenceError){
+							window.close();
+							window.location.href="about:blank";
+						}
 					});
 					ManageObject.object.toast.toast("取消签到成功！", 1);
 					$(elem).html('签到').removeClass('anti_sign').addClass('sign');

@@ -33,10 +33,16 @@
 					}
 					exit;
 				}
+				/** @var \Core\Model\HotelModel $hotel_model */
+				$hotel_model = D('Core/Hotel');
+				$hotel_result = $hotel_model->findHotel(2,[
+					'status'=> 'not deleted'
+				]);
 				/** @var \Manager\Model\EmployeeModel $employee_model */
 				$employee_model = D('Employee');
 				$employee_list  = $employee_model->getEmployeeSelectList();
 				$this->assign('employee_list', $employee_list);
+				$this->assign('info',$hotel_result);
 				$this->display();
 			}else $this->error('您没有创建会议的权限');
 		}

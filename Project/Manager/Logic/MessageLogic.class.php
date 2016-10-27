@@ -95,6 +95,7 @@
 			$message = str_replace('<:参会人会所:>', $client['club'], $message);
 			$message = str_replace('<:参会人手机号:>', $client['mobile'], $message);
 			$message = str_replace('<:签到码:>', $client['sign_code'], $message);
+			$message = str_replace('<:个人中心链接:>', getShortUrl("$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/mid/$meeting[id]"), $message);
 			$message = str_replace('<:签到(取消)时间:>', date('Y-m-d H:i:s'), $message);
 			$message = str_replace('<:会议名称:>', $meeting['name'], $message);
 			$message = str_replace('<:会议主办方:>', $meeting['host'], $message);
@@ -148,9 +149,10 @@
 				$client_record = $client_model->findClient(1, ['id' => $val]);
 				$weixin_record = $weixin_model->findRecord(1, ['mobile' => $client_record['mobile']]);
 				$content       = $this->replaceTempToMessage($message_temp['context'], $meeting_record, $client_record);
-				$result        = $sms_logic->send($content, [$client_record['mobile']]);
+				// $result        = $sms_logic->send($content, [$client_record['mobile']]);
 				$wxcorp_logic->sendMessage('text', $content, ['user' => [$weixin_record['weixin_id']]]);
-				if($result['status']) $count++;
+				//if($result['status']) $count++;
+				$count++;
 			}
 			if($count == count($client_id_list)) return ['status' => true, 'message' => '全部发送成功'];
 			elseif($count == 0) return ['status' => true, 'message' => "发送失败"];

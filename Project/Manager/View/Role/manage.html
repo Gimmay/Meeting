@@ -152,7 +152,7 @@
 							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 						<h2 class="modal-title" id="create_role_title">新增角色</h2>
 					</div>
-					<form class="form-horizontal" role="form" method="post" action="">
+					<form class="form-horizontal" role="form" method="post" action="" onsubmit="return roleManage.checkIsEmpty()">
 						<input type="hidden" name="requestType" value="create">
 						<div class="modal-body">
 							<div class="form-group">
@@ -224,7 +224,7 @@
 							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 						<h2 class="modal-title" id="modify_role_title">修改角色</h2>
 					</div>
-					<form class="form-horizontal" role="form" action="" method="post">
+					<form class="form-horizontal" role="form" action="" method="post" onsubmit="return roleManage.checkIsEmpty2()">
 						<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
 						<div class="modal-body">
 							<div class="form-group">
@@ -388,8 +388,8 @@
 					name        :'effect',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting_list)}>',
-					idInput     :'selected_meeting',
-					idHidden    :'selected_meeting_form',
+					idInput     :'selected_meeting_select',
+					idHidden    :'selected_meeting_select_form',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
@@ -397,8 +397,8 @@
 					name        :'effect',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting_list)}>',
-					idInput     :'selected_meeting',
-					idHidden    :'selected_meeting_form',
+					idInput     :'selected_modify_meeting_select',
+					idHidden    :'selected_modify_meeting_select_form',
 					placeholder :'',
 					hasEmptyItem:false,
 					defaultHtml :0,

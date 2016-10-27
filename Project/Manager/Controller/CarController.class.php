@@ -30,48 +30,24 @@
 				}
 				exit;
 			}
-			/** @var \Core\Model\CarModel $car_model */
-			$car_model = D('Core/Car');
+			/** @var \Manager\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Meeting');
+			/** @var \Manager\Model\EmployeeModel $employee_model */
+			$employee_model = D('Employee');
 			/** @var \Core\Model\AssignCarModel $assign_car_model */
 			$assign_car_model = D('Core/AssignCar');
-			$list      = $assign_car_model->findRecord(2, ['status' => 'not deleted']);
-			$list = $logic->setData('manage:set_extend_column', $list);
-
-		}
-
-		public function create(){
-			$logic = new CarLogic();
-			if(IS_POST){
-				$result = $logic->handlerRequest('create');
-				if($result['__ajax__']){
-					unset($result['__ajax__']);
-					echo json_encode($result);
-				}
-				else{
-					unset($result['__ajax__']);
-					if($result['status']) $this->success($result['message'], U('manage'));
-					else $this->error($result['message'], '', 3);
-				}
-				exit;
-			}
-			$this->display();
-		}
-
-		public function alter(){
-			$logic = new CarLogic();
-			if(IS_POST){
-				$result = $logic->handlerRequest('alter');
-				if($result['__ajax__']){
-					unset($result['__ajax__']);
-					echo json_encode($result);
-				}
-				else{
-					unset($result['__ajax__']);
-					if($result['status']) $this->success($result['message'], U('manage'));
-					else $this->error($result['message'], '', 3);
-				}
-				exit;
-			}
+			/** @var \Manager\Model\CarModel $model */
+			$model         = D('Car');
+			$type          = I('get.type', '');
+			$list          = $assign_car_model->findRecord(2, ['status' => 'not deleted']);
+			$list          = $logic->setData('manage:set_and_filter', $list, ['type' => $type]);
+			$meeting_list  = $meeting_model->getMeetingForSelect();
+			$employee_list = $employee_model->getEmployeeNameSelectList();
+			$type_list     = $model->getTypeSelectList();
+			$this->assign('list', $list);
+			$this->assign('meeting', $meeting_list);
+			$this->assign('employee', $employee_list);
+			$this->assign('type', $type_list);
 			$this->display();
 		}
 	}

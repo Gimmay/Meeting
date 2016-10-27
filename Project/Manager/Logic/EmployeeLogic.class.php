@@ -38,7 +38,7 @@
 						foreach($v1['department'] as $v3) $department .= $v3.',';
 						$department         = trim($department, ',');
 						$data               = [];
-						$data['otype']      = 1;    //对象类型
+						$data['otype']      = 0;    //对象类型
 						$data['wtype']      = 1;    //微信ID类型 企业号
 						$data['oid']        = $result['id'];    //对象ID
 						$data['department'] = $department;    //部门ID
@@ -150,6 +150,7 @@
 				break;
 				case 'reset_password':
 					if($this->permissionList['EMPLOYEE.RESET-PASSWORD']){
+						C('TOKEN_ON', false);
 						$str = new StringPlus();
 						/** @var \Core\Model\EmployeeModel $model */
 						$model        = D('Core/Employee');
@@ -223,5 +224,43 @@
 			}
 
 			return $result;
+		}
+
+		public function findEmployee(){
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			/** @var \Core\Model\DepartmentModel $department_model */
+			$department_model = D('Core/Department');
+			$employee_result  = $employee_model->findEmployee(1, ['id' => (session('MANAGER_EMPLOYEE_ID'))]);
+			foreach($employee_result as $k => $v){
+				$department_result                  = $department_model->findDepartment(1, ['id' => $employee_result['did']]);
+				$employee_result['department_name'] = $department_result['name'];
+			}
+
+			return $employee_result;
+		}
+
+		public function alterPassword(){
+			if($this->permissionList['EMPLOYEE.ALTER-PASSWORD']){
+				C('TOKEN_ON', false);
+				$str = new StringPlus();
+				/** @var \Core\Model\EmployeeModel $model */
+				$model        = D('Core/Employee');
+				$old_password = I('post.ypassword'); // 旧密码
+				$id           = session('MANAGER_EMPLOYEE_ID');           // 账户ID
+				$new_password = I('post.renpassword'); // 新密码
+				$tmp          = $model->findEmployee(1, ['id' => $id]); //查询出这个ID的数据
+				$old_password = $str->makePassword($old_password, $tmp['code']);    //旧密码加密
+				$new_password = $str->makePassword($new_password, $tmp['code']);    //新密码加密
+				if($tmp['password'] == $old_password){    //判断加密过后的密码和数据库的密码是否匹配
+					/** @var \Core\Model\EmployeeModel $model */
+					$model = D('Core/Employee');
+					$result = $model->alterEmployee(['id'=>$id],['password'=>$new_password]); //成功后就更新到数据库
+
+					return array_merge($result, ['__ajax__' => false]);
+				}
+				else return ['status' => false, 'message' => '密码错误', '__ajax__' => false];
+			}
+			else return ['status' => false, 'message' => '您没有修改密码的权限', '__ajax__' => false];
 		}
 	}

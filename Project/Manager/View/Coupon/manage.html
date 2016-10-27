@@ -264,7 +264,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="coupon_type2" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>类型：</label>
+							<label for="coupon_type2" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>会议名称：</label>
 							<div class="col-sm-10">
 								<div id="coupon_type2"></div>
 							</div>
@@ -273,6 +273,11 @@
 							<label for="price_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>价格：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control price" name="price" id="price_a">
+							</div>
+						</div>	<div class="form-group">
+							<label for="price_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>类型：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control price" name="type" id="type">
 							</div>
 						</div>
 						<div class="form-group">
@@ -363,6 +368,7 @@
 					idInput     :'selected_meeting',
 					idHidden    :'selected_meeting_form',
 					placeholder :'',
+
 					hasEmptyItem:false
 				}),
 				typeSelect:$('#coupon_type1,#coupon_type2').QuasarSelect({

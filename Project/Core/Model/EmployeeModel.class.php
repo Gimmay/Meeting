@@ -162,7 +162,7 @@ $limit
 		}
 
 		public function alterEmployee($id, $data){
-			if($this->create()){
+			if($this->create($data)){
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save($data);
 					if($result) return ['status' => true, 'message' => '修改成功'];
@@ -176,6 +176,4 @@ $limit
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}
-
-
 	}
