@@ -1,7 +1,7 @@
 /**
  * Created by qyqy on 2016-9-9.
  */
-var roleManage = {
+var ScriptObject = {
 	asignRoleTemp        :'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\'>$name</a>',
 	authorizeRoleTemp    :'<a class=\"btn btn-default btn-sm btn_role\" href="javascript:void(0)" role="button" data-id=\'$id\'>$name</a>',
 	authorizeEmployeeTemp:'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\' data-group="$group-code" data-name="$group-name">$name</a>',
@@ -28,15 +28,17 @@ var roleManage = {
 								$(this).remove();
 							}
 						});
-						select_temp = roleManage.authorizeEmployeeTemp2.replace('$id', id).replace('$name', name).replace('$group-code',code).replace('$group_name',group_name).replace('$group_name2',group_name);
+						select_temp = ScriptObject.authorizeEmployeeTemp2.replace('$id', id).replace('$name', name).replace('$group-code',code).replace('$group_name',group_name).replace('$group_name2',group_name);
 						$('#authorize_select').append(select_temp);
-						roleManage.unbindEvent();
-						roleManage.bindEvent();
+						ScriptObject.unbindEvent();
+						ScriptObject.bindEvent();
 					}
 				}
 			});
 		});
-		// 点击已选择角色，删除并将其移至未选择区域
+		/*
+		 * 点击已授予的权限，删除并将其移至未选择区域
+		 */
 		$('#authorize_select a').on('click', function(){
 			var id          = $(this).attr('data-id');
 			var type        = $(this).attr('data-type');
@@ -56,10 +58,10 @@ var roleManage = {
 								$(this).remove();
 							}
 						});
-						select_temp = roleManage.authorizeEmployeeTemp.replace('$id', id).replace('$name', b_name).replace('$group-name',group_name).replace('$group-code',code);
+						select_temp = ScriptObject.authorizeEmployeeTemp.replace('$id', id).replace('$name', b_name).replace('$group-name',group_name).replace('$group-code',code);
 						$('#'+code).find('section').append(select_temp);
-						roleManage.unbindEvent();
-						roleManage.bindEvent();
+						ScriptObject.unbindEvent();
+						ScriptObject.bindEvent();
 					}
 				}
 			});
@@ -80,39 +82,27 @@ var roleManage = {
 				ManageObject.object.loading.complete();
 				var str = '';
 				$.each(data, function(index, value){
-					str += roleManage.authorizeEmployeeTemp.replace('$id', value.id).replace('$name', value.name)
+					str += ScriptObject.authorizeEmployeeTemp.replace('$id', value.id).replace('$name', value.name)
 									 .replace('$type', value.type);
 				});
 				$('#authorize_all').html(str);
 			}
 		});
-		roleManage.bindEvent();
+		ScriptObject.bindEvent();
 	},
 	checkIsEmpty         :function(){
 		var $create_role_name = $('#create_role_name');
-		var $selected_meeting = $('#selected_meeting_select');
 		if($create_role_name.val() == ''){
 			ManageObject.object.toast.toast("角色名称不能为空");
 			$create_role_name.focus();
 			return false;
 		}
-		if($selected_meeting.text() == ''){
-			ManageObject.object.toast.toast("作用域不能为空");
-			$selected_meeting.focus();
-			return false;
-		}
 	},
 	checkIsEmpty2         :function(){
 		var $modify_role_name = $('#modify_role_name');
-		var $selected_meeting = $('#selected_modify_meeting_select');
 		if($modify_role_name.val() == ''){
 			ManageObject.object.toast.toast("角色名称不能为空");
 			$modify_role_name.focus();
-			return false;
-		}
-		if($selected_meeting.text() == ''){
-			ManageObject.object.toast.toast("作用域不能为空");
-			$selected_meeting.focus();
 			return false;
 		}
 	}
@@ -133,7 +123,7 @@ $(function(){
 				var str = '';
 				if(data){
 					$.each(data, function(index, value){
-						str += roleManage.authorizeEmployeeTemp2.replace('$id', value.id).replace('$name', value.name).replace('$group-code',value.group_code).replace('$group_name',value.group_name).replace('$group_name2',value.group_name);
+						str += ScriptObject.authorizeEmployeeTemp2.replace('$id', value.id).replace('$name', value.name).replace('$group-code',value.group_code).replace('$group_name',value.group_name).replace('$group_name2',value.group_name);
 
 
 					});
@@ -153,26 +143,26 @@ $(function(){
 					$.each(data, function(index, value){
 						var group_code= value.group_code.replace(/(^\s*)|(\s*$)/g, "");
 						if($('div[data-group='+group_code+']').length == 0){
-							htm += roleManage.pannelTemp.replace('$group', group_code)
+							htm += ScriptObject.pannelTemp.replace('$group', group_code)
 											 .replace('$name', value.group_name).replace('$id', group_code)
 							$('#authorize_all').html(htm);
 						}
 						setTimeout(function(){
-							str=roleManage.authorizeEmployeeTemp.replace('$id', value.id).replace('$name', value.name).replace('$group-name',value.group_name).replace('$group-code',value.group_code);
+							str=ScriptObject.authorizeEmployeeTemp.replace('$id', value.id).replace('$name', value.name).replace('$group-name',value.group_name).replace('$group-code',value.group_code);
 							$('#'+group_code).find('section').append(str);
-							roleManage.unbindEvent();
-							roleManage.bindEvent();
+							ScriptObject.unbindEvent();
+							ScriptObject.bindEvent();
 						},1000);
 
 					});
 				}
 			}
 		});
-		//roleManage.unbindEvent();
+		ScriptObject.bindEvent();
 
 	});
 	$('#authorize_search .input-group-addon').on('click', function(){
-		roleManage.searchAuthorize();
+		ScriptObject.searchAuthorize();
 	});
 	$('#authorize_search input[type=text]').on('keydown', function(e){
 		if(e.keyCode == 13){
@@ -211,13 +201,6 @@ $(function(){
 						$('#modify_role_level').find('option:eq(4)').prop('selected', 'selected');
 					}
 					$('#modify_role_comment').val(data.comment);
-					if(data.effect == 0){
-						ManageObject.object.modifyMeetingSelect.setValue(0);
-						ManageObject.object.modifyMeetingSelect.setHtml('(系统全局)');
-					}else{
-						ManageObject.object.modifyMeetingSelect.setValue(data.effect);
-						ManageObject.object.modifyMeetingSelect.setHtml(data.meeting);
-					}
 				}
 			}
 		});
@@ -240,7 +223,7 @@ $(function(){
 		var s, newStr = "";
 		s             = str.charAt(str.length-1);
 		if(s == ","){
-			for(var i = 0; i<str.length-1; i++){
+			for(i = 0; i<str.length-1; i++){
 				newStr += str[i];
 			}
 		}
@@ -259,4 +242,4 @@ $(function(){
 			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
 		}
 	});
-})
+});

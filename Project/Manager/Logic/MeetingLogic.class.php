@@ -7,6 +7,7 @@
 	 */
 	namespace Manager\Logic;
 
+	use Core\Logic\PermissionLogic;
 	use Core\Logic\QRCodeLogic;
 	use Core\Logic\UploadLogic;
 	use Quasar\StringPlus;
@@ -196,16 +197,27 @@
 						else $data['place'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
 						$result = $model->createMeeting($data);
 						if($result['status']){
+							$meeting_id = $result['id'];
+							// 创建二维码
 							$qrcode_obj = new QRCodeLogic();
 							/** @var \Core\Model\MeetingModel $model */
 							$model       = D('Core/Meeting');
-							$url         = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/mid/$result[id].aspx";
+							$url         = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('/Mobile/Client/myMeeting', ['mid'=>$meeting_id, 'sign'=>1]);
 							$qrcode_file = $qrcode_obj->make($url);
 							$remote_url  = '/'.trim($qrcode_file, './');
-							$record      = $model->findMeeting(1, ['id' => $result['id']]);
+							$record      = $model->findMeeting(1, ['id' => $meeting_id]);
 							C('TOKEN_ON', false);
 							$model->alterMeeting([$record['id']], [
 								'qrcode' => $remote_url
+							]);
+							// 创建该员工对会议的可见记录
+							/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
+							$meeting_manager_model = D('Core/MeetingManager');
+							C('TOKEN_ON', false);
+							$meeting_manager_model->createRecord([
+								'eid'     => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'mid'     => $meeting_id,
+								'creator' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
 							]);
 						}
 
@@ -225,7 +237,7 @@
 						$model          = D('Core/Meeting');
 						$qrcode_obj     = new QRCodeLogic();
 						$id             = I('get.id', 0, 'int');
-						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/mid/$id.aspx";
+						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myMeeting', ['mid'=>$id, 'sign'=>1]);
 						$qrcode_file    = $qrcode_obj->make($url);
 						$remote_url     = '/'.trim($qrcode_file, './');
 						$data           = I('post.');
@@ -248,11 +260,14 @@
 
 		public function setExtendColumnForManage($list){
 			/** @var \Core\Model\EmployeeModel $employee_model */
-			$employee_model = D('Core/Employee');
-			$new_list       = [];
-			$i              = 0;
+			$employee_model   = D('Core/Employee');
+			$permission_logic = new PermissionLogic();
+			$new_list         = [];
+			$i                = 0;
 			foreach($list as $key => $val){
-				if(in_array($val['id'], $this->meetingViewList)){
+				$condition_1 = in_array($val['id'], $this->meetingViewList);
+				$condition_2 = $permission_logic->hasPermission('MEETING.VIEW-ALL-MEETING', I('session.MANAGER_EMPLOYEE_ID', 0, 'int'), 1);
+				if($condition_1 || $condition_2){
 					$tmp                           = $employee_model->findEmployee(1, ['id' => $val['director_id']]);
 					$new_list[]                    = $val;
 					$new_list[$i]['director_name'] = $tmp['name'];

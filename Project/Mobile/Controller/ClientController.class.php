@@ -7,62 +7,58 @@
 	 */
 	namespace Mobile\Controller;
 
-	use Core\Logic\PermissionLogic;
+	use Core\Logic\MeetingLogic;
 	use Core\Logic\WxCorpLogic;
 	use Mobile\Logic\ClientLogic;
 
 	class ClientController extends MobileController{
-		protected $weixinID   = 0;
-		protected $clientID   = 0;
-		protected $employeeID = 0;
-		protected $meetingID  = 0;
+		protected $weixinID  = 0;
+		protected $clientID  = 0;
+		protected $meetingID = 0;
 
 		public function _initialize(){
+			// lqy
+			//			$_SESSION['MOBILE_WEIXIN_ID'] = 1216;
+			//			$_SESSION['MOBILE_CLIENT_ID'] = 599;
+			// quasar
+			//						$_SESSION['MOBILE_CLIENT_ID'] = '599';
+			//						$_SESSION['MOBILE_WEIXIN_ID'] = '0967';
+			session_unset();
+			exit;
 			parent::_initialize();
-			if($this->_getWeixinID()) $this->_initAttribute();
 		}
 
-		private function _initAttribute(){
-			$logic            = new ClientLogic();
-			$this->meetingID  = I('get.mid', 0, 'int');
-			$this->clientID   = isset($_SESSION['MOBILE_CLIENT_ID']) ? I('session.MOBILE_CLIENT_ID', 0, 'int') : $logic->getVisitorID(1, $this->weixinID);
-			$this->employeeID = isset($_SESSION['MOBILE_EMPLOYEE_ID']) ? I('session.MOBILE_EMPLOYEE_ID', 0, 'int') : $logic->getVisitorID(0, $this->weixinID);
-			if(!$this->meetingID) $this->redirect('Error/requireMeeting');
-		}
-
-		/**
-		 * 获取WeixinID
-		 *
-		 * @return bool
-		 */
-		private function _getWeixinID(){
+		private function _getWeixinID($redirect = true){
 			if(!isset($_SESSION['MOBILE_WEIXIN_ID'])){
 				$wxcorp_logic   = new WxCorpLogic();
 				$weixin_user_id = $wxcorp_logic->getUserID();
 				if($weixin_user_id){
-					session('MOBILE_WEIXIN_ID', $weixin_user_id);
+					$_SESSION['MOBILE_WEIXIN_ID'] = $weixin_user_id;
 
 					return true;
 				}
-				else return false;
+				else{
+					if($redirect) $this->redirect('Weixin/isNotFollow');
+
+					return false;
+				}
 			}
 			else{
-				$this->weixinID = I('session.MOBILE_WEIXIN_ID');
+				$this->weixinID = I('session.MOBILE_WEIXIN_ID', 0, 'int');
 
 				return true;
 			}
 		}
 
-		private function _isGetWeixin($redirect = true){
-			if($this->weixinID == 0){
-				if($redirect) $this->redirect('Weixin/isNotFollow');
+		private function _getClientID($redirect = true){
+			$get            = function (){
+				$logic     = new ClientLogic();
+				$client_id = $logic->getVisitorID($this->weixinID, 1);
+				$_SESSION['MOBILE_CLIENT_ID'] = $client_id;
 
-				return false;
-			}
-			else return true;
-		}
-
-		private function _isGetClient($redirect = true){
+				return $client_id;
+			};
+			$this->clientID = isset($_SESSION['MOBILE_CLIENT_ID']) ? I('session.MOBILE_CLIENT_ID', 0, 'int') : $get();
 			if($this->clientID == 0){
 				if($redirect) $this->redirect('Error/notJoin');
 
@@ -71,46 +67,39 @@
 			else return true;
 		}
 
-		private function _isGetEmployee($redirect = true){
-			if($this->employeeID == 0){
-				if($redirect) $this->redirect('Error/isNotRegister');
+		private function _getClientParam($redirect = true){
+			if(!isset($_GET['cid'])){
+				if($redirect) $this->redirect('Error/requireClient');
 
 				return false;
 			}
-			else return true;
+			else{
+				$this->clientID = I('get.cid', 0, 'int');
+
+				return true;
+			}
 		}
 
-		public function manage(){
-			$logic = new ClientLogic();
-			if(IS_POST){
-				$type   = strtolower(I('post.requestType', ''));
-				$result = $logic->handlerRequest($type, ['eid' => $this->employeeID]);
-				if($result === -1){
-				}
-				else{
-					if($result['status']) $this->success($result['message']);
-					else $this->error($result['message'], '', 3);
-				}
-				exit;
+		private function _getMeetingParam($redirect = true){
+			if(!isset($_GET['mid'])){
+				if($redirect) $this->redirect('Error/requireMeeting');
+
+				return false;
 			}
-			if($this->_isGetEmployee()){
-				$permission_logic = new PermissionLogic();
-				$permission       = $permission_logic->hasPermission('WEIXIN.VIEW-CLIENT', $this->employeeID);
-				if($permission){
-					$cid  = I('get.cid', 0, 'int');
-					$mid  = I('get.mid', 0, 'int');
-					$info = $logic->getUserInformation($cid, $mid);
-					$this->assign('info', $info);
-					$this->display();
-				}
-				else $this->redirect('Error/notPermission');
+			else{
+				$this->meetingID = I('get.mid', 0, 'int');
+
+				return true;
 			}
 		}
 
 		public function myCenter(){
+			$this->_getWeixinID();
+			$this->_getMeetingParam();
+			$this->_getClientID();
 			$logic = new ClientLogic();
 			if(IS_POST){
-				$type   = strtolower(I('post.requestType', ''));
+				$type   = (I('post.requestType', ''));
 				$result = $logic->handlerRequest($type, ['cid' => $this->clientID]);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);
@@ -123,10 +112,65 @@
 				}
 				exit;
 			}
-			if($this->_isGetClient()){
-				$info = $logic->getUserInformation($this->clientID, $this->meetingID);
-				$this->assign('info', $info);
-				$this->display();
-			}
+			$info = $logic->getClientInformation($this->clientID, $this->meetingID);
+			$this->assign('info', $info);
+			$this->display();
+		}
+
+		/**
+		 * 展示签到二维码页面
+		 */
+		public function myQRCode(){
+			$this->_getClientParam();
+			$this->_getMeetingParam();
+			/** @var \Core\Model\JoinModel $join_model */
+			$join_model = D('Core/Join');
+			/** @var \Core\Model\WeixinIDModel $weixin_model */
+			$weixin_model = D('Core/WeixinID');
+			$info         = $join_model->findRecord(1, ['cid' => $this->clientID, 'mid' => $this->meetingID]);
+			$weixin_info  = $weixin_model->findRecord(1, ['oid' => $this->clientID, 'otype' => 1, 'wtype' => 1]);
+			$this->assign('info', $info);
+			$this->assign('weixin', $weixin_info);
+			$this->display();
+		}
+
+		/**
+		 * 会议列表
+		 */
+		public function myMeetingList(){
+			$this->_getWeixinID();
+			$this->_getClientID();
+			$core_logic = new MeetingLogic();
+			$core_logic->initializeStatus();
+			$logic        = new ClientLogic();
+			$meeting_list = $logic->getMeeting($this->clientID);
+			$this->assign('meeting_list', $meeting_list);
+			$this->display();
+		}
+
+		/**
+		 * 会议详情页
+		 */
+		public function myMeeting(){
+			$this->_getWeixinID();
+			$this->_getMeetingParam();
+			$this->_getClientID();
+			$core_logic = new MeetingLogic();
+			$core_logic->initializeStatus();
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			/** @var \Core\Model\JoinModel $join_model */
+			$join_model  = D('Core/Join');
+			$logic       = new ClientLogic();
+			$join_record = $join_model->findRecord(1, [
+				'cid'    => $this->clientID,
+				'mid'    => $this->meetingID,
+				'status' => 'not deleted'
+			]);
+			$meeting     = $meeting_model->findMeeting(1, ['id' => $this->meetingID, 'status' => 'not deleted']);
+			$meeting     = $logic->setDate('myMeeting:set_meeting_column', $meeting);
+			$this->assign('info', $join_record);
+			$this->assign('meeting', $meeting);
+			$this->display();
 		}
 	}

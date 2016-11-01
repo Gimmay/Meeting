@@ -25,56 +25,37 @@
 <body>
 	<div id="mb_wrap">
 		<div class="mb_body">
-			<if condition="$info.sign_status eq 1">
-				<div class="sign_type signed">已签到</div>
-				<else/><div class="sign_type unsigned">未签到</div>
-			</if>
-
-			<div class="my_title">
-				<div class="photo">
-					<img src="<{$info.avatar}>">
-				</div>
-				<p class="name"><{$info.name}></p>
-				<p class="address"><{$info.club}></p>
+			<div class="topbar">
+				<div class="topbarBg"><img src="<{$Think.COMMON_IMAGE_PATH}>/topbarBg.jpg" alt=""></div>
+				<span class="photo"><img src="<{$info.avatar}>"></span>
 			</div>
-			<div class="my_infor" style=" margin-top: 0.3rem;">
-				<div class="title">
-					<p style="text-align: center"><{$info.meeting_name}> </p>
-				</div>
-				<div class="personal">
-					<p>
-						<b>会议简介</b>：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<{$info.meeting_brief}>
-					</p>
-					<p>
-						<b>备注</b>：<{$info.meeting_comment}>
-					</p>
-					<p>
-						<b>起始时间</b>：<br><{$info.meeting_start_time}> — <{$info.meeting_end_time}>
-					</p>
-					<p>
-						<b>会议地点</b>：<{$info.meeting_place}>
-					</p>
-					<p>
-						<b>签到负责人</b>：各公司人事部负责人
-					</p>
-				</div>
-			</div>
-			<div class="my_box">
-				<div class="qr_code">
-					<img src="<{$info.sign_qrcode}>">
+			<div class="content">
+				<div class="myInfor">
+					<div class="li">
+						<span class="lab">姓&nbsp;&nbsp;&nbsp;&nbsp;名：</span>
+						<span><{$info.name}></span>
+					</div>
+					<div class="li">
+						<span class="lab">性&nbsp;&nbsp;&nbsp;&nbsp;别：</span>
+						<span>
+							<switch name="info.gender">
+								<case value="0">未指定</case>
+								<case value="1">男</case>
+								<case value="2">女</case>
+							</switch>
+						</span>
+					</div>
+					<div class="li">
+						<span class="lab">会&nbsp;&nbsp;&nbsp;&nbsp;所：</span>
+						<span><{$info.club}></span>
+					</div>
+					<div class="li">
+						<span class="lab">手机号：</span>
+						<span><{$info.mobile}></span>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<script>
-		MyCenterObject = {
-			config:{
-				signStatus:'<{$info.sign_status}>'
-			},
-			object:{
-				toast:$().QuasarToast()
-			}
-		}
-	</script>
 </body>
 </html>

@@ -20,15 +20,9 @@
 		public function manage(){
 			$setExtendColumn = function ($list) use (&$model){
 				$result = [];
-				/** @var \Core\Model\MeetingModel $meeting_model */
-				$meeting_model = D('Core/Meeting');
 				/** @var \Core\Model\RoleModel $model */
 				foreach($list as $val){
 					$tmp = $model->getUserOfRole($val['id']);
-					if($val['effect'] != 0){
-						$meeting_record = $meeting_model->findMeeting(1, ['id' => $val['effect']]);
-						$val['meeting'] = $meeting_record['name'];
-					}
 					$val['count'] = count($tmp);
 					$result[]     = $val;
 				}

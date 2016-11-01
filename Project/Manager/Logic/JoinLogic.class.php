@@ -38,7 +38,7 @@
 			$count      = 0;
 			$result     = ['status' => false, 'message' => '数据更新失败'];
 			foreach($client_list as $val){
-				$url         = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/manage/cid/$val/mid/$data[mid]";
+				$url         = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Manager/client', ['cid'=>$val, 'mid'=>$data['mid']]);
 				$qrcode_file = $qrcode_obj->make($url);
 				$remote_url  = '/'.trim($qrcode_file, './');
 				$join_record = $join_model->findRecord(1, ['cid' => $val, 'mid' => $data['mid']]);

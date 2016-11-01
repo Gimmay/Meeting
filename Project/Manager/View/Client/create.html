@@ -6,7 +6,6 @@
 	<title>新建客户 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
@@ -15,8 +14,7 @@
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
@@ -63,10 +61,7 @@
 									<div class="form-group">
 										<label for="birthdate" class="col-sm-1 control-label">出生日期：</label>
 										<div class="col-sm-11">
-											<div class="input-group date form_datetime" id="birth_date">
-												<input class="form-control" id="birthdate" name="birthdate">
-												<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-											</div>
+											<input type="text" class="form-control" name="birthdate" id="birthdate">
 										</div>
 									</div>
 									<div class="form-group">
@@ -151,10 +146,7 @@
 									<div class="form-group">
 										<label for="registration_date" class="col-sm-1 control-label">报名时间：</label>
 										<div class="col-sm-11">
-											<div class="input-group date form_datetime" id="registration_date_layout">
-												<input class="form-control" id="registration_date" name="registration_date">
-												<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-											</div>
+											<input type="text" class="form-control" name="registration_date" id="registration_date">
 										</div>
 									</div>
 									<div class="form-group">
@@ -164,51 +156,51 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="colume1" class="col-sm-1 control-label">保留字段1：</label>
+										<label for="column1" class="col-sm-1 control-label">保留字段1：</label>
 										<div class="col-sm-11">
-											<input type="text" class="form-control colume1" name="colume1" id="colume1">
+											<input type="text" class="form-control column1" name="column1" id="column1">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="colume2" class="col-sm-1 control-label">保留字段2：</label>
+										<label for="column2" class="col-sm-1 control-label">保留字段2：</label>
 										<div class="col-sm-11">
-											<input type="text" class="form-control colume2" name="colume2" id="colume2">
+											<input type="text" class="form-control column2" name="column2" id="column2">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="colume3" class="col-sm-1 control-label">保留字段3：</label>
+										<label for="column3" class="col-sm-1 control-label">保留字段3：</label>
 										<div class="col-sm-11">
-											<input type="text" class="form-control colume3" name="colume3" id="colume3">
+											<input type="text" class="form-control column3" name="column3" id="column3">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="colume4" class="col-sm-1 control-label">保留字段4：</label>
+										<label for="column4" class="col-sm-1 control-label">保留字段4：</label>
 										<div class="col-sm-11">
-											<input type="text" class="form-control colume4" name="colume4" id="colume4">
+											<input type="text" class="form-control column4" name="column4" id="column4">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="colume5" class="col-sm-1 control-label">保留字段5：</label>
+										<label for="column5" class="col-sm-1 control-label">保留字段5：</label>
 										<div class="col-sm-11">
-											<input type="text" class="form-control colume5" name="colume5" id="colume5">
+											<input type="text" class="form-control column5" name="column5" id="column5">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="colume6" class="col-sm-1 control-label">保留字段6：</label>
+										<label for="column6" class="col-sm-1 control-label">保留字段6：</label>
 										<div class="col-sm-11">
-											<input type="text" class="form-control colume6" name="colume6" id="colume6">
+											<input type="text" class="form-control column6" name="column6" id="column6">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="colume7" class="col-sm-1 control-label">保留字段7：</label>
+										<label for="column7" class="col-sm-1 control-label">保留字段7：</label>
 										<div class="col-sm-11">
-											<input type="text" class="form-control colume7" name="colume7" id="colume7">
+											<input type="text" class="form-control column7" name="column7" id="column7">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="colume8" class="col-sm-1 control-label">保留字段8：</label>
+										<label for="column8" class="col-sm-1 control-label">保留字段8：</label>
 										<div class="col-sm-11">
-											<input type="text" class="form-control colume8" name="colume8" id="colume8">
+											<input type="text" class="form-control column8" name="column8" id="column8">
 										</div>
 									</div>
 								</div>
@@ -245,33 +237,19 @@
 					hasEmptyItem :true,
 					emptyItemHtml:'---空---'
 				}),
-				birthDate              :$('#birth_date').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd',
-					weekStart         :0,
-					startView         :4,
-					minView           :2,
-					maxView           :4,
-					minuteStep        :5
+				birthDate              :jeDate({
+					dateCell:"#birthdate",
+					format  :"YYYY-MM-DD",
+					isClear :false, // isClear:false, // 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
 				}),
-				registrationDate       :$('#registration_date_layout').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd',
-					weekStart         :0,
-					startView         :2,
-					minView           :2,
-					maxView           :4,
-					minuteStep        :5
+				registrationDate       :jeDate({
+					dateCell:"#registration_date",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					isTime  :true, // isClear:false, // 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
 				}),
 				toast                  :$().QuasarToast(),
 				loading                :$().QuasarLoading(),

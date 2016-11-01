@@ -93,26 +93,15 @@
 											<td><{$i}></td>
 											<td><{$vo.name}></td>
 											<td>
-												<span class="color-info">
-													<switch name="vo.status">
-														<case value="0">禁用</case>
-														<case value="1">新建</case>
-														<case value="2">进行中</case>
-														<case value="3">结束</case>
-													</switch>
-												</span>
+												<switch name="vo.status">
+													<case value="0"><span style="color:#FF0000">禁用</span></case>
+													<case value="1"><span style="color:#000000">新建</span></case>
+													<case value="2"><span style="color:#0000FF">发布</span></case>
+													<case value="3"><span style="color:#00D700">进行中</span></case>
+													<case value="4"><span style="color:#A08000">结束</span></case>
+												</switch>
 											</td>
-											<td>
-												<span class="color-info">
-													<switch name="vo.type">
-														<case value="1">成交会</case>
-														<case value="2">特训营</case>
-														<case value="3">优雅女子</case>
-														<case value="4">招商会</case>
-														<case value="5">启动大会</case>
-													</switch>
-												</span>
-											</td>
+											<td><{$vo.type}></td>
 											<td><img src="<{$vo.qrcode}>" width="150px"></td>
 											<td><{$vo.host}></td>
 											<td><{$vo.plan}></td>

@@ -12,6 +12,35 @@
 	class CarController extends ManagerController{
 		public function _initialize(){
 			parent::_initialize();
+			$init = function(){
+				/** @var \Core\Model\CarModel $model */
+				$model = D('Core/Car');
+				/** @var \Core\Model\MeetingModel $meeting_model */
+				$meeting_model = D('Core/Meeting');
+				/** @var \Core\Model\AssignCarModel $assign_car_model */
+				$assign_car_model = D('Core/AssignCar');
+				$core_logic = new CarLogic();
+				$list = $model->findCar(2, ['status'=>'available']);
+				print_r($list);exit;
+				foreach($list as $val){
+					if(!empty($val)){
+						$meeting_record = $meeting_model->findMeeting(1, ['id'=>$val['mid'], 'not deleted']);
+						$carry_record = $assign_car_model->findRecord(2, ['carID'=>$val['id']]);
+						if($meeting_record){
+							$meeting_start_time = strtotime($meeting_record['start_time']);
+							$meeting_end_time   = strtotime($meeting_record['end_time']);
+							$now_time           = time();
+							if($meeting_start_time<$now_time && $meeting_end_time>$now_time){
+								C('TOKEN_ON', false);
+								$model->alterCar(['id'=>$val['id'], ['status'=>2]]);
+							}
+
+						}
+					}
+				}
+			};
+			$init();
+
 		}
 
 		public function manage(){

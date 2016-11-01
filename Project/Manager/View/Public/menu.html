@@ -4,12 +4,12 @@
 		<div class="logo">
 			<img src="<{$Think.COMMON_IMAGE_PATH}>/logo.png" alt="">
 		</div>
-		<a href="javascript:void(0)">吉美会议</a>
+		<a href="javascript:void(0)">瑞辉会议</a>
 	</div>
 	<div class="sidenav">
 		<ul class="sidenav_list" id="side_menu">
 			<if condition="$permission_list['EMPLOYEE.VIEW'] eq 1">
-				<li class="side_item <php>if('Employee'==$c_name) echo 'active';</php>">
+				<li class="side_item <if condition='$c_name eq Employee'>active</if>">
 					<a href="<{:U('Employee/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">员工管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
@@ -23,14 +23,14 @@
 				</li>
 			</if>
 			<if condition="$permission_list['ROLE.VIEW'] eq 1">
-				<li class="side_item <php>if('Role'==$c_name) echo 'active';</php>">
+				<li class="side_item <if condition='$c_name eq Role'>active</if>">
 					<a href="<{:U('Role/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon glyphicon-star"></i> <span class="nav-label">角色管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['MEETING.VIEW'] eq 1">
-				<li class="side_item <php>if('Meeting'==$c_name or 'SignPlace'==$c_name or 'Client'==$c_name) echo 'active';</php>">
+				<li class="side_item <if condition='($c_name eq Meeting) or ($c_name eq SignPlace) or ($c_name eq Client)'>active</if>">
 					<a href="<{:U('Meeting/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-th"></i> <span class="nav-label">会议管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
@@ -44,55 +44,55 @@
 				</li>
 			</if>
 			<if condition="$permission_list['COUPON.VIEW'] eq 1">
-				<li class="side_item <php>if('Receivables'==$c_name) echo 'active';</php>">
+				<li class="side_item <if condition='$c_name eq Receivables'>active</if>">
 					<a href="<{:U('Receivables/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-usd"></i> <span class="nav-label">收款管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['COUPON.VIEW'] eq 1">
-				<li class="side_item <php>if('Coupon'==$c_name) echo 'active';</php>">
+				<li class="side_item <if condition='$c_name eq Coupon'>active</if>">
 					<a href="<{:U('Coupon/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">券管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['MESSAGE.VIEW'] eq 1">
-				<li class="side_item <php>if('Message'==$c_name) echo 'active';</php>">
+				<li class="side_item <if condition='$c_name eq Message'>active</if>">
 					<a href="<{:U('Message/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">消息管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['BADGE.VIEW'] eq 1">
-				<li class="side_item <php>if('Badge'==$c_name) echo 'active';</php>">
+				<li class="side_item <if condition='$c_name eq Badge'>active</if>">
 					<a href="<{:U('Badge/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-bookmark"></i> <span class="nav-label">胸卡设计</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['ROOM.VIEW'] eq 1">
-				<li class="side_item <php>if('Room'==$c_name) echo 'active';</php>">
+				<li class="side_item <if condition='$c_name eq Hotel or $c_name eq Room'>active</if>">
 					<a href="<{:U('Hotel/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-home"></i> <span class="nav-label">酒店管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['CAR.VIEW'] eq 1">
-				<li class="side_item <php>if('Car'==$c_name) echo 'active';</php>">
+				<li class="side_item <if condition='$c_name eq Car'>active</if>">
 					<a href="<{:U('Car/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-plane"></i> <span class="nav-label">车辆管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['DINING_TABLE.VIEW'] eq 1">
-				<li class="side_item <php>if('DiningTable'==$c_name) echo 'active';</php>">
+				<li class="side_item <if condition='$c_name eq DiningTable'>active</if>">
 					<a href="<{:U('DiningTable/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
-			<li class="side_item cls <php>if('Report'==$c_name) echo 'active';</php>">
+			<li class="side_item cls <if condition='$c_name eq Report'>active</if>">
 				<div class="side-item-link no_link">
 					<i class="icon_nav glyphicon glyphicon-list-alt"></i> <span class="nav-label">报表查询</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span>
@@ -104,7 +104,7 @@
 				</ul>
 			</li>
 			<if condition="($permission_list['RECYCLE.VIEW-CLIENT'] eq 1) OR ($permission_list['RECYCLE.VIEW-EMPLOYEE'] eq 1) OR ($permission_list['RECYCLE.VIEW-ROLE'] eq 1) OR ($permission_list['RECYCLE.VIEW-MEETING'] eq 1)">
-				<li class="side_item cls <php>if('Recycle'==$c_name) echo 'active';</php>">
+				<li class="side_item cls <if condition='$c_name eq Recycle'>active</if>">
 					<div class="side-item-link no_link">
 						<i class="icon_nav glyphicon glyphicon-trash"></i> <span class="nav-label">回收站管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span>

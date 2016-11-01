@@ -7,7 +7,6 @@
 	 */
 	namespace Mobile\Logic;
 
-	use Core\Logic\PermissionLogic;
 	use Core\Logic\WxCorpLogic;
 	use Manager\Logic\MessageLogic;
 
@@ -19,112 +18,70 @@
 		/**
 		 * 获取访问者的微信ID
 		 *
-		 * @param int        $otype     访客系统身份的类型 0：员工 1：客户
 		 * @param int|string $weixin_id 微信ID
 		 * @param int        $wtype     微信ID类型 0：公众号OPENID 1：企业号USERID
 		 *
-		 * @return int|[]|null
+		 * @return int|null
 		 */
-		public function getVisitorID($otype, $weixin_id, $wtype = 1){
+		public function getVisitorID($weixin_id, $wtype = 1){
 			/** @var \Core\Model\WeixinIDModel $weixin_model */
 			$weixin_model = D('Core/WeixinID');
-			if($otype == 1){
-				/** @var \Core\Model\JoinModel $join_model */
-				$join_model = D('Core/Join');
-				$mid        = I('get.mid', 0, 'int');
-				$join_list  = $join_model->findRecord(2, ['mid' => $mid]);
-				$client_id  = [];
-				foreach($join_list as $val) $client_id[] = $val['cid'];
-				$visitor = $weixin_model->findRecord(2, [
-					'weixin_id' => $weixin_id,
-					'wtype'     => $wtype,
-					'otype'     => $otype
-				]);
-				$found   = false;
-				foreach($visitor as $val){
-					if(in_array($val['oid'], $client_id)){
-						$visitor = $val;
-						$found   = true;
-						break;
-					}
-				}
-				if($found == false) return 0;
-				if($visitor['oid']){
-					session('MOBILE_CLIENT_ID', $visitor['oid']);
+			$visitor      = $weixin_model->findRecord(1, [
+				'weixin_id' => $weixin_id,
+				'wtype'     => $wtype,
+				'otype'     => 1
+			]);
+			if($visitor) return $visitor['oid'];
 
-					return $visitor['oid'];
-				}
-			}
-			else{
-				$visitor = $weixin_model->findRecord(1, [
-					'weixin_id' => $weixin_id,
-					'wtype'     => $wtype,
-					'otype'     => $otype
-				]);
-				if($visitor['oid']){
-					session('MOBILE_EMPLOYEE_ID', $visitor['oid']);
-
-					return $visitor['oid'];
-				}
-			}
-
-			return 0;
+			else return 0;
 		}
 
 		/**
-		 * @param int $oid  用户ID
-		 * @param int $mid  会议ID
-		 * @param int $type 用户类型 0：员工 1：客户
+		 * @param int $cid 用户ID
+		 * @param int $mid 会议ID
 		 *
 		 * @return array
 		 */
-		public function getUserInformation($oid, $mid, $type = 1){
-			if($type == 1){
-				/** @var \Core\Model\WeixinIDModel $weixin_model */
-				$weixin_model = D('Core/WeixinID');
-				/** @var \Core\Model\MeetingModel $meeting_model */
-				$meeting_model = D('Core/Meeting');
-				/** @var \Core\Model\JoinModel $join_model */
-				$join_model = D('Core/Join');
-				$record     = $join_model->findRecord(1, ['cid' => $oid, 'mid' => $mid]);
-				if(!$record) return [];
-				$weixin_record                = $weixin_model->findRecord(1, ['oid' => $oid, 'otype' => $type]);
-				$meeting_record               = $meeting_model->findMeeting(1, ['id' => $record['mid']]);
-				$record['avatar']             = $weixin_record['avatar'];
-				$record['meeting_name']       = $meeting_record['name'];
-				$record['meeting_host']       = $meeting_record['host'];
-				$record['meeting_plan']       = $meeting_record['plan'];
-				$record['meeting_place']      = $meeting_record['place'];
-				$record['meeting_start_time'] = $meeting_record['start_time'];
-				$record['meeting_end_time']   = $meeting_record['end_time'];
-				$record['meeting_brief']      = $meeting_record['brief'];
-				$record['meeting_comment']    = $meeting_record['comment'];
+		public function getClientInformation($cid, $mid){
+			/** @var \Core\Model\WeixinIDModel $weixin_model */
+			$weixin_model = D('Core/WeixinID');
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			/** @var \Core\Model\JoinModel $join_model */
+			$join_model = D('Core/Join');
+			$record     = $join_model->findRecord(1, ['cid' => $cid, 'mid' => $mid]);
+			if(!$record) return [];
+			$weixin_record                = $weixin_model->findRecord(1, ['oid' => $cid, 'otype' => 1]);
+			$meeting_record               = $meeting_model->findMeeting(1, ['id' => $record['mid']]);
+			$record['avatar']             = $weixin_record['avatar'];
+			$record['meeting_name']       = $meeting_record['name'];
+			$record['meeting_host']       = $meeting_record['host'];
+			$record['meeting_plan']       = $meeting_record['plan'];
+			$record['meeting_place']      = $meeting_record['place'];
+			$record['meeting_start_time'] = $meeting_record['start_time'];
+			$record['meeting_end_time']   = $meeting_record['end_time'];
+			$record['meeting_brief']      = $meeting_record['brief'];
+			$record['meeting_comment']    = $meeting_record['comment'];
 
-				return $record;
-			}
-			else{
-				/** @var \Core\Model\WeixinIDModel $weixin_model */
-				$weixin_model = D('Core/WeixinID');
-				/** @var \Core\Model\MeetingModel $meeting_model */
-				$meeting_model = D('Core/Meeting');
-				/** @var \Core\Model\EmployeeModel $employee_model */
-				$employee_model = D('Core/Employee');
-				$record         = $employee_model->findEmployee(1, ['id' => $oid]);
-				if(!$record) return [];
-				$weixin_record                = $weixin_model->findRecord(1, ['oid' => $oid, 'otype' => $type]);
-				$meeting_record               = $meeting_model->findMeeting(1, ['id' => $mid]);
-				$record['avatar']             = $weixin_record['avatar'];
-				$record['meeting_name']       = $meeting_record['name'];
-				$record['meeting_host']       = $meeting_record['host'];
-				$record['meeting_plan']       = $meeting_record['plan'];
-				$record['meeting_place']      = $meeting_record['place'];
-				$record['meeting_start_time'] = $meeting_record['start_time'];
-				$record['meeting_end_time']   = $meeting_record['end_time'];
-				$record['meeting_brief']      = $meeting_record['brief'];
-				$record['meeting_comment']    = $meeting_record['comment'];
+			return $record;
+		}
 
-				return $record;
+		public function getMeeting($client_id){
+			/** @var \Core\Model\JoinModel $join_model */
+			$join_model = D('Core/Join');
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model  = D('Core/Meeting');
+			$join_record    = $join_model->findRecord(2, ['cid' => $client_id]);
+			$meeting_arr    = [];
+			$meeting_list   = ['fin' => [], 'ing' => []];
+			$meeting_record = $meeting_model->findMeeting(2, ['status' => 'not deleted']);
+			foreach($join_record as $val) if(!in_array($val['mid'], $meeting_arr)) $meeting_arr[] = $val['mid'];
+			foreach($meeting_record as $val) if(!in_array($val['id'], $meeting_arr)){
+				if($val['status'] == 4) $meeting_list['fin'][] = $val;
+				if($val['status'] == 3) $meeting_list['ing'][] = $val;
 			}
+
+			return $meeting_list;
 		}
 
 		public function handlerRequest($type, $option = []){
@@ -217,7 +174,7 @@
 
 					return ['status' => false, 'message' => '此客户信息还没有被审核', '__ajax__' => true];
 				break;
-				case 'myCenter:check_sign':
+				case 'check_sign':
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
 					$id          = $option['cid'];
@@ -231,6 +188,25 @@
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
+				break;
+			}
+		}
+
+		public function setDate($type, $data){
+			switch($type){
+				case 'myMeeting:set_meeting_column':
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model   = D('Core/Employee');
+					$director         = $employee_model->findEmployee(1, [
+						'id'     => $data['director_id'],
+						'status' => 'not deleted'
+					]);
+					$data['director'] = $director['name'];
+
+					return $data;
+				break;
+				default:
+					return $data;
 				break;
 			}
 		}

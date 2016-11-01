@@ -91,14 +91,8 @@
 				case 'get_role':
 					if($this->permissionList['ROLE.VIEW']){
 						/** @var \Core\Model\RoleModel $model */
-						$model = D('Core/Role');
-						/** @var \Core\Model\MeetingModel $meeting_model */
-						$meeting_model = D('Core/Meeting');
-						$role_record   = $model->findRole(1, ['id' => I('post.id', 0, 'int')]);
-						if($role_record['effect'] != 0){
-							$meeting_record         = $meeting_model->findMeeting(1, ['id' => $role_record['effect']]);
-							$role_record['meeting'] = $meeting_record['name'];
-						}
+						$model       = D('Core/Role');
+						$role_record = $model->findRole(1, ['id' => I('post.id', 0, 'int')]);
 
 						return (array_merge($role_record, ['__ajax__' => true]));
 					}

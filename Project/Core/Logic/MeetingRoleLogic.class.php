@@ -12,24 +12,19 @@
 			parent::_initialize();
 		}
 
+		/**
+		 * @return array
+		 */
 		public function getMeetingView(){
-			/** @var \Core\Model\AssignRoleModel $model */
-			$model = D('Core/AssignRole');
-			/** @var \Core\Model\MeetingModel $meeting_model */
-			$meeting_model = D('Core/Meeting');
-			$role_list     = $model->getRoleEffect(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));
-			$meeting_id    = [];
-			foreach($role_list as $val1){
-				if($val1 == 0){
-					$meeting_id   = [];
-					$meeting_list = $meeting_model->findMeeting(2);
-					foreach($meeting_list as $val2) $meeting_id[] = $val2['id'];
-				}
-				else{
-					$meeting_id[] = $val1;
-				}
-			}
+			/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
+			$meeting_manager_model = D('Core/MeetingManager');
+			$meeting_id_list       = $meeting_manager_model->findRecord(2, [
+				'eid'    => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+				'status' => 1
+			]);
+			$meeting_id_arr        = [];
+			foreach($meeting_id_list as $val) $meeting_id_arr[] = $val['mid'];
 
-			return $meeting_id;
+			return $meeting_id_arr;
 		}
 	}

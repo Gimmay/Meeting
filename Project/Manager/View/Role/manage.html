@@ -69,14 +69,13 @@
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="3%">序号</td>
-										<td width="10%">名称</td>
+										<td width="15%">名称</td>
 										<td width="5%">状态</td>
 										<td width="5%">用户数</td>
 										<td width="5%">等级</td>
-										<td width="15%">会议</td>
 										<td width="10%">备注</td>
 										<td width="8%">创建时间</td>
-										<td width="30%">操作</td>
+										<td width="40%">操作</td>
 									</tr>
 								</thead>
 								<tbody>
@@ -102,13 +101,6 @@
 													</if>
 												</td>
 												<td><{$single.level}></td>
-												<td>
-													<if condition="$single[effect] eq 0">
-														(系统全局)
-														<else/>
-														<{$single.meeting}>
-													</if>
-												</td>
 												<td><{$single.comment}></td>
 												<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
 												<td>
@@ -193,12 +185,6 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="meeting_select" class="col-sm-2 control-label">作用域：</label>
-								<div class="col-sm-10">
-									<div id="meeting_select"></div>
-								</div>
-							</div>
-							<div class="form-group">
 								<label for="create_role_comment" class="col-sm-2 control-label">备注：</label>
 								<div class="col-sm-10">
 									<textarea class="form-control comment" name="comment" id="create_role_comment"></textarea>
@@ -262,12 +248,6 @@
 										<option value="1">可用</option>
 										<option value="0">禁用</option>
 									</select>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="modify_meeting_select" class="col-sm-2 control-label">作用域：</label>
-								<div class="col-sm-10">
-									<div id="modify_meeting_select"></div>
 								</div>
 							</div>
 							<div class="form-group">
@@ -384,26 +364,6 @@
 	<script>
 		var ManageObject = {
 			object:{
-				meetingSelect      :$('#meeting_select').QuasarSelect({
-					name        :'effect',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting_list)}>',
-					idInput     :'selected_meeting_select',
-					idHidden    :'selected_meeting_select_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				modifyMeetingSelect:$('#modify_meeting_select').QuasarSelect({
-					name        :'effect',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting_list)}>',
-					idInput     :'selected_modify_meeting_select',
-					idHidden    :'selected_modify_meeting_select_form',
-					placeholder :'',
-					hasEmptyItem:false,
-					defaultHtml :0,
-					defaultValue:0
-				}),
 				toast  :$().QuasarToast(),
 				icheck             :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',

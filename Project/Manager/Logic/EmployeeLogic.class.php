@@ -150,7 +150,6 @@
 				break;
 				case 'reset_password':
 					if($this->permissionList['EMPLOYEE.RESET-PASSWORD']){
-						C('TOKEN_ON', false);
 						$str = new StringPlus();
 						/** @var \Core\Model\EmployeeModel $model */
 						$model        = D('Core/Employee');
@@ -158,7 +157,8 @@
 						$new_password = I('post.password'); // 新密码
 						$tmp          = $model->findEmployee(1, ['id' => $id]); //查询出这个ID的数据
 						$password     = $str->makePassword($new_password, $tmp['code']);    //新密码加密
-						$result       = $model->alterEmployee($id, ['password' => $password]); //成功后就更新到数据库
+						C('TOKEN_ON', false);
+						$result = $model->alterEmployee($id, ['password' => $password]); //成功后就更新到数据库
 						return array_merge($result, ['__ajax__' => false]);
 					}
 					else return ['status' => false, 'message' => '您没有重置密码的权限', '__ajax__' => false];
@@ -177,6 +177,7 @@
 						if($tmp['password'] == $old_password){    //判断加密过后的密码和数据库的密码是否匹配
 							/** @var \Core\Model\EmployeeModel $model */
 							$model  = D('Core/Employee');
+							C('TOKEN_ON', false);
 							$result = $model->alterEmployee($id, ['password' => $new_password]); //成功后就更新到数据库
 							return array_merge($result, ['__ajax__' => false]);
 						}
@@ -254,9 +255,8 @@
 				$new_password = $str->makePassword($new_password, $tmp['code']);    //新密码加密
 				if($tmp['password'] == $old_password){    //判断加密过后的密码和数据库的密码是否匹配
 					/** @var \Core\Model\EmployeeModel $model */
-					$model = D('Core/Employee');
-					$result = $model->alterEmployee(['id'=>$id],['password'=>$new_password]); //成功后就更新到数据库
-
+					$model  = D('Core/Employee');
+					$result = $model->alterEmployee(['id' => $id], ['password' => $new_password]); //成功后就更新到数据库
 					return array_merge($result, ['__ajax__' => false]);
 				}
 				else return ['status' => false, 'message' => '密码错误', '__ajax__' => false];

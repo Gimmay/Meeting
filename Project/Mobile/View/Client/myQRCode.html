@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta id="viewport" name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>个人中心</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/mobile_common.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/mobile_rem.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mb_wrap">
+		<div class="mb_body">
+			<if condition="$info.sign_status eq 1">
+				<div class="sign_type signed">已签到</div>
+				<else/><div class="sign_type unsigned">未签到</div>
+			</if>
+
+			<div class="my_title">
+				<div class="photo">
+					<img src="<{$weixin.avatar}>">
+				</div>
+				<p class="name"><{$info.name}></p>
+				<p class="address"><{$info.club}></p>
+			</div>
+			<div class="my_infor" style=" margin-top: 0.3rem;">
+				<div class="title">
+					<p style="text-align: center"><{$info.meeting_name}> </p>
+				</div>
+				<div class="personal">
+					<p>
+						<b>会议简介</b>：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<{$info.meeting_brief}>
+					</p>
+					<p>
+						<b>备注</b>：<{$info.meeting_comment}>
+					</p>
+					<p>
+						<b>起始时间</b>：<br><{$info.meeting_start_time}> — <{$info.meeting_end_time}>
+					</p>
+					<p>
+						<b>会议地点</b>：<{$info.meeting_place}>
+					</p>
+					<p>
+						<b>签到负责人</b>：各公司人事部负责人
+					</p>
+				</div>
+			</div>
+			<div class="my_box">
+				<div class="qr_code">
+					<img src="<{$info.sign_qrcode}>">
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		MyCenterObject = {
+			config:{
+				signStatus:'<{$info.sign_status}>'
+			},
+			object:{
+				toast:$().QuasarToast()
+			}
+		}
+	</script>
+</body>
+</html>

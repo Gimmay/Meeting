@@ -129,7 +129,9 @@
 			/** @var \Core\Model\MeetingModel $meeting_model */
 			$meeting_model = D('Core/Meeting');
 			/** @var \Core\Model\CouponModel $coupon_model */
-			$coupon_model      = D('Core/Coupon');
+			$coupon_model = D('Core/Coupon');
+			/** @var \Core\Model\ClientModel $client_model */
+			$client_model      = D('Core/Client');
 			$coupon_item_count = $coupon_item_model->findCouponItem(0, [
 				'mid'       => I('get.mid', 0, 'int'),
 				'coupon_id' => I('get.id', 0, 'int'),
@@ -143,13 +145,18 @@
 				'_limit'    => $page_object->firstRow.','.$page_object->listRows,
 				'_order'    => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
 				'mid'       => I('get.mid', 0, 'int'),
-				'coupon_id' => I('get.id', 0, 'int')
+				'coupon_id' => I('get.id', 0, 'int'),
+				'status'    => 'not deleted'
 			]);
 			foreach($coupon_item_result as $k => $v){
-				$coupon_result                       = $coupon_model->findCoupon(1, ['id' => $coupon_item_result[$k]['coupon_id']]);
-				$meeting_result                      = $meeting_model->findMeeting(1, ['id' => $coupon_item_result[$k]['mid']]);
-				$coupon_item_result[$k]['coupon_id'] = $coupon_result['name'];
-				$coupon_item_result[$k]['mid']       = $meeting_result['name'];
+				$coupon_result  = $coupon_model->findCoupon(1, ['id' => $coupon_item_result[$k]['coupon_id']]);
+				$meeting_result = $meeting_model->findMeeting(1, ['id' => $coupon_item_result[$k]['mid']]);
+				if($coupon_item_result[$k]['cid']){
+					$client_result                         = $client_model->findClient(1, ['id' => $coupon_item_result[$k]['cid']]);
+					$coupon_item_result[$k]['client_name'] = $client_result['name'];
+				}
+				$coupon_item_result[$k]['coupon_name']  = $coupon_result['name'];
+				$coupon_item_result[$k]['meeting_name'] = $meeting_result['name'];
 			}
 			$this->assign('coupon', $coupon_item_result);
 			$this->assign('page_show', $page_show);

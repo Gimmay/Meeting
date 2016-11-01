@@ -124,7 +124,7 @@
 											<td><{$single.creatime|date='Y-m-d H:i:s',###}></td>
 											<td>
 												<div class="btn-group" data-id="<{$info.id}>">
-													<a href="<{:U('Car/assign')}>" class="btn btn-default btn-xs delete_btn">人员分配</a>
+													<notempty name="single.meeting"><a href="<{:U('Car/assign')}>" class="btn btn-default btn-xs delete_btn">人员分配</a></notempty>
 													<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_car">修改</button>
 													<button class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_car">删除</button>
 												</div>

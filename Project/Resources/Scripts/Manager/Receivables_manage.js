@@ -12,7 +12,6 @@ $(function(){
 	ManageObject.object.meetingName.onQuasarSelect(function(){
 		var value = ManageObject.object.meetingName.getValue();
 		$add_receivables_modal.find('input[name=mid]').val(value);
-		console.log(123);
 	});
 	ManageObject.object.clientName.onQuasarSelect(function(){
 		var value = ManageObject.object.clientName.getValue();
@@ -46,5 +45,37 @@ $(function(){
 	});
 	$('.clear-marginleft').on('click',function(){
 		$('#price').val(0);
-	})
+	});
+
+	// 删除收款记录
+	$('.delete_btn').on('click',function(){
+		var id =$(this).parents('.btn-group').attr('data-id');
+		$('#delete_receivables').find('input[name=id]').val(id);
+	});
+
+	// 修改收款
+	$('.modify_btn').on('click',function(){
+		var id =$(this).parents('.btn-group').attr('data-id');
+		var price =$(this).parents('tr').find('.price').text();
+		var type =$(this).parents('tr').find('.type').text();
+		var method =$(this).parents('tr').find('.method').text();
+		var time =$(this).parents('tr').find('.time').text();
+		var place =$(this).parents('tr').find('.place').text();
+		var source_type =$(this).parents('tr').find('.source_type').text();
+		var comment =$(this).parents('tr').find('.comment').text();
+		$('#alter_receivables').find('input[name=id]').val(id);
+		$('#alter_receivables').find('#price_a').val(price);
+		$('#alter_receivables').find('#selected_method').val(method);
+		$('#alter_receivables').find('#selected_type').val(type);
+		$('#alter_receivables').find('#place_a').val(place);
+		$('#alter_receivables').find('#source_type').val(source_type);
+		$('#alter_receivables').find('#receivables_time_a').val(time);
+		$('#alter_receivables').find('#comment_a').val(comment);
+		Common.ajax({
+			data:{requestType:'alter_coupon',id:id},
+			callback:function(r){
+				console.log(r);
+			}
+		});
+	});
 });

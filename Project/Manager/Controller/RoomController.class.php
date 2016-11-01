@@ -25,6 +25,9 @@
 				}
 				exit;
 			}
+			/** @var \Manager\Model\RoomModel $room_model_st */
+			$room_model_st = D('Room');
+			$room_result_st = $room_model_st->getRoomForSelect();
 			$room_result = $room_logic->findRoom();
 			$meeting_result = $room_logic->findMeeting();
 			$join_result = $room_logic->selectMeetingJoin();

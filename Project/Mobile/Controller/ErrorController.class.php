@@ -41,6 +41,12 @@
 			echo '<h1>缺少会议参数</h1>';
 			//$this->display();
 		}
+		/**
+		 * URL缺少参会人员参数
+		 */
+		public function requireClient(){
+			echo '<h1>缺少参会参数</h1>';
+		}
 
 		/**
 		 * 没有授予权限

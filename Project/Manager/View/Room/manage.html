@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<title>房间分配 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
-	<!--<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/custom.css">-->
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
@@ -66,11 +66,14 @@
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="3%">序号</td>
-										<td width="10%">房间号</td>
-										<td width="10%">可容纳人数</td>
+										<td width="8%">房间号</td>
+										<td width="8%">房间类型</td>
+										<td width="8%">价格</td>
+										<td width="8%">可容纳人数</td>
 										<td width="10%">入住情况</td>
-										<td width="10%">房客类型</td>
-										<td width="10%">备注</td>
+										<td width="8%">房客类型</td>
+										<td width="10%">入住时间</td>
+										<td width="13%">备注</td>
 										<td width="20%">操作</td>
 									</tr>
 								</thead>
@@ -81,9 +84,10 @@
 												<input type="checkbox" class="icheck" placeholder="" value="<{$room_info.id}>">
 											</td>
 											<td><{$i}></td>
-											<td><{$room_info.code}></td>
-
-											<td><{$room_info.capacity}></td>
+											<td class="room_code"><{$room_info.code}></td>
+											<td class="room_type"><{$room_info.type}></td>
+											<td class="price"><{$room_info.price}></td>
+											<td class="capacity"><{$room_info.capacity}></td>
 											<td>
 												<if condition="$room_info.count eq $room_info.capacity "> 住满
 													<elseif condition=" $room_info.count gt $room_info.capacity  "/>
@@ -92,12 +96,13 @@
 													未住满(已入住<span style="color: red;"><{$room_info.count}></span>人,可容纳<span style="color: red;"><{$room_info.capacity}>人</span>)
 												</if>
 											</td>
-											<td><{$room_info.type}></td>
-											<td><{$room_info.comment}></td>
+											<td class="client_type"><{$room_info.client_type}></td>
+											<td class="come_time"><{$room_info.come_time}></td>
+											<td class="comment"><{$room_info.comment}></td>
 											<td>
 												<div class="btn-group" data-id="<{$room_info.id}>">
-													<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_hotel">修改</button>
-													<button class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_hotel">删除</button>
+													<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_room">修改</button>
+													<button class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_room">删除</button>
 													<button class="btn btn-default btn-xs details_btn">详情</button>
 												</div>
 											</td>
@@ -122,44 +127,35 @@
 						</div>
 						<div class="info">
 							<div class="li">
-								<span>房间号：</span> <span>301</span>
+								<span>房间号：</span> <span class="room_code"></span>
 							</div>
 							<div class="li">
-								<span>可容纳人数：</span> <span>301</span>
+								<span>房间类型：</span> <span class="room_type"></span>
 							</div>
 							<div class="li">
-								<span>房客人数：</span> <span>标准单间</span>
+								<span>可容纳人数：</span> <span class="capacity"></span>
 							</div>
 							<div class="li">
-								<span>备注：</span> <span>备注</span>
+								<span>房客类型：</span> <span class="client_type"></span>
+							</div>
+							<div class="li">
+								<span>房客人数：</span> <span class="room_num"></span>
+							</div>
+							<div class="li">
+								<span>入住时间：</span> <span class="come_time"></span>
+							</div>
+							<div class="li">
+								<span>备注：</span> <span class="comment"></span>
 							</div>
 						</div>
 						<div class="btn_fun">
-							<a data-toggle="modal" data-target="#alter_hotel">修改</a> <a href="javascript:void(0)">退房</a>
+							<a data-toggle="modal" data-target="#alter_room">修改</a> <!--<a href="javascript:void(0)">退房</a>-->
 						</div>
 						<div class="d_list">
+							<span class="add">添加</span>
 							<div class="list_title">入住人员列表</div>
 							<table class="table" width="100%">
-								<thead>
-									<th width="30%">序号</th>
-									<th width="35%">姓名</th>
-									<th width="35%">操作</th>
-								</thead>
 								<tbody id="list_c">
-									<tr>
-										<td>1</td>
-										<td>刘先生</td>
-										<td>
-											<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#choose_leave_time">离开</button>
-										</td>
-									</tr>
-									<tr>
-										<td>2</td>
-										<td>刘先生</td>
-										<td>
-											<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#choose_leave_time">离开</button>
-										</td>
-									</tr>
 								</tbody>
 							</table>
 						</div>
@@ -205,6 +201,18 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<label for="room_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>房客类型：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control room_type" name="client_type" id="client_type">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="price" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>价格：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control price" name="price" id="price">
+							</div>
+						</div>
+						<div class="form-group">
 							<label for="capacity" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>可容纳人数：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control capacity" name="capacity" id="capacity">
@@ -228,6 +236,81 @@
 							<label for="room_comment" class="col-sm-2 control-label">备注：</label>
 							<div class="col-sm-10">
 								<textarea class="form-control comment" name="comment" id="room_comment"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 修改房间 -->
+	<div class="modal fade" id="alter_room" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width:700px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">修改房间</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit=" return checkAssign()">
+					<input type="hidden" name="requestType" value="create">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="hotel_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>酒店名称：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control hotel_name" name="hotel_name" value="<{$info.hotel_name}>" id="hotel_name_a" disabled>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="meeting_name_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>会议名称：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control meeting_name" name="meeting_name" value="<{$info.name}>" id="meeting_name_a" disabled>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="room_code_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>房间号：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control room_code" name="room_code" id="room_code_a">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="room_type_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>房间类型：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control room_type" name="room_type" id="room_type_a">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="room_type_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>房间类型：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control room_type" name="client_type" id="client_type_a">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="price" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>价格：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control price" name="price" id="price_a">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="capacity_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>可容纳人数：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control capacity" name="capacity" id="capacity_a">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="come_time" class="col-sm-2 control-label">入住时间：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="come_time" id="come_time_a">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="room_comment_a" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" id="room_comment_a"></textarea>
 							</div>
 						</div>
 					</div>
@@ -297,7 +380,7 @@
 												<case value="2">女</case>
 											</switch>
 										</td>
-										<td>职务</td>
+										<td><{$list.position}></td>
 										<td><{$list.mobile}></td>
 										<td><{$list.club}></td>
 										<td><{$list.creatime|date='Y-m-d',###}></td>
@@ -315,47 +398,8 @@
 			</div>
 		</div>
 	</div>
-	<!-- 修改房间 -->
-	<div class="modal fade" id="alter_hotel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">修改酒店</h2>
-				</div>
-				<form class="form-horizontal" role="form" action="" method="post">
-					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="hotel_name_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>酒店名称：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control hotel_name" name="hotel_name" id="hotel_name_a">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="meeting_name_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>会议名称：</label>
-							<div class="col-sm-10">
-								<div id="meeting_name_a"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="room_comment_a" class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-10">
-								<textarea class="form-control comment" name="comment" id="room_comment_a"></textarea>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
 	<!-- 删除房间 -->
-	<div class="modal fade" id="delete_hotel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="delete_room" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -425,6 +469,43 @@
 			</div>
 		</div>
 	</div>
+	<!-- 换房 -->
+	<div class="modal fade" id="change_room" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 800px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">更换房间</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post">
+					<input type="hidden" name="requestType" value="leave"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="room_list">
+							<div class="repertory clearfix">
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" class="form-control" placeholder="房间/拼音简码" value="">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default mian_search">搜索</button>
+									</span>
+									</div>
+									<a type="reset" class="btn btn-default mian_search" href="/Room/details.aspx">查看所有</a>
+									<input type="hidden" name="__hash__" value="f1cc4eba10f5c18edb094cf3a5259357_a21ff50e181797de04a7fb980cf795aa"></form>
+							</div>
+							<div class="room_li">
+
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 	<script>
 		var ThisObject = {
 			object:{
@@ -447,6 +528,13 @@
 				}),
 				time1        :jeDate({
 					dateCell:"#leave_time",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					isTime  :true, // isClear:false, // 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
+				}),
+				time2        :jeDate({
+					dateCell:"#come_time_a",
 					format  :"YYYY-MM-DD hh:mm:ss",
 					isTime  :true, // isClear:false, // 时分秒--true
 					/*	minDate :"2015-10-19 00:00:00",

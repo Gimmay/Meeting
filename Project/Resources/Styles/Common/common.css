@@ -416,6 +416,7 @@ textarea{
 	top        : 0;
 	left       : 0;
 	z-index    : 999;
+	overflow-y: auto;
 }
 
 .mt_navbar > .header{
@@ -696,6 +697,7 @@ textarea{
 }
 
 .mt_wrapper .right_details .d_con .d_list{
+	position : relative;
 }
 
 .mt_wrapper .right_details .d_con .d_list .list_title{

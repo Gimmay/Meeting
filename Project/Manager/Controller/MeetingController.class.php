@@ -14,6 +14,8 @@
 	class MeetingController extends ManagerController{
 		public function _initialize(){
 			parent::_initialize();
+			$core_logic = new \Core\Logic\MeetingLogic();
+			$core_logic->initializeStatus();
 		}
 
 		public function create(){
@@ -34,17 +36,18 @@
 					exit;
 				}
 				/** @var \Core\Model\HotelModel $hotel_model */
-				$hotel_model = D('Core/Hotel');
-				$hotel_result = $hotel_model->findHotel(2,[
-					'status'=> 'not deleted'
+				$hotel_model  = D('Core/Hotel');
+				$hotel_result = $hotel_model->findHotel(2, [
+					'status' => 'not deleted'
 				]);
 				/** @var \Manager\Model\EmployeeModel $employee_model */
 				$employee_model = D('Employee');
 				$employee_list  = $employee_model->getEmployeeSelectList();
 				$this->assign('employee_list', $employee_list);
-				$this->assign('info',$hotel_result);
+				$this->assign('info', $hotel_result);
 				$this->display();
-			}else $this->error('您没有创建会议的权限');
+			}
+			else $this->error('您没有创建会议的权限');
 		}
 
 		public function manage(){
@@ -87,7 +90,8 @@
 				$this->assign('page', $show); // 赋值分页输出
 				$this->assign('message', $message);
 				$this->display();
-			}else $this->error('您没有查看会议的权限');
+			}
+			else $this->error('您没有查看会议的权限');
 		}
 
 		public function alter(){
@@ -129,6 +133,7 @@
 				$this->assign('info', $info);
 				$this->assign('employee_list', $employee_list);
 				$this->display();
-			}else $this->error('您没有修改会议的权限');
+			}
+			else $this->error('您没有修改会议的权限');
 		}
 	}

@@ -18,80 +18,85 @@
 		}
 
 		public function create($data){
-			/** @var \Core\Model\ClientModel $model */
-			/** @var \Core\Model\JoinModel $join_model */
-			/** @var \Core\Model\WeixinIDModel $weixin_model */
 			/* 1.创建参会人员 */
-			$str_obj             = new StringPlus();
+			/** @var \Core\Model\ClientModel $model */
 			$model               = D('Core/Client');
-			$data['status']      = $data['status'] == 1 ? 0 : (($data['status'] == 0) ? 1 : 1);
-			$data['creatime']    = time();
-			$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-			$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-			$data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
-			$data['birthday']    = date('Y-m-d', strtotime($data['birthday']));
-			if(I('post.city')) $data['address'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
-			else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
-			$result1 = $model->createClient($data);
-			if(!$result1['status']){
-				$exist_client = $model->findClient(1, ['name' => $data['name'], 'mobile' => $data['mobile']]);
-				if(!$exist_client) return $result1;
-				else $client_id = $exist_client['id'];
+			$exist_client = $model->findClient(1, ['mobile' => $data['mobile']]);
+			if($exist_client){
+				$client_id = $exist_client['id'];
+				$str_obj             = new StringPlus();
+				$data['creatime']    = time();
+				$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+				$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
+				if(I('post.city')) $data['address'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
+				else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
+				$model->alterClient([$client_id], $data);
 			}
-			else $client_id = $result1['id'];
+			else{
+				$str_obj             = new StringPlus();
+				$data['creatime']    = time();
+				$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+				$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
+				$data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
+				if(I('post.city')) $data['address'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
+				else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
+				$result1 = $model->createClient($data);
+				if($result1['status']) $client_id = $result1['id'];
+				else return $result1;
+			}
 			/* 2.创建参会记录 */
-
-			$mid               = I('get.mid', 0, 'int');
-			$join_model                = D('Core/Join');
-			$join_record = $join_model->findRecord(1,['mid'=>$mid,'cid'=>$client_id]);
+			$mid         = I('get.mid', 0, 'int');
+			/** @var \Core\Model\JoinModel $join_model */
+			$join_model  = D('Core/Join');
+			$join_record = $join_model->findRecord(1, ['mid' => $mid, 'cid' => $client_id]);
+			$mobile           = $data['mobile'];
 			if($join_record){
-				C('TOKEN_ON',false);
-				$join_result=$join_model->alterRecord([$join_record['id']],['status'=>1]);
-				if($join_result['status']){
-					return ['status'=>true,'message'=>'创建成功'];
-				}else{
-					return ['status'=>false,'message'=>'创建失败'];
+				if($join_record['status'] != 1){
+					C('TOKEN_ON', false);
+					$join_result = $join_model->alterRecord([$join_record['id']], ['status' => 1]);
+					if($join_result['status']) $result = ['status' => true, 'message' => '创建成功'];
+					else $result = $join_result;
 				}
-			}else{
-				$mobile                    = $data['mobile'];
-				$registration_date         = date('Y-m-d', strtotime($data['registration_date']));
+				else $result = ['status'=>true, 'message'=>'创建成功'];
+			}
+			else{
 				$data                      = [];
 				$data['cid']               = $client_id;
 				$data['mid']               = $mid;
 				$data['creatime']          = time();
 				$data['creator']           = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-				$data['registration_date'] = $registration_date;
 				C('TOKEN_ON', false);
-				$result2 = $join_model->createRecord($data);
-				if(!$result2['status']) return $result2;
-				/* 3.试图根据手机号创建微信用户记录 */
-				$weixin_logic     = new WxCorpLogic();
-				$weixin_user_list = $weixin_logic->getAllUserList();
-				foreach($weixin_user_list as $val){
-					if($val['mobile'] == $mobile){
-						$weixin_model = D('Core/WeixinID');
-						$department   = '';
-						foreach($val['department'] as $val2) $department .= $val2.',';
-						$department         = trim($department, ',');
-						$data               = [];
-						$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
-						$data['oid']        = $client_id; // 对象ID
-						$data['wtype']      = 1; // 微信ID类型 企业号
-						$data['weixin_id']  = $val['userid']; // 微信ID
-						$data['department'] = $department; // 部门ID
-						$data['mobile']     = $val['mobile']; // 手机号码
-						$data['avatar']     = $val['avatar']; // 头像地址
-						$data['gender']     = $val['gender']; // 性别
-						$data['nickname']   = $val['name']; // 昵称
-						$data['creatime']   = time(); // 创建时间
-						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); // 当前创建者
-						$weixin_model->createRecord($data); // 插入数据
-						break;
-					}
-				}
-
-				return $result2;
+				$result = $join_model->createRecord($data);
 			}
+			/* 3.试图根据手机号创建微信用户记录 */
+			$weixin_logic     = new WxCorpLogic();
+			$weixin_user_list = $weixin_logic->getAllUserList();
+			foreach($weixin_user_list as $val){
+				if($val['mobile'] == $mobile){
+					/** @var \Core\Model\WeixinIDModel $weixin_model */
+					$weixin_model = D('Core/WeixinID');
+					$department   = '';
+					foreach($val['department'] as $val2) $department .= $val2.',';
+					$department         = trim($department, ',');
+					$data               = [];
+					$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
+					$data['oid']        = $client_id; // 对象ID
+					$data['wtype']      = 1; // 微信ID类型 企业号
+					$data['weixin_id']  = $val['userid']; // 微信ID
+					$data['department'] = $department; // 部门ID
+					$data['mobile']     = $val['mobile']; // 手机号码
+					$data['avatar']     = $val['avatar']; // 头像地址
+					$data['gender']     = $val['gender']; // 性别
+					$data['nickname']   = $val['name']; // 昵称
+					$data['creatime']   = time(); // 创建时间
+					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); // 当前创建者
+					C('TOKEN_ON', false);
+					$weixin_model->createRecord($data); // 插入数据
+					break;
+				}
+			}
+
+			return $result;
 		}
 
 		public function alter($id, $data){
@@ -105,8 +110,7 @@
 			else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
 			$result1                    = $model->alterClient([$id], $data);
 			$join_record                = $join_model->findRecord(1, ['cid' => $id, 'mid' => I('get.mid', 0, 'int')]);
-			$registration_date          = date('Y-m-d', strtotime($data['registration_date']));
-			$data2['registration_date'] = $registration_date;
+			$data2['registration_date'] = $data['registration_date'];
 			C('TOKEN_ON', false);
 			$result2 = $join_model->alterRecord([$join_record['id']], $data2);
 
@@ -119,19 +123,16 @@
 		public function setExtendColumnForAlter($info){
 			/** @var \Core\Model\EmployeeModel $employee_model */
 			/** @var \Core\Model\JoinModel $join_model */
-			$meeting_id                      = I('get.mid', 0, 'int');
-			$id                              = I('get.id', 0, 'int');
-			$employee_model                  = D('Core/Employee');
-			$join_model                      = D('Core/Join');
-			$join_record                     = $join_model->findRecord(1, ['mid' => $meeting_id, 'cid' => $id]);
-			$info['registration_date']       = $join_record['registration_date'];
+			$meeting_id                = I('get.mid', 0, 'int');
+			$id                        = I('get.id', 0, 'int');
+			$join_model                = D('Core/Join');
+			$join_record               = $join_model->findRecord(1, ['mid' => $meeting_id, 'cid' => $id]);
+			$info['registration_date'] = $join_record['registration_date'];
 
 			return $info;
 		}
 
 		public function alterColumnForExportExcel($list, $except_column = []){
-			/** @var \Core\Model\EmployeeModel $employee_model */
-			$employee_model = D('Core/Employee');
 			foreach($list as $key1 => $val1){
 				// 排除字段
 				foreach($except_column as $val2) unset($list[$key1][$val2]);
@@ -216,6 +217,8 @@
 					'service_consultant' => '服务顾问',
 					'accompany'          => '陪同',
 					'accompany_mobile'   => '陪同手机',
+					'team'               => '团队',
+					'type'               => '类型',
 					'comment'            => '备注',
 					'column1'            => '备选字段1',
 					'column2'            => '备选字段2',
@@ -226,12 +229,13 @@
 					'column7'            => '备选字段7',
 					'column8'            => '备选字段8',
 					'registration_date'  => '报名时间',
+					'registration_type'  => '报名类型',
 					'review_status'      => '审核状态',
 					'review_time'        => '审核时间',
-					'sign_code'          => '签到码',
-					'sign_time'          => '签到时间',
 					'sign_status'        => '签到状态',
+					'sign_time'          => '签到时间',
 					'sign_type'          => '签到类型',
+					'sign_code'          => '签到码',
 					'print_status'       => '打印状态',
 					'print_times'        => '打印时间'
 				]
@@ -518,7 +522,10 @@
 					$record         = $client_model->findClient(1, ['id' => $client_id]);
 					$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 					$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
-					$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/cid/$client_id/mid/$meeting_id";
+					$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myQRCode', [
+							'cid' => $client_id,
+							'mid' => $meeting_id
+						]);
 					$result1        = $wxcorp_logic->sendMessage('news', [
 						[
 							'title'       => "$meeting_record[name]",
@@ -529,8 +536,8 @@
 					$url            = getShortUrl($url); // 使用新浪的t.cn短地址
 					//$result2        = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
 					if(!$result1['status']) return ['status' => false, 'message' => '微信推送信息失败', '__ajax__' => true];
-					//if(!$result2['status']) return ['status' => false, 'message' => '短信发送失败', '__ajax__' => true];
 
+					//if(!$result2['status']) return ['status' => false, 'message' => '短信发送失败', '__ajax__' => true];
 					return ['status' => true, 'message' => '发送消息成功', '__ajax__' => true];
 				break;
 				case 'multi_send_message':
@@ -549,7 +556,10 @@
 						$record         = $client_model->findClient(1, ['id' => $v]);
 						$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 						$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
-						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/cid/$v/mid/$meeting_id";
+						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myQRCode', [
+								'cid' => $v,
+								'mid' => $meeting_id
+							]);
 						$wxcorp_logic->sendMessage('news', [
 							[
 								'title'       => "$meeting_record[name]", // todo just title
@@ -692,7 +702,7 @@
 							$name = $val;
 						break;
 						case 'registration_date':
-							$registration_date = date('Y-m-d', strtotime($val));
+							$registration_date =$val;
 						break;
 						case 'inviter_id':
 							$invitor = $val;
@@ -710,10 +720,10 @@
 						break;
 					}
 					// 指定特殊列的值
-					$client_data['creator']            = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					$client_data['creatime']           = time();
-					$client_data['password']           = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $mobile);
-					$client_data['pinyin_code']        = $str_obj->makePinyinCode($name);
+					$client_data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$client_data['creatime']    = time();
+					$client_data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $mobile);
+					$client_data['pinyin_code'] = $str_obj->makePinyinCode($name);
 					if($column_index === null){
 						if(!in_array($table_column[$key2]['name'], ['registration_date'])) $client_data[$table_column[$key2]['name']] = $val;
 					} // 按顺序指定缺省值

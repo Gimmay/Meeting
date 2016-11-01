@@ -481,20 +481,24 @@ $(function(){
 		$('#batch_alter_sign_point').find('input[name=sign_place]').val(arr);
 	});
 
-	// 人员状态列表（签到\审核\收款）
-	var mvc         = $('#Quasar').attr('data-mvc-name');
-	var suffix      = $('#Quasar').attr('data-page-suffix');
-	var link        = new Quasar.UrlClass(1, mvc, suffix);
-	var signed      = link.getUrlParam('signed');
-	var reviewed    = link.getUrlParam('reviewed');
-	var receivables = link.getUrlParam('receivables');
-	if(signed == 1) $('.check_signed').find('.iradio_square-green').addClass('checked');
-	if(signed == 0) $('.check_not_signed').find('.iradio_square-green').addClass('checked');
-	if(reviewed == 1) $('.check_reviewed').find('.iradio_square-blue').addClass('checked');
-	if(reviewed == 0) $('.check_not_reviewed').find('.iradio_square-blue').addClass('checked');
-	if(receivables == 1) $('.check_receivables').find('.iradio_square-red').addClass('checked');
-	if(receivables == 0) $('.check_not_receivables').find('.iradio_square-red').addClass('checked');
+	(function(){
+		// 人员状态列表（签到\审核\收款）
+		var mvc         = $('#Quasar').attr('data-mvc-name');
+		var suffix      = $('#Quasar').attr('data-page-suffix');
+		var link        = new Quasar.UrlClass(1, mvc, suffix);
+		var signed      = link.getUrlParam('signed');
+		var reviewed    = link.getUrlParam('reviewed');
+		var receivables = link.getUrlParam('receivables');
+		if(signed == 1) $('.check_signed').find('.iradio_square-green').addClass('checked');
+		if(signed == 0) $('.check_not_signed').find('.iradio_square-green').addClass('checked');
+		if(reviewed == 1) $('.check_reviewed').find('.iradio_square-blue').addClass('checked');
+		if(reviewed == 0) $('.check_not_reviewed').find('.iradio_square-blue').addClass('checked');
+		if(receivables == 1) $('.check_receivables').find('.iradio_square-red').addClass('checked');
+		if(receivables == 0) $('.check_not_receivables').find('.iradio_square-red').addClass('checked');
+	})();
+
 });
+
 function getIframeData(){
 	var data = document.getElementById('fileUpload_iframe').contentWindow.document
 					   .getElementsByTagName('body')[0].innerHTML;

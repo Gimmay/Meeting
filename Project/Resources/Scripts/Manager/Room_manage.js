@@ -2,9 +2,23 @@
  * Created by qyqy on 2016-10-25.
  */
 
-/*var ScriptObject = {
- attendeeTableTemp:'<tr>\n\t<td class="check_item_m">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$name</td>\n\t<td>$gender</td>\n\t<td>$phoneNumber</td>\n\t<td>$club</td>\n\t<td>$createTime</td>\n</tr>',
- };*/
+var ScriptObject = {
+ roomDetailsTemp:'<tr data-id="$id">' +
+ '	<td>$n</td>' +
+ '	<td>$name</td>' +
+ '	<td>' +
+ '	<div class="btn-group">' +
+ '	<button type="button" class="btn btn-default btn-sm leave_btn" data-toggle="modal" data-target="#choose_leave_time">退房</button>' +
+ '	<button type="button" class="btn btn-default btn-sm change_btn">换房</button>' +
+ '	</div></td></tr>',
+	roomDetailsTemp2:'<tr data-id="$id">' +
+	'	<td>$n</td>' +
+	'	<td>$name</td>' +
+	'	<td>' +
+	'	<div class="btn-group">' +
+	'	<button type="button" class="btn btn-default btn-sm leave_btn" disabled>已退房</button>' +
+	'	</div></td></tr>',
+ };
 $(function(){
 	// 全选checkbox
 	$('.all_check').find('.iCheck-helper').on('click', function(){
@@ -17,7 +31,7 @@ $(function(){
 	// 单个删除
 	$('.delete_btn').on('click', function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
-		$('#delete_hotel ').find('input[name=id]').val(id);
+		$('#delete_room ').find('input[name=id]').val(id);
 	});
 	// 批量删除
 	$('.batch_delete_btn_confirm').on('click', function(){
@@ -190,15 +204,92 @@ $(function(){
 	});
 	$('.details_btn').on('click',function(){
 		var id =$(this).parent('.btn-group').attr('data-id');
+		var room_code = $(this).parents('tr').find('.room_code').text();
+		var capacity = $(this).parents('tr').find('.capacity').text();
+		var room_type = $(this).parents('tr').find('.room_type').text();
+		var client_type = $(this).parents('tr').find('.client_type').text();
+		var come_time = $(this).parents('tr').find('.come_time').text();
+		var comment = $(this).parents('tr').find('.comment').text();
+		var $right_details = $('.right_details');
+		$right_details.find('.room_code').text(room_code);
+		$right_details.find('.capacity').text(capacity);
+		$right_details.find('.room_type').text(room_type);
+		$right_details.find('.client_type').text(client_type);
+		$right_details.find('.come_time').text(come_time);
+		$right_details.find('.comment').text(comment);
 		Common.ajax({
 			data:{requestType:'details',id:id},
 			callback:function(r){
 				console.log(r);
+				var str='',i=0;
+				$.each(r,function(index,value){
+					if(!value.leave_time){
+						str+=ScriptObject.roomDetailsTemp.replace('$n',index+1).replace('$name',value.name).replace('$id',value.id);
+						i++;
+					}else{
+						str+=ScriptObject.roomDetailsTemp2.replace('$n',index+1).replace('$name',value.name).replace('$id',value.id);
+					}
+				});
+				$right_details.find('.room_num').text(i);
+				if(Number(i)>=Number(capacity)){
+					$('.right_details').find('.add').hide();
+				}
+				$('#list_c').html(str);
+				leave_btn();
+				change_room();
 			}
 		});
 	});
-
+	$('.alter_btn').on('click',function(){
+		choose($(this));
+	});
 });
+function choose(e){
+	var room_code = e.parents('tr').find('.room_code').text();
+	var room_type = e.parents('tr').find('.room_type').text();
+	var capacity = e.parents('tr').find('.capacity').text();
+	var price = e.parents('tr').find('.price').text();
+	var client_type = e.parents('tr').find('.client_type').text();
+	var come_time = e.parents('tr').find('.come_time').text();
+	var comment = e.parents('tr').find('.comment').text();
+	var $alter_room = $('#alter_room');
+	$alter_room.find('#room_code_a').val(room_code);
+	$alter_room.find('#room_type_a').val(room_type);
+	$alter_room.find('#capacity_a').val(capacity);
+	$alter_room.find('#price').val(price);
+	$alter_room.find('#come_time_a').val(come_time);
+	$alter_room.find('#room_code_a').val(room_code);
+}
+function leave_btn(){
+	$('.leave_btn').on('click',function(){
+		var id = $(this).parents('tr').attr('data-id');
+		$('#choose_leave_time').find('input[name=id]').val(id);
+	});
+}
+
+function change_room(){
+	$('.change_btn').on('click',function(){
+		var id = $(this).parents('tr').attr('data-id');
+		Common.ajax({
+			data:{requestType:'change_room',id:id},
+			callback:function(r){
+				console.log(r);
+				$('#change_room').modal('show');
+				var str='';
+				/*$.each(r,function(index,value){
+					if(!value.leave_time){
+						str+=ScriptObject.roomDetailsTemp.replace('$n',index+1).replace('$name',value.name).replace('$id',value.id);
+					}else{
+						str+=ScriptObject.roomDetailsTemp2.replace('$n',index+1).replace('$name',value.name).replace('$id',value.id);
+					}
+				});
+				$('#list_c').html(str);
+				leave_btn();
+				change_room();*/
+			}
+		});
+	});
+}
 
 function checkAssign(){
 	var capacity_v = $('#capacity').val();

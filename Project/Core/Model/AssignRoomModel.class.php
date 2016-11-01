@@ -38,10 +38,11 @@
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['rid'])) $where['rid'] = $filter['rid'];
+			if(isset($filter['jid'])) $where['jid'] = $filter['jid'];
 			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
-				if($status == 'not deleted') $where['status'] = ['neq', 3];
+				if($status == 'not deleted') $where['status'] = ['neq', 2];
 				else $where['status'] = $filter['status'];
 			}
 			if(isset($filter['keyword']) && $filter['keyword']){
@@ -106,7 +107,7 @@
 		public function alterAssignRoom($id, $data){
 			if($this->create($data)){
 				try{
-					$result = $this->where(['id' => ['in', $id]])->save($data);
+					$result = $this->where(['jid' => ['in', $id]])->save($data);
 					if($result) return ['status' => true, 'message' => '修改成功'];
 					else return ['status' => false, 'message' => '未做任何修改'];
 				}catch(Exception $error){

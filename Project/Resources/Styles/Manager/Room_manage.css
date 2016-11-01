@@ -1,32 +1,47 @@
 /**选择收件人**/
-.mes_people .m_color {
-	color : #fb5050;
-}
-.mes_people a {
-	margin-left: 15px;
-	color : #00A0E8;
-}
-.mes_people a:hover {
-	color : #4eb900;
+.mes_people .m_color{
+	color : #FB5050;
 }
 
-.choose_people {
-
+.mes_people a{
+	margin-left : 15px;
+	color       : #00A0E8;
 }
 
-.choose_people .d1 {
-	padding: 10px 20px;
+.mes_people a:hover{
+	color : #4EB900;
 }
 
-.choose_people .d1 span {
-	margin-right: 10px;
-	font-size: 14px;
+.choose_people{
 }
 
-.choose_people .d1 .btn_save {
-	float: right;
+.d_list .add{
+	position    : absolute;
+	top         : 0;
+	right       : 20px;
+	width       : 50px;
+	height      : 27px;
+	line-height : 27px;
+	border      : 1px solid #E1E1E1;
+	text-align  : center;
+	background  : #00A0E8;
+	color       : #FFFFFF;
+	cursor: pointer;
 }
 
-.search_sm {
-	padding: 5px 15px ;
+.choose_people .d1{
+	padding : 10px 20px;
+}
+
+.choose_people .d1 span{
+	margin-right : 10px;
+	font-size    : 14px;
+}
+
+.choose_people .d1 .btn_save{
+	float : right;
+}
+
+.search_sm{
+	padding : 5px 15px;
 }

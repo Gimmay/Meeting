@@ -95,7 +95,7 @@
 			$message = str_replace('<:参会人会所:>', $client['club'], $message);
 			$message = str_replace('<:参会人手机号:>', $client['mobile'], $message);
 			$message = str_replace('<:签到码:>', $client['sign_code'], $message);
-			$message = str_replace('<:个人中心链接:>', getShortUrl("$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]/Mobile/Client/myCenter/mid/$meeting[id]"), $message);
+			$message = str_replace('<:签到二维码:>', getShortUrl("$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myQRCode', ['mid' => $meeting['id'], 'cid'=>$client['id']])), $message);
 			$message = str_replace('<:签到(取消)时间:>', date('Y-m-d H:i:s'), $message);
 			$message = str_replace('<:会议名称:>', $meeting['name'], $message);
 			$message = str_replace('<:会议主办方:>', $meeting['host'], $message);
@@ -109,8 +109,6 @@
 
 			return $message;
 		}
-
-		
 
 		public function alterMessage(){
 			/** @var \Core\Model\MessageModel $message_model */

@@ -58,7 +58,10 @@
 					$new_list      = [];
 					$type          = strtolower($option['type']);
 					foreach($data as $key => $val){
-						$meeting_record = $meeting_model->findMeeting(1, ['id' => $val['mid']]);
+						$meeting_record = $meeting_model->findMeeting(1, [
+							'id'     => $val['mid'],
+							'status' => 'not deleted'
+						]);
 						if($type == 'using'){ // 1、mid字段有值 2、会议进行中
 							if($meeting_record){
 								$meeting_start_time = strtotime($meeting_record['start_time']);
