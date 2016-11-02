@@ -509,8 +509,8 @@ var Quasar = {
 			}else{
 				//noinspection JSDuplicatedDeclaration
 				var i = (arguments.length<1) ? (url.indexOf(_Config.except)+_Config.except.length) : (url.indexOf(opt.except)+opt.except.length);
-				if(!url.substr(i, url.length)
-					   .match(/\/([.#\w\u4E00-\u9FA5\uF900-\uFA2D-]+)\/([.#\w\u4E00-\u9FA5\uF900-\uFA2D-]+)/)){
+				//if(!url.substr(i, url.length).match(/\/([.#\w\u4E00-\u9FA5\uF900-\uFA2D-]+)\/([.#\w\u4E00-\u9FA5\uF900-\uFA2D-]+)/)){
+				if(!url.substr(i, url.length).match(/\/([.#%$A-Za-z0-9\u0800-\u9FA5０-９Ａ-Ｚａ-ｚ\uFE10-\uFFEF_-]+)\/([.#%$A-Za-z0-9\u0800-\u9FA5０-９Ａ-Ｚａ-ｚ\uFE10-\uFFEF_-]+)/)){
 					Quasar._setError(false, 3001, 'URL不存在参数', 'UrlClass/getUrlParamsJSON()');
 					return null;
 				}

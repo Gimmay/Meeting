@@ -19,7 +19,7 @@
 		 * @var array 企业号的基本配置信息
 		 *            包括corpid和corpsecret
 		 */
-		private $WXCorpConfigs = ['corpid' => null, 'corpsecret' => null];
+		private $_config = ['corpid' => null, 'corpsecret' => null];
 
 		/**
 		 * 手动设置corpid
@@ -27,7 +27,7 @@
 		 * @param string $corp_id 企业号的corpid
 		 */
 		public function setCorpid($corp_id){
-			$this->WXCorpConfigs['corpid'] = $corp_id;
+			$this->_config['corpid'] = $corp_id;
 		}
 
 		/**
@@ -36,7 +36,7 @@
 		 * @param string $corp_secret 企业号的appsercet
 		 */
 		public function setCorpsercet($corp_secret){
-			$this->WXCorpConfigs['corpsecret'] = $corp_secret;
+			$this->_config['corpsecret'] = $corp_secret;
 		}
 
 		/**
@@ -45,7 +45,7 @@
 		 * @return array 格式为['corpid'=>string, 'corpsecret'=>string]
 		 */
 		public function getConfigs(){
-			return $this->WXCorpConfigs;
+			return $this->_config;
 		}
 
 		/**
@@ -56,8 +56,8 @@
 		 * @param null|string $corp_secret 企业号的appsecret
 		 */
 		public function __construct($corp_id = null, $corp_secret = null){
-			if($corp_id != null) $this->WXCorpConfigs['corpid'] = $corp_id;
-			if($corp_secret != null) $this->WXCorpConfigs['corpsecret'] = $corp_secret;
+			if($corp_id != null) $this->_config['corpid'] = $corp_id;
+			if($corp_secret != null) $this->_config['corpsecret'] = $corp_secret;
 		}
 
 		/**
@@ -67,9 +67,9 @@
 		 * @return string|array 成功则返回AccessToken，否则返回错误信息
 		 */
 		public function getAccessToken(){
-			$cd_obj = new WXCorpLocalCache($this->WXCorpConfigs['corpid'], 'ac', getcwd().'/Project/Runtime/Wxcorp-Cache');
+			$cd_obj = new WXCorpLocalCache($this->_config['corpid'], 'ac', getcwd().'/Project/Runtime/Wxcorp-Cache');
 			if($cd_obj->isExpired()){
-				$response = $this->wxcapi_AccessToken($this->WXCorpConfigs['corpid'], $this->WXCorpConfigs['corpsecret']);
+				$response = $this->wxcapi_AccessToken($this->_config['corpid'], $this->_config['corpsecret']);
 				if($response['status']){
 					$cd_obj->saveCacheData(json_encode([
 						'access_token' => $response['data']['access_token'],
@@ -96,7 +96,7 @@
 		 * @return array|string 成功则返回JSPI_Ticket，否则返回错误信息
 		 */
 		public function getJSApiTicket($access_token = null){
-			$cd_obj       = new WXCorpLocalCache($this->WXCorpConfigs['corpid'], 'jt', getcwd().'/Project/Runtime/Wxcorp-Cache');
+			$cd_obj       = new WXCorpLocalCache($this->_config['corpid'], 'jt', getcwd().'/Project/Runtime/Wxcorp-Cache');
 			$access_token = $access_token == null ? $this->getAccessToken() : $access_token;
 			if($cd_obj->isExpired()){
 				$response = $this->wxcapi_JSApiTicket($access_token);
@@ -127,7 +127,7 @@
 		 * @param string $corp_id 企业号的appid
 		 */
 		public function getCode($url, $data = '', $corp_id = null){
-			if($corp_id === null) $corp_id = $this->WXCorpConfigs['corpid'];
+			if($corp_id === null) $corp_id = $this->_config['corpid'];
 			$url  = urlencode($url);
 			$data = urlencode((string)$data);
 			header('Location:'.$this->wxcapi_GetCode($corp_id, $url, $data));
@@ -195,13 +195,13 @@
 		 */
 		public function getID($corp_id = null){
 			if(isset($_GET['code'])){
-				$code     = I('get.code');
+				$code     = $_GET['code'];
 				$response = $this->getUserID($code);
 				if($response['type'] == 1) return $response['id'];
 				else return null;
 			}
 			else{
-				if($corp_id === null) $corp_id = $this->WXCorpConfigs['corpid'];
+				if($corp_id === null) $corp_id = $this->_config['corpid'];
 				$redirect_url = urlencode('http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING']);
 				header('Location:'.$this->wxcapi_GetCode($corp_id, $redirect_url, 'getID'));
 				exit;
