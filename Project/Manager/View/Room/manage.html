@@ -72,7 +72,7 @@
 										<td width="8%">可容纳人数</td>
 										<td width="10%">入住情况</td>
 										<td width="8%">房客类型</td>
-										<td width="10%">入住时间</td>
+										<td width="10%">创建时间</td>
 										<td width="13%">备注</td>
 										<td width="20%">操作</td>
 									</tr>
@@ -97,7 +97,7 @@
 												</if>
 											</td>
 											<td class="client_type"><{$room_info.client_type}></td>
-											<td class="come_time"><{$room_info.come_time}></td>
+											<td class="come_time"><{$room_info.creatime|date='Y-m-d H:s',###}></td>
 											<td class="comment"><{$room_info.comment}></td>
 											<td>
 												<div class="btn-group" data-id="<{$room_info.id}>">
@@ -133,6 +133,9 @@
 								<span>房间类型：</span> <span class="room_type"></span>
 							</div>
 							<div class="li">
+								<span>价格（元）：</span> <span class="price"></span>
+							</div>
+							<div class="li">
 								<span>可容纳人数：</span> <span class="capacity"></span>
 							</div>
 							<div class="li">
@@ -142,7 +145,7 @@
 								<span>房客人数：</span> <span class="room_num"></span>
 							</div>
 							<div class="li">
-								<span>入住时间：</span> <span class="come_time"></span>
+								<span>创建时间：</span> <span class="create_time"></span>
 							</div>
 							<div class="li">
 								<span>备注：</span> <span class="comment"></span>
@@ -227,12 +230,6 @@
 							<input type="hidden" name="person">
 						</div>
 						<div class="form-group">
-							<label for="come_time" class="col-sm-2 control-label">入住时间：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" name="come_time" id="come_time">
-							</div>
-						</div>
-						<div class="form-group">
 							<label for="room_comment" class="col-sm-2 control-label">备注：</label>
 							<div class="col-sm-10">
 								<textarea class="form-control comment" name="comment" id="room_comment"></textarea>
@@ -256,8 +253,8 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title">修改房间</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="" onsubmit=" return checkAssign()">
-					<input type="hidden" name="requestType" value="create">
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="alter_room"> <input type="hidden" name="id">
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="hotel_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>酒店名称：</label>
@@ -284,7 +281,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="room_type_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>房间类型：</label>
+							<label for="room_type_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>房客类型：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control room_type" name="client_type" id="client_type_a">
 							</div>
@@ -299,12 +296,6 @@
 							<label for="capacity_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>可容纳人数：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control capacity" name="capacity" id="capacity_a">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="come_time" class="col-sm-2 control-label">入住时间：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" name="come_time" id="come_time_a">
 							</div>
 						</div>
 						<div class="form-group">
@@ -366,26 +357,107 @@
 										<td width="20%">签到时间</td>
 									</tr>
 								</thead>
-								<volist name="list" id="list">
-									<tbody id="attendee_body">
-										<td class="check_item_m">
-											<input type="checkbox" class="icheck" value="<{$list.id}>" placeholder="">
+								<tbody id="attendee_body">
+									<volist name="list" id="list">
+										<tr>
+											<td class="check_item_m">
+												<input type="checkbox" class="icheck" value="<{$list.id}>" placeholder="">
+											</td>
+											<td><{$i}></td>
+											<td class="name"><{$list.name}></td>
+											<td>
+												<switch name="list.gender">
+													<case value="0">未设置</case>
+													<case value="1">男</case>
+													<case value="2">女</case>
+												</switch>
+											</td>
+											<td><{$list.position}></td>
+											<td><{$list.mobile}></td>
+											<td><{$list.club}></td>
+											<td><{$list.creatime|date='Y-m-d',###}></td>
+										</tr>
+									</volist>
+								</tbody>
+							</table>
+						</div>
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$page_show}>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加人员2 -->
+	<div class="modal fade" id="add_recipient2" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 60%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title">添加人员<span>（可添加<b class="can_live_p"></b>人）</span></h2>
+					<input type="hidden" name="can_live">
+				</div>
+				<div class="choose_people">
+					<div class="d1">
+						<span>当前有<b class="current_attendee">0</b>人</span>
+						<span>已选择<b class="color-red selected_attendee">0</b>人</span>
+						<a href="javascript:void(0)" class="btn_save btn btn-sm btn-info">添加入住</a>
+					</div>
+					<div class="search_sm">
+						<div class="col-sm-5">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="姓名" value="">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default mian_search">搜索</button>
+								</span>
+							</div>
+						</div>
+						<a type="reset" class="btn btn-default mian_search" href="/Meeting/manage.aspx">查看所有</a>
+					</div>
+					<div class="d2">
+						<div class="table_wrap">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="10%" class="all_check_m">
+											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td><{$i}></td>
-										<td class="name"><{$list.name}></td>
-										<td>
-											<switch name="list.gender">
-												<case value="0">未设置</case>
-												<case value="1">男</case>
-												<case value="2">女</case>
-											</switch>
-										</td>
-										<td><{$list.position}></td>
-										<td><{$list.mobile}></td>
-										<td><{$list.club}></td>
-										<td><{$list.creatime|date='Y-m-d',###}></td>
-									</tbody>
-								</volist>
+										<td width="10%">序号</td>
+										<td width="10%">姓名</td>
+										<td width="10%">性别</td>
+										<td width="10%">职务</td>
+										<td width="20%">手机号</td>
+										<td width="20%">会所名称</td>
+										<td width="20%">签到时间</td>
+									</tr>
+								</thead>
+								<tbody id="attendee_body_a">
+									<volist name="list" id="list">
+										<tr>
+											<td class="check_item_m">
+												<input type="checkbox" class="icheck" value="<{$list.id}>" placeholder="">
+											</td>
+											<td><{$i}></td>
+											<td class="name"><{$list.name}></td>
+											<td>
+												<switch name="list.gender">
+													<case value="0">未设置</case>
+													<case value="1">男</case>
+													<case value="2">女</case>
+												</switch>
+											</td>
+											<td><{$list.position}></td>
+											<td><{$list.mobile}></td>
+											<td><{$list.club}></td>
+											<td><{$list.creatime|date='Y-m-d',###}></td>
+										</tr>
+									</volist>
+								</tbody>
 							</table>
 						</div>
 						<div class="page_wrap">
@@ -471,7 +543,7 @@
 	</div>
 	<!-- 换房 -->
 	<div class="modal fade" id="change_room" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog" style="width: 800px">
+		<div class="modal-dialog" style="width: 1000px">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
@@ -491,10 +563,43 @@
 									</span>
 									</div>
 									<a type="reset" class="btn btn-default mian_search" href="/Room/details.aspx">查看所有</a>
-									<input type="hidden" name="__hash__" value="f1cc4eba10f5c18edb094cf3a5259357_a21ff50e181797de04a7fb980cf795aa"></form>
+								</form>
 							</div>
-							<div class="room_li">
-
+							<div class="room_list">
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<th width="10%">序号</th>
+											<th width="20%">房间号</th>
+											<th width="30%">入住情况</th>
+											<th width="40%">入住人</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>1</td>
+											<td>102</td>
+											<td>住满</td>
+											<td>
+												<div class="client_list">
+													<span>刘岂宇</span> <span>刘岂宇</span> <span>刘岂宇</span>
+													<span class="c_add">添加</span>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td>1</td>
+											<td>102</td>
+											<td>为主满</td>
+											<td>
+												<div class="client_list full">
+													<span>刘岂宇</span> <span class="active">刘岂宇</span> <span>刘岂宇</span>
+													<span class="c_change">交换</span>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</div>
 					</div>
@@ -519,22 +624,8 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				time         :jeDate({
-					dateCell:"#come_time",
-					format  :"YYYY-MM-DD hh:mm:ss",
-					isTime  :true, // isClear:false, // 时分秒--true
-					/*	minDate :"2015-10-19 00:00:00",
-					 maxDate :"2016-11-8 00:00:00"*/
-				}),
-				time1        :jeDate({
+				leaveTime    :jeDate({
 					dateCell:"#leave_time",
-					format  :"YYYY-MM-DD hh:mm:ss",
-					isTime  :true, // isClear:false, // 时分秒--true
-					/*	minDate :"2015-10-19 00:00:00",
-					 maxDate :"2016-11-8 00:00:00"*/
-				}),
-				time2        :jeDate({
-					dateCell:"#come_time_a",
 					format  :"YYYY-MM-DD hh:mm:ss",
 					isTime  :true, // isClear:false, // 时分秒--true
 					/*	minDate :"2015-10-19 00:00:00",

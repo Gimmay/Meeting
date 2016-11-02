@@ -55,11 +55,14 @@
 					$receivables_model = D('Core/Receivables');
 					/** @var \Core\Model\CouponItemModel $coupon_item_model */
 					$coupon_item_model  = D('Core/Coupon_item');
-					$coupon_item_result = $coupon_item_model->findCouponItem(2,['mid'=>I('get.mid',0,'int')]);
+					$coupon_item_result = $coupon_item_model->findCouponItem(2, ['mid' => I('get.mid', 0, 'int')]);
 					$receivables_result = $receivables_model->findRecord(1, ['id' => $id]);
-					$data  = explode(',',$receivables_result['coupon_ids']);
-					
-					$data['coupon_id'] = $coupon_item_result['code'];
+					$data               = explode(',', $receivables_result['coupon_ids']);
+					$coupon_item_ids    = [];
+					foreach($data as $k => $v){
+						$coupon_item_ids[] = $coupon_item_model->findCouponItem(1, ['id' => $v]);
+					}
+					return array_merge($coupon_item_ids, ['__ajax__' => true]);
 				break;
 				//				case 'search';
 				//					/** @var \Core\Model\CouponItemModel $coupon_item_model */
@@ -92,6 +95,27 @@
 				//					}
 				//					return $receivables_result;
 				//				break;
+				case'alter':
+					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+					$coupon_item_model  = D('Core/CouponItem');
+					$old_coupon_code    = explode(',', I('post.old_coupon_code', ''));
+					$data               = I('post.', '');
+					$data['coupon_ids'] = I('post.coupon_code', '');
+					$id                 = I('post.id', '');
+					/** @var \Core\Model\ReceivablesModel $receivables_model */
+					$receivables_model  = D('Core/Receivables');
+					$receivables_result = $receivables_model->alterRecord([$id], $data);
+					C('TOKEN_ON', false);
+					foreach($old_coupon_code as $k => $v){
+						$coupon_item_result = $coupon_item_model->alterCouponItem(['id' => $v], [
+							'status' => 0,
+							'cid'    => null
+						]);
+					}
+				break;
+
+				case'delete':
+				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
 				break;

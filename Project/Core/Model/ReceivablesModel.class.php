@@ -79,6 +79,23 @@
 			return $result;
 		}
 
+		public function alterRecord($id, $data){
+			if($this->create($data)){
+				try{
+					$result = $this->where(['id' => ['in', $id]])->save($data);
+
+					if($result) return ['status' => true, 'message' => '修改成功'];
+					else return ['status' => false, 'message' => '未做任何修改'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
+			}
+			else return ['status' => false, 'message' => $this->getError()];
+		}
+
 		public function sumPrice($filter = []){
 			$where = [];
 			if(isset($filter['cid']) && $filter['cid']) $where['cid'] = $filter['cid'];

@@ -7,6 +7,8 @@
 	 */
 	namespace Mobile\Controller;
 
+	use Core\Logic\WxCorpLogic;
+
 	class WeixinController extends MobileController{
 		public function _initialize(){
 			parent::_initialize();
@@ -14,5 +16,32 @@
 
 		public function isNotFollow(){
 			echo "<h1>我们不能获取到您的微信身份<br>或者<br>您似乎没有关注我们的企业号</h1>";
+		}
+
+		public function verify(){
+			$redirect = I('get.redirect', 0, 'int');
+			if(!isset($_SESSION['MOBILE_WEIXIN_ID'])){
+				$wxcorp_logic   = new WxCorpLogic();
+				$weixin_user_id = $wxcorp_logic->getUserID();
+				if($weixin_user_id){
+					$redirect_url = I('cookie.WEIXIN_REDIRECT_URL', '');
+					setcookie('WEIXIN_REDIRECT_URL');
+					$_SESSION['MOBILE_WEIXIN_ID'] = $weixin_user_id;
+					redirect($redirect_url);
+
+					return true;
+				}
+				else{
+					if($redirect) $this->redirect('Weixin/isNotFollow');
+
+					return false;
+				}
+			}
+			else{
+				$redirect_url = I('cookie.WEIXIN_REDIRECT_URL', '');
+				setcookie('WEIXIN_REDIRECT_URL');
+				redirect($redirect_url);
+				return true;
+			}
 		}
 	}

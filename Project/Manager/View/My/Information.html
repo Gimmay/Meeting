@@ -37,15 +37,14 @@
 						<header>
 							<div class="nav_tab clearfix">
 								<div class="nav_tab_li active">
-									<a href="<{:U('Employee/personalInfor')}>">个人信息</a>
+									<a href="<{:U('My/information')}>">个人信息</a>
 								</div>
 								<div class="nav_tab_li">
-									<a href="<{:U('Employee/alterPass')}>">修改密码</a>
+									<a href="<{:U('My/password')}>">修改密码</a>
 								</div>
 							</div>
 						</header>
 						<form class="form-horizontal" role="form" method="post" id="form" action="" onsubmit="return checkIsEmpty()">
-							<input type="hidden" name="requestType" value="alterInfor">
 							<div class="modal-body">
 								<div class="form-group">
 									<label for="code" class="col-sm-1 control-label"><b style="vertical-align: middle;color: red;">*</b>工号：</label>

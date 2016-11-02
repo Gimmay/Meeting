@@ -3,11 +3,113 @@
  */
 
 var ThisObject = {
-	aTemp:'<a class="btn btn-default btn-sm active" href="javascript:void(0)" role="button" data-id="$id">$name</a>'
+	aTemp               :'<a class="btn btn-default btn-sm active" href="javascript:void(0)" role="button" data-id="$id">$name</a>',
+	word                :0,
+	bindEvent           :function(){
+		var self = this;
+		$('.coupon_list a').on('click', function(){
+			var id = $(this).attr('data-id');
+			if($(this).hasClass('active')){
+				$(this).removeClass('active');
+			}else{
+				$(this).addClass('active');
+			}
+		});
+		$('#add_receivables .coupon_list a').on('click', function(){
+			self.eachAddReceivables();
+		});
+		self.eachAddReceivables();
+		$('#alter_receivables .coupon_list a').on('click', function(){
+			self.eachAlterReceivables();
+		});
+		self.eachAlterReceivables();
+		$('#price').on('focus', function(){
+			$('#idCalculadora').removeClass('hide');
+		});
+		$('.close_calcuator button').on('click', function(){
+			$('#idCalculadora').addClass('hide');
+		})
+		$('.equal').on('click', function(){
+			var sum = $('#input-box').val();
+			$('#price').val(sum);
+		});
+		$('.clear-marginleft').on('click', function(){
+			$('#price').val(0);
+		});
+		// 删除收款记录
+		$('.delete_btn').on('click', function(){
+			var id = $(this).parents('.btn-group').attr('data-id');
+			$('#delete_receivables').find('input[name=id]').val(id);
+		});
+		// 修改收款
+		$('.modify_btn').on('click', function(){
+			var id          = $(this).parents('.btn-group').attr('data-id');
+			var price       = $(this).parents('tr').find('.price').text();
+			var type        = $(this).parents('tr').find('.type').text();
+			var method      = $(this).parents('tr').find('.method').text();
+			var time        = $(this).parents('tr').find('.time').text();
+			var place       = $(this).parents('tr').find('.place').text();
+			var source_type = $(this).parents('tr').find('.source_type').text();
+			var comment     = $(this).parents('tr').find('.comment').text();
+			$('#alter_receivables').find('input[name=id]').val(id);
+			$('#alter_receivables').find('#price_a').val(price);
+			$('#alter_receivables').find('#selected_method_a').val(method);
+			$('#alter_receivables').find('#selected_type_a').val(type);
+			$('#alter_receivables').find('#place_a').val(place);
+			$('#alter_receivables').find('#source_type_a').children('option').each(function(){
+				var opts          = $(this).text();
+				var option        = opts.trim();
+				var source_type_1 = source_type.trim();
+				var index         = $(this).index();
+				if(option == source_type_1){
+					$('#alter_receivables').find('#source_type_a').children('option').eq(index)
+										   .prop('selected', 'selected');
+				}
+			});
+			$('#alter_receivables').find('#receivables_time_a').val(time);
+			$('#alter_receivables').find('#comment_a').val(comment);
+			Common.ajax({
+				data    :{requestType:'alter_coupon', id:id},
+				callback:function(r){
+					var arr = [];
+					if(ThisObject.word == 0){
+						$.each(r, function(index, value){
+							$('.coupon_list')
+							.append('<a class=\"btn btn-default btn-sm active\" href="javascript:void(0)" role="button" data-id='+value.id+'>'+value.code+'</a>');
+							arr.push(value.id);
+							ThisObject.word = 1;
+						});
+						$('#alter_receivables').find('input[name=old_coupon_code]').val(arr);
+					}
+					ThisObject.unbindEvent();
+					ThisObject.bindEvent();
+				}
+			});
+		});
+	},
+	unbindEvent         :function(){
+		$('.coupon_list a').off('click');
+	},
+	eachAddReceivables  :function(){
+		var arr = [];
+		$('#add_receivables .coupon_list a.active').each(function(){
+			var id = $(this).attr('data-id');
+			arr.push(id)
+		});
+		$('#add_receivables').find('input[name=coupon_code]').val(arr);
+	},
+	eachAlterReceivables:function(){
+		var arr = [];
+		$('#alter_receivables .coupon_list a.active').each(function(){
+			var id = $(this).attr('data-id');
+			arr.push(id)
+		});
+		$('#alter_receivables').find('input[name=coupon_code]').val(arr);
+	}
 };
 $(function(){
-	var quasar_script = document.getElementById('quasar_script');
-	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
+	var quasar_script          = document.getElementById('quasar_script');
+	var url_object             = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
 	var $add_receivables_modal = $('#add_receivables');
 	ManageObject.object.meetingName.onQuasarSelect(function(){
 		var value = ManageObject.object.meetingName.getValue();
@@ -17,65 +119,5 @@ $(function(){
 		var value = ManageObject.object.clientName.getValue();
 		$add_receivables_modal.find('input[name=cid]').val(value);
 	});
-	$('.coupon_list a').on('click', function(){
-		var id = $(this).attr('data-id');
-		if($(this).hasClass('active')){
-			$(this).removeClass('active');
-		}else{
-			$(this).addClass('active');
-		}
-	});
-	$('.coupon_list a').on('click', function(){
-		var arr = [];
-		$('.coupon_list a.active').each(function(){
-			var id = $(this).attr('data-id');
-			arr.push(id)
-		});
-		$('#add_receivables').find('input[name=coupon_code]').val(arr);
-	});
-	$('#price').on('focus',function(){
-		$('#idCalculadora').removeClass('hide');
-	});
-	$('.close_calcuator button').on('click',function(){
-		$('#idCalculadora').addClass('hide');
-	})
-	$('.equal').on('click',function(){
-		var sum = $('#input-box').val();
-		$('#price').val(sum);
-	});
-	$('.clear-marginleft').on('click',function(){
-		$('#price').val(0);
-	});
-
-	// 删除收款记录
-	$('.delete_btn').on('click',function(){
-		var id =$(this).parents('.btn-group').attr('data-id');
-		$('#delete_receivables').find('input[name=id]').val(id);
-	});
-
-	// 修改收款
-	$('.modify_btn').on('click',function(){
-		var id =$(this).parents('.btn-group').attr('data-id');
-		var price =$(this).parents('tr').find('.price').text();
-		var type =$(this).parents('tr').find('.type').text();
-		var method =$(this).parents('tr').find('.method').text();
-		var time =$(this).parents('tr').find('.time').text();
-		var place =$(this).parents('tr').find('.place').text();
-		var source_type =$(this).parents('tr').find('.source_type').text();
-		var comment =$(this).parents('tr').find('.comment').text();
-		$('#alter_receivables').find('input[name=id]').val(id);
-		$('#alter_receivables').find('#price_a').val(price);
-		$('#alter_receivables').find('#selected_method').val(method);
-		$('#alter_receivables').find('#selected_type').val(type);
-		$('#alter_receivables').find('#place_a').val(place);
-		$('#alter_receivables').find('#source_type').val(source_type);
-		$('#alter_receivables').find('#receivables_time_a').val(time);
-		$('#alter_receivables').find('#comment_a').val(comment);
-		Common.ajax({
-			data:{requestType:'alter_coupon',id:id},
-			callback:function(r){
-				console.log(r);
-			}
-		});
-	});
+	ThisObject.bindEvent();
 });

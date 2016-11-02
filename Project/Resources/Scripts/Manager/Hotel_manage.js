@@ -46,6 +46,12 @@ $(function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
 		$('#alter_hotel ').find('input[name=id]').val(id);
 		var hotel_name = $(this).parents('tr').find('.hotel_name').text();
+		var meeting_name = $(this).parents('tr').find('.meeting_name').text();
+		var level = $(this).parents('tr').find('.level').text();
+		var type = $(this).parents('tr').find('.type').text();
+		var address = $(this).parents('tr').find('.address').text();
+		var address = $(this).parents('tr').find('.address').text();
+		var address = $(this).parents('tr').find('.address').text();
 		$('#alter_hotel').find('#hotel_name_a').val(hotel_name);
 	});
 })

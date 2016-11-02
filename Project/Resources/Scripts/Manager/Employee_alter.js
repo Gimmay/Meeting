@@ -44,5 +44,5 @@ $(function(){
 		AlterObject.object.companySelect.setValue(company);
 		AlterObject.object.companySelect.setHtml(company);
 	});
-	$('input[name=history_url]').val(document.referrer);
+	$('input[name=redirectUrl]').val(document.referrer);
 });

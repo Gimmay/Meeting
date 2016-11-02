@@ -30,19 +30,19 @@ $(function(){
 			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
 		}
 	});
-	$('.coupon_area').on('change',function(){
+	$('.coupon_area').on('change', function(){
 		var id = $(this).val();
 		$('#create_coupon').find('input[name=coupon_area]').val(id);
 	});
 	// 修改代金券
 	$('.modify_btn').on('click', function(){
-		var id = $(this).parent('.btn-group').attr('data-id');
-		var name = $(this).parents('tr').find('.name').text();
-		var price = $(this).parents('tr').find('.price').text();
+		var id         = $(this).parent('.btn-group').attr('data-id');
+		var name       = $(this).parents('tr').find('.name').text();
+		var type       = $(this).parents('tr').find('.type').text();
+		var price      = $(this).parents('tr').find('.price').text();
 		var start_time = $(this).parents('tr').find('.start_time').text();
-		var end_time = $(this).parents('tr').find('.end_time').text();
-		var comment = $(this).parents('tr').find('.comment').text();
-
+		var end_time   = $(this).parents('tr').find('.end_time').text();
+		var comment    = $(this).parents('tr').find('.comment').text();
 		$('#modify_coupon').find('input[name=id]').val(id);
 		$('#modify_coupon').find('input[name=name]').val(name);
 		$('#modify_coupon').find('input[name=price]').val(price);
@@ -69,7 +69,7 @@ $(function(){
 				newStr += str[i];
 			}
 		}
-		if(str!=''){
+		if(str != ''){
 			$('#batch_delete_coupon').modal('show')
 		}else{
 			ManageObject.object.toast.toast('请选择券！');

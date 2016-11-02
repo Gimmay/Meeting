@@ -86,13 +86,13 @@
 
 		public function handlerRequest($type, $option = []){
 			switch($type){
-				case 'manage:sign':
+				case 'myMeeting:sign':
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
-					$id          = I('get.cid', 0, 'int');
+					$cid         = $option['cid'];
 					$meeting_id  = I('get.mid', 0, 'int');
 					$join_record = $join_model->findRecord(1, [
-						'cid' => $id,
+						'cid' => $cid,
 						'mid' => $meeting_id
 					]);
 					if($join_record['review_status'] == 1){
@@ -106,7 +106,7 @@
 						]);
 						if($result['status']){
 							$message_logic = new MessageLogic();
-							$message_logic->send($meeting_id, 1, [$id]);
+							$message_logic->send($meeting_id, 1, [$cid]);
 						}
 
 						return array_merge($result, ['__ajax__' => true]);
@@ -117,10 +117,10 @@
 				case 'manage:anti_sign':
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
-					$id          = I('get.cid', 0, 'int');
+					$cid         = I('get.cid', 0, 'int');
 					$meeting_id  = I('get.mid', 0, 'int');
 					$join_record = $join_model->findRecord(1, [
-						'cid' => $id,
+						'cid' => $cid,
 						'mid' => $meeting_id
 					]);
 					C('TOKEN_ON', false);
@@ -138,10 +138,10 @@
 						$weixin_model   = D('Core/WeixinID');
 						$meeting_model  = D('Core/Meeting');
 						$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
-						$record         = $model->findClient(1, ['id' => $id]);
+						$record         = $model->findClient(1, ['id' => $cid]);
 						$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
 						$time           = date('Y-m-d H:i:s');
-						$wxcorp_logic->sendMessage('text', "您参加的<$meeting_record[name]>于[$time]取消签到", ['user' => [$weixin_record['weixin_id']]]);
+						$wxcorp_logic->sendMessage('text', "您参加的<$meeting_record[name]>于[$time]取消签到", ['user' => [$weixin_record['weixin_id']]], 'client');
 					}
 
 					return array_merge($result, ['__ajax__' => true]);
@@ -149,10 +149,10 @@
 				case 'myCenter:sign':
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
-					$id          = $option['cid'];
+					$cid         = $option['cid'];
 					$meeting_id  = I('get.mid', 0, 'int');
 					$join_record = $join_model->findRecord(1, [
-						'cid' => $id,
+						'cid' => $cid,
 						'mid' => $meeting_id
 					]);
 					if($join_record['review_status'] == 1){
@@ -166,7 +166,7 @@
 						]);
 						if($result['status']){
 							$message_logic = new MessageLogic();
-							$message_logic->send($meeting_id, 1, [$id]);
+							$message_logic->send($meeting_id, 1, [$cid]);
 						}
 
 						return array_merge($result, ['__ajax__' => true]);
@@ -177,10 +177,10 @@
 				case 'check_sign':
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
-					$id          = $option['cid'];
+					$cid         = $option['cid'];
 					$mid         = I('get.mid', 0, 'int');
 					$join_record = $join_model->findRecord(1, [
-						'cid' => $id,
+						'cid' => $cid,
 						'mid' => $mid
 					]);
 

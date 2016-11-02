@@ -32,7 +32,15 @@
 					if($this->permissionList['MEETING.DELETE']){
 						/** @var \Core\Model\MeetingModel $model */
 						$model  = D('Core/Meeting');
-						$result = $model->deleteMeeting([I('post.id', 0, 'int')]);
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model = D('Core/Join');
+						$join_result = $join_model->findRecord(2,['mid'=>I('post.id',0,'int'),'status'=>'not deleted']);
+						if($join_result){
+							return array_merge(['message'=>'会议还存在参会人员.不允许删除'], ['__ajax__' => false]);exit;
+						}else{
+							$result = $model->deleteMeeting([I('post.id', 0, 'int')]);
+						}
+
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
@@ -202,7 +210,10 @@
 							$qrcode_obj = new QRCodeLogic();
 							/** @var \Core\Model\MeetingModel $model */
 							$model       = D('Core/Meeting');
-							$url         = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('/Mobile/Client/myMeeting', ['mid'=>$meeting_id, 'sign'=>1]);
+							$url         = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('/Mobile/Client/myMeeting', [
+									'mid'  => $meeting_id,
+									'sign' => 1
+								]);
 							$qrcode_file = $qrcode_obj->make($url);
 							$remote_url  = '/'.trim($qrcode_file, './');
 							$record      = $model->findMeeting(1, ['id' => $meeting_id]);
@@ -215,9 +226,10 @@
 							$meeting_manager_model = D('Core/MeetingManager');
 							C('TOKEN_ON', false);
 							$meeting_manager_model->createRecord([
-								'eid'     => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
-								'mid'     => $meeting_id,
-								'creator' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+								'eid'      => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'mid'      => $meeting_id,
+								'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'creatime' => time()
 							]);
 						}
 
@@ -237,7 +249,10 @@
 						$model          = D('Core/Meeting');
 						$qrcode_obj     = new QRCodeLogic();
 						$id             = I('get.id', 0, 'int');
-						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myMeeting', ['mid'=>$id, 'sign'=>1]);
+						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myMeeting', [
+								'mid'  => $id,
+								'sign' => 1
+							]);
 						$qrcode_file    = $qrcode_obj->make($url);
 						$remote_url     = '/'.trim($qrcode_file, './');
 						$data           = I('post.');

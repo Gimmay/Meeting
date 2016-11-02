@@ -8,7 +8,6 @@
 	namespace Mobile\Controller;
 
 	use Core\Logic\MeetingLogic;
-	use Core\Logic\WxCorpLogic;
 	use Mobile\Logic\ClientLogic;
 
 	class ClientController extends MobileController{
@@ -18,47 +17,27 @@
 
 		public function _initialize(){
 			// lqy
-			//			$_SESSION['MOBILE_WEIXIN_ID'] = 1216;
-			//			$_SESSION['MOBILE_CLIENT_ID'] = 599;
+			//						$_SESSION['MOBILE_WEIXIN_ID'] = 1216;
+			//						$_SESSION['MOBILE_CLIENT_ID'] = 599;
 			// quasar
-			//						$_SESSION['MOBILE_CLIENT_ID'] = '599';
-			//						$_SESSION['MOBILE_WEIXIN_ID'] = '0967';
-			session_unset();
-			exit;
+			//									$_SESSION['MOBILE_CLIENT_ID'] = '599';
+			//									$_SESSION['MOBILE_WEIXIN_ID'] = '0967';
+//									print_r($_SESSION);
+			//						print_r($_COOKIE['WEIXIN_REDIRECT_URL']);
+//															session_unset();
+//															exit;
 			parent::_initialize();
-		}
-
-		private function _getWeixinID($redirect = true){
-			if(!isset($_SESSION['MOBILE_WEIXIN_ID'])){
-				$wxcorp_logic   = new WxCorpLogic();
-				$weixin_user_id = $wxcorp_logic->getUserID();
-				if($weixin_user_id){
-					$_SESSION['MOBILE_WEIXIN_ID'] = $weixin_user_id;
-
-					return true;
-				}
-				else{
-					if($redirect) $this->redirect('Weixin/isNotFollow');
-
-					return false;
-				}
-			}
-			else{
-				$this->weixinID = I('session.MOBILE_WEIXIN_ID', 0, 'int');
-
-				return true;
-			}
 		}
 
 		private function _getClientID($redirect = true){
 			$get            = function (){
 				$logic     = new ClientLogic();
-				$client_id = $logic->getVisitorID($this->weixinID, 1);
-				$_SESSION['MOBILE_CLIENT_ID'] = $client_id;
+				$client_id = $logic->getVisitorID($this->weixinID);
+				if($client_id) $_SESSION['MOBILE_CLIENT_ID'] = $client_id;
 
 				return $client_id;
 			};
-			$this->clientID = isset($_SESSION['MOBILE_CLIENT_ID']) ? I('session.MOBILE_CLIENT_ID', 0, 'int') : $get();
+			$this->clientID = $_SESSION['MOBILE_CLIENT_ID'] ? $_SESSION['MOBILE_CLIENT_ID'] : $get();
 			if($this->clientID == 0){
 				if($redirect) $this->redirect('Error/notJoin');
 
@@ -94,7 +73,7 @@
 		}
 
 		public function myCenter(){
-			$this->_getWeixinID();
+			$this->weixinID = $this->getWeixinID();
 			$this->_getMeetingParam();
 			$this->_getClientID();
 			$logic = new ClientLogic();
@@ -138,7 +117,7 @@
 		 * 会议列表
 		 */
 		public function myMeetingList(){
-			$this->_getWeixinID();
+			$this->weixinID = $this->getWeixinID();
 			$this->_getClientID();
 			$core_logic = new MeetingLogic();
 			$core_logic->initializeStatus();
@@ -152,23 +131,37 @@
 		 * 会议详情页
 		 */
 		public function myMeeting(){
-			$this->_getWeixinID();
+			$logic = new ClientLogic();
+			if(IS_POST){
+				$result         = $logic->handlerRequest(I('post.requestType', ''), ['cid'=>$_SESSION['MOBILE_CLIENT_ID']]);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']) $this->success($result['message'], I('post.redirectUrl', ''));
+					else $this->error($result['message']);
+				}
+				exit;
+			}
+			$this->weixinID = $this->getWeixinID();
 			$this->_getMeetingParam();
 			$this->_getClientID();
-			$core_logic = new MeetingLogic();
-			$core_logic->initializeStatus();
-			/** @var \Core\Model\MeetingModel $meeting_model */
-			$meeting_model = D('Core/Meeting');
 			/** @var \Core\Model\JoinModel $join_model */
 			$join_model  = D('Core/Join');
-			$logic       = new ClientLogic();
 			$join_record = $join_model->findRecord(1, [
 				'cid'    => $this->clientID,
 				'mid'    => $this->meetingID,
 				'status' => 'not deleted'
 			]);
-			$meeting     = $meeting_model->findMeeting(1, ['id' => $this->meetingID, 'status' => 'not deleted']);
-			$meeting     = $logic->setDate('myMeeting:set_meeting_column', $meeting);
+			if(!$join_record) $this->redirect('Error/notJoin');
+			$core_logic = new MeetingLogic();
+			$core_logic->initializeStatus();
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			$meeting       = $meeting_model->findMeeting(1, ['id' => $this->meetingID, 'status' => 'not deleted']);
+			$meeting       = $logic->setDate('myMeeting:set_meeting_column', $meeting);
 			$this->assign('info', $join_record);
 			$this->assign('meeting', $meeting);
 			$this->display();

@@ -110,7 +110,7 @@
 			if($this->create()){
 				try{
 					$where['id'] = ['in', $ids];
-					$result      = $this->where($where)->save(['status' => 4]);
+					$result      = $this->where($where)->save(['status' => 5]);
 					if($result) return ['status' => true, 'message' => '删除成功'];
 					else return ['status' => false, 'message' => '删除失败'];
 				}catch(Exception $error){

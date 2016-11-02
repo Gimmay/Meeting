@@ -26,7 +26,7 @@
 	text-align  : center;
 	background  : #00A0E8;
 	color       : #FFFFFF;
-	cursor: pointer;
+	cursor      : pointer;
 }
 
 .choose_people .d1{
@@ -44,4 +44,47 @@
 
 .search_sm{
 	padding : 5px 15px;
+}
+
+#change_room .repertory{
+	padding    : 10px 0;
+	border-top : none;
+}
+
+.client_list{
+	width     : 100%;
+	overflow  : hidden;
+	font-size : 0;
+}
+
+.client_list > span{
+	display      : inline-block;
+	font-size    : 12px;
+	background   : #FFFFFF;
+	border       : 1px solid #E1E1E1;
+	padding      : 4px 10px;
+	margin-right : 10px;
+	cursor       : pointer;
+}
+
+.client_list.full > span.active{
+	background : #00A0E8;
+	color      : #FFFFFF;
+	border     : #00A0E8;
+}
+
+.client_list > span.c_add{
+	background   : #FB5050;
+	border-color : #FB5050;
+	color        : #FFFFFF;
+	cursor       : pointer;
+	font-weight  : bold;
+}
+
+.client_list > span.c_change{
+	background   : #23C6C8;
+	border-color : #23C6C8;
+	color        : #FFFFFF;
+	cursor       : pointer;
+	font-weight  : bold;
 }

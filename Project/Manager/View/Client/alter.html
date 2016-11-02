@@ -74,12 +74,9 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="birthdate" class="col-sm-1 control-label">出生日期：</label>
+										<label for="birthday" class="col-sm-1 control-label">出生日期：</label>
 										<div class="col-sm-11">
-											<div class="input-group date form_datetime" id="birth_date">
-												<input class="form-control" id="birthdate" name="birthday" value="<{$info.birthday}>">
-												<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-											</div>
+											<input class="form-control" id="birthday" name="birthday" value="<{$info.birthday}>">
 										</div>
 									</div>
 									<div class="form-group">
@@ -103,7 +100,6 @@
 												</div>
 											</div>
 										</div>
-
 									</div>
 									<div class="form-group">
 										<label for="id_card_number" class="col-sm-1 control-label">身份证号：</label>
@@ -166,12 +162,15 @@
 										</div>
 									</div>
 									<div class="form-group">
+										<label for="accompany_mobile" class="col-sm-1 control-label">陪同人手机：</label>
+										<div class="col-sm-11">
+											<input type="text" class="form-control accompany_mobile" name="accompany_mobile" id="accompany_mobile" value="<{$info.accompany_mobile}>">
+										</div>
+									</div>
+									<div class="form-group">
 										<label for="registration_date" class="col-sm-1 control-label">报名时间：</label>
 										<div class="col-sm-11">
-											<div class="input-group date form_datetime" id="registration_date_layout">
-												<input class="form-control" id="registration_date" name="registration_date" value="<{$info.registration_date}>">
-												<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-											</div>
+											<input class="form-control" id="registration_date" name="registration_date" value="<{$info.registration_date}>">
 										</div>
 									</div>
 									<div class="form-group">
@@ -264,33 +263,19 @@
 					defaultValue:'<{$info.service_consultant}>',
 					defaultHtml :'<{$info.service_consultant}>'
 				}),
-				birthDate              :$('#birth_date').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd',
-					weekStart         :0,
-					startView         :2,
-					minView           :2,
-					maxView           :4,
-					minuteStep        :5
+				birthDate              :jeDate({
+					dateCell:"#birthday",
+					format  :"YYYY-MM-DD",
+					isClear :false, // isClear:false, // 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
 				}),
-				registrationDate       :$('#registration_date_layout').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd',
-					weekStart         :0,
-					startView         :2,
-					minView           :2,
-					maxView           :4,
-					minuteStep        :5
+				registrationDate       :jeDate({
+					dateCell:"#registration_date",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					isTime  :true, // isClear:false, // 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
 				}),
 				toast                  :$().QuasarToast(),
 				loading                :$().QuasarLoading(),

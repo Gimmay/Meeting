@@ -474,15 +474,15 @@ var Quasar = {
 		this.getUrlParamsJSON = function(url, opt){
 			if(arguments.length<1){
 				url = _StateObject.url.toString();
-				if(_Config.mode!=0){
-					opt = {};
+				if(_Config.mode != 0){
+					opt        = {};
 					opt.except = _Config.except;
 					opt.suffix = _Config.suffix;
 				}
 			}
 			else{
 				if(arguments.length == 1 && _Config.mode != 0){
-					opt = {};
+					opt        = {};
 					opt.except = _Config.except;
 					opt.suffix = _Config.suffix;
 				}
@@ -614,14 +614,14 @@ var Quasar = {
 			if(arguments.length<2){
 				url = _StateObject.url.toString();
 				if(_Config.mode != 0){
-					opt = {};
+					opt        = {};
 					opt.except = _Config.except;
 					opt.suffix = _Config.suffix;
 				}
 			}
 			else{
 				if((arguments.length == 2 && _Config.mode != 0) || arguments.length == 0){
-					opt = {};
+					opt        = {};
 					opt.except = _Config.except;
 					opt.suffix = _Config.suffix;
 				}
@@ -663,13 +663,13 @@ var Quasar = {
 				Quasar._setError(false, 11, '函数缺少必要参数', 'UrlClass/setUrlParam()');
 				return false;
 			}else if(arguments.length == 3 && _Config.mode != 0){
-				opt = {};
+				opt        = {};
 				opt.except = _Config.except;
 				opt.suffix = _Config.suffix;
 			}else{
 				if(arguments.length == 2){
 					url        = _StateObject.url.toString();
-					opt = {};
+					opt        = {};
 					opt.except = _Config.except;
 					opt.suffix = _Config.suffix;
 				}
@@ -715,14 +715,14 @@ var Quasar = {
 			if(arguments.length<1){
 				url = _StateObject.url.toString();
 				if(_Config.mode != 0){
-					opt = {};
+					opt        = {};
 					opt.except = _Config.except;
 					opt.suffix = _Config.suffix;
 				}
 			}
 			else{
 				if(arguments.length == 1 && _Config.mode != 0){
-					opt = {};
+					opt        = {};
 					opt.except = _Config.except;
 					opt.suffix = _Config.suffix;
 				}
@@ -733,7 +733,6 @@ var Quasar = {
 				if(index == -1) return null;
 				else return url.substr(index, url.length);
 			}else{
-
 				if(url.indexOf(opt.except) != -1){
 					//noinspection JSDuplicatedDeclaration
 					var index = arguments.length == 1 ? (url.indexOf(_Config.except)+_Config.except.length) : (url.indexOf(opt.except)+opt.except.length);
@@ -754,14 +753,14 @@ var Quasar = {
 			if(arguments.length<2){
 				url = _StateObject.url;
 				if(_Config.mode != 0){
-					opt = {};
+					opt        = {};
 					opt.except = _Config.except;
 					opt.suffix = _Config.suffix;
 				}
 			}
 			else{
 				if(arguments.length == 2 && _Config.mode != 0){
-					opt = {};
+					opt        = {};
 					opt.except = _Config.except;
 					opt.suffix = _Config.suffix;
 				}
@@ -1060,7 +1059,12 @@ var Quasar = {
 		this.makeRandomString = function(length, type){
 			length    = arguments[0] ? arguments[0] : 8;
 			type      = arguments[1] ? arguments[1] : 'NW';
-			var chars = ['abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', '0123456789', '~!@#$%^&()[]{}_+=-;.,'];
+			var chars = [
+				'abcdefghijklmnopqrstuvwxyz',
+				'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+				'0123456789',
+				'~!@#$%^&()[]{}_+=-;.,'
+			];
 			switch(type.toUpperCase()){
 				case 'N':
 					chars = chars[2];
@@ -1160,99 +1164,136 @@ var Quasar = {
 		}
 	}
 };
-/**
- * 为Date对象原型添加时间格式化函数
- *
- * @param pattern 时间模式。y, M, d, H, m, s, S, w, W, q分别代表年、月、日、时、分、秒、毫秒、周（中文）、周（英文）、季度
- * @returns string 返回时间模式对应的时间字符串
- */
-Date.prototype.format = function(pattern){
-	var o = {
-		"d+":this.getDate(),
-		"H+":this.getHours(),
-		"m+":this.getMinutes(),
-		"s+":this.getSeconds(),
-		"q+":Math.floor((this.getMonth()+3)/3),
-		"S" :this.getMilliseconds()
+(function(){
+	/**
+	 * 为Date对象原型添加时间格式化函数
+	 *
+	 * @param pattern 时间模式。y, M, d, H, m, s, S, w, W, q分别代表年、月、日、时、分、秒、毫秒、周（中文）、周（英文）、季度
+	 * @returns string 返回时间模式对应的时间字符串
+	 */
+	Date.prototype.format = function(pattern){
+		var o = {
+			"d+":this.getDate(),
+			"H+":this.getHours(),
+			"m+":this.getMinutes(),
+			"s+":this.getSeconds(),
+			"q+":Math.floor((this.getMonth()+3)/3),
+			"S" :this.getMilliseconds()
+		};
+		if(/(y+)/.test(pattern)) pattern = pattern.replace(new RegExp(RegExp.$1, 'g'), (this.getFullYear()+"").substr(4-RegExp.$1.length));
+		if(/(W+)/.test(pattern)) pattern = pattern.replace(new RegExp(RegExp.$1, 'g'), _getFormat('week_cn', RegExp.$1.length, this));
+		if(/(M+)/.test(pattern)) pattern = pattern.replace(new RegExp(RegExp.$1, 'g'), _getFormat('month', RegExp.$1.length, this));
+		if(/(w+)/.test(pattern)) pattern = pattern.replace(new RegExp(RegExp.$1, 'g'), _getFormat('week_en', RegExp.$1.length, this));
+		for(var k in o)
+			if(new RegExp("("+k+")").test(pattern)){ //noinspection JSUnfilteredForInLoop
+				pattern = pattern.replace(new RegExp(RegExp.$1, 'g'), (RegExp.$1.length == 1) ? (o[k]) : (("00"+o[k]).substr((""+o[k]).length)));
+			}
+		return pattern;
+		function _getFormat(type, len, obj){
+			type = type.toLowerCase();
+			if(type == 'week_cn'){
+				var cn = [
+					'日', '一', '二', '三', '四', '五', '六'
+				];
+				switch(len){
+					case 1:
+						return cn[obj.getDay()];
+						break;
+					case 2:
+						return '周'+cn[obj.getDay()];
+						break;
+					case 3:
+					default:
+						return '星期'+cn[obj.getDay()];
+						break;
+				}
+			}
+			if(type == 'week_en'){
+				var en = {
+					abbreviation:['Sun', 'Mon', 'Tue', 'Wed', 'Thr', 'Fri', 'Sat'],
+					full        :[
+						"Sunday",
+						"Monday",
+						"Tuesday",
+						"Wednesday",
+						"Thursday",
+						"Friday",
+						"Saturday"
+					]
+				};
+				switch(len){
+					case 1:
+						return obj.getDay();
+						break;
+					case 2:
+						return en.abbreviation[obj.getDay()];
+						break;
+					case 3:
+					default:
+						return en.full[obj.getDay()];
+						break;
+				}
+			}
+			if(type == 'month'){
+				var month = {
+					abbreviation:[
+						'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+					],
+					full        :[
+						'January',
+						'February',
+						'March',
+						'April',
+						'May',
+						'June',
+						'July',
+						'August',
+						'September',
+						'October',
+						'November',
+						'December'
+					]
+				};
+				switch(len){
+					case 1:
+						return obj.getMonth()+1;
+						break;
+					case 2:
+						return ("00"+(obj.getMonth()+1)).substr((""+(obj.getMonth()+1)).length);
+						break;
+					case 3:
+						return month.abbreviation[obj.getMonth()+1];
+						break;
+					case 4:
+					default:
+						return month.full[obj.getMonth()+1];
+						break;
+				}
+			}
+		}
 	};
-	if(/(y+)/.test(pattern)) pattern = pattern.replace(new RegExp(RegExp.$1, 'g'), (this.getFullYear()+"").substr(4-RegExp.$1.length));
-	if(/(W+)/.test(pattern)) pattern = pattern.replace(new RegExp(RegExp.$1, 'g'), _getFormat('week_cn', RegExp.$1.length, this));
-	if(/(M+)/.test(pattern)) pattern = pattern.replace(new RegExp(RegExp.$1, 'g'), _getFormat('month', RegExp.$1.length, this));
-	if(/(w+)/.test(pattern)) pattern = pattern.replace(new RegExp(RegExp.$1, 'g'), _getFormat('week_en', RegExp.$1.length, this));
-	for(var k in o)
-		if(new RegExp("("+k+")").test(pattern)){ //noinspection JSUnfilteredForInLoop
-			pattern = pattern.replace(new RegExp(RegExp.$1, 'g'), (RegExp.$1.length == 1) ? (o[k]) : (("00"+o[k]).substr((""+o[k]).length)));
-		}
-	return pattern;
-	function _getFormat(type, len, obj){
-		type = type.toLowerCase();
-		if(type == 'week_cn'){
-			var cn = [
-				'日', '一', '二', '三', '四', '五', '六'
-			];
-			switch(len){
-				case 1:
-					return cn[obj.getDay()];
-					break;
-				case 2:
-					return '周'+cn[obj.getDay()];
-					break;
-				case 3:
-				default:
-					return '星期'+cn[obj.getDay()];
-					break;
-			}
-		}
-		if(type == 'week_en'){
-			var en = {
-				abbreviation:['Sun', 'Mon', 'Tue', 'Wed', 'Thr', 'Fri', 'Sat'],
-				full        :[
-					"Sunday",
-					"Monday",
-					"Tuesday",
-					"Wednesday",
-					"Thursday",
-					"Friday",
-					"Saturday"
-				]
-			};
-			switch(len){
-				case 1:
-					return obj.getDay();
-					break;
-				case 2:
-					return en.abbreviation[obj.getDay()];
-					break;
-				case 3:
-				default:
-					return en.full[obj.getDay()];
-					break;
-			}
-		}
-		if(type == 'month'){
-			var month = {
-				abbreviation:[
-					'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-				],
-				full        :[
-					'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
-				]
-			};
-			switch(len){
-				case 1:
-					return obj.getMonth()+1;
-					break;
-				case 2:
-					return ("00"+(obj.getMonth()+1)).substr((""+(obj.getMonth()+1)).length);
-					break;
-				case 3:
-					return month.abbreviation[obj.getMonth()+1];
-					break;
-				case 4:
-				default:
-					return month.full[obj.getMonth()+1];
-					break;
-			}
-		}
-	}
-};
+	/**
+	 * 为String对象原型添加去除两端空格的函数
+	 *
+	 * @returns {string}
+	 */
+	String.prototype.trim      = function(){
+		return this.replace(/(^\s*)|(\s*$)/g, '');
+	};
+	/**
+	 * 为String对象原型添加去除左边空格的函数
+	 *
+	 * @returns {string}
+	 */
+	String.prototype.trimLeft  = function(){
+		return this.replace(/(^\s*)/g, '');
+	};
+	/**
+	 * 为String对象原型添加去除右边空格的函数
+	 *
+	 * @returns {string}
+	 */
+	String.prototype.trimRight = function(){
+		return this.replace(/(\s*$)/g, '');
+	};
+})();

@@ -88,10 +88,9 @@
 										<td width="8%">会议名称</td>
 										<td width="7%">星级</td>
 										<td width="8%">类型</td>
-										<td width="8%">地址</td>
-										<td width="8%">价格</td>
-										<td width="8%">联系方式</td>
-										<td width="10%">备注</td>
+										<td width="10%">地址</td>
+										<td width="10%">联系方式</td>
+										<td width="10%">简介</td>
 										<td width="30%">操作</td>
 									</tr>
 								</thead>
@@ -104,12 +103,11 @@
 											<td><{$i}></td>
 											<td class="hotel_name"><{$info.hotel_name}></td>
 											<td class="meeting_name"><{$info.name}></td>
-											<td><{$info.level}></td>
-											<td><{$info.type}></td>
-											<td><{$info.address}></td>
-											<td><{$info.price}></td>
-											<td><{$info.contact}></td>
-											<td><{$info.brief}></td>
+											<td class="level"><{$info.level}></td>
+											<td class="type"><{$info.type}></td>
+											<td class="address"><{$info.address}></td>
+											<td class="contact"><{$info.contact}></td>
+											<td class="brief"><{$info.brief}></td>
 											<td>
 												<div class="btn-group" data-id="<{$info.id}>">
 													<a href="<{:U('Room/manage',['id'=>$info['id'],'hid'=>$info['hid']])}>" class="btn btn-default btn-xs delete_btn">房间管理</a>
@@ -235,12 +233,6 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="price_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>价格：</label>
-								<div class="col-sm-10">
-									<input type="text" class="form-control price_a" name="price_a" id="price_a">
-								</div>
-							</div>
-							<div class="form-group">
 								<label for="contact_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>联系方式：</label>
 								<div class="col-sm-10">
 									<input type="text" class="form-control contact_a" name="contact_a" id="contact_a">
@@ -320,8 +312,8 @@
 	<script>
 		var ManageObject = {
 			object:{
-				//　酒店分配
-				meetingSelect:$('#meeting_name,#meeting_name_a').QuasarSelect({
+			/*	//　酒店分配
+				meetingSelect:$('#meeting_name').QuasarSelect({
 					name        :'meeting_name',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting)}>',
@@ -330,6 +322,15 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
+				meetingSelectA:$('#meeting_name_a').QuasarSelect({
+					name        :'meeting_name',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($meeting)}>',
+					idInput     :'selected_meeting_name_a',
+					idHidden    :'selected_meeting_name_a_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),*/
 				toast        :$().QuasarToast(),
 				icheck       :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',

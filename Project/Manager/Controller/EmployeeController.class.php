@@ -31,17 +31,7 @@
 			$this->display();
 		}
 
-		public function logout(){
-			session_unset();
-			session_destroy();
-			$this->success('注销成功');
-		}
-
 		public function manage(){
-			/** @var \Core\Model\EmployeeModel $model */
-			$model = D('Core/Employee');
-			/** @var \Core\Model\RoleModel $role_model */
-			$role_model     = D('Core/Role');
 			$employee_logic = new EmployeeLogic();
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
@@ -57,6 +47,10 @@
 				}
 				exit;
 			}
+			/** @var \Core\Model\EmployeeModel $model */
+			$model = D('Core/Employee');
+			/** @var \Core\Model\RoleModel $role_model */
+			$role_model = D('Core/Role');
 			if($this->permissionList['EMPLOYEE.VIEW']){
 				$logic = new EmployeeLogic();
 				/* 获取当前员工角色的最大等级 */
@@ -117,15 +111,22 @@
 
 		public function create(){
 			if($this->permissionList['EMPLOYEE.CREATE']){
-				/** @var \Manager\Model\EmployeeModel $model */
-				$model = D('Manager/Employee');
 				$logic = new EmployeeLogic();
 				if(IS_POST){
-					$result = $logic->create(I('post.'));
-					if($result['status']) $this->success($result['message'], U('manage'));
-					else $this->error($result['message'], '', 3);
+					$result = $logic->handlerRequest('create');
+					if($result['__ajax__']){
+						unset($result['__ajax__']);
+						echo json_encode($result);
+					}
+					else{
+						unset($result['__ajax__']);
+						if($result['status']) $this->success($result['message'], U('manage'));
+						else $this->error($result['message'], '', 3);
+					}
 					exit;
 				}
+				/** @var \Manager\Model\EmployeeModel $model */
+				$model = D('Manager/Employee');
 				/** @var \Manager\Model\TDOAUserModel $oa_user_model */
 				$oa_user_model = D('TDOAUser');
 				/** @var \Manager\Model\DepartmentModel $dept_model */
@@ -148,19 +149,26 @@
 
 		public function alter(){
 			if($this->permissionList['EMPLOYEE.ALTER']){
+				$logic = new EmployeeLogic();
+				if(IS_POST){
+					$result = $logic->handlerRequest('alter');
+					if($result['__ajax__']){
+						unset($result['__ajax__']);
+						echo json_encode($result);
+					}
+					else{
+						unset($result['__ajax__']);
+						if($result['status']) $this->success($result['message'], $_POST['redirectUrl'] ? I('post.redirectUrl', '') : U('manage'));
+						else $this->error($result['message'], '', 3);
+					}
+					exit;
+				}
 				/** @var \Manager\Model\EmployeeModel $model */
 				$model = D('Manager/Employee');
 				/** @var \Core\Model\EmployeeModel $core_model */
 				$core_model = D('Core/Employee');
-				if(IS_POST){
-					$result = $core_model->alterEmployee(I('get.id', ''), I('post.')); //传值到model里面操作
-					if($result['status']) $this->success('写入成功', U('manage')); //判断status存在
-					else $this->error($result['message']);              //判断status不存在
-					exit;
-				}
-				$logic = new EmployeeLogic();
-				$info  = $core_model->findEmployee(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
-				$info  = $logic->writeExtendInformation($info, true);
+				$info       = $core_model->findEmployee(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
+				$info       = $logic->writeExtendInformation($info, true);
 				/** @var \Manager\Model\DepartmentModel $dept_model */
 				$dept_model = D('Manager/Department');
 				/* 获取职位列表（for select插件） */
@@ -177,57 +185,7 @@
 			else $this->error('您没有修改员工的权限');
 		}
 
-		public function personalCenter(){
-			$this->display();
-		}
-
 		public function forgetPassword(){
-			$this->display();
-		}
-
-		public function personalInfor(){
-			/** @var \Manager\Model\EmployeeModel $model */
-			$model = D('Manager/Employee');
-			/** @var \Core\Model\EmployeeModel $core_model */
-			$core_model = D('Core/Employee');
-			if(IS_POST){
-				$result = $core_model->alterEmployee(session('MANAGER_EMPLOYEE_ID'), I('post.')); //传值到model里面操作
-				if($result['status']) $this->success('写入成功', U('personalInfor')); //判断status存在
-				else $this->error($result['message']);              //判断status不存在
-				exit;
-			}
-			$logic = new EmployeeLogic();
-			$info  = $core_model->findEmployee(1, ['id' => session('MANAGER_EMPLOYEE_ID'), 'status' => 'not deleted']);
-			$info = $logic->writeExtendInformation($info, true);
-			/** @var \Manager\Model\DepartmentModel $dept_model */
-			$dept_model = D('Manager/Department');
-			/* 获取职位列表（for select插件） */
-			$position = $model->getPositionSelectList();
-			/* 获取部门列表（for select插件） */
-			$dept    = $dept_model->getDepartmentSelectList();
-			$company = $dept_model->getCompanySelectList();
-			$this->assign('position', $position);
-			$this->assign('dept', $dept);
-			$this->assign('company', $company);
-			$this->assign('employee', $info);
-			$this->display();
-		}
-
-		public function alterPass(){
-			$employee_logic = new EmployeeLogic();
-			if(IS_POST){
-				$result = $employee_logic->alterPassword();
-				if($result['__ajax__']){
-					unset($result['__ajax__']);
-					echo json_encode($result);
-				}
-				else{
-					unset($result['__ajax__']);
-					if($result['status']) $this->success($result['message']);
-					else $this->error($result['message'], '', 3);
-				}
-				exit;
-			}
 			$this->display();
 		}
 	}

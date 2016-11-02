@@ -17,109 +17,6 @@
 			parent::_initialize();
 		}
 
-		public function create($data){
-			/* 1.创建参会人员 */
-			/** @var \Core\Model\ClientModel $model */
-			$model               = D('Core/Client');
-			$exist_client = $model->findClient(1, ['mobile' => $data['mobile']]);
-			if($exist_client){
-				$client_id = $exist_client['id'];
-				$str_obj             = new StringPlus();
-				$data['creatime']    = time();
-				$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-				$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-				if(I('post.city')) $data['address'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
-				else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
-				$model->alterClient([$client_id], $data);
-			}
-			else{
-				$str_obj             = new StringPlus();
-				$data['creatime']    = time();
-				$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-				$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-				$data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
-				if(I('post.city')) $data['address'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
-				else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
-				$result1 = $model->createClient($data);
-				if($result1['status']) $client_id = $result1['id'];
-				else return $result1;
-			}
-			/* 2.创建参会记录 */
-			$mid         = I('get.mid', 0, 'int');
-			/** @var \Core\Model\JoinModel $join_model */
-			$join_model  = D('Core/Join');
-			$join_record = $join_model->findRecord(1, ['mid' => $mid, 'cid' => $client_id]);
-			$mobile           = $data['mobile'];
-			if($join_record){
-				if($join_record['status'] != 1){
-					C('TOKEN_ON', false);
-					$join_result = $join_model->alterRecord([$join_record['id']], ['status' => 1]);
-					if($join_result['status']) $result = ['status' => true, 'message' => '创建成功'];
-					else $result = $join_result;
-				}
-				else $result = ['status'=>true, 'message'=>'创建成功'];
-			}
-			else{
-				$data                      = [];
-				$data['cid']               = $client_id;
-				$data['mid']               = $mid;
-				$data['creatime']          = time();
-				$data['creator']           = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-				C('TOKEN_ON', false);
-				$result = $join_model->createRecord($data);
-			}
-			/* 3.试图根据手机号创建微信用户记录 */
-			$weixin_logic     = new WxCorpLogic();
-			$weixin_user_list = $weixin_logic->getAllUserList();
-			foreach($weixin_user_list as $val){
-				if($val['mobile'] == $mobile){
-					/** @var \Core\Model\WeixinIDModel $weixin_model */
-					$weixin_model = D('Core/WeixinID');
-					$department   = '';
-					foreach($val['department'] as $val2) $department .= $val2.',';
-					$department         = trim($department, ',');
-					$data               = [];
-					$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
-					$data['oid']        = $client_id; // 对象ID
-					$data['wtype']      = 1; // 微信ID类型 企业号
-					$data['weixin_id']  = $val['userid']; // 微信ID
-					$data['department'] = $department; // 部门ID
-					$data['mobile']     = $val['mobile']; // 手机号码
-					$data['avatar']     = $val['avatar']; // 头像地址
-					$data['gender']     = $val['gender']; // 性别
-					$data['nickname']   = $val['name']; // 昵称
-					$data['creatime']   = time(); // 创建时间
-					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); // 当前创建者
-					C('TOKEN_ON', false);
-					$weixin_model->createRecord($data); // 插入数据
-					break;
-				}
-			}
-
-			return $result;
-		}
-
-		public function alter($id, $data){
-			/** @var \Core\Model\ClientModel $model */
-			$model = D('Core/Client');
-			/** @var \Core\Model\JoinModel $join_model */
-			$join_model          = D('Core/Join');
-			$str_obj             = new StringPlus();
-			$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-			if(I('post.city')) $data['address'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
-			else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
-			$result1                    = $model->alterClient([$id], $data);
-			$join_record                = $join_model->findRecord(1, ['cid' => $id, 'mid' => I('get.mid', 0, 'int')]);
-			$data2['registration_date'] = $data['registration_date'];
-			C('TOKEN_ON', false);
-			$result2 = $join_model->alterRecord([$join_record['id']], $data2);
-
-			return ($result1['status'] || $result2['status']) ? [
-				'status'  => true,
-				'message' => '修改成功'
-			] : ['status' => false, 'message' => '未做任何修改'];
-		}
-
 		public function setExtendColumnForAlter($info){
 			/** @var \Core\Model\EmployeeModel $employee_model */
 			/** @var \Core\Model\JoinModel $join_model */
@@ -276,6 +173,114 @@
 
 		public function handlerRequest($type){
 			switch($type){
+				case 'create':
+					$data = I('post.');
+					/* 1.创建参会人员 */
+					/** @var \Core\Model\ClientModel $model */
+					$model        = D('Core/Client');
+					$exist_client = $model->findClient(1, ['mobile' => $data['mobile']]);
+					if($exist_client){
+						$client_id           = $exist_client['id'];
+						$str_obj             = new StringPlus();
+						$data['creatime']    = time();
+						$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
+						if(I('post.city')) $data['address'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
+						else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
+						$model->alterClient(['id' => $client_id], $data);
+					}
+					else{
+						$str_obj             = new StringPlus();
+						$data['creatime']    = time();
+						$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
+						$data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
+						if(I('post.city')) $data['address'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
+						else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
+						$result1 = $model->createClient($data);
+						if($result1['status']) $client_id = $result1['id'];
+						else return $result1;
+					}
+					/* 2.创建参会记录 */
+					$mid = I('get.mid', 0, 'int');
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model  = D('Core/Join');
+					$join_record = $join_model->findRecord(1, ['mid' => $mid, 'cid' => $client_id]);
+					$mobile      = $data['mobile'];
+					if($join_record){
+						if($join_record['status'] != 1){
+							C('TOKEN_ON', false);
+							$join_result = $join_model->alterRecord([$join_record['id']], ['status' => 1]);
+							if($join_result['status']) $result = ['status' => true, 'message' => '创建成功'];
+							else $result = $join_result;
+						}
+						else $result = ['status' => true, 'message' => '创建成功'];
+					}
+					else{
+						$data             = [];
+						$data['cid']      = $client_id;
+						$data['mid']      = $mid;
+						$data['creatime'] = time();
+						$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						C('TOKEN_ON', false);
+						$result = $join_model->createRecord($data);
+					}
+					/* 3.试图根据手机号创建微信用户记录 */
+					$weixin_logic     = new WxCorpLogic();
+					$weixin_user_list = $weixin_logic->getAllUserList();
+					foreach($weixin_user_list as $val){
+						if($val['mobile'] == $mobile){
+							/** @var \Core\Model\WeixinIDModel $weixin_model */
+							$weixin_model = D('Core/WeixinID');
+							$department   = '';
+							foreach($val['department'] as $val2) $department .= $val2.',';
+							$department         = trim($department, ',');
+							$data               = [];
+							$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
+							$data['oid']        = $client_id; // 对象ID
+							$data['wtype']      = 1; // 微信ID类型 企业号
+							$data['weixin_id']  = $val['userid']; // 微信ID
+							$data['department'] = $department; // 部门ID
+							$data['mobile']     = $val['mobile']; // 手机号码
+							$data['avatar']     = $val['avatar']; // 头像地址
+							$data['gender']     = $val['gender']; // 性别
+							$data['nickname']   = $val['name']; // 昵称
+							$data['creatime']   = time(); // 创建时间
+							$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); // 当前创建者
+							C('TOKEN_ON', false);
+							$weixin_model->createRecord($data); // 插入数据
+							break;
+						}
+					}
+
+					return array_merge($result, ['__ajax__' => false]);
+				break;
+				case 'alter':
+					/** @var \Core\Model\ClientModel $model */
+					$model = D('Core/Client');
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model          = D('Core/Join');
+					$str_obj             = new StringPlus();
+					$id                  = I('get.id', 0, 'int');
+					$data                = I('post.');
+					$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
+					$data['birthday']    = $data['birthday'] ? $data['birthday'] : null;
+					if(I('post.city')) $data['address'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
+					else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
+					$result1                    = $model->alterClient(['id' => $id], $data);
+					$join_record                = $join_model->findRecord(1, [
+						'cid' => $id,
+						'mid' => I('get.mid', 0, 'int')
+					]);
+					$data2['registration_date'] = $data['registration_date'];
+					C('TOKEN_ON', false);
+					$result2 = $join_model->alterRecord([$join_record['id']], $data2);
+
+					return ($result1['status'] || $result2['status']) ? [
+						'status'  => true,
+						'message' => '修改成功'
+					] : ['status' => false, 'message' => '未做任何修改'];
+				break;
 				case 'import_excel':
 					$excel_logic = new ExcelLogic();
 					$result      = $excel_logic->importClientData($_FILES);
@@ -532,7 +537,7 @@
 							'description' => "亲爱的$record[name]，请于$meeting_record[start_time]前点击\"查看全文\"后出示二维码提供给签到负责人进行签到",
 							'url'         => $url
 						]
-					], ['user' => [$weixin_record['weixin_id']]]);
+					], ['user' => [$weixin_record['weixin_id']]], 'client');
 					$url            = getShortUrl($url); // 使用新浪的t.cn短地址
 					//$result2        = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
 					if(!$result1['status']) return ['status' => false, 'message' => '微信推送信息失败', '__ajax__' => true];
@@ -566,7 +571,7 @@
 								'description' => "亲爱的$record[name]，请于$meeting_record[start_time]前点击\"查看全文\"后出示二维码提供给签到负责人进行签到",
 								'url'         => $url
 							]
-						], ['user' => [$weixin_record['weixin_id']]]);
+						], ['user' => [$weixin_record['weixin_id']]], 'client');
 						//$sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
 					}
 
@@ -702,7 +707,7 @@
 							$name = $val;
 						break;
 						case 'registration_date':
-							$registration_date =$val;
+							$registration_date = $val;
 						break;
 						case 'inviter_id':
 							$invitor = $val;

@@ -269,8 +269,8 @@
 					<h2 class="modal-title">修改收款</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
-					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="mid" value="">
-					<input type="hidden" name="cid" value="">
+					<input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="alter">
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="client_name" class="col-sm-2 control-label">客户姓名：</label>
@@ -319,6 +319,7 @@
 									</div>
 								</div>
 							</div>
+							<input type="hidden" name="old_coupon_code">
 							<input type="hidden" name="coupon_code">
 						</div>
 						<div class="form-group">
@@ -383,7 +384,7 @@
 	<script>
 		var ManageObject = {
 			object:{
-				method     :$('#method,#method_a').QuasarSelect({
+				method     :$('#method').QuasarSelect({
 					name        :'method',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting)}>',
@@ -392,12 +393,30 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				type       :$('#type,#type_a').QuasarSelect({
+				methoda    :$('#method_a').QuasarSelect({
+					name        :'method',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($meeting)}>',
+					idInput     :'selected_method_a',
+					idHidden    :'selected_method_a_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				type       :$('#type').QuasarSelect({
 					name        :'type',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting)}>',
 					idInput     :'selected_type',
 					idHidden    :'selected_type_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				typea       :$('#type_a').QuasarSelect({
+					name        :'type',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($meeting)}>',
+					idInput     :'selected_type_a',
+					idHidden    :'selected_type_a_form',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
@@ -419,7 +438,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				payeeName  :$('#payee_id,#payee_id_a').QuasarSelect({
+				payeeName  :$('#payee_id').QuasarSelect({
 					name        :'payee_id',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($employee_list)}>',
@@ -427,7 +446,18 @@
 					idHidden    :'selected_payeeName_form',
 					placeholder :'',
 					defaultValue:'<{$employee_info[id]}>',
-					defaultHtml :'<{$employee_info[name]}>'+' - '+'<{$employee_info[name]}>',
+					defaultHtml :'<{$employee_info[code]}>'+' - '+'<{$employee_info[name]}>',
+					hasEmptyItem:false
+				}),
+				payeeNameA  :$('#payee_id_a').QuasarSelect({
+					name        :'payee_id',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee_list)}>',
+					idInput     :'selected_payee_id_a',
+					idHidden    :'selected_payee_id_a_form',
+					placeholder :'',
+					defaultValue:'<{$employee_info[id]}>',
+					defaultHtml :'<{$employee_info[code]}>'+' - '+'<{$employee_info[name]}>',
 					hasEmptyItem:false
 				}),
 				time       :$('#time').datetimepicker({

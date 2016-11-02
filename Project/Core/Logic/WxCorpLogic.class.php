@@ -13,7 +13,10 @@
 		private $_config = [
 			'corpID'     => 'wxbd62380696bb0201',
 			'corpSecret' => 'nS7-z8pbUzUwxwnImCoNCslbKSj6kRgDqYm8vn2oRD2kCE9aKpNNUAJVkPc9wlQb',
-			'appID'      => 33
+			'appID'      => [
+				'client'   => 27,
+				'employee' => 33
+			]
 		];
 
 		public function _initialize(){
@@ -27,9 +30,12 @@
 			return $result;
 		}
 
-		public function sendMessage($type, $data, $receiver){
+		public function sendMessage($type, $data, $receiver, $app_type){
+			if($app_type == 'client') $app_id = $this->_config['appID']['client'];
+			elseif($app_type == 'employee') $app_id = $this->_config['appID']['employee'];
+			else return ['status' => false, 'message' => '错误的应用类型'];
 			$wxcorp_object = new WXCorpUniversalApi($this->_config['corpID'], $this->_config['corpSecret']);
-			$result        = $wxcorp_object->sendMessage($type, $data, $this->_config['appID'], $receiver);
+			$result        = $wxcorp_object->sendMessage($type, $data, $app_id, $receiver);
 
 			return $result;
 		}

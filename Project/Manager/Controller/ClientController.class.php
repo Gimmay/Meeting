@@ -160,9 +160,16 @@
 		public function create(){
 			if(IS_POST){
 				$logic  = new ClientLogic();
-				$result = $logic->create(I('post.'));
-				if($result['status']) $this->success($result['message'], U('manage', ['mid' => I('get.mid')]));
-				else $this->error($result['message']);
+				$result = $logic->handlerRequest('create');
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']) $this->success($result['message'], U('manage', ['mid' => I('get.mid')]));
+					else $this->error($result['message'], '', 3);
+				}
 				exit;
 			}
 			/** @var \Manager\Model\EmployeeModel $employee_model */
@@ -229,9 +236,16 @@
 		public function alter(){
 			if(IS_POST){
 				$logic  = new ClientLogic();
-				$result = $logic->alter(I('get.id', 0, 'int'), I('post.'));
-				if($result['status']) $this->success($result['message'], U('manage', ['mid' => I('get.mid')]));
-				else $this->error($result['message']);
+				$result = $logic->handlerRequest('alter');
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']) $this->success($result['message'], U('manage', ['mid' => I('get.mid')]));
+					else $this->error($result['message'], '', 3);
+				}
 				exit;
 			}
 			/** @var \Core\Model\ClientModel $model */

@@ -148,7 +148,7 @@
 				$weixin_record = $weixin_model->findRecord(1, ['mobile' => $client_record['mobile']]);
 				$content       = $this->replaceTempToMessage($message_temp['context'], $meeting_record, $client_record);
 				// $result        = $sms_logic->send($content, [$client_record['mobile']]);
-				$wxcorp_logic->sendMessage('text', $content, ['user' => [$weixin_record['weixin_id']]]);
+				$wxcorp_logic->sendMessage('text', $content, ['user' => [$weixin_record['weixin_id']]], 'client');
 				//if($result['status']) $count++;
 				$count++;
 			}

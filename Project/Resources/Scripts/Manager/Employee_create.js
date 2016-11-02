@@ -60,7 +60,7 @@ $(function(){
 	var $birthday_tmp  = $('#oa_user_info_viewer_birthday');
 	var $modal         = $('#oa_user_info_viewer');
 	CreateObject.object.userSelect.onQuasarSelect(function(){
-		var data = $(this).attr('data-ext');
+		var data = CreateObject.object.userSelect.getExtend();
 		if(data){
 			var tmp = data.split('&');
 			for(var i = 0; i<tmp.length; i++){

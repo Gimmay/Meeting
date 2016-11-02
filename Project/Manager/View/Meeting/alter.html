@@ -6,7 +6,6 @@
 	<title>会议模块 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
@@ -15,8 +14,7 @@
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
@@ -83,7 +81,6 @@
 											</switch>
 										</select>
 									</div>
-
 								</div>
 								<div class="form-group">
 									<label for="meeting_type" class="col-sm-1 control-label">类型：</label>
@@ -128,21 +125,18 @@
 											</switch>
 										</select>
 									</div>
-
 								</div>
 								<div class="form-group">
 									<label for="meeting_host" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>主办方：</label>
 									<div class="col-sm-11">
 										<input type="text" value="<{$info.host}>" class="form-control meeting_host" name="host" id="meeting_host">
 									</div>
-
 								</div>
 								<div class="form-group">
 									<label for="meeting_plan" class="col-sm-1 control-label">策划方：</label>
 									<div class="col-sm-11">
 										<input type="text" value="<{$info.plan}>" class="form-control meeting_plan" name="plan" id="meeting_plan">
 									</div>
-
 								</div>
 								<div class="form-group">
 									<label for="place" class="col-sm-1 control-label">地址：</label>
@@ -169,59 +163,39 @@
 								<div class="form-group">
 									<label for="meeting_start_time" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>开始时间：</label>
 									<div class="col-sm-11">
-										<!--<input type="text" class="form-control meeting_start_time" name="meeting_place" id="meeting_start_time">-->
-										<div class="input-group date form_datetime" id="meeting_start_time_wrap">
-											<input class="form-control" id="meeting_start_time" name="start_time" value="<{$info.start_time}>">
-											<!--<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>-->
-											<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-										</div>
+										<input class="form-control" id="meeting_start_time" name="start_time" value="<{$info.start_time}>">
 									</div>
-
 								</div>
 								<div class="form-group">
 									<label for="meeting_end_time" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>结束时间：</label>
 									<div class="col-sm-11">
-										<div class="input-group date form_datetime" id="meeting_end_time_wrap">
-											<input class="form-control" id="meeting_end_time" name="end_time" value="<{$info.end_time}>" >
-											<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-										</div>
+										<input class="form-control" id="meeting_end_time" name="end_time" value="<{$info.end_time}>" >
 									</div>
-
 								</div>
 								<div class="form-group">
 									<label for="director_id" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>负责人：</label>
 									<div class="col-sm-11">
 										<div id="director_id"></div>
 									</div>
-
 								</div>
 								<div class="form-group">
 									<label for="contacts_1_id" class="col-sm-1 control-label ">联系人：</label>
 									<div class="col-sm-11">
 										<div id="contacts_1_id"></div>
 									</div>
-
 								</div>
 								<div class="form-group">
 									<label for="contacts_2_id" class="col-sm-1 control-label ">联系人2：</label>
 									<div class="col-sm-11">
 										<div id="contacts_2_id"></div>
 									</div>
-
 								</div>
 								<div class="form-group">
 									<label for="brief" class="col-sm-1 control-label">简介：</label>
 									<div class="col-sm-11">
 										<textarea class="form-control brief xheditor" runat="server"  name="brief" id="brief" style="min-height: 200px"><{$info.brief}></textarea>
 									</div>
-
 								</div>
-								<!--<div class="form-group">
-									<label for="logo" class="col-sm-1 control-label">LOGO图片地址：</label>
-									<div class="col-sm-11">
-										<input type="text" class="form-control logo" name="logo" id="logo" value="<{$info.logo}>">
-									</div>
-								</div>-->
 								<div class="form-group">
 									<label for="updateBackground" class="col-sm-1 control-label">LOGO图片地址：</label>
 									<div class="col-sm-10">
@@ -241,14 +215,14 @@
 										</div>
 									</div>
 								</div>
-								<div class="form-group">
+							<!--	<div class="form-group">
 									<label class="col-sm-1 control-label">选择酒店：</label>
 									<div class="col-sm-11">
 										<button type="button" class="btn btn-default choose_hotel_btn" data-toggle="modal" data-target="#choose_hotel">选择酒店</button>
 										&nbsp;&nbsp;&nbsp;&nbsp;<span class="c_hotel">已选择：<span></span></span>
 									</div>
 									<input type="hidden" name="hotel">
-								</div>
+								</div>-->
 								<div class="form-group">
 									<label for="comment" class="col-sm-1 control-label">备注：</label>
 									<div class="col-sm-11">
@@ -267,7 +241,7 @@
 			</div>
 		</div>
 	</div>
-	<!--选择酒店-->
+	<!--&lt;!&ndash;选择酒店&ndash;&gt;
 	<div class="modal fade" id="choose_hotel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog" style="width: 60%">
 			<div class="modal-content">
@@ -330,7 +304,7 @@
 				</form>
 			</div>
 		</div>
-	</div>
+	</div>-->
 	<script>
 		var AlterObject = {
 			object:{
@@ -338,20 +312,19 @@
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				}),
-				meetingTime      :$('#meeting_start_time_wrap , #meeting_end_time_wrap').datetimepicker({
-					language          :'zh-CN',
-					todayBtn          :true,
-					autoclose         :true,
-					todayHighlight    :true,
-					keyboardNavigation:true,
-					forceParse        :true,
-					format            :'yyyy-mm-dd hh:ii:ss',
-					weekStart         :0,
-					startView         :2,
-					minView           :0,
-					maxView           :4,
-					minuteStep        :5,
-					startDate         :new Date()
+				meetingStartTime        :jeDate({
+					dateCell:"#meeting_start_time",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					isTime  :true, //isClear:false,// 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
+				}),
+				meetingEndTime        :jeDate({
+					dateCell:"#meeting_end_time",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					isTime  :true, //isClear:false,// 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
 				}),
 				directorIdSelect :$('#director_id').QuasarSelect({
 					name        :'director_id',

@@ -10,6 +10,8 @@
 	class ErrorController extends MobileController{
 		public function _initialize(){
 			parent::_initialize();
+			session_destroy();
+			session_unset();
 		}
 
 		/**
