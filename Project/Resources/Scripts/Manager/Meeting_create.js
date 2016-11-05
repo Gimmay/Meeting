@@ -16,19 +16,7 @@ $(function(){
 		}
 	});
 
-	$('.btn_save_hotel').on('click',function(){
-		var arr=[],hotel=[];
-		$('.check_item .icheckbox_square-green.checked').each(function(){
-			var id = $(this).find('.icheck').val();
-			var hotel_name = $(this).parents('tr').find('.hotel_name').text();
-			arr.push(id);
-			hotel.push(hotel_name);
-		});
-		$('#choose_hotel').modal('hide')
-		$('input[name=hotel]').val(arr);
-		$('.c_hotel').removeClass('hide');
-		$('.c_hotel').find('span').text(hotel);
-	})
+	
 });
 
 function  checkIsEmpty(){

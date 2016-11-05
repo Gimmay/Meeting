@@ -66,34 +66,34 @@
 			switch((int)$type){
 				case 0: // count
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_car sub on sub.id = main.car_id')->limit($filter['_limit'])->count();
-						else $result = $this->alias('main')->join('join workflow_car sub on sub.id = main.car_id')->count();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('right join workflow_car sub on sub.id = main.car_id')->limit($filter['_limit'])->count();
+						else $result = $this->alias('main')->join('right join workflow_car sub on sub.id = main.car_id')->count();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_car sub on sub.id = main.car_id')->limit($filter['_limit'])->where($where)->count();
-						else $result = $this->alias('main')->join('join workflow_car sub on sub.id = main.car_id')->where($where)->count();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('right join workflow_car sub on sub.id = main.car_id')->limit($filter['_limit'])->where($where)->count();
+						else $result = $this->alias('main')->join('right join workflow_car sub on sub.id = main.car_id')->where($where)->count();
 					}
 				break;
 				case 1: // find
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->limit($filter['_limit'])->find();
-						else $result = $this->alias('main')->join('join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->find();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('right join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->limit($filter['_limit'])->find();
+						else $result = $this->alias('main')->join('right join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->find();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->limit($filter['_limit'])->where($where)->find();
-						else $result = $this->alias('main')->join('join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->where($where)->find();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('right join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->limit($filter['_limit'])->where($where)->find();
+						else $result = $this->alias('main')->join('right join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->where($where)->find();
 					}
 				break;
 				case 2: // select
 				default:
 					if(!isset($filter['_order'])) $filter['_order'] = 'creatime desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->limit($filter['_limit'])->order($filter['_order'])->select();
-						else $result = $this->alias('main')->join('join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->order($filter['_order'])->select();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('right join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->limit($filter['_limit'])->order($filter['_order'])->select();
+						else $result = $this->alias('main')->join('right join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->order($filter['_order'])->select();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->limit($filter['_limit'])->where($where)->order($filter['_order'])->select();
-						else $result = $this->alias('main')->join('join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->where($where)->order($filter['_order'])->select();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('right join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->limit($filter['_limit'])->where($where)->order($filter['_order'])->select();
+						else $result = $this->alias('main')->join('right join workflow_car sub on sub.id = main.car_id')->field('sub.*, main.jid, main.id aid')->where($where)->order($filter['_order'])->select();
 					}
 				break;
 			}

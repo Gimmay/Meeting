@@ -31,16 +31,15 @@
 				case 'delete':
 					if($this->permissionList['MEETING.DELETE']){
 						/** @var \Core\Model\MeetingModel $model */
-						$model  = D('Core/Meeting');
+						$model = D('Core/Meeting');
 						/** @var \Core\Model\JoinModel $join_model */
-						$join_model = D('Core/Join');
-						$join_result = $join_model->findRecord(2,['mid'=>I('post.id',0,'int'),'status'=>'not deleted']);
-						if($join_result){
-							return array_merge(['message'=>'会议还存在参会人员.不允许删除'], ['__ajax__' => false]);exit;
-						}else{
-							$result = $model->deleteMeeting([I('post.id', 0, 'int')]);
-						}
-
+						$join_model  = D('Core/Join');
+						$join_result = $join_model->findRecord(2, [
+							'mid'    => I('post.id', 0, 'int'),
+							'status' => 'not deleted'
+						]);
+						if($join_result) return array_merge(['message' => '当前会议存在参会人员<br>不允许删除'], ['__ajax__' => false]);
+						else $result = $model->deleteMeeting([I('post.id', 0, 'int')]);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
@@ -267,6 +266,195 @@
 					}
 					else return ['status' => false, 'message' => '您没有修改会议的权限', '__ajax__' => false];
 				break;
+				case 'get_detail':
+					/** @var \Core\Model\MeetingModel $model */
+					$model = D('Core/Meeting');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model             = D('Core/Employee');
+					$id                         = I('post.id', 0, 'int');
+					$meeting_record             = $model->findMeeting(1, ['id' => $id]);
+					$meeting_record['creatime'] = date('Y-m-d H:i:s', $meeting_record['creatime']);
+					$creator                    = $employee_model->findEmployee(1, ['id' => $meeting_record['creator']]);
+					$meeting_record['creator']  = $creator['name'];
+					if($meeting_record['contacts_1_id']){
+						$contacts_1                   = $employee_model->findEmployee(1, ['id' => $meeting_record['contacts_1_id']]);
+						$meeting_record['contacts_1'] = $contacts_1['name'];
+					}
+					if($meeting_record['contacts_2_id']){
+						$contacts_2                   = $employee_model->findEmployee(1, ['id' => $meeting_record['contacts_2_id']]);
+						$meeting_record['contacts_2'] = $contacts_2['name'];
+					}
+					if($meeting_record['director_id']){
+						$director                   = $employee_model->findEmployee(1, ['id' => $meeting_record['director_id']]);
+						$meeting_record['director'] = $director['name'];
+					}
+					if($meeting_record['hid']){
+						/** @var \Core\Model\HotelModel $hotel_model */
+						$hotel_model             = D('Core/Hotel');
+						$hotel                   = $hotel_model->findHotel(1, ['id' => $meeting_record['hid']]);
+						$meeting_record['hotel'] = $hotel['name'];
+					}
+
+					return array_merge($meeting_record, ['__ajax__' => true]);
+				break;
+				case 'assign_meeting_manager':
+					/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
+					$meeting_manager_model = D('Core/MeetingManager');
+					/** @var \Core\Model\AssignRoleModel $assign_role_model */
+					$assign_role_model = D('Core/AssignRole');
+				break;
+				case 'get_role':
+					/** @var \Core\Model\RoleModel $role_model */
+					$role_model = D('Core/Role');
+					/* 获取当前员工角色的最大等级 */
+					$max_role_level = $role_model->getMaxRoleLevel(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));
+					$role_result    = $role_model->findRole(2, [
+						'level'  => [
+							'value'    => $max_role_level,
+							'operator' => 'egt'
+						],
+						'status' => 'not deleted'
+					]);
+
+					return array_merge($role_result, ['__ajax__' => true]);
+				break;
+				case 'release':
+					$id = I('post.id', '');
+					/** @var \Core\Model\MeetingModel $meeting_model */
+					$meeting_model  = D('Core/Meeting');
+					$meeting_result = $meeting_model->alterMeeting($id, ['status' => 2]);
+
+					return array_merge(['message' => '发布成功'], ['__ajax__' => true]);
+				break;
+				case'get_employee':
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model = D('Core/Employee');
+					/** @var \Core\Model\DepartmentModel $department_model */
+					$department_model = D('Core/Department');
+					$employee_result  = $employee_model->findEmployee(2, ['status' => 'not deleted']);
+					foreach($employee_result as $k => $v){
+						$department_result             = $department_model->findDepartment(1, [
+							'id' => $v['did']
+						]);
+						$employee_result[$k]['d_name'] = $department_result['name'];
+					}
+
+					return array_merge($employee_result, ['__ajax__' => true]);
+				break;
+				case'get_employee2':
+					$keyword = I('post.keyword', '');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model = D('Core/Employee');
+					/** @var \Core\Model\DepartmentModel $department_model */
+					$department_model = D('Core/Department');
+					$employee_result  = $employee_model->findEmployee(2, [
+						'keyword' => $keyword,
+						'status'  => 'not deleted'
+					]);
+					foreach($employee_result as $k => $v){
+						$department_result             = $department_model->findDepartment(1, [
+							'id' => $v['did']
+						]);
+						$employee_result[$k]['d_name'] = $department_result['name'];
+					}
+
+					return array_merge($employee_result, ['__ajax__' => true]);
+				break;
+				case 'save_employee':
+					/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
+					$meeting_manager_model = D('Core/MeetingManager');
+					/** @var \Core\Model\AssignRoleModel $assign_role_model */
+					$assign_role_model    = D('Core/AssignRole');
+					$id                   = I('post.id', '');
+					$mid                  = I('post.mid', '');
+					$rid                  = I('post.rid', '');
+					$meeting_manager_list = $meeting_manager_model->findRecord(2, ['mid' => $mid]); // 查出所有当前会议的数据
+					$m_mid                = [];
+					foreach($meeting_manager_list as $kk => $vv){
+						$m_mid[] = $vv['eid'];  //查出当前所有会议的所有eid
+					}
+					foreach($id as $k1 => $v1){
+						if(in_array($v1, $m_mid)){
+							$meeting_manager_info  = $meeting_manager_model->findRecord(1, [
+								'mid' => $mid,
+								'eid' => $v1
+							]);//查出当前会议.并且状态为已删除的数据.
+							$meeitng_manager_alter = $meeting_manager_model->alterRecord(['id' => $meeting_manager_info['id']], ['status' => 1]);
+							$assign_role_result    = $assign_role_model->createRecord([
+								'rid'      => $rid,
+								'oid'      => $v1,
+								'type'     => 0,
+								'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'creatime' => time()
+							]);
+						}
+						else{
+							foreach($id as $k => $v){
+								$meeting_manager_result = $meeting_manager_model->createRecord([
+									'mid'      => $mid,
+									'eid'      => $v,
+									'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+									'creatime' => time()
+								]);
+								$assign_role_result     = $assign_role_model->createRecord([
+									'rid'      => $rid,
+									'oid'      => $v,
+									'type'     => 0,
+									'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+									'creatime' => time()
+								]);
+							}
+						}
+					}
+
+					return array_merge($meeting_manager_result, ['__ajax__' => true]);
+				break;
+				case 'see_employee':
+					$rid = I('post.rid', '');
+					$mid = I('post.mid', '');
+					/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
+					$meeting_manager_model = D('Core/MeetingManager');
+					/** @var \Core\Model\AssignRoleModel $assign_role_model */
+					$assign_role_model = D('Core/AssignRole');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model = D('Core/Employee');
+					/** @var \Core\Model\DepartmentModel $department_model */
+					$department_model   = D('Core/Department');
+					$assign_role_result = $assign_role_model->findRecord(2, ['rid' => $rid, 'type' => 0]);
+					$oid                = [];
+					foreach($assign_role_result as $k => $v){
+						$oid[] = $v['oid'];
+					}
+					$meeting_manager_result = $meeting_manager_model->findRecord(2, [
+						'mid'    => $mid,
+						'status' => 'not deleted'
+					]);
+					$manager_id             = $eid = [];
+					foreach($meeting_manager_result as $k1 => $v1){
+						if(in_array($v1['eid'], $oid)) $manager_id[] = $v1['eid'];
+						else continue;
+					}
+					$result = [];
+					foreach($manager_id as $k1 => $v1) $result[] = $employee_model->findEmployee(1, ['id' => $v1]);
+					foreach($result as $kk => $vv){
+						$department_result     = $department_model->findDepartment(1, ['id' => $vv['did']]);
+						$result[$kk]['d_name'] = $department_result['name'];
+					}
+
+					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'delete_employee':
+					$mid = I('post.mid', '');
+					$eid = I('post.id', '');
+					$rid = I('post.rid', '');
+					/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
+					$meeting_manager_model  = D('Core/MeetingManager');
+					$meeting_manager_result = $meeting_manager_model->deleteRecord(['mid' => $mid, 'eid' => $eid]);
+					$assign_role_logic      = new AssignRoleLogic();
+					$result                 = $assign_role_logic->antiAssignRole($rid, $eid, 0);
+
+					return array_merge($meeting_manager_result, ['__ajax__' => true]);
+				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
 				break;
@@ -281,7 +469,7 @@
 			$i                = 0;
 			foreach($list as $key => $val){
 				$condition_1 = in_array($val['id'], $this->meetingViewList);
-				$condition_2 = $permission_logic->hasPermission('MEETING.VIEW-ALL-MEETING', I('session.MANAGER_EMPLOYEE_ID', 0, 'int'), 1);
+				$condition_2 = $permission_logic->hasPermission('MEETING.VIEW-ALL', I('session.MANAGER_EMPLOYEE_ID', 0, 'int'), 1);
 				if($condition_1 || $condition_2){
 					$tmp                           = $employee_model->findEmployee(1, ['id' => $val['director_id']]);
 					$new_list[]                    = $val;

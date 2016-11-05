@@ -42,7 +42,7 @@
 				$qrcode_file = $qrcode_obj->make($url);
 				$remote_url  = '/'.trim($qrcode_file, './');
 				$join_record = $join_model->findRecord(1, ['cid' => $val, 'mid' => $data['mid']]);
-				$result      = $join_model->alterRecord([$join_record['id']], [
+				$result      = $join_model->alterRecord(['id' => $join_record['id']], [
 					'sign_qrcode' => $remote_url,
 					'sign_code'   => $str_obj->makeRandomString(8)
 				]);

@@ -77,11 +77,32 @@
  }
  })()*/
 var ThisObject = {
-	optTemp  :'<option value="$numOpt">$name</option>',
-	tableTemp:'<tr>\n\t<td class="check_item_excel"><input type="checkbox" class="icheck_excel" value="$id"></td>\n\t<td>$num</td><td class="excel_name" data-id="$id">$value</td>\n\t<td>\n\t\t<select name="client_info" id="" class="form-control select_h">\n\t\t\t$opt\n\t\t</select>\n\t</td>\n</tr>',
+	optTemp       :'<option value="$numOpt">$name</option>',
+	tableTemp     :'<tr>\n\t<td class="check_item_excel"><input type="checkbox" class="icheck_excel" value="$id"></td>\n\t<td>$num</td><td class="excel_name" data-id="$id">$value</td>\n\t<td>\n\t\t<select name="client_info" id="" class="form-control select_h">\n\t\t\t$opt\n\t\t</select>\n\t</td>\n</tr>',
 	uploadInterval:null
 };
 $(function(){
+	var quasar_script = document.getElementById('quasar_script');
+	// 实例化Url类
+	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
+	// 显示结果数
+	$('.table_length').find('select').on('change', function(){
+		var number = $(this).find('option:selected').text();
+		var url    = url_object.setUrlParam('_page_count', number);
+		location.replace(url);
+	});
+	// 页面显示列表数下拉框默认值处理
+	(function(){
+		var page_count = url_object.getUrlParam('_page_count');
+		$('.table_length').find('select option').each(function(){
+			var num = $(this).text();
+			if(page_count == num){
+				$('.table_length').find('select option:selected').removeProp('selected').removeAttr('selected');
+				$(this).prop('selected', true).attr('selected', true);
+				return true;
+			}
+		});
+	})();
 	// 全选checkbox
 	$('.all_check').find('.iCheck-helper').on('click', function(){
 		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
@@ -228,7 +249,7 @@ $(function(){
 	// 批量审核客户
 	$('.batch_review_btn_confirm').on('click', function(){
 		var str = '';
-		var i = 0;
+		var i   = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
 			str += id+',';
@@ -242,7 +263,7 @@ $(function(){
 				newStr += str[i];
 			}
 		}
-		if(newStr!=''){
+		if(newStr != ''){
 			$('#batch_review_client').modal('show')
 		}else{
 			ManageObject.object.toast.toast('请选择客户！');
@@ -252,7 +273,7 @@ $(function(){
 	// 批量取消审核客户
 	$('.batch_anti_review_btn_confirm').on('click', function(){
 		var str = '';
-		var i = 0;
+		var i   = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
 			str += id+',';
@@ -266,7 +287,7 @@ $(function(){
 				newStr += str[i];
 			}
 		}
-		if(newStr!=''){
+		if(newStr != ''){
 			$('#batch_anti_review_client').modal('show')
 		}else{
 			ManageObject.object.toast.toast('请选择客户！');
@@ -318,7 +339,7 @@ $(function(){
 	// 批量签到
 	$('.batch_sign_point').on('click', function(){
 		var str = '';
-		var i = 0;
+		var i   = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
 			str += id+',';
@@ -332,7 +353,7 @@ $(function(){
 				newStr += str[i];
 			}
 		}
-		if(newStr!=''){
+		if(newStr != ''){
 			$('#batch_sign_point').modal('show')
 		}else{
 			ManageObject.object.toast.toast('请选择客户！');
@@ -342,7 +363,7 @@ $(function(){
 	// 批量取消签到
 	$('.batch_anti_sign_point ').on('click', function(){
 		var str = '';
-		var i = 0;
+		var i   = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
 			str += id+',';
@@ -356,7 +377,7 @@ $(function(){
 				newStr += str[i];
 			}
 		}
-		if(newStr!=''){
+		if(newStr != ''){
 			$('#batch_anti_sign_point').modal('show')
 		}else{
 			ManageObject.object.toast.toast('请选择客户！');
@@ -365,30 +386,30 @@ $(function(){
 	});
 	// 删除客户
 	$('.delete_btn').on('click', function(){
-		var id = $(this).parent('.btn-group').attr('data-id');
+		var id      = $(this).parent('.btn-group').attr('data-id');
 		var join_id = $(this).parent('.btn-group').attr('data-join-id');
-		var $object= $('#delete_client');
+		var $object = $('#delete_client');
 		$object.find('input[name=id]').val(id);
 		$object.find('input[name=join_id]').val(join_id);
 	});
 	// 批量删除客户
 	$('.batch_delete_btn_confirm').on('click', function(){
-		var str = '', str_join = '',i=0;
+		var str = '', str_join = '', i = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
-			var id = $(this).find('.icheck').val();
-			var join_id =  $(this).find('.icheck').attr('data-join-value');
+			var id      = $(this).find('.icheck').val();
+			var join_id = $(this).find('.icheck').attr('data-join-value');
 			str += id+',';
 			str_join += join_id+',';
 			i++;
 		});
 		$('#batch_delete_client').find('.sAmount').text(i);
 		str = str.substr(0, str.length-1);
-		if(str!=''){
+		if(str != ''){
 			$('#batch_delete_client').modal('show')
 		}else{
 			ManageObject.object.toast.toast('请选择客户！');
 		}
-		str_join = str_join.substr(0, str_join.length-1);
+		str_join    = str_join.substr(0, str_join.length-1);
 		var $object = $('#batch_delete_client');
 		$object.find('input[name=id]').val(str);
 		$object.find('input[name=join_id]').val(str_join);
@@ -413,7 +434,7 @@ $(function(){
 	});
 	// 批量发送消息
 	$('.batch_send_message_btn_confirm').on('click', function(){
-		var str = '',i = 0;
+		var str = '', i = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
 			str += id+',';
@@ -427,7 +448,7 @@ $(function(){
 				newStr += str[i];
 			}
 		}
-		if(newStr!=''){
+		if(newStr != ''){
 			$('#batch_send_message').modal('show')
 		}else{
 			ManageObject.object.toast.toast('请选择客户！');
@@ -439,15 +460,15 @@ $(function(){
 		var cid = $(this).parent().attr('data-id');
 		$('#alter_sign_place_cid').val(cid).attr('value', cid);
 	});
-	$('#alter_sign_point .coupon_list a').on('click',function(){
+	$('#alter_sign_point .coupon_list a').on('click', function(){
 		if($(this).hasClass('active')){
 			$(this).removeClass('active');
 		}else{
 			$(this).addClass('active');
 		}
-		var arr=[];
+		var arr = [];
 		$('.coupon_list a.active').each(function(){
-			var id= $(this).attr('data-id');
+			var id = $(this).attr('data-id');
 			arr.push(id);
 		});
 		$('#alter_sign_point').find('input[name=sign_place]').val(arr);
@@ -460,27 +481,26 @@ $(function(){
 			str += id+','
 		});
 		str = str.substr(0, str.length-1);
-		if(str!=''){
+		if(str != ''){
 			$('#batch_alter_sign_point').modal('show')
 		}else{
 			ManageObject.object.toast.toast('请选择客户！');
 		}
 		$('#alter_multi_sign_place_cid').val(str).attr('value', str);
 	});
-	$('#batch_alter_sign_point .coupon_list a').on('click',function(){
+	$('#batch_alter_sign_point .coupon_list a').on('click', function(){
 		if($(this).hasClass('active')){
 			$(this).removeClass('active');
 		}else{
 			$(this).addClass('active');
 		}
-		var arr=[];
+		var arr = [];
 		$('.coupon_list a.active').each(function(){
-			var id= $(this).attr('data-id');
+			var id = $(this).attr('data-id');
 			arr.push(id);
 		});
 		$('#batch_alter_sign_point').find('input[name=sign_place]').val(arr);
 	});
-
 	(function(){
 		// 人员状态列表（签到\审核\收款）
 		var mvc         = $('#Quasar').attr('data-mvc-name');
@@ -496,9 +516,7 @@ $(function(){
 		if(receivables == 1) $('.check_receivables').find('.iradio_square-red').addClass('checked');
 		if(receivables == 0) $('.check_not_receivables').find('.iradio_square-red').addClass('checked');
 	})();
-
 });
-
 function getIframeData(){
 	var data = document.getElementById('fileUpload_iframe').contentWindow.document
 					   .getElementsByTagName('body')[0].innerHTML;
@@ -513,7 +531,7 @@ function getIframeData(){
 		$.each(data.data.head, function(index, value){
 			var num = index+1;
 			str += ThisObject.tableTemp.replace('$num', num).replace('$value', value).replace('$opt', str2)
-							   .replace('$id', index);
+							 .replace('$id', index);
 		});
 		$('#ExcelHeadTable').html(str);
 		ManageObject.object.loading.complete();

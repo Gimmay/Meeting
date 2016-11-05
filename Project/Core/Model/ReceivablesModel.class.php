@@ -41,6 +41,11 @@
 			if(isset($filter['mid']) && $filter['mid']) $where['mid'] = $filter['mid'];
 			if(isset($filter['keyword']) && $filter['keyword']){
 			}
+			if(isset($filter['status'])){
+				$status = strtolower($filter['status']);
+				if($status == 'not deleted') $where['status'] = ['neq', 2];
+				else $where['status'] = $filter['status'];
+			}
 			switch((int)$type){
 				case 0: // count
 					if($where == []){
@@ -83,7 +88,6 @@
 			if($this->create($data)){
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save($data);
-
 					if($result) return ['status' => true, 'message' => '修改成功'];
 					else return ['status' => false, 'message' => '未做任何修改'];
 				}catch(Exception $error){
@@ -104,5 +108,21 @@
 			else $result = $this->where($where)->sum('price');
 
 			return $result;
+		}
+
+		public function deleteRecord($id){
+			if($this->create()){
+				try{
+					$result = $this->where(['id' => ['in', $id]])->save(['status' => 2]);
+					if($result) return ['status' => true, 'message' => '删除成功'];
+					else return ['status' => false, 'message' => '没有删除任何收款信息'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
+			}
+			else return ['status' => false, 'message' => $this->getError()];
 		}
 	}

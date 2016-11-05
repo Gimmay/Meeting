@@ -44,6 +44,7 @@ var ThisObject = {
 		// 修改收款
 		$('.modify_btn').on('click', function(){
 			var id          = $(this).parents('.btn-group').attr('data-id');
+			var client_name = $(this).parents('tr').find('.client_name').text();
 			var price       = $(this).parents('tr').find('.price').text();
 			var type        = $(this).parents('tr').find('.type').text();
 			var method      = $(this).parents('tr').find('.method').text();
@@ -52,6 +53,7 @@ var ThisObject = {
 			var source_type = $(this).parents('tr').find('.source_type').text();
 			var comment     = $(this).parents('tr').find('.comment').text();
 			$('#alter_receivables').find('input[name=id]').val(id);
+			$('#alter_receivables').find('#client_name_a').val(client_name);
 			$('#alter_receivables').find('#price_a').val(price);
 			$('#alter_receivables').find('#selected_method_a').val(method);
 			$('#alter_receivables').find('#selected_type_a').val(type);

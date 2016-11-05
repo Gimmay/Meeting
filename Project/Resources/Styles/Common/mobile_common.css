@@ -12,10 +12,12 @@
 	position      : relative;
 	border        : 1px solid #E1E1E1;
 }
-.content {
-	width: 100%;
+
+.content{
+	width    : 100%;
 	position : relative;
 }
+
 .my_infor{
 	width   : 100%;
 	padding : 0 0.2rem;
@@ -35,5 +37,37 @@
 
 .my_infor .personal p{
 	margin-bottom : 0.1rem;
+}
+
+#mb_footer{
+	position   : fixed;
+	bottom     : 0;
+	left       : 0;
+	width      : 100%;
+	height     : 1rem;
+	background : #FEFEFE;
+	border-top : 1px solid rgba(0, 0, 0, .1);
+	display    : -webkit-box !important; /* OLD - iOS 6-, Safari 3.1-6*/
+	display    : -moz-box !important; /* OLD - Firefox 22- */
+	display    : -ms-flexbox !important; /* TWEENER - IE 10 */
+	display    : -webkit-flex !important; /* NEW - Chrome 20-,Android 2.1-4.3 */
+	display    : flex !important; /* NEW */
+}
+
+#mb_footer .ft_a{
+	color            : rgba(0, 0, 0, .7);
+	height           : inherit;
+	text-align       : center;
+	font-size        : 0.3rem;
+	line-height      : 1rem;
+	-webkit-box-flex : 1; /* OLD - iOS 6-, Safari 3.1-6 */
+	-moz-box-flex    : 1; /* OLD - Firefox 19- */
+	-webkit-flex     : 1; /* Chrome */
+	-ms-flex         : 1; /* IE 10 */
+	flex             : 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
+
+#mb_footer .ft_a.active, #mb_footer .ft_a:hover{
+	color : #00A0E8;
 }
 

@@ -23,6 +23,11 @@
 			if(isset($filter['id']) && $filter['id']) $where['id'] = $filter['id'];
 			if(isset($filter['eid']) && $filter['eid']) $where['eid'] = $filter['eid'];
 			if(isset($filter['mid']) && $filter['mid']) $where['mid'] = $filter['mid'];
+			if(isset($filter['status'])){
+				$status = strtolower($filter['status']);
+				if($status == 'not deleted') $where['status'] = ['neq', 2];
+				else $where['status'] = $filter['status'];
+			}
 			switch((int)$type){
 				case 0: // count
 					if($where == []){

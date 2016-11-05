@@ -17,6 +17,49 @@
 			parent::_initialize();
 		}
 
+		public function findRecord($type, $filter = []){
+			$where = [];
+			if(isset($filter['id']) && $filter['id']) $where['id'] = $filter['id'];
+			if(isset($filter['rid']) && $filter['rid']) $where['rid'] = $filter['rid'];
+			if(isset($filter['oid']) && $filter['oid']) $where['oid'] = $filter['oid'];
+			switch((int)$type){
+				case 0: // count
+					if($where == []){
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->count();
+						else $result = $this->count();
+					}
+					else{
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->count();
+						else $result = $this->where($where)->count();
+					}
+				break;
+				case 1: // find
+					if($where == []){
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->find();
+						else $result = $this->find();
+					}
+					else{
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->find();
+						else $result = $this->where($where)->find();
+					}
+				break;
+				case 2: // select
+				default:
+					if(!isset($filter['_order'])) $filter['_order'] = 'creatime desc';
+					if($where == []){
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
+						else $result = $this->order($filter['_order'])->select();
+					}
+					else{
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['_order'])->select();
+						else $result = $this->where($where)->order($filter['_order'])->select();
+					}
+				break;
+			}
+
+			return $result;
+		}
+
 		public function createRecord($data){
 			if($this->create($data)){
 				try{

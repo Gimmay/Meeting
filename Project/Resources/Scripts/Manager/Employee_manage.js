@@ -2,7 +2,7 @@
  * Created by 1195 on 2016-9-9. Role
  */
 var temp = {
-	asignRoleTemp        :'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\'>$name</a>',
+	assignRoleTemp        :'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\'>$name</a>',
 	authorizeRoleTemp    :'<a class=\"btn btn-default btn-sm btn_role\" href="javascript:void(0)" role="button" data-id=\'$id\' data-type=\'$type\'>$name</a>',
 	authorizeEmployeeTemp:'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\' data-type=\'$type\'>$name</a>',
 	bindEvent            :function(){
@@ -25,7 +25,7 @@ var temp = {
 								$(this).remove();
 							}
 						});
-						select_temp = temp.asignRoleTemp.replace('$id', id).replace('$name', name);
+						select_temp = temp.assignRoleTemp.replace('$id', id).replace('$name', name);
 						$('.select_role_area').append(select_temp);
 						temp.unbindEvent();
 						temp.bindEvent();
@@ -49,7 +49,7 @@ var temp = {
 								$(this).remove();
 							}
 						});
-						select_temp = temp.asignRoleTemp.replace('$id', id).replace('$name', name);
+						select_temp = temp.assignRoleTemp.replace('$id', id).replace('$name', name);
 						$('.all_role_area').append(select_temp);
 						temp.unbindEvent();
 						temp.bindEvent();
@@ -128,7 +128,7 @@ var temp = {
 				console.log(data);
 				var str = '';
 				$.each(data, function(index, value){
-					str += temp.asignRoleTemp.replace('$id', value.id).replace('$name', value.name);
+					str += temp.assignRoleTemp.replace('$id', value.id).replace('$name', value.name);
 				});
 				$('.all_role_area').html(str);
 			}
@@ -173,7 +173,7 @@ $(function(){
 				var str = '';
 				if(data){
 					$.each(data, function(index, value){
-						str += temp.asignRoleTemp.replace('$id', value.id).replace('$name', value.name);
+						str += temp.assignRoleTemp.replace('$id', value.id).replace('$name', value.name);
 					});
 					$('input[name=hide_employee_id]').val(data_id);
 					$('.select_role_area').html(str);
@@ -188,7 +188,7 @@ $(function(){
 				console.log(data);
 				var str = '';
 				$.each(data, function(index, value){
-					str += temp.asignRoleTemp.replace('$id', value.id).replace('$name', value.name);
+					str += temp.assignRoleTemp.replace('$id', value.id).replace('$name', value.name);
 				});
 				$('.all_role_area').html(str);
 			}

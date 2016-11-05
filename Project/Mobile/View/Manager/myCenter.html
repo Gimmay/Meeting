@@ -4,7 +4,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta id="viewport" name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no">
 	<meta name="apple-mobile-web-app-capable" content="yes">
-	<title>会议列表</title>
+	<title>个人中心</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
@@ -25,32 +25,34 @@
 <body>
 	<div id="mb_wrap">
 		<div class="mb_body">
-			<div class="toptab">
-				<div class="nav">
-					<a class="active">进行中的会议</a> <a>已结束会议</a>
-				</div>
+			<div class="topbar">
+				<div class="topbarBg"><img src="<{$Think.COMMON_IMAGE_PATH}>/topbarBg.jpg" alt=""></div>
+				<span class="photo"><img src="<{$info.avatar}>"></span>
 			</div>
 			<div class="content">
-				<div class="list">
-					<volist name="meeting_list.ing" id="single">
-						<div class="li">
-							<a href="<{:U('myMeeting', ['mid'=>$single['id']])}>">
-								<span class="meeting_name"><{$single.name}></span><span class="time">开始结束时间：<{$single.start_time}> - <{$single.end_time}></span><switch name="single.status">
-								<case value="2"><span class="status release">等待开始</span></case>
-								<case value="3"><span class="status ing">正在进行</span></case>
+				<div class="myInfor">
+					<div class="li">
+						<span class="lab">姓&nbsp;&nbsp;&nbsp;&nbsp;名：</span>
+						<span><{$info.name}></span>
+					</div>
+					<div class="li">
+						<span class="lab">性&nbsp;&nbsp;&nbsp;&nbsp;别：</span>
+						<span>
+							<switch name="info.gender">
+								<case value="0">未指定</case>
+								<case value="1">男</case>
+								<case value="2">女</case>
 							</switch>
-							</a>
-						</div>
-					</volist>
-				</div>
-				<div class="list hide">
-					<volist name="meeting_list.fin" id="single">
-						<div class="li">
-							<a href="<{:U('myMeeting', ['mid'=>$single['id']])}>">
-								<span class="meeting_name"><{$single.name}></span><span class="time">开始结束时间：<{$single.start_time}> - <{$single.end_time}></span><span class="status complete">已结束</span>
-							</a>
-						</div>
-					</volist>
+						</span>
+					</div>
+					<div class="li">
+						<span class="lab">会&nbsp;&nbsp;&nbsp;&nbsp;所：</span>
+						<span><{$info.club}></span>
+					</div>
+					<div class="li">
+						<span class="lab">手机号：</span>
+						<span><{$info.mobile}></span>
+					</div>
 				</div>
 			</div>
 		</div>

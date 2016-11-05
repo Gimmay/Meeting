@@ -66,7 +66,7 @@
 				$this->assign('meeting_list', $meeting_record);
 				$this->assign('role_list', $role_list);
 				$this->assign('page_show', $page_show);
-				$this->assign('max_role_level', $max_role_level ? $max_role_level : 5);
+				$this->assign('max_role_level', $max_role_level);
 				$this->display();
 			}
 			else{

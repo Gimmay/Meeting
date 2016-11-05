@@ -97,6 +97,7 @@
 			], $options));
 			/* 特殊处理收款列表和统计 */
 			$receivables_count = $not_receivables_count = 0;
+
 			if(isset($_GET['receivables'])){
 				$client_list = $logic->getReceivablesList($client_list, I('get.receivables', 1, 'int'));
 				if(I('get.receivables', 1, 'int') == 1){
@@ -128,7 +129,6 @@
 				], $options));
 				$receivables_count     = count($logic->getReceivablesList($temp_total_list, 1));
 				$not_receivables_count = count($logic->getReceivablesList($temp_total_list, 0));
-				$client_list           = $logic->getReceivablesList($total_list, 1, false);
 			}
 			/* 会议对应的券记录 */
 			$coupon_item_result = $coupon_item_model->findCouponItem(2, ['mid' => $mid, 'status' => 0]);

@@ -2,10 +2,9 @@
  * Created by qyqy on 2016-9-9.
  */
 var ScriptObject = {
-	asignRoleTemp        :'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\'>$name</a>',
-	authorizeRoleTemp    :'<a class=\"btn btn-default btn-sm btn_role\" href="javascript:void(0)" role="button" data-id=\'$id\'>$name</a>',
-	authorizeEmployeeTemp:'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\' data-group="$group-code" data-name="$group-name">$name</a>',
-	authorizeEmployeeTemp2:'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\' data-group="$group-code" data-name="$group_name">($group_name2)$name</a>',
+	assignRoleTemp        :'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\'>$name</a>',
+	authorizeRoleTemp:'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\' data-group="$group-code" data-name="$group-name">$name</a>',
+	authorizeRoleTemp2:'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\' data-group="$group-code" data-name="$group_name">($group_name2)$name</a>',
 	pannelTemp           :'<div class="pannel_n" id="$id"  data-group="$group">\n\t<div>\n\t\t<header class="title">$name</header>\n\t\t<section>\n\t\t\t\n\t\t</section>\n\t</div>\n</div>',
 	bindEvent            :function(){
 		/*
@@ -28,7 +27,7 @@ var ScriptObject = {
 								$(this).remove();
 							}
 						});
-						select_temp = ScriptObject.authorizeEmployeeTemp2.replace('$id', id).replace('$name', name).replace('$group-code',code).replace('$group_name',group_name).replace('$group_name2',group_name);
+						select_temp = ScriptObject.authorizeRoleTemp2.replace('$id', id).replace('$name', name).replace('$group-code',code).replace('$group_name',group_name).replace('$group_name2',group_name);
 						$('#authorize_select').append(select_temp);
 						ScriptObject.unbindEvent();
 						ScriptObject.bindEvent();
@@ -58,7 +57,7 @@ var ScriptObject = {
 								$(this).remove();
 							}
 						});
-						select_temp = ScriptObject.authorizeEmployeeTemp.replace('$id', id).replace('$name', b_name).replace('$group-name',group_name).replace('$group-code',code);
+						select_temp = ScriptObject.authorizeRoleTemp.replace('$id', id).replace('$name', b_name).replace('$group-name',group_name).replace('$group-code',code);
 						$('#'+code).find('section').append(select_temp);
 						ScriptObject.unbindEvent();
 						ScriptObject.bindEvent();
@@ -82,7 +81,7 @@ var ScriptObject = {
 				ManageObject.object.loading.complete();
 				var str = '';
 				$.each(data, function(index, value){
-					str += ScriptObject.authorizeEmployeeTemp.replace('$id', value.id).replace('$name', value.name)
+					str += ScriptObject.authorizeRoleTemp.replace('$id', value.id).replace('$name', value.name)
 									 .replace('$type', value.type);
 				});
 				$('#authorize_all').html(str);
@@ -123,9 +122,7 @@ $(function(){
 				var str = '';
 				if(data){
 					$.each(data, function(index, value){
-						str += ScriptObject.authorizeEmployeeTemp2.replace('$id', value.id).replace('$name', value.name).replace('$group-code',value.group_code).replace('$group_name',value.group_name).replace('$group_name2',value.group_name);
-
-
+						str += ScriptObject.authorizeRoleTemp2.replace('$id', value.id).replace('$name', value.name).replace('$group-code',value.group_code).replace('$group_name',value.group_name).replace('$group_name2',value.group_name);
 					});
 					$('input[name=hide_employee_id]').val(data_id);
 					$('#authorize_select').html(str);
@@ -139,16 +136,18 @@ $(function(){
 				ManageObject.object.loading.complete();
 				var str = '', htm = '';
 				$('#authorize_all').empty();
+
 				if(data){
 					$.each(data, function(index, value){
-						var group_code= value.group_code.replace(/(^\s*)|(\s*$)/g, "");
+						//var group_code= value.group_code.replace(/(^\s*)|(\s*$)/g, "");
+						var group_code= value.group_code;
 						if($('div[data-group='+group_code+']').length == 0){
 							htm += ScriptObject.pannelTemp.replace('$group', group_code)
-											 .replace('$name', value.group_name).replace('$id', group_code)
+											 .replace('$name', value.group_name).replace('$id', group_code);
 							$('#authorize_all').html(htm);
 						}
 						setTimeout(function(){
-							str=ScriptObject.authorizeEmployeeTemp.replace('$id', value.id).replace('$name', value.name).replace('$group-name',value.group_name).replace('$group-code',value.group_code);
+							str=ScriptObject.authorizeRoleTemp.replace('$id', value.id).replace('$name', value.name).replace('$group-name',value.group_name).replace('$group-code',value.group_code);
 							$('#'+group_code).find('section').append(str);
 							ScriptObject.unbindEvent();
 							ScriptObject.bindEvent();

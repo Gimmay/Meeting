@@ -89,12 +89,13 @@
 										<td width="3%">序号</td>
 										<td width="8%">会议</td>
 										<td width="8%">车牌号</td>
-										<td width="18%">车辆信息</td>
+										<td width="8%">车辆信息</td>
 										<td width="6%">司机</td>
 										<td width="6%">已载人数</td>
 										<td width="6%">可容纳人数</td>
 										<td width="6%">载客类型</td>
-										<td width="6%">状态</td>
+										<td width="10%">载客状态/行驶状态</td>
+										<td width="6%">记录状态</td>
 										<td width="10%">创建时间</td>
 										<td width="19%">操作</td>
 									</tr>
@@ -114,11 +115,22 @@
 											<td><{$single.capacity}></td>
 											<td><{$single.client_type}></td>
 											<td>
+												<switch name="single.carry_status">
+													<case value="0">空载</case>
+													<case value="1">载客</case>
+													<case value="2">满载</case>
+												</switch>
+												/
+												<switch name="single.drive_status">
+													<case value="0">停止</case>
+													<case value="1">行驶中</case>
+												</switch>
+											</td>
+											<td>
 												<switch name="single.status">
 													<case value="0">禁用</case>
 													<case value="1">可用</case>
-													<case value="2">使用中</case>
-													<case value="3">删除</case>
+													<case value="2">删除</case>
 												</switch>
 											</td>
 											<td><{$single.creatime|date='Y-m-d H:i:s',###}></td>

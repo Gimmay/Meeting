@@ -142,13 +142,13 @@
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">
 							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-						<h2 class="modal-title" id="create_role_title">新增角色</h2>
+						<h2 class="modal-title">新增角色</h2>
 					</div>
-					<form class="form-horizontal" role="form" method="post" action="" onsubmit="return roleManage.checkIsEmpty()">
+					<form class="form-horizontal" role="form" method="post" action="" onsubmit="return ScriptObject.checkIsEmpty()">
 						<input type="hidden" name="requestType" value="create">
 						<div class="modal-body">
 							<div class="form-group">
-								<label for="create_role_name" class="col-sm-2 control-label">名称：</label>
+								<label for="create_role_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>名称：</label>
 								<div class="col-sm-10">
 									<input type="text" class="form-control name" name="name" id="create_role_name">
 								</div>
@@ -210,11 +210,11 @@
 							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 						<h2 class="modal-title" id="modify_role_title">修改角色</h2>
 					</div>
-					<form class="form-horizontal" role="form" action="" method="post" onsubmit="return roleManage.checkIsEmpty2()">
+					<form class="form-horizontal" role="form" action="" method="post" onsubmit="return ScriptObject.checkIsEmpty2()">
 						<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
 						<div class="modal-body">
 							<div class="form-group">
-								<label for="modify_role_name" class="col-sm-2 control-label">名称：</label>
+								<label for="modify_role_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>名称：</label>
 								<div class="col-sm-10">
 									<input type="text" class="form-control name" name="name" id="modify_role_name">
 								</div>

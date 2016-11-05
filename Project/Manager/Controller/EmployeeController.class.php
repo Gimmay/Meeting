@@ -103,7 +103,7 @@
 				$employee_list = $employee_logic->setMaxRoleLevel($employee_list);
 				$this->assign('list', $employee_list);
 				$this->assign('page_show', $page_show);
-				$this->assign('max_role_level', $max_role_level ? $max_role_level : 5);
+				$this->assign('max_role_level', $max_role_level);
 				$this->display();
 			}
 			else $this->error('您没有查看员工的权限');

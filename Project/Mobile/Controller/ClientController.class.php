@@ -17,15 +17,17 @@
 
 		public function _initialize(){
 			// lqy
-			//						$_SESSION['MOBILE_WEIXIN_ID'] = 1216;
-			//						$_SESSION['MOBILE_CLIENT_ID'] = 599;
+//									$_SESSION['MOBILE_WEIXIN_ID'] = 1216;
+//									$_SESSION['MOBILE_CLIENT_ID'] = 599;
 			// quasar
-			//									$_SESSION['MOBILE_CLIENT_ID'] = '599';
-			//									$_SESSION['MOBILE_WEIXIN_ID'] = '0967';
-//									print_r($_SESSION);
+//												$_SESSION['MOBILE_CLIENT_ID'] = '599';
+//												$_SESSION['MOBILE_WEIXIN_ID'] = '0967';
+			//									print_r($_SESSION);
 			//						print_r($_COOKIE['WEIXIN_REDIRECT_URL']);
-//															session_unset();
-//															exit;
+			//															session_unset();
+			//															exit;
+			$meeting_logic = new MeetingLogic();
+			$meeting_logic->initializeStatus();
 			parent::_initialize();
 		}
 
@@ -74,7 +76,6 @@
 
 		public function myCenter(){
 			$this->weixinID = $this->getWeixinID();
-			$this->_getMeetingParam();
 			$this->_getClientID();
 			$logic = new ClientLogic();
 			if(IS_POST){
@@ -91,7 +92,7 @@
 				}
 				exit;
 			}
-			$info = $logic->getClientInformation($this->clientID, $this->meetingID);
+			$info = $logic->getClientInformation($this->clientID);
 			$this->assign('info', $info);
 			$this->display();
 		}
@@ -131,9 +132,10 @@
 		 * 会议详情页
 		 */
 		public function myMeeting(){
+
 			$logic = new ClientLogic();
 			if(IS_POST){
-				$result         = $logic->handlerRequest(I('post.requestType', ''), ['cid'=>$_SESSION['MOBILE_CLIENT_ID']]);
+				$result = $logic->handlerRequest(I('post.requestType', ''), ['cid' => $_SESSION['MOBILE_CLIENT_ID']]);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);
 					echo json_encode($result);
@@ -161,7 +163,7 @@
 			/** @var \Core\Model\MeetingModel $meeting_model */
 			$meeting_model = D('Core/Meeting');
 			$meeting       = $meeting_model->findMeeting(1, ['id' => $this->meetingID, 'status' => 'not deleted']);
-			$meeting       = $logic->setDate('myMeeting:set_meeting_column', $meeting);
+			$meeting       = $logic->setData('myMeeting:set_meeting_column', $meeting);
 			$this->assign('info', $join_record);
 			$this->assign('meeting', $meeting);
 			$this->display();

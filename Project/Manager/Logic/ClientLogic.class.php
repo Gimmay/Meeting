@@ -12,7 +12,6 @@
 	use Quasar\StringPlus;
 
 	class ClientLogic extends ManagerLogic{
-
 		public function _initialize(){
 			parent::_initialize();
 		}
@@ -23,7 +22,10 @@
 			$meeting_id                = I('get.mid', 0, 'int');
 			$id                        = I('get.id', 0, 'int');
 			$join_model                = D('Core/Join');
-			$join_record               = $join_model->findRecord(1, ['mid' => $meeting_id, 'cid' => $id]);
+			$join_record               = $join_model->findRecord(1, [
+				'mid' => $meeting_id,
+				'cid' => $id
+			]);
 			$info['registration_date'] = $join_record['registration_date'];
 
 			return $info;
@@ -147,7 +149,10 @@
 			$new_list          = [];
 			$mid               = I('get.mid', 0, 'int');
 			foreach($list as $key => $val){
-				$receivables_record = $receivables_model->findRecord(1, ['cid' => $val['cid'], 'mid' => $mid]);
+				$receivables_record = $receivables_model->findRecord(1, [
+					'cid' => $val['cid'],
+					'mid' => $mid
+				]);
 				if($receivables == 1 && $receivables_record){
 					if($val['receivables']) $val['receivables'] += $receivables_record['price'];
 					else{
@@ -205,16 +210,25 @@
 					$mid = I('get.mid', 0, 'int');
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
-					$join_record = $join_model->findRecord(1, ['mid' => $mid, 'cid' => $client_id]);
+					$join_record = $join_model->findRecord(1, [
+						'mid' => $mid,
+						'cid' => $client_id
+					]);
 					$mobile      = $data['mobile'];
 					if($join_record){
 						if($join_record['status'] != 1){
 							C('TOKEN_ON', false);
-							$join_result = $join_model->alterRecord([$join_record['id']], ['status' => 1]);
-							if($join_result['status']) $result = ['status' => true, 'message' => '创建成功'];
+							$join_result = $join_model->alterRecord(['id' => $join_record['id']], ['status' => 1]);
+							if($join_result['status']) $result = [
+								'status'  => true,
+								'message' => '创建成功'
+							];
 							else $result = $join_result;
 						}
-						else $result = ['status' => true, 'message' => '创建成功'];
+						else $result = [
+							'status'  => true,
+							'message' => '创建成功'
+						];
 					}
 					else{
 						$data             = [];
@@ -274,12 +288,15 @@
 					]);
 					$data2['registration_date'] = $data['registration_date'];
 					C('TOKEN_ON', false);
-					$result2 = $join_model->alterRecord([$join_record['id']], $data2);
+					$result2 = $join_model->alterRecord(['id' => $join_record['id']], $data2);
 
 					return ($result1['status'] || $result2['status']) ? [
 						'status'  => true,
 						'message' => '修改成功'
-					] : ['status' => false, 'message' => '未做任何修改'];
+					] : [
+						'status'  => false,
+						'message' => '未做任何修改'
+					];
 				break;
 				case 'import_excel':
 					$excel_logic = new ExcelLogic();
@@ -309,9 +326,12 @@
 					$join_model  = D('Core/Join');
 					$client_id   = I('post.id', 0, 'int');
 					$meeting_id  = I('post.mid', 0, 'int');
-					$join_record = $join_model->findRecord(1, ['mid' => $meeting_id, 'cid' => $client_id]);
+					$join_record = $join_model->findRecord(1, [
+						'mid' => $meeting_id,
+						'cid' => $client_id
+					]);
 					C('TOKEN_ON', false);
-					$result1 = $join_model->alterRecord([$join_record['id']], [
+					$result1 = $join_model->alterRecord(['id' => $join_record['id']], [
 						'review_status' => 1,
 						'review_time'   => time()
 					]);
@@ -326,9 +346,12 @@
 					$join_model  = D('Core/Join');
 					$client_id   = I('post.id', 0, 'int');
 					$meeting_id  = I('post.mid', 0, 'int');
-					$join_record = $join_model->findRecord(1, ['mid' => $meeting_id, 'cid' => $client_id]);
+					$join_record = $join_model->findRecord(1, [
+						'mid' => $meeting_id,
+						'cid' => $client_id
+					]);
 					C('TOKEN_ON', false);
-					$result = $join_model->alterRecord([$join_record['id']], ['review_status' => 2]);
+					$result = $join_model->alterRecord(['id' => $join_record['id']], ['review_status' => 2]);
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
@@ -339,11 +362,17 @@
 					$client_id_arr = explode(',', I('post.id', ''));
 					$join_id       = [];
 					foreach($client_id_arr as $v){
-						$join_record = $join_model->findRecord(1, ['cid' => $v, 'mid' => $meeting_id]);
+						$join_record = $join_model->findRecord(1, [
+							'cid' => $v,
+							'mid' => $meeting_id
+						]);
 						$join_id[]   = $join_record['id'];
 					}
 					C('TOKEN_ON', false);
-					$result1 = $join_model->alterRecord($join_id, ['review_status' => 1, 'review_time' => time()]);
+					$result1 = $join_model->alterRecord(['id'=>$join_id], [
+						'review_status' => 1,
+						'review_time'   => time()
+					]);
 					if(!$result1['status']) return array_merge($result1, ['__ajax__' => false]);
 					$join_logic = new JoinLogic();
 					$result2    = $join_logic->makeQRCode($client_id_arr, ['mid' => $meeting_id]);
@@ -358,11 +387,14 @@
 					$client_id_arr = explode(',', $data['id']);
 					$join_id       = [];
 					foreach($client_id_arr as $v){
-						$join_record = $join_model->findRecord(1, ['cid' => $v, 'mid' => $meeting_id]);
+						$join_record = $join_model->findRecord(1, [
+							'cid' => $v,
+							'mid' => $meeting_id
+						]);
 						$join_id[]   = $join_record['id'];
 					}
 					C('TOKEN_ON', false);
-					$result = $join_model->alterRecord($join_id, ['review_status' => 2]);
+					$result = $join_model->alterRecord(['id'=>$join_id], ['review_status' => 2]);
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
@@ -378,7 +410,7 @@
 					]);
 					if($join_record['review_status'] == 1){
 						C('TOKEN_ON', false);
-						$result = $join_model->alterRecord([$join_record['id']], [
+						$result = $join_model->alterRecord(['id' => $join_record['id']], [
 							'sign_status'      => 1,
 							'sign_time'        => time(),
 							'sign_director_id' => $sign_director,
@@ -391,7 +423,11 @@
 
 						return array_merge($result, ['__ajax__' => true]);
 					}
-					else return ['status' => false, 'message' => '此客户信息还没有被审核', '__ajax__' => true];
+					else return [
+						'status'   => false,
+						'message'  => '此客户信息还没有被审核',
+						'__ajax__' => true
+					];
 				break; // 取消签到
 				case 'anti_sign':
 					/** @var \Core\Model\JoinModel $join_model */
@@ -403,7 +439,7 @@
 						'mid' => $meeting_id
 					]);
 					C('TOKEN_ON', false);
-					$result = $join_model->alterRecord([$join_record['id']], [
+					$result = $join_model->alterRecord(['id' => $join_record['id']], [
 						'sign_status' => 2,
 						'sign_time'   => null,
 						'sign_type'   => 0
@@ -431,7 +467,7 @@
 						]);
 						if($join_record['review_status'] == 1){
 							C('TOKEN_ON', false);
-							$result = $join_model->alterRecord([$join_record['id']], [
+							$result = $join_model->alterRecord(['id' => $join_record['id']], [
 								'sign_status'      => 1,
 								'sign_time'        => time(),
 								'sign_director_id' => $sign_director,
@@ -448,13 +484,21 @@
 						}
 					}
 					if($count<50 && $count>0) $message_logic->send($meeting_id, 1, $send_list);
-					if($count == 0) return ['status' => false, 'message' => '批量签到失败', '__ajax__' => false];
+					if($count == 0) return [
+						'status'   => false,
+						'message'  => '批量签到失败',
+						'__ajax__' => false
+					];
 					elseif($count == count($id_arr)) return [
 						'status'   => true,
 						'message'  => '批量签到成功',
 						'__ajax__' => false
 					];
-					else return ['status' => true, 'message' => '部分批量签到成功', '__ajax__' => false];
+					else return [
+						'status'   => true,
+						'message'  => '部分批量签到成功',
+						'__ajax__' => false
+					];
 				break;
 				case 'multi_anti_sign':
 					/** @var \Core\Model\JoinModel $join_model */
@@ -470,7 +514,7 @@
 							'mid' => $meeting_id
 						]);
 						C('TOKEN_ON', false);
-						$result = $join_model->alterRecord([$join_record['id']], [
+						$result = $join_model->alterRecord(['id' => $join_record['id']], [
 							'sign_status' => 2,
 							'sign_time'   => null,
 							'sign_type'   => 0
@@ -485,13 +529,21 @@
 						}
 					}
 					if($count<50 && $count>0) $message_logic->send($meeting_id, 1, $send_list);
-					if($count == 0) return ['status' => false, 'message' => '批量取消签到失败', '__ajax__' => false];
+					if($count == 0) return [
+						'status'   => false,
+						'message'  => '批量取消签到失败',
+						'__ajax__' => false
+					];
 					elseif($count == count($id_arr)) return [
 						'status'   => true,
 						'message'  => '批量取消签到成功',
 						'__ajax__' => false
 					];
-					else return ['status' => true, 'message' => '部分批量取消签到成功', '__ajax__' => false];
+					else return [
+						'status'   => true,
+						'message'  => '部分批量取消签到成功',
+						'__ajax__' => false
+					];
 				break;
 				case 'delete';
 					///** @var \Core\Model\ClientModel $model */
@@ -508,7 +560,11 @@
 						if($record['review_status'] == 1) continue;
 						$delete_id_arr[] = $val;
 					}
-					if(!$delete_id_arr) return ['status' => false, 'message' => '客户已审核不能删除', '__ajax__' => false];
+					if(!$delete_id_arr) return [
+						'status'   => false,
+						'message'  => '客户已审核不能删除',
+						'__ajax__' => false
+					];
 					$result = $join_model->deleteRecord($delete_id_arr);
 
 					return array_merge($result, ['__ajax__' => false]);
@@ -525,25 +581,33 @@
 					$client_model   = D('Core/Client');
 					$sms_logic      = new SMSLogic();
 					$record         = $client_model->findClient(1, ['id' => $client_id]);
-					$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
+					$weixin_record  = $weixin_model->findRecord(1, ['mobile' => trim($record['mobile'])]);
 					$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
-					$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myQRCode', [
+					$url     = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myQRCode', [
 							'cid' => $client_id,
 							'mid' => $meeting_id
 						]);
-					$result1        = $wxcorp_logic->sendMessage('news', [
+					$result1 = $wxcorp_logic->sendMessage('news', [
 						[
 							'title'       => "$meeting_record[name]",
 							'description' => "亲爱的$record[name]，请于$meeting_record[start_time]前点击\"查看全文\"后出示二维码提供给签到负责人进行签到",
 							'url'         => $url
 						]
 					], ['user' => [$weixin_record['weixin_id']]], 'client');
-					$url            = getShortUrl($url); // 使用新浪的t.cn短地址
+					$url     = getShortUrl($url); // 使用新浪的t.cn短地址
 					//$result2        = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
-					if(!$result1['status']) return ['status' => false, 'message' => '微信推送信息失败', '__ajax__' => true];
+					if(!$result1['status']) return [
+						'status'   => false,
+						'message'  => '微信推送信息失败',
+						'__ajax__' => true
+					];
 
 					//if(!$result2['status']) return ['status' => false, 'message' => '短信发送失败', '__ajax__' => true];
-					return ['status' => true, 'message' => '发送消息成功', '__ajax__' => true];
+					return [
+						'status'   => true,
+						'message'  => '发送消息成功',
+						'__ajax__' => true
+					];
 				break;
 				case 'multi_send_message':
 					$wxcorp_logic = new WxCorpLogic();
@@ -575,7 +639,11 @@
 						//$sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
 					}
 
-					return ['status' => true, 'massage' => '发送成功', '__ajax__' => false];
+					return [
+						'status'   => true,
+						'massage'  => '发送成功',
+						'__ajax__' => false
+					];
 				break;
 				case 'assign_sign_place':
 					/** @var \Core\Model\JoinSignPlaceModel $join_sign_place_model */
@@ -595,9 +663,21 @@
 						if($result['status']) $count++;
 						echo 1;
 					}
-					if($count == count($sid_arr)) return ['status' => true, 'message' => '分配成功', '__ajax__' => false];
-					elseif($count == 0) return ['status' => false, 'message' => '分配失败', '__ajax__' => false];
-					else return ['status' => true, 'message' => '部分分配成功', '__ajax__' => false];
+					if($count == count($sid_arr)) return [
+						'status'   => true,
+						'message'  => '分配成功',
+						'__ajax__' => false
+					];
+					elseif($count == 0) return [
+						'status'   => false,
+						'message'  => '分配失败',
+						'__ajax__' => false
+					];
+					else return [
+						'status'   => true,
+						'message'  => '部分分配成功',
+						'__ajax__' => false
+					];
 				break;
 				case 'batch_assign_sign_place':
 					/** @var \Core\Model\JoinSignPlaceModel $join_sign_place_model */
@@ -624,8 +704,16 @@
 						'message'  => '分配成功',
 						'__ajax__' => false
 					];
-					elseif($count == 0) return ['status' => false, 'message' => '分配失败', '__ajax__' => false];
-					else return ['status' => true, 'message' => '部分分配成功', '__ajax__' => false];
+					elseif($count == 0) return [
+						'status'   => false,
+						'message'  => '分配失败',
+						'__ajax__' => false
+					];
+					else return [
+						'status'   => true,
+						'message'  => '部分分配成功',
+						'__ajax__' => false
+					];
 				break;
 				case 'get_receivables':
 					/** @var \Core\Model\ReceivablesModel $receivables_model */
@@ -641,10 +729,16 @@
 						$record[$key]['payee'] = $employee_record['name'];
 					}
 
-					return ['data' => $record, '__ajax__' => true];
+					return [
+						'data'     => $record,
+						'__ajax__' => true
+					];
 				break;
 				default:
-					return ['status' => false, 'message' => '参数错误'];
+					return [
+						'status'  => false,
+						'message' => '参数错误'
+					];
 				break;
 			}
 		}
@@ -654,7 +748,8 @@
 			$upload_model  = D('Core/Upload');
 			$excel_logic   = new ExcelLogic();
 			$upload_record = $upload_model->findRecord(1, ['id' => $upload_record_id]);
-			$excel_content = $excel_logic->readClientData($upload_record['save_path']);
+			$file_path     = trim($upload_record['save_path'], '/');
+			$excel_content = $excel_logic->readClientData($file_path);
 
 			return $this->createClientFromExcelData($excel_content['body'], $map);
 		}
@@ -675,6 +770,8 @@
 			$count           = 0;
 			$mid             = I('get.mid', 0, 'int');
 			$cur_employee_id = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+			$weixin_opt      = [];
+			$error_str = '';
 			foreach($excel_data as $key1 => $line){
 				$client_data        = [];
 				$mobile             = '';
@@ -695,13 +792,14 @@
 					// 过滤数据
 					switch(strtolower($table_column[$key2]['name'])){
 						case 'birthday':
-							$val = date('Y-m-d', strtotime($val));
+							$val = $val ? date('Y-m-d', strtotime($val)) : null;
 						break;
 						case 'gender':
 							$val = $val == '男' ? 1 : ($val == '女' ? 2 : 0);
 						break;
 						case 'mobile':
-							$mobile = $val;
+							$mobile = trim($val);
+							if($mobile==''&!$mobile) continue;
 						break;
 						case 'name':
 							$name = $val;
@@ -738,11 +836,11 @@
 					}
 				}
 				// 判定是否存在该客户
-				$exist_client                   = $core_model->isExist($mobile, $name);
+				$exist_client                   = $core_model->isExist($mobile);
 				$join_data                      = [];
 				$join_data['creator']           = $cur_employee_id;
 				$join_data['creatime']          = time();
-				$join_data['registration_date'] = $registration_date;
+				$join_data['registration_date'] = $registration_date ? date('Y-m-d', strtotime($registration_date)) : null;
 				$join_data['traffic_method']    = $traffic_method;
 				if($invitor != null) $join_data['inviter_id'] = $invitor;
 				$join_data['mid'] = $mid;
@@ -750,7 +848,13 @@
 				if($exist_client) $join_data['cid'] = $exist_client['id'];
 				else{
 					$client_result = $core_model->createClient($client_data);
-					if($client_result['status']) $join_data['cid'] = $client_result['id'];
+					if($client_result['status']){
+						$join_data['cid'] = $client_result['id'];
+						$weixin_opt[]     = [
+							'id'     => $client_result['id'],
+							'mobile' => $mobile
+						];
+					}
 				}
 				if($join_data['cid']){
 					$join_result = $join_model->createRecord($join_data);
@@ -764,16 +868,58 @@
 							'creatime'    => time(),
 							'price'       => $price,
 						]);
+					}else $error_str .= $client_data['name'].',';
+				}
+			}
+			$this->_asyncWeixinInfo($weixin_opt);
+			if($count === 0) return [
+				'status'  => false,
+				'message' => '没有导入任何数据'
+			];
+			elseif($count == count($excel_data)) return [
+				'status'  => true,
+				'message' => '全部导入成功'
+			];
+			else{
+				$error_str = trim($error_str, ',');
+				return [
+					'status'  => true,
+					'message' => "部分数据无需导入<br>
+已导入：$count<br>
+未导入：".(count($excel_data)-$count)." $error_str"
+				];
+			}
+		}
+
+		private function _asyncWeixinInfo($client_list){
+			ignore_user_abort();
+			$weixin_logic = new WxCorpLogic();
+			$wx_list      = $weixin_logic->getAllUserList(); //查出wx接口获取的所有用户信息
+			/** @var \Core\Model\WeixinIDModel $weixin_model */
+			$weixin_model = D('Core/WeixinID');
+			foreach($client_list as $key => $val){
+				foreach($wx_list as $key2 => $val2){
+					if($val['mobile'] = $val2['mobile']){
+						//$weixin_model->deleteRecord(['weixin_id'=>$v2['userid'], 'otype'=>0]);
+						$department = '';
+						foreach($val2['department'] as $v3) $department .= $v3.',';
+						$department         = trim($department, ',');
+						$data               = [];
+						$data['otype']      = 0;    //对象类型
+						$data['oid']        = $val['id'];    //对象ID
+						$data['wtype']      = 1;    //微信ID类型 企业号
+						$data['department'] = $department;    //部门ID
+						$data['weixin_id']  = $val2['userid'];    //微信ID
+						$data['mobile']     = $val2['mobile'];    //手机号码
+						$data['avatar']     = $val2['avatar'];    //头像地址
+						$data['gender']     = $val2['gender'];    //性别
+						$data['nickname']   = $val2['name'];    //昵称
+						$data['creatime']   = time();    //创建时间
+						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+						$weixin_model->createRecord($data);    //插入数据
+						break;
 					}
 				}
 			}
-			if($count === 0) return ['status' => false, 'message' => '没有导入任何数据'];
-			elseif($count == count($excel_data)) return ['status' => true, 'message' => '全部导入成功'];
-			else return [
-				'status'  => true,
-				'message' => "部分数据无需导入<br>
-已导入：$count<br>
-未导入：".(count($excel_data)-$count)
-			];
 		}
 	}

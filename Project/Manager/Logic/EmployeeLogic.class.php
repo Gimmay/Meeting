@@ -232,8 +232,7 @@
 			/** @var \Core\Model\RoleModel $model */
 			$model = D('Core/Role');
 			foreach($list as $val){
-				$tmp              = $model->getMaxRoleLevel($val['id']);
-				$val['roleLevel'] = $tmp ? $tmp : 5;
+				$val['roleLevel'] = $model->getMaxRoleLevel($val['id']);
 				$result[]         = $val;
 			}
 

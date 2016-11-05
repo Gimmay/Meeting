@@ -80,9 +80,11 @@
 			if($result['status']){
 				$header       = [];
 				$content      = [];
-				$excel_reader = \PHPExcel_IOFactory::createReaderForFile($result['data']['filePath']);
+				$file_path = trim($result['data']['filePath'], '/');
+				$excel_reader = \PHPExcel_IOFactory::createReaderForFile($file_path);
+
 				/** @var \PHPExcel $excel_object */
-				$excel_object = $excel_reader->load($result['data']['filePath']);
+				$excel_object = $excel_reader->load($file_path);
 				$excel_object->setActiveSheetIndex(0);
 				$line_number = 0;
 				foreach($excel_object->getActiveSheet()->getRowIterator() as $val){

@@ -25,29 +25,18 @@
 <body>
 	<div id="mb_wrap">
 		<div class="mb_body">
-			<div class="toptab">
-				<div class="nav">
-					<a class="active">进行中的会议</a> <a>已结束会议</a>
-				</div>
-			</div>
 			<div class="content">
 				<div class="list">
-					<volist name="meeting_list.ing" id="single">
+					<volist name="meeting_list" id="single">
 						<div class="li">
-							<a href="<{:U('myMeeting', ['mid'=>$single['id']])}>">
-								<span class="meeting_name"><{$single.name}></span><span class="time">开始结束时间：<{$single.start_time}> - <{$single.end_time}></span><switch name="single.status">
-								<case value="2"><span class="status release">等待开始</span></case>
-								<case value="3"><span class="status ing">正在进行</span></case>
-							</switch>
-							</a>
-						</div>
-					</volist>
-				</div>
-				<div class="list hide">
-					<volist name="meeting_list.fin" id="single">
-						<div class="li">
-							<a href="<{:U('myMeeting', ['mid'=>$single['id']])}>">
-								<span class="meeting_name"><{$single.name}></span><span class="time">开始结束时间：<{$single.start_time}> - <{$single.end_time}></span><span class="status complete">已结束</span>
+							<a href="<{:U('meeting', ['mid'=>$single['id']])}>">
+								<span class="meeting_name"><{$single.name}></span><span class="time">开始结束时间<{$single.start_time}> - <{$single.end_time}></span>
+								<switch name="single.status">
+									<case value="1"><span class="status new">新　建</span></case>
+									<case value="2"><span class="status release">发　布</span></case>
+									<case value="3"><span class="status ing">进行中</span></case>
+									<case value="4"><span class="status complete">结　束</span></case>
+								</switch>
 							</a>
 						</div>
 					</volist>

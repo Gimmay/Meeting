@@ -92,17 +92,21 @@
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
-			<li class="side_item cls <if condition='$c_name eq Report'>active</if>">
-				<div class="side-item-link no_link">
-					<i class="icon_nav glyphicon glyphicon-list-alt"></i> <span class="nav-label">报表查询</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</div>
-				<ul class="nav-second-level">
-					<li>
-						<a href="<{:U('Report/joinReceivables')}>">报名收款数据</a>
-					</li>
-				</ul>
-			</li>
+			<if condition="$permission_list['REPORT.JOINRECEIVABLES'] eq 1">
+				<li class="side_item cls <if condition='$c_name eq Report'>active</if>">
+					<div class="side-item-link no_link">
+						<i class="icon_nav glyphicon glyphicon-list-alt"></i> <span class="nav-label">报表查询</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span>
+					</div>
+					<ul class="nav-second-level">
+						<if condition="$permission_list['REPORT.JOINRECEIVABLES'] eq 1">
+							<li>
+								<a href="<{:U('Report/joinReceivables')}>">报名收款数据</a>
+							</li>
+						</if>
+					</ul>
+				</li>
+			</if>
 			<if condition="($permission_list['RECYCLE.VIEW-CLIENT'] eq 1) OR ($permission_list['RECYCLE.VIEW-EMPLOYEE'] eq 1) OR ($permission_list['RECYCLE.VIEW-ROLE'] eq 1) OR ($permission_list['RECYCLE.VIEW-MEETING'] eq 1)">
 				<li class="side_item cls <if condition='$c_name eq Recycle'>active</if>">
 					<div class="side-item-link no_link">

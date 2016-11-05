@@ -111,14 +111,4 @@
 .screen_check input {
 	vertical-align: top;
 }
-.table_length {
-	padding-top: 10px;
-	font-size: 14px;
-}
-.table_length > select {
-	width: 100px;
-	height: 30px;
-	line-height: 50px;
-}
-
 

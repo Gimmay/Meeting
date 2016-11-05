@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
@@ -22,6 +23,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -50,7 +52,7 @@
 								</if>
 							</div>
 						</header>
-						<div class="repertory clearfix">
+						<div class="repertory clearfix" style="padding: 10px 30px 10px 30px;border-bottom: 1px solid #E1E1E1;">
 							<form action="" method="get">
 								<div class="input-group repertory_text">
 									<input type="search" name="keyword" class="form-control" placeholder="会议名称/拼音简码" value="<{:I('get.keyword', '')}>">
@@ -62,26 +64,28 @@
 							</form>
 						</div>
 						<div class="table_wrap">
-							<table class="table table-bordered" style="text-align: center">
+							<!--<table class="table table-bordered" style="text-align: center">
 								<thead>
 									<tr>
-										<td width="2%" class="all_check">
+										<td width="4%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="2%">序号</td>
-										<td width="8%">名称</td>
-										<td width="3%">状态</td>
+										<td width="3%">序号</td>
+										<td width="8%">会议名称</td>
+										<td width="5%">状态</td>
 										<td width="5%">类型</td>
-										<td width="10%">二维码</td>
-										<td width="5%">主办方</td>
-										<td width="5%">策划方</td>
-										<td width="6%">举办地点</td>
-										<td width="8%">会议酒店</td>
-										<td width="8%">会议车辆</td>
+										<td class="hide">二维码</td>
+										<td width="6%">主办方</td>
+										<td width="6%">策划方</td>
+										<td width="10%">举办地点</td>
+										<td class="hide">会议酒店</td>
+										<td class="hide">会议车辆</td>
 										<td width="10%">开始结束时间</td>
-										<td width="5%">负责人</td>
+										<td width="8%">负责人</td>
 										<td width="8%">创建时间</td>
-										<td width="25%">操作</td>
+										<td class="hide">简介</td>
+										<td class="hide">备注</td>
+										<td width="20%">操作</td>
 									</tr>
 								</thead>
 								<tbody>
@@ -91,8 +95,8 @@
 												<input type="checkbox" class="icheck" value="<{$vo.id}>" placeholder="">
 											</td>
 											<td><{$i}></td>
-											<td><{$vo.name}></td>
-											<td>
+											<td class="meeting_name"><{$vo.name}></td>
+											<td class="status">
 												<switch name="vo.status">
 													<case value="0"><span style="color:#FF0000">禁用</span></case>
 													<case value="1"><span style="color:#000000">新建</span></case>
@@ -101,29 +105,31 @@
 													<case value="4"><span style="color:#A08000">结束</span></case>
 												</switch>
 											</td>
-											<td><{$vo.type}></td>
-											<td><img src="<{$vo.qrcode}>" width="150px"></td>
-											<td><{$vo.host}></td>
-											<td><{$vo.plan}></td>
-											<td><{$vo.place}></td>
-											<td><{$vo.place}></td>
-											<td><{$vo.place}></td>
-											<td><{$vo.start_time}><br>至<br><{$vo.end_time}></td>
-											<td><{$vo.director_name}></td>
-											<td><{:date('Y-m-d H:i:s', $vo['creatime'])}></td>
+											<td class="type"><{$vo.type}></td>
+											<td class="hide"><img src="<{$vo.qrcode}>" width="150px"></td>
+											<td class="host"><{$vo.host}></td>
+											<td class="plan"><{$vo.plan}></td>
+											<td class="place"><{$vo.place}></td>
+											<td class="hotel hide"><{$vo.place}></td>
+											<td class="car hide"><{$vo.place}></td>
+											<td class="setime"><{$vo.start_time}><br>至<br><{$vo.end_time}></td>
+											<td class="director_name"><{$vo.director_name}></td>
+											<td class="create_time"><{:date('Y-m-d H:i:s', $vo['creatime'])}></td>
+											<td class="hide brief">简介</td>
+											<td class="hide comment">备注</td>
 											<td>
 												<div class="btn-group" data-id="<{$vo.id}>">
 													<if condition="$permission_list['SIGN_PLACE.VIEW'] eq 1">
-														<a href="<{:U('SignPlace/manage',['mid'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">签到点</a>
+														<a href="<{:U('SignPlace/Manager',['mid'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">签到点</a>
 													</if>
 													<if condition="$permission_list['MEETING.SELECT-MESSAGE'] eq 1">
 														<a type="button" class="btn btn-default btn-xs mes_btn" data-toggle="modal" data-target="#choose_message">选择消息模板</a>
 													</if>
 													<if condition="$permission_list['CLIENT.VIEW'] eq 1">
-														<a href="<{:U('Client/manage',['mid'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a>
+														<a href="<{:U('Client/Manager',['mid'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a>
 													</if>
 													<if condition="$permission_list['MEETING.SELECT-BADGE'] eq 1">
-														<a href="<{:U('Badge/manage')}>" type="button" class="btn btn-default btn-xs modify_btn">胸卡设计</a>
+														<a href="<{:U('Badge/Manager')}>" type="button" class="btn btn-default btn-xs modify_btn">胸卡设计</a>
 													</if>
 													<if condition="$permission_list['MEETING.ALTER'] eq 1">
 														<a href="<{:U('Meeting/alter',['id'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
@@ -132,12 +138,93 @@
 														<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_meeting">删除</button>
 													</if>
 													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#choose_hotel">选择酒店</button>
+													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#choose_hotel">会议管理人员</button>
+													<button class="btn btn-default btn-xs details_btn">详情</button>
 												</div>
 											</td>
 										</tr>
 									</volist>
 								</tbody>
-							</table>
+							</table>-->
+							<ul class="meeting_list">
+								<volist name="content" id="vo">
+									<li class="meeting_li clearfix">
+										<div class="col-sm-12">
+											<span class="check_item">
+											<input type="checkbox" class="icheck" value="<{$vo.id}>" placeholder="">
+										</span> <a class="list_img"> <img src="<{$vo.qrcode}>" alt=""> </a>
+											<div class="content-box">
+												<h3><span class="meeting_name"><{$vo.name}></span>
+													<switch name="vo.status">
+														<case value="0"><span class="status disable">禁用</span></case>
+														<case value="1"><span class="status new">新建</span></case>
+														<case value="2"><span class="status release">发布</span></case>
+														<case value="3"><span class="status conduct">进行中</span></case>
+														<case value="4"><span class="status end">结束</span></case>
+													</switch>
+												</h3>
+												<div class="desc clearfix">
+													<div>类型：<span class="type"><{$vo.type}></span></div>
+													<div>主办方：<span class="host"><{$vo.host}></span></div>
+													<div>策划方：<span class="plan"><{$vo.plan}></span></div>
+												</div>
+												<div class="desc silver clearfix">
+													<div>• 开始结束时间：<span class="start_end_time"><{$vo.start_time}> - <{$vo.end_time}></span>
+													</div>
+													<div>• 创建时间：<span class="create_time"><{:date('Y-m-d H:i:s', $vo['creatime'])}></span>
+													</div>
+													<div>• 负责人：<span class="create_time"><{$vo.director_name}></span>
+													</div>
+												</div>
+												<ul class="fun_btn clearfix" data-id="<{$vo.id}>">
+													<if condition="$permission_list['SIGN_PLACE.VIEW'] eq 1">
+														<li class="fun_li">
+															<a href="<{:U('SignPlace/manage',['mid'=>$vo['id']])}>"><i class="glyphicon glyphicon-star"></i>签到点</a>
+														</li>
+													</if>
+													<if condition="$permission_list['MEETING.SELECT-MESSAGE'] eq 1">
+														<li class="fun_li">
+															<a class="mes_btn" data-toggle="modal" data-target="#choose_message"><i class="glyphicon glyphicon-envelope"></i>选择消息模板</a>
+														</li>
+													</if>
+													<if condition="$permission_list['CLIENT.VIEW'] eq 1">
+														<li class="fun_li">
+															<a href="<{:U('Client/manage',['mid'=>$vo['id']])}>"><i class="glyphicon glyphicon-user"></i>参会人员</a>
+														</li>
+													</if>
+													<if condition="$permission_list['MEETING.SELECT-BADGE'] eq 1">
+														<li class="fun_li">
+															<a href="<{:U('Badge/manage')}>"><i class="glyphicon glyphicon-tags"></i>胸卡设计</a>
+														</li>
+													</if>
+													<li class="fun_li">
+														<a data-toggle="modal" data-target="#choose_hotel"><i class="glyphicon glyphicon-home"></i>选择酒店</a>
+													</li>
+													<li class="fun_li">
+														<a class="management_btn" data-toggle="modal" data-target="#role_list_modal"><i class="glyphicon glyphicon-th"></i>会议管理人员</a>
+													</li>
+													<if condition="$permission_list['MEETING.ALTER'] eq 1">
+														<li class="fun_li">
+															<a href="<{:U('Meeting/alter',['id'=>$vo['id']])}>"><i class="glyphicon glyphicon-cog"></i>修改</a>
+														</li>
+													</if>
+													<if condition="$permission_list['MEETING.DELETE'] eq 1">
+														<li class="fun_li">
+															<a class="delete_btn" data-toggle="modal" data-target="#delete_meeting"><i class="glyphicon glyphicon-trash"></i>删除</a>
+														</li>
+													</if>
+												</ul>
+											</div>
+										</div>
+										<p class="detail">
+											<a class="details_btn" data-id="<{$vo.id}>">详情</a>
+										</p>
+										<p class="release1 release_btn">
+											<a class="release_btn" data-id="<{$vo.id}>">发布</a>
+										</p>
+									</li>
+								</volist>
+							</ul>
 						</div>
 						<div class="page_wrap">
 							<ul class="pagination ">
@@ -145,6 +232,71 @@
 							</ul>
 						</div>
 					</section>
+				</div>
+				<div class="right_details">
+					<div class="d_con">
+						<span class="close_btn glyphicon glyphicon-remove">
+						</span>
+						<div class="title">
+							<span>详情</span>
+						</div>
+						<div class="info">
+							<div class="li">
+								<span>会议名称：</span> <span class="meeting_name"></span>
+							</div>
+							<div class="li">
+								<span>状态：</span> <span class="status"></span>
+							</div>
+							<div class="li">
+								<span>类型：</span> <span class="type"></span>
+							</div>
+							<div class="li">
+								<span>主办方：</span> <span class="host"></span>
+							</div>
+							<div class="li">
+								<span>策划方：</span> <span class="plan"></span>
+							</div>
+							<div class="li">
+								<span>举办地点：</span> <span class="place"></span>
+							</div>
+							<div class="li">
+								<span>会议酒店：</span> <span class="hotel"></span>
+							</div>
+							<div class="li">
+								<span>会议车辆：</span> <span class="car"></span>
+							</div>
+							<div class="li">
+								<span>开始结束时间：</span> <span class="setime"></span>
+							</div>
+							<div class="li">
+								<span>负责人：</span> <span class="director_name"></span>
+							</div>
+							<div class="li">
+								<span>创建时间：</span> <span class="create_time"></span>
+							</div>
+							<div class="li">
+								<span>备注：</span> <span class="comment"></span>
+							</div>
+							<div class="li">
+								<span>简介：</span> <span class="brief"></span>
+							</div>
+						</div>
+						<!--	<div class="btn_fun">
+								<a data-toggle="modal" data-target="#alter_room">选择消息模板</a>
+								<a href="javascript:void(0)">胸卡设计</a> <a href="javascript:void(0)">选择酒店</a>
+								<a href="javascript:void(0)">会议管理人员</a> <a href="javascript:void(0)">签到点</a>
+							</div>-->
+						<div class="d_list">
+							<div class="list_title">二维码</div>
+							<div class="QRcode img">
+								<img src="">
+							</div>
+							<div class="list_title">logo图</div>
+							<div class="logo img">
+								<img src="">
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -255,7 +407,7 @@
 					<h2 class="modal-title text-center">可选酒店列表</h2>
 				</div>
 				<form class="form-horizontal" role="form" action="" method="post">
-					<input type="hidden" name="requestType" value="choose_car"> <input type="hidden" name="id">
+					<input type="hidden" name="requestType" value="choose_hotel"> <input type="hidden" name="id">
 					<div class="modal-body">
 						<table class="table table-bordered" style="text-align: center">
 							<thead>
@@ -309,6 +461,172 @@
 			</div>
 		</div>
 	</div>
+	<!--会议对应角色-->
+	<div class="modal fade" id="role_list_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 60%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">会务管理人员角色列表</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post">
+					<input type="hidden" name="mid">
+					<div class="modal-body">
+						<table class="table table-bordered" style="text-align: center">
+							<thead>
+								<tr>
+									<td width="10%">序号</td>
+									<td width="20%">角色名</td>
+									<td width="20%">等级</td>
+									<td width="20%">备注</td>
+									<td width="30%">操作</td>
+								</tr>
+							</thead>
+							<tbody id="role_list">
+								<tr>
+									<td width="10%">1</td>
+									<td width="20%">管理员</td>
+									<td width="20%">1</td>
+									<td width="20%">备注</td>
+									<td width="30%">
+										<div class="btn-group" data-id="">
+											<button type="button" class="btn btn-default btn-xs choose_employee" data-toggle="modal" data-target="#add_management">选人</button>
+											<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#delete_receivables">查看</button>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="page_wrap">
+							<div class="pagination">
+								<{$page_show}>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn_save">保存</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 添加会议管理人员 -->
+	<div class="modal fade" id="add_management" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 65%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title text-center">添加员工</h2>
+				</div>
+				<div class="choose_people">
+					<div class="d1">
+						<span>当前有<b class="current_attendee">0</b>人</span>
+						<span>已选择<b class="color-red selected_attendee">0</b>人</span>
+						<a href="javascript:void(0)" class="btn_save btn btn-sm btn-info">添加</a>
+					</div>
+					<div class="search_sm">
+						<div class="col-sm-5">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="姓名/手机号/单位" value="">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default mian_search">搜索</button>
+								</span>
+							</div>
+						</div>
+						<a type="reset" class="btn btn-default mian_search">查看所有</a>
+					</div>
+					<div class="d2">
+						<div class="table_wrap" style="max-height: 600px; overflow-y: auto">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="10%" class="all_check_e">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</td>
+										<td width="10%">序号</td>
+										<td width="10%">姓名</td>
+										<td width="10%">性别</td>
+										<td width="10%">部门</td>
+										<td width="10%">职务</td>
+										<td width="20%">手机号</td>
+										<td width="20%">单位</td>
+									</tr>
+								</thead>
+								<tbody id="employee_body">
+								</tbody>
+							</table>
+						</div>
+						<input type="hidden" name="rid"> <input type="hidden" name="mid">
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$page_show}>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加会议管理人员 -->
+	<div class="modal fade" id="see_management" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 65%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title text-center">员工列表</h2>
+				</div>
+				<div class="choose_people">
+					<!--<div class="d1">
+						<span>当前有<b class="current_attendee">0</b>人</span>
+						<span>已选择<b class="color-red selected_attendee">0</b>人</span>
+						<a href="javascript:void(0)" class="btn_save btn btn-sm btn-info">添加</a>
+					</div>-->
+					<!--<div class="search_sm">
+						<div class="col-sm-5">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="姓名/手机号/单位" value="">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default mian_search">搜索</button>
+								</span>
+							</div>
+						</div>
+						<a type="reset" class="btn btn-default mian_search">查看所有</a>
+					</div>-->
+					<div class="d2">
+						<div class="table_wrap" style="max-height: 600px; overflow-y: auto">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="10%">序号</td>
+										<td width="10%">姓名</td>
+										<td width="10%">性别</td>
+										<td width="10%">部门</td>
+										<td width="10%">职务</td>
+										<td width="10%">手机号</td>
+										<td width="20%">单位</td>
+										<td width="20%">操作</td>
+									</tr>
+								</thead>
+								<tbody id="employee_body1">
+								</tbody>
+							</table>
+						</div>
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$page_show}>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	<script>
 		var ManageObject = {
 			object:{
@@ -340,6 +658,7 @@
 					hasEmptyItem:false
 				}),
 				toast                   :$().QuasarToast(),
+				loading                 :$().QuasarLoading(),
 				icheck                  :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'

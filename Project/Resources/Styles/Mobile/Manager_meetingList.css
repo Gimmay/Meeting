@@ -13,29 +13,12 @@
 	z-index: 99;
 }
 
-.toptab .nav{
-	width         : 100%;
-	border        : 1px solid #FF5303;
-	border-radius : 4px;
-}
-
-.toptab .nav a{
-	width       : 50%;
-	display     : block;
-	text-align  : center;
-	float       : left;
-	height      : 25px;
-	line-height : 25px;
-	color       : #FF5303;
-}
-
 .toptab .nav a.active{
 	background : #FF5303;
 	color      : #FFFFFF;
 }
 
 .content{
-	padding-top : 60px;
 }
 
 .list{
@@ -70,9 +53,15 @@
 	box-shadow    : 1px 1px 1px rgba(0, 0, 0, .1);
 }
 
+
 .list .li .status.ing{
 	background : #00DD30;
 	color      : #FFFFFF;
+}
+
+.list .li .status.new{
+	background : #FFFFFF;
+	color      : #EEEEEE;
 }
 .list .li .status.release{
 	background : #00A0E8;

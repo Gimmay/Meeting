@@ -7,6 +7,7 @@
 	 */
 	namespace Mobile\Controller;
 
+	use Core\Logic\MeetingLogic;
 	use Core\Logic\PermissionLogic;
 	use Core\Logic\WxCorpLogic;
 	use Mobile\Logic\ClientLogic;
@@ -18,9 +19,11 @@
 		protected $meetingID  = 0;
 
 		public function _initialize(){
-//			$_SESSION['MOBILE_WEIXIN_ID']   = 599;
+//			$_SESSION['MOBILE_WEIXIN_ID']   = 1090;
 //			$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
 			parent::_initialize();
+			$meeting_logic = new MeetingLogic();
+			$meeting_logic->initializeStatus();
 		}
 
 		private function _getWeixinID($redirect = true){
@@ -94,11 +97,55 @@
 			if($permission){
 				$client_logic = new ClientLogic();
 				$cid          = I('get.cid', 0, 'int');
-				$mid          = I('get.mid', 0, 'int');
-				$info         = $client_logic->getClientInformation($cid, $mid);
+			/** @var \Core\Model\JoinModel $join_model */
+				$join_model = D('Core/Join');
+			$join_result = $join_model->findRecord(1,['cid'=>$cid,'mid'=>I('get.mid',0,'int')]);
+
+				$info         = $client_logic->getClientInformation($cid);
+				$this->assign('list',$join_result);
 				$this->assign('info', $info);
 				$this->display();
 			}
 			else $this->redirect('Error/notPermission');
+		}
+
+		public function clientList(){
+			$logic = new ManagerLogic();
+			//$this->_getWeixinID();
+			//$this->_getMeetingParam();
+			$client_list = $logic->findData('clientList:find_client_list', ['mid'=>I('get.mid',0,'int')]);
+			$this->assign('client_list',$client_list);
+			$this->display();
+		}
+
+		public function meetingList(){
+			$this->_getWeixinID();
+			$this->_getEmployeeID();
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			$logic         = new ManagerLogic();
+			$meeting_list  = $meeting_model->findMeeting(2, ['status' => 'not deleted']);
+			$meeting_list  = $logic->setData('meetingList', $meeting_list);
+			$this->assign('meeting_list', $meeting_list);
+			$this->display();
+		}
+
+		public function meeting(){
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			$logic         = new ManagerLogic();
+			$meeting_info  = $meeting_model->findMeeting(1, [
+				'status' => 'not deleted',
+				'id'     => I('get.mid', 0, 'int')
+			]);
+			$meeting_info  = $logic->setData('meeting:set_extend_column', $meeting_info);
+			$statistics = $logic->setData('meeting:set_statistics_data', $meeting_info);
+			$this->assign('meeting', $meeting_info);
+			$this->assign('statistics', $statistics);
+			$this->display();
+		}
+
+		public function myCenter(){
+			$this->display();
 		}
 	}

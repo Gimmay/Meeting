@@ -52,6 +52,18 @@ $(function(){
 	},function(){
 		$(this).find('.hidden_dropDown').addClass('hide');
 	});
+
+
+	/*
+	 *	右边详情框
+	 */
+	$('.details_btn').on('click', function(){
+		$('.right_details').animate({width:'480px'})
+	});
+	// 关闭详情
+	$('.close_btn').on('click', function(){
+		$('.right_details').animate({width:'0'})
+	});
 });
 var Common = {
 	ajax:function(options){

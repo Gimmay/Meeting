@@ -32,6 +32,7 @@
 			$meeting_result = $room_logic->findMeeting();
 			$join_result = $room_logic->selectMeetingJoin();
 			$this->assign('list',$join_result);
+			$this->assign('lists',$join_result);
 			$this->assign('room_info',$room_result);
 			$this->assign('info',$meeting_result);
 			$this->display();

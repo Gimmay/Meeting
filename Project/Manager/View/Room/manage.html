@@ -151,9 +151,9 @@
 								<span>备注：</span> <span class="comment"></span>
 							</div>
 						</div>
-						<div class="btn_fun">
-							<a data-toggle="modal" data-target="#alter_room">修改</a> <!--<a href="javascript:void(0)">退房</a>-->
-						</div>
+						<!--<div class="btn_fun">
+							<a data-toggle="modal" data-target="#alter_room">修改</a> &lt;!&ndash;<a href="javascript:void(0)">退房</a>&ndash;&gt;
+						</div>-->
 						<div class="d_list">
 							<span class="add">添加</span>
 							<div class="list_title">入住人员列表</div>
@@ -424,7 +424,7 @@
 							<table class="table table-bordered" style="text-align: center">
 								<thead>
 									<tr>
-										<td width="10%" class="all_check_m">
+										<td width="10%" class="all_check_m2">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="10%">序号</td>
@@ -437,28 +437,30 @@
 									</tr>
 								</thead>
 								<tbody id="attendee_body_a">
-									<volist name="list" id="list">
+									<volist name="lists" id="lists">
 										<tr>
-											<td class="check_item_m">
-												<input type="checkbox" class="icheck" value="<{$list.id}>" placeholder="">
+											<td class="check_item_m2">
+												<input type="checkbox" class="icheck" value="<{$lists.id}>" placeholder="">
 											</td>
 											<td><{$i}></td>
-											<td class="name"><{$list.name}></td>
+											<td class="name"><{$lists.name}></td>
 											<td>
-												<switch name="list.gender">
+												<switch name="lists.gender">
 													<case value="0">未设置</case>
 													<case value="1">男</case>
 													<case value="2">女</case>
 												</switch>
 											</td>
-											<td><{$list.position}></td>
-											<td><{$list.mobile}></td>
-											<td><{$list.club}></td>
-											<td><{$list.creatime|date='Y-m-d',###}></td>
+											<td><{$lists.position}></td>
+											<td><{$lists.mobile}></td>
+											<td><{$lists.club}></td>
+											<td><{$lists.creatime|date='Y-m-d',###}></td>
 										</tr>
 									</volist>
 								</tbody>
 							</table>
+							<input type="hidden" name="person">
+							<input type="hidden" name="room_id">
 						</div>
 						<div class="page_wrap">
 							<ul class="pagination">

@@ -50,19 +50,32 @@
 					return array_merge($receivables_result, ['__ajax__' => false]);
 				break;
 				case'alter_coupon':
-					$id = I('post.id', '');
-					/** @var \Core\Model\ReceivablesModel $receivables_model */
-					$receivables_model = D('Core/Receivables');
-					/** @var \Core\Model\CouponItemModel $coupon_item_model */
-					$coupon_item_model  = D('Core/Coupon_item');
-					$coupon_item_result = $coupon_item_model->findCouponItem(2, ['mid' => I('get.mid', 0, 'int')]);
-					$receivables_result = $receivables_model->findRecord(1, ['id' => $id]);
-					$data               = explode(',', $receivables_result['coupon_ids']);
-					$coupon_item_ids    = [];
-					foreach($data as $k => $v){
-						$coupon_item_ids[] = $coupon_item_model->findCouponItem(1, ['id' => $v]);
+					if(I('get.mid',0,'int')){
+						$id = I('post.id', '');
+						/** @var \Core\Model\ReceivablesModel $receivables_model */
+						$receivables_model = D('Core/Receivables');
+						/** @var \Core\Model\CouponItemModel $coupon_item_model */
+						$coupon_item_model  = D('Core/Coupon_item');
+						$coupon_item_result = $coupon_item_model->findCouponItem(2, ['mid' => I('get.mid', 0, 'int')]);
+						$receivables_result = $receivables_model->findRecord(1, ['id' => $id]);
+						$data               = explode(',', $receivables_result['coupon_ids']);
+						$coupon_item_ids    = [];
+						foreach($data as $k => $v){
+							$coupon_item_ids[] = $coupon_item_model->findCouponItem(1, ['id' => $v]);
+						}
+
+						return array_merge($coupon_item_ids, ['__ajax__' => true]);
+					}else{
+						/** @var \Core\Model\ReceivablesModel $receivables_model */
+						$receivables_model = D('Core/Receivables');
+						/** @var \Core\Model\CouponItemModel $coupon_item_model */
+						$coupon_item_model =D('Core/CouponItem');
+						$receivables_result = $receivables_model->findRecord(1,['id'=>I('post.id','')]);
+						$coupon_item_result = $coupon_item_model->findCouponItem(2,['mid'=>$receivables_result['mid'],'status'=>'0']);
+
+						return array_merge($coupon_item_result, ['__ajax__' => true]);
 					}
-					return array_merge($coupon_item_ids, ['__ajax__' => true]);
+
 				break;
 				//				case 'search';
 				//					/** @var \Core\Model\CouponItemModel $coupon_item_model */
@@ -112,9 +125,17 @@
 							'cid'    => null
 						]);
 					}
-				break;
 
+					return array_merge($receivables_result, ['__ajax__' => false]);
+				break;
 				case'delete':
+					$id = I('post.id', '');
+					/** @var \Core\Model\ReceivablesModel $receivables_model */
+					$receivables_model = D('Core/Receivables');
+					C('TOKEN_ON', false);
+					$receivables_result = $receivables_model->deleteRecord($id);
+
+					return array_merge($receivables_result, ['__ajax__' => false]);
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
@@ -161,19 +182,29 @@
 			$cid                = I('get.cid', 0, 'int');
 			$keyword            = I('get.keyword', '');
 			$receivables_result = $receivables_model->findRecord(2, [
-				'mid' => $mid,
-				'cid' => $cid
+				'mid'    => $mid,
+				'cid'    => $cid,
+				'status' => 'not deleted'
 			]);
 			$new_list           = [];
 			foreach($receivables_result as $k => $v){
-				$meeting_result                         = $meeting_model->findMeeting(1, ['id' => $receivables_result[$k]['mid']]);
-				$client_result                          = $client_model->findClient(1, ['id' => $receivables_result[$k]['cid']]);
+				$meeting_result                         = $meeting_model->findMeeting(1, [
+					'id'     => $receivables_result[$k]['mid'],
+					'status' => 'not deleted'
+				]);
+				$client_result                          = $client_model->findClient(1, [
+					'id'     => $receivables_result[$k]['cid'],
+					'status' => 'not deleted'
+				]);
 				$receivables_result[$k]['meeting_name'] = $meeting_result['name'];
 				$receivables_result[$k]['client_name']  = $client_result['name'];
 				$code_id                                = explode(',', $receivables_result[$k]['coupon_ids']);
 				$coupon_item_code                       = '';
 				foreach($code_id as $kk => $vv){
-					$coupon_item_result = $coupon_item_model->findCouponItem(1, ['id' => $vv]);
+					$coupon_item_result = $coupon_item_model->findCouponItem(1, [
+						'id'     => $vv,
+						'status' => 'not deleted'
+					]);
 					$coupon_item_code .= $coupon_item_result['code'].',';  //点连接两个数据
 				}
 				$receivables_result[$k]['coupon_code'] = trim($coupon_item_code, ',');

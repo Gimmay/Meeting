@@ -416,7 +416,7 @@ textarea{
 	top        : 0;
 	left       : 0;
 	z-index    : 999;
-	overflow-y: auto;
+	overflow-y : auto;
 }
 
 .mt_navbar > .header{
@@ -646,6 +646,7 @@ textarea{
 	height   : 100%;
 	padding  : 24px;
 	position : relative;
+	overflow : auto;
 }
 
 .mt_wrapper .right_details .d_con .close_btn{
@@ -691,6 +692,7 @@ textarea{
 	float        : left;
 	display      : inline-block;
 	margin-right : 10px;
+	margin-bottom: 10px;
 	padding      : 8px 20px;
 	color        : #FFFFFF;
 	background   : #00A0E8;
@@ -851,6 +853,17 @@ textarea{
 	font-size : 16px;
 	color     : red;
 }
+
+.table_length {
+	padding-top: 10px;
+	font-size: 14px;
+}
+.table_length > select {
+	width: 100px;
+	height: 30px;
+	line-height: 50px;
+}
+
 
 /** 时间插件层级 **/
 #jedatebox{

@@ -27,6 +27,10 @@
 					C('TOKEN_ON', false);
 					$meeting_model->alterMeeting([$val['id']], ['status' => 4]);
 				}
+				elseif($start_time>time()){
+					C('TOKEN_ON', false);
+					$meeting_model->alterMeeting([$val['id']], ['status' => 2]);
+				}
 			}
 		}
 	}

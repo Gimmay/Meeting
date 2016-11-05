@@ -91,7 +91,7 @@
 				$this->assign('message', $message);
 				$this->display();
 			}
-			else $this->error('您没有查看会议的权限');
+			else $this->error('您没有查看会议的权限', U('My/information'));
 		}
 
 		public function alter(){

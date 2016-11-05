@@ -38,6 +38,7 @@
 		public function findRole($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
+			if(isset($filter['level'])) $where['level'] = [$filter['level']['operator'], $filter['level']['value']];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted') $where['status'] = ['neq', 2];

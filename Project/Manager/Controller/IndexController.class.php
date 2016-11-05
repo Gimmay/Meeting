@@ -59,6 +59,7 @@
 						$data['creatime']   = time();    //创建时间
 						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
 						$weixin_model->createRecord($data);    //插入数据
+						break;
 					}
 				}
 			}
@@ -93,6 +94,7 @@
 						$data['creatime']   = time();    //创建时间
 						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
 						$weixin_model->createRecord($data);    //插入数据
+						break;
 					}
 				}
 			}

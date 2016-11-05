@@ -24,7 +24,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="Quasar" data-mvc-name="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -36,8 +36,22 @@
 				<include file="Public/header"/>
 				<div class="main_body">
 					<section class="content">
-						<div class="return">
+						<!--<div class="return">
 							<a class="btn btn-default" href="<{:U('Meeting/manage')}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
+						</div>-->
+						<div class="table_wrap">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="javascript:void(0)">报表查询</a>
+								</div>
+								<div class="table_length  pull-right">
+									显示： <select>
+									<option>5</option>
+									<option>10</option>
+									<option selected="">20</option>
+								</select> 项结果
+								</div>
+							</div>
 						</div>
 						<header class="c_header">
 							<div class="function_list clearfix">
@@ -235,7 +249,7 @@
 												<div class="btn-group" data-id="<{$single.cid}>" data-join-id="<{$single.id}>">
 													<switch name="single.sign_status">
 														<case value="0">
-															<if condition="$permission_list['CLIENT.SIGN']">
+															<if condition="$permission_list['CLIENT.SIGN'] and $single['review_status'] eq 1">
 																<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
 															</if>
 														</case>
@@ -245,7 +259,7 @@
 															</if>
 														</case>
 														<case value="2">
-															<if condition="$permission_list['CLIENT.SIGN']">
+															<if condition="$permission_list['CLIENT.SIGN'] and $single['review_status'] eq 1">
 																<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
 															</if>
 														</case>
@@ -618,9 +632,9 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				toast               :$().QuasarToast(),
-				loading             :$().QuasarLoading(),
-				icheck              :$('.icheck').iCheck({
+				toast                :$().QuasarToast(),
+				loading              :$().QuasarLoading(),
+				icheck               :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				}),

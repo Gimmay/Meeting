@@ -41,7 +41,7 @@
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted'){
-					$where['sub.status'] = ['neq', 2];
+					$where['sub.status']  = ['neq', 2];
 					$where['main.status'] = ['neq', 2];
 				}
 				else $where['main.status'] = $filter['status']; // todo 是否要client表也要处理
@@ -61,6 +61,7 @@
 				$condition['mobile']      = ['like', "%$filter[keyword]%"];
 				$condition['name']        = ['like', "%$filter[keyword]%"];
 				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
+				$condition['sign_code']   = ['like', "%$filter[keyword]%"];
 				$condition['_logic']      = 'or';
 				$where['_complex']        = $condition;
 			}
@@ -102,10 +103,10 @@
 			return $result;
 		}
 
-		public function alterRecord($id, $data){
+		public function alterRecord($filter, $data){
 			if($this->create($data)){
 				try{
-					$result = $this->where(['id' => ['in', $id]])->save($data);
+					$result = $this->where($filter)->save($data);
 					if($result) return ['status' => true, 'message' => '操作成功'];
 					else return ['status' => false, 'message' => '未做任何修改'];
 				}catch(Exception $error){
