@@ -13,13 +13,15 @@
 		}
 
 		/**
+		 * @param $employee_id
+		 *
 		 * @return array
 		 */
-		public function getMeetingView(){
+		public function getMeetingView($employee_id){
 			/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
 			$meeting_manager_model = D('Core/MeetingManager');
 			$meeting_id_list       = $meeting_manager_model->findRecord(2, [
-				'eid'    => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+				'eid'    => $employee_id,
 				'status' => 1
 			]);
 			$meeting_id_arr        = [];

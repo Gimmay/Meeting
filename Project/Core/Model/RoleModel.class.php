@@ -105,6 +105,7 @@
 				$oid,
 				$type
 			])->min('level');
+			if(!$result) $result = 5;
 
 			return $result;
 		}
@@ -168,5 +169,4 @@ UNION
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}
-
 	}

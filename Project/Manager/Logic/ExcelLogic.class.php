@@ -67,7 +67,7 @@
 				}
 			}
 			header('Content-Type: "application/vnd.ms-excel"');
-			header("Content-Disposition: attachment;filename='$opts[fileName].xlsx'");
+			header("Content-Disposition: attachment;filename=$opts[fileName].xlsx");
 			header('Cache-Control: max-age=0');
 			$excel_writer_07->save('php://output');
 			exit;

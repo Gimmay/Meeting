@@ -14,13 +14,14 @@
 	class ManagerController extends CoreController{
 		protected $permissionList  = null;
 		protected $meetingViewList = null;
+		protected $meetingID       = 0;
 
 		public function _initialize(){
 			parent::_initialize();
 			$meeting_role_logic    = new MeetingRoleLogic();
 			$permission_logic      = new PermissionLogic();
 			$this->permissionList  = $permission_logic->getPermissionList();
-			$this->meetingViewList = $meeting_role_logic->getMeetingView();
+			$this->meetingViewList = $meeting_role_logic->getMeetingView(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));
 			$this->_checkLogin();
 			$this->_assignEmployeeName();
 			$this->assign('cv_name', CONTROLLER_NAME.':'.ACTION_NAME);
@@ -54,8 +55,25 @@
 		}
 
 		private function _assignEmployeeName(){
+			/** @var \Core\Model\EmployeeModel $model */
 			$model    = D('Core/Employee');
 			$employee = $model->findEmployee(1, ['id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')]);
 			$this->assign('curname', $employee['name']);
+		}
+
+		/**
+		 * @param ManagerController $obj
+		 *
+		 * @return mixed
+		 */
+		protected function initMeetingID($obj){
+			$meeting_id = I('get.mid', 0, 'int');
+			if($meeting_id===0){
+				echo "缺少会议参数！";
+				exit;
+			}else{
+				$obj->meetingID = $meeting_id;
+				return $meeting_id;
+			}
 		}
 	}

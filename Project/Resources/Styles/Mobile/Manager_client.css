@@ -1,9 +1,10 @@
 .topbar{
 	width         : 100%;
-	height : 4rem;
+	height        : 4rem;
 	position      : relative;
 	margin-bottom : 0.4rem;
 	background    : #FFFFFF;
+	overflow      : hidden;
 }
 
 .topbar .topbarBg{
@@ -14,18 +15,18 @@
 	top      : 0;
 }
 
-.topbar .topbarBg img {
-	width: 100%;
+.topbar .topbarBg img{
+	width : 100%;
 }
 
 .topbar .photo{
 	position      : absolute;
 	top           : 50%;
 	left          : 50%;
-	margin-top    : -35px;
-	margin-left   : -35px;
-	width         : 70px;
-	height        : 70px;
+	margin-top    : -1.7rem;
+	margin-left   : -1.7rem;
+	width         : 3.4rem;
+	height        : 3.4rem;
 	border-radius : 50%;
 	background    : #FFFFFF;
 	overflow      : hidden;
@@ -41,12 +42,12 @@
 }
 
 .myInfor .li{
-	padding : 0.3rem 0;
-	border-bottom: 1px solid rgba(0,0,0,0.08);
+	padding       : 0.3rem 0;
+	border-bottom : 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.myInfor .li .lab {
-	margin-right: 30px;
+.myInfor .li .lab{
+	margin-right : 30px;
 }
 
 .my_box{
@@ -139,3 +140,18 @@
 .sign_type.unsigned{
 	background : silver
 }
+
+#mb_footer .auditing{
+	color : #FF6600;
+}
+
+#mb_footer .sign{
+	color : #28B778;
+}
+
+#mb_footer .not{
+	color : rgba(0, 0, 0, .5) !important;
+}
+
+
+

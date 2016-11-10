@@ -2,68 +2,94 @@
  * Created by qyqy on 2016-9-12.
  */
 var ScriptObject = {
+	bindEvent        :function(){
+		var self = this;
+		$('.release_a').on('click', function(){
+			var id = $(this).attr('data-id');
+			var t  = $(this);
+			Common.ajax({
+				data    :{requestType:'release', id:id},
+				callback:function(data){
+					console.log(data);
+					if(data.status){
+						ManageObject.object.toast.toast('发布成功！');
+						t.removeClass('release_a').addClass('cancel_release_a').text('取消发布');
+						self.unbindEvent();
+						self.bindEvent();
+					}else{
+						ManageObject.object.toast.toast('发布失败！');
+					}
+				}
+			})
+		});
+		// 取消发布
+		$('.cancel_release_a').on('click', function(){
+			var id = $(this).attr('data-id');
+			var t  = $(this);
+			Common.ajax({
+				data    :{requestType:'release', id:id},
+				callback:function(data){
+					console.log(data);
+					if(data.status){
+						ManageObject.object.toast.toast('取消发布成功！');
+						t.removeClass('cancel_release_a').addClass('release_a').text('发布');
+						self.unbindEvent();
+						self.bindEvent();
+					}else{
+						ManageObject.object.toast.toast('取消发布失败！');
+					}
+				}
+			})
+		});
+	},
+	unbindEvent      :function(){
+		$('.release_a').off('click');
+		$('.cancel_release_a').off('click');
+	},
 	roleListTemp     :'<tr><td width="10%">$i</td><td width="20%">$name</td><td width="20%">$level</td><td width="20%">$comment</td><td width="30%"><div class="btn-group" data-id="$id"><button type="button" class="btn btn-default btn-xs choose_employee" data-toggle="modal" data-target="#add_management">添加</button><button type="button" class="btn btn-default btn-xs see_employee" data-toggle="modal" data-target="#see_management">查看人员</button></div></td></tr>',
 	employeeListTemp :'<tr><td class="check_item_e"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$department</td><td>$position</td><td>$mobile</td><td>$company</td></tr>',
 	employeeListTemp2:'<tr data-id="$id"><td>$num</td><td class="name">$name</td><td>$gender</td><td>$department</td><td>$position</td><td>$mobile</td><td>$company</td><td><button type="button" class="btn btn-default btn-xs delete_employee" data-toggle="modal" data-target="#delete_management">删除</button></td></tr>',
 }
 $(function(){
+	ScriptObject.bindEvent();
 	// 发布
-	$('.release.release_btn').on('click', function(){
-		var id = $(this).find('a').attr('data-id');
-		Common.ajax({
-			data    :{requestType:'release', id:id},
-			callback:function(data){
-				console.log(data);
-			}
-		})
-	});
-	// 取消发布
-	$('.release.cancel_release_btn').on('click', function(){
-		var id = $(this).find('a').attr('data-id');
-		Common.ajax({
-			data    :{requestType:'cancel_release', id:id},
-			callback:function(data){
-				console.log(data);
-			}
-		})
-	});
 	// 单个会议删除
 	$('.delete_btn').on('click', function(){
 		var id = $(this).parents('ul.fun_btn').attr('data-id');
 		$('#delete_meeting').find('input[name=id]').val(id);
 	});
-	/*// 批量删除会议
-	 $('.batch_delete_btn_confirm').on('click', function(){
-	 var str = '';
-	 var i   = 0;
-	 $('.check_item  .icheckbox_square-green.checked').each(function(){
-	 var id = $(this).find('.icheck').val();
-	 str += id+',';
-	 i++;
-	 });
-	 $('#batch_delete_meeting').find('.sAmount').text(i);
-	 var s, newStr = "";
-	 s             = str.charAt(str.length-1);
-	 if(s == ","){
-	 for(var i = 0; i<str.length-1; i++){
-	 newStr += str[i];
-	 }
-	 }
-	 if(str != ''){
-	 $('#batch_delete_meeting').modal('show')
-	 }else{
-	 ManageObject.object.toast.toast('请选择会议！');
-	 }
-	 $('#batch_delete_meeting').find('input[name=id]').val(newStr);
-	 });
-	 // 全选checkbox
-	 $('.all_check').find('.iCheck-helper').on('click', function(){
-	 if($(this).parent('.icheckbox_square-green').hasClass('checked')){
-	 $('.check_item').find('.icheckbox_square-green').addClass('checked');
-	 }else{
-	 $('.check_item').find('.icheckbox_square-green').removeClass('checked');
-	 }
-	 });*/
+	// 批量删除会议
+	$('.batch_delete_btn_confirm').on('click', function(){
+		var str = '';
+		var i   = 0;
+		$('.check_item  .icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
+			str += id+',';
+			i++;
+		});
+		$('#batch_delete_meeting').find('.sAmount').text(i);
+		var s, newStr = "";
+		s             = str.charAt(str.length-1);
+		if(s == ","){
+			for(var i = 0; i<str.length-1; i++){
+				newStr += str[i];
+			}
+		}
+		if(str != ''){
+			$('#batch_delete_meeting').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择会议！');
+		}
+		$('#batch_delete_meeting').find('input[name=id]').val(newStr);
+	});
+	// 全选checkbox
+	$('.all_check_h').find('.iCheck-helper').on('click', function(){
+		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
+			$('.check_item_h').find('.icheckbox_square-green').addClass('checked');
+		}else{
+			$('.check_item_h').find('.icheckbox_square-green').removeClass('checked');
+		}
+	});
 	// 选择消息模板做提交获取数据
 	$('.mes_btn').on('click', function(){
 		var mid = $(this).parents('ul.fun_btn').attr('data-id');
@@ -100,7 +126,6 @@ $(function(){
 	// 预览
 	$('.mes_preview_btn').on('click', function(){
 		var id = $(this).parents('.form-group').find('input[type=hidden]').val();
-		alert(id);
 		Common.ajax({
 			data    :{requestType:'get_message', id:id},
 			callback:function(data){
@@ -109,19 +134,32 @@ $(function(){
 			}
 		});
 	});
+	// 打开酒店modal
+	$('.hotel_btn').on('click', function(){
+		var mid = $(this).parents('.fun_btn').attr('data-id');
+		$('#choose_hotel').find('input[name=mid]').val(mid);
+	});
+	// 酒店保存
 	$('.btn_save_hotel').on('click', function(){
-		var arr = [], hotel = [];
-		$('.check_item .icheckbox_square-green.checked').each(function(){
-			var id         = $(this).find('.icheck').val();
-			var hotel_name = $(this).parents('tr').find('.hotel_name').text();
+		var mid = $('#choose_hotel').find('input[name=mid]').val();
+		var arr = [];
+		$('.check_item_h').find('.icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
 			arr.push(id);
-			hotel.push(hotel_name);
 		});
-		$('#choose_hotel').modal('hide')
-		$('input[name=hotel]').val(arr);
-		$('.c_hotel').removeClass('hide');
-		$('.c_hotel').find('span').text(hotel);
+		ManageObject.object.loading.loading();
+		Common.ajax({
+			data    :{requestType:'choose_hotel', mid:mid, id:arr},
+			callback:function(r){
+				ManageObject.object.loading.complete();
+				console.log(r);
+				$('#choose_hotel').modal('hide');
+				ManageObject.object.toast.toast('酒店选择成功！');
+				location.replace(document.referrer);
+			}
+		})
 	})
+	// 会议详情
 	$('.details_btn').on('click', function(){
 		var id = $(this).attr('data-id');
 		Common.ajax({
@@ -202,7 +240,7 @@ $(function(){
 					var str = '', i = 0;
 					ManageObject.object.loading.loading();
 					Common.ajax({
-						data    :{requestType:'get_employee', id:id},
+						data    :{requestType:'get_employee', id:id, mid:mid},
 						callback:function(data){
 							ManageObject.object.loading.complete();
 							console.log(data);
@@ -243,9 +281,10 @@ $(function(){
 	// 搜索员工
 	$('#add_management').find('.mian_search').on('click', function(){
 		var keyword = $(this).parents('.repertory_text').find('input[name=keyword]').val();
+		var mid = $('#add_management').find('input[name=mid]').val();
 		ManageObject.object.loading.loading();
 		Common.ajax({
-			data    :{requestType:'get_employee2', keyword:keyword},
+			data    :{requestType:'get_employee2', keyword:keyword, mid:mid},
 			callback:function(data){
 				ManageObject.object.loading.complete();
 				console.log(data);
@@ -285,22 +324,27 @@ $(function(){
 			arr.push(id);
 		});
 		ManageObject.object.loading.loading();
-		Common.ajax({
-			data    :{requestType:'save_employee', id:arr, rid:rid, mid:mid},
-			callback:function(data){
-				ManageObject.object.loading.complete();
-				console.log(data);
-				if(data.status == 1){
-					$('#add_management').modal('hide');
-					ManageObject.object.toast.toast('添加成功！');
-				}else if(data.status == 0){
-					$('#add_management').modal('hide');
-					ManageObject.object.toast.toast('添加成功！');
+		if(arr!=''){
+			Common.ajax({
+				data    :{requestType:'save_employee', id:arr, rid:rid, mid:mid},
+				callback:function(data){
+					ManageObject.object.loading.complete();
+					console.log(data);
+					if(data.status == 1){
+						$('#add_management').modal('hide');
+						ManageObject.object.toast.toast('添加成功！');
+					}else if(data.status == 0){
+						$('#add_management').modal('hide');
+						ManageObject.object.toast.toast('添加成功！');
+					}
+				}, error:function(){
+					/*ManageObject.object.toast.toast('添加失败');*/
 				}
-			}, error:function(){
-				/*ManageObject.object.toast.toast('添加失败');*/
-			}
-		});
+			});
+		}else{
+			ManageObject.object.loading.complete();
+			ManageObject.object.toast.toast('添加失败，未选择员工！！');
+		}
 	});
 });
 function get_employee_list(mid, rid){

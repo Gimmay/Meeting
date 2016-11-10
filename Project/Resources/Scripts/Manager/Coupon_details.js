@@ -138,8 +138,8 @@ $(function(){
 	/////// 券的筛选 ////////
 	// 未使用
 	$('.unused_filter').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#Quasar');
-		var mvc     = $quasar.attr('data-mvc-name');
+		var $quasar = $('#quasar_script');
+		var mvc     = $quasar.attr('data-url-sys-param');
 		var suffix  = $quasar.attr('data-page-suffix');
 		var link    = new Quasar.UrlClass(1, mvc, suffix);
 		var param   = link.getUrlParam('status');
@@ -153,8 +153,8 @@ $(function(){
 	});
 	// 已使用
 	$('.used_filter').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#Quasar');
-		var mvc     = $quasar.attr('data-mvc-name');
+		var $quasar = $('#quasar_script');
+		var mvc     = $quasar.attr('data-url-sys-param');
 		var suffix  = $quasar.attr('data-page-suffix');
 		var link    = new Quasar.UrlClass(1, mvc, suffix);
 		var param   = link.getUrlParam('status');
@@ -168,8 +168,8 @@ $(function(){
 	});
 	// 退费
 	$('.refund_filter').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#Quasar');
-		var mvc     = $quasar.attr('data-mvc-name');
+		var $quasar = $('#quasar_script');
+		var mvc     = $quasar.attr('data-url-sys-param');
 		var suffix  = $quasar.attr('data-page-suffix');
 		var link    = new Quasar.UrlClass(1, mvc, suffix);
 		var param   = link.getUrlParam('status');
@@ -182,8 +182,8 @@ $(function(){
 		}
 	});
 	// 券状态列表（未使用\已使用\退费）
-	var mvc    = $('#Quasar').attr('data-mvc-name');
-	var suffix = $('#Quasar').attr('data-page-suffix');
+	var mvc    = $('#quasar_script').attr('data-url-sys-param');
+	var suffix = $('#quasar_script').attr('data-page-suffix');
 	var link   = new Quasar.UrlClass(1, mvc, suffix);
 	var status   = link.getUrlParam('status');
 	if(status == 1) $('.used_filter').find('.iradio_square-green').addClass('checked');

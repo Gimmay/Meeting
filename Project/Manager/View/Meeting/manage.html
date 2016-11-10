@@ -30,7 +30,7 @@
 <body>
 	<div id="mt_container">
 		<div class="mt_content">
-			<include file="Public/menu"/>
+			<include file="Public/meetingMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/header"/>
 				<div class="main_body">
@@ -152,7 +152,7 @@
 										<div class="col-sm-12">
 											<span class="check_item">
 											<input type="checkbox" class="icheck" value="<{$vo.id}>" placeholder="">
-										</span> <a class="list_img"> <img src="<{$vo.qrcode}>" alt=""> </a>
+										</span> <a class="list_img"> <img src="<{$vo.logo}>" alt=""> </a>
 											<div class="content-box">
 												<h3><span class="meeting_name"><{$vo.name}></span>
 													<switch name="vo.status">
@@ -197,7 +197,7 @@
 															<a href="<{:U('Badge/manage')}>"><i class="glyphicon glyphicon-tags"></i>胸卡设计</a>
 														</li>
 													</if>
-													<li class="fun_li">
+													<li class="fun_li hotel_btn">
 														<a data-toggle="modal" data-target="#choose_hotel"><i class="glyphicon glyphicon-home"></i>选择酒店</a>
 													</li>
 													<li class="fun_li">
@@ -220,7 +220,12 @@
 											<a class="details_btn" data-id="<{$vo.id}>">详情</a>
 										</p>
 										<p class="release1 release_btn">
-											<a class="release_btn" data-id="<{$vo.id}>">发布</a>
+											<if condition="$vo.status eq 1">
+												<a class="release_a" data-id="<{$vo.id}>">发布</a>
+											</if>
+											<if condition="$vo.status eq 2">
+												<a class="cancel_release_a" data-id="<{$vo.id}>">取消发布</a>
+											</if>
 										</p>
 									</li>
 								</volist>
@@ -412,7 +417,7 @@
 						<table class="table table-bordered" style="text-align: center">
 							<thead>
 								<tr>
-									<td width="5%" class="all_check">
+									<td width="5%" class="all_check_h">
 										<input type="checkbox" class="icheck" placeholder="" value="">
 									</td>
 									<td width="5%">序号</td>
@@ -420,7 +425,6 @@
 									<td width="10%">星级</td>
 									<td width="10%">类型</td>
 									<td width="10%">地址</td>
-									<td width="10%">价格</td>
 									<td width="10%">联系方式</td>
 									<td width="10%">简介</td>
 									<td width="20%">备注</td>
@@ -429,15 +433,14 @@
 							<tbody>
 								<volist name="info" id="single">
 									<tr>
-										<td class="check_item">
+										<td class="check_item_h">
 											<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
 										</td>
 										<td><{$i}></td>
 										<td class="hotel_name"><{$single.name}></td>
-										<td data-id="<{$single.id}>"><{$single.name}></td>
+										<td data-id="<{$single.id}>"><{$single.level}></td>
 										<td><{$single.type}></td>
 										<td><{$single.address}></td>
-										<td><{$single.price}></td>
 										<td><a href="<{:U('manage', ['did'=>$single['did']])}>"><{$single.contact}></a>
 										</td>
 										<td><{$single.brief}></td>
@@ -445,8 +448,8 @@
 									</tr>
 								</volist>
 							</tbody>
-
 						</table>
+						<input type="hidden" name="mid">
 						<div class="page_wrap">
 							<div class="pagination">
 								<{$page_show}>

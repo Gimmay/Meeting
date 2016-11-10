@@ -86,6 +86,10 @@
 					'status'  => 'not deleted'
 				]); // 查出一页会议的内容
 				$meeting_list = $meeting_logic->setExtendColumnForManage($meeting_list);
+				/** @var \Core\Model\HotelModel $hotel_model */
+				$hotel_model = D('Core/Hotel');
+				$hotel_result = $hotel_model->findHotel(2,['status'=>'not deleted']);
+				$this->assign('info',$hotel_result);
 				$this->assign('content', $meeting_list); // 赋值数据集
 				$this->assign('page', $show); // 赋值分页输出
 				$this->assign('message', $message);

@@ -23,22 +23,39 @@
 				case 'create':
 					$data = I('post.');
 					/** @var \Core\Model\EmployeeModel $model */
-					$model               = D('Core/Employee');
-					$str_obj             = new StringPlus();
+					$model      = D('Core/Employee');
+					$str_obj    = new StringPlus();
+					$exist_flag = false;
+					if(!empty($data['mobile'])){
+						$exist_record = $model->findEmployee(1, ['mobile' => $data['mobile']]);
+						$exist_flag   = true;
+					}
+					elseif(!empty($data['code'])){
+						$exist_record = $model->findEmployee(1, ['code' => $data['code']]);
+						$exist_flag   = true;
+					}
 					$data['status']      = $data['status'] == 1 ? 0 : (($data['status'] == 0) ? 1 : 1);
 					$data['creatime']    = time();
 					$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
 					$data['password']    = $str_obj->makePassword($data['password'], $data['code']);
 					$data['birthday']    = date('Y-m-d', strtotime($data['birthday']));
-					$result              = $model->createEmployee($data);
-					if($result['status']){
+					if($exist_flag && isset($exist_record)){
+						$result = $model->alterEmployee(['id' => $exist_record['id']], $data);
+						if($result['status']) $employee_id = $exist_record['id'];
+					}
+					else{
+						$result = $model->createEmployee($data);
+						if($result['status']) $employee_id = $result['id'];
+					}
+					if($result['status'] && isset($employee_id)){
+						$result['message'] = '创建成功';
 						/** @var \Core\Model\WeixinIDModel $weixin_model */
 						$weixin_model = D('Core/WeixinID');
 						$logic        = new WxCorpLogic();
 						$wx_list      = $logic->getAllUserList(); //查出wx接口获取的所有用户信息
 						foreach($wx_list as $k1 => $v1){
-							if($v1['mobile'] == $data['mobile']){
+							if($v1['mobile'] == $data['mobile'] && $v1['status'] != 4){
 								C('TOKEN_ON', false);
 								$department = '';
 								foreach($v1['department'] as $v3) $department .= $v3.',';
@@ -46,12 +63,13 @@
 								$data               = [];
 								$data['otype']      = 0;    //对象类型
 								$data['wtype']      = 1;    //微信ID类型 企业号
-								$data['oid']        = $result['id'];    //对象ID
+								$data['oid']        = $employee_id;    //对象ID
 								$data['department'] = $department;    //部门ID
 								$data['weixin_id']  = $v1['userid'];    //微信ID
 								$data['mobile']     = $v1['mobile'];    //手机号码
 								$data['avatar']     = $v1['avatar'];    //头像地址
 								$data['gender']     = $v1['gender'];    //性别
+								$data['is_follow']  = $v1['status'];    //是否关注
 								$data['nickname']   = $v1['name'];    //昵称
 								$data['creatime']   = time();    //创建时间
 								$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者

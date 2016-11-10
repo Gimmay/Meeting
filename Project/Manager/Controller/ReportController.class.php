@@ -14,14 +14,14 @@
 	class ReportController extends ManagerController{
 		public function _initialize(){
 			parent::_initialize();
+			$this->meetingID = $this->initMeetingID($this);
 		}
 
 		public function joinReceivables(){
 			/** @var \Manager\Model\ReportModel $model */
 			$model   = D('Report');
-			$mid     = I('get.mid', 0, 'int');
 			$options = [];
-			if($mid != 0) $options['mid'] = $mid;
+			if($_GET['mid'] != 0) $options['mid'] = $this->meetingID;
 			$total             = $model->getJoinReceivablesList(0, array_merge([
 				'status'  => 'not deleted',
 				'keyword' => I('get.keyword', ''),
@@ -47,10 +47,10 @@
 
 		public function receivablesDetail(){
 			$cid = I('get.cid', 0, 'int');
-			$mid = I('get.mid', 0, 'int');
+			$mid = $this->meetingID;
 			/** @var \Core\Model\ReceivablesModel $receivables_model */
 			$receivables_model = D('Core/Receivables');
-			$list = $receivables_model->findRecord(2, ['cid'=>$cid, 'mid'=>$mid]);
+			$list = $receivables_model->findRecord(2, ['cid'=>$cid, 'mid'=>$this->meetingID]);
 			print_r($list);exit;
 			$this->display();
 		}
@@ -66,9 +66,8 @@
 					$model       = D('Report');
 					$logic       = new ReportLogic();
 					$excel_logic = new ExcelLogic();
-					$mid         = I('get.mid', 0, 'int');
 					$options     = [];
-					if($mid != 0) $options['mid'] = $mid;
+					if(isset($_GET['mid'])) $options['mid'] = $this->meetingID;
 					$list = $model->getJoinReceivablesList(2, array_merge([
 						'status'  => 'not deleted',
 						'keyword' => I('get.keyword', ''),

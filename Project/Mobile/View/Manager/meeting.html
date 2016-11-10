@@ -23,7 +23,7 @@
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
-<body>
+<body style="padding-bottom: 1.2rem">
 	<style scoped>
 		div.btn_sign_ban{
 			background-color : darkgrey;
@@ -44,11 +44,12 @@
 		<div class="mb_body">
 			<div class="topbar">
 				<div class="status">
-					<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="st"> <b><{$statistics.total}></b> <span>报名</span> </a>
-					<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int'), 'sign'=>1])}>" class="st"><b style="font-size: 0.6rem;"><{$statistics.signCount}></b> <span>签到</span> </a>
-					<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int'), 'sign'=>0])}>" class="st"> <b><{$statistics.notSignCount}></b><span>未签到</span> </a>
+					<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="st enroll"> <b><{$statistics.total}></b> <span>报名</span> </a>
+					<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int'), 'sign'=>1])}>" class="st sign"><b style="font-size: 0.6rem;"><{$statistics.signCount}></b> <span>已签到</span> </a>
+					<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int'), 'sign'=>0])}>" class="st unsign"> <b><{$statistics.notSignCount}></b><span>未签到</span> </a>
 				</div>
-				<div class="topbarBg"><img src="<{$Think.COMMON_IMAGE_PATH}>/topbarBg.jpg" alt=""></div>
+				<div class="topbarBg"><img src="<{$Think.COMMON_IMAGE_PATH}>/topbarBg.jpg" alt="bg"></div>
+				<div class="logo"><img src="<{$meeting.logo}>" alt="logo"></div>
 			</div>
 			<div class="content">
 				<div class="myInfor">
@@ -94,8 +95,8 @@
 		</div>
 	</div>
 	<div id="mb_footer">
-		<a href="" class="ft_a"> <i class="glyphicon glyphicon-th-large"></i> <span>会议详情</span> </a>
-		<a href="" class="ft_a"> <i class="glyphicon glyphicon-user"></i> <span>参会人员</span> </a>
+		<a href="<{:U('meeting', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a active"> <i class="glyphicon glyphicon-th-large"></i> <span>会议详情</span> </a>
+		<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"> <i class="glyphicon glyphicon-user"></i> <span>参会人员</span> </a>
 	</div>
 	<script>
 		var ThisObject = {

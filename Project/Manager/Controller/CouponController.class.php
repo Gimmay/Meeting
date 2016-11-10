@@ -9,6 +9,7 @@
 	class CouponController extends ManagerController{
 		public function _initialize(){
 			parent::_initialize();
+			$this->meetingID = $this->initMeetingID($this);
 		}
 
 		public function manage(){
@@ -133,7 +134,7 @@
 			/** @var \Core\Model\ClientModel $client_model */
 			$client_model      = D('Core/Client');
 			$coupon_item_count = $coupon_item_model->findCouponItem(0, [
-				'mid'       => I('get.mid', 0, 'int'),
+				'mid'       => $this->meetingID,
 				'coupon_id' => I('get.id', 0, 'int'),
 				'keyword'   => I('get.keyword', '')
 			]);
@@ -144,7 +145,7 @@
 				'keyword'   => I('get.keyword', ''),
 				'_limit'    => $page_object->firstRow.','.$page_object->listRows,
 				'_order'    => I('get.column', 'creatime').' '.I('get.sort', 'desc'),
-				'mid'       => I('get.mid', 0, 'int'),
+				'mid'       => $this->meetingID,
 				'coupon_id' => I('get.id', 0, 'int'),
 				'status'    => 'not deleted'
 			]);

@@ -27,7 +27,7 @@
 							'age'                => '参会人年龄',
 							'mobile'             => '参会人手机',
 							'price'              => '收款总和',
-							'club'               => '参会人会所',
+							'unit'               => '参会人单位',
 							'accompany'          => '陪同',
 							'accompany_mobile'   => '陪同手机',
 							'team'               => '团队',

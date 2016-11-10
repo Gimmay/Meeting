@@ -3,7 +3,7 @@
  */
 
 var ScriptObject = {
-	roomDetailsTemp :'<tr data-id="$id">'+
+	roomDetailsTemp  :'<tr data-id="$id">'+
 	'	<td>$n</td>'+
 	'	<td>$name</td>'+
 	'	<td>'+
@@ -11,14 +11,40 @@ var ScriptObject = {
 	'	<button type="button" class="btn btn-default btn-sm leave_btn" data-toggle="modal" data-target="#choose_leave_time">退房</button>'+
 	'	<button type="button" class="btn btn-default btn-sm change_btn">换房</button>'+
 	'	</div></td></tr>',
-	roomDetailsTemp2:'<tr data-id="$id">'+
+	roomDetailsTemp2 :'<tr data-id="$id">'+
 	'	<td>$n</td>'+
 	'	<td>$name</td>'+
 	'	<td>'+
 	'	<div class="btn-group">'+
 	'	<button type="button" class="btn btn-default btn-sm leave_btn" disabled>已退房</button>'+
 	'	</div></td></tr>',
+	changeFulltemp   :'<tr><td>$i</td><td>$code</td><td>$situation</td><td><div class="client_list"><span class="c_add">添加</span><span class="c_change">交换</span></div></td></tr>',
+	changeNotFulltemp:'	<tr><td>$i</td><td>$code</td><td>$situation</td><td><div class="client_list full"><span class="c_change">交换</span></div></td></tr>',
+	clientBtnTemp    :'<span>$name</span>'
 };
+function change_room(){
+	$('.change_btn').on('click', function(){
+		var id = $(this).parents('tr').attr('data-id');
+		Common.ajax({
+			data    :{requestType:'change_room', id:id},
+			callback:function(r){
+				console.log(r);
+				$('#change_room').modal('show');
+				var str = '', strBtn = '';
+				$.each(r, function(index, value){
+					console.log(value.client.length);
+					if(value.capacity>value.client.length){
+						alert('123');
+						$.each(value.client, function(index, value){
+							console.log(value);
+							//strBtn+=ScriptObject.clientBtnTemp.replace('$name',value)
+						})
+					}
+				});
+			}
+		});
+	});
+}
 $(function(){
 	// 全选checkbox
 	$('.all_check').find('.iCheck-helper').on('click', function(){
@@ -190,7 +216,7 @@ $(function(){
 	// 保存入住人
 	$('#add_recipient2 .btn_save').on('click', function(){
 		var can_live = $('#add_recipient2').find('.can_live_p').text();
-		var room_id = $('#add_recipient2').find('input[name=room_id]').val();
+		var room_id  = $('#add_recipient2').find('input[name=room_id]').val();
 		var n1       = 0;
 		var str      = [], nameStr = [];
 		$('#add_recipient2 .check_item_m2 .icheckbox_square-green.checked').each(function(){
@@ -207,26 +233,19 @@ $(function(){
 			return false;
 		}else{
 			Common.ajax({
-				data    :{requestType:'choose_client_2', id:str,rid:room_id},
+				data    :{requestType:'choose_client_2', id:str, rid:room_id},
 				callback:function(r){
 					console.log(r);
-					/*$('#change_room').modal('show');
-					 var str = '';*/
-					/*$.each(r,function(index,value){
-					 if(!value.leave_time){
-					 str+=ScriptObject.roomDetailsTemp.replace('$n',index+1).replace('$name',value.name).replace('$id',value.id);
-					 }else{
-					 str+=ScriptObject.roomDetailsTemp2.replace('$n',index+1).replace('$name',value.name).replace('$id',value.id);
-					 }
-					 });
-					 $('#list_c').html(str);
-					 leave_btn();
-					 change_room();*/
+					if(r.status){
+						$('#add_recipient2').modal('hide');
+						ThisObject.object.toast.toast('添加成功！');
+						location.replace(document.referrer); //刷新
+					}else{
+						ThisObject.object.toast.toast('添加失败！');
+					}
 				}
 			});
 		}
-		/*		ThisObject.object.loading.complete();*/
-		/*$('#add_recipient2').modal('hide')*/
 	});
 	/*
 	 *  右侧详情
@@ -310,29 +329,6 @@ function leave_btn(){
 	$('.leave_btn').on('click', function(){
 		var id = $(this).parents('tr').attr('data-id');
 		$('#choose_leave_time').find('input[name=id]').val(id);
-	});
-}
-function change_room(){
-	$('.change_btn').on('click', function(){
-		var id = $(this).parents('tr').attr('data-id');
-		Common.ajax({
-			data    :{requestType:'change_room', id:id},
-			callback:function(r){
-				console.log(r);
-				$('#change_room').modal('show');
-				var str = '';
-				/*$.each(r,function(index,value){
-				 if(!value.leave_time){
-				 str+=ScriptObject.roomDetailsTemp.replace('$n',index+1).replace('$name',value.name).replace('$id',value.id);
-				 }else{
-				 str+=ScriptObject.roomDetailsTemp2.replace('$n',index+1).replace('$name',value.name).replace('$id',value.id);
-				 }
-				 });
-				 $('#list_c').html(str);
-				 leave_btn();
-				 change_room();*/
-			}
-		});
 	});
 }
 function checkAssign(){

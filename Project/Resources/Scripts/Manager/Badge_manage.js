@@ -42,7 +42,7 @@ var badgeManage = {
 			var meeting_name_id = $('.vote_list').find('.meeting_name').attr('data-id');
 			var time_id         = $('.vote_list').find('.time').attr('data-id');
 			var sign_place_id   = $('.vote_list').find('.sign_place').attr('data-id');
-			var club_id         = $('.vote_list').find('.club').attr('data-id');
+			var unit_id         = $('.vote_list').find('.unit').attr('data-id');
 			var brief_id        = $('.vote_list').find('.brief').attr('data-id');
 			var badge_name = $('input[name=badge_name]').val();
 			var data            = {
@@ -56,7 +56,7 @@ var badgeManage = {
 						meetingName:meeting_name_id,
 						meetingTime:time_id,
 						signPlace  :sign_place_id,
-						club       :club_id,
+						unit       :unit_id,
 						brief      :brief_id,
 						name:badge_name
 					}
@@ -158,10 +158,10 @@ var badgeManage = {
 		}else{
 			$vote_list.find('.sign_place').attr('data-id', 1)
 		}
-		if($vote_list.find('.club').hasClass('no_choose')){
-			$vote_list.find('.club').attr('data-id', 0)
+		if($vote_list.find('.unit').hasClass('no_choose')){
+			$vote_list.find('.unit').attr('data-id', 0)
 		}else{
-			$vote_list.find('.club').attr('data-id', 1)
+			$vote_list.find('.unit').attr('data-id', 1)
 		}
 		if($vote_list.find('.brief').hasClass('no_choose')){
 			$vote_list.find('.brief').attr('data-id', 0)

@@ -57,7 +57,7 @@
 					$data['data'] = str_replace('客户姓名', $option['client']['name'], $data['data']);
 					$data['data'] = str_replace('会议名称', $option['meeting']['name'], $data['data']);
 					$data['data'] = str_replace('会议名称', $option['meeting']['name'], $data['data']);
-					$data['data'] = str_replace('会所', $option['client']['club'], $data['data']);
+					$data['data'] = str_replace('单位', $option['client']['unit'], $data['data']);
 					$data['data'] = str_replace('会议简介', $option['meeting']['brief'], $data['data']);
 					$data['data'] = str_replace('会议时间', $option['meeting']['start_time'].' - '.$option['meeting']['end_time'], $data['data']);
 					$data['data'] = str_replace(COMMON_IMAGE_PATH.'/CheckIn_Code.jpg', $option['client']['sign_qrcode'], $data['data']);

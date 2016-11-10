@@ -55,7 +55,7 @@
 								<form action="" method="get">
 									<div class="input-group repertory_text">
 										<input name="p" type="hidden" value="1">
-										<input type="search" name="keyword" class="form-control" placeholder="客户名称/会议名称/手机号/会所名称/拼音简码" value="<{:I('get.keyword', '')}>">
+										<input type="search" name="keyword" class="form-control" placeholder="客户名称/会议名称/手机号/单位名称/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default mian_search">搜索</button>
 									</span>
@@ -75,7 +75,7 @@
 											<label><input type="checkbox" checked>性别&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>年龄&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>电话&nbsp;&nbsp;</label>
-											<label><input type="checkbox" checked>会所&nbsp;&nbsp;</label>
+											<label><input type="checkbox" checked>单位&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>收款金额&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>陪同人&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>陪同电话&nbsp;&nbsp;</label>
@@ -100,7 +100,7 @@
 													<th style=" width: 60px;" data-column="gender">性别</th>
 													<th style=" width: 60px;" data-column="age">年龄</th>
 													<th style=" width: 80px;" data-column="mobile">电话</th>
-													<th style=" width: 100px;" data-column="club">会所</th>
+													<th style=" width: 100px;" data-column="unit">单位</th>
 													<th style=" width: 100px;" data-column="price">收款金额</th>
 													<th style=" width: 90px;" data-column="accompany">陪同人</th>
 													<th style=" width: 100px;" data-column="accompany_mobile">陪同电话</th>
@@ -129,7 +129,7 @@
 														</td>
 														<td><{$single.age}></td>
 														<td><{$single.mobile}></td>
-														<td><{$single.club}></td>
+														<td><{$single.unit}></td>
 														<td>
 															<present name="single.price">
 																<a href="<{:U('receivablesDetail', ['cid'=>$single['cid'], 'mid'=>$single['mid']])}>" class="link color-red">￥<{$single.price}></a>

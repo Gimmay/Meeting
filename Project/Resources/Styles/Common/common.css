@@ -689,13 +689,13 @@ textarea{
 }
 
 .mt_wrapper .right_details .d_con .btn_fun a{
-	float        : left;
-	display      : inline-block;
-	margin-right : 10px;
-	margin-bottom: 10px;
-	padding      : 8px 20px;
-	color        : #FFFFFF;
-	background   : #00A0E8;
+	float         : left;
+	display       : inline-block;
+	margin-right  : 10px;
+	margin-bottom : 10px;
+	padding       : 8px 20px;
+	color         : #FFFFFF;
+	background    : #00A0E8;
 }
 
 .mt_wrapper .right_details .d_con .d_list{
@@ -759,7 +759,7 @@ textarea{
 .function_list .function_btn{
 	position      : relative;
 	width         : 100px;
-	height        : 58px;
+	height        : 38px;
 	border-radius : 4px;
 	float         : left;
 	margin        : 10px 20px 10px 0;
@@ -769,7 +769,7 @@ textarea{
 
 .function_list .function_btn p{
 	text-align  : center;
-	line-height : 58px;
+	line-height : 38px;
 	color       : #FFFFFF;
 }
 
@@ -854,16 +854,17 @@ textarea{
 	color     : red;
 }
 
-.table_length {
-	padding-top: 10px;
-	font-size: 14px;
-}
-.table_length > select {
-	width: 100px;
-	height: 30px;
-	line-height: 50px;
+.table_length{
+	padding-top   : 10px;
+	padding-right : 10px;
+	font-size     : 14px;
 }
 
+.table_length > select{
+	width       : 100px;
+	height      : 30px;
+	line-height : 50px;
+}
 
 /** 时间插件层级 **/
 #jedatebox{

@@ -121,141 +121,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- 添加收款 -->
-	<div class="modal fade" id="add_receivables" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">收款</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
-					<input type="hidden" name="requestType" value="create"> <input type="hidden" name="mid" value="">
-					<input type="hidden" name="cid" value="">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="client_name" class="col-sm-2 control-label">客户姓名：</label>
-							<div class="col-sm-10">
-								<input type="text" id="client_name" class="form-control" value="<{$meeting_info.name}>" disabled>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="price" class="col-sm-2 control-label">金额：</label>
-							<div class="col-sm-10">
-								<input type="number" name="price" id="price" class="form-control">
-								<div id="idCalculadora" class="hide clearfix">
-									<div id="calcuator">
-										<input type="text" id="input-box" value="0" size="21" maxlength="21" readonly="readonly"/>
-										<div id="btn-list">
-											<div onclick="operator('clear')" class=" btn-30 btn-radius color-red clear-marginleft">C</div>
-											<div onclick="operator('opposite')" class=" btn-30 btn-radius color-blue">+/-</div>
-											<div onclick="operator('percent')" class=" btn-30 btn-radius color-blue">%</div>
-											<div onclick="operator('backspace')" class=" btn-70 btn-radius color-red font-14">←</div>
-											<div onclick="typetoinput('7')" class=" btn-30 btn-radius clear-marginleft">7</div>
-											<div onclick="typetoinput('8')" class=" btn-30 btn-radius">8</div>
-											<div onclick="typetoinput('9')" class=" btn-30 btn-radius">9</div>
-											<div onclick="operator('plus')" class=" btn-30 btn-radius color-blue font-14">+</div>
-											<div onclick="operator('minus')" class=" btn-30 btn-radius color-blue font-14">-</div>
-											<div onclick="typetoinput('4')" class=" btn-30 btn-radius clear-marginleft">4</div>
-											<div onclick="typetoinput('5')" class=" btn-30 btn-radius">5</div>
-											<div onclick="typetoinput('6')" class=" btn-30 btn-radius">6</div>
-											<div onclick="operator('multiply')" class=" btn-30 btn-radius color-blue font-14">×</div>
-											<div onclick="operator('divide')" class=" btn-30 btn-radius color-blue font-12">÷</div>
-											<div onclick="typetoinput('1')" class=" btn-30 btn-radius clear-marginleft">1</div>
-											<div onclick="typetoinput('2')" class=" btn-30 btn-radius">2</div>
-											<div onclick="typetoinput('3')" class=" btn-30 btn-radius">3</div>
-											<div onclick="operator('pow')" class=" btn-30 btn-radius color-blue font-14">×²</div>
-											<div onclick="operator('sqrt')" class=" btn-30 btn-radius color-blue font-12">√</div>
-											<div onclick="typetoinput('0')" class=" btn-70 btn-radius clear-marginleft">0</div>
-											<div onclick="typetoinput('.')" class=" btn-30 btn-radius">.</div>
-											<div onclick="operator('result')" class=" btn-70 btn-radius color-red font-14 equal">=</div>
-										</div>
-										<div class="close_calcuator">
-											<button type="button" class="btn btn-default btn-sm">关闭</button>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="method" class="col-sm-2 control-label">支付方式：</label>
-							<div class="col-sm-10">
-								<div id="method"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="type" class="col-sm-2 control-label">收款类型：</label>
-							<div class="col-sm-10">
-								<div id="type"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="payee_id" class="col-sm-2 control-label">收款人：</label>
-							<div class="col-sm-10">
-								<div id="payee_id"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">代金券：</label>
-							<div class="col-sm-10">
-								<div class="coupon_area ">
-									<div class="coupon_box">
-										<div class="coupon_list">
-											<if condition="$coupon_item">
-												<volist name="coupon_item" id="list">
-													<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="<{$list.id}>"><{$list.code}></a>
-												</volist>
-												<else/>
-												<div style="padding: 10px; text-align: center; font-size: 14px; color: rgba(0,0,0,.72)">&lt;无代金券可用&gt;</div>
-											</if>
-										</div>
-									</div>
-								</div>
-							</div>
-							<input type="hidden" name="coupon_code">
-						</div>
 
-						<div class="form-group">
-							<label for="place" class="col-sm-2 control-label">收款地点：</label>
-							<div class="col-sm-10">
-								<input type="text" name="place" id="place" class="form-control">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="source_type" class="col-sm-2 control-label">来源状态：</label>
-							<div class="col-sm-10">
-								<select name="source_type" id="source_type" class="form-control">
-									<option value="0">会前收款</option>
-									<option value="1">会中收款</option>
-									<option value="2">会后收款</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="time" class="col-sm-2 control-label">收款时间：</label>
-							<div class="col-sm-10">
-								<div class="input-group date form_datetime" id="time">
-									<input class="form-control" id="receivables_time" name="receivables_time" value="<{$time|date=" Y-m-d H:i",###}>">
-									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="comment" class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-10">
-								<textarea class="form-control comment" name="comment" id="comment"></textarea>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
 	<!-- 修改收款 -->
 	<div class="modal fade" id="alter_receivables" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -270,7 +136,7 @@
 					<input type="hidden" name="requestType" value="alter">
 					<div class="modal-body">
 						<div class="form-group">
-							<label for="client_name" class="col-sm-2 control-label">客户姓名：</label>
+							<label for="client_name_a" class="col-sm-2 control-label">客户姓名：</label>
 							<div class="col-sm-10">
 								<input type="text" id="client_name_a" class="form-control" value="<{$meeting_info.name}>" disabled>
 							</div>
@@ -338,7 +204,7 @@
 						<div class="form-group">
 							<label for="receivables_time_a" class="col-sm-2 control-label">收款时间：</label>
 							<div class="col-sm-10">
-								<input class="form-control" id="receivables_time_a" name="receivables_time" value="<{$time|date=" Y-m-d H:i",###}>">
+								<input class="form-control" id="receivables_time_a" name="receivables_time" value="<{$time|date='Y-m-d H:i:s',###}>">
 							</div>
 						</div>
 						<div class="form-group">
@@ -381,30 +247,12 @@
 	<script>
 		var ManageObject = {
 			object:{
-				method     :$('#method').QuasarSelect({
-					name        :'method',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting)}>',
-					idInput     :'selected_method',
-					idHidden    :'selected_method_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
 				methoda    :$('#method_a').QuasarSelect({
 					name        :'method',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting)}>',
 					idInput     :'selected_method_a',
 					idHidden    :'selected_method_a_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				type       :$('#type').QuasarSelect({
-					name        :'type',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting)}>',
-					idInput     :'selected_type',
-					idHidden    :'selected_type_form',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
@@ -433,17 +281,6 @@
 					idInput     :'selected_client_name',
 					idHidden    :'selected_client_name_form',
 					placeholder :'',
-					hasEmptyItem:false
-				}),
-				payeeName  :$('#payee_id').QuasarSelect({
-					name        :'payee_id',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($employee_list)}>',
-					idInput     :'selected_payeeName',
-					idHidden    :'selected_payeeName_form',
-					placeholder :'',
-					defaultValue:'<{$employee_info[id]}>',
-					defaultHtml :'<{$employee_info[code]}>'+' - '+'<{$employee_info[name]}>',
 					hasEmptyItem:false
 				}),
 				payeeNameA  :$('#payee_id_a').QuasarSelect({

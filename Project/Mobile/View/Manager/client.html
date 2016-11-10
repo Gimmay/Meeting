@@ -23,7 +23,7 @@
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
-	<div id="mb_wrap">
+	<div id="mb_wrap" style="padding-bottom: 1rem">
 		<div class="mb_body">
 			<div class="topbar">
 				<div class="topbarBg"><img src="<{$Think.COMMON_IMAGE_PATH}>/topbarBg.jpg" alt=""></div>
@@ -45,7 +45,7 @@
 						</span>
 					</div>
 					<div class="li">
-						<span class="lab">会&nbsp;&nbsp;&nbsp;&nbsp;所：</span> <span><{$info.club}></span>
+						<span class="lab">单&nbsp;&nbsp;&nbsp;&nbsp;位：</span> <span><{$info.unit}></span>
 					</div>
 					<div class="li">
 						<span class="lab">手机号：</span> <span><{$info.mobile}></span>
@@ -54,36 +54,35 @@
 			</div>
 		</div>
 	</div>
+	<!-- 客户ID值-->
+	<input type="hidden" name="client_id" value="<{:I('get.cid',0,'int')}>" id="h_cid">
+	<!-- 会议ID值-->
+	<input type="hidden" name="meeting_id" value="<{:I('get.mid',0,'int')}>" id="h_mid">
 	<div id="mb_footer">
-		<if condition="$list.review_status neq 1">
-			<a href="javascript:void(0)" class="ft_a tri_c">
-				<form role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="examine"><input type="hidden" name="id">
-					<i class="glyphicon glyphicon-unchecked"></i> <span>审核</span>
-				</form>
-			</a>
-			<else/>
-			<a href="javascript:void(0)" class="ft_a">
-
-				<input type="hidden" name="requestType" value="examine"><input type="hidden" name="id">
-				<i class="glyphicon glyphicon-unchecked"></i> <span>已审核</span>
-
-			</a>
+		<if condition="$list.review_status neq 1 and $list.sign_status neq 1">
+			<a href="javascript:void(0)" class="ft_a auditing"> <span>审核</span> </a>
+			<a href="javascript:void(0)" class="ft_a sign" style="display: none"> <span>签到</span> </a>
 		</if>
-		<if condition="$list.review_status eq 1 "><a href="javascript:void(0)" class="ft_a tri_c">
-
-			<input type="hidden" name="requestType" value="examine"><input type="hidden" name="id">
-			<i class="glyphicon glyphicon-unchecked"></i> <span>已签到</span>
-
-		</a>
-			<else/>
-			<a href="javascript:void(0)" class="ft_a">
-				<form role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="sign"><input type="hidden" name="id">
-					<i class="glyphicon glyphicon-unchecked"></i> <span>签到</span>
-				</form>
-			</a>
+		<if condition="$list.review_status neq 1 and $list.sign_status eq 1">
+			<a href="javascript:void(0)" class="ft_a auditing"> <span>审核</span> </a>
+			<a href="javascript:void(0)" class="ft_a sign" style="display: none"> <span>签到</span> </a>
+		</if>
+		<if condition="$list.review_status eq 1 and $list.sign_status neq 1">
+			<a href="javascript:void(0)" class="ft_a auditing not"> <span>取消审核</span> </a>
+			<a href="javascript:void(0)" class="ft_a sign"> <span>签到</span> </a>
+		</if>
+		<if condition="$list.review_status eq 1 and $list.sign_status eq 1">
+			<a href="javascript:void(0)" class="ft_a auditing not"> <span>取消审核</span> </a>
+			<a href="javascript:void(0)" class="ft_a sign not"> <span>取消签到</span> </a>
 		</if>
 	</div>
+	<script>
+		var ManageObject = {
+			object:{
+				toast  :$().QuasarToast(),
+				loading:$().QuasarLoading()
+			}
+		}
+	</script>
 </body>
 </html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta id="viewport" name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>添加参会人员</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/mobile_common.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/mobile_rem.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mb_wrap" style="padding-bottom: 0.8rem">
+		<form action="" method="post" id="form">
+			<div class="mb_body">
+				<div class="content">
+					<ul class="info_list">
+						<li class="info_li">
+							<div class="item">
+								<span class="labe"><b style="vertical-align: middle;color: red;">*</b>姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名:</span>
+								<div class="inp">
+									<input type="text" name="name">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别:</span>
+								<div>
+									<select name="gender" id="gender">
+										<option value="0">未知</option>
+										<option value="1">男</option>
+										<option value="2">女</option>
+									</select>
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">出生日期:</span>
+								<div>
+									<input type="date" name="birthday" value="1990-01-01">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe"><b style="vertical-align: middle;color: red;">*</b>手机号:</span>
+								<div class="inp">
+									<input type="text" name="mobile">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe"><b style="vertical-align: middle;color: red;">*</b>单位名称:</span>
+								<div class="inp">
+									<input type="text" name="unit">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">开拓顾问:</span>
+								<div class="inp">
+									<input type="text" name="develop_consultant">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">服务顾问:</span>
+								<div class="inp">
+									<input type="text" name="service_consultant">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">陪同人姓名:</span>
+								<div class="inp">
+									<input type="text" name="accompany">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">陪同人手机:</span>
+								<div class="inp">
+									<input type="text" class="accompany_mobile">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">报名时间:</span>
+								<div class="inp">
+									<input type="datetime" name="registration_date">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">备注:</span>
+								<div>
+									<textarea name="comment"></textarea>
+								</div>
+							</div>
+						</li>
+						<input type="hidden" name="requestType" value="create_client"> <input type="hidden" name="mid" value="<{:I('get.mid', 0, 'int')}>">
+					</ul>
+				</div>
+				<div class="submit">
+					<button type="submit">提交</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script>
+		var ThisObject = {
+			object:{
+				toast:$().QuasarToast()
+			}
+		}
+	</script>
+</body>
+</html>

@@ -64,7 +64,7 @@
 			if(isset($filter['sign_status'])) $where['sign_status'] = $filter['sign_status'];
 			if(isset($filter['review_status'])) $where['review_status'] = $filter['review_status'];
 			if(isset($filter['keyword']) && $filter['keyword']){
-				$condition['club']        = ['like', "%$filter[keyword]%"];
+				$condition['unit']        = ['like', "%$filter[keyword]%"];
 				$condition['mobile']      = ['like', "%$filter[keyword]%"];
 				$condition['name']        = ['like', "%$filter[keyword]%"];
 				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];

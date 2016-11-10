@@ -19,33 +19,15 @@
 		protected $meetingID  = 0;
 
 		public function _initialize(){
+//			session_unset();
+//			session_destroy();
+//			echo '<h1>已清除缓存</h1>';
+//			exit;
 //			$_SESSION['MOBILE_WEIXIN_ID']   = 1090;
 //			$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
 			parent::_initialize();
 			$meeting_logic = new MeetingLogic();
 			$meeting_logic->initializeStatus();
-		}
-
-		private function _getWeixinID($redirect = true){
-			if(!isset($_SESSION['MOBILE_WEIXIN_ID'])){
-				$wxcorp_logic   = new WxCorpLogic();
-				$weixin_user_id = $wxcorp_logic->getUserID();
-				if($weixin_user_id){
-					session('MOBILE_WEIXIN_ID', $weixin_user_id);
-
-					return true;
-				}
-				else{
-					if($redirect) $this->redirect('Weixin/isNotFollow');
-
-					return false;
-				}
-			}
-			else{
-				$this->weixinID = I('session.MOBILE_WEIXIN_ID', 0, 'int');
-
-				return true;
-			}
 		}
 
 		private function _getMeetingParam($redirect = true){
@@ -76,56 +58,87 @@
 			else return true;
 		}
 
+		public function addClient(){
+			$logic = new ManagerLogic();
+			if(IS_POST){
+				$type   = 'addClient:create_create';
+				$result = $logic->handlerRequest($type, ['employeeID' => I('session.MOBILE_EMPLOYEE_ID', 0, 'int')]);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']) $this->success($result['message'], U('clientList', ['mid'=>I('get.mid', 0, 'int')]));
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
+			}
+			$this->display();
+		}
+
 		public function client(){
-			$this->_getWeixinID();
+			$this->weixinID = $this->getWeixinID();
 			$this->_getEmployeeID();
 			$this->_getMeetingParam();
 			$logic = new ManagerLogic();
 			if(IS_POST){
 				$type   = (I('post.requestType', ''));
 				$result = $logic->handlerRequest($type, ['eid' => $this->employeeID]);
-				if($result === -1){
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
 				}
 				else{
+					unset($result['__ajax__']);
 					if($result['status']) $this->success($result['message']);
 					else $this->error($result['message'], '', 3);
 				}
 				exit;
 			}
 			$permission_logic = new PermissionLogic();
-			$permission       = $permission_logic->hasPermission('WEIXIN.VIEW-CLIENT', $this->employeeID);
+			$permission       = $permission_logic->hasPermission('WEIXIN.CLIENT.VIEW', $this->employeeID);
 			if($permission){
 				$client_logic = new ClientLogic();
 				$cid          = I('get.cid', 0, 'int');
-			/** @var \Core\Model\JoinModel $join_model */
+				$mid          = I('get.mid', 0, 'int');
+				/** @var \Core\Model\JoinModel $join_model */
 				$join_model = D('Core/Join');
-			$join_result = $join_model->findRecord(1,['cid'=>$cid,'mid'=>I('get.mid',0,'int')]);
-
-				$info         = $client_logic->getClientInformation($cid);
-				$this->assign('list',$join_result);
+				/** @var \Core\Model\MeetingModel $meeting_model */
+				$meeting_model = D('Core/Meeting');
+				$join_result   = $join_model->findRecord(1, ['cid' => $cid, 'mid' => $mid]);
+				$info          = $client_logic->getClientInformation($cid);
+				$meeting       = $meeting_model->findMeeting(1, ['id' => $mid]);
+				$this->assign('list', $join_result);
 				$this->assign('info', $info);
+				$this->assign('meeting', $meeting);
 				$this->display();
 			}
 			else $this->redirect('Error/notPermission');
 		}
 
 		public function clientList(){
-			$logic = new ManagerLogic();
-			//$this->_getWeixinID();
-			//$this->_getMeetingParam();
-			$client_list = $logic->findData('clientList:find_client_list', ['mid'=>I('get.mid',0,'int')]);
-			$this->assign('client_list',$client_list);
+			$this->weixinID = $this->getWeixinID();
+			$this->_getMeetingParam();
+			$logic       = new ManagerLogic();
+			$client_list = $logic->findData('clientList:find_client_list', ['mid' => I('get.mid', 0, 'int')]);
+			if(!isset($_GET['sign'])) $title = '所有参会人员';
+			elseif(I('get.sign',0,'int')===0) $title = '未签到人员';
+			elseif(I('get.sign',0,'int')===1) $title = '已签到人员';
+			else $title = '参会人员';
+			$this->assign('title', $title);
+			$this->assign('client_list', $client_list);
 			$this->display();
 		}
 
 		public function meetingList(){
-			$this->_getWeixinID();
+			$this->weixinID = $this->getWeixinID();
 			$this->_getEmployeeID();
 			/** @var \Core\Model\MeetingModel $meeting_model */
 			$meeting_model = D('Core/Meeting');
 			$logic         = new ManagerLogic();
 			$meeting_list  = $meeting_model->findMeeting(2, ['status' => 'not deleted']);
-			$meeting_list  = $logic->setData('meetingList', $meeting_list);
+			$meeting_list  = $logic->setData('meetingList:set_meeting_list', $meeting_list);
 			$this->assign('meeting_list', $meeting_list);
 			$this->display();
 		}
@@ -139,13 +152,18 @@
 				'id'     => I('get.mid', 0, 'int')
 			]);
 			$meeting_info  = $logic->setData('meeting:set_extend_column', $meeting_info);
-			$statistics = $logic->setData('meeting:set_statistics_data', $meeting_info);
+			$statistics    = $logic->setData('meeting:set_statistics_data', $meeting_info);
 			$this->assign('meeting', $meeting_info);
 			$this->assign('statistics', $statistics);
 			$this->display();
 		}
 
 		public function myCenter(){
+			$this->weixinID = $this->getWeixinID();
+			$this->_getEmployeeID();
+			$logic = new ManagerLogic();
+			$info  = $logic->getEmployeeInformation($this->employeeID);
+			$this->assign('info', $info);
 			$this->display();
 		}
 	}

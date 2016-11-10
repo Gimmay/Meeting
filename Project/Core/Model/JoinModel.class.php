@@ -17,6 +17,10 @@
 			parent::_initialize();
 		}
 
+		public function isJoin($meeting_id, $client_id){
+			return $this->where(['mid' => $meeting_id, 'cid' => $client_id])->find();
+		}
+
 		public function createRecord($data){
 			if($this->create($data)){
 				try{
@@ -57,7 +61,7 @@
 				else $where['review_status'] = $filter['review_status'];
 			}
 			if(isset($filter['keyword']) && $filter['keyword']){
-				$condition['club']        = ['like', "%$filter[keyword]%"];
+				$condition['unit']        = ['like', "%$filter[keyword]%"];
 				$condition['mobile']      = ['like', "%$filter[keyword]%"];
 				$condition['name']        = ['like', "%$filter[keyword]%"];
 				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
@@ -78,24 +82,24 @@
 				break;
 				case 1: // find
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid')->find();
-						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid')->find();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status')->find();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status')->find();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->where($where)->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid')->find();
-						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->where($where)->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid')->find();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->where($where)->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status')->find();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->where($where)->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status')->find();
 					}
 				break;
 				case 2: // select
 				default:
 					if(!isset($filter['_order'])) $filter['_order'] = 'main.creatime desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid')->select();
-						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid')->select();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status')->select();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status')->select();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->where($where)->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid')->select();
-						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->where($where)->order($filter['_order'])->field('sub.*, registration_date,registration_type,  review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid')->select();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->where($where)->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status')->select();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->where($where)->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status')->select();
 					}
 				break;
 			}

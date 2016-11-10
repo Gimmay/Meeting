@@ -10,7 +10,7 @@
 	padding    : 11px 0.2rem;
 	width      : 100%;
 	background : #FFFFFF;
-	z-index: 99;
+	z-index    : 99;
 }
 
 .toptab .nav{
@@ -46,18 +46,19 @@
 	width         : 100%;
 	position      : relative;
 	margin-bottom : 0.1rem;
-	background : #FFFFFF;
+	background    : #FFFFFF;
 }
 
 .list .li .meeting_name{
-	display    : block;
-	padding    : 0.2rem 0.4rem;
-	font-size  : 0.33rem;
+	display   : block;
+	padding   : 0.2rem 0.4rem;
+	font-size : 0.33rem;
 }
-.list .li .time {
-	display    : block;
-	padding    : 0.2rem 0.5rem;
-	color : rgba(0,0,0,.6);
+
+.list .li .time{
+	display : block;
+	padding : 0.2rem 0.5rem;
+	color   : rgba(0, 0, 0, .6);
 }
 
 .list .li .status{
@@ -66,7 +67,7 @@
 	right         : 5px;
 	font-size     : 0.12rem;
 	border-radius : 2px;
-	padding       : 0.05rem;
+	padding       : 0.08rem;
 	box-shadow    : 1px 1px 1px rgba(0, 0, 0, .1);
 }
 
@@ -74,11 +75,13 @@
 	background : #00DD30;
 	color      : #FFFFFF;
 }
+
 .list .li .status.release{
 	background : #00A0E8;
 	color      : #FFFFFF;
 }
-.list .li .status.complete {
+
+.list .li .status.complete{
 	background : silver;
 	color      : #FFFFFF;
 }

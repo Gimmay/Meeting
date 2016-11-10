@@ -62,7 +62,7 @@
 //noinspection JSUnusedGlobalSymbols
 /**
  * 自定义通用JS工具
- * *若需要用到UrlClass并且URL模式为PATHINFO的话，可以在载入该js文件的标签内写入data-mvc-name的属性键入需要排除的关键值
+ * *若需要用到UrlClass并且URL模式为PATHINFO的话，可以在载入该js文件的标签内写入data-url-sys-param的属性键入需要排除的关键值
  *
  * @author Quasar
  * @version 2.20

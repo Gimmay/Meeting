@@ -12,6 +12,7 @@
 	class BadgeController extends ManagerController{
 		public function _initialize(){
 			parent::_initialize();
+			$this->meetingID = $this->initMeetingID($this);
 		}
 
 		public function manage(){
@@ -52,11 +53,9 @@
 			/** @var \Core\Model\JoinModel $join_model */
 			$join_model = D('Core/Join');
 			$logic = new BadgeLogic();
-			$mid    = I('get.mid', 0, 'int');
 			$cid    = I('get.cid', 0, 'int');
-
-			$meeting_record = $meeting_model->findMeeting(1, ['id'=>$mid]);
-			$client_record = $join_model->findRecord(1, ['mid'=>$mid, 'cid'=>$cid]);
+			$meeting_record = $meeting_model->findMeeting(1, ['id'=>$this->meetingID]);
+			$client_record = $join_model->findRecord(1, ['mid'=>$this->meetingID, 'cid'=>$cid]);
 			$info  = $model->findBadge(1, ['id' => $meeting_record['bid']]);
 			$info = $logic->setData('preview:init_temp', $info, ['client'=>$client_record, 'meeting'=>$meeting_record]);
 			$this->assign('info', $info);

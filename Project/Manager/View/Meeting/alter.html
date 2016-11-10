@@ -173,6 +173,18 @@
 									</div>
 								</div>
 								<div class="form-group">
+									<label for="meeting_sign_start_time" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>签到开始时间：</label>
+									<div class="col-sm-11">
+										<input class="form-control" id="meeting_sign_start_time" name="sign_start_time" value="<{$info.sign_start_time}>">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="meeting_sign_end_time" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>签到结束时间：</label>
+									<div class="col-sm-11">
+										<input class="form-control" id="meeting_sign_end_time" name="sign_end_time" value="<{$info.sign_end_time}>" >
+									</div>
+								</div>
+								<div class="form-group">
 									<label for="director_id" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>负责人：</label>
 									<div class="col-sm-11">
 										<div id="director_id"></div>
@@ -321,6 +333,20 @@
 				}),
 				meetingEndTime        :jeDate({
 					dateCell:"#meeting_end_time",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					isTime  :true, //isClear:false,// 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
+				}),
+				meetingSignStartTime        :jeDate({
+					dateCell:"#meeting_sign_start_time",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					isTime  :true, //isClear:false,// 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
+				}),
+				meetingSignEndTime        :jeDate({
+					dateCell:"#meeting_sign_end_time",
 					format  :"YYYY-MM-DD hh:mm:ss",
 					isTime  :true, //isClear:false,// 时分秒--true
 					/*	minDate :"2015-10-19 00:00:00",

@@ -189,6 +189,11 @@
 						'status' => 'not deleted'
 					]);
 					$data['director'] = $director['name'];
+					$sign_start_time  = strtotime($data['sign_start_time']);
+					$sign_end_time    = strtotime($data['sign_end_time']);
+					$cur_time         = time();
+					if($cur_time>=$sign_start_time && $cur_time<=$sign_end_time) $data['can_sign'] = 1;
+					else $data['can_sign'] = 0;
 
 					return $data;
 				break;

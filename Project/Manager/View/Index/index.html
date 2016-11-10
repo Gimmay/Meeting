@@ -3,14 +3,27 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>登入 - 会议系统</title>
+	<title>会议模块 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<!--<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/custom.css">-->
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/md5/jQuery.md5.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -21,9 +34,179 @@
 			<div class="mt_wrapper">
 				<include file="Public/header"/>
 				<div class="main_body">
+					<section class="content">
+						<div class="table_wrap">
+							<header class="title">11月份启动大会</header>
+							<div class="modular clearfix">
+								<div class="m_item">
+									<div class="m_content" style="background: #46B9CB">
+										<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;参会人员统计</h3>
+										<div class="desc">
+											<p>报名人数：130人</p>
+										</div>
+										<div class="foot"><a href="">查看详情</a></div>
+									</div>
+								</div>
+								<div class="m_item">
+									<div class="m_content" style="background: #FF6633">
+										<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;签到情况</h3>
+										<div class="desc">
+											<p>已签到：130人</p>
+											<p>未签到：130人</p>
+										</div>
+										<div class="foot"><a href="">查看详情</a></div>
+									</div>
+								</div>
+								<div class="m_item">
+									<div class="m_content" style="background: #ED5565">
+										<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;住房情况</h3>
+										<div class="desc">
+											<p>已安排：130人</p>
+											<p>未安排：130人</p>
+										</div>
+										<div class="foot"><a href="">查看详情</a></div>
+									</div>
+								</div>
+								<div class="m_item">
+									<div class="m_content" style="background: #F8AC59">
+										<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;收款情况</h3>
+										<div class="desc">
+											<p>已收款：130人</p>
+											<p>未收款：130人</p>
+										</div>
+										<div class="foot"><a href="">查看详情</a></div>
+									</div>
+								</div>
+								<div class="m_item">
+									<div class="m_content" style="background: #28B778">
+										<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;购券情况</h3>
+										<div class="desc">
+											<p>已购买：130人</p>
+											<p>未购买：130人</p>
+										</div>
+										<div class="foot"><a href="">查看详情</a></div>
+									</div>
+								</div>
+								<div class="m_item">
+									<div class="m_content" style="background: #2254A5">
+										<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;消息发送情况</h3>
+										<div class="desc">
+											<p>已发送微信企业号：130人</p>
+											<p>未发送短信：130人</p>
+										</div>
+										<div class="foot"><a href="">查看详情</a></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+				</div>
+				<div class="right_details">
+					<div class="d_con">
+						<span class="close_btn glyphicon glyphicon-remove">
+						</span>
+						<div class="title">
+							<span>详情</span>
+						</div>
+						<div class="info">
+							<div class="li">
+								<span>会议名称：</span> <span class="meeting_name"></span>
+							</div>
+							<div class="li">
+								<span>状态：</span> <span class="status"></span>
+							</div>
+							<div class="li">
+								<span>类型：</span> <span class="type"></span>
+							</div>
+							<div class="li">
+								<span>主办方：</span> <span class="host"></span>
+							</div>
+							<div class="li">
+								<span>策划方：</span> <span class="plan"></span>
+							</div>
+							<div class="li">
+								<span>举办地点：</span> <span class="place"></span>
+							</div>
+							<div class="li">
+								<span>会议酒店：</span> <span class="hotel"></span>
+							</div>
+							<div class="li">
+								<span>会议车辆：</span> <span class="car"></span>
+							</div>
+							<div class="li">
+								<span>开始结束时间：</span> <span class="setime"></span>
+							</div>
+							<div class="li">
+								<span>负责人：</span> <span class="director_name"></span>
+							</div>
+							<div class="li">
+								<span>创建时间：</span> <span class="create_time"></span>
+							</div>
+							<div class="li">
+								<span>备注：</span> <span class="comment"></span>
+							</div>
+							<div class="li">
+								<span>简介：</span> <span class="brief"></span>
+							</div>
+						</div>
+						<!--	<div class="btn_fun">
+								<a data-toggle="modal" data-target="#alter_room">选择消息模板</a>
+								<a href="javascript:void(0)">胸卡设计</a> <a href="javascript:void(0)">选择酒店</a>
+								<a href="javascript:void(0)">会议管理人员</a> <a href="javascript:void(0)">签到点</a>
+							</div>-->
+						<div class="d_list">
+							<div class="list_title">二维码</div>
+							<div class="QRcode img">
+								<img src="">
+							</div>
+							<div class="list_title">logo图</div>
+							<div class="logo img">
+								<img src="">
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<script>
+		var ManageObject = {
+			object:{
+				signMessageSelect       :$('#sign_mes').QuasarSelect({
+					name        :'sign_mes',
+					classStyle  :'form-control',
+					idInput     :'selected_sign_mes',
+					idHidden    :'selected_sign_mes_form',
+					data        :'<{:json_encode($message)}>',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				antiSignMessageSelect   :$('#unti_sign_mes').QuasarSelect({
+					name        :'anti_sign_mes',
+					classStyle  :'form-control',
+					idInput     :'selected_unti_sign_mes',
+					idHidden    :'selected_unti_sign_mes_form',
+					data        :'<{:json_encode($message)}>',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				receivablesMessageSelect:$('#receivables_mes').QuasarSelect({
+					name        :'receivables_mes',
+					classStyle  :'form-control',
+					idInput     :'selected_receivables_mes',
+					idHidden    :'selected_receivables_mes_form',
+					data        :'<{:json_encode($message)}>',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				toast                   :$().QuasarToast(),
+				loading                 :$().QuasarLoading(),
+				icheck                  :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				})
+			}
+		}
+	</script>
 </body>
 </html>

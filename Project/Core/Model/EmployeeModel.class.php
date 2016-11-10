@@ -28,6 +28,7 @@
 				if($status == 'not deleted') $where['status'] = ['neq', 2];
 				else $where['status'] = $filter['status'];
 			}
+			if(isset($filter['code'])) $where['code'] = $filter['code'];
 			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$condition['code']        = ['like', "%$filter[keyword]%"];

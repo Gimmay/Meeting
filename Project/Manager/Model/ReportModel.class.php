@@ -37,7 +37,7 @@
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$keyword = addslashes($filter['keyword']);
 				$where .= " and(";
-				$where .= " sub.club like '%$keyword%'".' or';
+				$where .= " sub.unit like '%$keyword%'".' or';
 				$where .= " sub.mobile like '%$keyword%'".' or';
 				$where .= " sub.name like '%$keyword%'".' or';
 				$where .= " sub.pinyin_code like '%$keyword%'".' or';
@@ -57,7 +57,7 @@
 	(year(now()) - year(sub.birthday)) age,
 	sub.mobile,
 	(select sum(price) from workflow_receivables where workflow_receivables.mid = meeting.id and workflow_receivables.cid = main.cid) price,
-	sub.club,
+	sub.unit,
 	sub.accompany,
 	sub.accompany_mobile,
 	sub.team,

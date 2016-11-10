@@ -178,9 +178,8 @@
 	color      : #FFFFFF;
 }
 
-.meeting_list .meeting_li .release.cancel_release_btn > a{
-	background : silver;
-	cursor: not-allowed;
+.meeting_list .meeting_li .release1 > a.cancel_release_a{
+	background : #FF6633 ;
 }
 
 /**选择收件人**/

@@ -2,7 +2,7 @@
  * Created by qyqy on 2016-9-29.
  */
 var ThisObject = {
-	attendeeTableTemp:'<tr>\n\t<td class="check_item">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$name</td>\n\t<td>$gender</td>\n\t<td>$phoneNumber</td>\n\t<td>$club</td>\n\t<td>$createTime</td>\n</tr>',
+	attendeeTableTemp:'<tr>\n\t<td class="check_item">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$name</td>\n\t<td>$gender</td>\n\t<td>$phoneNumber</td>\n\t<td>$unit</td>\n\t<td>$createTime</td>\n</tr>',
 };
 
 $(function(){

@@ -2,7 +2,7 @@
  * Created by qyqy on 2016-9-29.
  */
 var ThisObject = {
-	attendeeTableTemp:'<tr>\n\t<td class="check_item">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$name</td>\n\t<td>$gender</td>\n\t<td>$phoneNumber</td>\n\t<td>$club</td>\n\t<td>$createTime</td>\n</tr>',
+	attendeeTableTemp:'<tr>\n\t<td class="check_item">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$name</td>\n\t<td>$gender</td>\n\t<td>$phoneNumber</td>\n\t<td>$unit</td>\n\t<td>$createTime</td>\n</tr>',
 };
 
 $(function(){
@@ -73,7 +73,7 @@ $(function(){
 					var createTime = new Date(parseInt(value.creatime)*1000).toLocaleString().replace(/:\d{1,2}$/, ' ');
 					var signTime   = new Date(parseInt(value.creatime)*1000).toLocaleString().replace(/:\d{1,2}$/, ' ');
 					str += ThisObject.attendeeTableTemp.replace('$name', value.name).replace('$gender', gender)
-									 .replace('$phoneNumber', value.mobile).replace('$club', value.club)
+									 .replace('$phoneNumber', value.mobile).replace('$unit', value.unit)
 									 .replace('$createTime', createTime).replace('$id', value.cid);
 					number++;
 				})

@@ -8,27 +8,6 @@
 	</div>
 	<div class="sidenav">
 		<ul class="sidenav_list" id="side_menu">
-			<if condition="$permission_list['EMPLOYEE.VIEW'] eq 1">
-				<li class="side_item <if condition='$c_name eq Employee'>active</if>">
-					<a href="<{:U('Employee/manage')}>" class="side-item-link">
-						<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">员工管理</span>
-						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
-					<ul class="nav-second-level">
-						<if condition="$permission_list['EMPLOYEE.CREATE'] eq 1">
-							<li>
-								<a href="<{:U('Employee/create')}>">新建员工</a>
-							</li>
-						</if>
-					</ul>
-				</li>
-			</if>
-			<if condition="$permission_list['ROLE.VIEW'] eq 1">
-				<li class="side_item <if condition='$c_name eq Role'>active</if>">
-					<a href="<{:U('Role/manage')}>" class="side-item-link">
-						<i class="icon_nav glyphicon glyphicon glyphicon-star"></i> <span class="nav-label">角色管理</span>
-						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
-				</li>
-			</if>
 			<if condition="$permission_list['MEETING.VIEW'] eq 1">
 				<li class="side_item <if condition='($c_name eq Meeting) or ($c_name eq SignPlace) or ($c_name eq Client)'>active</if>">
 					<a href="<{:U('Meeting/manage')}>" class="side-item-link">
@@ -45,6 +24,20 @@
 			</if>
 			<if condition="$permission_list['COUPON.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq Receivables'>active</if>">
+					<a href="<{:U('Client/manage')}>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-usd"></i> <span class="nav-label">参会人员列表</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li>
+			</if>
+			<if condition="$permission_list['COUPON.VIEW'] eq 1">
+				<li class="side_item <if condition='$c_name eq Receivables'>active</if>">
+					<a href="<{:U('SignPlace/manage')}>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-usd"></i> <span class="nav-label">签到点管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li>
+			</if>
+			<if condition="$permission_list['COUPON.VIEW'] eq 1">
+				<li class="side_item <if condition='$c_name eq Receivables'>active</if>">
 					<a href="<{:U('Receivables/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-usd"></i> <span class="nav-label">收款管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
@@ -52,42 +45,42 @@
 			</if>
 			<if condition="$permission_list['COUPON.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq Coupon'>active</if>">
-					<a href="<{:U('Coupon/manage')}>" class="side-item-link">
+					<a href="<{:U('Coupon/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">券管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['MESSAGE.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq Message'>active</if>">
-					<a href="<{:U('Message/manage')}>" class="side-item-link">
+					<a href="<{:U('Message/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-comment"></i> <span class="nav-label">消息管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['BADGE.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq Badge'>active</if>">
-					<a href="<{:U('Badge/manage')}>" class="side-item-link">
+					<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-bookmark"></i> <span class="nav-label">胸卡设计</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['ROOM.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq Hotel or $c_name eq Room'>active</if>">
-					<a href="<{:U('Hotel/manage')}>" class="side-item-link">
+					<a href="<{:U('Hotel/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-home"></i> <span class="nav-label">酒店管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['CAR.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq Car'>active</if>">
-					<a href="<{:U('Car/manage')}>" class="side-item-link">
+					<a href="<{:U('Car/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-plane"></i> <span class="nav-label">车辆管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['DINING_TABLE.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq DiningTable'>active</if>">
-					<a href="<{:U('DiningTable/manage')}>" class="side-item-link">
+					<a href="<{:U('DiningTable/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
@@ -101,7 +94,7 @@
 					<ul class="nav-second-level">
 						<if condition="$permission_list['REPORT.JOINRECEIVABLES'] eq 1">
 							<li>
-								<a href="<{:U('Report/joinReceivables')}>">报名收款数据</a>
+								<a href="<{:U('Report/joinReceivables', ['mid'=>I('get.mid', 0, 'int')])}>">报名收款数据</a>
 							</li>
 						</if>
 					</ul>

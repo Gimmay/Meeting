@@ -20,7 +20,6 @@
 			$permission_logic      = new PermissionLogic();
 			$meeting_role_logic    = new MeetingRoleLogic();
 			$this->permissionList  = $permission_logic->getPermissionList();
-			$this->meetingViewList = $meeting_role_logic->getMeetingView();
+			$this->meetingViewList = $meeting_role_logic->getMeetingView(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));
 		}
-
 	}

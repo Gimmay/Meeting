@@ -16,8 +16,7 @@
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
@@ -36,19 +35,21 @@
 				<include file="Public/header"/>
 				<div class="main_body">
 					<section class="content">
-						<!--<div class="return">
-							<a class="btn btn-default" href="<{:U('Meeting/manage')}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
-						</div>-->
 						<div class="table_wrap">
 							<div class="nav_tab clearfix">
 								<div class="nav_tab_li active">
-									<a href="javascript:void(0)">报表查询</a>
+									<a href="javascript:void(0)">参会人员列表</a>
 								</div>
 								<div class="table_length  pull-right">
 									显示： <select>
 									<option>5</option>
 									<option>10</option>
-									<option selected="">20</option>
+									<option selected>20</option>
+									<option>50</option>
+									<option>100</option>
+									<option>150</option>
+									<option>200</option>
+									<option>500</option>
 								</select> 项结果
 								</div>
 							</div>
@@ -136,7 +137,7 @@
 							<form action="" method="get">
 								<div class="input-group repertory_text">
 									<input name="p" type="hidden" value="1">
-									<input type="search" name="keyword" class="form-control" placeholder="客户名称/手机号/会所名称/拼音简码" value="<{:I('get.keyword', '')}>">
+									<input type="search" name="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default mian_search">搜索客户</button>
 									</span>
@@ -175,7 +176,7 @@
 										<td width="5%">姓名</td>
 										<td width="4%">性别</td>
 										<td width="5%">手机号</td>
-										<td width="9%">会所名称</td>
+										<td width="9%">单位名称</td>
 										<td width="7%">签到时间</td>
 										<td width="5%">签到方式</td>
 										<td width="4%">收款</td>
@@ -203,14 +204,15 @@
 												</span>
 											</td>
 											<td><{$single.mobile}></td>
-											<td><{$single.club}></td>
+											<td><{$single.unit}></td>
 											<td>
 												<notempty name="single['sign_time']"><{:date('Y-m-d H:i:s', $single['sign_time'])}></notempty>
 											</td>
 											<td>
 												<switch name="single.sign_type">
 													<case value="1">手动签到</case>
-													<case value="2">微信签到</case>
+													<case value="2">微信自主签到</case>
+													<case value="3">微信后台签到</case>
 												</switch>
 											</td>
 											<td>
@@ -285,7 +287,7 @@
 														</case>
 													</switch>
 													<if condition="$permission_list['CLIENT.EARN-PAYMENT']">
-														<a href="<{:U('Receivables/manage',['mid'=>I('get.mid', 0, 'int'), 'cid'=>$single['cid']])}>" class="btn btn-default btn-xs">收款</a>
+														<a class="btn btn-default btn-xs btn_receivables" data-toggle="modal" data-target="#add_receivables">收款</a>
 													</if>
 													<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE']">
 														<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
@@ -592,6 +594,138 @@
 			</div>
 		</div>
 	</if>
+	<!-- 添加收款 -->
+	<div class="modal fade" id="add_receivables" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">收款</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+					<input type="hidden" name="requestType" value="create_receivables">
+					<input type="hidden" name="cid" value="">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="client_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>客户姓名：</label>
+							<div class="col-sm-10">
+								<input type="text" id="client_name" class="form-control" value="<{$meeting_info.name}>" disabled>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="price" class="col-sm-2 control-label">金额：</label>
+							<div class="col-sm-10">
+								<input type="number" name="price" id="price" class="form-control">
+								<div id="idCalculadora" class="hide clearfix">
+									<div id="calcuator">
+										<input type="text" id="input-box" value="0" size="21" maxlength="21" readonly="readonly"/>
+										<div id="btn-list">
+											<div onclick="operator('clear')" class=" btn-30 btn-radius color-red clear-marginleft">C</div>
+											<div onclick="operator('opposite')" class=" btn-30 btn-radius color-blue">+/-</div>
+											<div onclick="operator('percent')" class=" btn-30 btn-radius color-blue">%</div>
+											<div onclick="operator('backspace')" class=" btn-70 btn-radius color-red font-14">←</div>
+											<div onclick="typetoinput('7')" class=" btn-30 btn-radius clear-marginleft">7</div>
+											<div onclick="typetoinput('8')" class=" btn-30 btn-radius">8</div>
+											<div onclick="typetoinput('9')" class=" btn-30 btn-radius">9</div>
+											<div onclick="operator('plus')" class=" btn-30 btn-radius color-blue font-14">+</div>
+											<div onclick="operator('minus')" class=" btn-30 btn-radius color-blue font-14">-</div>
+											<div onclick="typetoinput('4')" class=" btn-30 btn-radius clear-marginleft">4</div>
+											<div onclick="typetoinput('5')" class=" btn-30 btn-radius">5</div>
+											<div onclick="typetoinput('6')" class=" btn-30 btn-radius">6</div>
+											<div onclick="operator('multiply')" class=" btn-30 btn-radius color-blue font-14">×</div>
+											<div onclick="operator('divide')" class=" btn-30 btn-radius color-blue font-12">÷</div>
+											<div onclick="typetoinput('1')" class=" btn-30 btn-radius clear-marginleft">1</div>
+											<div onclick="typetoinput('2')" class=" btn-30 btn-radius">2</div>
+											<div onclick="typetoinput('3')" class=" btn-30 btn-radius">3</div>
+											<div onclick="operator('pow')" class=" btn-30 btn-radius color-blue font-14">×²</div>
+											<div onclick="operator('sqrt')" class=" btn-30 btn-radius color-blue font-12">√</div>
+											<div onclick="typetoinput('0')" class=" btn-70 btn-radius clear-marginleft">0</div>
+											<div onclick="typetoinput('.')" class=" btn-30 btn-radius">.</div>
+											<div onclick="operator('result')" class=" btn-70 btn-radius color-red font-14 equal">=</div>
+										</div>
+										<div class="close_calcuator">
+											<button type="button" class="btn btn-default btn-sm">关闭</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="method" class="col-sm-2 control-label">支付方式：</label>
+							<div class="col-sm-10">
+								<div id="method"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="type" class="col-sm-2 control-label">收款类型：</label>
+							<div class="col-sm-10">
+								<div id="type"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="payee_id" class="col-sm-2 control-label">收款人：</label>
+							<div class="col-sm-10">
+								<div id="payee_id"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">代金券：</label>
+							<div class="col-sm-10">
+								<div class="coupon_area ">
+									<div class="coupon_box">
+										<div class="coupon_list">
+											<if condition="$coupon_code_list">
+												<volist name="coupon_code_list" id="list">
+													<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="<{$list.id}>"><{$list.code}></a>
+												</volist>
+												<else/>
+												<div style="padding: 10px; text-align: center; font-size: 14px; color: rgba(0,0,0,.72)">&lt;无代金券可用&gt;</div>
+											</if>
+										</div>
+									</div>
+								</div>
+							</div>
+							<input type="hidden" name="coupon_code">
+						</div>
+
+						<div class="form-group">
+							<label for="place" class="col-sm-2 control-label">收款地点：</label>
+							<div class="col-sm-10">
+								<input type="text" name="place" id="place" class="form-control">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="source_type" class="col-sm-2 control-label">来源状态：</label>
+							<div class="col-sm-10">
+								<select name="source_type" id="source_type" class="form-control">
+									<option value="0">会前收款</option>
+									<option value="1">会中收款</option>
+									<option value="2">会后收款</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="receivables_time" class="col-sm-2 control-label">收款时间：</label>
+							<div class="col-sm-10">
+								<input class="form-control" id="receivables_time" name="receivables_time" value="<{:date('Y-m-d H:i:s')}>">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="comment" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" id="comment"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 	<script>
 		var ManageObject = {
 			object:{
@@ -632,6 +766,43 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
+				method               :$('#method').QuasarSelect({
+					name        :'method',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($pay_list)}>',
+					idInput     :'selected_method',
+					idHidden    :'selected_method_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				type                 :$('#type').QuasarSelect({
+					name        :'type',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($receivables_type_list)}>',
+					idInput     :'selected_type',
+					idHidden    :'selected_type_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				payeeName            :$('#payee_id').QuasarSelect({
+					name        :'payee_id',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee_list)}>',
+					idInput     :'selected_payeeName',
+					idHidden    :'selected_payeeName_form',
+					placeholder :'',
+					defaultValue:'<{$employee_info[id]}>',
+					defaultHtml :'<{$employee_info[code]}>'+' - '+'<{$employee_info[name]}>',
+					hasEmptyItem:false
+				}),
+				receivablesTime        :jeDate({
+					dateCell:"#receivables_time",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					//isClear:false,
+					isTime  :true,// 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
+				}),
 				toast                :$().QuasarToast(),
 				loading              :$().QuasarLoading(),
 				icheck               :$('.icheck').iCheck({
@@ -645,7 +816,7 @@
 				icheckRed            :$('.icheckRed').iCheck({
 					checkboxClass:'icheckbox_square-red',
 					radioClass   :'iradio_square-red'
-				}),
+				})
 			}
 		}
 	</script>

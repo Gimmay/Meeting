@@ -13,6 +13,7 @@
 	class SignPlaceController extends ManagerController{
 		public function _initialize(){
 			parent::_initialize();
+			$this->meetingID = $this->initMeetingID($this);
 		}
 
 		public function create(){
@@ -28,8 +29,7 @@
 			$meeting_model = D('Meeting');
 			/** @var \Core\Model\MeetingModel $meeting_object */
 			$meeting_object = D('Core/Meeting');
-			$data['id']     = I('get.mid', 0, 'int');
-			$meeting_name   = $meeting_object->findMeeting(1, $data);
+			$meeting_name   = $meeting_object->findMeeting(1, ['id'=>$this->meetingID]);
 			/** @var \Manager\Model\EmployeeModel $employee_model */
 			$employee_model = D('Employee');
 			$meeting_list   = $meeting_model->getMeetingForSelect();
@@ -67,7 +67,7 @@
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 				'status'  => 'not deleted',
-				'mid'     => I('get.mid', 0, 'int')
+				'mid'     => $this->meetingID
 			]);
 			$record_list = $logic->setExtendColumnForManage($record_list);
 			$this->assign('page_show', $page_show);
@@ -90,8 +90,7 @@
 			}
 			/** @var \Core\Model\MeetingModel $result */
 			$result         = D('Core/Meeting');
-			$data_mid['id'] = I('get.mid', 0, 'int');
-			$record_name    = $result->findMeeting(1, $data_mid);
+			$record_name    = $result->findMeeting(1, ['id'=>$this->meetingID, 'status'=>'not deleted']);
 			/** @var \Manager\Model\EmployeeModel $employee_model */
 			$employee_model = D('Employee');
 			$employee_list  = $employee_model->getEmployeeSelectList();

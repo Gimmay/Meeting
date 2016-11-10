@@ -83,10 +83,13 @@
 						$list[$key1]['sign_type'] = '未签到';
 					break;
 					case 1:
-						$list[$key1]['sign_type'] = '手动签到';
+						$list[$key1]['sign_type'] = 'PC后台签到';
 					break;
 					case 2:
-						$list[$key1]['sign_type'] = '微信扫码签到';
+						$list[$key1]['sign_type'] = '微信自主签到';
+					break;
+					case 3:
+						$list[$key1]['sign_type'] = '微信后台签到';
 					break;
 				}
 				// 签到打印状态
@@ -105,7 +108,7 @@
 					'name'               => '姓名',
 					'gender'             => '性别',
 					'mobile'             => '电话',
-					'club'               => '会所',
+					'unit'               => '单位',
 					'birthday'           => '生日',
 					'email'              => '邮箱',
 					'title'              => '职务',
@@ -149,22 +152,24 @@
 			$new_list          = [];
 			$mid               = I('get.mid', 0, 'int');
 			foreach($list as $key => $val){
-				$receivables_record = $receivables_model->findRecord(1, [
+				$receivables_record = $receivables_model->findRecord(2, [
 					'cid' => $val['cid'],
 					'mid' => $mid
 				]);
-				if($receivables == 1 && $receivables_record){
-					if($val['receivables']) $val['receivables'] += $receivables_record['price'];
+				$receivables_price  = 0;
+				foreach($receivables_record as $val2) $receivables_price += $val2['price'];
+				if($receivables == 1 && $receivables_price){
+					if($val['receivables']) $val['receivables'] += $receivables_price;
 					else{
 						$val['receivables'] = 0;
-						$val['receivables'] += $receivables_record['price'];
+						$val['receivables'] += $receivables_price;
 					}
 					if($new) $new_list[] = $val;
 					else{
-						if($list[$key]['receivables']) $val['receivables'] += $receivables_record['price'];
+						if($list[$key]['receivables']) $val['receivables'] += $receivables_price;
 						else{
 							$list[$key]['receivables'] = 0;
-							$list[$key]['receivables'] += $receivables_record['price'];
+							$list[$key]['receivables'] += $receivables_price;
 						}
 					}
 				}
@@ -216,7 +221,7 @@
 					]);
 					$mobile      = $data['mobile'];
 					if($join_record){
-						if($join_record['status'] != 1){
+						if($join_record['join_status'] != 1){
 							C('TOKEN_ON', false);
 							$join_result = $join_model->alterRecord(['id' => $join_record['id']], ['status' => 1]);
 							if($join_result['status']) $result = [
@@ -243,7 +248,7 @@
 					$weixin_logic     = new WxCorpLogic();
 					$weixin_user_list = $weixin_logic->getAllUserList();
 					foreach($weixin_user_list as $val){
-						if($val['mobile'] == $mobile){
+						if($val['mobile'] == $mobile  && $val['status'] != 4){
 							/** @var \Core\Model\WeixinIDModel $weixin_model */
 							$weixin_model = D('Core/WeixinID');
 							$department   = '';
@@ -258,6 +263,7 @@
 							$data['mobile']     = $val['mobile']; // 手机号码
 							$data['avatar']     = $val['avatar']; // 头像地址
 							$data['gender']     = $val['gender']; // 性别
+							$data['is_follow']  = $val['status'];    //是否关注
 							$data['nickname']   = $val['name']; // 昵称
 							$data['creatime']   = time(); // 创建时间
 							$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); // 当前创建者
@@ -351,7 +357,10 @@
 						'cid' => $client_id
 					]);
 					C('TOKEN_ON', false);
-					$result = $join_model->alterRecord(['id' => $join_record['id']], ['review_status' => 2]);
+					$result = $join_model->alterRecord(['id' => $join_record['id']], [
+						'review_status' => 2,
+						'sign_status'   => 0
+					]);
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
@@ -369,7 +378,7 @@
 						$join_id[]   = $join_record['id'];
 					}
 					C('TOKEN_ON', false);
-					$result1 = $join_model->alterRecord(['id'=>$join_id], [
+					$result1 = $join_model->alterRecord(['id' => $join_id], [
 						'review_status' => 1,
 						'review_time'   => time()
 					]);
@@ -394,7 +403,7 @@
 						$join_id[]   = $join_record['id'];
 					}
 					C('TOKEN_ON', false);
-					$result = $join_model->alterRecord(['id'=>$join_id], ['review_status' => 2]);
+					$result = $join_model->alterRecord(['id' => $join_id], ['review_status' => 2]);
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
@@ -583,18 +592,18 @@
 					$record         = $client_model->findClient(1, ['id' => $client_id]);
 					$weixin_record  = $weixin_model->findRecord(1, ['mobile' => trim($record['mobile'])]);
 					$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
-					$url     = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myQRCode', [
+					$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myQRCode', [
 							'cid' => $client_id,
 							'mid' => $meeting_id
 						]);
-					$result1 = $wxcorp_logic->sendMessage('news', [
+					$result1        = $wxcorp_logic->sendMessage('news', [
 						[
 							'title'       => "$meeting_record[name]",
 							'description' => "亲爱的$record[name]，请于$meeting_record[start_time]前点击\"查看全文\"后出示二维码提供给签到负责人进行签到",
 							'url'         => $url
 						]
 					], ['user' => [$weixin_record['weixin_id']]], 'client');
-					$url     = getShortUrl($url); // 使用新浪的t.cn短地址
+					$url            = getShortUrl($url); // 使用新浪的t.cn短地址
 					//$result2        = $sms_logic->send("亲爱的$record[name]，请于$meeting_record[start_time]前到$meeting_record[place]参加$meeting_record[name]。详情请查看$url", [$record['mobile']], true);
 					if(!$result1['status']) return [
 						'status'   => false,
@@ -734,6 +743,45 @@
 						'__ajax__' => true
 					];
 				break;
+				case 'create_receivables':
+					C('TOKEN_ON', false);
+					$data               = I('post.', '');
+					$mid                = I('get.mid', 0, 'int');
+					$data['mid']        = $mid;
+					$cid                = I('post.cid', 0, 'int');
+					$data['cid']        = $cid;
+					$data['coupon_ids'] = I('post.coupon_code', '');
+					$data['time']       = strtotime(I('post.receivables_time', ''));
+					$data['creatime']   = time();    //创建时间
+					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+					/** @var \Core\Model\ReceivablesModel $receivables_model */
+					$receivables_model = D('Core/Receivables');
+					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+					$coupon_item_model  = D('Core/CouponItem');
+					/** @var \Core\Model\ClientModel $client_model */
+					$client_model = D('Core/Client');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model = D('Core/Employee');
+//					$receivables_result = $receivables_model->createRecord($data);
+					$coupon_item_code   = explode(',', $data['coupon_ids']);
+//					foreach($coupon_item_code as $k => $v){
+//						$coupon_item_result = $coupon_item_model->alterCouponItem($v, [
+//							'status' => 1,
+//							'cid'    => $cid
+//						]);
+//					}
+					//查出开拓顾问
+					$client_result = $client_model->findClient(1,['id'=>$cid]);
+					$employee_result = $employee_model->findEmployee(1,['keyword'=>$client_result['develop_consultant']]);
+					$message_logic   = new MessageLogic();
+
+					$sms_send    = $message_logic->send($mid,0,0,3,[$employee_result['id']]);
+					return [
+						'data'       => $coupon_item_code,
+						'__ajax__'   => true,
+						'__return__' => U('Receivables/Manage', ['mid' => $mid])
+					];
+				break;
 				default:
 					return [
 						'status'  => false,
@@ -771,7 +819,7 @@
 			$mid             = I('get.mid', 0, 'int');
 			$cur_employee_id = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 			$weixin_opt      = [];
-			$error_str = '';
+			$error_str       = '';
 			foreach($excel_data as $key1 => $line){
 				$client_data        = [];
 				$mobile             = '';
@@ -791,6 +839,9 @@
 					}
 					// 过滤数据
 					switch(strtolower($table_column[$key2]['name'])){
+						case 'type':
+							$val = in_array($val, ['终端', '内部员工', '嘉宾', '陪同']) ? $val : null;
+						break;
 						case 'birthday':
 							$val = $val ? date('Y-m-d', strtotime($val)) : null;
 						break;
@@ -799,7 +850,7 @@
 						break;
 						case 'mobile':
 							$mobile = trim($val);
-							if($mobile==''&!$mobile) continue;
+							if($mobile == ''&!$mobile) continue;
 						break;
 						case 'name':
 							$name = $val;
@@ -842,10 +893,16 @@
 				$join_data['creatime']          = time();
 				$join_data['registration_date'] = $registration_date ? date('Y-m-d', strtotime($registration_date)) : null;
 				$join_data['traffic_method']    = $traffic_method;
+				$join_data['registration_type'] = '线下';
+				$join_data['status']            = 1;
 				if($invitor != null) $join_data['inviter_id'] = $invitor;
 				$join_data['mid'] = $mid;
 				C('TOKEN_ON', false);
-				if($exist_client) $join_data['cid'] = $exist_client['id'];
+				if($exist_client){
+					// 若存在则用新数据覆盖旧数据
+					$core_model->alterClient(['id' => $exist_client['id']], $client_data);
+					$join_data['cid'] = $exist_client['id'];
+				}
 				else{
 					$client_result = $core_model->createClient($client_data);
 					if($client_result['status']){
@@ -857,18 +914,37 @@
 					}
 				}
 				if($join_data['cid']){
-					$join_result = $join_model->createRecord($join_data);
-					if($join_result['status']){
-						$count++;
-						if(((int)$price)>0) $receivables_model->createRecord([
-							'cid'         => $join_data['cid'],
-							'mid'         => $mid,
-							'source_type' => 0,
-							'creator'     => $cur_employee_id,
-							'creatime'    => time(),
-							'price'       => $price,
-						]);
-					}else $error_str .= $client_data['name'].',';
+					$exist_join_record = $join_model->isJoin($mid, $join_data['cid']);
+					if($exist_join_record){
+						$alter_join_result = $join_model->alterRecord(['id' => $exist_join_record['id']], $join_data);
+						if($alter_join_result){
+							$count++;
+							if(((int)$price)>0) $receivables_model->createRecord([
+								'cid'         => $join_data['cid'],
+								'mid'         => $mid,
+								'source_type' => 0,
+								'creator'     => $cur_employee_id,
+								'creatime'    => time(),
+								'price'       => $price,
+							]);
+						}
+						else $error_str .= "$client_data[name],";
+					}
+					else{
+						$join_result = $join_model->createRecord($join_data);
+						if($join_result['status']){
+							$count++;
+							if(((int)$price)>0) $receivables_model->createRecord([
+								'cid'         => $join_data['cid'],
+								'mid'         => $mid,
+								'source_type' => 0,
+								'creator'     => $cur_employee_id,
+								'creatime'    => time(),
+								'price'       => $price,
+							]);
+						}
+						else $error_str .= "$client_data[name],";
+					}
 				}
 			}
 			$this->_asyncWeixinInfo($weixin_opt);
@@ -882,6 +958,7 @@
 			];
 			else{
 				$error_str = trim($error_str, ',');
+
 				return [
 					'status'  => true,
 					'message' => "部分数据无需导入<br>
@@ -899,7 +976,7 @@
 			$weixin_model = D('Core/WeixinID');
 			foreach($client_list as $key => $val){
 				foreach($wx_list as $key2 => $val2){
-					if($val['mobile'] = $val2['mobile']){
+					if($val['mobile'] = $val2['mobile'] && $val2['status'] != 4){
 						//$weixin_model->deleteRecord(['weixin_id'=>$v2['userid'], 'otype'=>0]);
 						$department = '';
 						foreach($val2['department'] as $v3) $department .= $v3.',';
@@ -913,6 +990,7 @@
 						$data['mobile']     = $val2['mobile'];    //手机号码
 						$data['avatar']     = $val2['avatar'];    //头像地址
 						$data['gender']     = $val2['gender'];    //性别
+						$data['is_follow']  = $val2['status'];    //是否关注
 						$data['nickname']   = $val2['name'];    //昵称
 						$data['creatime']   = time();    //创建时间
 						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者

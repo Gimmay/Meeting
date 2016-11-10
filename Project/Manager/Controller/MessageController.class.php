@@ -14,6 +14,7 @@
 	class MessageController extends ManagerController{
 		public function _initialize(){
 			parent::_initialize();
+			$this->meetingID = $this->initMeetingID($this);
 		}
 
 		public function manage(){

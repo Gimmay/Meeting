@@ -5,7 +5,7 @@
 function checkIsEmpty(){
 	var $name   = $('#name');
 	var $mobile = $('#mobile');
-	var $club   = $('#club');
+	var $unit   = $('#unit');
 	if($name.val() == ''){
 		AlterObject.object.toast.toast("姓名不能为空");
 		$name.focus();
@@ -16,9 +16,9 @@ function checkIsEmpty(){
 		$mobile.focus();
 		return false;
 	}
-	if($club.val() == ''){
-		AlterObject.object.toast.toast("会所名称不能为空");
-		$club.focus();
+	if($unit.val() == ''){
+		AlterObject.object.toast.toast("单位名称不能为空");
+		$unit.focus();
 		return false;
 	}
 	return true;

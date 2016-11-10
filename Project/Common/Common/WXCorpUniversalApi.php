@@ -168,7 +168,7 @@
 		 *
 		 * @return bool|string|int|array 若成功则返回相应的ID值，否则返回错误信息或者$type参数赋值不正确直接返回false
 		 */
-		public function parseID($id, $type, $agent_id = null, $access_token){
+		public function parseID($id, $type, $agent_id = null, $access_token = null){
 			$access_token = $access_token == null ? $this->getAccessToken() : $access_token;
 			switch($type){
 				case 0:

@@ -14,19 +14,13 @@
 			$this->display();
 		}
 
-		public function test(){
-			$post = [];
-			$post['EMPLOYEE.VIEW-ASSIGNED-PERMISSION'] = 123;
-			print_r($post['EMPLOYEE.VIEW-ASSIGNED-PERMISSION']);
-		}
-
 		public function updatePermissionPinyin(){
 			$str_obj = new StringPlus();
 			/** @var \Think\Model $permission_model */
 			$permission_model = M('system_permission');
-			$record = $permission_model->select();
+			$record           = $permission_model->select();
 			foreach($record as $val){
-				if(!$val['pinyin_code']) $permission_model->where(['id'=>$val['id']])->save(['pinyin_code'=>$str_obj->makePinyinCode($val['name'])]);
+				if(!$val['pinyin_code']) $permission_model->where(['id' => $val['id']])->save(['pinyin_code' => $str_obj->makePinyinCode($val['name'])]);
 			}
 		}
 
@@ -41,7 +35,7 @@
 			C('TOKEN_ON', false);
 			foreach($client_list as $k1 => $v1){ //循环输出当前系统的客户名单
 				foreach($wx_list as $k2 => $v2){//循环输出微信获取的所有用户信息
-					if($v1['mobile'] == $v2['mobile']){//判断 当前系统的手机和微信获取的用户信息的手机做匹配
+					if($v1['mobile'] == $v2['mobile'] && $v2['status'] != 4){//判断 当前系统的手机和微信获取的用户信息的手机做匹配同时没有取消关注
 						//$weixin_model->deleteRecord(['weixin_id'=>$v2['userid'], 'otype'=>1]);
 						$department = '';
 						foreach($v2['department'] as $v3) $department .= $v3.',';
@@ -55,6 +49,7 @@
 						$data['mobile']     = $v2['mobile'];    //手机号码
 						$data['avatar']     = $v2['avatar'];    //头像地址
 						$data['gender']     = $v2['gender'];    //性别
+						$data['is_follow']  = $v2['status'];    //是否关注
 						$data['nickname']   = $v2['name'];    //昵称
 						$data['creatime']   = time();    //创建时间
 						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
@@ -76,7 +71,7 @@
 			C('TOKEN_ON', false);
 			foreach($client_list as $k1 => $v1){ //循环输出当前系统的员工名单
 				foreach($wx_list as $k2 => $v2){//循环输出微信获取的所有用户信息
-					if($v1['mobile'] == $v2['mobile']){//判断 当前系统的手机和微信获取的用户信息的手机做匹配
+					if($v1['mobile'] == $v2['mobile'] && $v2['status'] != 4){//判断 当前系统的手机和微信获取的用户信息的手机做匹配
 						//$weixin_model->deleteRecord(['weixin_id'=>$v2['userid'], 'otype'=>0]);
 						$department = '';
 						foreach($v2['department'] as $v3) $department .= $v3.',';
@@ -90,6 +85,7 @@
 						$data['mobile']     = $v2['mobile'];    //手机号码
 						$data['avatar']     = $v2['avatar'];    //头像地址
 						$data['gender']     = $v2['gender'];    //性别
+						$data['is_follow']  = $v2['status'];    //是否关注
 						$data['nickname']   = $v2['name'];    //昵称
 						$data['creatime']   = time();    //创建时间
 						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
@@ -99,5 +95,4 @@
 				}
 			}
 		}
-
 	}

@@ -19,7 +19,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/mobile_rem.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="Quasar" data-mvc-name="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -54,7 +54,7 @@
 						</switch>
 					</p>
 					<p>手机：<{$info.mobile}></p>
-					<p>部门：<{$info.club}></p>
+					<p>部门：<{$info.unit}></p>
 				</div>
 				<div class="title">
 					<p>会议名称：<{$info.meeting_name}> </p>

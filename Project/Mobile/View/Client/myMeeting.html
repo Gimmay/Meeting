@@ -24,35 +24,11 @@
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
-	<style scoped>
-		div.btn_sign_ban{
-			background-color : darkgrey;
-			color            : lavender;
-			width            : 2rem;
-			height           : 0.8rem;
-			line-height      : 0.8rem;
-			position         : absolute;
-			margin-left      : -0.9rem;
-			top              : 50%;
-			left             : 50%;
-			font-size        : 0.3rem;
-			text-align       : center;
-			border-radius    : 5px;
-		}
-	</style>
-	<div id="mb_wrap">
+	<div id="mb_wrap" style=" padding-bottom: 1rem">
 		<div class="mb_body">
 			<div class="topbar">
 				<div class="topbarBg"><img src="<{$Think.COMMON_IMAGE_PATH}>/topbarBg.jpg" alt=""></div>
-				<if condition="$meeting[status] eq 3 and $_GET[sign] eq 1 and $info[review_status] eq 1 and $info[sign_status] eq 0">
-					<div class="btn_sign" id="sign_btn">签到</div>
-				</if>
-				<if condition="$info[sign_status] eq 1">
-					<div class="btn_sign_ban">已签到</div>
-				</if>
-				<if condition="$info[sign_status] eq 2">
-					<div class="btn_sign_ban">已取消签到</div>
-				</if>
+				<span class="photo"><img src="<{$meeting.logo}>"></span>
 			</div>
 			<div class="content">
 				<div class="myInfor">
@@ -91,16 +67,31 @@
 						<span class="lab">负&nbsp;&nbsp;责&nbsp;&nbsp;人：</span> <span><{$meeting.director}></span>
 					</div>
 					<div class="li">
+						<span class="lab">签到开始时间：</span> <span><{$meeting.sign_start_time}></span>
+					</div>
+					<div class="li">
+						<span class="lab">签到结束时间：</span> <span><{$meeting.sign_end_time}></span>
+					</div>
+					<div class="li">
 						<span class="lab">简　　介：</span> <span><{$meeting.brief}></span>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<div id="mb_footer">
+		<if condition="$info[sign_status] eq 1">
+			<a href="javascript:void(0)" class="ft_a">已签到</a>
+			<else/><a href="javascript:void(0)" class="ft_a">未签到</a>
+		</if>
+	</div>
 	<script>
 		var ThisObject = {
 			object:{
 				toast:$().QuasarToast()
+			},
+			config:{
+				isSign:parseInt("<{$can_sign}>")
 			}
 		}
 	</script>
