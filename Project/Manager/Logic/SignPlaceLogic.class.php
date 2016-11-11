@@ -12,48 +12,6 @@
 			parent::_initialize();
 		}
 
-		public function create($data){
-			/** @var \Core\Model\SignPlaceModel $model */
-			$model            = D('Core/SignPlace');
-			$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-			$data['mid']      = I('get.mid', 0, 'int');
-			$data['place']    = I('post.address_province', '').'-'.I('post.address_city', '').'-'.I('post.address_area', '').'-'.I('post.address_detail', '');
-			$data['creatime'] = time();
-
-			return $model->createRecord($data);
-		}
-
-		public function setExtendColumnForManage($list){
-			/** @var \Core\Model\MeetingModel $meeting_model */
-			$meeting_model = D('Core/Meeting');
-			/** @var \Core\Model\EmployeeModel $employee_model */
-			$employee_model = D('Core/Employee');
-			foreach($list as $key => $val){
-				$meeting                     = $meeting_model->findMeeting(1, ['id' => $val['mid']]);
-				$director                    = $employee_model->findEmployee(1, ['id' => $val['director_id']]);
-				$sign_director               = $employee_model->findEmployee(1, ['id' => $val['sign_director_id']]);
-				$list[$key]['meeting']       = $meeting['name'];
-				$list[$key]['director']      = $director['name'];
-				$list[$key]['sign_director'] = $sign_director['name'];
-			}
-
-			return $list;
-		}
-
-		public function alter($id, $data, $old_place){
-			/** @var \Core\Model\SignPlaceModel $model */
-			$model = D('Core/Sign_Place');
-			if(I('post.address_area')) $data['place'] = I('post.address_province')."-".I('post.address_city')."-".I('post.address_area')."-".I('post.address_detail');
-			elseif(I('post.address_city')) $data['place'] = I('post.address_province')."-".I('post.address_area')."-".I('post.address_detail');
-			else $data['place'] = $old_place;
-
-			return $model->alterRecord($id, $data);
-		}
-
-		public function setExtendColumnForAlter($info){
-			return $info;
-		}
-
 		public function handlerRequest($type){
 			switch($type){
 				case 'delete':
@@ -64,8 +22,72 @@
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
+				case 'create':
+					/** @var \Core\Model\SignPlaceModel $model */
+					$model            = D('Core/SignPlace');
+					$data             = I('post.');
+					$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$data['mid']      = I('get.mid', 0, 'int');
+					$data['creatime'] = time();
+
+					return $model->createRecord($data);
+				break;
+				case 'alter':
+					/** @var \Core\Model\SignPlaceModel $model */
+					$model = D('Core/SignPlace');
+					$data  = I('post.');
+					$id    = I('get.id', 0, 'int');
+
+					return $model->alterRecord(['id' => $id], $data);
+				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
+				break;
+			}
+		}
+
+		public function setData($type, $data){
+			switch($type){
+				case 'alter:get_extend_column':
+					/** @var \Core\Model\MeetingModel $meeting_model */
+					$meeting_model = D('Core/Meeting');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model        = D('Core/Employee');
+					$meeting               = $meeting_model->findMeeting(1, ['id' => $data['mid']]);
+					$director              = $employee_model->findEmployee(1, ['id' => $data['director_id']]);
+					$sign_director         = $employee_model->findEmployee(1, ['id' => $data['sign_director_id']]);
+					$data['meeting']       = $meeting['name'];
+					$data['director']      = $director['name'];
+					$data['sign_director'] = $sign_director['name'];
+
+					return $data;
+				break;
+				case 'manage:get_extend_column':
+					/** @var \Core\Model\MeetingModel $meeting_model */
+					$meeting_model = D('Core/Meeting');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model = D('Core/Employee');
+					foreach($data as $key => $val){
+						$meeting                     = $meeting_model->findMeeting(1, [
+							'id'     => $val['mid'],
+							'status' => 'not deleted'
+						]);
+						$director                    = $employee_model->findEmployee(1, [
+							'id'     => $val['director_id'],
+							'status' => 'not deleted'
+						]);
+						$sign_director               = $employee_model->findEmployee(1, [
+							'id'     => $val['sign_director_id'],
+							'status' => 'not deleted'
+						]);
+						$data[$key]['meeting']       = $meeting['name'];
+						$data[$key]['director']      = $director['name'];
+						$data[$key]['sign_director'] = $sign_director['name'];
+					}
+
+					return $data;
+				default:
+					return $data;
 				break;
 			}
 		}

@@ -28,14 +28,11 @@
 <body>
 	<div id="mt_container">
 		<div class="mt_content">
-			<include file="Public/menu"/>
+			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
-				<include file="Public/header"/>
+				<include file="Public/innerHeader"/>
 				<div class="main_body">
 					<section class="content">
-						<div class="return">
-							<a class="btn btn-default" href="<{:U('Meeting/manage')}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
-						</div>
 						<header class="c_header">
 							<div class="function_list clearfix">
 								<div class="function_btn bg-warning">
@@ -98,7 +95,7 @@
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>">
 													<a href="<{:U('Client/manage',['mid'=>$_GET['mid'], 'sid'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a>
-													<a href="<{:U('SignPlace/alter',['mid'=>$_GET['mid'], 'sid'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
+													<a href="<{:U('SignPlace/alter',['mid'=>$_GET['mid'], 'id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
 													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_signPlace">删除</button>
 												</div>
 											</td>

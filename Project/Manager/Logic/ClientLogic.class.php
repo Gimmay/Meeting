@@ -762,22 +762,25 @@
 					$client_model = D('Core/Client');
 					/** @var \Core\Model\EmployeeModel $employee_model */
 					$employee_model = D('Core/Employee');
-//					$receivables_result = $receivables_model->createRecord($data);
+					$receivables_result = $receivables_model->createRecord($data);
 					$coupon_item_code   = explode(',', $data['coupon_ids']);
-//					foreach($coupon_item_code as $k => $v){
-//						$coupon_item_result = $coupon_item_model->alterCouponItem($v, [
-//							'status' => 1,
-//							'cid'    => $cid
-//						]);
-//					}
+					foreach($coupon_item_code as $k => $v){
+						$coupon_item_result = $coupon_item_model->alterCouponItem($v, [
+							'status' => 1,
+							'cid'    => $cid
+						]);
+					}
 					//查出开拓顾问
 					$client_result = $client_model->findClient(1,['id'=>$cid]);
 					$employee_result = $employee_model->findEmployee(1,['keyword'=>$client_result['develop_consultant']]);
-					$message_logic   = new MessageLogic();
+					if($employee_result){
+						$message_logic   = new MessageLogic();
 
-					$sms_send    = $message_logic->send($mid,0,0,3,[$employee_result['id']]);
+						$sms_send    = $message_logic->send($mid,0,0,3,[$employee_result['id']]);
+					}
+
 					return [
-						'data'       => $coupon_item_code,
+						'data'       => $receivables_result,
 						'__ajax__'   => true,
 						'__return__' => U('Receivables/Manage', ['mid' => $mid])
 					];
@@ -850,7 +853,6 @@
 						break;
 						case 'mobile':
 							$mobile = trim($val);
-							if($mobile == ''&!$mobile) continue;
 						break;
 						case 'name':
 							$name = $val;
@@ -886,6 +888,7 @@
 						if(!in_array($table_column[$column_index]['name'], ['registration_date'])) $client_data[$table_column[$column_index]['name']] = $val;
 					}
 				}
+				if($mobile == ''&!$mobile) continue;
 				// 判定是否存在该客户
 				$exist_client                   = $core_model->isExist($mobile);
 				$join_data                      = [];

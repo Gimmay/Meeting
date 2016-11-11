@@ -31,9 +31,9 @@
 <body>
 	<div id="mt_container">
 		<div class="mt_content">
-			<include file="Public/menu"/>
+			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
-				<include file="Public/header"/>
+				<include file="Public/innerHeader"/>
 				<div class="main_body">
 					<section class="content">
 						<header class="c_header">
@@ -52,20 +52,20 @@
 								</if>
 							</div>
 						</header>
-						<div class="tabs">
-							<ul class="tabsUl clearfix">
-								<li class="active">
-									<a href="#">进行中</a>
-								</li>
-								<li>
-									<a href="#">已完成</a>
-								</li>
-								<li>
-									<a href="#">取消</a>
-								</li>
-							</ul>
-						</div>
 						<div class="repertory clearfix">
+							<div class="tabs">
+								<ul class="tabsUl clearfix">
+									<li class="active">
+										<a href="#">进行中</a>
+									</li>
+									<li>
+										<a href="#">已完成</a>
+									</li>
+									<li>
+										<a href="#">取消</a>
+									</li>
+								</ul>
+							</div>
 							<form action="" method="get">
 								<div class="input-group repertory_text">
 									<input type="search" name="keyword" class="form-control" placeholder="酒店/拼音简码" value="">

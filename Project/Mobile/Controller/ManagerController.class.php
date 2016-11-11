@@ -19,12 +19,8 @@
 		protected $meetingID  = 0;
 
 		public function _initialize(){
-//			session_unset();
-//			session_destroy();
-//			echo '<h1>已清除缓存</h1>';
-//			exit;
-//			$_SESSION['MOBILE_WEIXIN_ID']   = 1090;
-//			$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
+			$_SESSION['MOBILE_WEIXIN_ID']   = 1090;
+			$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
 			parent::_initialize();
 			$meeting_logic = new MeetingLogic();
 			$meeting_logic->initializeStatus();
@@ -120,7 +116,7 @@
 		public function clientList(){
 			$this->weixinID = $this->getWeixinID();
 			$this->_getMeetingParam();
-			$logic       = new ManagerLogic();
+			$logic = new ManagerLogic();
 			$client_list = $logic->findData('clientList:find_client_list', ['mid' => I('get.mid', 0, 'int')]);
 			if(!isset($_GET['sign'])) $title = '所有参会人员';
 			elseif(I('get.sign',0,'int')===0) $title = '未签到人员';

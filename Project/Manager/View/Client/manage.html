@@ -30,9 +30,9 @@
 <body data-meeting-id="<{:I('get.mid')}>" data-place-id="<{:I('get.sid')}>">
 	<div id="mt_container">
 		<div class="mt_content">
-			<include file="Public/menu"/>
+			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
-				<include file="Public/header"/>
+				<include file="Public/innerHeader"/>
 				<div class="main_body">
 					<section class="content">
 						<div class="table_wrap">
@@ -120,7 +120,7 @@
 								</if>
 								<if condition="$permission_list['CLIENT.DOWNLOAD-IMPORT-EXCEL-TEMPLATE'] eq 1">
 									<div class="function_btn bg-f63 download_excel_temp">
-										<a href="<{:U('exportClientDataTemplate')}>"> <i></i>
+										<a href="<{:U('exportClientDataTemplate', ['mid'=>I('get.mid', 0, 'int')])}>"> <i></i>
 											<p>下载Excel模板</p>
 										</a>
 									</div>

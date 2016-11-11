@@ -19,7 +19,7 @@
 			$badge_logic = new BadgeLogic();
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
-				$result = $badge_logic->handlerRequest($type);
+				$result = $badge_logic->handlerRequest($type, ['mid' => $this->meetingID]);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);
 					echo json_encode($result);
@@ -36,29 +36,44 @@
 			}
 			/** @var \Core\Model\BadgeModel $model */
 			$model = D('Core/Badge');
-			/** @var \Manager\Model\MeetingModel $meeting_model */
-			$meeting_model = D('Meeting');
-			$meeting_list  = $meeting_model->getMeetingForSelect();
-			$list          = $model->findBadge(2, ['status' => 'not deleted']);
+			$list  = $model->findBadge(2, ['status' => 'not deleted']);
 			$this->assign('list', $list);
-			$this->assign('meeting_list', $meeting_list);
 			$this->display();
 		}
 
 		public function preview(){
+			//			/** @var \Core\Model\BadgeModel $model */
+			//			$model = D('Core/Badge');
+			//			/** @var \Core\Model\MeetingModel $meeting_model */
+			//			$meeting_model = D('Core/Meeting');
+			//			/** @var \Core\Model\JoinModel $join_model */
+			//			$join_model     = D('Core/Join');
+			//			$logic          = new BadgeLogic();
+			//			$cid            = I('get.cid', 0, 'int');
+			//			$meeting_record = $meeting_model->findMeeting(1, ['id' => $this->meetingID]);
+			//			$client_record  = $join_model->findRecord(1, ['mid' => $this->meetingID, 'cid' => $cid]);
+			//			$info           = $model->findBadge(1, ['id' => $meeting_record['bid']]);
+			//			$info           = $logic->setData('preview:init_temp', $info, [
+			//				'client'  => $client_record,
+			//				'meeting' => $meeting_record
+			//			]);
+			//			$this->assign('info', $info);print_r($info);exit;
+			//			$this->display();
 			/** @var \Core\Model\BadgeModel $model */
 			$model = D('Core/Badge');
 			/** @var \Core\Model\MeetingModel $meeting_model */
 			$meeting_model = D('Core/Meeting');
-			/** @var \Core\Model\JoinModel $join_model */
-			$join_model = D('Core/Join');
-			$logic = new BadgeLogic();
-			$cid    = I('get.cid', 0, 'int');
-			$meeting_record = $meeting_model->findMeeting(1, ['id'=>$this->meetingID]);
-			$client_record = $join_model->findRecord(1, ['mid'=>$this->meetingID, 'cid'=>$cid]);
-			$info  = $model->findBadge(1, ['id' => $meeting_record['bid']]);
-			$info = $logic->setData('preview:init_temp', $info, ['client'=>$client_record, 'meeting'=>$meeting_record]);
+			$meeting       = $meeting_model->findMeeting(1, ['mid' => $this->meetingID, 'status' => 'not deleted']);
+			$info          = $model->findBadge(1, ['bid' => $meeting['bid'], 'status' => 'not deleted']);
 			$this->assign('info', $info);
+			$this->display();
+		}
+
+		public function previewList(){
+			/** @var \Core\Model\BadgeModel $model */
+			$model = D('Core/Badge');
+			$list  = $model->findBadge(2, ['status' => 'not deleted']);
+			$this->assign('list', $list);
 			$this->display();
 		}
 	}

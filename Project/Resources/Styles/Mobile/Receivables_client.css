@@ -1,0 +1,187 @@
+.topbar{
+	width         : 100%;
+	height        : 2rem;
+	position      : relative;
+	margin-bottom : 0.2rem;
+	background    : #FFFFFF;
+	overflow      : hidden;
+}
+
+.topbar .topbarBg{
+	width    : 100%;
+	height   : 100%;
+	position : absolute;
+	left     : 0;
+	top      : 0;
+}
+
+.topbar .topbarBg img{
+	width : 100%;
+}
+
+.topbar .photo{
+	position      : absolute;
+	top           : 50%;
+	left          : 50%;
+	margin-top    : -0.75rem;
+	margin-left   : -0.75rem;
+	width         : 1.5rem;
+	height        : 1.5rem;
+	border-radius : 50%;
+	background    : #FFFFFF;
+	overflow      : hidden;
+	border        : 2px solid #E1E1E1;
+}
+
+.topbar .photo > img{
+	width : 100%;
+}
+
+.myInfor{
+	padding : 0.1rem 0.4rem;
+}
+
+.myInfor .li{
+	padding       : 0.2rem 0;
+	border-bottom : 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.myInfor .li .lab{
+	margin-right : 30px;
+}
+
+.my_box{
+	width   : 100%;
+	padding : 0.4rem 0.2rem;
+}
+
+.my_title{
+	width         : 100%;
+	padding       : 0.2rem;
+	border-bottom : 1px solid #E1E1E1;
+}
+
+.fun_btn{
+	border-bottom : 1px solid #E1E1E1;
+	padding       : 5px 0;
+	text-align    : center;
+	font-size     : 0;
+}
+
+.fun_btn a{
+	display    : inline-block;
+	border     : 1px solid #00A0E8;
+	background : #00A0E8;
+	font-size  : 14px;
+	margin     : 5px;
+	padding    : 6px 10px;
+	color      : #FFFFFF;
+}
+
+.fun_btn a:hover{
+	background : #0A84BB;
+}
+
+.fun_btn a.active{
+	background : #0A84BB;
+}
+
+.my_title .photo{
+	width         : 0.8rem;
+	float         : left;
+	overflow      : hidden;
+	border        : 1px solid #999999;
+	border-radius : 4px;
+}
+
+.my_title .photo img{
+	width          : 100%;
+	vertical-align : top;
+}
+
+.qr_code img{
+	width          : 100%;
+	vertical-align : top;
+}
+
+.name{
+	margin-left   : 1rem;
+	font-size     : 0.30rem;
+	font-weight   : bold;
+	margin-bottom : 0.1rem;
+}
+
+.address{
+	margin-left : 1rem;
+	font-size   : 0.24rem;
+}
+
+.qr_code{
+	width  : 60%;
+	margin : 0.2rem auto;
+}
+
+.sign_type{
+	width         : 50px;
+	height        : 30px;
+	line-height   : 30px;
+	text-align    : center;
+	border-radius : 20%;
+	color         : #FFFFFF;
+	position      : absolute;
+	top           : 10px;
+	right         : 10px;
+}
+
+.sign_type.signed{
+	background : #23C6C8;
+}
+
+.sign_type.unsigned{
+	background : silver
+}
+
+#mb_footer .auditing{
+	color : #FF6600;
+}
+
+#mb_footer .sign{
+	color : #28B778;
+}
+
+#mb_footer .not{
+	color : rgba(0, 0, 0, .5) !important;
+}
+
+.my_receivables{
+	margin-top : 0.2rem;
+	border-top : 1px solid #E1E1E1;
+	padding    : 0.1rem 0.4rem;
+}
+
+.my_receivables header{
+	text-align    : center;
+	font-size     : 0.28rem;
+	font-weight   : bolder;
+	padding       : 0.1rem 0;
+	border-bottom : 1px solid #E1E1E1;
+}
+
+.my_receivables .receivables_list{
+	width      : 100%;
+	text-align : center;
+}
+
+.my_receivables .receivables_list .receivables_item{
+	padding       : 0.13rem 0;
+	width         : 100%;
+	text-align    : center;
+	border-bottom : 1px solid #E1E1E1;
+}
+
+.my_receivables .receivables_list .receivables_item .link a{
+	color : #00A0E8;
+}
+
+
+

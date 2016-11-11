@@ -12,6 +12,7 @@
 	class MeetingModel extends CoreModel{
 		protected $tableName   = 'meeting';
 		protected $tablePrefix = 'workflow_';
+		protected $autoCheckFields = true;
 
 		public function _initialize(){
 			parent::_initialize();

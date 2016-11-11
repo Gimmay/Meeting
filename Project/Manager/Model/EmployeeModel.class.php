@@ -30,15 +30,12 @@
 					if($user['status'] != 1) return ['status' => false, 'message' => '该用户已删除或者被禁用'];
 					session('MANAGER_EMPLOYEE_ID', $user['id']);
 					session('MANAGER_EMPLOYEE_CODE', $user['code']);
+					session('MANAGER_EMPLOYEE_NAME', $user['name']);
 					return ['status' => true, 'message' => '登入成功'];
 				}
 				else return ['status' => false, 'message' => '该用户不存在或用户名/密码错误'];
 			}
 			else return ['status' => false, 'message' => $this->getError()];
-		}
-
-		public function isLogin(){
-			return isset($_SESSION['MANAGER_EMPLOYEE_ID']) && session('MANAGER_EMPLOYEE_ID') ? true : false;
 		}
 
 		public function getEmployeeSelectList(){

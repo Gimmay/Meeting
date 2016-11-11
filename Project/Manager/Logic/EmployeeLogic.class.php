@@ -15,7 +15,8 @@
 			parent::_initialize();
 		}
 
-		public function create($data){
+		public function isLogin(){
+			return isset($_SESSION['MANAGER_EMPLOYEE_ID']) && session('MANAGER_EMPLOYEE_ID') ? true : false;
 		}
 
 		public function handlerRequest($type, $opt = []){

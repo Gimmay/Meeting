@@ -21,7 +21,10 @@
 			/** @var \Manager\Model\MeetingModel $model */
 			$model  = D('Meeting');
 			$result = $model->getMeetingForSelect();
-			array_unshift($result, ['value' => 0, 'html' => '(系统全局)']);
+			array_unshift($result, [
+				'value' => 0,
+				'html'  => '(系统全局)'
+			]);
 
 			return $result;
 		}
@@ -43,7 +46,11 @@
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
-					else return ['status' => false, 'message' => '您没有删除会议的权限', '__ajax__' => false];
+					else return [
+						'status'   => false,
+						'message'  => '您没有删除会议的权限',
+						'__ajax__' => false
+					];
 				break;
 				case 'message':
 					/** @var \Core\Model\AssignMessageModel $assign_message_model */
@@ -61,7 +68,10 @@
 						C('TOKEN_ON', false);
 						/** @var \Core\Model\AssignMessageModel $message_model */
 						$message_model  = D('Core/Assign_Message');
-						$message_result = $message_model->findRecord(1, ['mid' => I('post.id'), 'type' => 1]);
+						$message_result = $message_model->findRecord(1, [
+							'mid'  => I('post.id'),
+							'type' => 1
+						]);
 						if($message_result){
 							$sign_result = $assign_message_model->alterRecord([$message_result['id']], ['message_id' => I('post.sign_mes', 0, 'int')]);
 						}
@@ -82,7 +92,10 @@
 						C('TOKEN_ON', false);
 						/** @var \Core\Model\AssignMessageModel $message_model */
 						$message_model  = D('Core/Assign_Message');
-						$message_result = $message_model->findRecord(1, ['mid' => I('post.id'), 'type' => 2]);
+						$message_result = $message_model->findRecord(1, [
+							'mid'  => I('post.id'),
+							'type' => 2
+						]);
 						if($message_result){
 							$anti_sign_result = $assign_message_model->alterRecord([$message_result['id']], [
 								'message_id' => I('post.anti_sign_mes', 0, 'int'),
@@ -106,7 +119,10 @@
 						C('TOKEN_ON', false);
 						/** @var \Core\Model\AssignMessageModel $message_model */
 						$message_model  = D('Core/Assign_Message');
-						$message_result = $message_model->findRecord(1, ['mid' => I('post.id'), 'type' => 3]);
+						$message_result = $message_model->findRecord(1, [
+							'mid'  => I('post.id'),
+							'type' => 3
+						]);
 						if($message_result){
 							$receivables_result = $assign_message_model->alterRecord([$message_result['id']], [
 								'message_id' => I('post.receivables_mes', 0, 'int'),
@@ -121,10 +137,18 @@
 						}
 					}
 					if($count>0){
-						return ['status' => true, 'message' => '保存成功', '__ajax__' => false];
+						return [
+							'status'   => true,
+							'message'  => '保存成功',
+							'__ajax__' => false
+						];
 					}
 					else{
-						return ['status' => false, 'message' => '保存失败', '__ajax__' => false];
+						return [
+							'status'   => false,
+							'message'  => '保存失败',
+							'__ajax__' => false
+						];
 					}
 					//					elseif(I('post.sign_mes')){
 					//						$data['message_id'] = I('post.sign_mes', '');
@@ -190,7 +214,10 @@
 					$message_model         = D('Core/Message');
 					$assign_message_result = $message_model->findMessage(1, ['id' => $id]);
 
-					return ['data' => $assign_message_result, '__ajax__' => true];
+					return [
+						'data'     => $assign_message_result,
+						'__ajax__' => true
+					];
 				break;
 				case 'create':
 					if($this->permissionList['MEETING.CREATE']){
@@ -200,9 +227,7 @@
 						$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 						$data['creatime'] = time();
 						$data['brief']    = $_POST['brief'];
-						if(I('post.city')) $data['place'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
-						else $data['place'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
-						$result = $model->createMeeting($data);
+						$result           = $model->createMeeting($data);
 						if($result['status']){
 							$meeting_id = $result['id'];
 							// 创建二维码
@@ -234,20 +259,27 @@
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
-					else return ['status' => false, 'message' => '您没有创建会议的权限', '__ajax__' => false];
+					else return [
+						'status'   => false,
+						'message'  => '您没有创建会议的权限',
+						'__ajax__' => false
+					];
 				break;
 				case 'upload_image':
 					$core_upload_logic = new UploadLogic();
 					$result            = $core_upload_logic->upload($_FILES, '/Image/');
 
-					return array_merge($result, ['__ajax__' => true, 'imageUrl' => $result['data']['filePath']]);
+					return array_merge($result, [
+						'__ajax__' => true,
+						'imageUrl' => $result['data']['filePath']
+					]);
 				break;
 				case 'alter':
 					if($this->permissionList['MEETING.ALTER']){
 						/** @var \Core\Model\MeetingModel $model */
 						$model          = D('Core/Meeting');
 						$qrcode_obj     = new QRCodeLogic();
-						$id             = I('get.id', 0, 'int');
+						$id             = I('get.mid', 0, 'int');
 						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myMeeting', [
 								'mid'  => $id,
 								'sign' => 1
@@ -257,14 +289,15 @@
 						$data           = I('post.');
 						$data['brief']  = $_POST['brief'];
 						$data['qrcode'] = $remote_url;
-						if(I('post.area')) $data['place'] = I('post.province')."-".I('post.city')."-".I('post.area')."-".I('post.address_detail');
-						elseif(I('post.city')) $data['place'] = I('post.province')."-".I('post.city')."-".I('post.address_detail');
-						else $data['place'] = $ext['info']['place'];
-						$result = $model->alterMeeting([$id], $data);
+						$result         = $model->alterMeeting([$id], $data);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
-					else return ['status' => false, 'message' => '您没有修改会议的权限', '__ajax__' => false];
+					else return [
+						'status'   => false,
+						'message'  => '您没有修改会议的权限',
+						'__ajax__' => false
+					];
 				break;
 				case 'get_detail':
 					/** @var \Core\Model\MeetingModel $model */
@@ -340,37 +373,36 @@
 					/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
 					$meeting_manager_model = D('Core/MeetingManager');
 					$employee_result       = $employee_model->findEmployee(2, ['status' => 'not deleted']);
-					foreach ($employee_result as $k=>$v){
-						$department_result = $department_model->findDepartment(1,['id'=>$v['did']]);
+					foreach($employee_result as $k => $v){
+						$department_result             = $department_model->findDepartment(1, ['id' => $v['did']]);
 						$employee_result[$k]['d_name'] = $department_result['name'];
 					}
-//					$employee_id           = [];
-//					foreach($employee_result as $k1 => $v1){
-//						$employee_id[] = $v1['id'];
-//					}
-//					$meeting_manager_result = $meeting_manager_model->findRecord(2, [
-//						'mid'    => I('post.mid', ''),
-//						'status' => 'not deleted'
-//					]);
-//					foreach($meeting_manager_result as $key => $val){
-//						$eid[] = $val['eid'];
-//					}
-//					$id = [];
-//					foreach($employee_id as $kk => $vv){
-//						if(in_array($vv, $eid)){
-//							continue;
-//						}
-//						else{
-//							$id[] = $vv;
-//						}
-//					}
-//					$result = [];
-//					foreach($id as $k2 => $v3){
-//						$result[]              = $employee_model->findEmployee(1, ['id' => $v3]);
-//						$department_result     = $department_model->findDepartment(1, ['id' => $result[$k2]['did']]);
-//						$result[$k2]['d_name'] = $department_result['name'];
-//					}
-
+					//					$employee_id           = [];
+					//					foreach($employee_result as $k1 => $v1){
+					//						$employee_id[] = $v1['id'];
+					//					}
+					//					$meeting_manager_result = $meeting_manager_model->findRecord(2, [
+					//						'mid'    => I('post.mid', ''),
+					//						'status' => 'not deleted'
+					//					]);
+					//					foreach($meeting_manager_result as $key => $val){
+					//						$eid[] = $val['eid'];
+					//					}
+					//					$id = [];
+					//					foreach($employee_id as $kk => $vv){
+					//						if(in_array($vv, $eid)){
+					//							continue;
+					//						}
+					//						else{
+					//							$id[] = $vv;
+					//						}
+					//					}
+					//					$result = [];
+					//					foreach($id as $k2 => $v3){
+					//						$result[]              = $employee_model->findEmployee(1, ['id' => $v3]);
+					//						$department_result     = $department_model->findDepartment(1, ['id' => $result[$k2]['did']]);
+					//						$result[$k2]['d_name'] = $department_result['name'];
+					//					}
 					return array_merge($employee_result, ['__ajax__' => true]);
 				break;
 				case 'get_employee2':
@@ -475,7 +507,10 @@
 					$employee_model = D('Core/Employee');
 					/** @var \Core\Model\DepartmentModel $department_model */
 					$department_model   = D('Core/Department');
-					$assign_role_result = $assign_role_model->findRecord(2, ['rid' => $rid, 'type' => 0]);
+					$assign_role_result = $assign_role_model->findRecord(2, [
+						'rid'  => $rid,
+						'type' => 0
+					]);
 					$oid                = [];
 					foreach($assign_role_result as $k => $v){
 						$oid[] = $v['oid'];
@@ -504,7 +539,10 @@
 					$rid = I('post.rid', '');
 					/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
 					$meeting_manager_model  = D('Core/MeetingManager');
-					$meeting_manager_result = $meeting_manager_model->deleteRecord(['mid' => $mid, 'eid' => $eid]);
+					$meeting_manager_result = $meeting_manager_model->deleteRecord([
+						'mid' => $mid,
+						'eid' => $eid
+					]);
 					$assign_role_logic      = new AssignRoleLogic();
 					$result                 = $assign_role_logic->antiAssignRole($rid, $eid, 0);
 
@@ -515,7 +553,7 @@
 					$id  = I('post.id', '');
 					/** @var \Core\Model\MeetingModel $meeting_model */
 					$meeting_model = D('Core/Meeting');
-					$hid = '';
+					$hid           = '';
 					foreach($id as $k => $v){
 						$hid .= $v.',';
 					}
@@ -524,7 +562,10 @@
 					return array_merge($meeting_result, ['__ajax__' => true]);
 				break;
 				default:
-					return ['status' => false, 'message' => '参数错误'];
+					return [
+						'status'  => false,
+						'message' => '参数错误'
+					];
 				break;
 			}
 		}

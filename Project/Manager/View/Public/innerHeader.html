@@ -1,0 +1,23 @@
+<!--会议系统头部  公用-->
+<div class="mt_topbar clearfix">
+	<div class="topbar_left">
+		<a class="meeting_name "><i class="glyphicon glyphicon-fire"></i><{$meeting_name}></a>
+		<a href="<{:U('Meeting/manage')}>" class="back_meetingList"><i class="glyphicon glyphicon-list"></i>返回会议列表</span></a>
+	</div>
+	<ul class="nav_info clearfix">
+		<li class="name">
+			<i class="glyphicon glyphicon-user"></i> <span><{:I('session.MANAGER_EMPLOYEE_NAME','')}></span>
+			<div class="hidden_dropDown hide">
+				<div class="dropDown_item">
+					<a href="<{:U('My/information')}>">个人信息</a>
+				</div>
+				<div class="dropDown_item">
+					<a href="<{:U('My/password')}>">修改密码</a>
+				</div>
+				<div class="dropDown_item">
+					<a href="<{:U('My/logout')}>">注销</a>
+				</div>
+			</div>
+		</li>
+	</ul>
+</div>

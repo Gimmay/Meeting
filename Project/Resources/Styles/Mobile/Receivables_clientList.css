@@ -1,0 +1,109 @@
+.mb_body{
+	background : rgba(0, 0, 0, .05);
+}
+
+.search{
+	position   : fixed;
+	top        : 0;
+	left       : 0;
+	width      : 100%;
+	padding    : 0.1rem;
+	text-align : center;
+	background : silver;
+	z-index    : 99;
+}
+
+.search .inp{
+	width         : 100%;
+	padding-right : 1rem;
+}
+
+.search .inp .ss{
+	border        : 1px solid #E1E1E1;
+	border-radius : 5px;
+}
+
+.search .inp .ss .search_inp{
+	border : none;
+	width  : 90%;
+	height : 0.6rem;
+}
+
+.client_list{
+	width   : 100%;
+}
+
+.client_list .list_item{
+	position      : relative;
+	margin-bottom : 0.08rem;
+}
+
+.client_list .list_item .title{
+	color       : rgba(0, 0, 0, .6);
+	position    : relative;
+	height      : 0.7rem;
+	padding     : 0 0.2rem;
+	background  : rgba(0, 0, 0, .1);
+	line-height : 0.7rem;
+	font-weight : bolder;
+	font-size   : 0.3rem;
+}
+
+.client_list .list_item .icon{
+	position    : absolute;
+	top         : 0;
+	color       : rgba(0, 0, 0, .6);
+	font-size   : 0.35rem;
+	right       : 0.2rem;
+	width       : 0.7rem;
+	height      : 0.7rem;
+	line-height : 0.7rem;
+	text-align  : center;
+}
+
+.client_list .list_item > ul{
+	padding : 0.1rem 0;
+}
+
+.client_list ul li.client_item{
+	background    : #FFFFFF;
+	margin-bottom : 0.08rem;
+}
+
+.client_list ul li.client_item > a{
+	padding : 0.15rem 0.3rem;
+	display : block;
+}
+
+.client_list ul li.client_item > a .status{
+	float : right;
+}
+
+.client_list ul li.client_item > a .status.receivables{
+	color : #00A0E8;
+}
+
+.client_list ul li.client_item > a .status.unReceivables{
+	color : #FF6633;
+}
+
+#mb_footer{
+	padding-right : 1rem;
+}
+
+#mb_footer .add_client{
+	position    : absolute;
+	top         : 0;
+	right       : 0;
+	width       : 1rem;
+	height      : 1rem;
+	line-height : 1rem;
+	color       : #FF5303;
+	text-align  : center;
+	font-size   : 0.3rem;
+	border-left : 1px solid rgba(0, 0, 0, .1);
+}
+
+#mb_footer .add_client:hover{
+	color : #FF0000
+}

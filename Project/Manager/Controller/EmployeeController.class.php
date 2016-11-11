@@ -24,7 +24,7 @@
 				$username = I('post.username', '');
 				$password = I('post.password', '');
 				$result   = $model->checkLogin($username, $password);
-				if($result['status']) $this->success($result['message'], U('Meeting/manage'));
+				if($result['status']) $this->success($result['message'], U('Meeting/manage', ['type'=>'ing']));
 				else $this->error($result['message'], '', 3);
 				exit;
 			}

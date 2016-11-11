@@ -15,13 +15,12 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/xheditor-1.2.2/xheditor-1.2.2.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/xheditor-1.2.2/xheditor_lang/zh-cn.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
-	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=VAbtsPongeKqYXLz2PEaE3GN8WpGuQfE"></script>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=sUwLVfn7vTv7ejhLw6OIfHnMf9iXijlV"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
@@ -30,26 +29,27 @@
 <body>
 	<div id="mt_container">
 		<div class="mt_content">
-			<include file="Public/menu"/>
+			<include file="Public/outerMenu"/>
 			<div class="mt_wrapper">
-				<include file="Public/header"/>
+				<include file="Public/outerHeader"/>
 				<div class="main_body">
-					<section class="content" style="padding: 10px;">
-						<div class="return">
-							<a class="btn btn-default" href="<{:U('manage')}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
-						</div>
-						<div class="modal-header">
-							<h2 class="modal-title" id="authorize_role_title">新建会议</h2>
+					<section class="content">
+						<div class="table_wrap">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="javascript:void(0)">新建会议</a>
+								</div>
+							</div>
 						</div>
 						<form class="form-horizontal" role="form" method="post" action="" id="form">
-							<div class="modal-body" style=" padding: 15px 20px 15px 0;">
+							<div class="modal-body" style=" padding: 30px 30px 15px 30px;">
 								<div class="form-group">
 									<label for="meeting_name" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>会议名称：</label>
 									<div class="col-sm-11">
 										<input type="text" class="form-control meeting_name" name="name" id="meeting_name">
 									</div>
 								</div>
-								<div class="form-group">
+								<!--<div class="form-group">
 									<label for="meeting_status" class="col-sm-1 control-label">状态：</label>
 									<div class="col-sm-11">
 										<select name="status" id="meeting_status" class="form-control">
@@ -59,7 +59,7 @@
 											<option value="4">作废</option>
 										</select>
 									</div>
-								</div>
+								</div>-->
 								<div class="form-group">
 									<label for="meeting_type" class="col-sm-1 control-label">类型：</label>
 									<div class="col-sm-11">
@@ -87,23 +87,8 @@
 								<div class="form-group">
 									<label for="place" class="col-sm-1 control-label">地址：</label>
 									<div class="col-sm-11">
-										<div id="place" class="address_wrap clearfix">
-											<div class="address_item">
-												<select class="prov form-control" name="province"></select>
-											</div>
-											<div class="address_item">
-												<select class="city form-control" name="city" disabled="disabled"></select>
-											</div>
-											<div class="address_item">
-												<select class="dist form-control" name="area" disabled="disabled"></select>
-											</div>
-											<div class="address_item address_details">
-												<input type="text" placeholder="具体街道或者村镇" class="form-control" name="address.detail">
-											</div>
-										</div>
-										<div id="map_container">
-
-										</div>
+										<input type="text" class="form-control" name="place" id="place">
+										<!--<div id="allmap" style="width: 100%; height: 400px;"></div>-->
 									</div>
 								</div>
 								<div class="form-group">
@@ -175,14 +160,6 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-1 control-label">选择酒店：</label>
-									<div class="col-sm-11">
-										<button type="button" class="btn btn-default choose_hotel_btn" data-toggle="modal" data-target="#choose_hotel">选择酒店</button>
-										&nbsp;&nbsp;&nbsp;&nbsp;<span class="c_hotel hide">已选择：<span></span></span>
-									</div>
-									<input type="hidden" name="hotel">
-								</div>
-								<div class="form-group">
 									<label for="comment" class="col-sm-1 control-label">备注：</label>
 									<div class="col-sm-11">
 										<textarea class="form-control comment" name="comment" id="comment"></textarea>
@@ -196,70 +173,6 @@
 						</form>
 					</section>
 				</div>
-			</div>
-		</div>
-	</div>
-	<!--选择酒店-->
-	<div class="modal fade" id="choose_hotel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog" style="width: 60%">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title text-center">可选酒店列表</h2>
-				</div>
-				<form class="form-horizontal" role="form" action="" method="post">
-					<input type="hidden" name="requestType" value="choose_car"> <input type="hidden" name="id">
-					<div class="modal-body">
-						<table class="table table-bordered" style="text-align: center">
-							<thead>
-								<tr>
-									<td width="5%" class="all_check">
-										<input type="checkbox" class="icheck" placeholder="" value="">
-									</td>
-									<td width="5%">序号</td>
-									<td width="10%">酒店名称</td>
-									<td width="10%">星级</td>
-									<td width="10%">类型</td>
-									<td width="10%">地址</td>
-									<td width="10%">价格</td>
-									<td width="10%">联系方式</td>
-									<td width="10%">简介</td>
-									<td width="20%">备注</td>
-								</tr>
-							</thead>
-							<tbody>
-								<volist name="info" id="single">
-									<tr>
-										<td class="check_item">
-											<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
-										</td>
-										<td><{$i}></td>
-										<td class="hotel_name"><{$single.name}></td>
-										<td data-id="<{$single.id}>"><{$single.name}></td>
-										<td><{$single.type}></td>
-										<td><{$single.address}></td>
-										<td><{$single.price}></td>
-										<td><a href="<{:U('manage', ['did'=>$single['did']])}>"><{$single.contact}></a>
-										</td>
-										<td><{$single.brief}></td>
-										<td><{$single.comment}></td>
-									</tr>
-								</volist>
-							</tbody>
-
-						</table>
-						<div class="page_wrap">
-							<div class="pagination">
-								<{$page_show}>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="button" class="btn btn-primary btn_save_hotel">保存</button>
-					</div>
-				</form>
 			</div>
 		</div>
 	</div>
@@ -329,15 +242,11 @@
 					emptyItemHtml:'----- 空 -----',
 				}),
 				toast            :$().QuasarToast(),
-				loading          :$().QuasarLoading(),
-				citySelect       :$("#place").citySelect({
-					nodata:"none",
-					url   :'<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/city.min.js'
-				})
+				loading          :$().QuasarLoading()
 			}
 		};
 	</script>
-	<!--<script type="text/javascript">
+<!--	<script type="text/javascript">
 		// 百度地图API功能
 		var map = new BMap.Map("allmap");
 		map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
@@ -346,6 +255,5 @@
 		});
 		local.search("广东-深圳-南山-智慧广场");
 	</script>-->
-
 </body>
 </html>

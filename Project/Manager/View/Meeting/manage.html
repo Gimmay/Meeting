@@ -30,9 +30,9 @@
 <body>
 	<div id="mt_container">
 		<div class="mt_content">
-			<include file="Public/meetingMenu"/>
+			<include file="Public/outerMenu"/>
 			<div class="mt_wrapper">
-				<include file="Public/header"/>
+				<include file="Public/outerHeader"/>
 				<div class="main_body">
 					<section class="content">
 						<header class="c_header">
@@ -52,7 +52,20 @@
 								</if>
 							</div>
 						</header>
-						<div class="repertory clearfix" style="padding: 10px 30px 10px 30px;border-bottom: 1px solid #E1E1E1;">
+						<div class="repertory clearfix">
+							<div class="tabs">
+								<ul class="tabsUl clearfix">
+									<li>
+										<a href="#">全部</a>
+									</li>
+									<li class="active">
+										<a href="#">进行</a>
+									</li>
+									<li>
+										<a href="#">结束</a>
+									</li>
+								</ul>
+							</div>
 							<form action="" method="get">
 								<div class="input-group repertory_text">
 									<input type="search" name="keyword" class="form-control" placeholder="会议名称/拼音简码" value="<{:I('get.keyword', '')}>">
@@ -64,97 +77,15 @@
 							</form>
 						</div>
 						<div class="table_wrap">
-							<!--<table class="table table-bordered" style="text-align: center">
-								<thead>
-									<tr>
-										<td width="4%" class="all_check">
-											<input type="checkbox" class="icheck" placeholder="" value="">
-										</td>
-										<td width="3%">序号</td>
-										<td width="8%">会议名称</td>
-										<td width="5%">状态</td>
-										<td width="5%">类型</td>
-										<td class="hide">二维码</td>
-										<td width="6%">主办方</td>
-										<td width="6%">策划方</td>
-										<td width="10%">举办地点</td>
-										<td class="hide">会议酒店</td>
-										<td class="hide">会议车辆</td>
-										<td width="10%">开始结束时间</td>
-										<td width="8%">负责人</td>
-										<td width="8%">创建时间</td>
-										<td class="hide">简介</td>
-										<td class="hide">备注</td>
-										<td width="20%">操作</td>
-									</tr>
-								</thead>
-								<tbody>
-									<volist name="content" id="vo">
-										<tr>
-											<td class="check_item">
-												<input type="checkbox" class="icheck" value="<{$vo.id}>" placeholder="">
-											</td>
-											<td><{$i}></td>
-											<td class="meeting_name"><{$vo.name}></td>
-											<td class="status">
-												<switch name="vo.status">
-													<case value="0"><span style="color:#FF0000">禁用</span></case>
-													<case value="1"><span style="color:#000000">新建</span></case>
-													<case value="2"><span style="color:#0000FF">发布</span></case>
-													<case value="3"><span style="color:#00D700">进行中</span></case>
-													<case value="4"><span style="color:#A08000">结束</span></case>
-												</switch>
-											</td>
-											<td class="type"><{$vo.type}></td>
-											<td class="hide"><img src="<{$vo.qrcode}>" width="150px"></td>
-											<td class="host"><{$vo.host}></td>
-											<td class="plan"><{$vo.plan}></td>
-											<td class="place"><{$vo.place}></td>
-											<td class="hotel hide"><{$vo.place}></td>
-											<td class="car hide"><{$vo.place}></td>
-											<td class="setime"><{$vo.start_time}><br>至<br><{$vo.end_time}></td>
-											<td class="director_name"><{$vo.director_name}></td>
-											<td class="create_time"><{:date('Y-m-d H:i:s', $vo['creatime'])}></td>
-											<td class="hide brief">简介</td>
-											<td class="hide comment">备注</td>
-											<td>
-												<div class="btn-group" data-id="<{$vo.id}>">
-													<if condition="$permission_list['SIGN_PLACE.VIEW'] eq 1">
-														<a href="<{:U('SignPlace/Manager',['mid'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">签到点</a>
-													</if>
-													<if condition="$permission_list['MEETING.SELECT-MESSAGE'] eq 1">
-														<a type="button" class="btn btn-default btn-xs mes_btn" data-toggle="modal" data-target="#choose_message">选择消息模板</a>
-													</if>
-													<if condition="$permission_list['CLIENT.VIEW'] eq 1">
-														<a href="<{:U('Client/Manager',['mid'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a>
-													</if>
-													<if condition="$permission_list['MEETING.SELECT-BADGE'] eq 1">
-														<a href="<{:U('Badge/Manager')}>" type="button" class="btn btn-default btn-xs modify_btn">胸卡设计</a>
-													</if>
-													<if condition="$permission_list['MEETING.ALTER'] eq 1">
-														<a href="<{:U('Meeting/alter',['id'=>$vo['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
-													</if>
-													<if condition="$permission_list['MEETING.DELETE'] eq 1">
-														<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_meeting">删除</button>
-													</if>
-													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#choose_hotel">选择酒店</button>
-													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#choose_hotel">会议管理人员</button>
-													<button class="btn btn-default btn-xs details_btn">详情</button>
-												</div>
-											</td>
-										</tr>
-									</volist>
-								</tbody>
-							</table>-->
 							<ul class="meeting_list">
 								<volist name="content" id="vo">
 									<li class="meeting_li clearfix">
 										<div class="col-sm-12">
 											<span class="check_item">
 											<input type="checkbox" class="icheck" value="<{$vo.id}>" placeholder="">
-										</span> <a class="list_img"> <img src="<{$vo.logo}>" alt=""> </a>
+										</span> <a class="list_img" href="<{:U('Meeting/index', ['mid'=>$vo['id']])}>"> <img src="<{$vo.logo}>" alt=""> </a>
 											<div class="content-box">
-												<h3><span class="meeting_name"><{$vo.name}></span>
+												<h3><a href="<{:U('Meeting/index', ['mid'=>$vo['id']])}>" class="meeting_name"><{$vo.name}></a>
 													<switch name="vo.status">
 														<case value="0"><span class="status disable">禁用</span></case>
 														<case value="1"><span class="status new">新建</span></case>
@@ -182,30 +113,20 @@
 															<a href="<{:U('SignPlace/manage',['mid'=>$vo['id']])}>"><i class="glyphicon glyphicon-star"></i>签到点</a>
 														</li>
 													</if>
-													<if condition="$permission_list['MEETING.SELECT-MESSAGE'] eq 1">
-														<li class="fun_li">
-															<a class="mes_btn" data-toggle="modal" data-target="#choose_message"><i class="glyphicon glyphicon-envelope"></i>选择消息模板</a>
-														</li>
-													</if>
 													<if condition="$permission_list['CLIENT.VIEW'] eq 1">
 														<li class="fun_li">
 															<a href="<{:U('Client/manage',['mid'=>$vo['id']])}>"><i class="glyphicon glyphicon-user"></i>参会人员</a>
 														</li>
 													</if>
-													<if condition="$permission_list['MEETING.SELECT-BADGE'] eq 1">
-														<li class="fun_li">
-															<a href="<{:U('Badge/manage')}>"><i class="glyphicon glyphicon-tags"></i>胸卡设计</a>
-														</li>
-													</if>
-													<li class="fun_li hotel_btn">
+													<!--<li class="fun_li hotel_btn">
 														<a data-toggle="modal" data-target="#choose_hotel"><i class="glyphicon glyphicon-home"></i>选择酒店</a>
-													</li>
+													</li>-->
 													<li class="fun_li">
 														<a class="management_btn" data-toggle="modal" data-target="#role_list_modal"><i class="glyphicon glyphicon-th"></i>会议管理人员</a>
 													</li>
 													<if condition="$permission_list['MEETING.ALTER'] eq 1">
 														<li class="fun_li">
-															<a href="<{:U('Meeting/alter',['id'=>$vo['id']])}>"><i class="glyphicon glyphicon-cog"></i>修改</a>
+															<a href="<{:U('Meeting/alter',['mid'=>$vo['id']])}>"><i class="glyphicon glyphicon-cog"></i>修改</a>
 														</li>
 													</if>
 													<if condition="$permission_list['MEETING.DELETE'] eq 1">

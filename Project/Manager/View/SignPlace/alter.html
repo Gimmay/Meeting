@@ -29,51 +29,36 @@
 <body>
 	<div id="mt_container">
 		<div class="mt_content">
-			<include file="Public/menu"/>
+			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
-				<include file="Public/header"/>
+				<include file="Public/innerHeader"/>
 				<div class="main_body">
 					<section class="content" style="padding: 10px;">
-						<div class="return">
-							<a class="btn btn-default" href="javascript:history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
-						</div>
-						<div class="modal-header">
-							<h2 class="modal-title" id="authorize_role_title">修改签到点</h2>
+						<div class="table_wrap">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="javascript:void(0)">修改签到点</a>
+								</div>
+							</div>
 						</div>
 						<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
-							<div class="modal-body" style=" padding: 15px 20px 15px 0;">
+							<div class="modal-body">
 								<div class="form-group">
 									<label for="mid" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>会议：</label>
 									<div class="col-sm-11">
-										<input type="text" class="form-control" name="mid" id="mid" value="<{$record_name.name}>" disabled>
+										<input type="text" class="form-control" name="mid" id="mid" value="<{$meeting.name}>" disabled>
 									</div>
 								</div>
 								<div class="form-group">
 									<label for="name" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>签到点名称：</label>
 									<div class="col-sm-11">
-										<input type="text" class="form-control name" name="name" id="name" value="<{$list.name}>">
+										<input type="text" class="form-control name" name="name" id="name" value="<{$info.name}>">
 									</div>
 								</div>
 								<div class="form-group">
 									<label for="place" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>地址：</label>
 									<div class="col-sm-11">
-										<div id="place" class="address_wrap clearfix">
-											<div class="address_item">
-												<select class="prov form-control" name="address_province"></select>
-											</div>
-											<div class="address_item">
-												<select class="city form-control" name="address_city" disabled="disabled"></select>
-											</div>
-											<div class="address_item">
-												<select class="dist form-control" name="address_area" disabled="disabled"></select>
-											</div>
-											<div class="address_item address_details">
-												<input type="text" placeholder="具体街道或者村镇" class="form-control" name="address.detail">
-											</div>
-											<div class="address_item address_default">
-												原先地址：<span><{$list.place}></span>
-											</div>
-										</div>
+										<input type="text" class="form-control" name="place" id="place" value="<{$info.place}>">
 									</div>
 								</div>
 								<div class="form-group">
@@ -91,7 +76,7 @@
 								<div class="form-group">
 									<label for="comment" class="col-sm-1 control-label">备注：</label>
 									<div class="col-sm-11">
-										<textarea class="form-control comment" name="comment" id="comment"><{$list.comment}></textarea>
+										<textarea class="form-control comment" name="comment" id="comment"><{$info.comment}></textarea>
 									</div>
 								</div>
 							</div>
@@ -115,8 +100,8 @@
 					idHidden    :'selected_director_id_form',
 					placeholder :'',
 					hasEmptyItem:false,
-					defaultValue:'<{$list.director_id}>',
-					defaultHtml :'<{$info.develop_consultant}>'
+					defaultValue:'<{$info.director_id}>',
+					defaultHtml :'<{$info.director}>'
 				}),
 				signDirectorIdSelect:$('#sign_director_id').QuasarSelect({
 					name        :'sign_director_id',
@@ -126,20 +111,13 @@
 					idHidden    :'selected_sign_director_id_form',
 					placeholder :'',
 					hasEmptyItem:false,
-					defaultValue:'<{$list.sign_director_id}>',
-					defaultHtml :'<{$info.code}>'+" - "+'<{$info.name}>'
+					defaultValue:'<{$info.sign_director_id}>',
+					defaultHtml :'<{$info.sign_director}>'
 				}),
 				toast            :$().QuasarToast(),
 				loading          :$().QuasarLoading()
 			}
 		};
-		// 三联地址
-		$(function(){
-			$("#place").citySelect({
-				nodata:"none",
-				url   :'<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/city.min.js'
-			});
-		});
 	</script>
 </body>
 </html>

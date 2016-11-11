@@ -29,57 +29,24 @@
 <body>
 	<div id="mt_container">
 		<div class="mt_content">
-			<include file="Public/menu"/>
+			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
-				<include file="Public/header"/>
+				<include file="Public/innerHeader"/>
 				<div class="main_body">
-					<section class="content" style="padding: 10px;">
-						<div class="return">
-							<a class="btn btn-default" href="<{:U('manage')}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
-						</div>
-						<div class="modal-header">
-							<h2 class="modal-title" id="authorize_role_title">修改会议</h2>
+					<section class="content">
+						<div class="table_wrap">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="javascript:void(0)">会议信息</a>
+								</div>
+							</div>
 						</div>
 						<form class="form-horizontal" role="form" method="post" action="" id="form">
-							<div class="modal-body" style=" padding: 15px 20px 15px 0;">
+							<div class="modal-body" style=" padding: 30px 30px 15px 30px;">
 								<div class="form-group">
 									<label for="meeting_name" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>会议名称：</label>
 									<div class="col-sm-11">
 										<input type="text" value="<{$info.name}>" class="form-control meeting_name" name="name" id="meeting_name">
-									</div>
-								</div>
-								<div class="form-group">
-									<label for="meeting_status" class="col-sm-1 control-label">状态：</label>
-									<div class="col-sm-11">
-										<select name="status" id="meeting_status" class="form-control">
-											<switch name="info['status']">
-												<case value="0">
-													<option value="0" selected>禁用</option>
-													<option value="1">新建</option>
-													<option value="2">进行中</option>
-													<option value="3">结束</option>
-												</case>
-												<case value="1">
-													<option value="0">禁用</option>
-													<option value="1" selected>新建</option>
-													<option value="2">进行中</option>
-													<option value="3">结束</option>
-												</case>
-												<case value="2">
-													<option value="0">禁用</option>
-													<option value="1">新建</option>
-													<option value="2" selected>进行中</option>
-													<option value="3">结束</option>
-												</case>
-												<case value="3">
-													<option value="0">禁用</option>
-													<option value="1">新建</option>
-													<option value="2">进行中</option>
-													<option value="3" selected>结束</option>
-												</case>
-
-											</switch>
-										</select>
 									</div>
 								</div>
 								<div class="form-group">
@@ -141,23 +108,7 @@
 								<div class="form-group">
 									<label for="place" class="col-sm-1 control-label">地址：</label>
 									<div class="col-sm-11">
-										<div id="place" class="address_wrap clearfix">
-											<div class="address_item">
-												<select class="prov form-control" name="province"></select>
-											</div>
-											<div class="address_item">
-												<select class="city form-control" name="city" disabled="disabled"></select>
-											</div>
-											<div class="address_item">
-												<select class="dist form-control" name="area" disabled="disabled"></select>
-											</div>
-											<div class="address_item address_details">
-												<input type="text" placeholder="具体街道或者村镇" class="form-control" name="address.detail">
-											</div>
-											<div class="address_item address_default">
-												原先地址：<span><{$info.place}></span>
-											</div>
-										</div>
+										<input class="form-control" id="place" name="place" value="<{$info.start_time}>">
 									</div>
 								</div>
 								<div class="form-group">

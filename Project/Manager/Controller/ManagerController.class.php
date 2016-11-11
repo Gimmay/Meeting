@@ -10,6 +10,8 @@
 	use Core\Controller\CoreController;
 	use Core\Logic\MeetingRoleLogic;
 	use Core\Logic\PermissionLogic;
+	use Manager\Logic\EmployeeLogic;
+	use Manager\Logic\ManagerLogic;
 
 	class ManagerController extends CoreController{
 		protected $permissionList  = null;
@@ -18,14 +20,16 @@
 
 		public function _initialize(){
 			parent::_initialize();
+			$this->_checkLogin();
 			$meeting_role_logic    = new MeetingRoleLogic();
 			$permission_logic      = new PermissionLogic();
+			$logic                 = new ManagerLogic();
 			$this->permissionList  = $permission_logic->getPermissionList();
 			$this->meetingViewList = $meeting_role_logic->getMeetingView(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));
-			$this->_checkLogin();
-			$this->_assignEmployeeName();
-			$this->assign('cv_name', CONTROLLER_NAME.':'.ACTION_NAME);
+			$meeting_name          = $logic->getMeetingName();
+			$this->assign('cv_name', CONTROLLER_NAME.'_'.ACTION_NAME);
 			$this->assign('c_name', CONTROLLER_NAME);
+			$this->assign('meeting_name', $meeting_name);
 			$this->assign('permission_list', $this->permissionList);
 			$this->assign('meeting_view_list', $this->meetingViewList);
 		}
@@ -39,9 +43,8 @@
 
 				return in_array($curcv, $list) ? true : false;
 			};
-			/** @var \Manager\Model\EmployeeModel $model */
-			$model    = D('Employee');
-			$is_login = $model->isLogin();
+			$logic             = new EmployeeLogic();
+			$is_login          = $logic->isLogin();
 			if(!$canAccessDirectly()){
 				if(!$is_login){
 					$this->redirect('Employee/login');
@@ -54,13 +57,6 @@
 			}
 		}
 
-		private function _assignEmployeeName(){
-			/** @var \Core\Model\EmployeeModel $model */
-			$model    = D('Core/Employee');
-			$employee = $model->findEmployee(1, ['id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')]);
-			$this->assign('curname', $employee['name']);
-		}
-
 		/**
 		 * @param ManagerController $obj
 		 *
@@ -68,11 +64,13 @@
 		 */
 		protected function initMeetingID($obj){
 			$meeting_id = I('get.mid', 0, 'int');
-			if($meeting_id===0){
-				echo "缺少会议参数！";
+			if($meeting_id === 0){
+				echo "<h1>缺少会议参数！</h1>";
 				exit;
-			}else{
+			}
+			else{
 				$obj->meetingID = $meeting_id;
+
 				return $meeting_id;
 			}
 		}

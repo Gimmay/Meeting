@@ -17,14 +17,14 @@
 
 		public function _initialize(){
 			// quasar
-//			$_SESSION['MOBILE_CLIENT_ID'] = '599';
-//			$_SESSION['MOBILE_WEIXIN_ID'] = '1090';
-//			session_destroy();
-//			session_unset();
-//			exit;
-//			$_SESSION['MOBILE_CLIENT_ID'] = '573';
-//			$_SESSION['MOBILE_WEIXIN_ID'] = '0018';
-			$meeting_logic                = new MeetingLogic();
+			$_SESSION['MOBILE_CLIENT_ID'] = 599;
+			$_SESSION['MOBILE_WEIXIN_ID'] = 1090;
+			//			session_destroy();
+			//			session_unset();
+			//			exit;
+			//			$_SESSION['MOBILE_CLIENT_ID'] = '573';
+			//			$_SESSION['MOBILE_WEIXIN_ID'] = '0018';
+			$meeting_logic = new MeetingLogic();
 			$meeting_logic->initializeStatus();
 			parent::_initialize();
 		}
@@ -126,23 +126,23 @@
 			$this->display();
 		}
 
-//		private function _sign($meeting, $join_record){
-//			/** @var \Core\Model\JoinModel $join_model */
-//			$join_model      = D('Core/Join');
-//			$sign_start_time = strtotime($meeting['sign_start_time']);
-//			$sign_end_time   = strtotime($meeting['sign_end_time']);
-//			$cur_time        = time();
-//			if($join_record['sign_status'] != 1 && $join_record['review_status'] == 1 && $sign_start_time<=$cur_time && $sign_end_time>=$cur_time){
-//				$join_model->alterRecord([
-//					'id' => $join_record['id']
-//				], [
-//					'sign_time'        => $cur_time,
-//					'sign_status'      => 1,
-//					'sign_director_id' => $this->clientID,
-//					'sign_type'        => 2
-//				]);
-//			}
-//		}
+		//		private function _sign($meeting, $join_record){
+		//			/** @var \Core\Model\JoinModel $join_model */
+		//			$join_model      = D('Core/Join');
+		//			$sign_start_time = strtotime($meeting['sign_start_time']);
+		//			$sign_end_time   = strtotime($meeting['sign_end_time']);
+		//			$cur_time        = time();
+		//			if($join_record['sign_status'] != 1 && $join_record['review_status'] == 1 && $sign_start_time<=$cur_time && $sign_end_time>=$cur_time){
+		//				$join_model->alterRecord([
+		//					'id' => $join_record['id']
+		//				], [
+		//					'sign_time'        => $cur_time,
+		//					'sign_status'      => 1,
+		//					'sign_director_id' => $this->clientID,
+		//					'sign_type'        => 2
+		//				]);
+		//			}
+		//		}
 		/**
 		 * 会议详情页
 		 */
@@ -178,11 +178,11 @@
 			if(!$join_record) $this->redirect('Error/notJoin');
 			$core_logic = new MeetingLogic();
 			$core_logic->initializeStatus();
-//			$this->_sign($meeting, $join_record);
+			//			$this->_sign($meeting, $join_record);
 			$sign_start_time = strtotime($meeting['sign_start_time']);
 			$sign_end_time   = strtotime($meeting['sign_end_time']);
 			$cur_time        = time();
-			$this->assign('can_sign', (I('get.sign', 0, 'int')==1 && $sign_start_time<=$cur_time && $sign_end_time>=$cur_time && $join_record['review_status'] && $join_record['sign_status'] != 1)?1:0);
+			$this->assign('can_sign', (I('get.sign', 0, 'int') == 1 && $sign_start_time<=$cur_time && $sign_end_time>=$cur_time && $join_record['review_status'] && $join_record['sign_status'] != 1) ? 1 : 0);
 			$this->assign('info', $join_record);
 			$this->assign('meeting', $meeting);
 			$this->display();

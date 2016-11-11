@@ -34,18 +34,21 @@
 <body>
 	<div id="mt_container">
 		<div class="mt_content">
-			<include file="Public/menu"/>
+			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
-				<include file="Public/header"/>
+				<include file="Public/innerHeader"/>
 				<div class="main_body">
 					<section class="content badge_content">
 						<header>
 							<div class="nav_tab clearfix">
 								<div class="nav_tab_li active">
-									<a href="javascript:void(0)">自定义胸卡模板</a>
+									<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">自定义胸卡模板</a>
 								</div>
 								<div class="nav_tab_li">
-									<a href="javascript:void(0)">系统胸卡模板列表</a>
+									<a href="<{:U('Badge/previewList', ['mid'=>I('get.mid', 0, 'int')])}>">系统胸卡模板列表</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int')])}>">已选择胸卡</a>
 								</div>
 							</div>
 						</header>
@@ -69,7 +72,7 @@
 								<h2>请设计会议所用胸卡模板</h2>
 								<div class="template template_custom">
 									<div class="form_li">
-										<p class="title">胸卡名称</p>
+										<p class="title"><b style="vertical-align: middle;color: red;">*</b>胸卡名称</p>
 										<div class="name">
 											<input type="text" name="badge_name" class="form-control">
 										</div>
@@ -84,10 +87,10 @@
 												<button type="button" id="submit_bg" onclick="badgeManage.upLoadBg()"></button>
 											</div>
 										</form>
-										<div class="size">
+										<!--<div class="size">
 											<span>宽高（PX）：</span><span><input type="text" class="temp_width" value="400">&nbsp;&nbsp;×&nbsp;&nbsp;<input type="text" class="temp_height" value="700"></span>
 											<button type="button" class="btn btn-sm btn-info size_confirm">确认</button>
-										</div>
+										</div>-->
 									</div>
 									<div class="form_li">
 										<p class="title">内容（点击勾选添加到左侧界面中，点击删除，将从左侧界面中移除）</p>
@@ -128,36 +131,6 @@
 									</div>
 								</div>
 							</div>
-						</div>
-						<!--系统模板	-->
-						<div class="badge_box system_tem tab_c hide">
-							<form role="form" class="form-horizontal" method="post" action="">
-								<input type="hidden" name="requestType" value="assign_badge_for_meeting">
-								<div class="form-group">
-									<label for="meeting_name_s" class="col-sm-1 control-label"><b style="vertical-align: middle;color: red;">*</b>选择会议：</label>
-									<div class="col-sm-5">
-										<div id="meeting_name_s"></div>
-									</div>
-								</div>
-								<div class="system_tem_list">
-									<ul class="clearfix system_tem_ul">
-										<volist name="list" id='single'>
-											<li data-id="<{$single.id}>">
-												<div class="layer"></div>
-												<i class="select_icon glyphicon glyphicon-ok"></i>
-												<div class="system_ontent">
-													<{$single.data}>
-												</div>
-												<p class="title">胸卡名称</p>
-											</li>
-										</volist>
-									</ul>
-								</div>
-								<input type="hidden" name="id">
-								<div class="form_li text-center">
-									<button type="submit" id="choose_system_badge" class="btn btn-primary">确认</button>
-								</div>
-							</form>
 						</div>
 					</section>
 				</div>

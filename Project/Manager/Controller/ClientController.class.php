@@ -7,7 +7,6 @@
 	 */
 	namespace Manager\Controller;
 
-	use Core\Logic\SMSLogic;
 	use Manager\Logic\ClientLogic;
 	use Manager\Logic\ExcelLogic;
 	use stdClass;
@@ -18,7 +17,6 @@
 			parent::_initialize();
 			$this->meetingID = $this->initMeetingID($this);
 		}
-
 		
 		public function manage(){
 			$logic = new ClientLogic();

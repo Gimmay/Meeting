@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta id="viewport" name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>添加收款</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/mobile_common.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/mobile_rem.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mb_wrap" style="padding-bottom: 0.8rem">
+		<form action="" method="post" id="form">
+			<input type="hidden" name="requestType" value="create_receivables">
+			<div class="mb_body">
+				<div class="content">
+					<ul class="info_list">
+						<li class="info_li">
+							<div class="item">
+								<span class="labe"><b style="vertical-align: middle;color: red;">*</b>客户姓名:</span>
+								<div class="inp">
+									<input type="text" name="name" value="<{$client.name}>">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">金&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;额:</span>
+								<div class="inp">
+									<input type="text" name="price">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">支付方式:</span>
+								<div>
+									<select name="method" id="method" class="form-control">
+										<volist name="method" id="list">
+										<option value="<{$list.id}>"><{$list.name}></option>
+										</volist>
+									</select>
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">收款类型:</span>
+								<div>
+									<select name="type" id="type" class="form-control">
+										<volist name="receivables_type" id="info">
+											<option value="<{$info.id}>"><{$info.name}></option>
+										</volist>
+									</select>
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">收款人:</span>
+								<div class="inp">
+									<input type="text" name="payee_id">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item coupon">
+								<span class="labe">代金券:</span>
+								<div class="coupon_list">
+									<volist name="coupon_item" id="info">
+									<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="<{$info.id}>"><{$info.code}></a>
+									</volist>
+								</div>
+								<input type="hidden" name="coupon_id">
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">收款地点:</span>
+								<div class="inp">
+									<input type="text" name="place">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">来源状态:</span>
+								<div>
+									<select name="source_type" id="source_type" class="form-control">
+										<option value="0">会前收款</option>
+										<option value="1">会中收款</option>
+										<option value="2">会后收款</option>
+									</select>
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item">
+								<span class="labe">收款时间:</span>
+								<div>
+									<input type="date" name="receivables_time" value="<{:date('Y-m-d H:i:s')}>" class="form-control">
+								</div>
+							</div>
+						</li>
+						<li class="info_li">
+							<div class="item" style="height: auto">
+								<span class="labe">备注:</span>
+								<div>
+									<textarea name="comment" class="form-control"></textarea>
+								</div>
+							</div>
+						</li>
+						<input type="hidden" name="requestType" value="create_client"> <input type="hidden" name="mid" value="<{:I('get.mid', 0, 'int')}>">
+					</ul>
+				</div>
+				<div class="submit">
+					<button type="submit">提交</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script>
+		var ThisObject = {
+			object:{
+				toast:$().QuasarToast()
+			}
+		}
+	</script>
+</body>
+</html>

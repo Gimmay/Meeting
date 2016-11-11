@@ -87,9 +87,9 @@
 				]); // 查出一页会议的内容
 				$meeting_list = $meeting_logic->setExtendColumnForManage($meeting_list);
 				/** @var \Core\Model\HotelModel $hotel_model */
-				$hotel_model = D('Core/Hotel');
-				$hotel_result = $hotel_model->findHotel(2,['status'=>'not deleted']);
-				$this->assign('info',$hotel_result);
+				$hotel_model  = D('Core/Hotel');
+				$hotel_result = $hotel_model->findHotel(2, ['status' => 'not deleted']);
+				$this->assign('info', $hotel_result);
 				$this->assign('content', $meeting_list); // 赋值数据集
 				$this->assign('page', $show); // 赋值分页输出
 				$this->assign('message', $message);
@@ -115,22 +115,23 @@
 				$meeting_logic = new MeetingLogic();
 				/** @var \Core\Model\MeetingModel $model */
 				$model = D('Core/Meeting');
-				$info  = $model->findMeeting(1, ['id' => I('get.id', 0, 'int'), 'status' => 'not deleted']);
-				$info  = $setEmployee($info);
 				if(IS_POST){
 					$type   = strtolower(I('post.requestType', ''));
-					$result = $meeting_logic->handlerRequest($type, ['info' => $info]);
+					$result = $meeting_logic->handlerRequest($type);
 					if($result['__ajax__']){
 						unset($result['__ajax__']);
 						echo json_encode($result);
 					}
 					else{
 						unset($result['__ajax__']);
-						if($result['status']) $this->success($result['message'], U('manage'));
+						if($result['status']) $this->success($result['message']);
 						else $this->error($result['message'], '', 3);
 					}
 					exit;
 				}
+				$mid  = I('get.mid', 0, 'int');
+				$info = $model->findMeeting(1, ['id' => $mid, 'status' => 'not deleted']);
+				$info = $setEmployee($info);
 				/** @var \Manager\Model\EmployeeModel $employee_model */
 				$employee_model = D('Employee');
 				$employee_list  = $employee_model->getEmployeeSelectList();

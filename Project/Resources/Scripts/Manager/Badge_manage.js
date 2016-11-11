@@ -38,27 +38,27 @@ var badgeManage = {
 			var width           = $('.temp_width').val();
 			var height          = $('.temp_height').val();
 			var client_name_id  = $('.vote_list').find('.client_name').attr('data-id');
-			var QRcode_id       = $('.vote_list').find('.QRcode').attr('data-id');
+			var qrcode          = $('.vote_list').find('.QRcode').attr('data-id');
 			var meeting_name_id = $('.vote_list').find('.meeting_name').attr('data-id');
 			var time_id         = $('.vote_list').find('.time').attr('data-id');
 			var sign_place_id   = $('.vote_list').find('.sign_place').attr('data-id');
 			var unit_id         = $('.vote_list').find('.unit').attr('data-id');
 			var brief_id        = $('.vote_list').find('.brief').attr('data-id');
-			var badge_name = $('input[name=badge_name]').val();
+			var badge_name      = $('input[name=badge_name]').val();
 			var data            = {
 				temp      :tempHtml,
+				name      :badge_name,
 				attributes:{
 					width :width,
 					height:height,
 					column:{
 						clientName :client_name_id,
-						qrcode     :QRcode_id,
+						qrcode     :qrcode,
 						meetingName:meeting_name_id,
 						meetingTime:time_id,
 						signPlace  :sign_place_id,
 						unit       :unit_id,
-						brief      :brief_id,
-						name:badge_name
+						brief      :brief_id
 					}
 				}
 			};
@@ -71,8 +71,7 @@ var badgeManage = {
 						ManageObject.object.toast.toast("保存成功");
 						setTimeout(function(){
 							//location.replace(location.href);
-						},1000)
-
+						}, 1000)
 					}else{
 						ManageObject.object.toast.toast("保存失败");
 					}
@@ -95,9 +94,9 @@ var badgeManage = {
 			$('.system_tem').find('input[name=id]').val(id);
 		})
 		// 选择胸卡字体颜色
-		$('.choose-color').on('change',function(){
+		$('.choose-color').on('change', function(){
 			var color = $(this).val();
-			$('.badge_muban').find('.cart_view_item').css('color',color);
+			$('.badge_muban').find('.cart_view_item').css('color', color);
 		});
 	},
 	// 计算胸卡设计（右侧）的宽度
