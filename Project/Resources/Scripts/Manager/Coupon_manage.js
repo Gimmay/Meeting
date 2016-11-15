@@ -111,18 +111,12 @@ function PrefixInteger(num, n){
 }
 // 新增代金券限制
 function checkCreate(){
-	var $selected_meeting = $('#selected_meeting');
 	var $coupon_name      = $('#coupon_name');
 	var $number           = $('#number');
 	var $price            = $('#price');
 	var $start_time       = $('#start_time');
 	var $end_time         = $('#end_time');
 	var $coupon_number    = $('input[name=coupon_area]');
-	if($selected_meeting.text() == ''){
-		ManageObject.object.toast.toast("会议不能为空");
-		$selected_meeting.focus();
-		return false;
-	}
 	if($coupon_name.val() == ''){
 		ManageObject.object.toast.toast("代金券名不能为空");
 		$coupon_name.focus();

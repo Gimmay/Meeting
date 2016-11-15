@@ -10,7 +10,6 @@
 	use Core\Logic\SMSLogic;
 
 	class ReceivablesLogic extends ManagerLogic{
-
 		public function _initialize(){
 			parent::_initialize();
 		}
@@ -35,9 +34,9 @@
 					$data['creatime']   = time();
 					$data['coupon_ids'] = I('post.coupon_code', '');
 					$receivables_result = $receivables_model->createRecord($data);
-					if($receivables_result['status'] == 1){
+					if($receivables_result['status']){
 						/** @var \Core\Model\CouponItemModel $coupon_item_model */
-						$coupon_item_model = D('Core/Coupon_item');
+						$coupon_item_model = D('Core/CouponItem');
 						$code_id           = explode(',', $data['coupon_ids']);
 						foreach($code_id as $k => $v){
 							$coupon_item_result = $coupon_item_model->alterCouponItem($v, [
@@ -49,13 +48,13 @@
 
 					return array_merge($receivables_result, ['__ajax__' => false]);
 				break;
-				case'alter_coupon':
-					if(I('get.mid',0,'int')){
+				case 'alter_coupon':
+					if(I('get.mid', 0, 'int')){
 						$id = I('post.id', '');
 						/** @var \Core\Model\ReceivablesModel $receivables_model */
 						$receivables_model = D('Core/Receivables');
 						/** @var \Core\Model\CouponItemModel $coupon_item_model */
-						$coupon_item_model  = D('Core/Coupon_item');
+						$coupon_item_model  = D('Core/CouponItem');
 						$coupon_item_result = $coupon_item_model->findCouponItem(2, ['mid' => I('get.mid', 0, 'int')]);
 						$receivables_result = $receivables_model->findRecord(1, ['id' => $id]);
 						$data               = explode(',', $receivables_result['coupon_ids']);
@@ -65,17 +64,20 @@
 						}
 
 						return array_merge($coupon_item_ids, ['__ajax__' => true]);
-					}else{
+					}
+					else{
 						/** @var \Core\Model\ReceivablesModel $receivables_model */
 						$receivables_model = D('Core/Receivables');
 						/** @var \Core\Model\CouponItemModel $coupon_item_model */
-						$coupon_item_model =D('Core/CouponItem');
-						$receivables_result = $receivables_model->findRecord(1,['id'=>I('post.id','')]);
-						$coupon_item_result = $coupon_item_model->findCouponItem(2,['mid'=>$receivables_result['mid'],'status'=>'0']);
+						$coupon_item_model  = D('Core/CouponItem');
+						$receivables_result = $receivables_model->findRecord(1, ['id' => I('post.id', '')]);
+						$coupon_item_result = $coupon_item_model->findCouponItem(2, [
+							'mid'    => $receivables_result['mid'],
+							'status' => '0'
+						]);
 
 						return array_merge($coupon_item_result, ['__ajax__' => true]);
 					}
-
 				break;
 				//				case 'search';
 				//					/** @var \Core\Model\CouponItemModel $coupon_item_model */
@@ -108,7 +110,7 @@
 				//					}
 				//					return $receivables_result;
 				//				break;
-				case'alter':
+				case 'alter':
 					/** @var \Core\Model\CouponItemModel $coupon_item_model */
 					$coupon_item_model  = D('Core/CouponItem');
 					$old_coupon_code    = explode(',', I('post.old_coupon_code', ''));
@@ -128,7 +130,7 @@
 
 					return array_merge($receivables_result, ['__ajax__' => false]);
 				break;
-				case'delete':
+				case 'delete':
 					$id = I('post.id', '');
 					/** @var \Core\Model\ReceivablesModel $receivables_model */
 					$receivables_model = D('Core/Receivables');
@@ -136,6 +138,117 @@
 					$receivables_result = $receivables_model->deleteRecord($id);
 
 					return array_merge($receivables_result, ['__ajax__' => false]);
+				break;
+				case 'create_receivables':
+					$data               = I('post.', '');
+					$mid                = I('get.mid', 0, 'int');
+					$cid                = I('post.cid', 0, 'int');
+					$data['mid']        = $mid;
+					$data['cid']        = $cid;
+					$data['coupon_ids'] = I('post.coupon_code', '');
+					$data['time']       = strtotime(I('post.receivables_time', ''));
+					$data['creatime']   = time();    //创建时间
+					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); //当前创建者
+					/** @var \Core\Model\ReceivablesModel $receivables_model */
+					$receivables_model = D('Core/Receivables');
+					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+					$coupon_item_model = D('Core/CouponItem');
+					/** @var \Core\Model\ClientModel $client_model */
+					$client_model = D('Core/Client');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model     = D('Core/Employee');
+					$receivables_result = $receivables_model->createRecord($data);
+					$coupon_item_code   = explode(',', $data['coupon_ids']);
+					C('TOKEN_ON', false);
+					foreach($coupon_item_code as $k => $v){
+						$coupon_item_result = $coupon_item_model->alterCouponItem($v, [
+							'status' => 1,
+							'cid'    => $cid
+						]);
+					}
+					//查出开拓顾问
+					$client_result   = $client_model->findClient(1, [
+						'id'     => $cid,
+						'status' => 'not deleted'
+					]);
+					$employee_result = $employee_model->findEmployee(1, [
+						'keyword' => $client_result['develop_consultant'],
+						'status'  => 'not deleted'
+					]);
+					if($employee_result){
+						$message_logic = new MessageLogic();
+						$sms_send      = $message_logic->send($mid, 0, 0, 3, [$employee_result['id']]);
+					}
+
+					return array_merge($receivables_result, [
+						'__ajax__'   => false,
+						'__return__' => U('Receivables/Manage', ['mid' => $mid])
+					]);
+				break;
+				case 'create_pay':
+					/** @var \Core\Model\PayMethodModel $pay_method_model */
+					$pay_method_model = D('Core/PayMethod');
+					C('TOKEN_ON', false);
+					$data              = I('post.', '');
+					$data['name']      = I('post.payMethod_name', '');
+					$data['creatime']  = time();    //创建时间
+					$data['creator']   = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+					$pay_method_result = $pay_method_model->createRecord($data);
+
+					return array_merge($pay_method_result, ['__ajax__' => false]);
+				break;
+				case 'delete_pay':
+					/** @var \Core\Model\PayMethodModel $pay_method_model */
+					$pay_method_model  = D('Core/PayMethod');
+					$id                = I('post.id', 0, 'int');
+					$pay_method_result = $pay_method_model->deleteRecord([$id]);
+
+					return array_merge($pay_method_result, ['__ajax__' => false]);
+				break;
+				case 'alter_pay':
+					/** @var \Core\Model\PayMethodModel $pay_method_model */
+					$pay_method_model = D('Core/PayMethod');
+					$id               = I('post.id', 0, 'int');
+					C('TOKEN_ON', false);
+					$data              = I('post.', '');
+					$data['creatime']  = time();    //创建时间
+					$data['creator']   = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+					$pay_method_result = $pay_method_model->alterRecord([$id], $data);
+
+					return array_merge($pay_method_result, ['__ajax__' => false]);
+				break;
+				case 'delete_type':
+					/** @var \Core\Model\ReceivablesTypeModel $receivables_type_model */
+					$receivables_type_model  = D('Core/ReceivablesType');
+					$id                      = I('post.id', 0, 'int');
+					$receivables_type_result = $receivables_type_model->deleteRecord([$id]);
+
+					return array_merge($receivables_type_result, ['__ajax__' => false]);
+				break;
+				case 'alter_type':
+					/** @var \Core\Model\ReceivablesTypeModel $receivables_type_model */
+					$receivables_type_model = D('Core/ReceivablesType');
+					$id                     = I('post.id', 0, 'int');
+					C('TOKEN_ON', false);
+					$data              = I('post.', '');
+					$data['name']      = I('post.receivablesType_name', '');
+					$data['creatime']  = time();    //创建时间
+					$data['creator']   = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+					$pay_method_result = $receivables_type_model->alterRecord([$id], $data);
+
+					return array_merge($pay_method_result, ['__ajax__' => false]);
+				break;
+				case 'create_type':
+					/** @var \Core\Model\ReceivablesTypeModel $receivables_type_model */
+					$receivables_type_model = D('Core/ReceivablesType');
+					C('TOKEN_ON', false);
+					$data              = I('post.', '');
+					$data['name']      = I('post.receivablesType_name', '');
+					$data['creatime']  = time();    //创建时间
+					$data['creator']   = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+					$pay_method_result = $receivables_type_model->createRecord($data);
+
+					return array_merge($pay_method_result, ['__ajax__' => false]);
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];

@@ -16,76 +16,214 @@
 			parent::_initialize();
 		}
 
-		public function handlerRequest($type){
+		public function handlerRequest($type, $option = []){
 			switch($type){
 				case 'create':
-					/** @var \Core\Model\MessageModel $model */
-					$model = D('Core/Message');
-					C('TOKEN_ON', false);
-					$data             = I('post.');
-					$data['type']     = 1;
-					$data['context']  = $_POST['context'];
-					$data['status']   = 1;
-					$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
-					$data['creatime'] = time(); //当前时间
-					$result           = $model->createMessage($data);
-					$data['mid']      = I('post.mid');
-					/** @var \Core\Model\JoinModel $join_model */
-					$join_model  = D('Core/Join');
-					$result_join = $join_model->findRecord(2, ['mid' => I('post.mid'), 'review_status' => 1]);
-					foreach($result_join as $k => $v){
-						$mobile    = $result_join[$k]['mobile'];
-						$sms_logic = new SMSLogic();
-						$sms_send  = $sms_logic->send($data['context'], [$mobile]);  //发送短信 第一个参数填内容， 第二个参数填手机号数组
-					}
+					if($this->permissionList['MESSAGE.CREATE']){
+						/** @var \Core\Model\MessageModel $model */
+						$model = D('Core/Message');
+						C('TOKEN_ON', false);
+						$data             = I('post.');
+						$data['context']  = $_POST['context'];
+						$data['status']   = 1;
+						$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$data['creatime'] = time();
+						$result           = $model->createMessage($data);
 
-					return array_merge($result, ['__ajax__' => false]);
+						return array_merge($result, [
+							'__ajax__'   => false,
+							'__return__' => U('manage', ['mid' => $option['mid']])
+						]);
+					}
+					else return ['message' => '您没有创建消息的权限', 'status' => false, '__ajax__' => false];
 				break;
 				case 'search';
-					$mid      = I('post.meeting_name'); //会议id
-					$sign     = I('post.sign');//签到状态
-					$reviewed = I('post.reviewed'); // 审核状态
-					if($sign == 1){
-						$data['sign_status'] = 0;
-					}
-					elseif($sign == 2){
-						$data['sign_status'] = 1;
-					}
-					else{
-					}
-					if($reviewed == 1){
-						$data['review_status'] = 0;
-					}
-					elseif($reviewed == 2){
-						$data['review_status'] = 1;
-					}
-					else{
-					}
-					$data['mid']    = $mid;
-					$data['status'] = 1;
-					/** @var \Core\Model\JoinModel $join_model */
-					$join_model  = D('Core/Join');
-					$result_join = $join_model->findRecord(2, $data);
+					if($this->permissionList['MESSAGE.VIEW']){
+						$mid         = $option['mid']; //会议id
+						$signed      = I('post.signed', 0, 'int');// 签到状态
+						$reviewed    = I('post.reviewed', 0, 'int'); // 审核状态
+						$receivables = I('post.receivables', 0, 'int'); // 收款状态
+						$printed     = I('post.printed', 0, 'int'); // 打印状态
+						switch($signed){
+							case 1:
+								$filter['sign_status'] = 1;
+							break;
+							case 0:
+								$filter['sign_status'] = 'not signed';
+							break;
+						}
+						switch($reviewed){
+							case 1:
+								$filter['review_status'] = 1;
+							break;
+							case 0:
+								$filter['review_status'] = 'not reviewed';
+							break;
+						}
+						switch($printed){
+							case 1:
+								$filter['print_status'] = 1;
+							break;
+							case 0:
+								$filter['print_status'] = 0;
+							break;
+						}
+						$filter['mid']    = $mid;
+						$filter['status'] = 1;
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model = D('Core/Join');
+						/** @var \Core\Model\ReceivablesModel $receivables_model */
+						$receivables_model = D('Core/Receivables');
+						$result_join       = $join_model->findRecord(2, $filter);
+						$receivables_list  = $receivables_model->findRecord(2, ['mid' => $mid, 'status' => 1]);
+						$new_list          = [];
+						switch($receivables){
+							case 1:
+							case 0:
+								$receivables_client_arr = [];
+								foreach($receivables_list as $val) $receivables_client_arr[] = $val['cid'];
+								foreach($result_join as $val){
+									if(!in_array($val['cid'], $receivables_client_arr) && $receivables == 0) $new_list[] = $val;
+									if(in_array($val['cid'], $receivables_client_arr) && $receivables == 1) $new_list[] = $val;
+								}
+							break;
+							case 2:
+								$new_list = $result_join;
+							break;
+						}
 
-					return array_merge($result_join, ['__ajax__' => true]);
+						return array_merge($new_list, ['__ajax__' => true]);
+					}
+					else return ['message' => '您没有查询消息的权限', 'status' => false, '__ajax__' => true];
 				break;
 				case 'send';
-					$id              = I('post.selected_p');
-					$user_id         = explode(',', $id);
-					$data['context'] = I('post.context', '');
-					/** @var \Core\Model\ClientModel $user_model */
-					$user_model = D('Core/Client');
-					foreach($user_id as $k => $v){
-						$user_result = $user_model->findClient(1, ['id' => $v]);
-						$mobile      = $user_result['mobile'];
-						$sms_logic   = new SMSLogic();
-						$sms_send    = $sms_logic->send($data['context'], [$mobile]);  //发送短信 第一个参数填内容， 第二个参数填手机号数组
-					}
+					if($this->permissionList['MESSAGE.MANUAL-SEND-MESSAGE']){
+						$id              = I('post.selected_p');
+						$user_id         = explode(',', $id);
+						$data['context'] = $_POST['context'];
+						/** @var \Core\Model\ClientModel $user_model */
+						$user_model = D('Core/Client');
+						$sms_send   = ['status' => false, 'message' => '发送失败'];
+						foreach($user_id as $k => $v){
+							$user_result = $user_model->findClient(1, ['id' => $v]);
+							$mobile      = $user_result['mobile'];
+							$sms_logic   = new SMSLogic();
+							$sms_send    = $sms_logic->send($data['context'], [$mobile]);  //发送短信 第一个参数填内容， 第二个参数填手机号数组
+						}
 
-					return $sms_send;
+						return array_merge($sms_send, ['__ajax__' => false]);
+					}
+					else return ['message' => '您没有发送消息的权限', 'status' => false, '__ajax__' => false];
+				break;
+				case 'delete':
+					if($this->permissionList['MESSAGE.DELETE']){
+						/** @var \Core\Model\MessageModel $message_model */
+						$message_model = D('Core/Message');
+						$result        = $message_model->deleteMessage(['id' => I('post.id', 0, 'int')]);
+
+						return array_merge($result, ['__ajax__' => false]);
+					}
+					else return ['message' => '您没有删除消息的权限', 'status' => false, '__ajax__' => false];
+				break;
+				case 'alter':
+					if($this->permissionList['MESSAGE.ALTER']){
+						/** @var \Core\Model\MessageModel $message_model */
+						$message_model   = D('Core/Message');
+						$id              = I('get.id', 0, 'int');
+						$data            = I('post.');
+						$data['context'] = $_POST['context'];
+						$result          = $message_model->alterMessage(['id' => $id], $data);
+
+						return array_merge($result, [
+							'__ajax__'   => false,
+							'__return__' => U('manage', ['mid' => I('get.mid', 0, 'int')])
+						]);
+					}
+					else return ['message' => '您没有修改消息的权限', 'status' => false, '__ajax__' => false];
+				break;
+				case 'assign_message':
+					if($this->permissionList['MESSAGE.SELECT']){
+						/** @var \Core\Model\AssignMessageModel $assign_message_model */
+						$assign_message_model = D('Core/AssignMessage');
+						$mid                  = I('get.mid', 0, 'int');
+						$type                 = I('post.type', 0, 'int');
+						$exist_record         = $assign_message_model->findRecord(1, ['mid' => $mid, 'type' => $type]);
+						if($exist_record){
+							$data = I('post.');
+							unset($data['id']);
+							$data['status']     = 1;
+							$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+							$data['creatime']   = time();
+							$data['message_id'] = I('post.id', 0, 'int');
+							$data['mid']        = $mid;
+							$result             = $assign_message_model->alterRecord(['id' => $exist_record['id']], $data);
+						}
+						else{
+							$data = I('post.');
+							unset($data['id']);
+							$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+							$data['creatime']   = time();
+							$data['message_id'] = I('post.id', 0, 'int');
+							$data['mid']        = $mid;
+							$result             = $assign_message_model->createRecord($data);
+						}
+						if($result['status']) return ['status' => true, 'message' => '分配成功', '__ajax__' => false];
+						else return ['status' => false, 'message' => '分配失败', '__ajax__' => false];
+					}
+					else return ['message' => '您没有设定消息的权限', 'status' => false, '__ajax__' => false];
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
+				break;
+			}
+		}
+
+		public function setData($type, $data, $option = []){
+			switch($type){
+				case 'manage:set_using_status':
+					/** @var \Core\Model\AssignMessageModel $assign_message_model */
+					$assign_message_model  = D('Core/AssignMessage');
+					$assign_message_record = $assign_message_model->findRecord(2, ['mid' => $option['mid']]);
+					$assigned_message_list = ['id' => [], 'type' => []];
+					$list                  = ['using' => [], 'notUse' => []];
+					foreach($assign_message_record as $val){
+						$assigned_message_list['id'][]   = $val['message_id'];
+						$assigned_message_list['type'][] = $val['assign_type'];
+					}
+					foreach($data as $val){
+						$flag        = false;
+						$assign_type = '';
+						foreach($assigned_message_list['id'] as $k => $v){
+							if($v == $val['id']){
+								switch($assigned_message_list['type'][$k]){
+									case 1:
+										$assign_type .= '签到提醒, ';
+									break;
+									case 2:
+										$assign_type .= '取消签到提醒, ';
+									break;
+									case 3:
+										$assign_type .= '收款提醒开拓顾问, ';
+									break;
+								}
+								$flag = true;
+							}
+						}
+						if(!$flag){
+							$val['assign_type'] = '未使用';
+							$list['notUse'][]   = $val;
+						}
+						else{
+							$val['assign_type'] = trim($assign_type, ', ');
+							$list['using'][]    = $val;
+						}
+					}
+					$list = array_merge($list['using'], $list['notUse']);
+
+					return $list;
+				break;
+				default:
+					return $data;
 				break;
 			}
 		}
@@ -112,26 +250,6 @@
 			$message = str_replace('<:会议简介:>', $meeting['brief'], $message);
 
 			return $message;
-		}
-
-		public function alterMessage(){
-			/** @var \Core\Model\MessageModel $message_model */
-			$message_model = D('Core/Message');
-			$id            = I('get.id', 0, 'int');
-			$result_alter  = $message_model->alterMessage(['id' => $id], [
-				'name'    => I('post.name', ''),
-				'context' => $_POST['context']
-			]);
-
-			return $result_alter;
-		}
-
-		public function deleteMessage($data){
-			/** @var \Core\Model\MessageModel $message_model */
-			$message_model = D('Core/Message');
-			$result        = $message_model->deleteMessage($data);
-
-			return $result;
 		}
 
 		/**

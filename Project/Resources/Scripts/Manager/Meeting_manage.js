@@ -279,9 +279,9 @@ $(function(){
 		});
 	});
 	// 搜索员工
-	$('#add_management').find('.mian_search').on('click', function(){
+	$('#add_management').find('.main_search').on('click', function(){
 		var keyword = $(this).parents('.repertory_text').find('input[name=keyword]').val();
-		var mid = $('#add_management').find('input[name=mid]').val();
+		var mid     = $('#add_management').find('input[name=mid]').val();
 		ManageObject.object.loading.loading();
 		Common.ajax({
 			data    :{requestType:'get_employee2', keyword:keyword, mid:mid},
@@ -324,7 +324,7 @@ $(function(){
 			arr.push(id);
 		});
 		ManageObject.object.loading.loading();
-		if(arr!=''){
+		if(arr != ''){
 			Common.ajax({
 				data    :{requestType:'save_employee', id:arr, rid:rid, mid:mid},
 				callback:function(data){
@@ -353,36 +353,42 @@ function get_employee_list(mid, rid){
 		callback:function(data){
 			ManageObject.object.loading.complete();
 			var str = '';
-			$.each(data, function(index, value){
-				if(value.gender == 0){
-					var gender = '未知';
-				}else if(value.gender == 1){
-					var gender = '男';
-				}else if(value.gender == 2){
-					var gender = '女';
-				}
-				str += ScriptObject.employeeListTemp2.replace('$num', index+1)
-								   .replace('$name', value.name)
-								   .replace('$id', value.id).replace('$position', value.position)
-								   .replace('$mobile', value.mobile).replace('$company', value.company)
-								   .replace('$gender', gender).replace('$department', value.d_name);
-			});
-			$('#employee_body1').html(str);
-			$('.delete_employee').on('click', function(){
-				var id = $(this).parents('tr').attr('data-id');
-				ManageObject.object.loading.loading();
-				Common.ajax({
-					data    :{requestType:'delete_employee', id:id, mid:mid, rid:rid},
-					callback:function(data){
-						ManageObject.object.loading.complete();
-						console.log(data);
-						if(data.status){
-							ManageObject.object.toast.toast('删除成功！');
-							get_employee_list(mid, rid);
-						}
+			if(data != ''){
+				$.each(data, function(index, value){
+					if(value.gender == 0){
+						var gender = '未知';
+					}else if(value.gender == 1){
+						var gender = '男';
+					}else if(value.gender == 2){
+						var gender = '女';
 					}
-				})
-			});
+					str += ScriptObject.employeeListTemp2.replace('$num', index+1)
+									   .replace('$name', value.name)
+									   .replace('$id', value.id).replace('$position', value.position)
+									   .replace('$mobile', value.mobile).replace('$company', value.company)
+									   .replace('$gender', gender).replace('$department', value.d_name);
+				});
+				$('#employee_body1').html(str);
+				$('.delete_employee').on('click', function(){
+					var id = $(this).parents('tr').attr('data-id');
+					ManageObject.object.loading.loading();
+					Common.ajax({
+						data    :{requestType:'delete_employee', id:id, mid:mid, rid:rid},
+						callback:function(data){
+							ManageObject.object.loading.complete();
+							console.log(data);
+							if(data.status){
+								ManageObject.object.toast.toast('删除成功！');
+								get_employee_list(mid, rid);
+							}
+						}
+					})
+				});
+				$('.no_choice').hide();
+			}else{
+				$('#employee_body1').empty();
+				$('.no_choice').show();
+			}
 		}
 	});
 }

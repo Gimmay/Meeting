@@ -55,12 +55,13 @@ AND COLUMN_NAME NOT IN (\'id\', \'password\', \'status\', \'creatime\', \'creato
 			else return $result;
 		}
 
-		public function getClientSelectList(){
-			$sql = "SELECT
-	CONCAT(`name`) `html`, CONCAT(`name`, ',', pinyin_code) `keyword`,
-	`id` `value`
-FROM user_client
-WHERE STATUS = 1";
+		public function getClientSelectList($mid){
+			$sql = "SELECT CONCAT(`name`) `html`, CONCAT( pinyin_code),
+user_client.id `value`
+FROM `workflow_join`
+LEFT JOIN `user_client` 
+ON workflow_join.cid = user_client.id
+WHERE mid = $mid AND workflow_join.status = 1 AND user_client.status = 1";
 
 			return $this->query($sql);
 		}

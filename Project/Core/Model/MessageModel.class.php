@@ -92,10 +92,10 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function deleteMessage($id){
+		public function deleteMessage($filter){
 			if($this->create()){
 				try{
-					$result = $this->where(['id' => ['in', $id]])->save(['status' => 2]);
+					$result = $this->where($filter)->save(['status' => 2]);
 					if($result) return ['status' => true, 'message' => '删除成功'];
 					else return ['status' => false, 'message' => '没有删除任何模版'];
 				}catch(Exception $error){
@@ -108,10 +108,10 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function alterMessage($id, $data){
+		public function alterMessage($filter, $data){
 			if($this->create()){
 				try{
-					$result = $this->where(['id' => ['in', $id]])->save($data);
+					$result = $this->where($filter)->save($data);
 					if($result) return ['status' => true, 'message' => '修改成功'];
 					else return ['status' => false, 'message' => '未做任何修改'];
 				}catch(Exception $error){

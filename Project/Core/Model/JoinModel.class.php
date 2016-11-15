@@ -60,6 +60,7 @@
 				if($status == 'not reviewed') $where['review_status'] = ['neq', 1];
 				else $where['review_status'] = $filter['review_status'];
 			}
+			if(isset($filter['print_status'])) $where['print_status'] = $filter['print_status'];
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$condition['unit']        = ['like', "%$filter[keyword]%"];
 				$condition['mobile']      = ['like', "%$filter[keyword]%"];

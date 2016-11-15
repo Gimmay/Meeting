@@ -139,11 +139,11 @@ $(function(){
 	});
 	//审核按钮
 	$('.review_btn').on('click', function(){
-		var id  = $(this).parent('.btn-group').attr('data-id');
+		var cid = $(this).parent('.btn-group').attr('data-id');
 		var mid = $('body').attr('data-meeting-id');
 		ManageObject.object.loading.loading();
 		Common.ajax({
-			data    :{requestType:'review', id:id, mid:mid},
+			data    :{requestType:'review', cid:cid, mid:mid},
 			callback:function(r){
 				ManageObject.object.loading.complete();
 				if(r.status){
@@ -157,11 +157,11 @@ $(function(){
 	});
 	// 取消审核按钮
 	$('.anti_review_btn').on('click', function(){
-		var id  = $(this).parent('.btn-group').attr('data-id');
+		var cid = $(this).parent('.btn-group').attr('data-id');
 		var mid = $('body').attr('data-meeting-id');
 		ManageObject.object.loading.loading();
 		Common.ajax({
-			data    :{requestType:'anti_review', id:id, mid:mid},
+			data    :{requestType:'anti_review', cid:cid, mid:mid},
 			callback:function(r){
 				ManageObject.object.loading.complete();
 				if(r.status){
@@ -195,7 +195,7 @@ $(function(){
 		}else{
 			ManageObject.object.toast.toast('请选择客户！');
 		}
-		$('#batch_review_client').find('input[name=id]').val(newStr);
+		$('#batch_review_client').find('input[name=cid]').val(newStr);
 	});
 	// 批量取消审核客户
 	$('.batch_anti_review_btn_confirm').on('click', function(){
@@ -219,17 +219,17 @@ $(function(){
 		}else{
 			ManageObject.object.toast.toast('请选择客户！');
 		}
-		$('#batch_anti_review_client').find('input[name=id]').val(newStr);
+		$('#batch_anti_review_client').find('input[name=cid]').val(newStr);
 	});
 	// 签到按钮
 	$('.sign_btn').on('click', function(){
 		var $body = $('body');
-		var id    = $(this).parent('.btn-group').attr('data-id');
+		var cid   = $(this).parent('.btn-group').attr('data-id');
 		var mid   = $body.attr('data-meeting-id');
 		var sid   = $body.attr('data-place-id');
 		ManageObject.object.loading.loading();
 		Common.ajax({
-			data    :{requestType:'sign', id:id, mid:mid, sid:sid},
+			data    :{requestType:'sign', cid:cid, mid:mid, sid:sid},
 			callback:function(r){
 				ManageObject.object.loading.complete();
 				if(r.status){
@@ -245,11 +245,11 @@ $(function(){
 	});
 	// 取消签到按钮
 	$('.anti_sign_btn').on('click', function(){
-		var id  = $(this).parent('.btn-group').attr('data-id');
+		var cid = $(this).parent('.btn-group').attr('data-id');
 		var mid = $('body').attr('data-meeting-id');
 		ManageObject.object.loading.loading();
 		Common.ajax({
-			data    :{requestType:'anti_sign', id:id, mid:mid},
+			data    :{requestType:'anti_sign', cid:cid, mid:mid},
 			callback:function(r){
 				ManageObject.object.loading.complete();
 				if(r.status){
@@ -285,7 +285,7 @@ $(function(){
 		}else{
 			ManageObject.object.toast.toast('请选择客户！');
 		}
-		$('#batch_sign_point').find('input[name=id]').val(newStr);
+		$('#batch_sign_point').find('input[name=cid]').val(newStr);
 	});
 	// 批量取消签到
 	$('.batch_anti_sign_point ').on('click', function(){
@@ -309,14 +309,14 @@ $(function(){
 		}else{
 			ManageObject.object.toast.toast('请选择客户！');
 		}
-		$('#batch_anti_sign_point').find('input[name=id]').val(newStr);
+		$('#batch_anti_sign_point').find('input[name=cid]').val(newStr);
 	});
 	// 删除客户
 	$('.delete_btn').on('click', function(){
 		var id      = $(this).parent('.btn-group').attr('data-id');
 		var join_id = $(this).parent('.btn-group').attr('data-join-id');
 		var $object = $('#delete_client');
-		$object.find('input[name=id]').val(id);
+		$object.find('input[name=cid]').val(id);
 		$object.find('input[name=join_id]').val(join_id);
 	});
 	// 批量删除客户
@@ -338,16 +338,16 @@ $(function(){
 		}
 		str_join    = str_join.substr(0, str_join.length-1);
 		var $object = $('#batch_delete_client');
-		$object.find('input[name=id]').val(str);
+		$object.find('input[name=cid]').val(str);
 		$object.find('input[name=join_id]').val(str_join);
 	});
 	// 发送消息
 	$('.send_message_btn').on('click', function(){
-		var id  = $(this).parent('.btn-group').attr('data-id');
+		var cid = $(this).parent('.btn-group').attr('data-id');
 		var mid = $('body').attr('data-meeting-id');
 		ManageObject.object.loading.loading();
 		Common.ajax({
-			data    :{requestType:'send_message', id:id, mid:mid},
+			data    :{requestType:'send_message', cid:cid, mid:mid},
 			callback:function(r){
 				ManageObject.object.loading.complete();
 				if(r.status){
@@ -380,7 +380,7 @@ $(function(){
 		}else{
 			ManageObject.object.toast.toast('请选择客户！');
 		}
-		$('#batch_send_message').find('input[name=id]').val(newStr);
+		$('#batch_send_message').find('input[name=cid]').val(newStr);
 	});
 	// 分配签到点 (single)
 	$('.alter_sign_point_btn').on('click', function(){
@@ -482,10 +482,10 @@ function eachAddReceivables(){
 		arr.push(id)
 	});
 	$('#add_receivables').find('input[name=coupon_code]').val(arr);
-};
+}
 function getIframeData(){
 	var data = document.getElementById('fileUpload_iframe').contentWindow.document
-					   .getElementsByTagName('body')[0].innerHTML;
+		.getElementsByTagName('body')[0].innerHTML;
 	if(data){
 		data        = $.parseJSON(data);
 		var str     = '';
@@ -497,7 +497,7 @@ function getIframeData(){
 		$.each(data.data.head, function(index, value){
 			var num = index+1;
 			str += ThisObject.tableTemp.replace('$num', num).replace('$value', value).replace('$opt', str2)
-							 .replace('$id', index);
+				.replace('$id', index);
 		});
 		$('#ExcelHeadTable').html(str);
 		ManageObject.object.loading.complete();

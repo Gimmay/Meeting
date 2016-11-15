@@ -17,10 +17,12 @@
 		protected $meetingID  = 0;
 
 		public function _initialize(){
+			$_SESSION['MOBILE_CLIENT_ID'] = 1090;
+			$_SESSION['MOBILE_WEIXIN_ID'] = 2;
 			parent::_initialize();
 		}
 
-		public function MeetingList(){
+		public function meetingList(){
 			$this->weixinID = $this->getWeixinID();
 			$this->_getEmployeeID();
 			/** @var \Core\Model\MeetingModel $meeting_model */
@@ -32,33 +34,49 @@
 			$this->display();
 		}
 
-		public function AddReceivables(){
+		public function addReceivables(){
 			$receivables_logic = new ReceivablesLogic();
-			if(I('post.')){
-				$type   = strtolower(I('post.requestType', ''));
+			if(IS_POST){
+				$type   = (I('post.requestType', ''));
 				$result = $receivables_logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']) $this->success($result['message']);
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
 			}
-			/** @var \Core\Model\CouponItemModel $coupon_item_model */
-			$coupon_item_model = D('Core/CouponItem');
 			/** @var \Core\Model\ClientModel $client_model */
-			$client_model =D('Core/Client');
+			$client_model = D('Core/Client');
 			/** @var \Core\Model\PayMethodModel $pay_method_model */
 			$pay_method_model = D('Core/PayMethod');
 			/** @var \Core\Model\ReceivablesTypeModel $receivables_type_model */
-			$receivables_type_model = D('Core/ReceivablesType');
-			$coupon_item_result = $coupon_item_model->findCouponItem(2,['mid'=>I('get.mid',0,'int'),'status'=>'not deleted']);
-			$client_result = $client_model->findClient(1,['id'=>I('get.cid',0,'int')]);
-			$pay_method_result = $pay_method_model->findPayMethod(2,['status'=>'not deleted']);
-			$receivables_type_result = $receivables_type_model->findReceivablesType(2,['status'=>'not deleted']);
-			$this->assign('client',$client_result);
-			$this->assign('coupon_item',$coupon_item_result);
-			$this->assign('method',$pay_method_result);
-			$this->assign('receivables_type',$receivables_type_result);
-
+			$receivables_type_model  = D('Core/ReceivablesType');
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			/** @var \Mobile\Model\ClientModel $client_model_type */
+			$client_model_type = D('Client');
+			$coupon_item_type = $receivables_logic->selectCouponItemType();
+			$client_result           = $client_model->findClient(1, ['id' => I('get.cid', 0, 'int')]);
+			$pay_method_result       = $pay_method_model->findRecord(2, ['status' => 'not deleted']);
+			$receivables_type_result = $receivables_type_model->findRecord(2, ['status' => 'not deleted']);
+			$employee_result = $employee_model->findEmployee(1,['id'=>I('session.MANAGER_EMPLOYEE_ID', 0, 'int')]);
+			$mid = I('get.mid',0,'int');
+			$client_result_type = $client_model_type->getClientSelectList($mid);
+			$this->assign('client_type',$client_result_type);
+			$this->assign('employee',$employee_result);
+			$this->assign('client', $client_result);
+			$this->assign('coupon_item', $coupon_item_type);
+			$this->assign('method', $pay_method_result);
+			$this->assign('receivables_type', $receivables_type_result);
 			$this->display();
 		}
 
-		public function Client(){
+		public function client(){
 			/** @var \Core\Model\JoinModel $join_model */
 			$join_model = D('Core/Join');
 			/** @var \Core\Model\ReceivablesModel $receivables_model */
@@ -72,7 +90,7 @@
 			$this->display();
 		}
 
-		public function ClientList(){
+		public function clientList(){
 			$receivables_logic = new ReceivablesLogic();
 			/** @var \Core\Model\JoinModel $join_model */
 			$join_model  = D('Core/Join');
@@ -86,7 +104,7 @@
 				else $type = 0;
 			}
 			else $type = 2;
-			$join_receivables_type = $receivables_logic->SelectReceivablesType($join_result);
+			$join_receivables_type = $receivables_logic->selectReceivablesType($join_result);
 			switch($type){
 				case 1:
 					$this->assign('list', $join_receivables_type['receivables']);
@@ -103,7 +121,7 @@
 			$this->display();
 		}
 
-		public function Meeting(){
+		public function meeting(){
 			/** @var \Core\Model\MeetingModel $meeting_model */
 			$meeting_model = D('Core/Meeting');
 			/** @var \Core\Model\JoinModel $join_model */
@@ -122,17 +140,68 @@
 			$this->display();
 		}
 
-		public function ReceivablesDetails(){
+		public function receivablesDetails(){
 			$receivables_logic = new ReceivablesLogic();
 			/** @var \Core\Model\ReceivablesModel $receivables_model */
 			$receivables_model  = D('Core/Receivables');
 			$receivables_result = $receivables_model->findRecord(1, ['id' => I('get.id', 0, 'int')]);
-			$receivables_info   = $receivables_logic->SelectReceivablesMethod($receivables_result);
+			$receivables_info   = $receivables_logic->selectReceivablesMethod($receivables_result);
 			$this->assign('list', $receivables_info);
 			$this->display();
 		}
 
-		public function ReceivablesRecord(){
+		public function receivablesRecord(){
+			/** @var \Core\Model\ReceivablesModel $receivables_model */
+			$receivables_model = D('Core/Receivables');
+			/** @var \Core\Model\ClientModel $client_model */
+			$client_model = D('Core/Client');
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model     = D('Core/Employee');
+			$receivables_result = $receivables_model->findRecord(2, [
+				'mid'    => I('get.mid', 0, 'int'),
+				'status' => 'not deleted'
+			]);
+			$cid                = [];
+			$eid                = [];
+			foreach($receivables_result as $k => $v){
+				$cid[] = $v['cid'];
+				$eid[] = $v['payee_id'];
+			}
+			foreach($cid as $k => $v){
+				$client_result                    = $client_model->findClient(1, ['id' => $v]);
+				$receivables_result[$k]['c_name'] = $client_result['name'];
+			}
+			foreach($eid as $k => $v){
+				$employee_result                  = $employee_model->findEmployee(1, ['id' => $v]);
+				$receivables_result[$k]['e_name'] = $employee_result['name'];
+			}
+			$this->assign('list', $receivables_result);
+			$this->display();
+		}
+
+		public function myReceivables(){
+			/** @var \Core\Model\ReceivablesModel $receivables_model */
+			$receivables_model = D('Core/Receivables');
+			/** @var \Core\Model\ClientModel $client_model */
+			$client_model = D('Core/Client');
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model     = D('Core/Employee');
+			$receivables_result = $receivables_model->findRecord(2, [
+				'mid'      => I('get.mid', 0, 'int'),
+				'payee_id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+				'status'   => 'not deleted'
+			]);
+			$cid                = [];
+			foreach($receivables_result as $k => $v){
+				$cid[] = $v['cid'];
+			}
+			foreach($cid as $k => $v){
+				$client_result                    = $client_model->findClient(1, ['id' => $v]);
+				$employee_result                  = $employee_model->findEmployee(1, ['id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')]);
+				$receivables_result[$k]['c_name'] = $client_result['name'];
+				$receivables_result[$k]['e_name'] = $employee_result['name'];
+			}
+			$this->assign('list', $receivables_result);
 			$this->display();
 		}
 

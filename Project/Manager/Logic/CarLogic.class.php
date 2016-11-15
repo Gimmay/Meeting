@@ -81,7 +81,7 @@
 						elseif($type == 'not_use'){ // mid没有值
 							if(!$val['mid']) $new_list[] = $val;
 						}
-						elseif($type == 'complete'){ // 1、mid有值 2、会议已开完
+						elseif($type == 'finish'){ // 1、mid有值 2、会议已开完
 							if($meeting_record){
 								$meeting_end_time = strtotime($meeting_record['end_time']);
 								$now_time = time();

@@ -24,7 +24,7 @@
 				</li>
 			</if>
 			<if condition="$permission_list['MEETING.VIEW'] eq 1">
-				<li class="side_item <if condition='($c_name eq Meeting) or ($c_name eq SignPlace) or ($c_name eq Client)'>active</if>">
+				<li class="side_item <if condition='$c_name eq Meeting'>active</if>">
 					<a href="<{:U('Meeting/manage')}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-th"></i> <span class="nav-label">会议列表</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span>

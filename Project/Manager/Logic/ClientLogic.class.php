@@ -23,8 +23,9 @@
 			$id                        = I('get.id', 0, 'int');
 			$join_model                = D('Core/Join');
 			$join_record               = $join_model->findRecord(1, [
-				'mid' => $meeting_id,
-				'cid' => $id
+				'mid'    => $meeting_id,
+				'cid'    => $id,
+				'status' => 'not deleted'
 			]);
 			$info['registration_date'] = $join_record['registration_date'];
 
@@ -153,8 +154,9 @@
 			$mid               = I('get.mid', 0, 'int');
 			foreach($list as $key => $val){
 				$receivables_record = $receivables_model->findRecord(2, [
-					'cid' => $val['cid'],
-					'mid' => $mid
+					'cid'    => $val['cid'],
+					'mid'    => $mid,
+					'status' => 'not deleted'
 				]);
 				$receivables_price  = 0;
 				foreach($receivables_record as $val2) $receivables_price += $val2['price'];
@@ -188,16 +190,19 @@
 					/* 1.创建参会人员 */
 					/** @var \Core\Model\ClientModel $model */
 					$model        = D('Core/Client');
-					$exist_client = $model->findClient(1, ['mobile' => $data['mobile']]);
+					$exist_client = $model->findClient(1, [
+						'mobile' => $data['mobile'],
+						'status' => 'not deleted'
+					]);
 					if($exist_client){
-						$client_id           = $exist_client['id'];
+						$cid                 = $exist_client['id'];
 						$str_obj             = new StringPlus();
 						$data['creatime']    = time();
 						$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 						$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
 						if(I('post.city')) $data['address'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
 						else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
-						$model->alterClient(['id' => $client_id], $data);
+						$model->alterClient(['id' => $cid], $data);
 					}
 					else{
 						$str_obj             = new StringPlus();
@@ -208,7 +213,7 @@
 						if(I('post.city')) $data['address'] = I('post.province', '')."-".I('post.city', '')."-".I('post.area', '')."-".I('post.address_detail', '');
 						else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
 						$result1 = $model->createClient($data);
-						if($result1['status']) $client_id = $result1['id'];
+						if($result1['status']) $cid = $result1['id'];
 						else return $result1;
 					}
 					/* 2.创建参会记录 */
@@ -216,8 +221,9 @@
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
 					$join_record = $join_model->findRecord(1, [
-						'mid' => $mid,
-						'cid' => $client_id
+						'mid'    => $mid,
+						'cid'    => $cid,
+						'status' => 'not deleted'
 					]);
 					$mobile      = $data['mobile'];
 					if($join_record){
@@ -237,7 +243,7 @@
 					}
 					else{
 						$data             = [];
-						$data['cid']      = $client_id;
+						$data['cid']      = $cid;
 						$data['mid']      = $mid;
 						$data['creatime'] = time();
 						$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
@@ -248,7 +254,7 @@
 					$weixin_logic     = new WxCorpLogic();
 					$weixin_user_list = $weixin_logic->getAllUserList();
 					foreach($weixin_user_list as $val){
-						if($val['mobile'] == $mobile  && $val['status'] != 4){
+						if($val['mobile'] == $mobile && $val['status'] != 4){
 							/** @var \Core\Model\WeixinIDModel $weixin_model */
 							$weixin_model = D('Core/WeixinID');
 							$department   = '';
@@ -256,7 +262,7 @@
 							$department         = trim($department, ',');
 							$data               = [];
 							$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
-							$data['oid']        = $client_id; // 对象ID
+							$data['oid']        = $cid; // 对象ID
 							$data['wtype']      = 1; // 微信ID类型 企业号
 							$data['weixin_id']  = $val['userid']; // 微信ID
 							$data['department'] = $department; // 部门ID
@@ -289,8 +295,9 @@
 					else $data['address'] = I('post.province', '')."-".I('post.area', '')."-".I('post.address.detail', '');
 					$result1                    = $model->alterClient(['id' => $id], $data);
 					$join_record                = $join_model->findRecord(1, [
-						'cid' => $id,
-						'mid' => I('get.mid', 0, 'int')
+						'cid'    => $id,
+						'mid'    => I('get.mid', 0, 'int'),
+						'status' => 'not deleted'
 					]);
 					$data2['registration_date'] = $data['registration_date'];
 					C('TOKEN_ON', false);
@@ -328,13 +335,14 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'review':
+					$cid = I('post.id', 0, 'int');
+					$mid = I('post.mid', 0, 'int');
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
-					$client_id   = I('post.id', 0, 'int');
-					$meeting_id  = I('post.mid', 0, 'int');
 					$join_record = $join_model->findRecord(1, [
-						'mid' => $meeting_id,
-						'cid' => $client_id
+						'mid'    => $mid,
+						'cid'    => $cid,
+						'status' => 'not deleted'
 					]);
 					C('TOKEN_ON', false);
 					$result1 = $join_model->alterRecord(['id' => $join_record['id']], [
@@ -343,23 +351,25 @@
 					]);
 					if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
 					$join_logic = new JoinLogic();
-					$result2    = $join_logic->makeQRCode([$client_id], ['mid' => $meeting_id]);
+					$result2    = $join_logic->makeQRCode([$cid], ['mid' => $mid]);
 
 					return array_merge($result2, ['__ajax__' => true]);
 				break;
 				case 'anti_review':
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
-					$client_id   = I('post.id', 0, 'int');
-					$meeting_id  = I('post.mid', 0, 'int');
+					$cid         = I('post.id', 0, 'int');
+					$mid         = I('post.mid', 0, 'int');
 					$join_record = $join_model->findRecord(1, [
-						'mid' => $meeting_id,
-						'cid' => $client_id
+						'mid'    => $mid,
+						'cid'    => $cid,
+						'status' => 'not deleted'
 					]);
 					C('TOKEN_ON', false);
 					$result = $join_model->alterRecord(['id' => $join_record['id']], [
 						'review_status' => 2,
-						'sign_status'   => 0
+						'sign_status'   => 0,
+						'sign_time'     => null
 					]);
 
 					return array_merge($result, ['__ajax__' => true]);
@@ -367,24 +377,25 @@
 				case 'multi_review': // 批量审核
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model    = D('Core/Join');
-					$meeting_id    = I('get.mid');
+					$mid           = I('get.mid');
 					$client_id_arr = explode(',', I('post.id', ''));
 					$join_id       = [];
 					foreach($client_id_arr as $v){
 						$join_record = $join_model->findRecord(1, [
-							'cid' => $v,
-							'mid' => $meeting_id
+							'cid'    => $v,
+							'mid'    => $mid,
+							'status' => 'not deleted'
 						]);
 						$join_id[]   = $join_record['id'];
 					}
 					C('TOKEN_ON', false);
-					$result1 = $join_model->alterRecord(['id' => $join_id], [
+					$result1 = $join_model->alterRecord(['id' => ['in', $join_id]], [
 						'review_status' => 1,
 						'review_time'   => time()
 					]);
 					if(!$result1['status']) return array_merge($result1, ['__ajax__' => false]);
 					$join_logic = new JoinLogic();
-					$result2    = $join_logic->makeQRCode($client_id_arr, ['mid' => $meeting_id]);
+					$result2    = $join_logic->makeQRCode($client_id_arr, ['mid' => $mid]);
 
 					return array_merge($result2, ['__ajax__' => false]);
 				break;
@@ -392,18 +403,23 @@
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model    = D('Core/Join');
 					$data['id']    = I('post.id', '');
-					$meeting_id    = I('get.mid', 0, 'int');
+					$mid           = I('get.mid', 0, 'int');
 					$client_id_arr = explode(',', $data['id']);
 					$join_id       = [];
 					foreach($client_id_arr as $v){
 						$join_record = $join_model->findRecord(1, [
-							'cid' => $v,
-							'mid' => $meeting_id
+							'cid'    => $v,
+							'mid'    => $mid,
+							'status' => 'not deleted'
 						]);
 						$join_id[]   = $join_record['id'];
 					}
 					C('TOKEN_ON', false);
-					$result = $join_model->alterRecord(['id' => $join_id], ['review_status' => 2]);
+					$result = $join_model->alterRecord(['id' => ['in', $join_id]], [
+						'review_status' => 2,
+						'sign_status'   => 0,
+						'sign_time'     => null
+					]);
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
@@ -411,11 +427,12 @@
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model    = D('Core/Join');
 					$id            = I('post.id', 0, 'int');
-					$meeting_id    = I('post.mid', 0, 'int');
+					$mid           = I('post.mid', 0, 'int');
 					$sign_director = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$join_record   = $join_model->findRecord(1, [
-						'cid' => $id,
-						'mid' => $meeting_id
+						'cid'    => $id,
+						'mid'    => $mid,
+						'status' => 'not deleted'
 					]);
 					if($join_record['review_status'] == 1){
 						C('TOKEN_ON', false);
@@ -427,7 +444,7 @@
 						]);
 						if($result['status']){
 							$message_logic = new MessageLogic();
-							$message_logic->send($meeting_id, 1, [$id]);
+							$message_logic->send($mid, 1, [$id]);
 						}
 
 						return array_merge($result, ['__ajax__' => true]);
@@ -442,10 +459,11 @@
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
 					$id          = I('post.id', 0, 'int');
-					$meeting_id  = I('post.mid', 0, 'int');
+					$mid         = I('post.mid', 0, 'int');
 					$join_record = $join_model->findRecord(1, [
-						'cid' => $id,
-						'mid' => $meeting_id
+						'cid'    => $id,
+						'mid'    => $mid,
+						'status' => 'not deleted'
 					]);
 					C('TOKEN_ON', false);
 					$result = $join_model->alterRecord(['id' => $join_record['id']], [
@@ -455,7 +473,7 @@
 					]);
 					if($result['status']){
 						$message_logic = new MessageLogic();
-						$message_logic->send($meeting_id, 2, [$id]);
+						$message_logic->send($mid, 2, [$id]);
 					}
 
 					return array_merge($result, ['__ajax__' => true]);
@@ -465,14 +483,15 @@
 					$join_model    = D('Core/Join');
 					$message_logic = new MessageLogic();
 					$id_arr        = explode(',', I('post.id', ''));
-					$meeting_id    = I('get.mid', 0, 'int');
+					$mid           = I('get.mid', 0, 'int');
 					$sign_director = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$count         = 0;
 					$send_list     = [];
 					foreach($id_arr as $val){
 						$join_record = $join_model->findRecord(1, [
-							'cid' => $val,
-							'mid' => $meeting_id
+							'cid'    => $val,
+							'mid'    => $mid,
+							'status' => 'not deleted'
 						]);
 						if($join_record['review_status'] == 1){
 							C('TOKEN_ON', false);
@@ -488,11 +507,11 @@
 							}
 						}
 						if($count%50 == 0 && $count != 0){
-							$message_logic->send($meeting_id, 1, $send_list);
+							$message_logic->send($mid, 1, $send_list);
 							$send_list = [];
 						}
 					}
-					if($count<50 && $count>0) $message_logic->send($meeting_id, 1, $send_list);
+					if($count<50 && $count>0) $message_logic->send($mid, 1, $send_list);
 					if($count == 0) return [
 						'status'   => false,
 						'message'  => '批量签到失败',
@@ -514,13 +533,14 @@
 					$join_model    = D('Core/Join');
 					$message_logic = new MessageLogic();
 					$id_arr        = explode(',', I('post.id', ''));
-					$meeting_id    = I('get.mid', 0, 'int');
+					$mid           = I('get.mid', 0, 'int');
 					$count         = 0;
 					$send_list     = [];
 					foreach($id_arr as $val){
 						$join_record = $join_model->findRecord(1, [
-							'cid' => $val,
-							'mid' => $meeting_id
+							'cid'    => $val,
+							'mid'    => $mid,
+							'status' => 'not deleted'
 						]);
 						C('TOKEN_ON', false);
 						$result = $join_model->alterRecord(['id' => $join_record['id']], [
@@ -533,11 +553,11 @@
 							$count++;
 						}
 						if($count%50 == 0 && $count != 0){
-							$message_logic->send($meeting_id, 2, $send_list);
+							$message_logic->send($mid, 2, $send_list);
 							$send_list = [];
 						}
 					}
-					if($count<50 && $count>0) $message_logic->send($meeting_id, 1, $send_list);
+					if($count<50 && $count>0) $message_logic->send($mid, 1, $send_list);
 					if($count == 0) return [
 						'status'   => false,
 						'message'  => '批量取消签到失败',
@@ -565,7 +585,10 @@
 					/* 监测是否已审核 */
 					$delete_id_arr = [];
 					foreach($join_id_arr as $val){
-						$record = $join_model->findRecord(1, ['id' => $val]);
+						$record = $join_model->findRecord(1, [
+							'id'     => $val,
+							'status' => 'not deleted'
+						]);
 						if($record['review_status'] == 1) continue;
 						$delete_id_arr[] = $val;
 					}
@@ -583,18 +606,25 @@
 					/** @var \Core\Model\WeixinIDModel $weixin_model */
 					/** @var \Core\Model\MeetingModel $meeting_model */
 					/** @var \Core\Model\ClientModel $client_model */
-					$client_id      = I('post.id', 0, 'int');
-					$meeting_id     = I('post.mid', 0, 'int');
+					$cid            = I('post.id', 0, 'int');
+					$mid            = I('post.mid', 0, 'int');
 					$weixin_model   = D('Core/WeixinID');
 					$meeting_model  = D('Core/Meeting');
 					$client_model   = D('Core/Client');
 					$sms_logic      = new SMSLogic();
-					$record         = $client_model->findClient(1, ['id' => $client_id]);
+					$record         = $client_model->findClient(1, [
+						'id'     => $cid,
+						'status' => 'not deleted'
+					]);
 					$weixin_record  = $weixin_model->findRecord(1, ['mobile' => trim($record['mobile'])]);
-					$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
+					$meeting_record = $meeting_model->findMeeting(1, [
+						'id'     => $mid,
+						'status' => 'not deleted',
+						'status' => 'not deleted'
+					]);
 					$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myQRCode', [
-							'cid' => $client_id,
-							'mid' => $meeting_id
+							'cid' => $cid,
+							'mid' => $mid
 						]);
 					$result1        = $wxcorp_logic->sendMessage('news', [
 						[
@@ -623,20 +653,26 @@
 					/** @var \Core\Model\WeixinIDModel $weixin_model */
 					/** @var \Core\Model\MeetingModel $meeting_model */
 					/** @var \Core\Model\ClientModel $client_model */
-					$client_id     = I('post.id', '');
-					$meeting_id    = I('get.mid', 0, 'int');
+					$cid           = I('post.id', '');
+					$mid           = I('get.mid', 0, 'int');
 					$weixin_model  = D('Core/WeixinID');
 					$meeting_model = D('Core/Meeting');
 					$client_model  = D('Core/Client');
 					$sms_logic     = new SMSLogic();
-					$client_arr    = explode(',', $client_id);
+					$client_arr    = explode(',', $cid);
 					foreach($client_arr as $v){
-						$record         = $client_model->findClient(1, ['id' => $v]);
-						$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
-						$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
+						$record         = $client_model->findClient(1, ['id' => $v, 'status' => 'not deleted']);
+						$weixin_record  = $weixin_model->findRecord(1, [
+							'mobile' => $record['mobile'],
+							'status' => 'not deleted'
+						]);
+						$meeting_record = $meeting_model->findMeeting(1, [
+							'id'     => $mid,
+							'status' => 'not deleted'
+						]);
 						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myQRCode', [
 								'cid' => $v,
-								'mid' => $meeting_id
+								'mid' => $mid
 							]);
 						$wxcorp_logic->sendMessage('news', [
 							[
@@ -654,37 +690,65 @@
 						'__ajax__' => false
 					];
 				break;
+				case 'get_assign_sign_place':
+					/** @var \Core\Model\JoinSignPlaceModel $join_sign_place_model */
+					$join_sign_place_model = D('Core/JoinSignPlace');
+					/** @var \Core\Model\SignPlaceModel $sign_place_model */
+					$sign_place_model       = D('Core/SignPlace');
+					$cid                    = I('post.cid', 0, 'int');
+					$mid                    = I('get.mid', 0, 'int');
+					$assigned_sign_place    = $join_sign_place_model->findRecord(2, [
+						'mid'    => $mid,
+						'cid'    => $cid,
+						'status' => 'not deleted'
+					]);
+					$sign_place             = $sign_place_model->findRecord(2, [
+						'mid'    => $mid,
+						'status' => 'not deleted'
+					]);
+					$assigned_sign_place_id = [];
+					foreach($assigned_sign_place as $val) $assigned_sign_place_id[] = $val['sid'];
+					foreach($sign_place as $key => $val){
+						if(in_array($val['id'], $assigned_sign_place_id)) $sign_place[$key]['assign_status'] = 1;
+						else $sign_place[$key]['assign_status'] = 0;
+					}
+
+					return ['data' => $sign_place, '__ajax__' => true];
+				break;
 				case 'assign_sign_place':
 					/** @var \Core\Model\JoinSignPlaceModel $join_sign_place_model */
 					$join_sign_place_model = D('Core/JoinSignPlace');
 					$cid                   = I('post.cid', 0, 'int');
+					$mid                   = I('get.mid', 0, 'int');
 					$sid_str               = I('post.sign_place', '');
 					$sid_arr               = explode(',', $sid_str);
-					$count                 = 0;
+					$data                  = [];
+					// 删除所有分配记录
+					$join_sign_place_model->deleteRecord(['mid' => $mid, 'cid' => $cid]);
+					// 清除已分配的记录
 					C('TOKEN_ON', false);
-					foreach($sid_arr as $key => $val){
-						$result = $join_sign_place_model->createRecord([
-							'cid'      => $cid,
-							'sid'      => $val,
-							'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
-							'creatime' => time()
-						]);
-						if($result['status']) $count++;
-						echo 1;
-					}
-					if($count == count($sid_arr)) return [
-						'status'   => true,
-						'message'  => '分配成功',
-						'__ajax__' => false
+					$join_sign_place_model->wipeOutRecord([
+						'mid' => $mid,
+						'cid' => $cid,
+						'sid' => ['in', $sid_arr]
+					]);
+					// 添加分配记录
+					foreach($sid_arr as $key => $val) $data[] = [
+						'mid'      => $mid,
+						'cid'      => $cid,
+						'sid'      => $val,
+						'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+						'creatime' => time()
 					];
-					elseif($count == 0) return [
-						'status'   => false,
-						'message'  => '分配失败',
+					$result = $join_sign_place_model->createMultiRecord($data);
+					if($result['status']) return [
+						'status'   => true,
+						'message'  => $result['message'],
 						'__ajax__' => false
 					];
 					else return [
-						'status'   => true,
-						'message'  => '部分分配成功',
+						'status'   => false,
+						'message'  => $result['message'],
 						'__ajax__' => false
 					];
 				break;
@@ -730,11 +794,15 @@
 					/** @var \Core\Model\EmployeeModel $employee_model */
 					$employee_model = D('Core/Employee');
 					$record         = $receivables_model->findRecord(2, [
-						'cid' => I('post.cid', 0, 'int'),
-						'mid' => I('post.mid', 0, 'int')
+						'cid'    => I('post.cid', 0, 'int'),
+						'mid'    => I('post.mid', 0, 'int'),
+						'status' => 'not deleted'
 					]);
 					foreach($record as $key => $val){
-						$employee_record       = $employee_model->findEmployee(1, ['id' => $val['payee_id']]);
+						$employee_record       = $employee_model->findEmployee(1, [
+							'id'     => $val['payee_id'],
+							'status' => 'not deleted'
+						]);
 						$record[$key]['payee'] = $employee_record['name'];
 					}
 
@@ -757,11 +825,11 @@
 					/** @var \Core\Model\ReceivablesModel $receivables_model */
 					$receivables_model = D('Core/Receivables');
 					/** @var \Core\Model\CouponItemModel $coupon_item_model */
-					$coupon_item_model  = D('Core/CouponItem');
+					$coupon_item_model = D('Core/CouponItem');
 					/** @var \Core\Model\ClientModel $client_model */
 					$client_model = D('Core/Client');
 					/** @var \Core\Model\EmployeeModel $employee_model */
-					$employee_model = D('Core/Employee');
+					$employee_model     = D('Core/Employee');
 					$receivables_result = $receivables_model->createRecord($data);
 					$coupon_item_code   = explode(',', $data['coupon_ids']);
 					foreach($coupon_item_code as $k => $v){
@@ -771,19 +839,23 @@
 						]);
 					}
 					//查出开拓顾问
-					$client_result = $client_model->findClient(1,['id'=>$cid]);
-					$employee_result = $employee_model->findEmployee(1,['keyword'=>$client_result['develop_consultant']]);
+					$client_result   = $client_model->findClient(1, [
+						'id'     => $cid,
+						'status' => 'not deleted'
+					]);
+					$employee_result = $employee_model->findEmployee(1, [
+						'keyword' => $client_result['develop_consultant'],
+						'status'  => 'not deleted'
+					]);
 					if($employee_result){
-						$message_logic   = new MessageLogic();
-
-						$sms_send    = $message_logic->send($mid,0,0,3,[$employee_result['id']]);
+						$message_logic = new MessageLogic();
+						$sms_send      = $message_logic->send($mid, 0, 0, 3, [$employee_result['id']]);
 					}
 
-					return [
-						'data'       => $receivables_result,
-						'__ajax__'   => true,
+					return array_merge($receivables_result, [
+						'__ajax__'   => false,
 						'__return__' => U('Receivables/Manage', ['mid' => $mid])
-					];
+					]);
 				break;
 				default:
 					return [
@@ -798,7 +870,10 @@
 			/** @var \Core\Model\UploadModel $upload_model */
 			$upload_model  = D('Core/Upload');
 			$excel_logic   = new ExcelLogic();
-			$upload_record = $upload_model->findRecord(1, ['id' => $upload_record_id]);
+			$upload_record = $upload_model->findRecord(1, [
+				'id'     => $upload_record_id,
+				'status' => 'not deleted'
+			]);
 			$file_path     = trim($upload_record['save_path'], '/');
 			$excel_content = $excel_logic->readClientData($file_path);
 
@@ -863,7 +938,10 @@
 						case 'inviter_id':
 							$invitor = $val;
 							if($invitor){
-								$record = $employee_model->findEmployee(1, ['keyword' => $invitor]);
+								$record = $employee_model->findEmployee(1, [
+									'keyword' => $invitor,
+									'status'  => 'not deleted'
+								]);
 								if($record) $invitor = $record['id'];
 								else $invitor = null;
 							}

@@ -23,3 +23,6 @@ function checkIsEmpty(){
 	}
 	return true;
 }
+$(function(){
+	$('input[name=redirectUrl]').val(document.referrer);
+})

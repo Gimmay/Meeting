@@ -55,11 +55,12 @@
 					<header>收款记录</header>
 					<section class="receivables_list">
 						<volist name="list" id="list">
-						<div class="receivables_item flex_wrap">
-							<div class="flex_1"><{$info.name}></div>
-							<div class="flex_1"><{$list.price}></div>
-							<div class="flex_1 link"><a href="<{:U('ReceivablesDetails',['id'=>$list['id']])}>">详情</a></div>
-						</div>
+							<div class="receivables_item flex_wrap">
+								<div class="flex_1"><{$info.name}></div>
+								<div class="flex_1"><{$list.price}></div>
+								<div class="flex_1 link">
+									<a href="<{:U('ReceivablesDetails',['id'=>$list['id']])}>">详情</a></div>
+							</div>
 						</volist>
 					</section>
 				</div>
@@ -71,7 +72,8 @@
 	<!-- 会议ID值-->
 	<input type="hidden" name="meeting_id" value="<{:I('get.mid',0,'int')}>" id="h_mid">
 	<div id="mb_footer">
-		<a href="<{:U('AddReceivables',['cid'=>$list['cid'],'mid'=>$list['mid']])}>" class="ft_a receivables_btn"><span>添加收款</span> </a>
+		<a href="<{:U('AddReceivables',['cid'=>$info['cid'],'mid'=>$info['mid']])}>" class="ft_a receivables_btn"><span>添加收款</span>
+		</a>
 	</div>
 	<script>
 		var ManageObject = {

@@ -39,6 +39,7 @@
 			if(isset($filter['id']) && $filter['id']) $where['id'] = $filter['id'];
 			if(isset($filter['cid']) && $filter['cid']) $where['cid'] = $filter['cid'];
 			if(isset($filter['mid']) && $filter['mid']) $where['mid'] = $filter['mid'];
+			if(isset($filter['payee_id']) && $filter['payee_id']) $where['payee_id'] = $filter['payee_id'];
 			if(isset($filter['keyword']) && $filter['keyword']){
 			}
 			if(isset($filter['status'])){

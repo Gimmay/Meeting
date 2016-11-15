@@ -17,7 +17,7 @@
 			parent::_initialize();
 			$this->meetingID = $this->initMeetingID($this);
 		}
-		
+
 		public function manage(){
 			$logic = new ClientLogic();
 			/* 处理POST提交请求 */
@@ -40,7 +40,7 @@
 			/** @var \Manager\Model\SignPlaceModel $sign_place_model */
 			$sign_place_model = D('Manager/SignPlace');
 			/** @var \Core\Model\CouponItemModel $coupon_item_model */
-			$coupon_item_model = D('Core/Coupon_item');
+			$coupon_item_model = D('Core/CouponItem');
 			/** @var \Manager\Model\PayMethodModel $pay_method_model */
 			$pay_method_model = D('PayMethod');
 			/** @var \Manager\Model\ReceivablesTypeModel $receivables_type_model */
@@ -51,27 +51,17 @@
 			$employee_personal_model = D('Core/Employee');
 			/** @var \Manager\Model\ReceivablesModel $receivables_model */
 			$receivables_model = D('Receivables');
-			$options           = [];
-			$sid               = 0;
-			$main_model        = new stdClass();
+			/** @var \Core\Model\JoinModel $model */
+			$model   = D('Core/Join');
+			$options = [];
 			/* 处理URL参数 */
 			if(isset($_GET['signed'])) $options['sign_status'] = I('get.signed', 0, 'int') == 1 ? 1 : 'not signed';
 			if(isset($_GET['reviewed'])) $options['review_status'] = I('get.reviewed', 0, 'int') == 1 ? 1 : 'not reviewed';
-			if(isset($_GET['mid'])){
-				/** @var \Core\Model\JoinModel $main_model */
-				$main_model     = D('Core/Join');
-				$options['mid'] = $this->meetingID;
-			}
-			if(isset($_GET['sid'])){
-				$sid = I('get.sid', 0, 'int');
-				/** @var \Core\Model\JoinSignPlaceModel $main_model */
-				$main_model     = D('Core/JoinSignPlace');
-				$options['sid'] = $sid;
-			}
 			/* 获取记录总数 */
-			$total_list = $main_model->findRecord(2, array_merge([
+			$total_list = $model->findRecord(2, array_merge([
 				'keyword' => I('get.keyword', ''),
-				'status'  => 'not deleted'
+				'status'  => 'not deleted',
+				'mid'     => $this->meetingID
 			], $options));
 			/* 特殊处理收款列表和统计 */
 			if(isset($_GET['receivables'])) $total_list = $logic->getReceivablesList($total_list, I('get.receivables', 1, 'int'));
@@ -80,35 +70,37 @@
 			\ThinkPHP\Quasar\Page\setTheme1($page_object);
 			$page_show = $page_object->show();
 			/* 当前页记录 */
-			$client_list = $main_model->findRecord(2, array_merge([
+			$client_list = $model->findRecord(2, array_merge([
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 				'_order'  => I('get._column', 'main.creatime').' '.I('get._sort', 'desc'),
-				'status'  => 'not deleted'
+				'status'  => 'not deleted',
+				'mid'     => $this->meetingID
 			], $options));
 			/* 设定额外字段 */
-			$options = [];
-			if(isset($_GET['mid'])) $options['mid'] = $this->meetingID;
-			if(isset($_GET['sid'])) $options['sid'] = $sid;
 			/* 统计数据 */
-			$signed_count   = $main_model->findRecord(0, array_merge([
+			$signed_count   = $model->findRecord(0, array_merge([
 				'sign_status' => 1,
-				'status'      => 'not deleted'
+				'status'      => 'not deleted',
+				'mid'         => $this->meetingID
 			], $options));
-			$reviewed_count = $main_model->findRecord(0, array_merge([
+			$reviewed_count = $model->findRecord(0, array_merge([
 				'review_status' => 1,
-				'status'        => 'not deleted'
+				'status'        => 'not deleted',
+				'mid'           => $this->meetingID
 			], $options));
-			$all_count      = $main_model->findRecord(0, array_merge([
-				'status' => 'not deleted'
+			$all_count      = $model->findRecord(0, array_merge([
+				'status' => 'not deleted',
+				'mid'    => $this->meetingID
 			], $options));
 			/* 特殊处理收款列表和统计 */
 			$receivables_count = $not_receivables_count = 0;
 			if(isset($_GET['receivables'])){
 				/* 获取记录总数 */
-				$temp_total_list  = $main_model->findRecord(2, array_merge([
+				$temp_total_list  = $model->findRecord(2, array_merge([
 					'keyword' => I('get.keyword', ''),
-					'status'  => 'not deleted'
+					'status'  => 'not deleted',
+					'mid'     => $this->meetingID
 				], $options));
 				$temp_client_list = $logic->getReceivablesList($temp_total_list, I('get.receivables', 1, 'int'));
 				if(I('get.receivables') == 1){
@@ -122,22 +114,11 @@
 				$client_list = $logic->getReceivablesList($client_list, I('get.receivables', 1, 'int'));
 			}
 			else{
-				$options = [];
-				if(isset($_GET['mid'])){
-					/** @var \Core\Model\JoinModel $main_model */
-					$main_model     = D('Core/Join');
-					$options['mid'] = $this->meetingID;
-				}
-				if(isset($_GET['sid'])){
-					$sid = I('get.sid', 0, 'int');
-					/** @var \Core\Model\JoinSignPlaceModel $main_model */
-					$main_model     = D('Core/JoinSignPlace');
-					$options['sid'] = $sid;
-				}
 				/* 获取记录总数 */
-				$temp_total_list       = $main_model->findRecord(2, array_merge([
+				$temp_total_list       = $model->findRecord(2, array_merge([
 					'keyword' => I('get.keyword', ''),
-					'status'  => 'not deleted'
+					'status'  => 'not deleted',
+					'mid'     => $this->meetingID
 				], $options));
 				$receivables_count     = count($logic->getReceivablesList($temp_total_list, 1));
 				$not_receivables_count = count($logic->getReceivablesList($temp_total_list, 0));
@@ -148,8 +129,7 @@
 			//收款类型
 			$receivables_type_result = $receivables_type_model->getReceivablesTypeSelectList();
 			//当前收款人
-			$employee_personal_result = $employee_personal_model->findEmployee(1,['id'=>I('session.MANAGER_EMPLOYEE_ID', 0, 'int')]);
-
+			$employee_personal_result = $employee_personal_model->findEmployee(1, ['id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')]);
 			/* 会议对应的券记录 */
 			$coupon_item_result = $coupon_item_model->findCouponItem(2, ['mid' => $this->meetingID, 'status' => 0]);
 			/* 收款类型列表(for select component) */
@@ -170,9 +150,9 @@
 				'receivables'     => $receivables_count,
 				'not_receivables' => $not_receivables_count
 			]);
-			$this->assign('employee_info',$employee_personal_result);
-			$this->assign('pay_list',$pay_method_list);
-			$this->assign('receivables_type_list',$receivables_type_result);
+			$this->assign('employee_info', $employee_personal_result);
+			$this->assign('pay_list', $pay_method_list);
+			$this->assign('receivables_type_list', $receivables_type_result);
 			$this->assign('employee_list', $employee_list);
 			$this->assign('coupon_code_list', $coupon_item_result);
 			$this->assign('list', $client_list);
@@ -269,7 +249,7 @@
 				}
 				else{
 					unset($result['__ajax__']);
-					if($result['status']) $this->success($result['message'], U('manage', ['mid' => $this->meetingID]));
+					if($result['status']) $this->success($result['message'], isset($_POST['redirectUrl']) ? I('post.redirectUrl', '') : U('manage', ['mid' => $this->meetingID]));
 					else $this->error($result['message'], '', 3);
 				}
 				exit;

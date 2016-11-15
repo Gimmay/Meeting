@@ -34,82 +34,42 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<div class="main_body">
-					<section class="content badge_content">
-						<header>
-							<div class="nav_tab clearfix">
-								<div class="nav_tab_li">
-									<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">自定义胸卡模板</a>
+				<if condition="$permission_list['BADGE.VIEW'] eq 1">
+					<div class="main_body">
+						<section class="content badge_content">
+							<header>
+								<div class="nav_tab clearfix">
+									<div class="nav_tab_li">
+										<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">自定义胸卡模板</a>
+									</div>
+									<div class="nav_tab_li">
+										<a href="<{:U('Badge/previewList', ['mid'=>I('get.mid', 0, 'int')])}>">系统胸卡模板列表</a>
+									</div>
+									<div class="nav_tab_li active">
+										<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int')])}>">已选择胸卡</a>
+									</div>
 								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Badge/previewList', ['mid'=>I('get.mid', 0, 'int')])}>">系统胸卡模板列表</a>
-								</div>
-								<div class="nav_tab_li active">
-									<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int')])}>">已选择胸卡</a>
+							</header>
+							<!--系统模板	-->
+							<div class="badge_box system_tem tab_c">
+								<div class="preview_badge">
+									<div class="badge_box"><{$info.data}></div>
+									<p class="title"><{$info.name}></p>
 								</div>
 							</div>
-						</header>
-						<!--系统模板	-->
-						<div class="badge_box system_tem tab_c">
-							<div class="preview_badge">
-								<div class="badge_box"><{$info.data}></div>
-								<p class="title"><{$info.name}></p>
-							</div>
-						</div>
-					</section>
-				</div>
+						</section>
+					</div>
+				</if>
 			</div>
 		</div>
 	</div>
 	<script>
 		var ManageObject = {
 			object:{
-				meetingNamesSelect:$('#meeting_name_s').QuasarSelect({
-					name        :'mid',
-					classStyle  :'form-control',
-					idInput     :'selected_develop_consultant',
-					idHidden    :'selected_develop_consultant_form',
-					data        :'<{:json_encode($meeting_list)}>',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				loading           :$().QuasarLoading(),
-				toast             :$().QuasarToast(),
-				icheck            :$('.icheck').iCheck({
-					checkboxClass:'icheckbox_square-blue',
-					radioClass   :'iradio_square-blue'
-				})
+				loading:$().QuasarLoading(),
+				toast  :$().QuasarToast(),
 			}
 		};
-		$(function(){
-			$(".cart_view_item ").resizable({
-				resize:function(event, ui){
-					var h = $(this).height();
-					$(this).css('font-size', h*0.6)
-				}
-			}).draggable();
-			$('.demo').minicolors(
-				$.minicolors = {
-					defaults:{
-						animationSpeed :50,
-						animationEasing:'swing',
-						change         :null,
-						changeDelay    :0,
-						control        :'hue',
-						defaultValue   :'',
-						hide           :null,
-						hideSpeed      :100,
-						inline         :false,
-						letterCase     :'lowercase',
-						opacity        :false,
-						position       :'bottom left',
-						show           :null,
-						showSpeed      :100,
-						theme          :'default'
-					}
-				}
-			);
-		});
 	</script>
 </body>
 </html>

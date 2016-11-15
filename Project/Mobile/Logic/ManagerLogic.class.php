@@ -105,9 +105,9 @@
 				break;
 				case 'cancel_auditing'; //取消审核
 					/** @var \Core\Model\JoinModel $join_model */
-					$join_model = D('Core/Join');
-					$client_id  = I('get.cid', 0, 'int');
-					$meeting_id = I('get.mid', 0, 'int');
+					$join_model  = D('Core/Join');
+					$client_id   = I('get.cid', 0, 'int');
+					$meeting_id  = I('get.mid', 0, 'int');
 					$join_record = $join_model->findRecord(1, [
 						'mid' => $meeting_id,
 						'cid' => $client_id
@@ -249,18 +249,19 @@
 					$permission_logic   = new PermissionLogic();
 					$meeting_view_list  = $meeting_role_logic->getMeetingView(I('session.MOBILE_EMPLOYEE_ID', 0, 'int'));
 					$new_list           = [
-						'ing'=>[],
-						'fin'=>[]
+						'ing' => [],
+						'fin' => []
 					];
 					$i                  = 0;
 					$condition_2        = $permission_logic->hasPermission('WEIXIN.MEETING.VIEW-ALL', I('session.MOBILE_EMPLOYEE_ID', 0, 'int'), 1);
 					foreach($data as $key => $val){
 						$condition_1 = in_array($val['id'], $meeting_view_list);
 						if($condition_1 || $condition_2){
-							if($val['status']==4){
+							if($val['status'] == 4){
 								$new_list['fin'][] = $val;
 								$i++;
-							}elseif(in_array($val['status'], [1, 2, 3])){
+							}
+							elseif(in_array($val['status'], [1, 2, 3])){
 								$new_list['ing'][] = $val;
 								$i++;
 							}

@@ -3,6 +3,9 @@
  */
 
 $(function(){
+	var quasar_script = document.getElementById('quasar_script');
+	// 实例化Url类
+	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
 	// 全选checkbox
 	$('.all_check').find('.iCheck-helper').on('click', function(){
 		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
@@ -47,4 +50,24 @@ $(function(){
 		var hotel_name = $(this).parents('tr').find('.hotel_name').text();
 		$('#alter_hotel').find('#hotel_name_a').val(hotel_name);
 	});
-})
+	// 点击过滤标签-全部
+	$('#filter_btn_all').on('click', function(){
+		var new_url = url_object.delUrlParam('type');
+		location.replace(new_url);
+	});
+	// 点击过滤标签-使用中
+	$('#filter_btn_using').on('click', function(){
+		var new_url = url_object.setUrlParam('type', 'using');
+		location.replace(new_url);
+	});
+	// 点击过滤标签-未使用
+	$('#filter_btn_not_use').on('click', function(){
+		var new_url = url_object.setUrlParam('type', 'not_use');
+		location.replace(new_url);
+	});
+	// 点击过滤标签-已结束
+	$('#filter_btn_finish').on('click', function(){
+		var new_url = url_object.setUrlParam('type', 'finish');
+		location.replace(new_url);
+	});
+});

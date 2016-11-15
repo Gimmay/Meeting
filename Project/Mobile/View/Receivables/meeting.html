@@ -83,10 +83,9 @@
 	</div>
 	<div id="mb_footer">
 		<a href="<{:U('meeting', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a active"><span>会议详情</span> </a>
-		<a href="<{:U('clientList')}>" class="ft_a"><span>参会人员</span> </a>
-		<a href="<{:U('myReceivables')}>" class="ft_a"> <span>我的收款</span> </a>
-		<a href="<{:U('receivablesRecord')}>" class="ft_a"> <span>收款记录</span> </a>
-		<a href="<{:U('addReceivables')}>" class="add_client glyphicon glyphicon-plus"></a>
+		<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"><span>参会人员</span> </a>
+		<a href="<{:U('myReceivables', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"> <span>我的收款</span> </a>
+		<a href="<{:U('receivablesRecord', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"> <span>收款记录</span> </a>
 	</div>
 	<script>
 		var ThisObject = {

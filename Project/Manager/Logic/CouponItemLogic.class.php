@@ -77,7 +77,7 @@
 				break;
 				case 'create';
 					/** @var \Core\Model\CouponItemModel $model */
-					$model = D('Core/Coupon_item');
+					$model = D('Core/CouponItem');
 					C('TOKEN_ON', false);            //令牌
 					$data['coupon_id'] = I('get.id', '');
 					$data['mid']       = I('post.meeting_name', '');

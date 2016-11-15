@@ -147,7 +147,8 @@ canvas{
 	overflow-x : auto;
 }
 
-.system_tem_list ul{
+.system_tem_list .w_box{
+	margin: 0 auto;
 }
 
 .system_tem_list ul li{
@@ -160,6 +161,7 @@ canvas{
 	border           : 1px solid rgba(0, 0, 0, .12);
 	background-color : #FFFFFF;
 	margin-right     : 10px;
+	margin-bottom    : 10px;
 }
 
 .system_tem_list ul li.active{

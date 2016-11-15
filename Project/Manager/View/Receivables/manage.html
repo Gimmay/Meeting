@@ -39,7 +39,13 @@
 						<div class="table_wrap">
 							<div class="nav_tab clearfix">
 								<div class="nav_tab_li active">
-									<a href="javascript:void(0)">收款列表</a>
+									<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/receivablesType', ['mid'=>I('get.mid', 0, 'int')])}>">收款类型</a>
 								</div>
 								<if condition="I('get.mid')">
 									<div class="add">
@@ -55,10 +61,10 @@
 										<div class="input-group repertory_text">
 											<input type="search" name="keyword" class="form-control" placeholder="客户名" value="<{:I('get.keyword', '')}>">
 											<span class="input-group-btn">
-												<button type="submit" class="btn btn-default mian_search">搜索</button>
+												<button type="submit" class="btn btn-default main_search">搜索</button>
 											</span>
 										</div>
-										<a type="reset" class="btn btn-default mian_search" href="<{:U('manage')}>">查看所有</a>
+										<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
 									</div>
 								</form>
 							</div>
@@ -88,8 +94,25 @@
 													<td class="client_name"><{$list.client_name}></td>
 													<td class="meeting_name"><{$list.meeting_name}></td>
 													<td class="price"><{$list.price}></td>
-													<td class="type"><{$list.type}></td>
-													<td class="method"><{$list.method}></td>
+													<td class="type">
+														<switch name="list.method">
+															<case value="33">门票费</case>
+															<case value="34">参会费</case>
+															<case value="35">场参费</case>
+															<case value="36">定金</case>
+															<case value="37">课程费</case>
+															<case value="38">产品费</case>
+															<case value="39">其他</case>
+														</switch>
+													</td>
+													<td class="type">
+														<switch name="list.type">
+															<case value="33">刷卡</case>
+															<case value="34">转账</case>
+															<case value="35">预付费</case>
+															<case value="36">其他</case>
+														</switch>
+													</td>
 													<td class="coupon_code" data-id="<{$list.coupon_ids}>"><{$list.coupon_code}></td>
 													<td class="time"><{$list.time|date="Y-m-d",###}></td>
 													<td class="place"><{$list.place}></td>
@@ -141,8 +164,8 @@
 						<div class="form-group">
 							<label for="price" class="col-sm-2 control-label">金额：</label>
 							<div class="col-sm-10">
-								<input type="number" name="price" id="price" class="form-control">
-								<div id="idCalculadora" class="hide clearfix">
+								<input type="text" name="price" id="price" class="form-control">
+								<!--<div id="idCalculadora" class="hide clearfix">
 									<div id="calcuator">
 										<input type="text" id="input-box" value="0" size="21" maxlength="21" readonly="readonly"/>
 										<div id="btn-list">
@@ -173,7 +196,7 @@
 											<button type="button" class="btn btn-default btn-sm">关闭</button>
 										</div>
 									</div>
-								</div>
+								</div>-->
 							</div>
 						</div>
 						<div class="form-group">
@@ -200,8 +223,8 @@
 								<div class="coupon_area ">
 									<div class="coupon_box">
 										<div class="coupon_list">
-											<if condition="$coupon_code_list">
-												<volist name="coupon_code_list" id="list">
+											<if condition="$coupon_item">
+												<volist name="coupon_item" id="list">
 													<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="<{$list.id}>"><{$list.code}></a>
 												</volist>
 												<else/>
@@ -374,43 +397,43 @@
 	<script>
 		var ManageObject = {
 			object:{
-				method     :$('#method').QuasarSelect({
+				method          :$('#method').QuasarSelect({
 					name        :'method',
 					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting)}>',
+					data        :'<{:json_encode($pay_info)}>',
 					idInput     :'selected_method',
 					idHidden    :'selected_method_form',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				methoda    :$('#method_a').QuasarSelect({
+				methoda         :$('#method_a').QuasarSelect({
 					name        :'method',
 					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting)}>',
+					data        :'<{:json_encode($pay_info)}>',
 					idInput     :'selected_method_a',
 					idHidden    :'selected_method_a_form',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				type       :$('#type').QuasarSelect({
+				type            :$('#type').QuasarSelect({
 					name        :'type',
 					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting)}>',
+					data        :'<{:json_encode($type_info)}>',
 					idInput     :'selected_type',
 					idHidden    :'selected_type_form',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				typea      :$('#type_a').QuasarSelect({
+				typea           :$('#type_a').QuasarSelect({
 					name        :'type',
 					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting)}>',
+					data        :'<{:json_encode($type_info)}>',
 					idInput     :'selected_type_a',
 					idHidden    :'selected_type_a_form',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				meetingName:$('#meeting_name').QuasarSelect({
+				meetingName     :$('#meeting_name').QuasarSelect({
 					name        :'mid',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting_list)}>',
@@ -419,16 +442,16 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				clientName :$('#client_name').QuasarSelect({
+				clientName      :$('#client_name').QuasarSelect({
 					name        :'client_name',
 					classStyle  :'form-control',
-					data        :'<{:json_encode($client_list)}>',
+					data        :'<{:json_encode($client_type)}>',
 					idInput     :'selected_client_name',
 					idHidden    :'selected_client_name_form',
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				payeeNameA :$('#payee_id').QuasarSelect({
+				payeeNameA      :$('#payee_id').QuasarSelect({
 					name        :'payee_id',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($employee_list)}>',
@@ -437,7 +460,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				payeeNameA :$('#payee_id_a').QuasarSelect({
+				payeeNameA      :$('#payee_id_a').QuasarSelect({
 					name        :'payee_id',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($employee_list)}>',
@@ -448,23 +471,23 @@
 					defaultHtml :'<{$employee_info[code]}>'+' - '+'<{$employee_info[name]}>',
 					hasEmptyItem:false
 				}),
-				receivablesTime    :jeDate({
+				receivablesTime :jeDate({
 					dateCell:"#receivables_time",
 					format  :"YYYY-MM-DD hh:mm:ss",
 					isTime  :true, // isClear:false, // 时分秒--true
 					/*	minDate :"2015-10-19 00:00:00",
 					 maxDate :"2016-11-8 00:00:00"*/
 				}),
-				receivablesTimeA    :jeDate({
+				receivablesTimeA:jeDate({
 					dateCell:"#receivables_time_a",
 					format  :"YYYY-MM-DD hh:mm:ss",
 					isTime  :true, // isClear:false, // 时分秒--true
 					/*	minDate :"2015-10-19 00:00:00",
 					 maxDate :"2016-11-8 00:00:00"*/
 				}),
-				toast      :$().QuasarToast(),
-				loading    :$().QuasarLoading(),
-				icheck     :$('.icheck').iCheck({
+				toast           :$().QuasarToast(),
+				loading         :$().QuasarLoading(),
+				icheck          :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				})

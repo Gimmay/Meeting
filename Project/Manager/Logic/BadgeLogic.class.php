@@ -23,30 +23,41 @@
 					return array_merge($result, ['__ajax__' => true, 'imageUrl' => $result['data']['filePath']]);
 				break;
 				case 'create':
-					/** @var \Core\Model\BadgeModel $model */
-					$model              = D('Core/Badge');
-					$data               = I('post.');
-					$data['name']       = $data['data']['name'];
-					$data['data']       = $_POST['data']['temp'];
-					$data['attributes'] = json_encode($_POST['data']['attributes']);
-					$data['creatime']   = time();
-					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					C('TOKEN_ON', false);
-					$result = $model->createBadge($data);
+					if($this->permissionList['BADGE.CREATE']){
+						/** @var \Core\Model\BadgeModel $model */
+						$model              = D('Core/Badge');
+						$data               = I('post.');
+						$data['name']       = $data['data']['name'];
+						$data['data']       = $_POST['data']['temp'];
+						$data['attributes'] = json_encode($_POST['data']['attributes']);
+						$data['creatime']   = time();
+						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						C('TOKEN_ON', false);
+						$result = $model->createBadge($data);
 
-					return array_merge($result, ['__ajax__'   => true,
-												 '__return__' => U('previewList', ['mid' => $option['mid']])
-					]);
+						return array_merge($result, [
+							'__ajax__'   => true,
+							'__return__' => U('previewList', ['mid' => $option['mid']])
+						]);
+					}
+					else return ['status' => false, 'message' => '您没有创建胸卡的权限', '__ajax__' => true];
 				break;
 				case 'assign_badge_for_meeting':
-					/** @var \Core\Model\MeetingModel $meeting_model */
-					$meeting_model = D('Core/Meeting');
-					$data          = I('post.');
-					$data['bid']   = I('post.id', 0, 'int');
-					$mid           = I('post.mid', 0, 'int');
-					$result        = $meeting_model->alterMeeting([$mid], $data);
+					if($this->permissionList['BADGE.SELECT']){
+						/** @var \Core\Model\MeetingModel $meeting_model */
+						$meeting_model = D('Core/Meeting');
+						$data          = I('post.');
+						$data['bid']   = I('post.id', 0, 'int');
+						$mid           = I('get.mid', 0, 'int');
+						unset($data['id']);
+						$result = $meeting_model->alterMeeting(['id' => $mid], $data);
 
-					return array_merge($result, ['__ajax__' => false, '__return__' => U('meeting/manage')]);
+						return array_merge($result, [
+							'__ajax__'   => false,
+							'__return__' => U('Badge/preview', ['mid' => $mid])
+						]);
+					}
+					else return ['status' => false, 'message' => '您没有选择胸卡的权限', '__ajax__' => false];
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];

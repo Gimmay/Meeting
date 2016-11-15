@@ -18,7 +18,7 @@
 			parent::_initialize();
 		}
 
-		public function findReceivablesType($type = 2, $filter = []){
+		public function findRecord($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['status'])){
@@ -71,7 +71,7 @@
 		}
 
 
-		public function createReceivablesType($data){
+		public function createRecord($data){
 			if($this->create($data)){
 				try{
 					$result = $this->add($data);
@@ -87,7 +87,7 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function deleteReceivablesType($id){
+		public function deleteRecord($id){
 			if($this->create()){
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save(['status' => 2]);
@@ -103,7 +103,7 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function alterReceivablesType($id, $data){
+		public function alterRecord($id, $data){
 			if($this->create($data)){
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save($data);

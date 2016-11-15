@@ -7,6 +7,7 @@ var ThisObject = {
 	word                :0,
 	bindEvent           :function(){
 		var self = this;
+		// 选择代金券
 		$('.coupon_list a').on('click', function(){
 			var id = $(this).attr('data-id');
 			if($(this).hasClass('active')){
@@ -15,20 +16,26 @@ var ThisObject = {
 				$(this).addClass('active');
 			}
 		});
+		// 添加收款代金券选择
 		$('#add_receivables .coupon_list a').on('click', function(){
 			self.eachAddReceivables();
 		});
 		self.eachAddReceivables();
+
+		// 添加修改代金券选择
 		$('#alter_receivables .coupon_list a').on('click', function(){
 			self.eachAlterReceivables();
 		});
 		self.eachAlterReceivables();
+		// 打开计算器
 		$('#price').on('focus', function(){
 			$('#idCalculadora').removeClass('hide');
 		});
+		// 计算机关闭
 		$('.close_calcuator button').on('click', function(){
 			$('#idCalculadora').addClass('hide');
-		})
+		});
+		// 计算器等于号
 		$('.equal').on('click', function(){
 			var sum = $('#input-box').val();
 			$('#price').val(sum);
@@ -73,6 +80,7 @@ var ThisObject = {
 			Common.ajax({
 				data    :{requestType:'alter_coupon', id:id},
 				callback:function(r){
+					console.log(r);
 					var arr = [];
 					if(ThisObject.word == 0){
 						$.each(r, function(index, value){

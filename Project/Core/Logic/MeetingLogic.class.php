@@ -21,15 +21,15 @@
 				$end_time   = strtotime($val['end_time']);
 				if($start_time<=time() && $end_time>=time() && $val['status'] != 0){
 					C('TOKEN_ON', false);
-					$meeting_model->alterMeeting([$val['id']], ['status' => 3]);
+					$meeting_model->alterMeeting(['id'=>$val['id']], ['status' => 3]);
 				}
 				elseif($end_time<time() && $val['status'] != 0){
 					C('TOKEN_ON', false);
-					$meeting_model->alterMeeting([$val['id']], ['status' => 4]);
+					$meeting_model->alterMeeting(['id'=>$val['id']], ['status' => 4]);
 				}
 //				elseif($start_time>time()){
 //					C('TOKEN_ON', false);
-////					$meeting_model->alterMeeting([$val['id']], ['status' => 2]);
+////					$meeting_model->alterMeeting(['id'=>$val['id']], ['status' => 2]);
 //				}
 			}
 		}

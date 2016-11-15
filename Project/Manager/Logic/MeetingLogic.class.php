@@ -73,7 +73,7 @@
 							'type' => 1
 						]);
 						if($message_result){
-							$sign_result = $assign_message_model->alterRecord([$message_result['id']], ['message_id' => I('post.sign_mes', 0, 'int')]);
+							$sign_result = $assign_message_model->alterRecord(['id'=>$message_result['id']], ['message_id' => I('post.sign_mes', 0, 'int')]);
 						}
 						else{
 							$sign_result = $assign_message_model->createRecord($data);
@@ -97,7 +97,7 @@
 							'type' => 2
 						]);
 						if($message_result){
-							$anti_sign_result = $assign_message_model->alterRecord([$message_result['id']], [
+							$anti_sign_result = $assign_message_model->alterRecord(['id'=>$message_result['id']], [
 								'message_id' => I('post.anti_sign_mes', 0, 'int'),
 								'type'       => 2
 							]);
@@ -124,7 +124,7 @@
 							'type' => 3
 						]);
 						if($message_result){
-							$receivables_result = $assign_message_model->alterRecord([$message_result['id']], [
+							$receivables_result = $assign_message_model->alterRecord(['id'=>$message_result['id']], [
 								'message_id' => I('post.receivables_mes', 0, 'int'),
 								'type'       => 3
 							]);
@@ -242,7 +242,7 @@
 							$remote_url  = '/'.trim($qrcode_file, './');
 							$record      = $model->findMeeting(1, ['id' => $meeting_id]);
 							C('TOKEN_ON', false);
-							$model->alterMeeting([$record['id']], [
+							$model->alterMeeting(['id'=>$record['id']], [
 								'qrcode' => $remote_url
 							]);
 							// 创建该员工对会议的可见记录
@@ -289,7 +289,7 @@
 						$data           = I('post.');
 						$data['brief']  = $_POST['brief'];
 						$data['qrcode'] = $remote_url;
-						$result         = $model->alterMeeting([$id], $data);
+						$result         = $model->alterMeeting(['id'=>$id], $data);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
@@ -352,15 +352,15 @@
 					return array_merge($role_result, ['__ajax__' => true]);
 				break;
 				case 'release':
-					$id = I('post.id', '');
+					$id = I('get.id', '');
 					/** @var \Core\Model\MeetingModel $meeting_model */
 					$meeting_model  = D('Core/Meeting');
 					$meeting_status = $meeting_model->findMeeting(1, ['id' => $id]);
 					if($meeting_status['status'] == 2){
-						$meeting_result = $meeting_model->alterMeeting($id, ['status' => 1]);
+						$meeting_result = $meeting_model->alterMeeting(['id'=>$id], ['status' => 1]);
 					}
 					else{
-						$meeting_result = $meeting_model->alterMeeting($id, ['status' => 2]);
+						$meeting_result = $meeting_model->alterMeeting(['id'=>$id], ['status' => 2]);
 					}
 
 					return array_merge($meeting_result, ['__ajax__' => true]);
@@ -549,7 +549,7 @@
 					return array_merge($meeting_manager_result, ['__ajax__' => true]);
 				break;
 				case 'choose_hotel':
-					$mid = I('post.mid', '');
+					$mid = I('get.mid', '');
 					$id  = I('post.id', '');
 					/** @var \Core\Model\MeetingModel $meeting_model */
 					$meeting_model = D('Core/Meeting');
@@ -557,7 +557,7 @@
 					foreach($id as $k => $v){
 						$hid .= $v.',';
 					}
-					$meeting_result = $meeting_model->alterMeeting($mid, ['hid' => $hid]);
+					$meeting_result = $meeting_model->alterMeeting(['id'=>$mid], ['hid' => $hid]);
 
 					return array_merge($meeting_result, ['__ajax__' => true]);
 				break;

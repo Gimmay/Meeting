@@ -34,7 +34,8 @@
 							<div class="item">
 								<span class="labe"><b style="vertical-align: middle;color: red;">*</b>客户姓名:</span>
 								<div class="inp">
-									<input type="text" name="name" value="<{$client.name}>">
+									<input type="text" name="name" value="<{$client.name}>" disabled="true">
+									<!--<div id="name"></div>-->
 								</div>
 							</div>
 						</li>
@@ -50,9 +51,9 @@
 							<div class="item">
 								<span class="labe">支付方式:</span>
 								<div>
-									<select name="method" id="method" class="form-control">
+									<select name="method" id="method" class="form-control input-sm">
 										<volist name="method" id="list">
-										<option value="<{$list.id}>"><{$list.name}></option>
+											<option value="<{$list.id}>"><{$list.name}></option>
 										</volist>
 									</select>
 								</div>
@@ -62,7 +63,7 @@
 							<div class="item">
 								<span class="labe">收款类型:</span>
 								<div>
-									<select name="type" id="type" class="form-control">
+									<select name="type" id="type" class="form-control input-sm">
 										<volist name="receivables_type" id="info">
 											<option value="<{$info.id}>"><{$info.name}></option>
 										</volist>
@@ -70,21 +71,19 @@
 								</div>
 							</div>
 						</li>
-						<li class="info_li">
+						<!--<li class="info_li">
 							<div class="item">
 								<span class="labe">收款人:</span>
 								<div class="inp">
-									<input type="text" name="payee_id">
+									<input type="text" name="payee_id" value="<{$employee.name}>" disabled="true">
 								</div>
 							</div>
-						</li>
+						</li>-->
 						<li class="info_li">
-							<div class="item coupon">
+							<div class="item">
 								<span class="labe">代金券:</span>
-								<div class="coupon_list">
-									<volist name="coupon_item" id="info">
-									<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="<{$info.id}>"><{$info.code}></a>
-									</volist>
+								<div class="inp">
+									<input type="text" name="coupon_name">
 								</div>
 								<input type="hidden" name="coupon_id">
 							</div>
@@ -101,7 +100,7 @@
 							<div class="item">
 								<span class="labe">来源状态:</span>
 								<div>
-									<select name="source_type" id="source_type" class="form-control">
+									<select name="source_type" id="source_type" class="form-control input-sm">
 										<option value="0">会前收款</option>
 										<option value="1">会中收款</option>
 										<option value="2">会后收款</option>
@@ -114,6 +113,7 @@
 								<span class="labe">收款时间:</span>
 								<div>
 									<input type="date" name="receivables_time" value="<{:date('Y-m-d H:i:s')}>" class="form-control">
+									<!--<input type="date" name="receivables_time" value="1993-05-08 12:00:00" class="form-control">-->
 								</div>
 							</div>
 						</li>
@@ -125,19 +125,59 @@
 								</div>
 							</div>
 						</li>
-						<input type="hidden" name="requestType" value="create_client"> <input type="hidden" name="mid" value="<{:I('get.mid', 0, 'int')}>">
+						<input type="hidden" name="mid" value="<{:I('get.mid', 0, 'int')}>">
 					</ul>
 				</div>
 				<div class="submit">
-					<button type="submit">提交</button>
+					<button type="button">提交</button>
 				</div>
 			</div>
 		</form>
 	</div>
+	<div id="mb_layer" class="hide">
+		<div class="search">
+			<form action="" method="get" id="form_modal">
+				<div class="input-group repertory_text">
+					<input type="search" name="keyword" class="form-control" placeholder="姓名/拼音简码" id="keyword">
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default main_search glyphicon glyphicon-search" style="top: 0;color: rgba(0,0,0,.5);"></button>
+					</span>
+				</div>
+			</form>
+		</div>
+		<div class="client_list">
+			<volist name="coupon_item" id="unit_list">
+				<div class="list_item open">
+					<div class="title"><{$key}> (<{:count($unit_list)}>)<span class="icon glyphicon glyphicon-chevron-down"></span>
+					</div>
+					<ul class="list_item_ul clearfix">
+						<volist name="unit_list" id="single">
+							<li class="client_item">
+								<a data-id="<{$single.id}>"> <span class="name"><{$single.code}></span> </a>
+							</li>
+						</volist>
+					</ul>
+				</div>
+			</volist>
+		</div>
+		<div class="footer_coupon">
+			<button type="button" class="btn btn-default btn-sm confirm_close">确认并关闭</button>
+		</div>
+	</div>
 	<script>
 		var ThisObject = {
 			object:{
-				toast:$().QuasarToast()
+				clientName:$('#name').QuasarSelect({
+					name        :'client_name',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($client_list)}>',
+					idInput     :'selected_client_name',
+					idHidden    :'selected_client_name_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				toast     :$().QuasarToast(),
+				loading   :$().QuasarLoading()
 			}
 		}
 	</script>

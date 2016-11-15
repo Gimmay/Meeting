@@ -18,7 +18,7 @@
 			parent::_initialize();
 		}
 
-		public function findPayMethod($type = 2, $filter = []){
+		public function findRecord($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['status'])){
@@ -70,8 +70,7 @@
 			return $result;
 		}
 
-
-		public function createPayMethod($data){
+		public function createRecord($data){
 			if($this->create($data)){
 				try{
 					$result = $this->add($data);
@@ -87,7 +86,7 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function deletePayMethod($id){
+		public function deleteRecord($id){
 			if($this->create()){
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save(['status' => 2]);
@@ -103,7 +102,7 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function alterPayMethod($id, $data){
+		public function alterRecord($id, $data){
 			if($this->create($data)){
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save($data);

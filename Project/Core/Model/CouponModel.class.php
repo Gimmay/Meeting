@@ -29,9 +29,9 @@
 			}
 			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['keyword']) && $filter['keyword']){
-				$condition['name']        = ['like', "%$filter[keyword]%"];
-				$condition['_logic']      = 'or';
-				$where['_complex']        = $condition;
+				$condition['name']   = ['like', "%$filter[keyword]%"];
+				$condition['_logic'] = 'or';
+				$where['_complex']   = $condition;
 			}
 			switch((int)$type){
 				case 0: // count
@@ -127,7 +127,7 @@ $limit
 					if($result) return ['status' => true, 'message' => '创建代金券成功', 'id' => $result];
 					else return ['status' => false, 'message' => '没有创建代金券'];
 				}catch(Exception $error){
-					$message = $error->getMessage();
+					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);
 					if(!$exception['status']) return $exception;
 					else return ['status' => false, 'message' => $this->getError()];
@@ -156,7 +156,6 @@ $limit
 			if($this->create($data)){
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save($data);
-					
 					if($result) return ['status' => true, 'message' => '修改成功'];
 					else return ['status' => false, 'message' => '未做任何修改'];
 				}catch(Exception $error){

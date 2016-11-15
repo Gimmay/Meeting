@@ -20,6 +20,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=18h24xIQGKWEuIMgHzjsNxMD4HTc9Q7m"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
@@ -32,183 +33,173 @@
 				<include file="Public/innerHeader"/>
 				<div class="main_body">
 					<section class="content">
-						<div class="return">
-							<a class="btn btn-default" onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
-						</div>
 						<div class="table_wrap">
-							<form class="form-horizontal" role="form" method="post" id="form" action="" onsubmit="return checkIsEmpty()">
-								<input type="hidden" name="requestType" value="create">
-								<div class="modal-header">
-									<h2 class="modal-title" id="delete_role_title">新建客户</h2>
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="javascript:void(0)">创建参会人员</a>
 								</div>
-								<div class="modal-body">
-									<div class="form-group">
-										<label for="name" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>姓名：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control name" name="name" id="name">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="gender" class="col-sm-1 control-label">性别：</label>
-										<div class="col-sm-11">
-											<select name="gender" id="gender" class="form-control">
-												<option value="0">未指定</option>
-												<option value="1">男</option>
-												<option value="2">女</option>
-											</select>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="birthdate" class="col-sm-1 control-label">出生日期：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control" name="birthdate" id="birthdate">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="address" class="col-sm-1 control-label">地址：</label>
-										<div class="col-sm-11">
-											<div id="address" class="address_wrap clearfix">
-												<div class="address_item">
-													<select class="prov form-control" name="province"></select>
-												</div>
-												<div class="address_item">
-													<select class="city form-control" name="city" disabled="disabled"></select>
-												</div>
-												<div class="address_item">
-													<select class="dist form-control" name="area" disabled="disabled"></select>
-												</div>
-												<div class="address_item address_details">
-													<input type="text" placeholder="具体街道或者村镇" class="form-control" name="address.detail">
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="id_card_number" class="col-sm-1 control-label">身份证号：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control id_card_number" name="id_card_number" id="id_card_number">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="title" class="col-sm-1 control-label">职称：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control title" name="title" id="title">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="position" class="col-sm-1 control-label">职务：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control position" name="position" id="position">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="mobile" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>手机号：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control mobile" name="mobile" id="mobile">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="email" class="col-sm-1 control-label">电子邮箱：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control email" name="email" id="email">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="unit" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>单位名称：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control unit" name="unit" id="unit">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="develop_consultant" class="col-sm-1 control-label">开拓顾问：</label>
-										<div class="col-sm-11">
-											<div id="develop_consultant"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="service_consultant" class="col-sm-1 control-label">服务顾问：</label>
-										<div class="col-sm-11">
-											<div id="service_consultant"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="accompany" class="col-sm-1 control-label">陪同人姓名：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control accompany" name="accompany" id="accompany">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="accompany_mobile" class="col-sm-1 control-label">陪同人手机：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control accompany_mobile" name="accompany_mobile" id="accompany_mobile">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="registration_date" class="col-sm-1 control-label">报名时间：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control" name="registration_date" id="registration_date">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="comment" class="col-sm-1 control-label">备注：</label>
-										<div class="col-sm-11">
-											<textarea class="form-control comment" name="comment" id="comment"></textarea>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="column1" class="col-sm-1 control-label">保留字段1：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control column1" name="column1" id="column1">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="column2" class="col-sm-1 control-label">保留字段2：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control column2" name="column2" id="column2">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="column3" class="col-sm-1 control-label">保留字段3：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control column3" name="column3" id="column3">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="column4" class="col-sm-1 control-label">保留字段4：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control column4" name="column4" id="column4">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="column5" class="col-sm-1 control-label">保留字段5：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control column5" name="column5" id="column5">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="column6" class="col-sm-1 control-label">保留字段6：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control column6" name="column6" id="column6">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="column7" class="col-sm-1 control-label">保留字段7：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control column7" name="column7" id="column7">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="column8" class="col-sm-1 control-label">保留字段8：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control column8" name="column8" id="column8">
-										</div>
-									</div>
-								</div>
-								<div class="modal-footer text_center">
-									<button type="submit" class="btn btn-primary">提交</button>
-								</div>
-							</form>
+							</div>
 						</div>
+						<form class="form-horizontal" role="form" method="post" id="form" action="" onsubmit="return checkIsEmpty()">
+							<input type="hidden" name="requestType" value="create">
+							<div class="modal-body">
+								<div class="form-group">
+									<label for="name" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>姓名：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control name" name="name" id="name">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="gender" class="col-sm-1 control-label">性别：</label>
+									<div class="col-sm-11">
+										<select name="gender" id="gender" class="form-control">
+											<option value="0">未指定</option>
+											<option value="1">男</option>
+											<option value="2">女</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="birthdate" class="col-sm-1 control-label">出生日期：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control" name="birthdate" id="birthdate">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="place" class="col-sm-1 control-label">地址：</label>
+									<div class="col-sm-11">
+										<div class="input-group address_map">
+											<input type="text" class="form-control" name="place" id="place">
+											<span class="input-group-addon glyphicon glyphicon-send get_map"></span>
+										</div>
+										<div id="allmap" class="hide" style="width: 100%; height: 400px;"></div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="id_card_number" class="col-sm-1 control-label">身份证号：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control id_card_number" name="id_card_number" id="id_card_number">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="title" class="col-sm-1 control-label">职称：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control title" name="title" id="title">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="position" class="col-sm-1 control-label">职务：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control position" name="position" id="position">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="mobile" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>手机号：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control mobile" name="mobile" id="mobile">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="email" class="col-sm-1 control-label">电子邮箱：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control email" name="email" id="email">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="unit" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>单位名称：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control unit" name="unit" id="unit">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="develop_consultant" class="col-sm-1 control-label">开拓顾问：</label>
+									<div class="col-sm-11">
+										<div id="develop_consultant"></div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="service_consultant" class="col-sm-1 control-label">服务顾问：</label>
+									<div class="col-sm-11">
+										<div id="service_consultant"></div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="accompany" class="col-sm-1 control-label">陪同人姓名：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control accompany" name="accompany" id="accompany">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="accompany_mobile" class="col-sm-1 control-label">陪同人手机：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control accompany_mobile" name="accompany_mobile" id="accompany_mobile">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="registration_date" class="col-sm-1 control-label">报名时间：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control" name="registration_date" id="registration_date">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="comment" class="col-sm-1 control-label">备注：</label>
+									<div class="col-sm-11">
+										<textarea class="form-control comment" name="comment" id="comment"></textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="column1" class="col-sm-1 control-label">保留字段1：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control column1" name="column1" id="column1">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="column2" class="col-sm-1 control-label">保留字段2：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control column2" name="column2" id="column2">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="column3" class="col-sm-1 control-label">保留字段3：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control column3" name="column3" id="column3">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="column4" class="col-sm-1 control-label">保留字段4：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control column4" name="column4" id="column4">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="column5" class="col-sm-1 control-label">保留字段5：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control column5" name="column5" id="column5">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="column6" class="col-sm-1 control-label">保留字段6：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control column6" name="column6" id="column6">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="column7" class="col-sm-1 control-label">保留字段7：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control column7" name="column7" id="column7">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="column8" class="col-sm-1 control-label">保留字段8：</label>
+									<div class="col-sm-11">
+										<input type="text" class="form-control column8" name="column8" id="column8">
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer text_center">
+								<button type="submit" class="btn btn-primary">提交</button>
+							</div>
+						</form>
 					</section>
 				</div>
 			</div>
@@ -259,6 +250,19 @@
 				})
 			}
 		};
+		$(function(){
+			// 百度地图API功能
+			var map = new BMap.Map("allmap");
+			map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
+			var local = new BMap.LocalSearch(map, {
+				renderOptions:{map:map}
+			});
+			$('.get_map').on('click', function(){
+				$(this).parents('.form-group').find('#allmap').removeClass('hide');
+				var value = $(this).parents('.form-group').find('#place').val();
+				local.search(value);
+			});
+		});
 	</script>
 </body>
 </html>

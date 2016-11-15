@@ -38,30 +38,64 @@
 					</form>
 				</div>
 				<div class="client_list">
-					<div class="list_item open">
+					<!--<div class="list_item open">
 						<ul class="list_item_ul">
-							<li class="client_item">
-								<a class="flex_wrap" href="<{:U('receivablesDetails')}>">
-									<span class="name flex_1">刘同学</span> <span class="price flex_1">1300</span>
-									<span class="payee_id flex_1">刘岂宇</span> </a>
-							</li>
-							<li class="client_item">
-								<a class="flex_wrap" href="<{:U('receivablesDetails')}>">
-									<span class="name flex_1">刘同学</span> <span class="price flex_1">1300</span>
-									<span class="payee_id flex_1">刘岂宇</span> </a>
-							</li>
+							<volist name="list" id="info">
+								<li class="client_item">
+									<a class="flex_wrap" href="<{:U('receivablesDetails',['id'=>$info['id']])}>">
+										<span class="name flex_1"><{$info.c_name}></span> <span class="price flex_1"><{$info.price}></span>
+										<span class="payee_id flex_1"><{$info.e_name}></span> </a>
+								</li>
+							</volist>
+
 						</ul>
-					</div>
+					</div>-->
+					<table class="table mytable">
+						<thead>
+							<tr>
+								<th width=15%">姓名</th>
+								<th width="35%">金额<span style="color: #FB5050;">（总额：1200）</span></th>
+								<th width="25%">单位</th>
+								<th width="25%">收款人</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr onclick="alert('123');">
+								<td>产品3</td>
+								<td>23/11/2013</td>
+								<td>待发货</td>
+								<td>待发货</td>
+							</tr>
+							<tr>
+								<td>产品2</td>
+								<td>10/11/2013</td>
+								<td>发货中</td>
+								<td>待发货</td>
+							</tr>
+							<tr>
+								<td>产品3</td>
+								<td>20/10/2013</td>
+								<td>待确认</td>
+								<td>待发货</td>
+							</tr>
+							<tr>
+								<td>产品4</td>
+								<td>20/10/2013</td>
+								<td>已退货</td>
+								<td>待发货</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div id="mb_footer">
 		<a href="<{:U('meeting', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"><span>会议详情</span> </a>
-		<a href="<{:U('clientList')}>" class="ft_a"><span>参会人员</span> </a>
-		<a href="<{:U('myReceivables')}>" class="ft_a"> <span>我的收款</span> </a>
-		<a href="<{:U('receivablesRecord')}>" class="ft_a active"> <span>收款记录</span> </a>
-		<a href="<{:U('addReceivables')}>" class="add_client glyphicon glyphicon-plus"></a>
+		<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"><span>参会人员</span> </a>
+		<a href="<{:U('myReceivables', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"> <span>我的收款</span> </a>
+		<a href="<{:U('receivablesRecord', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a active"> <span>收款记录</span>
+		</a>
 	</div>
 	<script>
 		var ThisObject = {

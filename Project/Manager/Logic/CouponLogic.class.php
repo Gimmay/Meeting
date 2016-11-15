@@ -72,7 +72,7 @@
 					$result           = $model->createCoupon($data);
 					if(I('post.coupon_c')){
 						/** @var \Core\Model\CouponItemModel $coupon_item_model */
-						$coupon_item_model  = D('Core/Coupon_item');
+						$coupon_item_model  = D('Core/CouponItem');
 						$info['coupon_id']  = $result['id'];
 						$info['mid']        = I('post.mid', '');
 						$info['code']       = I('post.coupon_c', '');

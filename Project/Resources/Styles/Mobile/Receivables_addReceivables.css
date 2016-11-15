@@ -33,12 +33,11 @@
 }
 
 .info_list .info_li .item .inp{
-	width         : 100%;
-	height        : inherit;
-	border        : 1px solid #E1E1E1;
-	overflow      : hidden;
-	border-radius : 4px;
-	padding       : 0 0.1rem;
+	width    : 100%;
+	height   : inherit;
+	border   : 1px solid #CCCCCC;
+	overflow : hidden;
+	padding  : 0 0.1rem;
 }
 
 .info_list .info_li .item .inp #gender{
@@ -48,9 +47,10 @@
 }
 
 .info_list .info_li .item .inp input{
-	border : none;
-	width  : 100%;
-	height : inherit;
+	border    : none;
+	width     : 100%;
+	height    : inherit;
+	font-size : 0.16rem;
 }
 
 .info_list .info_li .item .coupon_list{
@@ -86,4 +86,136 @@
 	color      : #FFFFFF;
 	width      : 100%;
 	height     : 100%;
+}
+
+.search{
+	position   : fixed;
+	top        : 0;
+	left       : 0;
+	width      : 100%;
+	padding    : 0.1rem;
+	text-align : center;
+	background : silver;
+	z-index    : 99;
+}
+
+.search .inp{
+	width         : 100%;
+	padding-right : 1rem;
+}
+
+.search .inp .ss{
+	border        : 1px solid #E1E1E1;
+	border-radius : 5px;
+}
+
+.search .inp .ss .search_inp{
+	border : none;
+	width  : 90%;
+	height : 0.6rem;
+}
+
+#mb_layer{
+	padding-top    : 45px;
+	padding-bottom : 40px;
+	background     : #FFFFFF;
+	position       : absolute;
+	top            : 0;
+	left           : 0;
+	width          : 100%;
+	height         : 100%;
+}
+
+#mb_layer .coupon_wrap{
+	max-height : 100%;
+	overflow-y : auto;
+}
+
+.client_list{
+	width   : 100%;
+	padding : 0.2rem 0;
+}
+
+.client_list .list_item{
+	position      : relative;
+	margin-bottom : 0.08rem;
+}
+
+.client_list .list_item .title{
+	color       : rgba(0, 0, 0, .6);
+	position    : relative;
+	height      : 0.7rem;
+	padding     : 0 0.2rem;
+	background  : rgba(0, 0, 0, .1);
+	line-height : 0.7rem;
+	font-weight : bolder;
+	font-size   : 0.3rem;
+}
+
+.client_list .list_item .icon{
+	position    : absolute;
+	top         : 0;
+	color       : rgba(0, 0, 0, .6);
+	font-size   : 0.35rem;
+	right       : 0.2rem;
+	width       : 0.7rem;
+	height      : 0.7rem;
+	line-height : 0.7rem;
+	text-align  : center;
+}
+
+.client_list .list_item > ul{
+	padding : 0.1rem 0;
+}
+
+.client_list ul li.client_item{
+	float         : left;
+	padding       : 0.05rem 0;
+	background    : #FFFFFF;
+	border        : 1px solid #E1E1E1;
+	border-radius : 4px;
+	margin-left   : 0.2rem;
+	margin-bottom : 0.08rem;
+}
+
+.client_list ul li.client_item.active{
+	background : #00A0E8;
+}
+
+.client_list ul li.client_item.active a{
+	color : #FFFFFF;
+}
+
+.client_list ul li.client_item > a{
+	padding : 0.1rem 0.3rem;
+	display : block;
+}
+
+.client_list ul li.client_item > a .status{
+	float : right;
+}
+
+.client_list ul li.client_item > a .status.signed{
+	color : #00A0E8;
+}
+
+.client_list ul li.client_item > a .status.unsigned{
+	color : #FF6633;
+}
+
+.footer_coupon{
+	position    : fixed;
+	bottom      : 0;
+	left        : 0;
+	height      : 40px;
+	width       : 100%;
+	text-align  : right;
+	line-height : 40px;
+}
+
+.footer_coupon button{
+	background  : #00A0E8;
+	color       : #FFFFFF;
+	text-shadow : none;
+	box-shadow  : none;
 }

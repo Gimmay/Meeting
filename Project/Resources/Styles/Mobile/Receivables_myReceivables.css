@@ -87,10 +87,6 @@
 	color : #FF6633;
 }
 
-#mb_footer{
-	padding-right : 1rem;
-}
-
 #mb_footer .add_client{
 	position    : absolute;
 	top         : 0;
@@ -107,3 +103,17 @@
 #mb_footer .add_client:hover{
 	color : #FF0000
 }
+
+.mytable{
+	background : #FFFFFF;
+	border     : 1px solid #E1E1E1
+}
+
+.mytable tbody tr:nth-child(odd){
+	background : #DFF0D8;
+}
+
+.mytable tbody tr:nth-child(even){
+	background : #F2DEDE;
+}
+

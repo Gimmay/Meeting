@@ -14,6 +14,7 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
@@ -37,144 +38,209 @@
 					<section class="content">
 						<header class="c_header">
 							<div class="function_list clearfix">
-								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
-									<a href="<{:U('Message/create')}>"> <i></i>
-										<p>新建消息模板</p>
-									</a>
-								</div>
-								<div class="function_btn bg-danger batch_delete_btn_confirm">
-									<i></i>
-									<p>批量删除</p>
-								</div>
+								<if condition="$permission_list['MESSAGE.CREATE'] eq 1">
+									<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
+										<a href="<{:U('Message/create', ['mid'=>I('get.mid', 0, 'int')])}>"> <i></i>
+											<p>新建消息模板</p>
+										</a>
+									</div>
+								</if>
+								<if condition="$permission_list['MESSAGE.DELETE'] eq 1">
+									<div class="function_btn bg-danger batch_delete_btn_confirm">
+										<i></i>
+										<p>批量删除</p>
+									</div>
+								</if>
 							</div>
 						</header>
-						<div class="repertory clearfix">
-							<form action="" method="get">
-								<div class="input-group repertory_text">
-									<input name="p" type="hidden" value="1">
-									<input type="search" name="keyword" class="form-control" placeholder="客户名称/拼音简码" value="<{:I('get.keyword', '')}>">
-									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default mian_search">搜索消息模板</button>
-									</span>
+						<if condition="$permission_list['MESSAGE.VIEW'] eq 1">
+							<div class="repertory clearfix">
+								<div class="tabs">
+									<ul class="tabsUl clearfix">
+										<li class="<notpresent name='_GET[type]'>active</notpresent>" id="filter_btn_all">
+											<a href="javascript:void(0)">全部</a>
+										</li>
+										<li class="<if condition='$_GET[type] eq sms'>active</if>" id="filter_btn_sms">
+											<a href="javascript:void(0)">短信模板</a>
+										</li>
+										<li class="<if condition='$_GET[type] eq wechat'>active</if>" id="filter_btn_wechat">
+											<a href="javascript:void(0)">微信模板</a>
+										</li>
+									</ul>
 								</div>
-								<a type="reset" class="btn btn-default mian_search" href="<{:U('manage')}>">查看所有</a>
-							</form>
-						</div>
-						<div class="table_wrap">
-							<table class="table table-bordered" id="tableExcel" style="text-align: center">
-								<thead>
-									<tr>
-										<td width="4%" class="all_check">
-											<input type="checkbox" class="icheck" placeholder="" value="">
-										</td>
-										<td width="3%">序号</td>
-										<td width="10%">模板名称</td>
-										<td width="5%">类型</td>
-										<td width="10%">模板内容</td>
-										<td width="8%">状态</td>
-										<td width="10%">创建者</td>
-										<td width="10%">创建时间</td>
-										<td width="20%">操作</td>
-									</tr>
-								</thead>
-								<tbody>
-									<volist name="list" id="single">
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input name="p" type="hidden" value="1">
+										<input type="search" name="keyword" class="form-control" placeholder="客户名称/拼音简码" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default main_search">搜索</button>
+									</span>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
+								</form>
+							</div>
+							<div class="table_wrap">
+								<table class="table table-bordered" id="tableExcel" style="text-align: center">
+									<thead>
 										<tr>
-											<td class="check_item">
-												<input type="checkbox" class="icheck" value="<{$single.id}>" placeholder="">
+											<td width="4%" class="all_check">
+												<input type="checkbox" class="icheck" placeholder="" value="">
 											</td>
-											<td><{$i}></td>
-											<td><{$single.name}></td>
-											<td>
+											<td width="5%">序号</td>
+											<td width="10%">模板名称</td>
+											<td width="5%">类型</td>
+											<td width="10%">使用情况</td>
+											<td width="35%">模板内容</td>
+											<td width="5%">状态</td>
+											<td width="10%">创建时间</td>
+											<td width="15%">操作</td>
+										</tr>
+									</thead>
+									<tbody>
+										<volist name="list" id="single">
+											<tr>
+												<td class="check_item">
+													<input type="checkbox" class="icheck" value="<{$single.id}>" placeholder="">
+												</td>
+												<td><{$i}></td>
+												<td><{$single.name}></td>
+												<td>
 												<span class="color-info">
 													<switch name="single.type">
 														<case value="1">短信</case>
-														<case value="2">邮件</case>
-														<case value="3">微信</case>
+														<case value="2">微信</case>
+														<case value="3">邮件</case>
 														<case value="4">其他</case>
 													</switch>
 												</span>
-											</td>
-											<td><p style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><{$single.context}></p></td>
-											<td>
-												<switch name="single.status">
-													<case value="0">禁用</case>
-													<case value="1">可用</case>
-													<case value="2">删除</case>
-												</switch>
-											</td>
-											<td><{$single.creator}></td>
-											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
-											<td>
-												<div class="btn-group" data-id="<{$single.id}>">
-													<a href="<{:U('Message/alter',['id'=>$single['id']])}>" class="btn btn-default btn-xs modify_btn">修改</a>
-													<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_message_modal">删除</button>
-												</div>
-											</td>
-										</tr>
-									</volist>
-								</tbody>
-							</table>
-						</div>
-						<div class="page_wrap">
-							<ul class="pagination">
-								<{$page_show}>
-							</ul>
-						</div>
+												</td>
+												<td><{$single.assign_type}></td>
+												<td>
+													<p style="word-break: break-all; word-wrap:break-word; text-align: left; overflow-y: hidden; max-height: 30px;"><{$single.context}></p>
+												</td>
+												<td>
+													<switch name="single.status">
+														<case value="0">禁用</case>
+														<case value="1">可用</case>
+														<case value="2">删除</case>
+													</switch>
+												</td>
+												<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
+												<td>
+													<div class="btn-group" data-id="<{$single.id}>">
+														<if condition="$permission_list['MESSAGE.ALTER']">
+															<a href="<{:U('Message/alter',['id'=>$single['id'], 'mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
+														</if>
+														<if condition="$permission_list['MESSAGE.DELETE']">
+
+															<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_message_modal">删除</button>
+														</if>
+														<if condition="$permission_list['MESSAGE.SELECT']">
+															<button type="submit" class="btn btn-default btn-xs choose_btn" data-toggle="modal" data-target="#choose_message_modal">选择</button>
+														</if>
+													</div>
+												</td>
+											</tr>
+										</volist>
+									</tbody>
+								</table>
+							</div>
+							<div class="page_wrap">
+								<ul class="pagination">
+									<{$page_show}>
+								</ul>
+							</div>
+						</if>
 					</section>
 				</div>
 			</div>
 		</div>
 	</div>
-	<!-- 删除客户 -->
-	<div class="modal fade" id="delete_message_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">删除消息模板</h2>
+	<if condition="$permission_list['MESSAGE.DELETE'] eq 1">
+		<!-- 删除消息 -->
+		<div class="modal fade" id="delete_message_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title">删除消息模板</h2>
+					</div>
+					<form class="form-horizontal" role="form" method="post" action="">
+						<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+						<div class="modal-body">
+							是否删除消息模板？
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary">确认删除</button>
+						</div>
+					</form>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
-					<div class="modal-body">
-						是否删除消息模板？
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认删除</button>
-					</div>
-				</form>
 			</div>
 		</div>
-	</div>
-	<!-- 批量删除 -->
-	<div class="modal fade" id="batch_delete_message_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量删除消息模板</h2>
+		<!-- 批量删除 -->
+		<div class="modal fade" id="batch_delete_message_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title">批量删除消息模板</h2>
+					</div>
+					<form class="form-horizontal" role="form" method="post" action="">
+						<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+						<div class="modal-body">
+							是否删除已选<span class="sAmount"></span>项消息模板？
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary batch_delete_btn">确认删除</button>
+						</div>
+					</form>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
-					<div class="modal-body">
-						是否删除已选<span class="sAmount"></span>项消息模板？
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary batch_delete_btn">确认删除</button>
-					</div>
-				</form>
 			</div>
 		</div>
-	</div>
+	</if>
+	<if condition="$permission_list['MESSAGE.SELECT'] eq 1">
+		<!-- 选择消息 -->
+		<div class="modal fade" id="choose_message_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title">选择方式</h2>
+					</div>
+					<form class="form-horizontal" role="form" method="post" action="">
+						<input type="hidden" name="requestType" value="assign_message">
+						<input type="hidden" name="id" value="">
+						<div class="modal-body">
+							<div class="form-group">
+								<label for="use_style" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>使用方式：</label>
+								<div class="col-sm-10">
+									<select name="type" id="use_style" class="form-control">
+										<option value="1">签到提醒</option>
+										<option value="2">取消签到提醒</option>
+										<option value="3">收款提醒开拓顾问</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary">确认</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</if>
 	<script>
 		var ManageObject = {
 			object:{
-				toast               :$().QuasarToast(),
-				icheck              :$('.icheck').iCheck({
+				toast :$().QuasarToast(),
+				icheck:$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				})

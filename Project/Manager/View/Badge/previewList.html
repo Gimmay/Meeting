@@ -37,47 +37,53 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<div class="main_body">
-					<section class="content badge_content">
-						<header>
-							<div class="nav_tab clearfix">
-								<div class="nav_tab_li">
-									<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">自定义胸卡模板</a>
+				<if condition="$permission_list['BADGE.VIEW'] eq 1">
+					<div class="main_body">
+						<section class="content badge_content">
+							<header>
+								<div class="nav_tab clearfix">
+									<div class="nav_tab_li">
+										<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">自定义胸卡模板</a>
+									</div>
+									<div class="nav_tab_li active">
+										<a href="<{:U('Badge/previewList', ['mid'=>I('get.mid', 0, 'int')])}>">系统胸卡模板列表</a>
+									</div>
+									<div class="nav_tab_li">
+										<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int')])}>">已选择胸卡</a>
+									</div>
 								</div>
-								<div class="nav_tab_li active">
-									<a href="<{:U('Badge/previewList', ['mid'=>I('get.mid', 0, 'int')])}>">系统胸卡模板列表</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int')])}>">已选择胸卡</a>
-								</div>
+							</header>
+							<!--系统模板	-->
+							<div class="badge_box system_tem tab_c">
+								<form role="form" class="form-horizontal" method="post" action="">
+									<input type="hidden" name="requestType" value="assign_badge_for_meeting">
+									<div class="system_tem_list">
+										<div class="w_box">
+											<ul class="clearfix system_tem_ul">
+												<volist name="list" id='single'>
+													<li data-id="<{$single.id}>" class="<if condition='$cur_bid eq $single[id]'>active</if>">
+														<div class="layer"></div>
+														<i class="select_icon glyphicon glyphicon-ok"></i>
+														<div class="system_ontent">
+															<{$single.data}>
+														</div>
+														<p class="title"><{$single.name}></p>
+													</li>
+												</volist>
+											</ul>
+										</div>
+									</div>
+									<input type="hidden" name="id">
+									<if condition="$permission_list['BADGE.SELECT'] eq 1">
+										<div class="form_li text-center">
+											<button type="submit" id="choose_system_badge" class="btn btn-primary">确认</button>
+										</div>
+									</if>
+								</form>
 							</div>
-						</header>
-						<!--系统模板	-->
-						<div class="badge_box system_tem tab_c">
-							<form role="form" class="form-horizontal" method="post" action="">
-								<input type="hidden" name="requestType" value="assign_badge_for_meeting">
-								<div class="system_tem_list">
-									<ul class="clearfix system_tem_ul">
-										<volist name="list" id='single'>
-											<li data-id="<{$single.id}>">
-												<div class="layer"></div>
-												<i class="select_icon glyphicon glyphicon-ok"></i>
-												<div class="system_ontent">
-													<{$single.data}>
-												</div>
-												<p class="title"><{$single.name}></p>
-											</li>
-										</volist>
-									</ul>
-								</div>
-								<input type="hidden" name="id">
-								<div class="form_li text-center">
-									<button type="submit" id="choose_system_badge" class="btn btn-primary">确认</button>
-								</div>
-							</form>
-						</div>
-					</section>
-				</div>
+						</section>
+					</div>
+				</if>
 			</div>
 		</div>
 	</div>
@@ -101,35 +107,6 @@
 				})
 			}
 		};
-		$(function(){
-			$(".cart_view_item ").resizable({
-				resize:function(event, ui){
-					var h = $(this).height();
-					$(this).css('font-size', h*0.6)
-				}
-			}).draggable();
-			$('.demo').minicolors(
-				$.minicolors = {
-					defaults:{
-						animationSpeed :50,
-						animationEasing:'swing',
-						change         :null,
-						changeDelay    :0,
-						control        :'hue',
-						defaultValue   :'',
-						hide           :null,
-						hideSpeed      :100,
-						inline         :false,
-						letterCase     :'lowercase',
-						opacity        :false,
-						position       :'bottom left',
-						show           :null,
-						showSpeed      :100,
-						theme          :'default'
-					}
-				}
-			);
-		});
 	</script>
 </body>
 </html>
