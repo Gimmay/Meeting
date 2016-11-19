@@ -35,12 +35,18 @@
 				'_order'  => I('get._column', 'name').' '.I('get._sort', 'desc'),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 			], $options));
-			$all_count         = $model->getJoinReceivablesList(0, array_merge([
+			$all_record        = $model->getJoinReceivablesList(2, array_merge([
 				'status'  => 'not deleted',
 				'keyword' => I('get.keyword', ''),
 			], $options));
+			$statistics        = [
+				'price' => 0,
+				'join'  => count($all_record)
+			];
+			foreach($all_record as $val) $statistics['price'] += $val['price'];
+
+			$this->assign('statistics', $statistics);
 			$this->assign('list', $list);
-			$this->assign('total', $all_count);
 			$this->assign('page_show', $page_show);
 			$this->display();
 		}
@@ -50,8 +56,9 @@
 			$mid = $this->meetingID;
 			/** @var \Core\Model\ReceivablesModel $receivables_model */
 			$receivables_model = D('Core/Receivables');
-			$list = $receivables_model->findRecord(2, ['cid'=>$cid, 'mid'=>$this->meetingID]);
-			print_r($list);exit;
+			$list              = $receivables_model->findRecord(2, ['cid' => $cid, 'mid' => $this->meetingID]);
+			print_r($list);
+			exit;
 			$this->display();
 		}
 

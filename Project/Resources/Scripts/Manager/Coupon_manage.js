@@ -57,11 +57,13 @@ $(function(){
 	});
 	// 批量删除代金券
 	$('.batch_delete_btn_confirm ').on('click', function(){
-		var str = '';
+		var str = '', i = 0;
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
 			str += id+','
+			i++;
 		});
+		$('#batch_delete_coupon').find('.sAmount').text(i);
 		var s, newStr = "";
 		s             = str.charAt(str.length-1);
 		if(s == ","){
@@ -111,12 +113,12 @@ function PrefixInteger(num, n){
 }
 // 新增代金券限制
 function checkCreate(){
-	var $coupon_name      = $('#coupon_name');
-	var $number           = $('#number');
-	var $price            = $('#price');
-	var $start_time       = $('#start_time');
-	var $end_time         = $('#end_time');
-	var $coupon_number    = $('input[name=coupon_area]');
+	var $coupon_name   = $('#coupon_name');
+	var $number        = $('#number');
+	var $price         = $('#price');
+	var $start_time    = $('#start_time');
+	var $end_time      = $('#end_time');
+	var $coupon_number = $('input[name=coupon_area]');
 	if($coupon_name.val() == ''){
 		ManageObject.object.toast.toast("代金券名不能为空");
 		$coupon_name.focus();

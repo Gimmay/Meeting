@@ -323,8 +323,8 @@ canvas{
 }
 
 .repertory{
-	border  : none;
-	padding : 0;
+	border-top : none;
+	padding    : 0;
 }
 
 .create_style_btn{

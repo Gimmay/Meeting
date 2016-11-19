@@ -2,41 +2,14 @@
 	background : rgba(0, 0, 0, .05);
 }
 
-.search{
-	position   : fixed;
-	top        : 0;
-	left       : 0;
-	width      : 100%;
-	padding    : 0.1rem;
-	text-align : center;
-	background : silver;
-	z-index    : 99;
-}
-
-.search .inp{
-	width         : 100%;
-	padding-right : 1rem;
-}
-
-.search .inp .ss{
-	border        : 1px solid #E1E1E1;
-	border-radius : 5px;
-}
-
-.search .inp .ss .search_inp{
-	border : none;
-	width  : 90%;
-	height : 0.6rem;
-}
-
 .client_list{
 	width   : 100%;
-	padding : 0.2rem 0;
+	padding : 0.05rem 0;
 }
 
 .client_list .list_item{
-	position      : relative;
-	margin-bottom : 0.08rem;
+	position  : relative;
+	font-size : 0.20rem;
 }
 
 .client_list .list_item .title{
@@ -69,6 +42,7 @@
 .client_list ul li.client_item{
 	background    : #FFFFFF;
 	margin-bottom : 0.08rem;
+	font-size     : 0.20rem;
 }
 
 .client_list ul li.client_item > a{

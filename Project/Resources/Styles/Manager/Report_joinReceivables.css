@@ -4,8 +4,8 @@
 }
 
 .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th{
-	padding : 8px 15px;
-	vertical-align: middle;
+	padding        : 6px;
+	vertical-align : middle;
 }
 
 .add{
@@ -25,90 +25,139 @@
 }
 
 .coupon_area{
-	padding-bottom: 8px;
+	padding-bottom : 8px;
 }
 
 .coupon_area .coupon_box{
-	border :1px solid rgba(0,0,0,.12);
-	padding: 12px 8px 0 8px;
+	border  : 1px solid rgba(0, 0, 0, .12);
+	padding : 12px 8px 0 8px;
 }
 
-.coupon_area .coupon_box .coupon_list {
-	font-size: 0;
-}
-.coupon_area .coupon_box .coupon_list a {
-	margin-bottom: 8px;
-	margin-left: 8px;
-	text-shadow: none;
-	font-size: 14px;
+.coupon_area .coupon_box .coupon_list{
+	font-size : 0;
 }
 
-.coupon_area .coupon_box .coupon_list a.active {
-	background: #00A0E8;
-	border-color: #00A0E8;
-	color : #fff;
+.coupon_area .coupon_box .coupon_list a{
+	margin-bottom : 8px;
+	margin-left   : 8px;
+	text-shadow   : none;
+	font-size     : 14px;
 }
 
-.coupon_footer {
-	border :1px solid rgba(0,0,0,.12);
-	border-top: none;
-	padding: 5px;
-	text-align: center;
-}
-.coupon_footer .confirm {
-	border-radius: 0;
-	padding: 5px 13px ;
-	background: #00A0E8;
-	border-color: #00A0E8;
-	color : #fff;
-	text-shadow: none;
+.coupon_area .coupon_box .coupon_list a.active{
+	background   : #00A0E8;
+	border-color : #00A0E8;
+	color        : #FFFFFF;
 }
 
-
-.no_record {
-	text-align: center;
-	padding: 30px !important;
-	font-size: 16px;
+.coupon_footer{
+	border     : 1px solid rgba(0, 0, 0, .12);
+	border-top : none;
+	padding    : 5px;
+	text-align : center;
 }
 
-.n_search {
-	padding: 16px;
-	background: #ecf1f4;
-	margin-top: 16px;
-	border :1px solid rgba(0,0,0,.12);
-}
-.n_search .search_li {
-	float: left;
-	margin-right: 20px;
+.coupon_footer .confirm{
+	border-radius : 0;
+	padding       : 5px 13px;
+	background    : #00A0E8;
+	border-color  : #00A0E8;
+	color         : #FFFFFF;
+	text-shadow   : none;
 }
 
-.n_search .search_li label {
-	float: left;
-	vertical-align: middle;
-	margin-top: 12px;
-	font-size: 14px;
-	font-weight: normal;
-}
-.n_search .search_li > div {
-	float: left;
-	width: 200px;
+.no_record{
+	text-align : center;
+	padding    : 30px !important;
+	font-size  : 16px;
 }
 
-.table_box {
-	overflow: auto;
-	width: 100%;
-}
-.table_box .table {
-	width: 2000px;
-	max-width: 2000px;
+.n_search{
+	padding    : 16px;
+	background : #ECF1F4;
+	margin-top : 16px;
+	border     : 1px solid rgba(0, 0, 0, .12);
 }
 
-.screen_table {
-	padding: 10px;
-	border-bottom: 1px solid #e1e1e1;
+.n_search .search_li{
+	float        : left;
+	margin-right : 20px;
 }
 
-.screen_check input {
-	vertical-align: top;
+.n_search .search_li label{
+	float          : left;
+	vertical-align : middle;
+	margin-top     : 12px;
+	font-size      : 14px;
+	font-weight    : normal;
 }
 
+.n_search .search_li > div{
+	float : left;
+	width : 200px;
+}
+
+.table_box{
+	overflow : auto;
+	width    : 100%;
+}
+
+.table_box .table{
+	/*	min-width: 100%;*/
+	text-align : center;
+}
+
+.table_box .table th{
+	text-align : center;
+}
+
+.screen_table{
+	padding       : 10px;
+	border-bottom : 1px solid #E1E1E1;
+}
+
+.screen_check input{
+	vertical-align : top;
+}
+
+.repertory .repertory_text{
+	width        : auto;
+	float        : left;
+	margin-right : 20px;
+}
+
+.repertory .repertory_text span{
+	line-height    : 34px;
+	display        : inline-block;
+	vertical-align : top;
+	font-size      : 14px;
+}
+
+.repertory .repertory_text span.label_zdy{
+	margin-right : 20px;
+}
+
+.repertory .repertory_text span.line{
+	margin : 0 10px;
+	color  : #999999;
+}
+
+.repertory .repertory_text .time{
+	width       : 160px;
+	line-height : 34px;
+	display     : inline-block;
+}
+
+.statistics{
+	padding-left : 20px;
+	height       : 40px;
+	line-height  : 40px;
+	background   : rgba(255, 102, 51, .7);
+}
+
+.statistics span{
+	line-height  : 40px;
+	font-size    : 14px;
+	margin-right : 20px;
+	color        : #FFFFFF;
+}

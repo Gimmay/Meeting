@@ -1,11 +1,12 @@
 .info_list{
 	width   : 100%;
-	padding : 0.2rem;
+	padding : 0	 0.2rem;
 }
 
 .info_list .info_li{
 	border-bottom : 1px solid #E1E1E1;
 	padding       : 0.2rem 0;
+	font-size     : 0.24rem;
 }
 
 .info_list .info_li .item{
@@ -50,7 +51,7 @@
 	border    : none;
 	width     : 100%;
 	height    : inherit;
-	font-size : 0.16rem;
+	font-size : 0.24rem;
 }
 
 .info_list .info_li .item .coupon_list{

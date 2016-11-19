@@ -18,6 +18,13 @@
 			$core_logic->initializeStatus();
 		}
 
+		public function index(){
+			if($this->permissionList['MEETING.VIEW']){
+				$this->display();
+			}
+			else $this->error('您没有查看会议详情的权限');
+		}
+
 		public function create(){
 			if($this->permissionList['MEETING.CREATE']){
 				$meeting_logic = new MeetingLogic();
@@ -71,20 +78,29 @@
 				$message_logic = D('Message');
 				$message       = $message_logic->getMessageSelectList();
 				/** @var \Core\Model\MeetingModel $model */
-				$model       = D('Core/Meeting'); // 实例化表模型
-				$list_total  = $model->findMeeting(0, [
+				$model      = D('Core/Meeting'); // 实例化表模型
+				$list_total = $model->findMeeting(0, [
 					'keyword' => I('get.keyword', ''),
 					'status'  => 'not deleted'
 				]); // 查处所有的会议的个数
+				$option     = [];
+				switch(I('get.type', '')){
+					case 'ing':
+						$option['status'] = 'ing';
+					break;
+					case 'fin':
+						$option['status'] = 4;
+					break;
+				}
 				$page_object = new Page($list_total, C('PAGE_RECORD_COUNT')); // 实例化分页类 传入总记录数和每页显示的记录数
 				\ThinkPHP\Quasar\Page\setTheme1($page_object);
 				$show         = $page_object->show();// 分页显示输出
-				$meeting_list = $model->findMeeting(2, [
+				$meeting_list = $model->findMeeting(2, array_merge([
 					'keyword' => I('get.keyword', ''),
 					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 					'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 					'status'  => 'not deleted'
-				]); // 查出一页会议的内容
+				], $option)); // 查出一页会议的内容
 				$meeting_list = $meeting_logic->setExtendColumnForManage($meeting_list);
 				/** @var \Core\Model\HotelModel $hotel_model */
 				$hotel_model  = D('Core/Hotel');
@@ -99,7 +115,7 @@
 		}
 
 		public function alter(){
-			if($this->permissionList['MEETING.ALTER']){
+			if($this->permissionList['MEETING.VIEW']){
 				$setEmployee   = function ($data){
 					/** @var \Core\Model\EmployeeModel $employee_model */
 					$employee_model          = D('Core/Employee');
@@ -139,6 +155,6 @@
 				$this->assign('employee_list', $employee_list);
 				$this->display();
 			}
-			else $this->error('您没有修改会议的权限');
+			else $this->error('您没有查看会议的权限');
 		}
 	}

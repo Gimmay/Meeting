@@ -24,6 +24,7 @@
 	top         : 0;
 	line-height : 0.6rem;
 	text-align  : center;
+	font-size   : 0.18rem;
 }
 
 .info_list .info_li .item .inp{
@@ -42,9 +43,10 @@
 }
 
 .info_list .info_li .item .inp input{
-	border : none;
-	width  : 100%;
-	height : inherit;
+	border    : none;
+	width     : 100%;
+	height    : inherit;
+	font-size : 0.2rem;
 }
 
 .submit{

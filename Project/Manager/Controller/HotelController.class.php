@@ -31,12 +31,12 @@
 				}
 				exit;
 			}
-			$find_room = $hotel_logic->findHotel();
-			/** @var \Manager\Model\MeetingModel $meeting_model */
-			$meeting_model = D('Meeting');
-			$meeting_list  = $meeting_model->getMeetingForSelect();
-			$this->assign('info', $find_room);
-			$this->assign('meeting', $meeting_list);
+			/** @var \Core\Model\HotelModel $model */
+			$model = D('Core/Hotel');
+			$logic = new HotelLogic();
+			$list  = $model->findHotel(2, ['status' => 'not deleted']);
+			$list  = $logic->setData('manage:set_meeting_column', $list, ['meetingType' => I('get.type', '')]);
+			$this->assign('list', $list);
 			$this->display();
 		}
 	}

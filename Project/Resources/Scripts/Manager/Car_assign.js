@@ -10,5 +10,5 @@ $(function(){
 			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
 		}
 	});
-})
+});
 

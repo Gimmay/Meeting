@@ -24,9 +24,12 @@
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
-	<div id="mb_wrap" style=" padding-bottom: 1rem">
+	<div id="mb_wrap">
+		<div class="top_title">
+			<a  href="javascript:history.go(-1)"  class="back glyphicon glyphicon-chevron-left"></a>
+		</div>
 		<div class="mb_body">
-			<div class="content" style="padding-top: 1rem">
+			<div class="content">
 				<div class="search">
 					<form action="" method="get">
 						<div class="input-group repertory_text">
@@ -52,32 +55,19 @@
 					<table class="table mytable">
 						<thead>
 							<tr>
-								<th width="20%">姓名</th>
-								<th width="40%">金额<span style="color: #FB5050;">（总额：1200）</span></th>
-								<th width="40%">单位</th>
+								<th width="25%">姓名</th>
+								<th width="40%">金额<span style="color: #FB5050;">（<{$count.price_count}>元）</span></th>
+								<th width="35%">单位</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>产品1</td>
-								<td>23/11/2013</td>
-								<td>待发货</td>
-							</tr>
-							<tr>
-								<td>产品2</td>
-								<td>10/11/2013</td>
-								<td>发货中</td>
-							</tr>
-							<tr>
-								<td>产品3</td>
-								<td>20/10/2013</td>
-								<td>待确认</td>
-							</tr>
-							<tr>
-								<td>产品4</td>
-								<td>20/10/2013</td>
-								<td>已退货</td>
-							</tr>
+							<volist name="list" id="info">
+								<tr onclick="location.href='<{:U(\'Receivables/client\', [\'cid\'=>$info[\'cid\'],\'eid\'=>$info[\'payee_id\'],\'mid\'=>I(\'get.mid\',0,\'int\')])}>'">
+									<td><{$info.c_name}></td>
+									<td><{$info.sum_price}></td>
+									<td><{$info.unit}></td>
+								</tr>
+							</volist>
 						</tbody>
 					</table>
 				</div>
@@ -85,10 +75,19 @@
 		</div>
 	</div>
 	<div id="mb_footer">
-		<a href="<{:U('meeting', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"><span>会议详情</span> </a>
-		<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"><span>参会人员</span> </a>
-		<a href="<{:U('myReceivables', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a active"> <span>我的收款</span> </a>
-		<a href="<{:U('receivablesRecord', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"> <span>收款记录</span> </a>
+		<if condition="$permission_list['WEIXIN.MEETING.VIEW'] eq 1 and I('get.mid')">
+			<a href="<{:U('meeting', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"><span>会议详情</span> </a>
+		</if>
+		<if condition="$permission_list['WEIXIN.CLIENT.VIEW'] eq 1 and I('get.mid')">
+			<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"><span>参会人员</span> </a>
+		</if>
+		<if condition="$permission_list['WEIXIN.RECEIVABLES.VIEW'] eq 1">
+			<a href="<{:U('myReceivables', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a active"> <span>我的收款</span>
+			</a>
+		</if>
+		<if condition="$permission_list['WEIXIN.RECEIVABLES.VIEW-ALL'] eq 1">
+			<a href="<{:U('receivablesRecord', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"> <span>收款记录</span> </a>
+		</if>
 	</div>
 	<script>
 		var ThisObject = {

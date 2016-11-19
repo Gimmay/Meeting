@@ -25,115 +25,122 @@
 </head>
 <body>
 	<div id="mb_wrap" style="padding-bottom: 0.8rem">
-		<form action="" method="post" id="form">
-			<div class="mb_body">
-				<div class="content">
-					<ul class="info_list">
-						<li class="info_li">
-							<div class="item">
-								<span class="labe"><b style="vertical-align: middle;color: red;">*</b>姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名:</span>
-								<div class="inp">
-									<input type="text" name="name">
+		<div class="top_title">
+			<a href="javascript:history.go(-1)" class="back glyphicon glyphicon-chevron-left"></a>
+		</div>
+		<if condition="$permission_list['WEIXIN.CLIENT.CREATE'] eq 1">
+			<form action="" method="post" id="form">
+				<div class="mb_body">
+					<div class="content">
+						<ul class="info_list">
+							<li class="info_li">
+								<div class="item">
+									<span class="labe"><b style="vertical-align: middle;color: red;">*</b>姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名:</span>
+									<div class="inp">
+										<input type="text" name="name">
+									</div>
 								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别:</span>
-								<div>
-									<select name="gender" id="gender">
-										<option value="0">未知</option>
-										<option value="1">男</option>
-										<option value="2">女</option>
-									</select>
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别:</span>
+									<div>
+										<select name="gender" id="gender">
+											<option value="0">未知</option>
+											<option value="1">男</option>
+											<option value="2">女</option>
+										</select>
+									</div>
 								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">出生日期:</span>
-								<div>
-									<input type="date" name="birthday" value="1990-01-01">
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">出生日期:</span>
+									<div>
+										<input type="date" name="birthday" value="1990-01-01">
+									</div>
 								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe"><b style="vertical-align: middle;color: red;">*</b>手机号:</span>
-								<div class="inp">
-									<input type="text" name="mobile">
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe"><b style="vertical-align: middle;color: red;">*</b>手机号:</span>
+									<div class="inp">
+										<input type="text" name="mobile">
+									</div>
 								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe"><b style="vertical-align: middle;color: red;">*</b>单位名称:</span>
-								<div class="inp">
-									<input type="text" name="unit">
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe"><b style="vertical-align: middle;color: red;">*</b>单位名称:</span>
+									<div class="inp">
+										<input type="text" name="unit">
+									</div>
 								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">开拓顾问:</span>
-								<div class="inp">
-									<input type="text" name="develop_consultant">
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">开拓顾问:</span>
+									<div class="inp">
+										<input type="text" name="develop_consultant">
+									</div>
 								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">服务顾问:</span>
-								<div class="inp">
-									<input type="text" name="service_consultant">
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">服务顾问:</span>
+									<div class="inp">
+										<input type="text" name="service_consultant">
+									</div>
 								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">陪同人姓名:</span>
-								<div class="inp">
-									<input type="text" name="accompany">
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">陪同人姓名:</span>
+									<div class="inp">
+										<input type="text" name="accompany">
+									</div>
 								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">陪同人手机:</span>
-								<div class="inp">
-									<input type="text" class="accompany_mobile">
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">陪同人手机:</span>
+									<div class="inp">
+										<input type="text" class="accompany_mobile">
+									</div>
 								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">报名时间:</span>
-								<div class="inp">
-									<input type="datetime" name="registration_date">
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">报名时间:</span>
+									<div class="inp">
+										<input type="datetime" name="registration_date">
+									</div>
 								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">备注:</span>
-								<div>
-									<textarea name="comment"></textarea>
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">备注:</span>
+									<div>
+										<textarea name="comment"></textarea>
+									</div>
 								</div>
-							</div>
-						</li>
-						<input type="hidden" name="requestType" value="create_client"> <input type="hidden" name="mid" value="<{:I('get.mid', 0, 'int')}>">
-					</ul>
+							</li>
+							<input type="hidden" name="requestType" value="create_client">
+							<input type="hidden" name="mid" value="<{:I('get.mid', 0, 'int')}>">
+						</ul>
+					</div>
+					<div class="submit">
+						<button type="button">提交</button>
+					</div>
 				</div>
-				<div class="submit">
-					<button type="submit">提交</button>
-				</div>
-			</div>
-		</form>
+			</form>
+		</if>
 	</div>
 	<script>
 		var ThisObject = {
 			object:{
-				toast:$().QuasarToast()
+				toast  :$().QuasarToast(),
+				loading:$().QuasarLoading()
 			}
 		}
 	</script>

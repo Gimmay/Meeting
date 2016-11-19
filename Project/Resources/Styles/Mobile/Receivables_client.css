@@ -44,6 +44,7 @@
 .myInfor .li{
 	padding       : 0.2rem 0;
 	border-bottom : 1px solid rgba(0, 0, 0, 0.08);
+	font-size     : 0.24rem;
 }
 
 .myInfor .li .lab{
@@ -177,6 +178,7 @@
 	width         : 100%;
 	text-align    : center;
 	border-bottom : 1px solid #E1E1E1;
+	font-size     : 0.24rem;
 }
 
 .my_receivables .receivables_list .receivables_item .link a{

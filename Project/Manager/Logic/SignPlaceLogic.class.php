@@ -7,6 +7,8 @@
 	 */
 	namespace Manager\Logic;
 
+	use Core\Logic\ReceivablesLogic;
+
 	class SignPlaceLogic extends ManagerLogic{
 		public function _initialize(){
 			parent::_initialize();
@@ -264,32 +266,43 @@
 				break;
 				case 'create_receivables':
 					if($this->permissionList['SIGN_PLACE-CLIENT.EARN-PAYMENT']){
-						$data               = I('post.', '');
-						$mid                = I('get.mid', 0, 'int');
-						$cid                = I('post.cid', 0, 'int');
-						$data['mid']        = $mid;
-						$data['cid']        = $cid;
-						$data['coupon_ids'] = I('post.coupon_code', '');
-						$data['time']       = strtotime(I('post.receivables_time', ''));
-						$data['creatime']   = time();    //创建时间
-						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
-						/** @var \Core\Model\ReceivablesModel $receivables_model */
-						$receivables_model = D('Core/Receivables');
 						/** @var \Core\Model\CouponItemModel $coupon_item_model */
 						$coupon_item_model = D('Core/CouponItem');
+						$data = I('post.', '');
+						$mid  = I('get.mid', 0, 'int');
+						$cid  = I('post.cid', 0, 'int');
+						$coupon_item_code = explode(',', $data['coupon_ids']);
+						C('TOKEN_ON', false);
+						foreach($coupon_item_code as $k => $v){
+							$coupon_item_record = $coupon_item_model->findCouponItem(1,['id'=>$v,'status'=>'not deleted']);
+							if($coupon_item_record['status']==0){
+								$coupon_item_result = $coupon_item_model->alterCouponItem(['id'=>$v], [
+									'status' => 1,
+									'cid'    => $cid
+								]);
+							}else{
+								return [
+									'status'=>false,
+									'message'=>'您选择的代金券已使用',
+									'__ajax__'   => false,
+								];
+							}
+						}
+						/** @var \Core\Model\ReceivablesModel $receivables_model */
+						$receivables_model = D('Core/Receivables');
 						/** @var \Core\Model\ClientModel $client_model */
 						$client_model = D('Core/Client');
 						/** @var \Core\Model\EmployeeModel $employee_model */
-						$employee_model     = D('Core/Employee');
+						$employee_model       = D('Core/Employee');
+						$logic                = new ReceivablesLogic();
+						$data['mid']          = $mid;
+						$data['cid']          = $cid;
+						$data['coupon_ids']   = I('post.coupon_code', '');
+						$data['time']         = strtotime(I('post.receivables_time', ''));
+						$data['creatime']     = time();    //创建时间
+						$data['creator']      = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+						$data['order_number'] = $logic->makeOrderNumber();
 						$receivables_result = $receivables_model->createRecord($data);
-						$coupon_item_code   = explode(',', $data['coupon_ids']);
-						C('TOKEN_ON', false);
-						foreach($coupon_item_code as $k => $v){
-							$coupon_item_model->alterCouponItem($v, [
-								'status' => 1,
-								'cid'    => $cid
-							]);
-						}
 						//查出开拓顾问
 						$client_result   = $client_model->findClient(1, [
 							'id'     => $cid,

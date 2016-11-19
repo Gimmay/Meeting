@@ -97,6 +97,9 @@ try{
 	 * Version 2.45 2016-10-27 18:36
 	 * 1、新增内部事件 _private.event.change 用于处理检测输入框值的改变事件
 	 * 2、添加处理检测输入框值的改变代码段的限制条件为数据不能为空
+	 *
+	 * Version 2.46 2016-11-16 14:56
+	 * 关键字检索时不存在则不处理
 	 */
 	(function($){
 		/**
@@ -127,10 +130,10 @@ try{
 		 *    async boolean  指明请求是异步还同步，可用值为 true 或 false，默认值为 true。
 		 *    callback function()  在请求成功后被首先调用的匿名函数，并将请求的返回数据传入匿名函数的第一个参数。
 		 *
-		 * @updated 2016-10-24 10:42
+		 * @updated 2016-11-16 14:56
 		 * @created 2016-05-10
 		 * @author Quasar
-		 * @version 2.42
+		 * @version 2.46
 		 * @param options 组件参数（JSON对象，索引值详见以上说明）
 		 * @returns {$.fn.QuasarSelect}
 		 * @constructor
@@ -179,7 +182,7 @@ try{
 			 * @type {boolean}
 			 * @private
 			 */
-			var _blurThenClick =  false;
+			var _blurThenClick   = false;
 			/**
 			 * 初始化组件
 			 *
@@ -232,10 +235,10 @@ try{
 									$_inputVisible.attr('data-ext', opts.data[index].ext);
 								}
 								self.selectedItem = $(self)
-								.find('li.quasar-select-data-item[data-value='+opts.data[index].value+']')[0];
+									.find('li.quasar-select-data-item[data-value='+opts.data[index].value+']')[0];
 								$(self).find('li.quasar-select-data-item').removeClass('selected');
 								$(self).find('li.quasar-select-data-item[data-value='+opts.data[index].value+']')
-									   .addClass('selected');
+									.addClass('selected');
 							}
 						};
 						if(_insertMode){
@@ -245,12 +248,14 @@ try{
 						}else{
 							if(opts.data){
 								for(var i = 0; i<opts.data.length; i++){
+									var _keyword = opts.data[i].keyword;
+									var _html    = opts.data[i].html;
 									//noinspection JSUnresolvedVariable
-									if(opts.data[i].keyword.indexOf(value) != -1){
+									if(_keyword && _keyword.indexOf(value) != -1){
 										handler(i);
 										return true;
 									}
-									if(opts.data[i].html.indexOf(value) != -1){
+									if(_html && _html.indexOf(value) != -1){
 										handler(i);
 										return true;
 									}
@@ -302,7 +307,6 @@ try{
 						self.hideList();
 						// _blurThenClick = true;
 						// $(self).trigger('_private.event.change');
-
 					});
 					$_dataList.on('keydown', function(e){
 						switch(parseInt(e.keyCode)){
@@ -366,7 +370,7 @@ try{
 			var _unbindEvent     = function(){
 				$(self).find('#'+opts.idInput).off('click keydown keyup blur');
 				$(self).find('li.quasar-select-data-item')
-					   .off('click touchend mouseenter mouseleave');
+					.off('click touchend mouseenter mouseleave');
 				$(self).find('ul.quasar-select-data-list').off('keydown');
 				$(self).find('span.quasar-select-data-operation-close').off('click touchend');
 				$(self).off('quasar.select.enter quasar.event.select');
@@ -451,7 +455,7 @@ try{
 						if(data[key].hasOwnProperty('value') && data[key].hasOwnProperty('html')){
 							//noinspection JSUnfilteredForInLoop
 							tmp = tmp.replace('::DATA-VALUE::', data[key]['value'])
-									 .replace('::HTML::', data[key]['html']);
+								.replace('::HTML::', data[key]['html']);
 						}else continue;
 						//noinspection JSUnfilteredForInLoop
 						if(opts.defaultValue == data[key]['value'] && opts.defaultHtml == data[key]['html']) tmp = tmp.replace('::SELECTED::', ' selected');
@@ -527,7 +531,7 @@ try{
 			this.getIndex = function(hover){
 				if(hover == undefined) hover = false;
 				var cur_value = hover ? $(self).find('li.quasar-select-data-item.hover')
-											   .attr('data-value') : $_inputHidden.val();
+					.attr('data-value') : $_inputHidden.val();
 				var result    = -1;
 				if(cur_value == '' || cur_value == undefined){
 					if(opts.hasEmptyItem) return 0;

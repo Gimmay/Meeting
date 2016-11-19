@@ -8,7 +8,6 @@
 	namespace Manager\Logic;
 
 	class CouponItemLogic extends ManagerLogic{
-
 		public function _initialize(){
 			parent::_initialize();
 		}
@@ -23,15 +22,15 @@
 					$request = explode(',', $code);    //打散代金券码
 					foreach($request as $v){
 						C('TOKEN_ON', false);            //令牌
-						$date['coupon_id'] = I('get.id', '');  //代金券ID
-						$date['mid']       = I('post.meeting_name');   //会议ID
+						$date['coupon_id'] = I('get.id',0,'int');  //代金券ID
+						$date['mid']       = I('get.mid',0,'int');   //会议ID
 						$date['code']      = $v;                        //代金券码
 						$date['creator']   = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); //创建者
 						$date['creatime']  = time();//创建时间
-						$coupon_item_model->createCouponItem($date); //插入到数据库
+						$coupon_item_result = $coupon_item_model->createCouponItem($date); //插入到数据库
 					}
 
-					return ['status' => true, 'message' => '创建代金券成功', '__ajax__' => false];
+					return ['status' => $coupon_item_result, 'message' => '创建代金券成功', '__ajax__' => false];
 				break;
 				case 'alter_coupon':
 					$id = I('post.id', '');
@@ -58,10 +57,9 @@
 					$mid = I('post.meeting_name_a', '');
 					$ids = I('post.id', '');
 					$id  = explode(',', $ids);
-					foreach ($id as $v){
-						$coupon_item_result = $coupon_item_model->alterCouponItem($v,['mid'=>$mid]);
+					foreach($id as $v){
+						$coupon_item_result = $coupon_item_model->alterCouponItem(['id' => $v], ['mid' => $mid]);
 					}
-
 
 					return array_merge($coupon_item_result, ['__ajax__' => false]);
 				break;
@@ -71,7 +69,7 @@
 					$mid['mid'] = I('post.meeting_name_a', '');
 					/** @var \Core\Model\CouponItemModel $model */
 					$model  = D('Core/CouponItem');
-					$result = $model->alterCouponItem($id, $mid);
+					$result = $model->alterCouponItem(['id' => $id], $mid);
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
@@ -98,22 +96,20 @@
 			/** @var \Core\Model\MeetingModel $meeting_model */
 			/** @var \Core\Model\CouponModel $coupon_model */
 			/** @var \Core\Model\ClientModel $client_model */
-			$client_model = D('Core/Client');
+			$client_model  = D('Core/Client');
 			$meeting_model = D('Core/Meeting');
 			$coupon_model  = D('Core/Coupon');
 			foreach($list as $key => $val){
-				$meeting_record            = $meeting_model->findMeeting(1, ['id' => $val['mid']]);
-				$coupon_record             = $coupon_model->findCoupon(1, ['id' => $val['coupon_id']]);
+				$meeting_record = $meeting_model->findMeeting(1, ['id' => $val['mid']]);
+				$coupon_record  = $coupon_model->findCoupon(1, ['id' => $val['coupon_id']]);
 				if($val['cid']){
-					$client_result = $client_model->findClient(1,['id'=>$val['cid']]);
+					$client_result     = $client_model->findClient(1, ['id' => $val['cid']]);
 					$list[$key]['cid'] = $client_result['name'];
 				}
 				$list[$key]['meetingName'] = $meeting_record['name'];
 				$list[$key]['couponName']  = $coupon_record['name'];
-
-
 			}
+
 			return $list;
 		}
-
 	}

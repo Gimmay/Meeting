@@ -24,7 +24,12 @@
 	<div class="error_wrap">
 		<h2><span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;出错啦</h2>
 		<h3>见到该页面可能由于以下情况导致。</h3>
-		<ul><li>您的系统的账号可能并没有授予相关操作的权限</li></ul>
+		<ul>
+			<present name="permission">
+				<li>您的系统账号可能没有<span style="font-weight: bold; color: red"><{$permission}></span>的权限</li>
+				<else/><li>您的系统的账号可能并没有授予相关操作的权限</li>
+			</present>
+		</ul>
 	</div>
 </body>
 </html>

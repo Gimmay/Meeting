@@ -29,7 +29,7 @@
 					$result1      = $coupon_model->createCoupon($data); //插入到数据库
 					$code         = I('post.coupon_area'); //代金券码
 					$request      = explode(',', $code);    //打散代金券码
-					$mid          = I('post.mid', 0, 'int');
+					$mid          = I('get.mid', 0, 'int');
 					C('TOKEN_ON', false);            //令牌
 					$data = [];
 					foreach($request as $v){
@@ -55,11 +55,10 @@
 				case 'alter';
 					/** @var \Core\Model\CouponModel $model */
 					$model              = D('Core/Coupon');
-					$id['id']           = I('post.id', 0, 'int');
 					$data               = I('post.', '');
 					$data['start_time'] = strtotime(I('post.start_time', ''));
 					$data['end_time']   = strtotime(I('post.end_time', ''));
-					$result             = $model->alterCoupon($id, $data);
+					$result             = $model->alterCoupon(['id'=>I('post.id', 0, 'int')], $data);
 					return array_merge($result, ['__ajax__' => false]);
 				break;
 				case 'create';

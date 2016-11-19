@@ -17,8 +17,8 @@
 
 		public function _initialize(){
 			// quasar
-			$_SESSION['MOBILE_CLIENT_ID'] = 599;
-			$_SESSION['MOBILE_WEIXIN_ID'] = 1090;
+//			$_SESSION['MOBILE_CLIENT_ID'] = 599;
+//			$_SESSION['MOBILE_WEIXIN_ID'] = 1090;
 			//			session_destroy();
 			//			session_unset();
 			//			exit;

@@ -23,19 +23,23 @@
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
-	<div id="mb_wrap" style="padding-bottom: 1rem">
-		<div class="mb_body">
-			<div class="topbar">
-				<div class="topbarBg"><img src="<{$Think.COMMON_IMAGE_PATH}>/topbarBg.jpg" alt=""></div>
-				<span class="photo"><img src="<{$info.avatar}>"></span>
+	<if condition="$permission_list['WEIXIN.CLIENT.VIEW'] eq 1">
+		<div id="mb_wrap">
+			<div class="top_title">
+				<a  href="javascript:history.go(-1)"  class="back glyphicon glyphicon-chevron-left"></a>
 			</div>
-			<div class="content">
-				<div class="myInfor">
-					<div class="li">
-						<span class="lab">姓&nbsp;&nbsp;&nbsp;&nbsp;名：</span> <span><{$info.name}></span>
-					</div>
-					<div class="li">
-						<span class="lab">性&nbsp;&nbsp;&nbsp;&nbsp;别：</span>
+			<div class="mb_body">
+				<div class="topbar">
+					<div class="topbarBg"><img src="<{$Think.COMMON_IMAGE_PATH}>/topbarBg.jpg" alt=""></div>
+					<span class="photo"><img src="<{$weixin_info.avatar}>"></span>
+				</div>
+				<div class="content">
+					<div class="myInfor">
+						<div class="li">
+							<span class="lab">姓&nbsp;&nbsp;&nbsp;&nbsp;名：</span> <span><{$info.name}></span>
+						</div>
+						<div class="li">
+							<span class="lab">性&nbsp;&nbsp;&nbsp;&nbsp;别：</span>
 						<span>
 							<switch name="info.gender">
 								<case value="0">未指定</case>
@@ -43,37 +47,44 @@
 								<case value="2">女</case>
 							</switch>
 						</span>
+						</div>
+						<div class="li">
+							<span class="lab">单&nbsp;&nbsp;&nbsp;&nbsp;位：</span> <span><{$info.unit}></span>
+						</div>
+						<div class="li">
+							<span class="lab">手机号：</span> <span><{$info.mobile}></span>
+						</div>
 					</div>
-					<div class="li">
-						<span class="lab">单&nbsp;&nbsp;&nbsp;&nbsp;位：</span> <span><{$info.unit}></span>
+					<div class="my_receivables">
+						<header>收款记录</header>
+						<section class="receivables_list">
+							<volist name="list" id="single">
+								<div class="receivables_item flex_wrap">
+									<div class="flex_1"><{$info.name}></div>
+									<div class="flex_1"><{$single.method_name}></div>
+									<div class="flex_1"><{$single.type_name}></div>
+									<div class="flex_1"><{$single.price}></div>
+									<div class="flex_1 link">
+										<a href="<{:U('receivablesDetails',['id'=>$single['id'],'mid'=>I('get.mid',0,'int')])}>" target="_blank">详情</a>
+									</div>
+								</div>
+							</volist>
+						</section>
 					</div>
-					<div class="li">
-						<span class="lab">手机号：</span> <span><{$info.mobile}></span>
-					</div>
-				</div>
-				<div class="my_receivables">
-					<header>收款记录</header>
-					<section class="receivables_list">
-						<volist name="list" id="list">
-							<div class="receivables_item flex_wrap">
-								<div class="flex_1"><{$info.name}></div>
-								<div class="flex_1"><{$list.price}></div>
-								<div class="flex_1 link">
-									<a href="<{:U('ReceivablesDetails',['id'=>$list['id']])}>">详情</a></div>
-							</div>
-						</volist>
-					</section>
 				</div>
 			</div>
 		</div>
-	</div>
-	<!-- 客户ID值-->
-	<input type="hidden" name="client_id" value="<{:I('get.cid',0,'int')}>" id="h_cid">
-	<!-- 会议ID值-->
-	<input type="hidden" name="meeting_id" value="<{:I('get.mid',0,'int')}>" id="h_mid">
+
+		<!-- 客户ID值-->
+		<input type="hidden" name="client_id" value="<{:I('get.cid',0,'int')}>" id="h_cid">
+		<!-- 会议ID值-->
+		<input type="hidden" name="meeting_id" value="<{:I('get.mid',0,'int')}>" id="h_mid">
+	</if>
 	<div id="mb_footer">
-		<a href="<{:U('AddReceivables',['cid'=>$info['cid'],'mid'=>$info['mid']])}>" class="ft_a receivables_btn"><span>添加收款</span>
-		</a>
+		<if condition="$permission_list['WEIXIN.CLIENT.RECEIVABLES'] eq 1">
+			<a href="<{:U('AddReceivables',['cid'=>$info['cid'],'mid'=>$info['mid']])}>" class="ft_a receivables_btn"><span>添加收款</span>
+			</a>
+		</if>
 	</div>
 	<script>
 		var ManageObject = {

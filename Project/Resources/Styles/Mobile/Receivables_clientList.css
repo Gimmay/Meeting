@@ -2,47 +2,21 @@
 	background : rgba(0, 0, 0, .05);
 }
 
-.search{
-	position   : fixed;
-	top        : 0;
-	left       : 0;
-	width      : 100%;
-	padding    : 0.1rem;
-	text-align : center;
-	background : silver;
-	z-index    : 99;
-}
-
-.search .inp{
-	width         : 100%;
-	padding-right : 1rem;
-}
-
-.search .inp .ss{
-	border        : 1px solid #E1E1E1;
-	border-radius : 5px;
-}
-
-.search .inp .ss .search_inp{
-	border : none;
-	width  : 90%;
-	height : 0.6rem;
-}
-
 .client_list{
 	width : 100%;
 }
 
 .client_list .list_item{
-	position      : relative;
-	margin-bottom : 0.08rem;
+	position  : relative;
+	font-size : 0.20rem;
 }
 
 .client_list .list_item .title{
+	overflow    : hidden;
 	color       : rgba(0, 0, 0, .6);
 	position    : relative;
 	height      : 0.7rem;
-	padding     : 0 0.2rem;
+	padding     : 0 0.9rem 0 0.2rem;
 	background  : rgba(0, 0, 0, .1);
 	line-height : 0.7rem;
 	font-weight : bolder;

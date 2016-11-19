@@ -65,176 +65,193 @@
 		}
 
 		public function handlerRequest($type, $option = []){
+			$permission_logic = new PermissionLogic();
+			$employee_id      = I('session.MOBILE_EMPLOYEE_ID', 0, 'int');
 			switch($type){
-				case 'client:sign':
-					//return array
-				break;
-				case 'client:review':
-				break;
-				case 'examine':
-					C('TOKEN_ON', false);
-					/** @var \Core\Model\JoinModel $join_model */
-					$join_model  = D('Core/Join');
-					$client_id   = I('get.cid', 0, 'int');
-					$meeting_id  = I('get.mid', 0, 'int');
-					$join_result = $join_model->alterRecord([
-						'mid' => $meeting_id,
-						'cid' => $client_id
-					], ['review_status' => 1]);
-					if(!$join_result['status']) return array_merge($join_result, ['__ajax__' => true]);
-					$join_logic = new JoinLogic();
-					$result2    = $join_logic->makeQRCode([$client_id], ['mid' => $meeting_id]);
-
-					return array_merge($result2, ['__ajax__' => true]);
-				break;
 				case 'auditing'; //审核
-					C('TOKEN_ON', false);
-					/** @var \Core\Model\JoinModel $join_model */
-					$join_model  = D('Core/Join');
-					$client_id   = I('get.cid', 0, 'int');
-					$meeting_id  = I('get.mid', 0, 'int');
-					$join_result = $join_model->alterRecord([
-						'mid' => $meeting_id,
-						'cid' => $client_id
-					], ['review_status' => 1]);
-					if(!$join_result['status']) return array_merge($join_result, ['__ajax__' => true]);
-					$join_logic = new JoinLogic();
-					$result2    = $join_logic->makeQRCode([$client_id], ['mid' => $meeting_id]);
+					if($permission_logic->hasPermission('WEIXIN.CLIENT.REVIEW', $employee_id)){
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model = D('Core/Join');
+						$client_id  = I('get.cid', 0, 'int');
+						$meeting_id = I('get.mid', 0, 'int');
+						C('TOKEN_ON', false);
+						$join_result = $join_model->alterRecord([
+							'mid' => $meeting_id,
+							'cid' => $client_id
+						], ['review_status' => 1, 'review_time' => time()]);
+						if(!$join_result['status']) return array_merge($join_result, ['__ajax__' => true]);
+						$join_logic = new JoinLogic();
+						$result2    = $join_logic->makeQRCode([$client_id], ['mid' => $meeting_id]);
 
-					return array_merge($result2, ['__ajax__' => true]);
+						return array_merge($result2, ['__ajax__' => true]);
+					}
+					else return [
+						'status'   => false,
+						'message'  => '您没有微信审核参会人员的权限',
+						'__ajax__' => true
+					];
 				break;
 				case 'cancel_auditing'; //取消审核
-					/** @var \Core\Model\JoinModel $join_model */
-					$join_model  = D('Core/Join');
-					$client_id   = I('get.cid', 0, 'int');
-					$meeting_id  = I('get.mid', 0, 'int');
-					$join_record = $join_model->findRecord(1, [
-						'mid' => $meeting_id,
-						'cid' => $client_id
-					]);
-					C('TOKEN_ON', false);
-					$result = $join_model->alterRecord(['id' => $join_record['id']], [
-						'review_status' => 2,
-						'sign_status'   => 0
-					]);
+					if($permission_logic->hasPermission('WEIXIN.CLIENT.ANTI-REVIEW', $employee_id)){
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model  = D('Core/Join');
+						$client_id   = I('get.cid', 0, 'int');
+						$meeting_id  = I('get.mid', 0, 'int');
+						$join_record = $join_model->findRecord(1, [
+							'mid' => $meeting_id,
+							'cid' => $client_id
+						]);
+						C('TOKEN_ON', false);
+						$result = $join_model->alterRecord(['id' => $join_record['id']], [
+							'review_status' => 2,
+							'sign_status'   => 0,
+							'sign_time'     => null,
+							'sign_type'     => 0
+						]);
 
-					return array_merge($result, ['__ajax__' => true]);
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return [
+						'status'   => false,
+						'message'  => '您没有微信取消审核参会人员的权限',
+						'__ajax__' => true
+					];
 				break;
 				case 'sign': //签到
-					C('TOKEN_ON', false);
-					/** @var \Core\Model\JoinModel $join_model */
-					$join_model  = D('Core/Join');
-					$join_result = $join_model->alterRecord([
-						'mid' => I('get.mid', 0, 'int'),
-						'cid' => I('get.cid', 0, 'int')
-					], [
-						'sign_status'      => 1,
-						'sign_time'        => time(),
-						//'sign_place_id'=>1,
-						'sign_director_id' => C('session.MOBILE_EMPLOYEE_ID', 0, 'int'),
-						'sign_type'        => 3
-					]);
+					if($permission_logic->hasPermission('WEIXIN.CLIENT.SIGN', $employee_id)){
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model = D('Core/Join');
+						C('TOKEN_ON', false);
+						$join_result = $join_model->alterRecord([
+							'mid' => I('get.mid', 0, 'int'),
+							'cid' => I('get.cid', 0, 'int')
+						], [
+							'sign_status'      => 1,
+							'sign_time'        => time(),
+							'sign_director_id' => $employee_id,
+							'sign_type'        => 3
+						]);
 
-					return array_merge($join_result, ['__ajax__' => true]);
+						return array_merge($join_result, ['__ajax__' => true]);
+					}
+					else return [
+						'status'   => false,
+						'message'  => '您没有微信签到的权限',
+						'__ajax__' => true
+					];
 				break;
 				case 'cancel_sign'; //取消签到
-					C('TOKEN_ON', false);
-					/** @var \Core\Model\JoinModel $join_model */
-					$join_model  = D('Core/Join');
-					$join_result = $join_model->alterRecord([
-						'mid' => I('get.mid', 0, 'int'),
-						'cid' => I('get.cid', 0, 'int')
-					], ['sign_status' => 2]);
+					if($permission_logic->hasPermission('WEIXIN.CLIENT.ANTI-SIGN', $employee_id)){
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model = D('Core/Join');
+						C('TOKEN_ON', false);
+						$join_result = $join_model->alterRecord([
+							'mid' => I('get.mid', 0, 'int'),
+							'cid' => I('get.cid', 0, 'int')
+						], ['sign_status' => 2, 'sign_type' => 0]);
 
-					return array_merge($join_result, ['__ajax__' => true]);
+						return array_merge($join_result, ['__ajax__' => true]);
+					}
+					else return [
+						'status'   => false,
+						'message'  => '您没有微信取消签到的权限',
+						'__ajax__' => true
+					];
 				break;
-				case 'addClient:create_create':
-					$data = I('post.');
-					/* 1.创建参会人员 */
-					/** @var \Core\Model\ClientModel $model */
-					$model        = D('Core/Client');
-					$exist_client = $model->findClient(1, ['mobile' => $data['mobile']]);
-					if($exist_client){
-						$client_id           = $exist_client['id'];
-						$str_obj             = new StringPlus();
-						$data['creatime']    = time();
-						$data['creator']     = $option['employeeID'];
-						$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-						$model->alterClient(['id' => $client_id], $data);
-					}
-					else{
-						$str_obj             = new StringPlus();
-						$data['creatime']    = time();
-						$data['creator']     = $option['employeeID'];
-						$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-						$data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
-						$result1             = $model->createClient($data);
-						if($result1['status']) $client_id = $result1['id'];
-						else return $result1;
-					}
-					/* 2.创建参会记录 */
-					$mid = I('get.mid', 0, 'int');
-					/** @var \Core\Model\JoinModel $join_model */
-					$join_model  = D('Core/Join');
-					$join_record = $join_model->findRecord(1, [
-						'mid' => $mid,
-						'cid' => $client_id
-					]);
-					$mobile      = $data['mobile'];
-					if($join_record){
-						if($join_record['join_status'] != 1){
-							C('TOKEN_ON', false);
-							$join_result = $join_model->alterRecord(['id' => $join_record['id']], ['status' => 1]);
-							if($join_result['status']) $result = [
+				case 'addClient:create':
+					if($permission_logic->hasPermission('WEIXIN.CLIENT.CREATE', $employee_id)){
+						$data = I('post.');
+						/* 1.创建参会人员 */
+						/** @var \Core\Model\ClientModel $model */
+						$model        = D('Core/Client');
+						$exist_client = $model->findClient(1, ['mobile' => $data['mobile']]);
+						if($exist_client){
+							$client_id           = $exist_client['id'];
+							$str_obj             = new StringPlus();
+							$data['creatime']    = time();
+							$data['creator']     = $option['employeeID'];
+							$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
+							$model->alterClient(['id' => $client_id], $data);
+						}
+						else{
+							$str_obj             = new StringPlus();
+							$data['creatime']    = time();
+							$data['creator']     = $option['employeeID'];
+							$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
+							$data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
+							$result1             = $model->createClient($data);
+							if($result1['status']) $client_id = $result1['id'];
+							else return $result1;
+						}
+						/* 2.创建参会记录 */
+						$mid = I('get.mid', 0, 'int');
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model  = D('Core/Join');
+						$join_record = $join_model->findRecord(1, [
+							'mid' => $mid,
+							'cid' => $client_id
+						]);
+						$mobile      = $data['mobile'];
+						if($join_record){
+							if($join_record['join_status'] != 1){
+								C('TOKEN_ON', false);
+								$join_result = $join_model->alterRecord(['id' => $join_record['id']], ['status' => 1]);
+								if($join_result['status']) $result = [
+									'status'  => true,
+									'message' => '创建成功'
+								];
+								else $result = $join_result;
+							}
+							else $result = [
 								'status'  => true,
 								'message' => '创建成功'
 							];
-							else $result = $join_result;
 						}
-						else $result = [
-							'status'  => true,
-							'message' => '创建成功'
-						];
-					}
-					else{
-						$data             = [];
-						$data['cid']      = $client_id;
-						$data['mid']      = $mid;
-						$data['creatime'] = time();
-						$data['creator']  = $option['employeeID'];
-						C('TOKEN_ON', false);
-						$result = $join_model->createRecord($data);
-					}
-					/* 3.试图根据手机号创建微信用户记录 */
-					$weixin_logic     = new WxCorpLogic();
-					$weixin_user_list = $weixin_logic->getAllUserList();
-					foreach($weixin_user_list as $val){
-						if($val['mobile'] == $mobile && $val['status'] != 4){
-							/** @var \Core\Model\WeixinIDModel $weixin_model */
-							$weixin_model = D('Core/WeixinID');
-							$department   = '';
-							foreach($val['department'] as $val2) $department .= $val2.',';
-							$department         = trim($department, ',');
-							$data               = [];
-							$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
-							$data['oid']        = $client_id; // 对象ID
-							$data['wtype']      = 1; // 微信ID类型 企业号
-							$data['weixin_id']  = $val['userid']; // 微信ID
-							$data['department'] = $department; // 部门ID
-							$data['mobile']     = $val['mobile']; // 手机号码
-							$data['avatar']     = $val['avatar']; // 头像地址
-							$data['gender']     = $val['gender']; // 性别
-							$data['is_follow']  = $val['status'];    //是否关注
-							$data['nickname']   = $val['name']; // 昵称
-							$data['creatime']   = time(); // 创建时间
-							$data['creator']    = $option['employeeID']; // 当前创建者
+						else{
+							$data             = [];
+							$data['cid']      = $client_id;
+							$data['mid']      = $mid;
+							$data['creatime'] = time();
+							$data['creator']  = $option['employeeID'];
 							C('TOKEN_ON', false);
-							$weixin_model->createRecord($data); // 插入数据
-							break;
+							$result = $join_model->createRecord($data);
 						}
-					}
+						/* 3.试图根据手机号创建微信用户记录 */
+						$weixin_logic     = new WxCorpLogic();
+						$weixin_user_list = $weixin_logic->getAllUserList();
+						foreach($weixin_user_list as $val){
+							if($val['mobile'] == $mobile && $val['status'] != 4){
+								/** @var \Core\Model\WeixinIDModel $weixin_model */
+								$weixin_model = D('Core/WeixinID');
+								$department   = '';
+								foreach($val['department'] as $val2) $department .= $val2.',';
+								$department         = trim($department, ',');
+								$data               = [];
+								$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
+								$data['oid']        = $client_id; // 对象ID
+								$data['wtype']      = 1; // 微信ID类型 企业号
+								$data['weixin_id']  = $val['userid']; // 微信ID
+								$data['department'] = $department; // 部门ID
+								$data['mobile']     = $val['mobile']; // 手机号码
+								$data['avatar']     = $val['avatar']; // 头像地址
+								$data['gender']     = $val['gender']; // 性别
+								$data['is_follow']  = $val['status'];    //是否关注
+								$data['nickname']   = $val['name']; // 昵称
+								$data['creatime']   = time(); // 创建时间
+								$data['creator']    = $option['employeeID']; // 当前创建者
+								C('TOKEN_ON', false);
+								$weixin_model->createRecord($data); // 插入数据
+								break;
+							}
+						}
 
-					return array_merge($result, ['__ajax__' => false]);
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return [
+						'status'   => false,
+						'message'  => '您没有微信创建参会人员的权限',
+						'__ajax__' => true
+					];
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];

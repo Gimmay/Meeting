@@ -83,7 +83,7 @@
 					if($this->permissionList['ROLE.ALTER']){
 						/** @var \Core\Model\RoleModel $model */
 						$model  = D('Core/Role');
-						$result = $model->alterRole([I('post.id', 0, 'int')], I('post.')); //传值到model里面操作
+						$result = $model->alterRole(['id'=>I('post.id', 0, 'int')], I('post.')); //传值到model里面操作
 						return array_merge($result, ['__ajax__' => false]);
 					}
 					else return ['status' => false, 'message' => '您没有修改角色的权限', '__ajax__' => false];

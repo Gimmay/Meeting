@@ -8,11 +8,13 @@
 	namespace Manager\Controller;
 
 	use Manager\Logic\EmployeeLogic;
+	use Manager\Logic\ExcelLogic;
 	use Manager\Logic\ReceivablesLogic;
 
 	class ReceivablesController extends ManagerController{
 		public function _initialize(){
 			parent::_initialize();
+			$this->meetingID = $this->initMeetingID($this);
 		}
 
 		public function create(){
@@ -53,17 +55,17 @@
 			/** @var \Core\Model\EmployeeModel $employee_model_one */
 			$employee_model_one = D('Core/Employee');
 			$employee_result    = $employee_model_one->findEmployee(1, ['id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')]);
-			/** @var \Manager\Model\PayMethodModel $pay_model */
-			$pay_model  = D('PayMethod');
-			$pay_result = $pay_model->getPayMethodSelectList();
 			/** @var \Manager\Model\ReceivablesTypeModel $receivables_type_model */
 			$receivables_type_model  = D('ReceivablesType');
 			$receivables_type_result = $receivables_type_model->getReceivablesTypeSelectList();
+			/** @var \Core\Model\PosMachineModel $pos_machine_model */
+			$pos_machine_model = D('Core/PosMachine');
+			$pos_machine_result = $pos_machine_model->findRecord(2,['status'=>'not deleted']);
 			$time                    = time();
-			$this->assign('pay_info', $pay_result);
-			$this->assign('type_info', $receivables_type_result);
+			$this->assign('type', $receivables_type_result);
 			$this->assign('client_type', $client_list);
 			$this->assign('pay', $pay_method_result);
+			$this->assign('pos', $pos_machine_result);
 			$this->assign('time', $time);
 			$this->assign('employee_info', $employee_result);
 			$this->assign('meeting_list', $meeting_list);
@@ -122,7 +124,56 @@
 				'status'  => 'not deleted',
 				'keyword' => I('get.keyword')
 			]);
-			$this->assign('type_info',$receivables_type_result);
+			$this->assign('type_info', $receivables_type_result);
 			$this->display();
+		}
+
+		public function posMachine(){
+			$pos_logic = new ReceivablesLogic();
+			if(IS_POST){
+				$type   = I('post.requestType');
+				$result = $pos_logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']) $this->success($result['message']);
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
+			}
+			/** @var \Core\Model\PosMachineModel $pos_machine_model */
+			$pos_machine_model  = D('Core/PosMachine');
+			$pos_machine_result = $pos_machine_model->findRecord(2, [
+				'status'  => 'not deleted',
+				'keyword' => I('get.keyword', '')
+			]);
+			$this->assign('pos', $pos_machine_result);
+			$this->display();
+		}
+
+		public function exportReceivablesData(){
+			/** @var \Core\Model\ReceivablesModel $receivables_model */
+			$receivables_model = D('Core/Receivables');
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model      = D('Core/Meeting');
+			$excel_logic        = new ExcelLogic();
+			$logic              = new ReceivablesLogic();
+			$receivables_result = $receivables_model->findRecord(2, [
+				'mid'    => $this->meetingID,
+				'status' => 'not deleted'
+			]);
+			$receivables_result = $logic->setData('excel_data', $receivables_result);
+			$meeting            = $meeting_model->findMeeting(1, ['id' => $this->meetingID]);
+			$excel_logic->exportCustomData($receivables_result, [
+				'fileName'    => "[$meeting[name]]收款信息",
+				'title'       => "$meeting[name]",
+				'subject'     => '收款列表',
+				'description' => '吉美会议系统导出收款数据',
+				'company'     => '吉美集团',
+				'hasHead'     => true
+			]);
 		}
 	}

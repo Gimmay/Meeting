@@ -3,7 +3,8 @@
  */
 
 var ThisObject = {
-	aTemp               :'<a class="btn btn-default btn-sm active" href="javascript:void(0)" role="button" data-id="$id">$name</a>',
+	aTemp               :'<a class="btn btn-default btn-sm " href="javascript:void(0)" role="button" data-id="$id">$name</a>',
+	aActiveTemp         :'<a class="btn btn-default btn-sm active" href="javascript:void(0)" role="button" data-id="$id">$name</a>',
 	word                :0,
 	bindEvent           :function(){
 		var self = this;
@@ -21,25 +22,11 @@ var ThisObject = {
 			self.eachAddReceivables();
 		});
 		self.eachAddReceivables();
-
 		// 添加修改代金券选择
 		$('#alter_receivables .coupon_list a').on('click', function(){
 			self.eachAlterReceivables();
 		});
 		self.eachAlterReceivables();
-		// 打开计算器
-		$('#price').on('focus', function(){
-			$('#idCalculadora').removeClass('hide');
-		});
-		// 计算机关闭
-		$('.close_calcuator button').on('click', function(){
-			$('#idCalculadora').addClass('hide');
-		});
-		// 计算器等于号
-		$('.equal').on('click', function(){
-			var sum = $('#input-box').val();
-			$('#price').val(sum);
-		});
 		$('.clear-marginleft').on('click', function(){
 			$('#price').val(0);
 		});
@@ -47,54 +34,6 @@ var ThisObject = {
 		$('.delete_btn').on('click', function(){
 			var id = $(this).parents('.btn-group').attr('data-id');
 			$('#delete_receivables').find('input[name=id]').val(id);
-		});
-		// 修改收款
-		$('.modify_btn').on('click', function(){
-			var id          = $(this).parents('.btn-group').attr('data-id');
-			var client_name = $(this).parents('tr').find('.client_name').text();
-			var price       = $(this).parents('tr').find('.price').text();
-			var type        = $(this).parents('tr').find('.type').text();
-			var method      = $(this).parents('tr').find('.method').text();
-			var time        = $(this).parents('tr').find('.time').text();
-			var place       = $(this).parents('tr').find('.place').text();
-			var source_type = $(this).parents('tr').find('.source_type').text();
-			var comment     = $(this).parents('tr').find('.comment').text();
-			$('#alter_receivables').find('input[name=id]').val(id);
-			$('#alter_receivables').find('#client_name_a').val(client_name);
-			$('#alter_receivables').find('#price_a').val(price);
-			$('#alter_receivables').find('#selected_method_a').val(method);
-			$('#alter_receivables').find('#selected_type_a').val(type);
-			$('#alter_receivables').find('#place_a').val(place);
-			$('#alter_receivables').find('#source_type_a').children('option').each(function(){
-				var opts          = $(this).text();
-				var option        = opts.trim();
-				var source_type_1 = source_type.trim();
-				var index         = $(this).index();
-				if(option == source_type_1){
-					$('#alter_receivables').find('#source_type_a').children('option').eq(index)
-										   .prop('selected', 'selected');
-				}
-			});
-			$('#alter_receivables').find('#receivables_time_a').val(time);
-			$('#alter_receivables').find('#comment_a').val(comment);
-			Common.ajax({
-				data    :{requestType:'alter_coupon', id:id},
-				callback:function(r){
-					console.log(r);
-					var arr = [];
-					if(ThisObject.word == 0){
-						$.each(r, function(index, value){
-							$('.coupon_list')
-							.append('<a class=\"btn btn-default btn-sm active\" href="javascript:void(0)" role="button" data-id='+value.id+'>'+value.code+'</a>');
-							arr.push(value.id);
-							ThisObject.word = 1;
-						});
-						$('#alter_receivables').find('input[name=old_coupon_code]').val(arr);
-					}
-					ThisObject.unbindEvent();
-					ThisObject.bindEvent();
-				}
-			});
 		});
 	},
 	unbindEvent         :function(){
@@ -129,5 +68,74 @@ $(function(){
 		var value = ManageObject.object.clientName.getValue();
 		$add_receivables_modal.find('input[name=cid]').val(value);
 	});
+	// 修改收款
+	$('.modify_btn').on('click', function(){
+		var id          = $(this).parents('.btn-group').attr('data-id');
+		Common.ajax({
+			data:{requestType:'get_receivables_detail', id:id},
+			callback:function(r){
+				var $alter_receivables_object = $('#alter_receivables');
+				var time = new Date(r.time*1000).format('yyyy-MM-dd HH:mm:ss');
+				$alter_receivables_object.find('input[name=id]').val(id);
+				//noinspection JSUnresolvedVariable
+				$alter_receivables_object.find('#client_name_a').val(r.client_name);
+				$alter_receivables_object.find('#price_a').val(r.price);
+				$alter_receivables_object.find('#receivables_time_a').val(time);
+				$alter_receivables_object.find('#comment_a').val(r.comment);
+				$alter_receivables_object.find('#place_a').val(r.place);
+				$alter_receivables_object.find('#source_type_a>option').prop('selected', false);
+				$alter_receivables_object.find('#source_type_a').val(r.source_type);
+				$alter_receivables_object.find('#source_type_a>option[value='+r.source_type+']').prop('selected', true);
+
+				$alter_receivables_object.find('#type_a>option').prop('selected', false);
+				$alter_receivables_object.find('#type_a').val(r.type);
+				$alter_receivables_object.find('#type_a>option[value='+r.type+']').prop('selected', true);
+
+				$alter_receivables_object.find('#method_a>option').prop('selected', false);
+				$alter_receivables_object.find('#method_a').val(r.method);
+				$alter_receivables_object.find('#method_a>option[value='+r.method+']').prop('selected', true);
+
+				$alter_receivables_object.find('#pos_id_a>option').prop('selected', false);
+				$alter_receivables_object.find('#pos_id_a').val(r.pos_id);
+				$alter_receivables_object.find('#pos_id_a>option[value='+r.pos_id+']').prop('selected', true);
+			}
+		});
+		Common.ajax({
+			data    :{requestType:'alter_coupon', id:id},
+			callback:function(r){
+				var arr = [], str = '';
+				//$('#alter_receivables .no_c').hide();
+				$.each(r, function(index1, value1){
+					$.each(value1, function(index2, value2){
+						if(index1 == 'coupon_item_yes'){
+							if(value2 != null){
+								str += ThisObject.aActiveTemp.replace('$id', value2.id)
+									.replace('$name', value2.code);
+								arr.push(value2.id);
+							}
+						}
+						if(index1 == 'coupon_item_not'){
+							if(value2 != null){
+								str += ThisObject.aTemp.replace('$id', value2.id)
+									.replace('$name', value2.code);
+							}
+						}
+					});
+				});
+				if(str == ''){
+					$('#alter_receivables .no_c').show();
+				}else{
+					// 记录之前已选择的代金券
+					$('#alter_receivables').find('input[name=old_coupon_code]').val(arr);
+					//输出所有代金券
+					$('#alter_receivables .coupon_list').html(str);
+				}
+				ThisObject.unbindEvent();
+				ThisObject.bindEvent();
+			}
+		});
+	});
 	ThisObject.bindEvent();
 });
+function checkIsEmpty(){
+};

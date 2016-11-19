@@ -24,40 +24,31 @@
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body style="padding-bottom: 1.2rem">
-	<style scoped>
-		div.btn_sign_ban{
-			background-color : darkgrey;
-			color            : lavender;
-			width            : 2rem;
-			height           : 0.8rem;
-			line-height      : 0.8rem;
-			position         : absolute;
-			margin-left      : -0.9rem;
-			top              : 50%;
-			left             : 50%;
-			font-size        : 0.3rem;
-			text-align       : center;
-			border-radius    : 5px;
-		}
-	</style>
-	<div id="mb_wrap">
-		<div class="mb_body">
-			<div class="topbar">
-				<div class="status">
-					<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="st enroll"> <b><{$statistics.total}></b> <span>报名</span> </a>
-					<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int'), 'sign'=>1])}>" class="st sign"><b style="font-size: 0.6rem;"><{$statistics.signCount}></b> <span>已签到</span> </a>
-					<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int'), 'sign'=>0])}>" class="st unsign"> <b><{$statistics.notSignCount}></b><span>未签到</span> </a>
-				</div>
-				<div class="topbarBg"><img src="<{$Think.COMMON_IMAGE_PATH}>/topbarBg.jpg" alt="bg"></div>
-				<div class="logo"><img src="<{$meeting.logo}>" alt="logo"></div>
+	<if condition="$permission_list['WEIXIN.MEETING.VIEW'] eq 1">
+		<div id="mb_wrap">
+			<div class="top_title">
+				<a href="javascript:history.go(-1)" class="back glyphicon glyphicon-chevron-left"></a>
 			</div>
-			<div class="content">
-				<div class="myInfor">
-					<div class="li">
-						<span class="lab">会议名称：</span> <span><{$meeting.name}></span>
+			<div class="mb_body">
+				<div class="topbar">
+					<div class="status">
+						<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="st enroll">
+							<b><{$statistics.total}></b> <span>报名</span> </a>
+						<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int'), 'sign'=>1])}>" class="st sign"><b style="font-size: 0.6rem;"><{$statistics.signCount}></b>
+							<span>已签到</span> </a>
+						<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int'), 'sign'=>0])}>" class="st unsign">
+							<b><{$statistics.notSignCount}></b><span>未签到</span> </a>
 					</div>
-					<div class="li">
-						<span class="lab">状　　态：</span> <span>
+					<div class="topbarBg"><img src="<{$Think.COMMON_IMAGE_PATH}>/topbarBg.jpg" alt="bg"></div>
+					<div class="logo"><img src="<{$meeting.logo}>" alt="logo"></div>
+				</div>
+				<div class="content">
+					<div class="myInfor">
+						<div class="li">
+							<span class="lab">会议名称：</span> <span><{$meeting.name}></span>
+						</div>
+						<div class="li">
+							<span class="lab">状　　态：</span> <span>
 						<switch name="meeting.status">
 							<case value="1">新会议</case>
 							<case value="2">已发布</case>
@@ -65,38 +56,45 @@
 							<case value="4">已结束</case>
 						</switch>
 					</span>
-					</div>
-					<div class="li">
-						<span class="lab">类　　型：</span> <span><{$meeting.type}></span>
-					</div>
-					<div class="li">
-						<span class="lab">主&nbsp;&nbsp;办&nbsp;&nbsp;方：</span> <span><{$meeting.host}></span>
-					</div>
-					<div class="li">
-						<span class="lab">策&nbsp;&nbsp;划&nbsp;&nbsp;方：</span> <span><{$meeting.plan}></span>
-					</div>
-					<div class="li">
-						<span class="lab">地　　点：</span> <span><{$meeting.place}></span>
-					</div>
-					<div class="li">
-						<span class="lab">开始时间：</span> <span><{$meeting.start_time}></span>
-					</div>
-					<div class="li">
-						<span class="lab">结束时间：</span> <span><{$meeting.end_time}></span>
-					</div>
-					<div class="li">
-						<span class="lab">负&nbsp;&nbsp;责&nbsp;&nbsp;人：</span> <span><{$meeting.director}></span>
-					</div>
-					<div class="li">
-						<span class="lab">简　　介：</span> <span><{$meeting.brief}></span>
+						</div>
+						<div class="li">
+							<span class="lab">类　　型：</span> <span><{$meeting.type}></span>
+						</div>
+						<div class="li">
+							<span class="lab">主&nbsp;&nbsp;办&nbsp;&nbsp;方：</span> <span><{$meeting.host}></span>
+						</div>
+						<div class="li">
+							<span class="lab">策&nbsp;&nbsp;划&nbsp;&nbsp;方：</span> <span><{$meeting.plan}></span>
+						</div>
+						<div class="li">
+							<span class="lab">地　　点：</span> <span><{$meeting.place}></span>
+						</div>
+						<div class="li">
+							<span class="lab">开始时间：</span> <span><{$meeting.start_time}></span>
+						</div>
+						<div class="li">
+							<span class="lab">结束时间：</span> <span><{$meeting.end_time}></span>
+						</div>
+						<div class="li">
+							<span class="lab">负&nbsp;&nbsp;责&nbsp;&nbsp;人：</span> <span><{$meeting.director}></span>
+						</div>
+						<div class="li">
+							<span class="lab">简　　介：</span> <span><{$meeting.brief}></span>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</if>
 	<div id="mb_footer">
-		<a href="<{:U('meeting', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a active"> <i class="glyphicon glyphicon-th-large"></i> <span>会议详情</span> </a>
-		<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"> <i class="glyphicon glyphicon-user"></i> <span>参会人员</span> </a>
+		<if condition="$permission_list['WEIXIN.MEETING.VIEW'] eq 1">
+			<a href="<{:U('meeting', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a active">
+				<i class="glyphicon glyphicon-th-large"></i> <span>会议详情</span> </a>
+		</if>
+		<if condition="$permission_list['WEIXIN.CLIENT.VIEW'] eq 1">
+			<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a">
+				<i class="glyphicon glyphicon-user"></i> <span>参会人员</span> </a>
+		</if>
 	</div>
 	<script>
 		var ThisObject = {

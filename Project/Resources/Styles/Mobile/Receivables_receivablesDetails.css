@@ -29,7 +29,8 @@
 	left        : 0;
 	top         : 0;
 	line-height : 0.6rem;
-	text-align  : center;
+	text-align  : left;
+	font-size   : 0.3rem;
 }
 
 .info_list .info_li .item .inp{
@@ -39,6 +40,7 @@
 	overflow      : hidden;
 	border-radius : 4px;
 	padding       : 0 0.1rem;
+	font-size     : 0.3rem;
 }
 
 .info_list .info_li .item .inp #gender{
@@ -86,4 +88,17 @@
 	color      : #FFFFFF;
 	width      : 100%;
 	height     : 100%;
+}
+
+.logo{
+	position : fixed;
+	bottom   : 0.4rem;
+	right    : 0.4rem;
+	width    : 2rem;
+	height   : 2rem;
+}
+
+.logo img{
+	width          : 100%;
+	vertical-align : top;
 }

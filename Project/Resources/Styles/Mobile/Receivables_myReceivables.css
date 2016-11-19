@@ -2,17 +2,6 @@
 	background : rgba(0, 0, 0, .05);
 }
 
-.search{
-	position   : fixed;
-	top        : 0;
-	left       : 0;
-	width      : 100%;
-	padding    : 0.1rem;
-	text-align : center;
-	background : silver;
-	z-index    : 99;
-}
-
 .search .inp{
 	width         : 100%;
 	padding-right : 1rem;
@@ -106,7 +95,8 @@
 
 .mytable{
 	background : #FFFFFF;
-	border     : 1px solid #E1E1E1
+	border     : 1px solid #E1E1E1;
+	font-size  : 0.20rem;
 }
 
 .mytable tbody tr:nth-child(odd){

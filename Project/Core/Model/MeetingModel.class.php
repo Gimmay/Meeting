@@ -10,8 +10,8 @@
 	use Exception;
 
 	class MeetingModel extends CoreModel{
-		protected $tableName   = 'meeting';
-		protected $tablePrefix = 'workflow_';
+		protected $tableName       = 'meeting';
+		protected $tablePrefix     = 'workflow_';
 		protected $autoCheckFields = true;
 
 		public function _initialize(){
@@ -32,6 +32,7 @@
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted') $where['status'] = ['neq', 5];
+				elseif($status == 'ing') $where['status'] = ['in', [1, 2, 3]];
 				else $where['status'] = $filter['status'];
 			}
 			if(isset($filter['keyword']) && $filter['keyword']){
@@ -79,7 +80,7 @@
 			if($this->create($data)){
 				try{
 					$result = $this->add($data);
-					if($result) return ['status' => true, 'message' => '创建会议成功', 'id'=>$result];
+					if($result) return ['status' => true, 'message' => '创建会议成功', 'id' => $result];
 					else return ['status' => false, 'message' => '创建会议失败'];
 				}catch(Exception $error){
 					$message   = $error->getMessage();

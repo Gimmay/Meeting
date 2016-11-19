@@ -23,6 +23,10 @@
 			parent::_initialize();
 		}
 
+		public function getCorpID(){
+			return $this->_config['corpID'];
+		}
+
 		public function getAllUserList(){
 			$wxcorp_object = new WXCorpUniversalApi($this->_config['corpID'], $this->_config['corpSecret']);
 			$result        = $wxcorp_object->getUserList(1);
@@ -44,6 +48,11 @@
 			$wxcorp_object = new WXCorpUniversalApi($this->_config['corpID'], $this->_config['corpSecret']);
 
 			return $wxcorp_object->getID();
+		}
+
+		public function getSignature($random_str, $time, $url= null){
+			$wxcorp_object = new WXCorpUniversalApi($this->_config['corpID'], $this->_config['corpSecret']);
+			return $wxcorp_object->getSignature($random_str, $time, $url);
 		}
 
 	}

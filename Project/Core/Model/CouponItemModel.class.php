@@ -179,10 +179,10 @@ $limit
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function alterCouponItem($id, $data){
+		public function alterCouponItem($filter, $data){
 			if($this->create($data)){
 				try{
-					$result = $this->where(['id' => ['in', $id]])->save($data);
+					$result = $this->where($filter)->save($data);
 					if($result) return ['status' => true, 'message' => '修改成功'];
 					else return ['status' => false, 'message' => '未做任何修改'];
 				}catch(Exception $error){

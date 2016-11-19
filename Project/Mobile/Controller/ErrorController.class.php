@@ -81,6 +81,39 @@
 		 * 没有授予权限
 		 */
 		public function notPermission(){
+			$permission = I('get.permission', '');
+			switch(strtoupper($permission)){
+				case 'WEIXIN.CLIENT.VIEW':
+					$this->assign('permission', '查看参会人员');
+				break;
+				case 'WEIXIN.CLIENT.REVIEW':
+					$this->assign('permission', '审核参会人员');
+				break;
+				case 'WEIXIN.CLIENT.SIGN':
+					$this->assign('permission', '签到');
+				break;
+				case 'WEIXIN.CLIENT.RECEIVABLES':
+					$this->assign('permission', '收款');
+				break;
+				case 'WEIXIN.CLIENT.CREATE':
+					$this->assign('permission', '创建参会人员');
+				break;
+				case 'WEIXIN.CLIENT.ANTI-REVIEW':
+					$this->assign('permission', '取消审核');
+				break;
+				case 'WEIXIN.CLIENT.ANTI-SIGN':
+					$this->assign('permission', '取消签到');
+				break;
+				case 'WEIXIN.MEETING.VIEW':
+					$this->assign('permission', '查看会议');
+				break;
+				case 'WEIXIN.RECEIVABLES.VIEW':
+					$this->assign('permission', '查看收款记录');
+				break;
+				case 'WEIXIN.RECEIVABLES.VIEW-ALL':
+					$this->assign('permission', '查看所有收款记录');
+				break;
+			}
 			$this->display();
 		}
 	}

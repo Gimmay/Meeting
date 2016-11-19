@@ -24,7 +24,7 @@
 				$username = I('post.username', '');
 				$password = I('post.password', '');
 				$result   = $model->checkLogin($username, $password);
-				if($result['status']) $this->success($result['message'], U('Meeting/manage', ['type'=>'ing']));
+				if($result['status']) $this->success($result['message'], U('Meeting/manage', ['type' => 'ing']));
 				else $this->error($result['message'], '', 3);
 				exit;
 			}
@@ -34,7 +34,8 @@
 		public function manage(){
 			$employee_logic = new EmployeeLogic();
 			if(IS_POST){
-				$type   = strtolower(I('post.requestType', ''));
+				$type = strtolower(I('post.requestType', ''));
+				if($type == '') $type = strtolower(I('get.requestType', ''));
 				$result = $employee_logic->handlerRequest($type);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);

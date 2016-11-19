@@ -89,10 +89,10 @@
 											<td width="5%">序号</td>
 											<td width="10%">模板名称</td>
 											<td width="5%">类型</td>
-											<td width="10%">使用情况</td>
 											<td width="35%">模板内容</td>
 											<td width="5%">状态</td>
 											<td width="10%">创建时间</td>
+											<td width="10%">使用情况</td>
 											<td width="15%">操作</td>
 										</tr>
 									</thead>
@@ -114,7 +114,6 @@
 													</switch>
 												</span>
 												</td>
-												<td><{$single.assign_type}></td>
 												<td>
 													<p style="word-break: break-all; word-wrap:break-word; text-align: left; overflow-y: hidden; max-height: 30px;"><{$single.context}></p>
 												</td>
@@ -122,10 +121,10 @@
 													<switch name="single.status">
 														<case value="0">禁用</case>
 														<case value="1">可用</case>
-														<case value="2">删除</case>
 													</switch>
 												</td>
 												<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
+												<td><{$single.assign_type}></td>
 												<td>
 													<div class="btn-group" data-id="<{$single.id}>">
 														<if condition="$permission_list['MESSAGE.ALTER']">
@@ -137,6 +136,12 @@
 														</if>
 														<if condition="$permission_list['MESSAGE.SELECT']">
 															<button type="submit" class="btn btn-default btn-xs choose_btn" data-toggle="modal" data-target="#choose_message_modal">选择</button>
+														</if>
+														<if condition="$single['status'] eq 0">
+															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_message', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
+														</if>
+														<if condition="$single['status'] eq 1">
+															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_message', 'id'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
 														</if>
 													</div>
 												</td>

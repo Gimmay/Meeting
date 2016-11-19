@@ -50,7 +50,10 @@
 					<volist name="meeting_list.fin" id="single">
 						<div class="li">
 							<a href="<{:U('myMeeting', ['mid'=>$single['id']])}>">
-								<span class="meeting_name"><{$single.name}></span><span class="time">开始结束时间：<{$single.start_time}> - <{$single.end_time}></span><span class="status complete">已结束</span>
+								<span class="meeting_name"><{$single.name}></span>
+								<span class="time">会议类型：<{$single.type}></span>
+								<!--<span class="time">开始结束时间：<{$single.start_time}> - <{$single.end_time}></span>-->
+								<span class="status complete">已结束</span>
 							</a>
 						</div>
 					</volist>

@@ -109,7 +109,7 @@
 		}
 
 		public function alterMessage($filter, $data){
-			if($this->create()){
+			if($this->create($data)){
 				try{
 					$result = $this->where($filter)->save($data);
 					if($result) return ['status' => true, 'message' => '修改成功'];

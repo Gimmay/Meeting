@@ -115,6 +115,12 @@
 															<if condition="$permission_list['ROLE.DELETE'] eq 1">
 																<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_role">删除</button>
 															</if>
+															<if condition="$single['status'] eq 0">
+																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_role', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
+															</if>
+															<if condition="$single['status'] eq 1">
+																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_role', 'id'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
+															</if>
 														</if>
 													</div>
 												</td>

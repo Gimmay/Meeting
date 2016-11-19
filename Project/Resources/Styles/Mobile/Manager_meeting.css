@@ -47,6 +47,7 @@
 .myInfor .li{
 	padding       : 0.3rem 0;
 	border-bottom : 1px solid rgba(0, 0, 0, 0.08);
+	font-size     : 0.24rem;
 }
 
 .myInfor .li .lab{
@@ -184,7 +185,8 @@
 }
 
 .status .st span{
-	color : #FF6633 !important;
+	color     : #FF6633 !important;
+	font-size : 0.20rem;
 }
 
 .topbar .logo{

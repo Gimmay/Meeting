@@ -9,8 +9,8 @@
 
 	use Think\Exception;
 
-	class PayMethodModel extends CoreModel{
-		protected $tableName       = 'pay_method';
+	class PosMachineModel extends CoreModel{
+		protected $tableName       = 'pos_machine';
 		protected $tablePrefix     = 'workflow_';
 		protected $autoCheckFields = true;
 

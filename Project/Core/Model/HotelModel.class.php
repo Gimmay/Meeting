@@ -39,7 +39,7 @@
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
-				if($status == 'not deleted') $where['status'] = ['neq', 3];
+				if($status == 'not deleted') $where['status'] = ['neq', 2];
 				else $where['status'] = $filter['status'];
 			}
 			if(isset($filter['keyword']) && $filter['keyword']){
@@ -88,7 +88,7 @@
 		public function deleteHotel($id){
 			if($this->create()){
 				try{
-					$result = $this->where(['id' => ['in', $id]])->save(['status' => 3]);
+					$result = $this->where(['id' => ['in', $id]])->save(['status' => 2]);
 					if($result) return ['status' => true, 'message' => '删除成功'];
 					else return ['status' => false, 'message' => '没有删除任何代金券'];
 				}catch(Exception $error){
@@ -101,10 +101,10 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function alterHotel($id, $data){
+		public function alterHotel($filter, $data){
 			if($this->create($data)){
 				try{
-					$result = $this->where(['id' => ['in', $id]])->save($data);
+					$result = $this->where($filter)->save($data);
 					if($result) return ['status' => true, 'message' => '修改成功'];
 					else return ['status' => false, 'message' => '未做任何修改'];
 				}catch(Exception $error){
@@ -116,14 +116,5 @@
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}
-
-		public function carryTime(){
-			$sql = "SELECT * 
-FROM workflow_hotel h 
-JOIN workflow_meeting m ON h.id IN (m.hid) 
-WHERE SYSDATE() >= m.start_time 
-AND SYSDATE() <= m.end_time";
-
-			return $this->query($sql);
-		}
+		
 	}

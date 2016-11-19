@@ -33,140 +33,143 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<div class="main_body">
-					<section class="content">
-						<div class="table_wrap">
-							<header class="title">11月份启动大会</header>
-							<div class="modular clearfix">
-								<div class="m_item">
-									<div class="m_content" style="background: #46B9CB">
-										<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;参会人员统计</h3>
-										<div class="desc">
-											<p>报名人数：130人</p>
+				<if condition="$permission_list['MEETING.VIEW']">
+					<div class="main_body">
+						<section class="content">
+							<div class="table_wrap">
+								<header class="title">11月份启动大会</header>
+								<div class="modular clearfix">
+									<div class="m_item">
+										<div class="m_content" style="background: #46B9CB">
+											<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;参会人员统计</h3>
+											<div class="desc">
+												<p>报名人数：130人</p>
+											</div>
+											<div class="foot"><a href="">查看详情</a></div>
 										</div>
-										<div class="foot"><a href="">查看详情</a></div>
 									</div>
-								</div>
-								<div class="m_item">
-									<div class="m_content" style="background: #FF6633">
-										<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;签到情况</h3>
-										<div class="desc">
-											<p>已签到：130人</p>
-											<p>未签到：130人</p>
+									<div class="m_item">
+										<div class="m_content" style="background: #FF6633">
+											<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;签到情况</h3>
+											<div class="desc">
+												<p>已签到：130人</p>
+												<p>未签到：130人</p>
+											</div>
+											<div class="foot"><a href="">查看详情</a></div>
 										</div>
-										<div class="foot"><a href="">查看详情</a></div>
 									</div>
-								</div>
-								<div class="m_item">
-									<div class="m_content" style="background: #ED5565">
-										<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;住房情况</h3>
-										<div class="desc">
-											<p>已安排：130人</p>
-											<p>未安排：130人</p>
+									<div class="m_item">
+										<div class="m_content" style="background: #ED5565">
+											<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;住房情况</h3>
+											<div class="desc">
+												<p>已安排：130人</p>
+												<p>未安排：130人</p>
+											</div>
+											<div class="foot"><a href="">查看详情</a></div>
 										</div>
-										<div class="foot"><a href="">查看详情</a></div>
 									</div>
-								</div>
-								<div class="m_item">
-									<div class="m_content" style="background: #F8AC59">
-										<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;收款情况</h3>
-										<div class="desc">
-											<p>已收款：130人</p>
-											<p>未收款：130人</p>
+									<div class="m_item">
+										<div class="m_content" style="background: #F8AC59">
+											<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;收款情况</h3>
+											<div class="desc">
+												<p>已收款：130人</p>
+												<p>未收款：130人</p>
+											</div>
+											<div class="foot"><a href="">查看详情</a></div>
 										</div>
-										<div class="foot"><a href="">查看详情</a></div>
 									</div>
-								</div>
-								<div class="m_item">
-									<div class="m_content" style="background: #28B778">
-										<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;购券情况</h3>
-										<div class="desc">
-											<p>已购买：130人</p>
-											<p>未购买：130人</p>
+									<div class="m_item">
+										<div class="m_content" style="background: #28B778">
+											<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;购券情况</h3>
+											<div class="desc">
+												<p>已购买：130人</p>
+												<p>未购买：130人</p>
+											</div>
+											<div class="foot"><a href="">查看详情</a></div>
 										</div>
-										<div class="foot"><a href="">查看详情</a></div>
 									</div>
-								</div>
-								<div class="m_item">
-									<div class="m_content" style="background: #2254A5">
-										<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;消息发送情况</h3>
-										<div class="desc">
-											<p>已发送微信企业号：130人</p>
-											<p>未发送短信：130人</p>
+									<div class="m_item">
+										<div class="m_content" style="background: #2254A5">
+											<h3 class="t1"><span>11启动大会</span>&nbsp;&nbsp;消息发送情况</h3>
+											<div class="desc">
+												<p>已发送微信企业号：130人</p>
+												<p>未发送短信：130人</p>
+											</div>
+											<div class="foot"><a href="">查看详情</a></div>
 										</div>
-										<div class="foot"><a href="">查看详情</a></div>
 									</div>
 								</div>
 							</div>
-						</div>
-					</section>
-				</div>
-				<div class="right_details">
-					<div class="d_con">
+						</section>
+					</div>
+					<div class="right_details">
+						<div class="d_con">
 						<span class="close_btn glyphicon glyphicon-remove">
 						</span>
-						<div class="title">
-							<span>详情</span>
-						</div>
-						<div class="info">
-							<div class="li">
-								<span>会议名称：</span> <span class="meeting_name"></span>
+							<div class="title">
+								<span>详情</span>
 							</div>
-							<div class="li">
-								<span>状态：</span> <span class="status"></span>
+							<div class="info">
+								<div class="li">
+									<span>会议名称：</span> <span class="meeting_name"></span>
+								</div>
+								<div class="li">
+									<span>状态：</span> <span class="status"></span>
+								</div>
+								<div class="li">
+									<span>类型：</span> <span class="type"></span>
+								</div>
+								<div class="li">
+									<span>主办方：</span> <span class="host"></span>
+								</div>
+								<div class="li">
+									<span>策划方：</span> <span class="plan"></span>
+								</div>
+								<div class="li">
+									<span>举办地点：</span> <span class="place"></span>
+								</div>
+								<div class="li">
+									<span>会议酒店：</span> <span class="hotel"></span>
+								</div>
+								<div class="li">
+									<span>会议车辆：</span> <span class="car"></span>
+								</div>
+								<div class="li">
+									<span>开始结束时间：</span> <span class="setime"></span>
+								</div>
+								<div class="li">
+									<span>负责人：</span> <span class="director_name"></span>
+								</div>
+								<div class="li">
+									<span>创建时间：</span> <span class="create_time"></span>
+								</div>
+								<div class="li">
+									<span>备注：</span> <span class="comment"></span>
+								</div>
+								<div class="li">
+									<span>简介：</span> <span class="brief"></span>
+								</div>
 							</div>
-							<div class="li">
-								<span>类型：</span> <span class="type"></span>
-							</div>
-							<div class="li">
-								<span>主办方：</span> <span class="host"></span>
-							</div>
-							<div class="li">
-								<span>策划方：</span> <span class="plan"></span>
-							</div>
-							<div class="li">
-								<span>举办地点：</span> <span class="place"></span>
-							</div>
-							<div class="li">
-								<span>会议酒店：</span> <span class="hotel"></span>
-							</div>
-							<div class="li">
-								<span>会议车辆：</span> <span class="car"></span>
-							</div>
-							<div class="li">
-								<span>开始结束时间：</span> <span class="setime"></span>
-							</div>
-							<div class="li">
-								<span>负责人：</span> <span class="director_name"></span>
-							</div>
-							<div class="li">
-								<span>创建时间：</span> <span class="create_time"></span>
-							</div>
-							<div class="li">
-								<span>备注：</span> <span class="comment"></span>
-							</div>
-							<div class="li">
-								<span>简介：</span> <span class="brief"></span>
-							</div>
-						</div>
-						<!--	<div class="btn_fun">
-								<a data-toggle="modal" data-target="#alter_room">选择消息模板</a>
-								<a href="javascript:void(0)">胸卡设计</a> <a href="javascript:void(0)">选择酒店</a>
-								<a href="javascript:void(0)">会议管理人员</a> <a href="javascript:void(0)">签到点</a>
-							</div>-->
-						<div class="d_list">
-							<div class="list_title">二维码</div>
-							<div class="QRcode img">
-								<img src="">
-							</div>
-							<div class="list_title">logo图</div>
-							<div class="logo img">
-								<img src="">
+							<!--	<div class="btn_fun">
+									<a data-toggle="modal" data-target="#alter_room">选择消息模板</a>
+									<a href="javascript:void(0)">胸卡设计</a> <a href="javascript:void(0)">选择酒店</a>
+									<a href="javascript:void(0)">会议管理人员</a> <a href="javascript:void(0)">签到点</a>
+								</div>-->
+							<div class="d_list">
+								<div class="list_title">二维码</div>
+								<div class="QRcode img">
+									<img src="">
+								</div>
+								<div class="list_title">logo图</div>
+								<div class="logo img">
+									<img src="">
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
+				</if>
 			</div>
+
 		</div>
 	</div>
 	<script>

@@ -100,21 +100,29 @@ $(function(){
 	});
 	// 提交按钮
 	$('.submit button').on('click', function(){
-		var data = $('#form').serialize();
-		ThisObject.object.loading.loading();
-		Common.ajax({
-			data    :data,
-			callback:function(r){
-				ThisObject.object.loading.complete();
-				console.log(r);
-				if(r.data.status){
-					ThisObject.object.toast.toast('添加成功！');
-					window.location.href = r.__return__;
-				}else{
-					ThisObject.object.toast.toast('添加失败！');
+		var data  = $('#form').serialize();
+		var price = $('input[name=price]').val();
+		if(price == ''){
+			ThisObject.object.toast.toast('金额不能为空！');
+		}else{
+			ThisObject.object.loading.loading();
+			Common.ajax({
+				data    :data,
+				callback:function(r){
+					ThisObject.object.loading.complete();
+					if(r.status){
+						ThisObject.object.toast.toast(r.message);
+						ThisObject.object.toast.onQuasarHidden(function(){
+							//noinspection JSUnresolvedVariable
+							window.location.href = r.__return__;
+						});
+					}else{
+						ThisObject.object.toast.toast(r.message);
+					}
 				}
-			},
-		})
+			})
+		}
 	});
 });
+
 

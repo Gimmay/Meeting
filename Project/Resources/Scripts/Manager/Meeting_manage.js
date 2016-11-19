@@ -49,9 +49,12 @@ var ScriptObject = {
 	roleListTemp     :'<tr><td width="10%">$i</td><td width="20%">$name</td><td width="20%">$level</td><td width="20%">$comment</td><td width="30%"><div class="btn-group" data-id="$id"><button type="button" class="btn btn-default btn-xs choose_employee" data-toggle="modal" data-target="#add_management">添加</button><button type="button" class="btn btn-default btn-xs see_employee" data-toggle="modal" data-target="#see_management">查看人员</button></div></td></tr>',
 	employeeListTemp :'<tr><td class="check_item_e"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$department</td><td>$position</td><td>$mobile</td><td>$company</td></tr>',
 	employeeListTemp2:'<tr data-id="$id"><td>$num</td><td class="name">$name</td><td>$gender</td><td>$department</td><td>$position</td><td>$mobile</td><td>$company</td><td><button type="button" class="btn btn-default btn-xs delete_employee" data-toggle="modal" data-target="#delete_management">删除</button></td></tr>',
-}
+};
 $(function(){
 	ScriptObject.bindEvent();
+	var quasar_script = document.getElementById('quasar_script');
+	// 实例化Url类
+	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
 	// 发布
 	// 单个会议删除
 	$('.delete_btn').on('click', function(){
@@ -158,7 +161,7 @@ $(function(){
 				location.replace(document.referrer);
 			}
 		})
-	})
+	});
 	// 会议详情
 	$('.details_btn').on('click', function(){
 		var id = $(this).attr('data-id');
@@ -229,8 +232,8 @@ $(function(){
 				console.log(data);
 				$.each(data, function(index, value){
 					str += ScriptObject.roleListTemp.replace('$i', index+1).replace('$name', value.name)
-									   .replace('$level', value.level).replace('$comment', value.comment)
-									   .replace('$id', value.id)
+						.replace('$level', value.level).replace('$comment', value.comment)
+						.replace('$id', value.id)
 				});
 				$('#role_list').html(str);
 				// 添加人
@@ -253,10 +256,10 @@ $(function(){
 									var gender = '女';
 								}
 								str += ScriptObject.employeeListTemp.replace('$num', index+1)
-												   .replace('$name', value.name)
-												   .replace('$id', value.id).replace('$position', value.position)
-												   .replace('$mobile', value.mobile).replace('$company', value.company)
-												   .replace('$gender', gender).replace('$department', value.d_name);
+									.replace('$name', value.name)
+									.replace('$id', value.id).replace('$position', value.position)
+									.replace('$mobile', value.mobile).replace('$company', value.company)
+									.replace('$gender', gender).replace('$department', value.d_name);
 								i++;
 							});
 							$('#add_management').find('.current_attendee').text(i);
@@ -298,10 +301,10 @@ $(function(){
 						var gender = '女';
 					}
 					str += ScriptObject.employeeListTemp.replace('$num', index+1)
-									   .replace('$name', value.name)
-									   .replace('$id', value.id).replace('$position', value.position)
-									   .replace('$mobile', value.mobile).replace('$company', value.company)
-									   .replace('$gender', gender).replace('$department', value.d_name);
+						.replace('$name', value.name)
+						.replace('$id', value.id).replace('$position', value.position)
+						.replace('$mobile', value.mobile).replace('$company', value.company)
+						.replace('$gender', gender).replace('$department', value.d_name);
 					i++;
 				});
 				$('#add_management').find('.current_attendee').text(i);
@@ -346,6 +349,21 @@ $(function(){
 			ManageObject.object.toast.toast('添加失败，未选择员工！！');
 		}
 	});
+	// 点击过滤标签-全部
+	$('#filter_btn_all').on('click', function(){
+		var new_url = url_object.delUrlParam('type');
+		location.replace(new_url);
+	});
+	// 点击过滤标签-进行中
+	$('#filter_btn_ing').on('click', function(){
+		var new_url = url_object.setUrlParam('type', 'ing');
+		location.replace(new_url);
+	});
+	// 点击过滤标签-已结束
+	$('#filter_btn_fin').on('click', function(){
+		var new_url = url_object.setUrlParam('type', 'fin');
+		location.replace(new_url);
+	});
 });
 function get_employee_list(mid, rid){
 	Common.ajax({
@@ -363,10 +381,10 @@ function get_employee_list(mid, rid){
 						var gender = '女';
 					}
 					str += ScriptObject.employeeListTemp2.replace('$num', index+1)
-									   .replace('$name', value.name)
-									   .replace('$id', value.id).replace('$position', value.position)
-									   .replace('$mobile', value.mobile).replace('$company', value.company)
-									   .replace('$gender', gender).replace('$department', value.d_name);
+						.replace('$name', value.name)
+						.replace('$id', value.id).replace('$position', value.position)
+						.replace('$mobile', value.mobile).replace('$company', value.company)
+						.replace('$gender', gender).replace('$department', value.d_name);
 				});
 				$('#employee_body1').html(str);
 				$('.delete_employee').on('click', function(){

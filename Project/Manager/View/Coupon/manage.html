@@ -52,7 +52,7 @@
 										<button type="submit" class="btn btn-default main_search">搜索</button>
 									</span>
 								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('manage')}>">查看所有</a>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
 							</form>
 						</div>
 						<div class="table_wrap">
@@ -62,15 +62,15 @@
 										<td width="4%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="8%">序号</td>
-										<td width="10%">券名称</td>
+										<td width="6%">序号</td>
+										<td width="8%">券名称</td>
 										<td width="8%">类型</td>
 										<td width="8%">数量</td>
-										<td width="10%">价格</td>
+										<td width="8%">价格</td>
 										<td width="10%">开始时间</td>
 										<td width="10%">结束时间</td>
-										<td width="10%">备注</td>
-										<td width="22%">操作</td>
+										<td width="8%">状态</td>
+										<td width="30%">操作</td>
 									</tr>
 								</thead>
 								<tbody>
@@ -88,13 +88,22 @@
 											<td class="price"><{$list.price}></td>
 											<td class="start_time"><{$list.start_time|date='Y-m-d',###}></td>
 											<td class="end_time"><{$list.end_time|date='Y-m-d',###}></td>
-											<td class="comment"><{$list.comment}></td>
+											<td class="status">
+												<switch name="list.status">
+													<case value="0">禁用</case>
+													<case value="1">可用</case>
+												</switch>
+											</td>
 											<td>
 												<div class="btn-group" data-id="<{$list.id}>">
-													<if condition="$max_role_level elt $single['level']">
-														<a href="<{:U('details',['id'=>$list['id'], 'mid'=>I('get.mid', 0, 'int')])}>" type="button" class="btn btn-default btn-xs seeList">查看列表</a>
-														<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>
-														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button>
+													<a href="<{:U('details',['id'=>$list['id'], 'mid'=>I('get.mid', 0, 'int')])}>" type="button" class="btn btn-default btn-xs seeList">查看列表</a>
+													<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>
+													<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button>
+													<if condition="$list['status'] eq 0">
+														<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_coupon', 'id'=>$list['id']])}>" class="btn btn-success btn-xs">启用</a>
+													</if>
+													<if condition="$list['status'] eq 1">
+														<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_coupon', 'id'=>$list['id']])}>" class="btn btn-danger btn-xs">禁用</a>
 													</if>
 												</div>
 											</td>
@@ -141,9 +150,14 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="coupon_type1" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>类型：</label>
+							<label for="coupon_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>类型：</label>
 							<div class="col-sm-10">
-								<div id="coupon_type1"></div>
+								<select name="type" id="coupon_type" class="form-control">
+									<option value="0">门票</option>
+									<option value="1">产品</option>
+									<option value="2">其他</option>
+								</select>
+								<!--<div id="coupon_type1"></div>-->
 							</div>
 						</div>
 						<div class="form-group">
@@ -257,9 +271,14 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="price_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>类型：</label>
+							<label for="coupon_type_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>类型：</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control price" name="type" id="type">
+								<select name="type" id="coupon_type_a" class="form-control">
+									<option value="0">门票</option>
+									<option value="1">产品</option>
+									<option value="2">其他</option>
+								</select>
+								<!--<input type="text" class="form-control price" name="type" id="type">-->
 							</div>
 						</div>
 						<div class="form-group">
@@ -324,7 +343,8 @@
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否删除已选券？
+						是否删除已选<span class="sAmount"></span>张券？
+
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -346,15 +366,15 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				typeSelect     :$('#coupon_type1,#coupon_type2').QuasarSelect({
-					name        :'type',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting_list)}>',
-					idInput     :'selected_coupon_type',
-					idHidden    :'selected_coupon_type_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
+				/*typeSelect     :$('#coupon_type1,#coupon_type2').QuasarSelect({
+				 name        :'type',
+				 classStyle  :'form-control',
+				 data        :'<{:json_encode($meeting_list)}>',
+				 idInput     :'selected_coupon_type',
+				 idHidden    :'selected_coupon_type_form',
+				 placeholder :'',
+				 hasEmptyItem:false
+				 }),*/
 				createStartTime:jeDate({
 					dateCell:"#start_time",
 					format  :"YYYY-MM-DD hh:mm:ss",

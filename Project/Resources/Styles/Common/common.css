@@ -807,6 +807,7 @@ textarea{
 
 /* 列表搜索 */
 .repertory{
+	position      : relative;
 	width         : 100%;
 	padding       : 10px 30px 10px 30px;
 	border-bottom : 1px solid #E1E1E1;

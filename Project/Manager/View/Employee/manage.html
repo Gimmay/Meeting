@@ -126,6 +126,12 @@
 													<if condition="$permission_list['EMPLOYEE.DELETE'] eq 1">
 														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_employee">删除</button>
 													</if>
+													<if condition="$single['status'] eq 0">
+														<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_employee', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
+													</if>
+													<if condition="$single['status'] eq 1">
+														<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_employee', 'id'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
+													</if>
 												</div>
 											</td>
 										</tr>

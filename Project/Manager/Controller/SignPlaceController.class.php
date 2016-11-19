@@ -153,10 +153,10 @@
 				$receivables_type_model = D('ReceivablesType');
 				/** @var \Manager\Model\EmployeeModel $employee_model */
 				$employee_model = D('Employee');
+				/** @var \Manager\Model\PosMachineModel $pos_machine_model */
+				$pos_machine_model = D('PosMachine');
 				/** @var \Core\Model\EmployeeModel $employee_personal_model */
 				$employee_personal_model = D('Core/Employee');
-				/** @var \Manager\Model\ReceivablesModel $receivables_model */
-				$receivables_model = D('Receivables');
 				/** @var \Core\Model\JoinSignPlaceModel $model */
 				$model   = D('Core/JoinSignPlace');
 				$options = [];
@@ -240,20 +240,19 @@
 				//支付类型
 				$pay_method_list = $pay_method_model->getPayMethodSelectList();
 				//收款类型
-				$receivables_type_result = $receivables_type_model->getReceivablesTypeSelectList();
+				$receivables_type_list = $receivables_type_model->getReceivablesTypeSelectList();
+				//POS机
+				$pos_machine_list = $pos_machine_model->getPosMachineSelectList();
 				//当前收款人
 				$employee_personal_result = $employee_personal_model->findEmployee(1, ['id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')]);
 				/* 会议对应的券记录 */
 				$coupon_item_result = $coupon_item_model->findCouponItem(2, ['mid' => $this->meetingID, 'status' => 0]);
-				/* 收款类型列表(for select component) */
-				$receivables_type_list = $receivables_model->getReceivablesTypeSelectList();
 				/* 员工列表(for select component) */
 				$employee_list = $employee_model->getEmployeeSelectList();
 				/* 获取签到点列表(for select component) */
 				$sign_place_list = $sign_place_model->getRecordSelectList($this->meetingID);
 				/* 向视图输出数据 */
 				$this->assign('sign_place_list', $sign_place_list);
-				$this->assign('receivables_type_list', $receivables_type_list);
 				$this->assign('statistics', [
 					'signed'          => $signed_count,
 					'not_signed'      => $all_count-$signed_count,
@@ -264,8 +263,9 @@
 					'not_receivables' => $not_receivables_count
 				]);
 				$this->assign('employee_info', $employee_personal_result);
-				$this->assign('pay_list', $pay_method_list);
-				$this->assign('receivables_type_list', $receivables_type_result);
+				$this->assign('pay_method_list', $pay_method_list);
+				$this->assign('pos_machine_list', $pos_machine_list);
+				$this->assign('receivables_type_list', $receivables_type_list);
 				$this->assign('employee_list', $employee_list);
 				$this->assign('coupon_code_list', $coupon_item_result);
 				$this->assign('list', $client_list);

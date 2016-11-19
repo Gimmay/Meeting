@@ -24,146 +24,141 @@
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
-	<div id="mb_wrap" style="padding-bottom: 0.8rem">
-		<form action="" method="post" id="form">
-			<input type="hidden" name="requestType" value="create_receivables">
-			<div class="mb_body">
-				<div class="content">
-					<ul class="info_list">
-						<li class="info_li">
-							<div class="item">
-								<span class="labe"><b style="vertical-align: middle;color: red;">*</b>客户姓名:</span>
-								<div class="inp">
-									<input type="text" name="name" value="<{$client.name}>" disabled="true">
-									<!--<div id="name"></div>-->
-								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">金&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;额:</span>
-								<div class="inp">
-									<input type="text" name="price">
-								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">支付方式:</span>
-								<div>
-									<select name="method" id="method" class="form-control input-sm">
-										<volist name="method" id="list">
-											<option value="<{$list.id}>"><{$list.name}></option>
-										</volist>
-									</select>
-								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">收款类型:</span>
-								<div>
-									<select name="type" id="type" class="form-control input-sm">
-										<volist name="receivables_type" id="info">
-											<option value="<{$info.id}>"><{$info.name}></option>
-										</volist>
-									</select>
-								</div>
-							</div>
-						</li>
-						<!--<li class="info_li">
-							<div class="item">
-								<span class="labe">收款人:</span>
-								<div class="inp">
-									<input type="text" name="payee_id" value="<{$employee.name}>" disabled="true">
-								</div>
-							</div>
-						</li>-->
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">代金券:</span>
-								<div class="inp">
-									<input type="text" name="coupon_name">
-								</div>
-								<input type="hidden" name="coupon_id">
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">收款地点:</span>
-								<div class="inp">
-									<input type="text" name="place">
-								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">来源状态:</span>
-								<div>
-									<select name="source_type" id="source_type" class="form-control input-sm">
-										<option value="0">会前收款</option>
-										<option value="1">会中收款</option>
-										<option value="2">会后收款</option>
-									</select>
-								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item">
-								<span class="labe">收款时间:</span>
-								<div>
-									<input type="date" name="receivables_time" value="<{:date('Y-m-d H:i:s')}>" class="form-control">
-									<!--<input type="date" name="receivables_time" value="1993-05-08 12:00:00" class="form-control">-->
-								</div>
-							</div>
-						</li>
-						<li class="info_li">
-							<div class="item" style="height: auto">
-								<span class="labe">备注:</span>
-								<div>
-									<textarea name="comment" class="form-control"></textarea>
-								</div>
-							</div>
-						</li>
-						<input type="hidden" name="mid" value="<{:I('get.mid', 0, 'int')}>">
-					</ul>
-				</div>
-				<div class="submit">
-					<button type="button">提交</button>
-				</div>
+	<if condition="$permission_list['WEIXIN.CLIENT.RECEIVABLES'] eq 1">
+		<div id="mb_wrap" style="padding-bottom: 0.8rem">
+			<div class="top_title">
+				<a  href="javascript:history.go(-1)"  class="back glyphicon glyphicon-chevron-left"></a>
 			</div>
-		</form>
-	</div>
-	<div id="mb_layer" class="hide">
-		<div class="search">
-			<form action="" method="get" id="form_modal">
-				<div class="input-group repertory_text">
-					<input type="search" name="keyword" class="form-control" placeholder="姓名/拼音简码" id="keyword">
-					<span class="input-group-btn">
-						<button type="button" class="btn btn-default main_search glyphicon glyphicon-search" style="top: 0;color: rgba(0,0,0,.5);"></button>
-					</span>
+			<form action="" method="post" id="form">
+				<input type="hidden" name="requestType" value="create_receivables">
+				<div class="mb_body">
+					<div class="content">
+						<ul class="info_list">
+							<li class="info_li">
+								<div class="item">
+									<span class="labe"><b style="vertical-align: middle;color: red;">*</b>客户姓名:</span>
+									<div>
+										<span style="line-height: 0.6rem"><{$client.name}></span>
+									</div>
+								</div>
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe"><b style="vertical-align: middle;color: red;">*</b>金&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;额:</span>
+									<div class="inp">
+										<input type="text" name="price">
+									</div>
+								</div>
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">支付方式:</span>
+									<div>
+										<select name="method" id="method" class="form-control input-sm">
+											<volist name="method" id="list">
+												<option value="<{$list.id}>"><{$list.name}></option>
+											</volist>
+										</select>
+									</div>
+								</div>
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">收款类型:</span>
+									<div>
+										<select name="type" id="type" class="form-control input-sm">
+											<volist name="receivables_type" id="info">
+												<option value="<{$info.id}>"><{$info.name}></option>
+											</volist>
+										</select>
+									</div>
+								</div>
+							</li>
+							<!--<li class="info_li">
+								<div class="item">
+									<span class="labe">收款人:</span>
+									<div class="inp">
+										<input type="text" name="payee_id" value="<{$employee.name}>" disabled="true">
+									</div>
+								</div>
+							</li>-->
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">代金券:</span>
+									<div class="inp">
+										<input type="text" name="coupon_name">
+									</div>
+									<input type="hidden" name="coupon_id">
+								</div>
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">收款地点:</span>
+									<div class="inp">
+										<input type="text" name="place">
+									</div>
+								</div>
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">来源状态:</span>
+									<div>
+										<select name="source_type" id="source_type" class="form-control input-sm">
+											<option value="0">会前收款</option>
+											<option value="1">会中收款</option>
+											<option value="2">会后收款</option>
+										</select>
+									</div>
+								</div>
+							</li>
+							<li class="info_li">
+								<div class="item" style="height: auto">
+									<span class="labe">备注:</span>
+									<div>
+										<textarea name="comment" class="form-control"></textarea>
+									</div>
+								</div>
+							</li>
+							<input type="hidden" name="mid" value="<{:I('get.mid', 0, 'int')}>">
+						</ul>
+					</div>
+					<div class="submit">
+						<button type="button">提交</button>
+					</div>
 				</div>
 			</form>
 		</div>
-		<div class="client_list">
-			<volist name="coupon_item" id="unit_list">
-				<div class="list_item open">
-					<div class="title"><{$key}> (<{:count($unit_list)}>)<span class="icon glyphicon glyphicon-chevron-down"></span>
+		<div id="mb_layer" class="hide">
+			<div class="search">
+				<form action="" method="get" id="form_modal">
+					<div class="input-group repertory_text">
+						<input type="search" name="keyword" class="form-control" placeholder="姓名/拼音简码" id="keyword">
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default main_search glyphicon glyphicon-search" style="top: 0;color: rgba(0,0,0,.5);"></button>
+					</span>
 					</div>
-					<ul class="list_item_ul clearfix">
-						<volist name="unit_list" id="single">
-							<li class="client_item">
-								<a data-id="<{$single.id}>"> <span class="name"><{$single.code}></span> </a>
-							</li>
-						</volist>
-					</ul>
-				</div>
-			</volist>
+				</form>
+			</div>
+			<div class="client_list">
+				<volist name="coupon_item" id="unit_list">
+					<div class="list_item open">
+						<div class="title"><{$key}> (<{:count($unit_list)}>)<span class="icon glyphicon glyphicon-chevron-down"></span>
+						</div>
+						<ul class="list_item_ul clearfix">
+							<volist name="unit_list" id="single">
+								<li class="client_item">
+									<a data-id="<{$single.id}>"> <span class="name"><{$single.code}></span> </a>
+								</li>
+							</volist>
+						</ul>
+					</div>
+				</volist>
+			</div>
+			<div class="footer_coupon">
+				<button type="button" class="btn btn-default btn-sm confirm_close">确认并关闭</button>
+			</div>
 		</div>
-		<div class="footer_coupon">
-			<button type="button" class="btn btn-default btn-sm confirm_close">确认并关闭</button>
-		</div>
-	</div>
+	</if>
 	<script>
 		var ThisObject = {
 			object:{

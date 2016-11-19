@@ -566,57 +566,39 @@
 							<div class="form-group">
 								<label for="price" class="col-sm-2 control-label">金额：</label>
 								<div class="col-sm-10">
-									<input type="number" name="price" id="price" class="form-control">
-									<div id="idCalculadora" class="hide clearfix">
-										<div id="calcuator">
-											<input type="text" id="input-box" value="0" size="21" maxlength="21" readonly="readonly"/>
-											<div id="btn-list">
-												<div onclick="operator('clear')" class=" btn-30 btn-radius color-red clear-marginleft">C</div>
-												<div onclick="operator('opposite')" class=" btn-30 btn-radius color-blue">+/-</div>
-												<div onclick="operator('percent')" class=" btn-30 btn-radius color-blue">%</div>
-												<div onclick="operator('backspace')" class=" btn-70 btn-radius color-red font-14">←</div>
-												<div onclick="typetoinput('7')" class=" btn-30 btn-radius clear-marginleft">7</div>
-												<div onclick="typetoinput('8')" class=" btn-30 btn-radius">8</div>
-												<div onclick="typetoinput('9')" class=" btn-30 btn-radius">9</div>
-												<div onclick="operator('plus')" class=" btn-30 btn-radius color-blue font-14">+</div>
-												<div onclick="operator('minus')" class=" btn-30 btn-radius color-blue font-14">-</div>
-												<div onclick="typetoinput('4')" class=" btn-30 btn-radius clear-marginleft">4</div>
-												<div onclick="typetoinput('5')" class=" btn-30 btn-radius">5</div>
-												<div onclick="typetoinput('6')" class=" btn-30 btn-radius">6</div>
-												<div onclick="operator('multiply')" class=" btn-30 btn-radius color-blue font-14">×</div>
-												<div onclick="operator('divide')" class=" btn-30 btn-radius color-blue font-12">÷</div>
-												<div onclick="typetoinput('1')" class=" btn-30 btn-radius clear-marginleft">1</div>
-												<div onclick="typetoinput('2')" class=" btn-30 btn-radius">2</div>
-												<div onclick="typetoinput('3')" class=" btn-30 btn-radius">3</div>
-												<div onclick="operator('pow')" class=" btn-30 btn-radius color-blue font-14">×²</div>
-												<div onclick="operator('sqrt')" class=" btn-30 btn-radius color-blue font-12">√</div>
-												<div onclick="typetoinput('0')" class=" btn-70 btn-radius clear-marginleft">0</div>
-												<div onclick="typetoinput('.')" class=" btn-30 btn-radius">.</div>
-												<div onclick="operator('result')" class=" btn-70 btn-radius color-red font-14 equal">=</div>
-											</div>
-											<div class="close_calcuator">
-												<button type="button" class="btn btn-default btn-sm">关闭</button>
-											</div>
-										</div>
-									</div>
+									<input type="text" name="price" id="price" class="form-control">
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="method" class="col-sm-2 control-label">支付方式：</label>
+								<label class="col-sm-2 control-label">支付方式：</label>
 								<div class="col-sm-10">
-									<div id="method"></div>
+									<select name="method" class="form-control">
+										<volist name="pay_method_list" id="single">
+											<option value="<{$single.value}>"><{$single.html}></option>
+										</volist>
+									</select>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="type" class="col-sm-2 control-label">收款类型：</label>
+								<label class="col-sm-2 control-label">收款类型：</label>
 								<div class="col-sm-10">
-									<div id="type"></div>
+									<select name="type" class="form-control">
+										<volist name="receivables_type_list" id="single">
+											<option value="<{$single.value}>"><{$single.html}></option>
+										</volist>
+
+									</select>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="payee_id" class="col-sm-2 control-label">收款人：</label>
+								<label class="col-sm-2 control-label">POS机：</label>
 								<div class="col-sm-10">
-									<div id="payee_id"></div>
+									<select name="pos_id" class="form-control">
+										<volist name="pos_machine_list" id="single">
+											<option value="<{$single.value}>"><{$single.html}></option>
+										</volist>
+
+									</select>
 								</div>
 							</div>
 							<div class="form-group">
@@ -717,24 +699,24 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				method               :$('#method').QuasarSelect({
-					name        :'method',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($pay_list)}>',
-					idInput     :'selected_method',
-					idHidden    :'selected_method_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				type                 :$('#type').QuasarSelect({
-					name        :'type',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($receivables_type_list)}>',
-					idInput     :'selected_type',
-					idHidden    :'selected_type_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
+//				method               :$('#method').QuasarSelect({
+//					name        :'method',
+//					classStyle  :'form-control',
+//					data        :'<{:json_encode($pay_list)}>',
+//					idInput     :'selected_method',
+//					idHidden    :'selected_method_form',
+//					placeholder :'',
+//					hasEmptyItem:false
+//				}),
+//				type                 :$('#type').QuasarSelect({
+//					name        :'type',
+//					classStyle  :'form-control',
+//					data        :'<{:json_encode($receivables_type_list)}>',
+//					idInput     :'selected_type',
+//					idHidden    :'selected_type_form',
+//					placeholder :'',
+//					hasEmptyItem:false
+//				}),
 				payeeName            :$('#payee_id').QuasarSelect({
 					name        :'payee_id',
 					classStyle  :'form-control',

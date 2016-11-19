@@ -88,9 +88,9 @@
 			return $result;
 		}
 
-		public function alterRole($id, $data){
+		public function alterRole($filter, $data){
 			if($this->create($data)){
-				$result = $this->where(['id' => ['in', $id]])->save($data);
+				$result = $this->where($filter)->save($data);
 
 				return $result ? ['status' => true, 'message' => '修改成功'] : [
 					'status'  => false,

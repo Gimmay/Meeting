@@ -19,8 +19,8 @@
 		protected $meetingID  = 0;
 
 		public function _initialize(){
-			$_SESSION['MOBILE_WEIXIN_ID']   = 1090;
-			$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
+//			$_SESSION['MOBILE_WEIXIN_ID']   = 1090;
+//			$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
 			parent::_initialize();
 			$meeting_logic = new MeetingLogic();
 			$meeting_logic->initializeStatus();
@@ -55,10 +55,13 @@
 		}
 
 		public function addClient(){
+			$this->weixinID = $this->getWeixinID();
+			$this->_getEmployeeID();
+			$this->_getMeetingParam();
 			$logic = new ManagerLogic();
 			if(IS_POST){
-				$type   = 'addClient:create_create';
-				$result = $logic->handlerRequest($type, ['employeeID' => I('session.MOBILE_EMPLOYEE_ID', 0, 'int')]);
+				$type   = 'addClient:create';
+				$result = $logic->handlerRequest($type, ['employeeID' => $this->employeeID]);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);
 					echo json_encode($result);
@@ -70,7 +73,12 @@
 				}
 				exit;
 			}
-			$this->display();
+			$permission_logic = new PermissionLogic();
+			if($permission_logic->hasPermission('WEIXIN.CLIENT.CREATE', $this->employeeID)){
+				$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
+				$this->display();
+			}
+			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.CLIENT.CREATE']);
 		}
 
 		public function client(){
@@ -93,8 +101,7 @@
 				exit;
 			}
 			$permission_logic = new PermissionLogic();
-			$permission       = $permission_logic->hasPermission('WEIXIN.CLIENT.VIEW', $this->employeeID);
-			if($permission){
+			if($permission_logic->hasPermission('WEIXIN.CLIENT.VIEW', $this->employeeID)){
 				$client_logic = new ClientLogic();
 				$cid          = I('get.cid', 0, 'int');
 				$mid          = I('get.mid', 0, 'int');
@@ -105,53 +112,73 @@
 				$join_result   = $join_model->findRecord(1, ['cid' => $cid, 'mid' => $mid]);
 				$info          = $client_logic->getClientInformation($cid);
 				$meeting       = $meeting_model->findMeeting(1, ['id' => $mid]);
+				$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
 				$this->assign('list', $join_result);
 				$this->assign('info', $info);
 				$this->assign('meeting', $meeting);
 				$this->display();
 			}
-			else $this->redirect('Error/notPermission');
+			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.CLIENT.VIEW']);
 		}
 
 		public function clientList(){
 			$this->weixinID = $this->getWeixinID();
+			$this->_getEmployeeID();
 			$this->_getMeetingParam();
-			$logic       = new ManagerLogic();
-			$client_list = $logic->findData('clientList:find_client_list', ['mid' => I('get.mid', 0, 'int')]);
-			if(!isset($_GET['sign'])) $title = '所有参会人员';
-			elseif(I('get.sign', 0, 'int') === 0) $title = '未签到人员';
-			elseif(I('get.sign', 0, 'int') === 1) $title = '已签到人员';
-			else $title = '参会人员';
-			$this->assign('title', $title);
-			$this->assign('client_list', $client_list);
-			$this->display();
+			$logic            = new ManagerLogic();
+			$permission_logic = new PermissionLogic();
+			if($permission_logic->hasPermission('WEIXIN.CLIENT.VIEW', $this->employeeID)){
+				$client_list = $logic->findData('clientList:find_client_list', ['mid' => I('get.mid', 0, 'int')]);
+				if(!isset($_GET['sign'])) $title = '所有参会人员';
+				elseif(I('get.sign', 0, 'int') === 0) $title = '未签到人员';
+				elseif(I('get.sign', 0, 'int') === 1) $title = '已签到人员';
+				else $title = '参会人员';
+				$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
+				$this->assign('title', $title);
+				$this->assign('client_list', $client_list);
+				$this->display();
+			}
+			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.CLIENT.VIEW']);
 		}
 
 		public function meetingList(){
 			$this->weixinID = $this->getWeixinID();
 			$this->_getEmployeeID();
-			/** @var \Core\Model\MeetingModel $meeting_model */
-			$meeting_model = D('Core/Meeting');
-			$logic         = new ManagerLogic();
-			$meeting_list  = $meeting_model->findMeeting(2, ['status' => 'not deleted']);
-			$meeting_list  = $logic->setData('meetingList:set_meeting_list', $meeting_list);
-			$this->assign('meeting_list', $meeting_list);
-			$this->display();
+			$permission_logic = new PermissionLogic();
+			if($permission_logic->hasPermission('WEIXIN.MEETING.VIEW', $this->employeeID)){
+				/** @var \Core\Model\MeetingModel $meeting_model */
+				$meeting_model = D('Core/Meeting');
+				$logic         = new ManagerLogic();
+				$meeting_list  = $meeting_model->findMeeting(2, ['status' => 'not deleted']);
+				$meeting_list  = $logic->setData('meetingList:set_meeting_list', $meeting_list);
+				$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
+				$this->assign('meeting_list', $meeting_list);
+				$this->display();
+			}
+			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.MEETING.VIEW']);
 		}
 
 		public function meeting(){
-			/** @var \Core\Model\MeetingModel $meeting_model */
-			$meeting_model = D('Core/Meeting');
-			$logic         = new ManagerLogic();
-			$meeting_info  = $meeting_model->findMeeting(1, [
-				'status' => 'not deleted',
-				'id'     => I('get.mid', 0, 'int')
-			]);
-			$meeting_info  = $logic->setData('meeting:set_extend_column', $meeting_info);
-			$statistics    = $logic->setData('meeting:set_statistics_data', $meeting_info);
-			$this->assign('meeting', $meeting_info);
-			$this->assign('statistics', $statistics);
-			$this->display();
+			$this->weixinID = $this->getWeixinID();
+			$this->_getEmployeeID();
+			$this->_getMeetingParam();
+			$permission_logic = new PermissionLogic();
+			if($permission_logic->hasPermission('WEIXIN.MEETING.VIEW', $this->employeeID)){
+				/** @var \Core\Model\MeetingModel $meeting_model */
+				$meeting_model = D('Core/Meeting');
+				$logic         = new ManagerLogic();
+				$meeting_info  = $meeting_model->findMeeting(1, [
+					'status' => 'not deleted',
+					'id'     => I('get.mid', 0, 'int')
+				]);
+				$meeting_info  = $logic->setData('meeting:set_extend_column', $meeting_info);
+				$statistics    = $logic->setData('meeting:set_statistics_data', $meeting_info);
+				$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
+				$this->assign('meeting', $meeting_info);
+				$this->assign('statistics', $statistics);
+				$this->display();
+			}
+			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.MEETING.VIEW']);
 		}
 
 		public function myCenter(){

@@ -33,168 +33,171 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<div class="main_body">
-					<section class="content">
-						<div class="table_wrap">
-							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="javascript:void(0)">参会人员列表</a>
-								</div>
-								<div class="table_length  pull-right">
-									显示： <select>
-									<option>5</option>
-									<option>10</option>
-									<option selected>20</option>
-									<option>50</option>
-									<option>100</option>
-									<option>150</option>
-									<option>200</option>
-									<option>500</option>
-								</select> 项结果
+				<if condition="$permission_list['CLIENT.VIEW'] eq 1">
+					<div class="main_body">
+						<section class="content">
+							<div class="table_wrap">
+								<div class="nav_tab clearfix">
+									<div class="nav_tab_li active">
+										<a href="javascript:void(0)">参会人员列表</a>
+									</div>
+									<div class="table_length  pull-right">
+										显示： <select>
+										<option>5</option>
+										<option>10</option>
+										<option selected>20</option>
+										<option>50</option>
+										<option>100</option>
+										<option>150</option>
+										<option>200</option>
+										<option>500</option>
+									</select> 项结果
+									</div>
 								</div>
 							</div>
-						</div>
-						<header class="c_header">
-							<div class="function_list clearfix">
-								<if condition="$permission_list['CLIENT.CREATE'] eq 1">
-									<div class="function_btn bg-warning">
-										<a href="<{:U('Client/create',['mid'=>I('get.mid')])}>"> <i></i>
-											<p>新建客户</p>
-										</a>
-									</div>
-								</if>
-								<if condition="$permission_list['CLIENT.DELETE'] eq 1">
-									<div class="function_btn bg-danger batch_delete_btn_confirm">
-										<i></i>
-										<p>批量删除</p>
-									</div>
-								</if>
-								<if condition="$permission_list['CLIENT.REVIEW'] eq 1">
-									<div class="function_btn bg-f63	 batch_review_btn_confirm">
-										<i></i>
-										<p>批量审核</p>
-									</div>
-								</if>
-								<if condition="$permission_list['CLIENT.ANTI-REVIEW'] eq 1">
-									<div class="function_btn bg-f63	 batch_anti_review_btn_confirm">
-										<i></i>
-										<p>取消审核</p>
-									</div>
-								</if>
-								<if condition="$permission_list['CLIENT.SIGN'] eq 1">
-									<div class="function_btn bg-success batch_sign_point">
-										<i></i>
-										<p>批量签到</p>
-									</div>
-								</if>
-								<if condition="$permission_list['CLIENT.ANTI-SIGN'] eq 1">
-									<div class="function_btn bg-success batch_anti_sign_point">
-										<i></i>
-										<p>取消签到</p>
-									</div>
-								</if>
-								<if condition="$permission_list['CLIENT.SEND-INVITATION'] eq 1">
-									<div class="function_btn bg-f63	 batch_send_message_btn_confirm">
-										<i></i>
-										<p>批量发送消息</p>
-									</div>
-								</if>
-								<if condition="$permission_list['CLIENT.IMPORT-EXCEL'] eq 1">
-									<!-- 导入EXCEL -->
-									<div class="function_btn bg-28B778 import_excel_btn">
-										<form action="" method="post" enctype="multipart/form-data" name="fileForm" target="fileUpload">
-											<input type="file" name="excel" accept=".xlsx, .xls" id="excel_file">
-											<input name="requestType" value="import_excel" type="hidden"> <i></i>
-											<button type="submit" id="import_sub">提交</button>
-											<p>导入Excel</p>
-										</form>
-									</div>
-									<iframe name="fileUpload" id="fileUpload_iframe" width="0" height="0" style=" display: none;"></iframe>
-								</if>
-								<if condition="$permission_list['CLIENT.EXPORT-EXCEL'] eq 1">
-									<div class="function_btn bg-info export_excel_btn">
-										<a href="<{:U('exportClientData', ['mid'=>I('get.mid', 0, 'int')])}>"> <i></i>
-											<p>导出Excel</p>
-										</a>
-									</div>
-								</if>
-								<if condition="$permission_list['CLIENT.DOWNLOAD-IMPORT-EXCEL-TEMPLATE'] eq 1">
-									<div class="function_btn bg-f63 download_excel_temp">
-										<a href="<{:U('exportClientDataTemplate', ['mid'=>I('get.mid', 0, 'int')])}>"> <i></i>
-											<p>下载Excel模板</p>
-										</a>
-									</div>
-								</if>
-								<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE'] eq 1">
-									<div class="function_btn bg-warning assign_sign_place">
-										<i></i>
-										<p>分配签到点</p>
-									</div>
-								</if>
-							</div>
-						</header>
-						<div class="repertory clearfix">
-							<form action="" method="get">
-								<div class="input-group repertory_text">
-									<input name="p" type="hidden" value="1">
-									<input type="search" name="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/拼音简码" value="<{:I('get.keyword', '')}>">
+							<header class="c_header">
+								<div class="function_list clearfix">
+									<if condition="$permission_list['CLIENT.CREATE'] eq 1">
+										<div class="function_btn bg-warning">
+											<a href="<{:U('Client/create',['mid'=>I('get.mid')])}>"> <i></i>
+												<p>新建客户</p>
+											</a>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.DELETE'] eq 1">
+										<div class="function_btn bg-danger batch_delete_btn_confirm">
+											<i></i>
+											<p>批量删除</p>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.REVIEW'] eq 1">
+										<div class="function_btn bg-f63	 batch_review_btn_confirm">
+											<i></i>
+											<p>批量审核</p>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.ANTI-REVIEW'] eq 1">
+										<div class="function_btn bg-f63	 batch_anti_review_btn_confirm">
+											<i></i>
+											<p>取消审核</p>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.SIGN'] eq 1">
+										<div class="function_btn bg-success batch_sign_point">
+											<i></i>
+											<p>批量签到</p>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.ANTI-SIGN'] eq 1">
+										<div class="function_btn bg-success batch_anti_sign_point">
+											<i></i>
+											<p>取消签到</p>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.SEND-INVITATION'] eq 1">
+										<div class="function_btn bg-f63	 batch_send_message_btn_confirm">
+											<i></i>
+											<p>批量发送消息</p>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.IMPORT-EXCEL'] eq 1">
+										<!-- 导入EXCEL -->
+										<div class="function_btn bg-28B778 import_excel_btn">
+											<form action="" method="post" enctype="multipart/form-data" name="fileForm" target="fileUpload">
+												<input type="file" name="excel" accept=".xlsx, .xls" id="excel_file">
+												<input name="requestType" value="import_excel" type="hidden"> <i></i>
+												<button type="submit" id="import_sub">提交</button>
+												<p>导入Excel</p>
+											</form>
+										</div>
+										<iframe name="fileUpload" id="fileUpload_iframe" width="0" height="0" style=" display: none;"></iframe>
+									</if>
+									<if condition="$permission_list['CLIENT.EXPORT-EXCEL'] eq 1">
+										<div class="function_btn bg-info export_excel_btn">
+											<a href="<{:U('exportClientData', ['mid'=>I('get.mid', 0, 'int')])}>">
+												<i></i>
+												<p>导出Excel</p>
+											</a>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.DOWNLOAD-IMPORT-EXCEL-TEMPLATE'] eq 1">
+										<div class="function_btn bg-f63 download_excel_temp">
+											<a href="<{:U('exportClientDataTemplate', ['mid'=>I('get.mid', 0, 'int')])}>">
+												<i></i>
+												<p>下载Excel模板</p>
+											</a>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE'] eq 1">
+										<div class="function_btn bg-warning assign_sign_place">
+											<i></i>
+											<p>分配签到点</p>
+										</div>
+									</if>
+								</div>
+							</header>
+							<div class="repertory clearfix">
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input name="p" type="hidden" value="1">
+										<input type="search" name="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default main_search">搜索</button>
 									</span>
-								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有&nbsp;(<{$statistics.total}>人)</a>
-							</form>
-							<form action="" method="get" class="sign_check">
-								<div class="input-group pull-left check_signed">
-									<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;签到 (<{$statistics.signed}>)
-								</div>
-								<div class="input-group pull-left check_not_signed">
-									<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;未签到 (<{$statistics.not_signed}>)
-								</div>
-								<div class="input-group pull-left check_reviewed">
-									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;审核 (<{$statistics.reviewed}>)
-								</div>
-								<div class="input-group pull-left check_not_reviewed">
-									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.not_reviewed}>)
-								</div>
-								<div class="input-group pull-left check_receivables">
-									<input type="radio" name="receivables" class="icheckRed">&nbsp;&nbsp;收款 (<{$statistics.receivables}>)
-								</div>
-								<div class="input-group pull-left check_not_receivables">
-									<input type="radio" name="receivables" class="icheckRed">&nbsp;&nbsp;未收款 (<{$statistics.not_receivables}>)
-								</div>
-							</form>
-						</div>
-						<div class="table_wrap">
-							<table class="table table-bordered" id="tableExcel" style="text-align: center">
-								<thead>
-									<tr>
-										<td width="2%" class="all_check">
-											<input type="checkbox" class="icheck" placeholder="" value="">
-										</td>
-										<td width="3%">序号</td>
-										<td width="5%">姓名</td>
-										<td width="4%">性别</td>
-										<td width="5%">手机号</td>
-										<td width="9%">单位名称</td>
-										<td width="7%">签到时间</td>
-										<td width="5%">签到方式</td>
-										<td width="4%">收款</td>
-										<td width="4%">状态</td>
-										<td width="10%">审核/签到/打印</td>
-										<td width="7%">创建时间</td>
-										<td width="25%">操作</td>
-									</tr>
-								</thead>
-								<tbody>
-									<volist name="list" id="single">
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有&nbsp;(<{$statistics.total}>人)</a>
+								</form>
+								<form action="" method="get" class="sign_check">
+									<div class="input-group pull-left check_signed">
+										<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;签到 (<{$statistics.signed}>)
+									</div>
+									<div class="input-group pull-left check_not_signed">
+										<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;未签到 (<{$statistics.not_signed}>)
+									</div>
+									<div class="input-group pull-left check_reviewed">
+										<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;审核 (<{$statistics.reviewed}>)
+									</div>
+									<div class="input-group pull-left check_not_reviewed">
+										<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.not_reviewed}>)
+									</div>
+									<div class="input-group pull-left check_receivables">
+										<input type="radio" name="receivables" class="icheckRed">&nbsp;&nbsp;收款 (<{$statistics.receivables}>)
+									</div>
+									<div class="input-group pull-left check_not_receivables">
+										<input type="radio" name="receivables" class="icheckRed">&nbsp;&nbsp;未收款 (<{$statistics.not_receivables}>)
+									</div>
+								</form>
+							</div>
+							<div class="table_wrap">
+								<table class="table table-bordered" id="tableExcel" style="text-align: center">
+									<thead>
 										<tr>
-											<td class="check_item">
-												<input type="checkbox" class="icheck" value="<{$single.cid}>" data-join-value="<{$single.id}>" placeholder="">
+											<td width="2%" class="all_check">
+												<input type="checkbox" class="icheck" placeholder="" value="">
 											</td>
-											<td><{$i}></td>
-											<td class="name"><{$single.name}></td>
-											<td>
+											<td width="3%">序号</td>
+											<td width="5%">姓名</td>
+											<td width="4%">性别</td>
+											<td width="5%">手机号</td>
+											<td width="9%">单位名称</td>
+											<td width="7%">签到时间</td>
+											<td width="5%">签到方式</td>
+											<td width="4%">收款</td>
+											<td width="4%">状态</td>
+											<td width="10%">审核/签到/打印</td>
+											<td width="7%">创建时间</td>
+											<td width="25%">操作</td>
+										</tr>
+									</thead>
+									<tbody>
+										<volist name="list" id="single">
+											<tr>
+												<td class="check_item">
+													<input type="checkbox" class="icheck" value="<{$single.cid}>" data-join-value="<{$single.id}>" placeholder="">
+												</td>
+												<td><{$i}></td>
+												<td class="name"><{$single.name}></td>
+												<td>
 												<span class="color-info">
 													<switch name="single.gender">
 														<case value="0">未指定</case>
@@ -202,117 +205,126 @@
 														<case value="2">女</case>
 													</switch>
 												</span>
-											</td>
-											<td><{$single.mobile}></td>
-											<td><{$single.unit}></td>
-											<td>
-												<notempty name="single['sign_time']"><{:date('Y-m-d H:i:s', $single['sign_time'])}></notempty>
-											</td>
-											<td>
-												<switch name="single.sign_type">
-													<case value="1">手动签到</case>
-													<case value="2">微信自主签到</case>
-													<case value="3">微信后台签到</case>
-												</switch>
-											</td>
-											<td>
-												<present name="single['receivables']">
-													<span class="color-red">￥<{$single.receivables}></span>
-													<else/>
-													未收款
-												</present>
-											</td>
-											<td>
-												<switch name="single.status">
-													<case value="0">禁用</case>
-													<case value="1">可用</case>
-												</switch>
-											</td>
-											<td>
-												<switch name="single.review_status">
-													<case value="0">未审核</case>
-													<case value="1"><span class="color-info">已审核</span></case>
-													<case value="2"><span class="color-warning">取消审核</span></case>
-												</switch>
-												/
-												<switch name="single.sign_status">
-													<case value="0">未签到</case>
-													<case value="1"><span class="color-danger">已签到</span></case>
-													<case value="2"><span class="color-warning">取消签到</span></case>
-												</switch>
-												/
-												<switch name="single.print_status">
-													<case value="0">未打印</case>
-													<case value="1"><span class="color-warning">已打印</span></case>
-												</switch>
-											</td>
-											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
-											<td>
-												<div class="btn-group" data-id="<{$single.cid}>" data-join-id="<{$single.id}>">
-													<switch name="single.sign_status">
-														<case value="0">
-															<if condition="$permission_list['CLIENT.SIGN'] and $single['review_status'] eq 1">
-																<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
-															</if>
-														</case>
-														<case value="1">
-															<if condition="$permission_list['CLIENT.ANTI-SIGN']">
-																<button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button>
-															</if>
-														</case>
-														<case value="2">
-															<if condition="$permission_list['CLIENT.SIGN'] and $single['review_status'] eq 1">
-																<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
-															</if>
-														</case>
+												</td>
+												<td><{$single.mobile}></td>
+												<td><{$single.unit}></td>
+												<td>
+													<notempty name="single['sign_time']"><{:date('Y-m-d H:i:s', $single['sign_time'])}></notempty>
+												</td>
+												<td>
+													<switch name="single.sign_type">
+														<case value="1">手动签到</case>
+														<case value="2">微信自主签到</case>
+														<case value="3">微信后台签到</case>
 													</switch>
-													<if condition="($single['review_status'] eq 1) and ($permission_list['CLIENT.SEND-INVITATION'])">
-														<button type="button" class="btn btn-default btn-xs send_message_btn">发送邀请</button>
-													</if>
+												</td>
+												<td>
+													<present name="single['receivables']">
+														<span class="color-red">￥<{$single.receivables}></span>
+														<else/>
+														未收款
+													</present>
+												</td>
+												<td>
+													<switch name="single.status">
+														<case value="0">禁用</case>
+														<case value="1">可用</case>
+													</switch>
+												</td>
+												<td>
 													<switch name="single.review_status">
-														<case value="0">
-															<if condition="$permission_list['CLIENT.REVIEW']">
-																<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
-															</if>
-														</case>
-														<case value="1">
-															<if condition="$permission_list['CLIENT.ANTI-REVIEW']">
-																<button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button>
-															</if>
-														</case>
-														<case value="2">
-															<if condition="$permission_list['CLIENT.REVIEW']">
-																<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
-															</if>
-														</case>
+														<case value="0">未审核</case>
+														<case value="1"><span class="color-info">已审核</span></case>
+														<case value="2"><span class="color-warning">取消审核</span></case>
 													</switch>
-													<if condition="$permission_list['CLIENT.EARN-PAYMENT']">
-														<a class="btn btn-default btn-xs btn_receivables" data-toggle="modal" data-target="#add_receivables">收款</a>
-													</if>
-													<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE']">
-														<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
-													</if>
-													<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int'), 'cid'=>$single['cid']])}>" class="btn btn-default btn-xs print_badge">打印胸卡</a>
-													<if condition="$permission_list['CLIENT.ALTER']">
-														<a href="<{:U('Client/alter',['id'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
-													</if>
-													<if condition="$permission_list['CLIENT.DELETE']">
-														<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_client">删除</button>
-													</if>
-												</div>
-											</td>
-										</tr>
-									</volist>
-								</tbody>
-							</table>
-						</div>
-						<div class="page_wrap">
-							<ul class="pagination">
-								<{$page_show}>
-							</ul>
-						</div>
-					</section>
-				</div>
+													/
+													<switch name="single.sign_status">
+														<case value="0">未签到</case>
+														<case value="1"><span class="color-danger">已签到</span></case>
+														<case value="2"><span class="color-warning">取消签到</span></case>
+													</switch>
+													/
+													<switch name="single.print_status">
+														<case value="0">未打印</case>
+														<case value="1"><span class="color-warning">已打印</span></case>
+													</switch>
+												</td>
+												<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
+												<td>
+													<div class="btn-group" data-id="<{$single.cid}>" data-join-id="<{$single.id}>">
+														<switch name="single.sign_status">
+															<case value="0">
+																<if condition="$permission_list['CLIENT.SIGN'] and $single['review_status'] eq 1">
+																	<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
+																</if>
+															</case>
+															<case value="1">
+																<if condition="$permission_list['CLIENT.ANTI-SIGN']">
+																	<button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button>
+																</if>
+															</case>
+															<case value="2">
+																<if condition="$permission_list['CLIENT.SIGN'] and $single['review_status'] eq 1">
+																	<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
+																</if>
+															</case>
+														</switch>
+														<if condition="($single['review_status'] eq 1) and ($permission_list['CLIENT.SEND-INVITATION'])">
+															<button type="button" class="btn btn-default btn-xs send_message_btn">发送邀请</button>
+														</if>
+														<switch name="single.review_status">
+															<case value="0">
+																<if condition="$permission_list['CLIENT.REVIEW']">
+																	<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
+																</if>
+															</case>
+															<case value="1">
+																<if condition="$permission_list['CLIENT.ANTI-REVIEW']">
+																	<button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button>
+																</if>
+															</case>
+															<case value="2">
+																<if condition="$permission_list['CLIENT.REVIEW']">
+																	<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
+																</if>
+															</case>
+														</switch>
+														<if condition="$permission_list['CLIENT.EARN-PAYMENT']">
+															<a class="btn btn-default btn-xs btn_receivables" data-toggle="modal" data-target="#add_receivables">收款</a>
+														</if>
+														<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE']">
+															<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
+														</if>
+														<if condition="$permission_list['CLIENT.PRINT-BADGE'] eq 1">
+															<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int'), 'cid'=>$single['cid']])}>" class="btn btn-default btn-xs print_badge">打印胸卡</a>
+														</if>
+														<if condition="$permission_list['CLIENT.ALTER']">
+															<a href="<{:U('Client/alter',['id'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
+														</if>
+														<if condition="$permission_list['CLIENT.DELETE']">
+															<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_client">删除</button>
+														</if>
+														<if condition="$single['status'] eq 0 and $permission_list['CLIENT.ENABLE']">
+															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_client', 'id'=>$single['cid']])}>" class="btn btn-success btn-xs">启用</a>
+														</if>
+														<if condition="$single['status'] eq 1 and $permission_list['CLIENT.DISABLE']">
+															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_client', 'id'=>$single['cid']])}>" class="btn btn-danger btn-xs">禁用</a>
+														</if>
+													</div>
+												</td>
+											</tr>
+										</volist>
+									</tbody>
+								</table>
+							</div>
+							<div class="page_wrap">
+								<ul class="pagination">
+									<{$page_show}>
+								</ul>
+							</div>
+						</section>
+					</div>
+				</if>
 			</div>
 		</div>
 	</div>
@@ -591,142 +603,131 @@
 			</div>
 		</div>
 	</if>
-	<!-- 添加收款 -->
-	<div class="modal fade" id="add_receivables" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">收款</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
-					<input type="hidden" name="requestType" value="create_receivables">
-					<input type="hidden" name="cid" value="">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="client_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>客户姓名：</label>
-							<div class="col-sm-10">
-								<input type="text" id="client_name" class="form-control" value="<{$meeting_info.name}>" disabled>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="price" class="col-sm-2 control-label">金额：</label>
-							<div class="col-sm-10">
-								<input type="number" name="price" id="price" class="form-control">
-								<div id="idCalculadora" class="hide clearfix">
-									<div id="calcuator">
-										<input type="text" id="input-box" value="0" size="21" maxlength="21" readonly="readonly"/>
-										<div id="btn-list">
-											<div onclick="operator('clear')" class=" btn-30 btn-radius color-red clear-marginleft">C</div>
-											<div onclick="operator('opposite')" class=" btn-30 btn-radius color-blue">+/-</div>
-											<div onclick="operator('percent')" class=" btn-30 btn-radius color-blue">%</div>
-											<div onclick="operator('backspace')" class=" btn-70 btn-radius color-red font-14">←</div>
-											<div onclick="typetoinput('7')" class=" btn-30 btn-radius clear-marginleft">7</div>
-											<div onclick="typetoinput('8')" class=" btn-30 btn-radius">8</div>
-											<div onclick="typetoinput('9')" class=" btn-30 btn-radius">9</div>
-											<div onclick="operator('plus')" class=" btn-30 btn-radius color-blue font-14">+</div>
-											<div onclick="operator('minus')" class=" btn-30 btn-radius color-blue font-14">-</div>
-											<div onclick="typetoinput('4')" class=" btn-30 btn-radius clear-marginleft">4</div>
-											<div onclick="typetoinput('5')" class=" btn-30 btn-radius">5</div>
-											<div onclick="typetoinput('6')" class=" btn-30 btn-radius">6</div>
-											<div onclick="operator('multiply')" class=" btn-30 btn-radius color-blue font-14">×</div>
-											<div onclick="operator('divide')" class=" btn-30 btn-radius color-blue font-12">÷</div>
-											<div onclick="typetoinput('1')" class=" btn-30 btn-radius clear-marginleft">1</div>
-											<div onclick="typetoinput('2')" class=" btn-30 btn-radius">2</div>
-											<div onclick="typetoinput('3')" class=" btn-30 btn-radius">3</div>
-											<div onclick="operator('pow')" class=" btn-30 btn-radius color-blue font-14">×²</div>
-											<div onclick="operator('sqrt')" class=" btn-30 btn-radius color-blue font-12">√</div>
-											<div onclick="typetoinput('0')" class=" btn-70 btn-radius clear-marginleft">0</div>
-											<div onclick="typetoinput('.')" class=" btn-30 btn-radius">.</div>
-											<div onclick="operator('result')" class=" btn-70 btn-radius color-red font-14 equal">=</div>
-										</div>
-										<div class="close_calcuator">
-											<button type="button" class="btn btn-default btn-sm">关闭</button>
-										</div>
-									</div>
+	<if condition="$permission_list['CLIENT.EARN-PAYMENT'] eq 1">
+		<!-- 添加收款 -->
+		<div class="modal fade" id="add_receivables" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h2 class="modal-title">收款</h2>
+					</div>
+					<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+						<input type="hidden" name="requestType" value="create_receivables">
+						<input type="hidden" name="cid" value="">
+						<div class="modal-body">
+							<div class="form-group">
+								<label for="client_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>客户姓名：</label>
+								<div class="col-sm-10">
+									<input type="text" id="client_name" class="form-control" value="<{$meeting_info.name}>" disabled>
 								</div>
 							</div>
-						</div>
-						<div class="form-group">
-							<label for="method" class="col-sm-2 control-label">支付方式：</label>
-							<div class="col-sm-10">
-								<div id="method"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="type" class="col-sm-2 control-label">收款类型：</label>
-							<div class="col-sm-10">
-								<div id="type"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="payee_id" class="col-sm-2 control-label">收款人：</label>
-							<div class="col-sm-10">
-								<div id="payee_id"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">代金券：</label>
-							<div class="col-sm-10">
-								<div class="coupon_area ">
-									<div class="coupon_box">
-										<div class="coupon_list">
-											<if condition="$coupon_code_list">
-												<volist name="coupon_code_list" id="list">
-													<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="<{$list.id}>"><{$list.code}></a>
-												</volist>
-												<else/>
-												<div style="padding: 10px; text-align: center; font-size: 14px; color: rgba(0,0,0,.72)">&lt;无代金券可用&gt;</div>
-											</if>
-										</div>
-									</div>
+							<div class="form-group">
+								<label for="price" class="col-sm-2 control-label">金额：</label>
+								<div class="col-sm-10">
+									<input type="text" name="price" id="price" class="form-control">
 								</div>
 							</div>
-							<input type="hidden" name="coupon_code">
-						</div>
+							<div class="form-group">
+								<label for="method" class="col-sm-2 control-label">支付方式：</label>
+								<div class="col-sm-10">
+									<select name="method" class="form-control" id="method">
+										<volist name="pay_method_list" id="single">
+											<option value="<{$single.value}>"><{$single.html}></option>
+										</volist>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="type" class="col-sm-2 control-label">收款类型：</label>
+								<div class="col-sm-10">
+									<select name="type" class="form-control" id="type">
+										<volist name="receivables_type_list" id="single">
+											<option value="<{$single.value}>"><{$single.html}></option>
+										</volist>
 
-						<div class="form-group">
-							<label for="place" class="col-sm-2 control-label">收款地点：</label>
-							<div class="col-sm-10">
-								<input type="text" name="place" id="place" class="form-control">
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="pos_id" class="col-sm-2 control-label">POS机：</label>
+								<div class="col-sm-10">
+									<select name="pos_id" class="form-control" id="pos_id">
+										<volist name="pos_machine_list" id="single">
+											<option value="<{$single.value}>"><{$single.html}></option>
+										</volist>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="payee_id" class="col-sm-2 control-label">收款人：</label>
+								<div class="col-sm-10">
+									<div id="payee_id"></div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">代金券：</label>
+								<div class="col-sm-10">
+									<div class="coupon_area ">
+										<div class="coupon_box">
+											<div class="coupon_list">
+												<if condition="$coupon_code_list">
+													<volist name="coupon_code_list" id="list">
+														<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="<{$list.id}>"><{$list.code}></a>
+													</volist>
+													<else/>
+													<div style="padding: 10px; text-align: center; font-size: 14px; color: rgba(0,0,0,.72)">&lt;无代金券可用&gt;</div>
+												</if>
+											</div>
+										</div>
+									</div>
+								</div>
+								<input type="hidden" name="coupon_code">
+							</div>
+
+							<div class="form-group">
+								<label for="place" class="col-sm-2 control-label">收款地点：</label>
+								<div class="col-sm-10">
+									<input type="text" name="place" id="place" class="form-control">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="source_type" class="col-sm-2 control-label">来源状态：</label>
+								<div class="col-sm-10">
+									<select name="source_type" id="source_type" class="form-control">
+										<option value="0">会前收款</option>
+										<option value="1">会中收款</option>
+										<option value="2">会后收款</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="receivables_time" class="col-sm-2 control-label">收款时间：</label>
+								<div class="col-sm-10">
+									<input class="form-control" id="receivables_time" name="receivables_time" value="<{:date('Y-m-d H:i:s')}>">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="comment" class="col-sm-2 control-label">备注：</label>
+								<div class="col-sm-10">
+									<textarea class="form-control comment" name="comment" id="comment"></textarea>
+								</div>
 							</div>
 						</div>
-						<div class="form-group">
-							<label for="source_type" class="col-sm-2 control-label">来源状态：</label>
-							<div class="col-sm-10">
-								<select name="source_type" id="source_type" class="form-control">
-									<option value="0">会前收款</option>
-									<option value="1">会中收款</option>
-									<option value="2">会后收款</option>
-								</select>
-							</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary">确认</button>
 						</div>
-						<div class="form-group">
-							<label for="receivables_time" class="col-sm-2 control-label">收款时间：</label>
-							<div class="col-sm-10">
-								<input class="form-control" id="receivables_time" name="receivables_time" value="<{:date('Y-m-d H:i:s')}>">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="comment" class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-10">
-								<textarea class="form-control comment" name="comment" id="comment"></textarea>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认</button>
-					</div>
-				</form>
+					</form>
+				</div>
 			</div>
 		</div>
-	</div>
+	</if>
 	<script>
 		var ManageObject = {
 			object:{
-				payeeSelect          :$('#payee').QuasarSelect({
+				payeeSelect         :$('#payee').QuasarSelect({
 					name        :'payee',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($employee_list)}>',
@@ -735,17 +736,17 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				receivablesTypeSelect:$('#receivables_type').QuasarSelect({
-					name        :'type',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($receivables_type_list)}>',
-					idInput     :'selected_receivables_type',
-					idHidden    :'selected_receivables_type_form',
-					placeholder :'',
-					hasEmptyItem:false,
-					justInput   :true
-				}),
-				couponSelect         :$('#coupon').QuasarSelect({
+				//				receivablesTypeSelect:$('#receivables_type').QuasarSelect({
+				//					name        :'type',
+				//					classStyle  :'form-control',
+				//					data        :'<{:json_encode($receivables_type_list)}>',
+				//					idInput     :'selected_receivables_type',
+				//					idHidden    :'selected_receivables_type_form',
+				//					placeholder :'',
+				//					hasEmptyItem:false,
+				//					justInput   :true
+				//				}),
+				couponSelect        :$('#coupon').QuasarSelect({
 					name        :'coupon',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($dept)}>',
@@ -754,7 +755,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				batchSignPlaceSelect :$('#batch_sign_place').QuasarSelect({
+				batchSignPlaceSelect:$('#batch_sign_place').QuasarSelect({
 					name        :'sid',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($sign_place_list)}>',
@@ -763,25 +764,25 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				method               :$('#method').QuasarSelect({
-					name        :'method',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($pay_list)}>',
-					idInput     :'selected_method',
-					idHidden    :'selected_method_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				type                 :$('#type').QuasarSelect({
-					name        :'type',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($receivables_type_list)}>',
-					idInput     :'selected_type',
-					idHidden    :'selected_type_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				payeeName            :$('#payee_id').QuasarSelect({
+				//				method               :$('#method').QuasarSelect({
+				//					name        :'method',
+				//					classStyle  :'form-control',
+				//					data        :'<{:json_encode($pay_list)}>',
+				//					idInput     :'selected_method',
+				//					idHidden    :'selected_method_form',
+				//					placeholder :'',
+				//					hasEmptyItem:false
+				//				}),
+				//				type                 :$('#type').QuasarSelect({
+				//					name        :'type',
+				//					classStyle  :'form-control',
+				//					data        :'<{:json_encode($receivables_type_list)}>',
+				//					idInput     :'selected_type',
+				//					idHidden    :'selected_type_form',
+				//					placeholder :'',
+				//					hasEmptyItem:false
+				//				}),
+				payeeName           :$('#payee_id').QuasarSelect({
 					name        :'payee_id',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($employee_list)}>',
@@ -792,7 +793,7 @@
 					defaultHtml :'<{$employee_info[code]}>'+' - '+'<{$employee_info[name]}>',
 					hasEmptyItem:false
 				}),
-				receivablesTime        :jeDate({
+				receivablesTime     :jeDate({
 					dateCell:"#receivables_time",
 					format  :"YYYY-MM-DD hh:mm:ss",
 					//isClear:false,
@@ -800,17 +801,17 @@
 					/*	minDate :"2015-10-19 00:00:00",
 					 maxDate :"2016-11-8 00:00:00"*/
 				}),
-				toast                :$().QuasarToast(),
-				loading              :$().QuasarLoading(),
-				icheck               :$('.icheck').iCheck({
+				toast               :$().QuasarToast(),
+				loading             :$().QuasarLoading(),
+				icheck              :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				}),
-				icheckBlue           :$('.icheckBlue').iCheck({
+				icheckBlue          :$('.icheckBlue').iCheck({
 					checkboxClass:'icheckbox_square-blue',
 					radioClass   :'iradio_square-blue'
 				}),
-				icheckRed            :$('.icheckRed').iCheck({
+				icheckRed           :$('.icheckRed').iCheck({
 					checkboxClass:'icheckbox_square-red',
 					radioClass   :'iradio_square-red'
 				})

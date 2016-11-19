@@ -13,7 +13,15 @@
 			if(!isset($_SESSION['MOBILE_WEIXIN_ID'])){
 				setcookie('WEIXIN_REDIRECT_URL', $_SERVER['REDIRECT_URL'], null, '/');
 				$this->redirect('Weixin/verify', ['redirect' => $redirect]);
+
 				return 0;
-			}else return $_SESSION['MOBILE_WEIXIN_ID'];
+			}
+			else return $_SESSION['MOBILE_WEIXIN_ID'];
+		}
+
+		public function logout(){
+			session_unset();
+			session_destroy();
+			echo '<h1>ok</h1>';
 		}
 	}

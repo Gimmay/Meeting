@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>收款类型 - 会议系统</title>
+	<title>支付方式 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
@@ -44,10 +44,10 @@
 								<div class="nav_tab_li">
 									<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
 								</div>
-								<div class="nav_tab_li active">
+								<div class="nav_tab_li">
 									<a href="<{:U('Receivables/receivablesType', ['mid'=>I('get.mid', 0, 'int')])}>">收款类型</a>
 								</div>
-								<div class="nav_tab_li">
+								<div class="nav_tab_li active">
 									<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机</a>
 								</div>
 							</div>
@@ -59,9 +59,9 @@
 												<button type="submit" class="btn btn-default main_search">搜索</button>
 											</span>
 									</div>
-									<a type="reset" class="btn btn-default main_search" href="<{:U('Receivables/receivablesType', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('Receivables/pos_machine', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
 								</form>
-								<a data-toggle="modal" data-target="#add_receivablesType" data-backdrop="static" class="btn btn-default export_report pull-right bg-00a0e8" style="margin-right: 20px;">添加收款类型</a>
+								<a data-toggle="modal" data-target="#add_pos_machine" data-backdrop="static" class="btn btn-default export_report pull-right bg-00a0e8" style="margin-right: 20px;">新增POS机</a>
 							</div>
 							<div class="tab-content clearfix">
 								<div class="ticket_list">
@@ -76,33 +76,32 @@
 											</tr>
 										</thead>
 										<tbody>
-											<volist name="type_info" id="list">
-											<tr>
-												<td><{$i}></td>
-												<td class="receivablesType"><{$list.name}></td>
-												<td>
-													<switch name="list.status">
-														<case value="0">禁用</case>
-														<case value="1">可用</case>
-													</switch>
-												</td>
-												<td class="comment"><{$list.comment}></td>
-												<td>
-													<div class="btn-group" data-id="<{$list.id}>">
-														<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_receivablesType">修改</button>
-														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_receivablesType">删除</button>
-														<if condition="$list['status'] eq 0">
-															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_receivables_type', 'id'=>$list['id']])}>" class="btn btn-success btn-xs">启用</a>
-														</if>
-														<if condition="$list['status'] eq 1">
-															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_receivables_type', 'id'=>$list['id']])}>" class="btn btn-danger btn-xs">禁用</a>
-														</if>
-													</div>
-												</td>
-											</tr>
+											<volist name="pos" id="list">
+												<tr>
+													<td><{$i}></td>
+													<td class="payMethod"><{$list.name}></td>
+													<td>
+														<switch name="list.status">
+															<case value="0">禁用</case>
+															<case value="1">可用</case>
+														</switch>
+													</td>
+													<td class="comment"><{$list.comment}></td>
+													<td>
+														<div class="btn-group" data-id="<{$list.id}>">
+															<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_pos_machine">修改</button>
+															<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_pos_machine">删除</button>
+															<if condition="$list['status'] eq 0">
+																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_pos_machine', 'id'=>$list['id']])}>" class="btn btn-success btn-xs">启用</a>
+															</if>
+															<if condition="$list['status'] eq 1">
+																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_pos_machine', 'id'=>$list['id']])}>" class="btn btn-danger btn-xs">禁用</a>
+															</if>
+														</div>
+													</td>
+												</tr>
 											</volist>
 										</tbody>
-
 									</table>
 								</div>
 							</div>
@@ -112,23 +111,23 @@
 			</div>
 		</div>
 	</div>
-	<!-- 添加收款类型 -->
-	<div class="modal fade" id="add_receivablesType" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- 添加POS机 -->
+	<div class="modal fade" id="add_pos_machine" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">添加收款类型</h2>
+					<h2 class="modal-title">添加POS机</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
-					<input type="hidden" name="requestType" value="create_type">
+					<input type="hidden" name="requestType" value="create_pos">
 					<input type="hidden" name="cid" value="">
 					<div class="modal-body">
 						<div class="form-group">
-							<label for="receivablesType_name" class="col-sm-2 control-label">收款类型：</label>
+							<label for="pos_machine" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>POS机：</label>
 							<div class="col-sm-10">
-								<input class="form-control" id="receivablesType_name" name="receivablesType_name">
+								<input class="form-control" id="pos_machine" name="name">
 							</div>
 						</div>
 						<div class="form-group">
@@ -146,26 +145,26 @@
 			</div>
 		</div>
 	</div>
-	<!-- 修改收款类型 -->
-	<div class="modal fade" id="alter_receivablesType" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- 修改支付方式 -->
+	<div class="modal fade" id="alter_pos_machine" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">修改收款</h2>
+					<h2 class="modal-title">修改支付方式</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
-					<input type="hidden" name="id" value=""> <input type="hidden" name="requestType" value="alter_type">
+					<input type="hidden" name="id" value=""> <input type="hidden" name="requestType" value="alter_pos">
 					<div class="modal-body">
 						<div class="form-group">
-							<label for="receivablesType_name_a" class="col-sm-2 control-label">收款类型：</label>
+							<label for="pos_machine_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>POS机：</label>
 							<div class="col-sm-10">
-								<input class="form-control" id="receivablesType_name_a" name="receivablesType_name">
+								<input type="text" id="pos_machine_a" class="form-control" name="pos_machine">
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="comment" class="col-sm-2 control-label">备注：</label>
+							<label for="comment_a" class="col-sm-2 control-label">备注：</label>
 							<div class="col-sm-10">
 								<textarea class="form-control comment" name="comment" id="comment_a"></textarea>
 							</div>
@@ -179,8 +178,8 @@
 			</div>
 		</div>
 	</div>
-	<!-- 删除收款类型 -->
-	<div class="modal fade" id="delete_receivablesType" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- 删除收款记录 -->
+	<div class="modal fade" id="delete_pos_machine" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -189,7 +188,7 @@
 					<h2 class="modal-title">删除记录</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete_type"> <input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="delete_pos"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
 						是否删除？
 					</div>

@@ -137,9 +137,17 @@
 											<td><{$single.creatime|date='Y-m-d H:i:s',###}></td>
 											<td>
 												<div class="btn-group" data-id="<{$info.id}>">
-													<notempty name="single.meeting"><a href="<{:U('Car/assign')}>" class="btn btn-default btn-xs delete_btn">人员分配</a></notempty>
+													<notempty name="single.meeting">
+														<a href="<{:U('Car/assign')}>" class="btn btn-default btn-xs delete_btn">人员分配</a>
+													</notempty>
 													<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_car">修改</button>
 													<button class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_car">删除</button>
+													<if condition="$single['status'] eq 1">
+														<a class="btn btn-danger btn-xs" href="<{:U('RequestHandler/getHandler', ['id'=>$single['id'], 'requestType'=>'get:disable_car'])}>">禁用</a>
+													</if>
+													<if condition="$single['status'] eq 0">
+														<a class="btn btn-success btn-xs" href="<{:U('RequestHandler/getHandler', ['id'=>$single['id'], 'requestType'=>'get:enable_car'])}>">启用</a>
+													</if>
 												</div>
 											</td>
 										</tr>
@@ -399,7 +407,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				typeSelectCreate :$('#type_create').QuasarSelect({
+				typeSelectCreate   :$('#type_create').QuasarSelect({
 					name        :'type',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($type)}>',
@@ -408,7 +416,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				typeSelectAlter  :$('#type_alter').QuasarSelect({
+				typeSelectAlter    :$('#type_alter').QuasarSelect({
 					name        :'type',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($type)}>',

@@ -44,15 +44,16 @@ $(function(){
 	});
 	// 勾选显示
 	$('.screen_check').find('input[type=checkbox]').on('click', function(){
+		tableWidth();
 		var index      = $(this).parent('label').index();
 		var $table_obj = $('#report_table');
 		if($(this).prop('checked')){
-			$table_obj.find('thead th').eq(index+1).removeClass('hide');
+			$table_obj.find('thead th').eq(index+1).removeClass('hide').addClass('showTh');
 			$table_obj.find('tbody tr').each(function(){
 				$(this).find('td').eq(index+1).removeClass('hide');
 			});
 		}else{
-			$table_obj.find('thead th').eq(index+1).addClass('hide');
+			$table_obj.find('thead th').eq(index+1).addClass('hide').removeClass('showTh');
 			$table_obj.find('tbody tr').each(function(){
 				$(this).find('td').eq(index+1).addClass('hide');
 			});
@@ -76,4 +77,14 @@ $(function(){
 			}
 		});
 	})();
+	tableWidth();
 });
+// 计算表格的宽度
+function tableWidth(){
+	var zWidth = 0;
+	$('#report_table thead tr th.showTh').each(function(){
+		var width = $(this).outerWidth();
+		zWidth += width;
+	});
+	$('#report_table').width(zWidth);
+}
