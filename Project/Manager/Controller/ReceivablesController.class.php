@@ -59,9 +59,9 @@
 			$receivables_type_model  = D('ReceivablesType');
 			$receivables_type_result = $receivables_type_model->getReceivablesTypeSelectList();
 			/** @var \Core\Model\PosMachineModel $pos_machine_model */
-			$pos_machine_model = D('Core/PosMachine');
-			$pos_machine_result = $pos_machine_model->findRecord(2,['status'=>'not deleted']);
-			$time                    = time();
+			$pos_machine_model  = D('Core/PosMachine');
+			$pos_machine_result = $pos_machine_model->findRecord(2, ['status' => 'not deleted']);
+			$time               = time();
 			$this->assign('type', $receivables_type_result);
 			$this->assign('client_type', $client_list);
 			$this->assign('pay', $pay_method_result);
@@ -175,5 +175,23 @@
 				'company'     => '吉美集团',
 				'hasHead'     => true
 			]);
+		}
+
+		public function exportReceivablesDataTemplate(){
+			if($this->permissionList['CLIENT.DOWNLOAD-IMPORT-EXCEL-TEMPLATE']){ // todo
+				/** @var \Manager\Model\ReceivablesModel $receivables_model */
+				$receivables_model = D('Receivables');
+				$header            = $receivables_model->getColumn(true);
+				$excel_logic       = new ExcelLogic();
+				$excel_logic->exportCustomData($header, [
+					'fileName'    => '导入收款数据模板',
+					'title'       => '导入收款数据模板',
+					'subject'     => '导入收款数据模板',
+					'description' => '吉美会议系统导入收款数据模板',
+					'company'     => '吉美集团',
+					'hasHead'     => true
+				]);
+			}
+			else $this->error('您没有下载导入模板的权限');
 		}
 	}

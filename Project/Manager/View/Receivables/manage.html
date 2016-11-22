@@ -63,6 +63,13 @@
 									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
 								</form>
 								<a class="btn btn-default export_report pull-right bg-00a0e8" href="<{:U('exportReceivablesData', ['mid'=>I('get.mid', 0, 'int')])}>">导出报表</a>
+								<a class="btn btn-default export_report pull-right bg-00a0e8" href="<{:U('exportReceivablesDataTemplate', ['mid'=>I('get.mid', 0, 'int')])}>" style="margin-right: 20px">下载Excel模板</a>
+								<a class="btn btn-default import_report pull-right bg-00a0e8" style="margin-right: 20px;">
+									<form action="" method="post" enctype="multipart/form-data" name="fileForm" id="file_form" target="fileUpload">
+										<input type="file" name="excel" accept=".xlsx, .xls" id="excel_file">
+										<input name="requestType" value="import_excel" type="hidden"> <i></i>
+									</form>
+									导入收款 </a>
 								<a data-toggle="modal" data-target="#add_receivables" data-backdrop="static" class="btn btn-default export_report pull-right bg-00a0e8" style="margin-right: 20px;">添加收款</a>
 							</div>
 							<div class="tab-content clearfix">
@@ -150,7 +157,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="price" class="col-sm-2 control-label">金额：</label>
+							<label for="price" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>金额：</label>
 							<div class="col-sm-10">
 								<input type="text" name="price" id="price" class="form-control">
 							</div>
@@ -261,17 +268,17 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title">修改收款</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmptyAlter()">
 					<input type="hidden" name="id" value=""> <input type="hidden" name="requestType" value="alter">
 					<div class="modal-body">
 						<div class="form-group">
-							<label for="client_name_a" class="col-sm-2 control-label">客户姓名：</label>
+							<label for="client_name_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>客户姓名：</label>
 							<div class="col-sm-10">
 								<input type="text" id="client_name_a" class="form-control" value="<{$meeting_info.name}>" disabled>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="price_a" class="col-sm-2 control-label">金额：</label>
+							<label for="price_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>金额：</label>
 							<div class="col-sm-10">
 								<input type="text" name="price" id="price_a" class="form-control">
 							</div>

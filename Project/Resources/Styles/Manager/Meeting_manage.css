@@ -65,6 +65,7 @@
 
 .meeting_list .meeting_li .list_img > img{
 	width          : 100%;
+	height         : 100%;
 	vertical-align : top;
 }
 
@@ -179,7 +180,7 @@
 }
 
 .meeting_list .meeting_li .release1 > a.cancel_release_a{
-	background : #FF6633 ;
+	background : #FF6633;
 }
 
 /**选择收件人**/

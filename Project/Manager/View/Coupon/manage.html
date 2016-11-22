@@ -152,11 +152,13 @@
 						<div class="form-group">
 							<label for="coupon_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>类型：</label>
 							<div class="col-sm-10">
+
 								<select name="type" id="coupon_type" class="form-control">
-									<option value="0">门票</option>
-									<option value="1">产品</option>
-									<option value="2">其他</option>
+									<volist name="type" id="info">
+										<option value="<{$info['id']}>"><{$info['name']}></option>
+									</volist>
 								</select>
+
 								<!--<div id="coupon_type1"></div>-->
 							</div>
 						</div>
@@ -274,9 +276,9 @@
 							<label for="coupon_type_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>类型：</label>
 							<div class="col-sm-10">
 								<select name="type" id="coupon_type_a" class="form-control">
-									<option value="0">门票</option>
-									<option value="1">产品</option>
-									<option value="2">其他</option>
+									<volist name="type" id="info">
+										<option value="<{$info['id']}>"><{$info['name']}></option>
+									</volist>
 								</select>
 								<!--<input type="text" class="form-control price" name="type" id="type">-->
 							</div>

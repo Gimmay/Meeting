@@ -23,6 +23,7 @@
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['did'])) $where['did'] = $filter['did'];
+			if(isset($filter['name'])) $where['name'] = $filter['name'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted') $where['status'] = ['neq', 2];
@@ -136,7 +137,7 @@ $limit
 					$message = $error->getMessage();
 					if(stripos($message, 'Duplicate entry')) return [
 						'status'  => false,
-						'message' => "$data[code]工号已存在"
+						'message' => "工号[$data[code]]或手机号[$data[mobile]]已存在"
 					];
 					$exception = $this->handlerException($message);
 					if(!$exception['status']) return $exception;

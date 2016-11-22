@@ -18,28 +18,105 @@ var ScriptObject = {
 	'	<div class="btn-group">'+
 	'	<button type="button" class="btn btn-default btn-sm leave_btn" disabled>已退房</button>'+
 	'	</div></td></tr>',
-	changeFulltemp   :'<tr><td>$i</td><td>$code</td><td>$situation</td><td><div class="client_list"><span class="c_add">添加</span><span class="c_change">交换</span></div></td></tr>',
-	changeNotFulltemp:'	<tr><td>$i</td><td>$code</td><td>$situation</td><td><div class="client_list full"><span class="c_change">交换</span></div></td></tr>',
-	clientBtnTemp    :'<span>$name</span>'
+	roomDetailsTemp3 :'<tr data-id="$id">'+
+	'	<td>$n</td>'+
+	'	<td>$name</td>'+
+	'	<td>'+
+	'	<div class="btn-group">'+
+	'	<button type="button" class="btn btn-default btn-sm leave_btn" disabled>已换房</button>'+
+	'	</div></td></tr>',
+	changeFulltemp   :'<tr data-id="$rid"><td>$i</td><td>$code</td><td>$situation</td><td><div class="client_list">$clientSpan<span class="c_change">交换</span></div></td></tr>',
+	changeEmptytemp  :'<tr data-id="$rid"><td>$i</td><td>$code</td><td>$situation</td><td><div class="client_list"><span class="c_add">添加</span></div></td></tr>',
+	changeNotFulltemp:'	<tr data-id="$rid"><td>$i</td><td>$code</td><td>$situation</td><td><div class="client_list">$clientSpan<span class="c_add">添加</span><span class="c_change">交换</span></div></td></tr>',
+	clientBtnTemp    :'<span class="cspan" data-id="$cid">$name</span>',
+	bindEvent        :function(){
+		$('#change_room .client_list .cspan').on('click', function(){
+			$('#change_room .client_list .cspan').removeClass('active');
+			$(this).addClass('active');
+		});
+	},
+	unbindEvent      :function(){
+		$('#change_room .client_list .cspan').off('click');
+	}
 };
 function change_room(){
 	$('.change_btn').on('click', function(){
-		var id = $(this).parents('tr').attr('data-id');
+		var id   = $(this).parents('tr').attr('data-id'); // 需要换房人的ID
+		var orid = $(this).parents('.right_details').find('#orid').val();
 		Common.ajax({
-			data    :{requestType:'change_room', id:id},
+			data    :{requestType:'change_room', id:id, rid:orid},
 			callback:function(r){
 				console.log(r);
 				$('#change_room').modal('show');
-				var str = '', strBtn = '';
+				var str = '';
 				$.each(r, function(index, value){
-					console.log(value.client.length);
-					if(value.capacity>value.client.length){
-						alert('123');
-						$.each(value.client, function(index, value){
-							console.log(value);
-							//strBtn+=ScriptObject.clientBtnTemp.replace('$name',value)
-						})
+					var strBtn = ''
+					/**
+					 * -----------------------------房间交换-------------------------
+					 *  1、 当房间可容纳人数等于入住人数时，显示住满，只有交换按钮显示，只提供与房间内其他人员交换房的功能。
+					 *  2、 当房间可容纳人数大于入住人数时，显示未住满，显示交换按钮和添加按钮，提供交换和添加的功能。
+					 *  3、 当入住人数=0时，显示未房间为空，只有添加按钮显示，提供添加的功能。
+					 */
+					if(Number(value.capacity) === Number(value.client.length)){
+						$.each(value.client, function(index1, value1){
+							strBtn += ScriptObject.clientBtnTemp.replace('$name', value1.name)
+												  .replace('$cid', value1.jid);
+						});
+						str += ScriptObject.changeFulltemp.replace('$i', index+1).replace('$code', value.code)
+										   .replace('$situation', '住满').replace('$clientSpan', strBtn)
+										   .replace('$rid', value.id);
+					}else if(Number(value.capacity)>Number(value.client.length)>0){
+						$.each(value.client, function(index1, value1){
+							console.log(value1);
+							strBtn += ScriptObject.clientBtnTemp.replace('$name', value1.name)
+												  .replace('$cid', value1.jid);
+						});
+						str += ScriptObject.changeNotFulltemp.replace('$i', index+1).replace('$code', value.code)
+										   .replace('$situation', '未住满').replace('$clientSpan', strBtn)
+										   .replace('$rid', value.id);
+					}else if(Number(value.client.length) == 0){
+						$.each(value.client, function(index1, value1){
+							console.log(value1);
+							strBtn += ScriptObject.clientBtnTemp.replace('$name', value1.name)
+												  .replace('$cid', value1.jid);
+						});
+						str += ScriptObject.changeEmptytemp.replace('$i', index+1).replace('$code', value.code)
+										   .replace('$situation', '未入住').replace('$clientSpan', strBtn)
+										   .replace('$rid', value.id);
 					}
+				});
+				$('#change_client_list').html(str);
+				ScriptObject.unbindEvent();
+				ScriptObject.bindEvent();
+				/**
+				 * rid : 提供可选的房间ID
+				 * cid : 需要换房的客户ID
+				 * orid: 需要换房客户的原先房间ID
+				 */
+				$('.c_add').on('click', function(){
+					var rid = $(this).parents('tr').attr('data-id'); // 选择房间的ID
+					Common.ajax({
+						data    :{requestType:'room_add', rid:rid, cid:id, orid:orid},
+						callback:function(r){
+							console.log(r);
+						}
+					});
+				});
+				/**
+				 * rid : 提供可选的房间ID
+				 * cid : 需要换房的客户ID
+				 * orid: 需要换房客户的原先房间ID
+				 * ocid: 提供的房间中选中的客户ID。。换房
+				 */
+				$('.c_change').on('click', function(){
+					var rid  = $(this).parents('tr').attr('data-id'); // 选择房间的ID
+					var ocid = $(this).siblings('.active').attr('data-id'); // 选择房间被选择人员的ID
+					Common.ajax({
+						data    :{requestType:'room_change', rid:rid, ocid:ocid, cid:id, orid:orid},
+						callback:function(r){
+							console.log(r);
+						}
+					})
 				});
 			}
 		});
@@ -267,19 +344,24 @@ $(function(){
 		$right_details.find('.price').text(price);
 		$right_details.find('.client_type').text(client_type);
 		$right_details.find('.create_time').text(come_time);
-		$right_details.find('.comment').text(comment);
+		$right_details.find('#orid').val(id);
 		Common.ajax({
 			data    :{requestType:'details', id:id},
 			callback:function(r){
-				console.log(r);
 				var str = '', i = 0;
+				console.log(r);
 				$.each(r, function(index, value){
-					if(!value.leave_time){
-						str += ScriptObject.roomDetailsTemp.replace('$n', index+1).replace('$name', value.name)
-										   .replace('$id', value.id);
-						i++;
+					if(value.occupancy_status == 1){
+						if(!value.leave_time){
+							str += ScriptObject.roomDetailsTemp.replace('$n', index+1).replace('$name', value.name)
+											   .replace('$id', value.id);
+							i++;
+						}else{
+							str += ScriptObject.roomDetailsTemp2.replace('$n', index+1).replace('$name', value.name)
+											   .replace('$id', value.id);
+						}
 					}else{
-						str += ScriptObject.roomDetailsTemp2.replace('$n', index+1).replace('$name', value.name)
+						str += ScriptObject.roomDetailsTemp3.replace('$n', index+1).replace('$name', value.name)
 										   .replace('$id', value.id);
 					}
 				});

@@ -27,7 +27,7 @@
 						$date['code']      = $v;                        //代金券码
 						$date['creator']   = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); //创建者
 						$date['creatime']  = time();//创建时间
-						$coupon_item_result = $coupon_item_model->createCouponItem($date); //插入到数据库
+						$coupon_item_result = $coupon_item_model->createRecord($date); //插入到数据库
 					}
 
 					return ['status' => $coupon_item_result, 'message' => '创建代金券成功', '__ajax__' => false];
@@ -38,7 +38,7 @@
 					$meeting_model = D('Core/Meeting');
 					/** @var \Core\Model\CouponItemModel $coupon_item_model */
 					$coupon_item_model  = D('Core/CouponItem');
-					$coupon_item_result = $coupon_item_model->findCouponItem(1, ['id' => $id]);
+					$coupon_item_result = $coupon_item_model->findRecord(1, ['id' => $id]);
 					$meeting_result     = $meeting_model->findMeeting(1, ['id' => $coupon_item_result['mid']]);
 
 					return array_merge($meeting_result, ['__ajax__' => true]);
@@ -47,7 +47,7 @@
 					$id = I('post.id', '');
 					/** @var \Core\Model\CouponItemModel $model */
 					$model  = D('Core/CouponItem');
-					$result = $model->deleteCouponItem($id);
+					$result = $model->deleteRecord($id);
 					return array_merge($result, ['__ajax__' => false]);
 				break;
 				case 'multi_alter';
@@ -58,7 +58,7 @@
 					$ids = I('post.id', '');
 					$id  = explode(',', $ids);
 					foreach($id as $v){
-						$coupon_item_result = $coupon_item_model->alterCouponItem(['id' => $v], ['mid' => $mid]);
+						$coupon_item_result = $coupon_item_model->alterRecord(['id' => $v], ['mid' => $mid]);
 					}
 
 					return array_merge($coupon_item_result, ['__ajax__' => false]);
@@ -69,7 +69,7 @@
 					$mid['mid'] = I('post.meeting_name_a', '');
 					/** @var \Core\Model\CouponItemModel $model */
 					$model  = D('Core/CouponItem');
-					$result = $model->alterCouponItem(['id' => $id], $mid);
+					$result = $model->alterRecord(['id' => $id], $mid);
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
@@ -78,11 +78,11 @@
 					$model = D('Core/CouponItem');
 					C('TOKEN_ON', false);            //令牌
 					$data['coupon_id'] = I('get.id', '');
-					$data['mid']       = I('post.meeting_name', '');
+					$data['mid']       = I('get.mid',0 ,'int');
 					$data['code']      = I('post.hide_coupon_area', '');
 					$data['creator']   = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); //创建者
 					$data['creatime']  = time();//创建时间
-					$result            = $model->createCouponItem($data);
+					$result            = $model->createRecord($data);
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;

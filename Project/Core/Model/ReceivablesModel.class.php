@@ -34,6 +34,20 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
+		public function createMultiRecord($data){
+			try{
+				$result = $this->addAll($data);
+				if($result) return ['status' => true, 'message' => '收款成功'];
+				else return ['status' => false, 'message' => '收款失败'];
+			}catch(Exception $error){
+				$message   = $error->getMessage();
+				$exception = $this->handlerException($message);
+				if(!$exception['status']) return $exception;
+
+				return ['status' => false, 'message' => $message];
+			}
+		}
+
 		public function findRecord($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id']) && $filter['id']) $where['id'] = $filter['id'];

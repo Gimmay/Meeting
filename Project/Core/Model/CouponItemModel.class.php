@@ -19,7 +19,7 @@
 			parent::_initialize();
 		}
 
-		public function findCouponItem($type = 2, $filter = []){
+		public function findRecord($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['coupon_id'])) $where['coupon_id'] = $filter['coupon_id'];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
@@ -72,45 +72,31 @@
 			return $result;
 		}
 
-		public function createMultiCouponItem($data){
-			try{
-				$result = $this->addAll($data);
-				if($result) return ['status' => true, 'message' => '创建成功'];
-				else return ['status' => false, 'message' => '创建失败'];
-			}catch(Exception $error){
-				$message = $error->getMessage();
-
-				return ['status' => false, 'message' => $message];
-			}
-		}
-
-		public function listCouponItem($type = 2, $filter = []){ // 与角色表做连表查询
-			$where   = '0 = 0';
-			$where_1 = '';
-			$limit   = '';
-			$order   = '';
-			$field   = '*';
+		public function listRecord($type = 2, $filter = []){
+			$where = '0 = 0';
+			$limit = '';
+			$order = '';
+			$field = '*';
 			if(isset($filter['id'])) $where .= " and id = $filter[id]";
-			if(isset($filter['rid'])) $where_1 .= " and system_role.id = $filter[rid]";
-			if(isset($filter['status'])){
-				$status = strtolower($filter['status']);
-				if($status == 'not deleted') $where .= " and status != 2";
-				else $where .= " and status = $filter[status]";
+			if(isset($filter['coupon_id'])) $where .= " and workflow_coupon.id = $filter[coupon_id]";
+			if(isset($filter['mid'])) $where .= " and workflow_coupon_item.mid = $filter[mid]";
+			if(isset($filter['main.status'])){
+				$status = strtolower($filter['main.status']);
+				if($status == 'not deleted') $where .= " and workflow_coupon_item.status != 3";
+				else $where .= " and workflow_coupon_item.status = ".$filter['main.status'];
 			}
-			if(isset($filter['keyword']) && $filter['keyword']) $where .= " and (code like '%$filter[keyword]%' or mobile like '%$filter[keyword]%'  or name like '%$filter[keyword]%'  or pinyin_code like '%$filter[keyword]%')";
+			if(isset($filter['sub.status'])){
+				$status = strtolower($filter['sub.status']);
+				if($status == 'not deleted') $where .= " and workflow_coupon.status != 2";
+				else $where .= " and workflow_coupon.status = ".$filter['sub.status'];
+			}
+			if(isset($filter['keyword']) && $filter['keyword']) $where .= " and (code like '%$filter[keyword]%' or name like '%$filter[keyword]%')";
 			if(isset($filter['_limit'])) $limit = "limit $filter[_limit]";
 			if(isset($filter['_order'])) $order = "order by $filter[_order]";
 			if((int)$type == 0) $field = 'count(*) count';
-			$sql = "SELECT
-	$field
-FROM(
-	SELECT * FROM user_employee
-	WHERE id IN (
-		SELECT oid FROM user_assign_role
-		join system_role on user_assign_role.rid = system_role.id
-		WHERE oid = user_employee.id AND type = 0 $where_1
-	)
-) main_table
+			$sql = "
+select $field from workflow_coupon_item
+JOIN workflow_coupon on workflow_coupon_item.coupon_id = workflow_coupon.id
 WHERE $where
 $order
 $limit
@@ -133,7 +119,7 @@ $limit
 			return $result;
 		}
 
-		public function createCouponItem($data){
+		public function createRecord($data){
 			if($this->create($data)){
 				try{
 					$result = $this->add($data);
@@ -163,7 +149,7 @@ $limit
 			}
 		}
 
-		public function deleteCouponItem($id){
+		public function deleteRecord($id){
 			if($this->create()){
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save(['status' => 3]);
@@ -179,7 +165,7 @@ $limit
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function alterCouponItem($filter, $data){
+		public function alterRecord($filter, $data){
 			if($this->create($data)){
 				try{
 					$result = $this->where($filter)->save($data);

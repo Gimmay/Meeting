@@ -352,7 +352,7 @@
 					return array_merge($role_result, ['__ajax__' => true]);
 				break;
 				case 'release':
-					$id = I('get.id', '');
+					$id = I('post.id', '');
 					/** @var \Core\Model\MeetingModel $meeting_model */
 					$meeting_model  = D('Core/Meeting');
 					$meeting_status = $meeting_model->findMeeting(1, ['id' => $id]);

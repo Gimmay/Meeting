@@ -69,8 +69,6 @@
 				$this->assign('max_role_level', $max_role_level);
 				$this->display();
 			}
-			else{
-				$this->error('您没有查看角色的权限');
-			}
+			else $this->error('您没有查看角色的权限');
 		}
 	}

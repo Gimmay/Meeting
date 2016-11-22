@@ -246,7 +246,7 @@
 				//当前收款人
 				$employee_personal_result = $employee_personal_model->findEmployee(1, ['id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')]);
 				/* 会议对应的券记录 */
-				$coupon_item_result = $coupon_item_model->findCouponItem(2, ['mid' => $this->meetingID, 'status' => 0]);
+				$coupon_item_result = $coupon_item_model->findRecord(2, ['mid' => $this->meetingID, 'status' => 0]);
 				/* 员工列表(for select component) */
 				$employee_list = $employee_model->getEmployeeSelectList();
 				/* 获取签到点列表(for select component) */

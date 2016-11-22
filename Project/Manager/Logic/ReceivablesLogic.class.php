@@ -8,7 +8,6 @@
 	namespace Manager\Logic;
 
 	use Core\Logic\SMSLogic;
-	use Quasar\StringPlus;
 
 	class ReceivablesLogic extends ManagerLogic{
 		public function _initialize(){
@@ -40,7 +39,7 @@
 						$coupon_item_model = D('Core/CouponItem');
 						$code_id           = explode(',', $data['coupon_ids']);
 						foreach($code_id as $k => $v){
-							$coupon_item_result = $coupon_item_model->alterCouponItem(['id' => $v], [
+							$coupon_item_result = $coupon_item_model->alterRecord(['id' => $v], [
 								'status' => 1,
 								'cid'    => $data['cid']
 							]);
@@ -55,19 +54,20 @@
 					$receivables_model = D('Core/Receivables');
 					/** @var \Core\Model\CouponItemModel $coupon_item_model */
 					$coupon_item_model  = D('Core/CouponItem');
-					$coupon_item_result = $coupon_item_model->findCouponItem(2, ['mid' => I('get.mid', 0, 'int')]);
+					$coupon_item_result = $coupon_item_model->findRecord(2, ['mid' => I('get.mid', 0, 'int')]);
 					$receivables_result = $receivables_model->findRecord(1, ['id' => $id]);
 					$data               = explode(',', $receivables_result['coupon_ids']);
 					$coupon_item_ids    = [];
 					foreach($data as $k => $v){
-						$coupon_item_ids[] = $coupon_item_model->findCouponItem(1, [
+						$coupon_item_ids[] = $coupon_item_model->findRecord(1, [
 							'id'     => $v,
 							'status' => 'not deleted'
 						]);
 					}
-					$coupon_item_result_not = $coupon_item_model->findCouponItem(2, [
-						'status' => '0',
-						'mid'    => I('get.mid', 0, 'int')
+					$coupon_item_result_not = $coupon_item_model->listRecord(2, [
+						'main.status' => 0,
+						'sub.status'  => 1,
+						'mid'         => I('get.mid', 0, 'int')
 					]);
 					if(!$coupon_item_result_not){
 						$coupon_item_result_not[] = null;
@@ -90,7 +90,7 @@
 					$receivables_model     = D('Core/Receivables');
 					$receivables_result_id = $receivables_model->findRecord(1, ['id' => $id]);
 					C('TOKEN_ON', false);
-					$coupon_item_model->alterCouponItem(['id' => ['in', $old_coupon_code]], [
+					$coupon_item_model->alterRecord(['id' => ['in', $old_coupon_code]], [
 						'status' => 0,
 						'cid'    => null
 					]);
@@ -101,7 +101,7 @@
 					//						]);
 					//					}
 					$receivables_result = $receivables_model->alterRecord(['id' => $id], $data);
-					$coupon_item_model->alterCouponItem(['id' => ['in', $new_coupon_id]], [
+					$coupon_item_model->alterRecord(['id' => ['in', $new_coupon_id]], [
 						'cid'    => $receivables_result_id['cid'],
 						'status' => 1
 					]);
@@ -131,12 +131,12 @@
 					$coupon_item_id    = explode(',', $data['coupon_code']);
 					C('TOKEN_ON', false);
 					foreach($coupon_item_id as $k => $v){
-						$coupon_item_record = $coupon_item_model->findCouponItem(1, [
+						$coupon_item_record = $coupon_item_model->findRecord(1, [
 							'id'     => $v,
 							'status' => 'not deleted'
 						]);
 						if($coupon_item_record['status'] == 0){
-							$coupon_item_result = $coupon_item_model->alterCouponItem(['id' => $v], [
+							$coupon_item_result = $coupon_item_model->alterRecord(['id' => $v], [
 								'status' => 1,
 								'cid'    => $cid
 							]);
@@ -290,21 +290,173 @@
 
 					return array_merge($receivables_result, ['__ajax__' => true]);
 				break;
+				case 'import_excel':
+					//if($this->permissionList['CLIENT.IMPORT-EXCEL']){ // todo
+					$excel_logic = new ExcelLogic();
+					$result1     = $excel_logic->importReceivablesData($_FILES);
+					$result2     = $this->saveReceivablesFromExcelData($result1['data']['content']);
+
+					return array_merge($result2, ['__ajax__' => true]);
+					//					}
+					//										else return [
+					//											'status'   => false,
+					//											'message'  => '您没有导入参会人员的权限',
+					//											'__ajax__' => false
+					//										];
+				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
 				break;
 			}
 		}
 
+		private function saveReceivablesFromExcelData($data){
+			/** @var \Manager\Model\ReceivablesModel $self_model */
+			$self_model = D('Receivables');
+			/** @var \Core\Model\ReceivablesModel $model */
+			$model = D('Core/Receivables');
+			/** @var \Core\Model\ClientModel $client_model */
+			$client_model = D('Core/Client');
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			/** @var \Core\Model\PayMethodModel $pay_method_model */
+			$pay_method_model = D('Core/PayMethod');
+			/** @var \Core\Model\ReceivablesTypeModel $receivables_type_model */
+			$receivables_type_model = D('Core/ReceivablesType');
+			/** @var \Core\Model\PosMachineModel $pos_machine_model */
+			$pos_machine_model = D('Core/PosMachine');
+			/** @var \Core\Model\CouponItemModel $coupon_item_model */
+			$coupon_item_model = D('Core/CouponItem');
+			$table_column      = $self_model->getColumn();
+			$count             = 0;
+			$error_msg         = '';
+			foreach($data as $key1 => $val1){
+				$save_data   = [];
+				$client_name = '';
+				foreach($val1 as $key2 => $val2){
+					switch($table_column[$key2]['name']){
+						case 'cid':
+							$client_name = $val2;
+							$client      = $client_model->findClient(1, ['name' => $val2, 'status' => 'not deleted']);
+							if($client) $val2 = $client['id'];
+							else $val2 = null;
+						break;
+						case 'payee_id':
+							$payee = $employee_model->findEmployee(1, ['name' => $val2, 'status' => 'not deleted']);
+							if($payee) $val2 = $payee['id'];
+							else $val2 = null;
+						break;
+						case 'method':
+							$pay_method = $pay_method_model->findRecord(1, [
+								'keyword' => $val2,
+								'status'  => 'not deleted'
+							]);
+							if($pay_method) $val2 = $pay_method['id'];
+							else{
+								$result = $pay_method_model->createRecord([
+									'name'     => $val2,
+									'creatime' => time(),
+									'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+								]);
+								if($result['status']) $val2 = $result['id'];
+								else $val2 = null;
+							}
+						break;
+						case 'type':
+							$receivables_type = $receivables_type_model->findRecord(1, [
+								'keyword' => $val2,
+								'status'  => 'not deleted'
+							]);
+							if($receivables_type) $val2 = $receivables_type['id'];
+							else{
+								$result = $receivables_type_model->createRecord([
+									'name'     => $val2,
+									'creatime' => time(),
+									'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+								]);
+								if($result['status']) $val2 = $result['id'];
+								else $val2 = null;
+							}
+						break;
+						case 'pos_id':
+							$pos_machine = $pos_machine_model->findRecord(1, [
+								'keyword' => $val2,
+								'status'  => 'not deleted'
+							]);
+							if($pos_machine) $val2 = $pos_machine['id'];
+							else{
+								$result = $pos_machine_model->createRecord([
+									'name'     => $val2,
+									'creatime' => time(),
+									'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+								]);
+								if($result['status']) $val2 = $result['id'];
+								else $val2 = null;
+							}
+						break;
+						case 'coupon_ids':
+							$coupon_item = $coupon_item_model->findRecord(1, [
+								'keyword' => $val2,
+								'status'  => 'not deleted'
+							]);
+							if($coupon_item) $val2 = $coupon_item['id'];
+							else $val2 = null;
+						break;
+						case 'source_type':
+							if(stripos($val2, '会中') === false){
+								$val2    = 0;
+								$handler = true;
+							}
+							else{
+								$val2    = 1;
+								$handler = true;
+							}
+							if(!$handler){
+								if(stripos($val2, '会前') === false){
+									$val2    = 0;
+									$handler = true;
+								}
+								else{
+									$val2    = 0;
+									$handler = true;
+								}
+							}
+							if(!$handler){
+								if(stripos($val2, '会后') === false){
+									$val2 = 0;
+									//$handler = true;
+								}
+								else{
+									$val2 = 2;
+									//$handler = true;
+								}
+							}
+						break;
+					}
+					$save_data[$table_column[$key2]['name']] = $val2;
+				}
+				$result = $model->createRecord($save_data);
+				if($result['stauts']){
+					$count++;
+					$error_msg .= "$client_name, ";
+				}
+			}
+			$error_msg = trim($error_msg, ', ');
+			if($count == count($data)) return ['status' => true, 'message' => '全部导入成功'];
+			elseif($count == 0) return ['status' => false, 'message' => '没有导入任何数据'];
+			else return ['status' => true, 'message' => "部分数据未导入: $error_msg"];
+		}
+
 		public function findCouponItem(){
 			/** @var \Core\Model\CouponItemModel $coupon_item_model */
 			$coupon_item_model = D('Core/CouponItem');
-			$result            = $coupon_item_model->findCouponItem(2, [
-				'mid'    => I('get.mid', 0, 'int'),
-				'status' => 0
+			$coupon_item_result_not = $coupon_item_model->listRecord(2, [
+				'main.status' => 0,
+				'sub.status'  => 1,
+				'mid'         => I('get.mid', 0, 'int')
 			]);
 
-			return $result;
+			return $coupon_item_result_not;
 		}
 
 		public function findMeetingClient(){
@@ -347,8 +499,21 @@
 			]);
 			$new_list           = [];
 			foreach($receivables_result as $k => $v){
-				$method_result                          = $pay_method_model->findRecord(1, ['id' => $v['method']]);
-				$receivables_type_result                = $receivables_type_model->findRecord(1, ['id' => $v['type']]);
+				if($v['method']) $method_result = $pay_method_model->findRecord(1, [
+					'id'     => $v['method'],
+					'status' => 'not deleted'
+				]);
+				else $method_result['name'] = '';
+				if($v['type']) $receivables_type_result = $receivables_type_model->findRecord(1, [
+					'id'     => $v['type'],
+					'status' => 'not deleted'
+				]);
+				else $receivables_type_result['name'] = '';
+				if($v['pos_id']) $pos_machine_result = $pos_machine_model->findRecord(1, [
+					'id'     => $v['pos_id'],
+					'status' => 'not deleted'
+				]);
+				else $pos_machine_result['name'] = '';
 				$meeting_result                         = $meeting_model->findMeeting(1, [
 					'id'     => $receivables_result[$k]['mid'],
 					'status' => 'not deleted'
@@ -357,7 +522,6 @@
 					'id'     => $receivables_result[$k]['cid'],
 					'status' => 'not deleted'
 				]);
-				$pos_machine_result                     = $pos_machine_model->findRecord(1, ['id' => $v['pos_id']]);
 				$receivables_result[$k]['meeting_name'] = $meeting_result['name'];
 				$receivables_result[$k]['client_name']  = $client_result['name'];
 				$receivables_result[$k]['unit']         = $client_result['unit'];
@@ -367,7 +531,7 @@
 				$code_id                                = explode(',', $receivables_result[$k]['coupon_ids']);
 				$coupon_item_code                       = '';
 				foreach($code_id as $kk => $vv){
-					$coupon_item_result = $coupon_item_model->findCouponItem(1, [
+					$coupon_item_result = $coupon_item_model->findRecord(1, [
 						'id'     => $vv,
 						'status' => 'not deleted'
 					]);
@@ -431,7 +595,7 @@
 						$temp['employee_name']   = $employee_result['name'];
 						$coupon_id               = explode(',', $val['coupon_ids']);
 						foreach($coupon_id as $k => $v){
-							$coupon_item_result = $coupon_item_model->findCouponItem(1, ['id' => $v]);
+							$coupon_item_result = $coupon_item_model->findRecord(1, ['id' => $v]);
 							$temp['coupon_name'] .= $coupon_item_result['code'].',';
 						}
 						$temp['comment'] = $val['comment'];

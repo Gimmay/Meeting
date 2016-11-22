@@ -64,8 +64,13 @@
 	border       : 1px solid #E1E1E1;
 	padding      : 4px 10px;
 	margin-right : 10px;
+	margin-bottom: 10px;
 	cursor       : pointer;
 }
+.client_list > span.cspan.active {
+	border-color: #fb5050;
+}
+
 
 .client_list.full > span.active{
 	background : #00A0E8;

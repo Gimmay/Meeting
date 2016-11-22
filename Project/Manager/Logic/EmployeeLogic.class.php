@@ -26,29 +26,29 @@
 					/** @var \Core\Model\EmployeeModel $model */
 					$model      = D('Core/Employee');
 					$str_obj    = new StringPlus();
-					$exist_flag = false;
-					if(!empty($data['mobile'])){
-						$exist_record = $model->findEmployee(1, ['mobile' => $data['mobile']]);
-						$exist_flag   = true;
-					}
-					elseif(!empty($data['code'])){
-						$exist_record = $model->findEmployee(1, ['code' => $data['code']]);
-						$exist_flag   = true;
-					}
+//					$exist_flag = false;
+//					if(!empty($data['mobile'])){
+//						$exist_record = $model->findEmployee(1, ['mobile' => $data['mobile']]);
+//						$exist_flag   = true;
+//					}
+//					elseif(!empty($data['code'])){
+//						$exist_record = $model->findEmployee(1, ['code' => $data['code']]);
+//						$exist_flag   = true;
+//					}
 					$data['status']      = $data['status'] == 1 ? 0 : (($data['status'] == 0) ? 1 : 1);
 					$data['creatime']    = time();
 					$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
 					$data['password']    = $str_obj->makePassword($data['password'], $data['code']);
 					$data['birthday']    = date('Y-m-d', strtotime($data['birthday']));
-					if($exist_flag && isset($exist_record)){
-						$result = $model->alterEmployee(['id' => $exist_record['id']], $data);
-						if($result['status']) $employee_id = $exist_record['id'];
-					}
-					else{
+//					if($exist_flag && isset($exist_record)){
+//						$result = $model->alterEmployee(['id' => $exist_record['id']], $data);
+//						if($result['status']) $employee_id = $exist_record['id'];
+//					}
+//					else{
 						$result = $model->createEmployee($data);
 						if($result['status']) $employee_id = $result['id'];
-					}
+//					}
 					if($result['status'] && isset($employee_id)){
 						$result['message'] = '创建成功';
 						/** @var \Core\Model\WeixinIDModel $weixin_model */

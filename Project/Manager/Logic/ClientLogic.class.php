@@ -947,12 +947,12 @@
 						$coupon_item_list  = explode(',', $data['coupon_ids']);
 						C('TOKEN_ON', false);
 						foreach($coupon_item_list as $k => $v){
-							$coupon_item_record = $coupon_item_model->findCouponItem(1, [
+							$coupon_item_record = $coupon_item_model->findRecord(1, [
 								'id'     => $v,
 								'status' => 'not deleted'
 							]);
 							if($coupon_item_record['status'] == 0){
-								$coupon_item_result = $coupon_item_model->alterCouponItem(['id' => $v], [
+								$coupon_item_result = $coupon_item_model->alterRecord(['id' => $v], [
 									'status' => 1,
 									'cid'    => $cid
 								]);

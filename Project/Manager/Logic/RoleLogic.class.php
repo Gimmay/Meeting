@@ -35,7 +35,7 @@
 					if($this->permissionList['ROLE.VIEW-ASSIGNED-PERMISSION']){
 						/** @var \Core\Model\PermissionModel $permission_model */
 						$permission_model = D('Core/Permission');
-						$result           = $permission_model->getPermissionOfRole(I('post.id', 0, 'int'), null);
+						$result           = $permission_model->getPermissionOfRole(I('post.id', 0, 'int'), null, false, I('post.keyword', ''));
 
 						return array_merge($result, ['__ajax__' => true]);
 					}
@@ -69,6 +69,10 @@
 					}
 					else return ['status' => false, 'message' => '您没有收回权限的权限', '__ajax__' => true];
 				break;
+				case 'anti_assign_permission_group':
+				break;
+				case 'assign_permission_group':
+				break;
 				case 'delete':
 					if($this->permissionList['ROLE.DELETE']){
 						/** @var \Core\Model\RoleModel $model */
@@ -83,7 +87,7 @@
 					if($this->permissionList['ROLE.ALTER']){
 						/** @var \Core\Model\RoleModel $model */
 						$model  = D('Core/Role');
-						$result = $model->alterRole(['id'=>I('post.id', 0, 'int')], I('post.')); //传值到model里面操作
+						$result = $model->alterRole(['id' => I('post.id', 0, 'int')], I('post.')); //传值到model里面操作
 						return array_merge($result, ['__ajax__' => false]);
 					}
 					else return ['status' => false, 'message' => '您没有修改角色的权限', '__ajax__' => false];

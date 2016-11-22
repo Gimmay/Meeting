@@ -402,5 +402,23 @@ canvas{
 	width : 40%;
 }
 
+.repertory a{
+	position : relative;
+}
+
+.import_report #excel_file{
+	position : absolute;
+	width    : 100%;
+	height   : 100%;
+	opacity  : 0;
+	top      : 0;
+	left     : 0;
+}
+
+.import_report #import_sub{
+	position : absolute;
+	opacity  : 0;
+}
+
 
 

@@ -34,21 +34,22 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function findAssignRoom($type = 2, $filter = []){
+		public function findRecord($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['rid'])) $where['rid'] = $filter['rid'];
 			if(isset($filter['jid'])) $where['jid'] = $filter['jid'];
 			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
+			if(isset($filter['occupancy_status'])) $where['occupancy_status'] = $filter['occupancy_status'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted') $where['status'] = ['neq', 2];
 				else $where['status'] = $filter['status'];
 			}
 			if(isset($filter['keyword']) && $filter['keyword']){
-				$condition['hotel_name']   = ['like', "%$filter[keyword]%"];
-				$condition['_logic'] = 'or';
-				$where['_complex']   = $condition;
+				$condition['hotel_name'] = ['like', "%$filter[keyword]%"];
+				$condition['_logic']     = 'or';
+				$where['_complex']       = $condition;
 			}
 			switch((int)$type){
 				case 0: // count
@@ -88,7 +89,7 @@
 			return $result;
 		}
 
-		public function deleteAssignRoom($id){
+		public function deleteRecord($id){
 			if($this->create()){
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save(['status' => 3]);
@@ -104,10 +105,10 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function alterAssignRoom($id, $data){
+		public function alterRecord($filter, $data){
 			if($this->create($data)){
 				try{
-					$result = $this->where(['jid' => ['in', $id]])->save($data);
+					$result = $this->where($filter)->save($data);
 					if($result) return ['status' => true, 'message' => '修改成功'];
 					else return ['status' => false, 'message' => '未做任何修改'];
 				}catch(Exception $error){

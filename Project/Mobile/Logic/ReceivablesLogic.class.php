@@ -30,12 +30,12 @@
 						$coupon_item_code  = explode(',', $data['coupon_ids']);
 						C('TOKEN_ON', false);
 						foreach($coupon_item_code as $k => $v){
-							$coupon_item_record = $coupon_item_model->findCouponItem(1, [
+							$coupon_item_record = $coupon_item_model->findRecord(1, [
 								'id'     => $v,
 								'status' => 'not deleted'
 							]);
 							if($coupon_item_record['status'] == 0){
-								$coupon_item_result = $coupon_item_model->alterCouponItem(['id' => $v], [
+								$coupon_item_result = $coupon_item_model->alterRecord(['id' => $v], [
 									'status' => 1,
 									'cid'    => $cid
 								]);
@@ -88,7 +88,7 @@
 					$coupon_item_model = D('Core/CouponItem');
 					/** @var \Core\Model\CouponModel $coupon_model */
 					$coupon_model       = D('Core/Coupon');
-					$coupon_item_result = $coupon_item_model->findCouponItem(2, [
+					$coupon_item_result = $coupon_item_model->findRecord(2, [
 						'mid'    => I('get.mid', 0, 'int'),
 						'status' => '0'
 					]);
@@ -144,7 +144,7 @@
 			$ids                     = [];
 			$ids_name                = '';
 			foreach($coupon_item_ids as $k => $v){
-				$ids[] = $coupon_item_model->findCouponItem(1, ['id' => $v]);
+				$ids[] = $coupon_item_model->findRecord(1, ['id' => $v]);
 				$ids_name[] .= $ids[$k]['code'].' ';
 			}
 			$data['method_name']   = $pay_method_result['name'];
@@ -197,7 +197,7 @@
 			$coupon_item_model = D('Core/CouponItem');
 			/** @var \Core\Model\CouponModel $coupon_model */
 			$coupon_model       = D('Core/Coupon');
-			$coupon_item_result = $coupon_item_model->findCouponItem(2, [
+			$coupon_item_result = $coupon_item_model->findRecord(2, [
 				'mid'    => I('get.mid', 0, 'int'),
 				'status' => '0'
 			]);

@@ -17,8 +17,8 @@
 
 		public function _initialize(){
 			// quasar
-//			$_SESSION['MOBILE_CLIENT_ID'] = 599;
-//			$_SESSION['MOBILE_WEIXIN_ID'] = 1090;
+			//			$_SESSION['MOBILE_CLIENT_ID'] = 599;
+			//			$_SESSION['MOBILE_WEIXIN_ID'] = 1090;
 			//			session_destroy();
 			//			session_unset();
 			//			exit;
@@ -75,6 +75,7 @@
 		public function myCenter(){
 			$this->weixinID = $this->getWeixinID();
 			$this->_getClientID();
+			$this->_getMeetingParam();
 			$logic = new ClientLogic();
 			if(IS_POST){
 				$type   = (I('post.requestType', ''));
@@ -105,8 +106,12 @@
 			$join_model = D('Core/Join');
 			/** @var \Core\Model\WeixinIDModel $weixin_model */
 			$weixin_model = D('Core/WeixinID');
-			$info         = $join_model->findRecord(1, ['cid' => $this->clientID, 'mid' => $this->meetingID]);
-			$weixin_info  = $weixin_model->findRecord(1, ['oid' => $this->clientID, 'otype' => 1, 'wtype' => 1]);
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			$info          = $join_model->findRecord(1, ['cid' => $this->clientID, 'mid' => $this->meetingID]);
+			$weixin_info   = $weixin_model->findRecord(1, ['oid' => $this->clientID, 'otype' => 1, 'wtype' => 1]);
+			$meeting       = $meeting_model->findMeeting(1, ['id' => $this->meetingID, 'status' => 'not deleted']);
+			$this->assign('meeting', $meeting);
 			$this->assign('info', $info);
 			$this->assign('weixin', $weixin_info);
 			$this->display();

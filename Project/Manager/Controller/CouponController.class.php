@@ -53,6 +53,10 @@
 			/** @var \Manager\Model\MeetingModel $meeting_model */
 			$meeting_model = D('Meeting');
 			$meeting_list  = $meeting_model->getMeetingForSelect();
+			/** @var \Core\Model\ReceivablesTypeModel $receivables_type_model */
+			$receivables_type_model = D('Core/ReceivablesType');
+			$receivables_type_result = $receivables_type_model->findRecord(2,['status'=>'not deleted']);
+			$this->assign('type',$receivables_type_result);
 			$this->assign('meeting_list', $meeting_list);
 			$this->assign('coupon_list', $coupon_list);
 			$this->assign('page_show', $page_show);
@@ -79,15 +83,15 @@
 			$model = D('Core/CouponItem');
 			$id    = I('get.id', 0, 'int');
 			if(isset($_GET['status'])){
-				$result = $model->findCouponItem(0, ['coupon_id' => $id, 'status' => I('get.status', 0, 'int')]);
+				$result = $model->findRecord(0, ['coupon_id' => $id, 'status' => I('get.status', 0, 'int')]);
 			}
 			else{
-				$result = $model->findCouponItem(0, ['coupon_id' => $id, 'status' => 'not deleted']);
+				$result = $model->findRecord(0, ['coupon_id' => $id, 'status' => 'not deleted']);
 			}
 			$page_object = new Page($result, 10);
 			$page_show   = $page_object->show();
 			if(isset($_GET['status'])){
-				$info = $model->findCouponItem(2, [
+				$info = $model->findRecord(2, [
 					'keyword'   => I('get.keyword', ''),
 					'_limit'    => $page_object->firstRow.','.$page_object->listRows,
 					'_order'    => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
@@ -96,7 +100,7 @@
 				]);
 			}
 			else{
-				$info = $model->findCouponItem(2, [
+				$info = $model->findRecord(2, [
 					'keyword'   => I('get.keyword', ''),
 					'_limit'    => $page_object->firstRow.','.$page_object->listRows,
 					'_order'    => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
@@ -104,9 +108,9 @@
 					'coupon_id' => I('get.id', 0, 'int'),
 				]);
 			}
-			$count_status0 = $model->findCouponItem(0, ['status' => 0, 'coupon_id' => I('get.id', 0, 'int')]);
-			$count_status1 = $model->findCouponItem(0, ['status' => 1, 'coupon_id' => I('get.id', 0, 'int')]);
-			$count_status2 = $model->findCouponItem(0, ['status' => 2, 'coupon_id' => I('get.id', 0, 'int')]);
+			$count_status0 = $model->findRecord(0, ['status' => 0, 'coupon_id' => I('get.id', 0, 'int')]);
+			$count_status1 = $model->findRecord(0, ['status' => 1, 'coupon_id' => I('get.id', 0, 'int')]);
+			$count_status2 = $model->findRecord(0, ['status' => 2, 'coupon_id' => I('get.id', 0, 'int')]);
 			$this->assign('count_status0', $count_status0);
 			$this->assign('count_status1', $count_status1);
 			$this->assign('count_status2', $count_status2);
@@ -133,7 +137,7 @@
 			$coupon_model = D('Core/Coupon');
 			/** @var \Core\Model\ClientModel $client_model */
 			$client_model      = D('Core/Client');
-			$coupon_item_count = $coupon_item_model->findCouponItem(0, [
+			$coupon_item_count = $coupon_item_model->findRecord(0, [
 				'mid'       => $this->meetingID,
 				'coupon_id' => I('get.id', 0, 'int'),
 				'keyword'   => I('get.keyword', '')
@@ -141,7 +145,7 @@
 			/* 分页设置 */
 			$page_object        = new Page($coupon_item_count, C('PAGE_RECORD_COUNT'));
 			$page_show          = $page_object->show();
-			$coupon_item_result = $coupon_item_model->findCouponItem(2, [
+			$coupon_item_result = $coupon_item_model->findRecord(2, [
 				'keyword'   => I('get.keyword', ''),
 				'_limit'    => $page_object->firstRow.','.$page_object->listRows,
 				'_order'    => I('get.column', 'creatime').' '.I('get.sort', 'desc'),

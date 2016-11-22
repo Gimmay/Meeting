@@ -73,16 +73,53 @@
 			exit;
 		}
 
+		public function importReceivablesData($files){
+			vendor('PHPExcel.PHPExcel');
+			$core_upload_logic = new UploadLogic();
+			$result            = $core_upload_logic->upload($files, '/Excel/');
+			if($result['status']){
+				$content      = [];
+				$file_path    = trim($result['data']['filePath'], '/');
+				$excel_reader = \PHPExcel_IOFactory::createReaderForFile($file_path);
+				/** @var \PHPExcel $excel_object */
+				$excel_object = $excel_reader->load($file_path);
+				$excel_object->setActiveSheetIndex(0);
+				$line_number = 0;
+				foreach($excel_object->getActiveSheet()->getRowIterator() as $val){
+					$cellIterator = $val->getCellIterator();
+					$cellIterator->setIterateOnlyExistingCells(false);
+					foreach($cellIterator as $cell){
+						if($line_number == 0) continue;
+						if(isset($content[$line_number])) array_push($content[$line_number], $cell->getFormattedValue());
+						else{
+							$content[$line_number] = [];
+							array_push($content[$line_number], $cell->getFormattedValue());
+						}
+					}
+					$line_number++;
+				}
+
+				return [
+					'status'  => true,
+					'message' => '读取文件成功',
+					'data'    => [
+						'content' => $content,
+						'dbIndex' => $result['data']['logID']
+					]
+				];
+			}
+			else return $result;
+		}
+
 		public function importClientData($files){
 			vendor('PHPExcel.PHPExcel');
 			$core_upload_logic = new UploadLogic();
-			$result           = $core_upload_logic->upload($files, '/Excel/');
+			$result            = $core_upload_logic->upload($files, '/Excel/');
 			if($result['status']){
 				$header       = [];
 				$content      = [];
-				$file_path = trim($result['data']['filePath'], '/');
+				$file_path    = trim($result['data']['filePath'], '/');
 				$excel_reader = \PHPExcel_IOFactory::createReaderForFile($file_path);
-
 				/** @var \PHPExcel $excel_object */
 				$excel_object = $excel_reader->load($file_path);
 				$excel_object->setActiveSheetIndex(0);

@@ -73,11 +73,11 @@
 						/** @var \Core\Model\CouponItemModel $coupon_item_model */
 						$coupon_item_model  = D('Core/CouponItem');
 						$info['coupon_id']  = $result['id'];
-						$info['mid']        = I('post.mid', '');
+						$info['mid']        = I('get.mid', '');
 						$info['code']       = I('post.coupon_c', '');
 						$info['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 						$info['creatime']   = time();//当前时间
-						$result_coupon_item = $coupon_item_model->createCouponItem($info);
+						$result_coupon_item = $coupon_item_model->createRecord($info);
 					}
 
 					return $result;
@@ -94,7 +94,7 @@
 			$coupon_item_model = D('Core/CouponItem');
 			$meeting_model     = D('Core/Meeting');
 			foreach($list as $k1 => $v1){
-				$coupon_list        = $coupon_item_model->findCouponItem(2, [
+				$coupon_list        = $coupon_item_model->findRecord(2, [
 					'coupon_id' => $v1['id'],
 					'status'    => 'not deleted'
 				]);

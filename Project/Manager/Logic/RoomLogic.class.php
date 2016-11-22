@@ -88,7 +88,7 @@
 						$assign_room_id[]   = $assign_room_result['id'];
 					}
 					foreach($assign_room_id as $k1 => $v2){
-						$assign_room_results[]                 = $assign_room_model->findAssignRoom(1, ['id' => $v2]);
+						$assign_room_results[]                 = $assign_room_model->findRecord(1, ['id' => $v2]);
 						$join_result                           = $join_model->findRecord(1, ['id' => $assign_room_results[$k1]['jid']]);
 						$assign_room_results[$k1]['join_name'] = $join_result['name'];
 					}
@@ -96,7 +96,7 @@
 					return array_merge($assign_room_result, ['__ajax__' => true]);
 				break;
 				case 'change_room':
-					$id = I('post.id', '');
+					$room_id = I('post.rid', '');
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model = D('Core/Join');
 					/** @var \Core\Model\AssignRoomModel $assign_room_model */
@@ -107,12 +107,14 @@
 						'hid'    => I('get.hid', 0, 'int'),
 						'status' => 'not deleted'
 					]);
-					$rid         = [];
-					foreach($room_result as $k => $v){
-						$rid[] = $v['id'];
-					}
-					foreach($rid as $k1 => $v1){
-						$assign_room_result = $assign_room_model->findAssignRoom(2, ['rid' => $v1]);
+					$new_list = [];
+					foreach($room_result as $k1 => $v1){
+						if($v1['id']==$room_id) continue;
+						$assign_room_result = $assign_room_model->findRecord(2, [
+							'rid'              => $v1['id'],
+							'occupancy_status' => 1,
+							'status'           => 1
+						]);
 						$jid                = [];
 						foreach($assign_room_result as $k2 => $v2){
 							$jid[] = $v2['jid'];
@@ -121,10 +123,11 @@
 							$join_result                     = $join_model->findRecord(1, ['id' => $v3]);
 							$assign_room_result[$k3]['name'] = $join_result['name'];
 						}
-						$room_result[$k1]['client'] = $assign_room_result;
+						$v1['client'] = $assign_room_result;
+						$new_list[]  = $v1;
 					}
 
-					return array_merge($room_result, ['__ajax__' => true]);
+					return array_merge($new_list, ['__ajax__' => true]);
 				break;
 				case 'leave':
 					C('TOKEN_ON', false);
@@ -132,7 +135,10 @@
 					$time = strtotime(I('post.leave_time', ''));
 					/** @var \Core\Model\AssignRoomModel $assign_room_model */
 					$assign_room_model  = D('Core/AssignRoom');
-					$assign_room_result = $assign_room_model->alterAssignRoom(['jid' => $id], ['leave_time' => $time,'status'=>2]);
+					$assign_room_result = $assign_room_model->alterRecord(['jid' => $id], [
+						'leave_time' => $time,
+						'status'     => 2
+					]);
 
 					return array_merge($assign_room_result, ['__ajax__' => false]);
 				break;
@@ -168,19 +174,21 @@
 					$assign_room_model = D('Core/AssignRoom');
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model         = D('Core/Join');
-					$assign_room_result = $assign_room_model->findAssignRoom(2, ['rid' => I('post.id', '')]);
+					$assign_room_result = $assign_room_model->findRecord(2, ['rid' => I('post.id', '')]);
 					$id                 = [];
 					foreach($assign_room_result as $k => $v){
 						$id[] = $assign_room_result[$k]['jid'];
 					}
 					$join = [];
 					foreach($id as $k1 => $v1){
-						$leave_time  = $assign_room_result[$k1]['leave_time'];
-						$join_result = $join_model->findRecord(1, ['id' => $v1]);
-						$join[]      = [
-							'name'       => $join_result['name'],
-							'id'         => $join_result['id'],
-							'leave_time' => $leave_time
+						$leave_time       = $assign_room_result[$k1]['leave_time'];
+						$occupancy_status = $assign_room_result[$k1]['occupancy_status'];
+						$join_result      = $join_model->findRecord(1, ['id' => $v1]);
+						$join[]           = [
+							'name'             => $join_result['name'],
+							'id'               => $join_result['id'],
+							'leave_time'       => $leave_time,
+							'occupancy_status' => $occupancy_status
 						];
 					}
 
@@ -197,6 +205,65 @@
 					]);
 
 					return array_merge($room_result, ['__ajax__' => false]);
+				break;
+				case 'room_add':
+					/** @var \Core\Model\AssignRoomModel $assign_room_model */
+					$assign_room_model = D('Core/AssignRoom');
+					C('TOKEN_ON', false);
+					$jid                = I('post.cid', 0, 'int');
+					$orid               = I('post.orid', 0, 'int');
+					$rid                = I('post.rid', 0, 'int');
+					$assign_room_result = $assign_room_model->findRecord(1, [
+						'jid' => $jid,
+						'rid' => $orid,
+						'occupancy_status'=>1
+					]);
+					$assign_room_model->alterRecord(['id'=>$assign_room_result['id']], ['occupancy_status' => 0]);
+					$assign_room_creator = $assign_room_model->createRecord([
+						'rid'       => $rid,
+						'jid'       => $jid,
+						'come_time' => time(),
+						'creatime'  => time(),
+						'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+					]);
+
+					return array_merge($assign_room_creator, ['__ajax__' => true]);
+				break;
+				case 'room_change':
+					C('TOKEN_ON', false);
+					$cid  = I('post.cid', '');    //当前选择换房时用户jid
+					$orid = I('post.orid', '');        //之前$ocid住的房间
+					$ocid = I('post.ocid', '');     //选择的那个用户的jid
+					$rid  = I('post.rid', '');        //之前$cid住的房间
+					/** @var \Core\Model\AssignRoomModel $assign_room_model */
+					$assign_room_model  = D('Core/AssignRoom');
+					$assign_room_result = $assign_room_model->findRecord(1, [
+						'jid' => $ocid,
+						'rid' => $rid,
+						'occupancy_status'=>1
+					]); //查出选择的用户那个房间信息.
+					$assign_room_model->alterRecord(['id'=>$assign_room_result['id']], ['occupancy_status' => 0]);//把这个用户的住房状态改为已退房
+					$assign_room_model->createRecord([
+						'jid'       => $ocid,
+						'rid'       => $orid,
+						'come_time' => time(),
+						'creatime'  => time(),
+						'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+					]);//把这个用户换到跟他交换的房间里去
+					$assign_room_results = $assign_room_model->findRecord(1, [
+						'jid' => $cid,
+						'rid' => $orid,
+						'occupancy_status'=>1
+					]); //查出选择的用户那个房间信息.
+					$assign_room_model->alterRecord(['id'=>$assign_room_results['id']], ['occupancy_status' => 0]);//把这个用户的住房状态改为已退房
+					$assign_room_alter = $assign_room_model->createRecord([
+						'jid'       => $cid,
+						'rid'       => $rid,
+						'come_time' => time(),
+						'creatime'  => time(),
+						'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+					]);//把这个用户换到跟他交换的房间里去
+					return array_merge($assign_room_alter, ['__ajax__' => true]);
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少参数'];
@@ -250,11 +317,16 @@
 			/** @var \Core\Model\RoomModel $room_model */
 			$room_model  = D('Core/Room');
 			$room_result = $room_model->findRoom(2, [
+				'hid'     => I('get.hid', 0, 'int'),
 				'status'  => 'not deleted',
-				'keyword' => I('get.keyword', 0, 'int')
+				'keyword' => I('get.keyword', 0, 'int'),
 			]);
 			foreach($room_result as $k => $v){
-				$room_result[$k]['count'] = $assign_room_model->findAssignRoom(0, ['rid' => $room_result[$k]['id'],'status'=>1]);
+				$room_result[$k]['count'] = $assign_room_model->findRecord(0, [
+					'rid'    => $room_result[$k]['id'],
+					'status' => 1,
+					'occupancy_status'=>1
+				]);
 			}
 			return $room_result;
 		}
@@ -262,7 +334,7 @@
 		public function selectMeetingJoin(){
 			/** @var \Core\Model\JoinModel $join_model */
 			$join_model  = D('Core/Join');
-			$join_result = $join_model->findRecord(2, ['mid' => I('get.id', 0, 'int'), 'keyword' => I('get.keyword')]);
+			$join_result = $join_model->findRecord(2, ['mid' => I('get.mid', 0, 'int'), 'keyword' => I('get.keyword')]);
 			/** @var \Core\Model\AssignRoomModel $assign_room_model */
 			$assign_room_model = D('Core/AssignRoom');
 			/** @var \Core\Model\RoomModel $room_model */
@@ -274,7 +346,7 @@
 				$id [] = $room_result[$k]['id'];
 			}
 			foreach($id as $k1 => $v1){
-				$assign_room_result = $assign_room_model->findAssignRoom(2, ['rid' => $v1]);
+				$assign_room_result = $assign_room_model->findRecord(2, ['rid' => $v1]);
 				foreach($assign_room_result as $k2 => $v2){
 					$jid [] = $assign_room_result[$k2]['jid'];
 				}

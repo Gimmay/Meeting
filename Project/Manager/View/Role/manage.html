@@ -307,14 +307,23 @@
 						<h2 class="modal-title" id="authorize_role_title">角色授权</h2>
 					</div>
 					<form class="form-horizontal" role="form" method="post">
-						<div class="modal-body role_body">
+						<div class="modal-body role_body clearfix">
 							<div class="btn_rect">
-								<header><h3>已分配的权限</h3></header>
+								<header>
+									<h2 class="text-center">已分配的权限</h2>
+									<div class="form-group">
+										<div class="input-group" id="authorize_search_o">
+											<input class="form-control" type="text" placeholder="权限名称">
+											<div class="input-group-addon">搜索</div>
+										</div>
+									</div>
+								</header>
 								<section class="select_area btn_green" id="authorize_select">
 								</section>
 							</div>
-							<div class="btn_rect but_wrap">
+							<div class="btn_rect">
 								<header>
+									<h2 class="text-center">未分配的权限</h2>
 									<div class="form-group">
 										<div class="input-group" id="authorize_search">
 											<input class="form-control" type="text" placeholder="权限名称">
@@ -323,14 +332,6 @@
 									</div>
 								</header>
 								<section class="all_area clearfix" id="authorize_all">
-									<!--<div class="pannel_n" data-group="aaa">
-										<div>
-											<header class="title">什么权限</header>
-											<section>
-												<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="41" data-type="$type">取消签到</a>
-											</section>
-										</div>
-									</div>-->
 								</section>
 							</div>
 						</div>
@@ -371,11 +372,11 @@
 		var ManageObject = {
 			object:{
 				toast  :$().QuasarToast(),
-				icheck             :$('.icheck').iCheck({
+				icheck :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				}),
-				loading            :$().QuasarLoading()
+				loading:$().QuasarLoading()
 			}
 		}
 	</script>

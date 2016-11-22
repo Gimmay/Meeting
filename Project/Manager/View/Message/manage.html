@@ -36,6 +36,16 @@
 				<include file="Public/innerHeader"/>
 				<div class="main_body">
 					<section class="content">
+						<div class="table_wrap">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="javascript:void(0)">消息管理</a>
+								</div>
+								<div class="pull-right" style="font-size: 14px; line-height: 50px; padding-right: 20px;">
+									您当前的短信余额：<b style="color: #FB5050; font-weight: bolder; font-size: 16px;"><{$sms_balance}></b>条
+								</div>
+							</div>
+						</div>
 						<header class="c_header">
 							<div class="function_list clearfix">
 								<if condition="$permission_list['MESSAGE.CREATE'] eq 1">

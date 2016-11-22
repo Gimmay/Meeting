@@ -191,8 +191,8 @@ $(function(){
 				$right_details.find('.setime').text(r.start_time+'-'+r.end_time);
 				$right_details.find('.director_name').text(r.director);
 				$right_details.find('.create_time').text(r.creatime);
-				$right_details.find('.brief').text(r.brief);
-				$right_details.find('.comment').text(r.comment);
+				$right_details.find('.brief').html(r.brief);
+				$right_details.find('.comment').html(r.comment);
 				if(r.qrcode){
 					$right_details.find('.QRcode img').attr('src', r.qrcode)
 				}else{

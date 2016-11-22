@@ -37,6 +37,7 @@
 				/** @var \Core\Model\MessageModel $message_model */
 				$message_model = D('Core/Message');
 				$logic         = new MessageLogic();
+				$sms_logic     = new SMSLogic();
 				$option        = [];
 				switch(I('get.type', '')){
 					case 'sms':
@@ -63,6 +64,7 @@
 				$list      = $logic->setData('manage:set_using_status', $list, ['mid' => $this->meetingID]);
 				$this->assign('list', $list);
 				$this->assign('page_show', $page_show);
+				$this->assign('sms_balance', $sms_logic->getBalance());
 				$this->display();
 			}
 			else $this->error('您没有查看消息模块的权限');

@@ -28,11 +28,15 @@
 			}
 			/** @var \Manager\Model\RoomModel $room_model_st */
 			$room_model_st = D('Room');
+			/** @var \Core\Model\HotelModel $hotel_model */
+			$hotel_model = D('Core/Hotel');
 			$room_result_st = $room_model_st->getRoomForSelect();
 			$room_result = $room_logic->findRoom();
 			$meeting_result = $room_logic->findMeeting();
 			$join_result = $room_logic->selectMeetingJoin();
+			$hotel_result_name = $hotel_model->findHotel(1,['id'=>I('get.hid',0,'int')]);
 			$this->assign('list',$join_result);
+			$this->assign('hotel_name',$hotel_result_name);
 			$this->assign('lists',$join_result);
 			$this->assign('room_info',$room_result);
 			$this->assign('info',$meeting_result);

@@ -27,6 +27,11 @@
 				'status'  => false,
 				'message' => "未提交非空字段"
 			];
-			return ['status'=>true];
+			if(stripos($message, 'Incorrect decimal value')) return [
+				'status'  => false,
+				'message' => "未提交非空字段"
+			];
+
+			return ['status' => true];
 		}
 	}
