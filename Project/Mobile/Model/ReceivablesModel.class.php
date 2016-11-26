@@ -22,7 +22,7 @@
 				'status' => 1,
 				'cid'    => [
 					'exp',
-					"in (select cid from workflow_join sub where main.mid = sub.mid and sub.status <> 2)"
+					"in (select cid from workflow_join sub where main.mid = sub.mid and sub.status = 1)"
 				]
 			])->field('distinct cid')->select();
 

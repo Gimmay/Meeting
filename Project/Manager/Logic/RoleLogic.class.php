@@ -70,8 +70,22 @@
 					else return ['status' => false, 'message' => '您没有收回权限的权限', '__ajax__' => true];
 				break;
 				case 'anti_assign_permission_group':
+					if($this->permissionList['ROLE.ANTI-ASSIGN-PERMISSION']){
+						$assign_permission_logic = new AssignPermissionLogic();
+						$result                  = $assign_permission_logic->multiAntiAssignPermission(I('post.code', ''), I('post.id', 0, 'int'), 0);
+
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有收回权限的权限', '__ajax__' => true];
 				break;
 				case 'assign_permission_group':
+					if($this->permissionList['ROLE.ASSIGN-PERMISSION']){
+						$assign_permission_logic = new AssignPermissionLogic();
+						$result                  = $assign_permission_logic->multiAssignPermission(I('post.code', ''), I('post.id', 0, 'int'), 0);
+
+						return array_merge($result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有授权的权限', '__ajax__' => true];
 				break;
 				case 'delete':
 					if($this->permissionList['ROLE.DELETE']){

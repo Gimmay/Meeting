@@ -59,27 +59,35 @@
 					$meeting_model  = D('Core/Meeting');
 					$meeting_list   = $meeting_model->findMeeting(2, ['status' => 'not deleted']);
 					$hotel_id_index = [];
+
 					foreach($data as $key => $val){
 						$hotel_id_index["index$val[id]"] = $key;
 						$data[$key]['meeting_name']      = '';
-						$data[$key]['meeting_status']    = null;
+						$data[$key]['meeting_status']    = [];
 					}
+
+
 					foreach($meeting_list as $val){
-						$index = $hotel_id_index["index$val[hid]"];
-						if(is_numeric($index)){
-							$data[$index]['meeting_name']   = $val['name'];
-							$data[$index]['meeting_status'] = $val['status'];
+						$hid_arr = explode(',', $val['hid']);
+						$last_index= null;
+						foreach($hid_arr as $key2=>$val2){
+							$index = $hotel_id_index["index$val2"];
+							if(is_numeric($index)){
+								$last_index = $index;
+								$data[$index]['meeting_name']   .= "$val[name], ";
+								$data[$index]['meeting_status'][] = $val['status'];
+							}
 						}
+						if(!($last_index===null)) $data[$last_index]['meeting_name'] = trim($data[$last_index]['meeting_name'], ', ');
 					}
 					foreach($data as $val){
-						if($option['meetingType'] == 'using' && in_array($val['meeting_status'], [
-								1,
-								2,
-								3
-							])
-						) $new_list[] = $val;
-						elseif($option['meetingType'] == 'finish' && $val['meeting_status'] == 4) $new_list[] = $val;
-						elseif($option['meetingType'] == 'not_use' && $val['meeting_status'] == null) $new_list[] = $val;
+						$condition_1 = in_array(1, $val['meeting_status']);
+						$condition_2 = in_array(2, $val['meeting_status']);
+						$condition_3 = in_array(3, $val['meeting_status']);
+						$condition_4 = in_array(4, $val['meeting_status']);
+						if($option['meetingType'] == 'using' && ($condition_1||$condition_2||$condition_3)) $new_list[] = $val;
+						elseif($option['meetingType'] == 'finish' && $condition_4) $new_list[] = $val;
+						elseif($option['meetingType'] == 'not_use' && count($val['meeting_status'])==0) $new_list[] = $val;
 						elseif($option['meetingType'] == '') $new_list[] = $val;
 					}
 

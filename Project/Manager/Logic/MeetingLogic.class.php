@@ -346,7 +346,7 @@
 							'value'    => $max_role_level,
 							'operator' => 'egt'
 						],
-						'status' => 'not deleted'
+						'status' => 1
 					]);
 
 					return array_merge($role_result, ['__ajax__' => true]);
@@ -406,6 +406,47 @@
 					return array_merge($employee_result, ['__ajax__' => true]);
 				break;
 				case 'get_employee2':
+//					$keyword = I('post.keyword', '');
+//					/** @var \Core\Model\EmployeeModel $employee_model */
+//					$employee_model = D('Core/Employee');
+//					/** @var \Core\Model\DepartmentModel $department_model */
+//					$department_model = D('Core/Department');
+//					/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
+//					$meeting_manager_model = D('Core/MeetingManager');
+//					$employee_result       = $employee_model->findEmployee(2, [
+//						'status'  => 'not deleted',
+//						'keyword' => $keyword
+//					]);
+//
+//					$employee_id           = [];
+//					foreach($employee_result as $k1 => $v1){
+//						$employee_id[] = $v1['id'];
+//					}
+//					$meeting_manager_result = $meeting_manager_model->findRecord(2, [
+//						'mid'    => I('post.mid', 0, 'int'),
+//						'status' => 'not deleted'
+//					]);
+//					$eid                    = [];
+//					foreach($meeting_manager_result as $key => $val){
+//						$eid[] = $val['eid'];
+//					}
+//					$id = [];
+//					foreach($employee_id as $kk => $vv){
+//						if(in_array($vv, $eid)){
+//							continue;
+//						}
+//						else{
+//							$id[] = $vv;
+//						}
+//					}
+//					$result = [];
+//					foreach($id as $k2 => $v3){
+//						$result[]              = $employee_model->findEmployee(1, ['id' => $v3]);
+//						$department_result     = $department_model->findDepartment(1, ['id' => $result[$k2]['did']]);
+//						$result[$k2]['d_name'] = $department_result['name'];
+//					}
+//
+//					return array_merge($employee_result, ['__ajax__' => true]);
 					$keyword = I('post.keyword', '');
 					/** @var \Core\Model\EmployeeModel $employee_model */
 					$employee_model = D('Core/Employee');
@@ -413,39 +454,38 @@
 					$department_model = D('Core/Department');
 					/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
 					$meeting_manager_model = D('Core/MeetingManager');
-					$employee_result       = $employee_model->findEmployee(2, [
-						'status'  => 'not deleted',
-						'keyword' => $keyword
-					]);
-					$employee_id           = [];
-					foreach($employee_result as $k1 => $v1){
-						$employee_id[] = $v1['id'];
+					$employee_result       = $employee_model->findEmployee(2, ['status' => 'not deleted','keyword' => $keyword]);
+					foreach($employee_result as $k => $v){
+						$department_result             = $department_model->findDepartment(1, ['id' => $v['did']]);
+						$employee_result[$k]['d_name'] = $department_result['name'];
 					}
-					$meeting_manager_result = $meeting_manager_model->findRecord(2, [
-						'mid'    => I('post.mid', 0, 'int'),
-						'status' => 'not deleted'
-					]);
-					$eid                    = [];
-					foreach($meeting_manager_result as $key => $val){
-						$eid[] = $val['eid'];
-					}
-					$id = [];
-					foreach($employee_id as $kk => $vv){
-						if(in_array($vv, $eid)){
-							continue;
-						}
-						else{
-							$id[] = $vv;
-						}
-					}
-					$result = [];
-					foreach($id as $k2 => $v3){
-						$result[]              = $employee_model->findEmployee(1, ['id' => $v3]);
-						$department_result     = $department_model->findDepartment(1, ['id' => $result[$k2]['did']]);
-						$result[$k2]['d_name'] = $department_result['name'];
-					}
-
-					return array_merge($result, ['__ajax__' => true]);
+					//					$employee_id           = [];
+					//					foreach($employee_result as $k1 => $v1){
+					//						$employee_id[] = $v1['id'];
+					//					}
+					//					$meeting_manager_result = $meeting_manager_model->findRecord(2, [
+					//						'mid'    => I('post.mid', ''),
+					//						'status' => 'not deleted'
+					//					]);
+					//					foreach($meeting_manager_result as $key => $val){
+					//						$eid[] = $val['eid'];
+					//					}
+					//					$id = [];
+					//					foreach($employee_id as $kk => $vv){
+					//						if(in_array($vv, $eid)){
+					//							continue;
+					//						}
+					//						else{
+					//							$id[] = $vv;
+					//						}
+					//					}
+					//					$result = [];
+					//					foreach($id as $k2 => $v3){
+					//						$result[]              = $employee_model->findEmployee(1, ['id' => $v3]);
+					//						$department_result     = $department_model->findDepartment(1, ['id' => $result[$k2]['did']]);
+					//						$result[$k2]['d_name'] = $department_result['name'];
+					//					}
+					return array_merge($employee_result, ['__ajax__' => true]);
 				break;
 				case 'save_employee':
 					/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */

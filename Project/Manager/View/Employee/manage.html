@@ -108,7 +108,7 @@
 											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>">
-													<if condition="($max_role_level elt $single['roleLevel']) and ($permission_list['EMPLOYEE.ASSIGN-ROLE'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-ROLE'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-ROLE'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-ROLE'] eq 1)">
+													<if condition="($max_role_level elt $single['roleLevel']) and ($permission_list['EMPLOYEE.ASSIGN-ROLE'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-ROLE'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-ROLE'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-ROLE'] eq 1) and $single['status'] eq 1">
 														<button type="button" class="btn btn-default btn-xs btn_distribution_role" data-toggle="modal" data-target="#distribution_role">分配角色</button>
 													</if>
 													<!--<if condition="($max_role_level elt $single['roleLevel']) and ($permission_list['EMPLOYEE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-PERMISSION'] eq 1)">
@@ -117,10 +117,10 @@
 													<if condition="$permission_list['EMPLOYEE.ALTER'] eq 1">
 														<a href="<{:U('Employee/alter',['id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
 													</if>
-													<if condition="$permission_list['EMPLOYEE.ALTER-PASSWORD'] eq 1">
+													<if condition="$permission_list['EMPLOYEE.ALTER-PASSWORD'] eq 1 and $single['status'] eq 1">
 														<button type="button" class="btn btn-default btn-xs btn_alter_password" data-toggle="modal" data-target="#alter_password">修改密码</button>
 													</if>
-													<if condition="$permission_list['EMPLOYEE.RESET-PASSWORD'] eq 1">
+													<if condition="$permission_list['EMPLOYEE.RESET-PASSWORD'] eq 1 and $single['status'] eq 1">
 														<button type="button" class="btn btn-default btn-xs btn_reset_password" data-toggle="modal" data-target="#reset_password">重置密码</button>
 													</if>
 													<if condition="$permission_list['EMPLOYEE.DELETE'] eq 1">
@@ -338,7 +338,8 @@
 							<div class="form-group">
 								<label for="password_reset" class="col-sm-2 control-label">密码：</label>
 								<div class="col-sm-10">
-									<input type="text" class="form-control reset_password" name="password" id="password_reset" value="123456">
+									默认密码为<if condition="C('DEFAULT_EMPLOYEE_PASSWORD') eq ''">空<else/><b><{:C('DEFAULT_EMPLOYEE_PASSWORD')}></b></if>
+									<input type="hidden" name="password" id="password_reset" value="<{:C('DEFAULT_EMPLOYEE_PASSWORD')}>">
 								</div>
 							</div>
 						</div>

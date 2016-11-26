@@ -44,22 +44,24 @@
 					<div class="client_list">
 						<volist name="list" id="unit_list">
 							<div class="list_item open">
-
 								<div class="title"><{$key}> (<{:count($unit_list)}>)<span class="icon glyphicon glyphicon-chevron-down"></span>
 								</div>
-
 								<ul class="list_item_ul">
 									<volist name="unit_list" id="single">
 										<li class="client_item">
-											<a href="<{:U('client',['cid'=>$single['cid'],'mid'=>I('get.mid',0,'int')])}>">
-												<span class="name"><{$single.name}></span>
-
-												<switch name="single.receivables">
-													<case value="1"><span class="status receivables">已收款</span></case>
-													<case value="0"><span class="status unReceivables">未收款</span></case>
-												</switch>
-
-											</a>
+											<if condition="$single.status eq 1">
+												<a href="<{:U('client',['cid'=>$single['cid'],'mid'=>I('get.mid',0,'int')])}>">
+													<span class="name"><{$single.name}></span>
+													<switch name="single.receivables">
+														<case value="1"><span class="status receivables">已收款</span></case>
+														<case value="0"><span class="status unReceivables">未收款</span></case>
+													</switch>
+												</a>
+												<else/><a href="<{:U('client',['cid'=>$single['cid'],'mid'=>I('get.mid',0,'int')])}>">
+													<span class="name"><{$single.name}></span>
+													<span class="status">已禁用</span>
+												</a>
+											</if>
 										</li>
 									</volist>
 								</ul>

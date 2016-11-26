@@ -18,6 +18,7 @@
 		public function findPermission($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id']) && $filter['id']) $where['id'] = $filter['id'];
+			if(isset($filter['group']) && $filter['group']) $where['group_code'] = $filter['group'];
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$where['name'] = ['like', "%$filter[keyword]%"];
 			}

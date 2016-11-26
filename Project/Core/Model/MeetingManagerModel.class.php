@@ -18,7 +18,7 @@
 			parent::_initialize();
 		}
 
-		public function findRecord($type, $filter = []){
+		public function findRecord($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id']) && $filter['id']) $where['id'] = $filter['id'];
 			if(isset($filter['eid']) && $filter['eid']) $where['eid'] = $filter['eid'];

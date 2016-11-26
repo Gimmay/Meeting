@@ -36,7 +36,7 @@
 				<div class="main_body" style="overflow: hidden;">
 					<section class="content">
 						<div class="return">
-							<a class="btn btn-default" onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
+							<a class="btn btn-default" href="<{:U('joinReceivables', ['mid'=>I('get.mid', 0, 'int')])}>"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
 						</div>
 						<div class="table_wrap">
 							<div class="nav_tab clearfix">
@@ -45,25 +45,17 @@
 								</div>
 							</div>
 							<div class="n_search clearfix">
-							<form class="form-horizontal" role="form" method="post" id="form" action="">
-								<input type="hidden" name="requestType" value="search">
-								<input type="hidden" name="id" value="">
-								<div class="search_li">
-									<label><span>会议：</span></label>
-									<div id="meeting_name" style="position: relative;"><input type="hidden" name="type" id="selected_meeting_name_form" value=""><textarea class="quasar-select-input form-control" id="selected_meeting_name" placeholder="" data-ext=""></textarea><ul class="quasar-select-data-list" tabindex="2" style="max-height: 300px">
-										<li data-ext="" data-value="38" data-keyword="开发测试会议" class="quasar-select-data-item">开发测试会议</li><li data-ext="" data-value="40" data-keyword="东方优雅仪态训练2天" class="quasar-select-data-item">东方优雅仪态训练2天</li>
-									</ul></div>									</div>
-								<div class="repertory clearfix">
-									<div class="input-group repertory_text">
-										<input type="search" name="keyword" class="form-control" placeholder="关键字" value="">
+								<form class="form-horizontal" method="get" action="">
+									<div class="repertory clearfix">
+										<div class="input-group repertory_text">
+											<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
 											<span class="input-group-btn">
 												<button type="submit" class="btn btn-default main_search">搜索</button>
 											</span>
+										</div>
 									</div>
-									<a type="reset" class="btn btn-default main_search" href="/Receivables/manage.aspx">查看所有</a>
-								</div>
-								<input type="hidden" name="__hash__" value="a2ac73500d06c547ebe8e2a97b47ddee_527f9ce62a56caedfd45ac82c4843242"></form>
-						</div>
+								</form>
+							</div>
 							<div class="tab-content clearfix">
 								<div class="ticket_list">
 									<table class="table table-striped">
@@ -71,10 +63,11 @@
 											<tr>
 												<th>序号</th>
 												<th>客户</th>
-												<th>会议</th>
 												<th>收款金额</th>
+												<th>收款人</th>
 												<th>收款类型</th>
 												<th>支付方式</th>
+												<th>POS机</th>
 												<th>代金券</th>
 												<th>收款时间</th>
 												<th>收款地点</th>
@@ -83,25 +76,26 @@
 											</tr>
 										</thead>
 										<tbody>
-											<volist name="info" id="list" key="k">
+											<volist name="list" id="info" key="k">
 												<tr>
 													<td><{$k}></td>
-													<td><{$list.cid}></td>
-													<td><{$list.mid}></td>
-													<td><{$list.price}></td>
-													<td><{$list.type}></td>
-													<td><{$list.method}></td>
-													<td><{$list.coupon_code}></td>
-													<td><{$list.time|date="Y-m-d",###}></td>
-													<td><{$list.place}></td>
+													<td><{$info.client}></td>
+													<td>￥<{$info.price}></td>
+													<td><{$info.payee}></td>
+													<td><{$info.type}></td>
+													<td><{$info.method}></td>
+													<td><{$info.pos}></td>
+													<td><{$info.coupon_code}></td>
+													<td><{$info.time|date="Y-m-d",###}></td>
+													<td><{$info.place}></td>
 													<td>
-														<switch name="list.source_type">
+														<switch name="info.source_type">
 															<case value="0">会前收款</case>
 															<case value="1">会中收款</case>
 															<case value="2">会后收款</case>
 														</switch>
 													</td>
-													<td><{$list.comment}></td>
+													<td><{$info.comment}></td>
 												</tr>
 											</volist>
 										</tbody>
@@ -114,62 +108,5 @@
 			</div>
 		</div>
 	</div>
-	<script>
-		var CreateObject = {
-			object:{
-				method   :$('#method').QuasarSelect({
-					name        :'method',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting)}>',
-					idInput     :'selected_method',
-					idHidden    :'selected_method_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				type     :$('#type').QuasarSelect({
-					name        :'type',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting)}>',
-					idInput     :'selected_type',
-					idHidden    :'selected_type_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				meetingName     :$('#meeting_name').QuasarSelect({
-					name        :'type',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($meeting_list)}>',
-					idInput     :'selected_meeting_name',
-					idHidden    :'selected_meeting_name_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				clientName     :$('#client_name').QuasarSelect({
-					name        :'client_name',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($client_list)}>',
-					idInput     :'selected_client_name',
-					idHidden    :'selected_client_name_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				payeeName:$('#payee_id').QuasarSelect({
-					name        :'payeeName',
-					classStyle  :'form-control',
-					data        :'<{:json_encode($client_list)}>',
-					idInput     :'selected_payeeName',
-					idHidden    :'selected_payeeName_form',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				toast    :$().QuasarToast(),
-				loading  :$().QuasarLoading(),
-				icheck   :$('.icheck').iCheck({
-					checkboxClass:'icheckbox_square-green',
-					radioClass   :'iradio_square-green'
-				})
-			}
-		};
-	</script>
 </body>
 </html>

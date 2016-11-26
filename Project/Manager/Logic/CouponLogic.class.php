@@ -8,7 +8,6 @@
 	namespace Manager\Logic;
 
 	class CouponLogic extends ManagerLogic{
-
 		public function _initialize(){
 			parent::_initialize();
 		}
@@ -20,6 +19,7 @@
 					$creator            = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$data['start_time'] = strtotime(I('post.start_time', ''));
 					$data['end_time']   = strtotime(I('post.end_time', ''));
+					$data['mid']   = I('get.mid',0,'int');
 					$data['creator']    = $creator;//当前创建者
 					$data['creatime']   = time();//当前时间
 					/** @var \Core\Model\CouponItemModel $coupon_item_model */
@@ -58,7 +58,7 @@
 					$data               = I('post.', '');
 					$data['start_time'] = strtotime(I('post.start_time', ''));
 					$data['end_time']   = strtotime(I('post.end_time', ''));
-					$result             = $model->alterCoupon(['id'=>I('post.id', 0, 'int')], $data);
+					$result             = $model->alterCoupon(['id' => I('post.id', 0, 'int')], $data);
 					return array_merge($result, ['__ajax__' => false]);
 				break;
 				case 'create';
@@ -66,6 +66,7 @@
 					/** @var \Core\Model\CouponModel $model */
 					$model            = D('Core/Coupon');
 					$data             = I('post.', '');
+					$data['mid']      = I('get.mid', 0, 'int');
 					$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$data['creatime'] = time();//当前时间
 					$result           = $model->createCoupon($data);
@@ -108,7 +109,10 @@
 					else{
 						array_push($meeting_arr['id'], $v2['mid']);
 						$meeting_record = $meeting_model->findMeeting(1, ['id' => $v2['mid']]);
-						$url            = U('couponlist', ['mid' => $meeting_record['id'],'id'=> $coupon_list[$k2]['coupon_id']]);
+						$url            = U('couponlist', [
+							'mid' => $meeting_record['id'],
+							'id'  => $coupon_list[$k2]['coupon_id']
+						]);
 						array_push($meeting_arr['name'], "<a href='$url'>$meeting_record[name]</a>");
 					}
 				}
@@ -121,5 +125,4 @@
 
 			return $list;
 		}
-
 	}

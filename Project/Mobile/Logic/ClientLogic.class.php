@@ -93,7 +93,7 @@
 						]);
 						if($result['status']){
 							$message_logic = new MessageLogic();
-							$message_logic->send($meeting_id, 1, [$cid]);
+							$message_logic->send($meeting_id, C('AUTO_SEND_TYPE'), 1, 1, [$cid]);
 						}
 
 						return array_merge($result, ['__ajax__' => true]);
@@ -153,7 +153,7 @@
 						]);
 						if($result['status']){
 							$message_logic = new MessageLogic();
-							$message_logic->send($meeting_id, 1, [$cid]);
+							$message_logic->send($meeting_id, C('AUTO_SEND_TYPE'), 1, 1, [$cid]);
 						}
 
 						return array_merge($result, ['__ajax__' => true]);

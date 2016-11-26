@@ -21,16 +21,14 @@
 		public function findRecord($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
+			if(isset($filter['name'])) $where['name'] = $filter['name'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted') $where['status'] = ['neq', 2];
 				else $where['status'] = $filter['status'];
 			}
-			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['keyword']) && $filter['keyword']){
-				$condition['name']   = ['like', "%$filter[keyword]%"];
-				$condition['_logic'] = 'or';
-				$where['_complex']   = $condition;
+				$where['name']   = ['like', "%$filter[keyword]%"];
 			}
 			switch((int)$type){
 				case 0: // count

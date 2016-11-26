@@ -48,7 +48,10 @@
 					$where['sub.status']  = ['neq', 2];
 					$where['main.status'] = ['neq', 2];
 				}
-				else $where['main.status'] = $filter['status']; // todo 是否要client表也要处理
+				else{
+					$where['main.status'] = $filter['status'];
+					$where['sub.status']  = $filter['status'];
+				}
 			};
 			if(isset($filter['sign_status'])){
 				$status = strtolower($filter['sign_status']);

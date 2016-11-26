@@ -33,15 +33,15 @@
 				<include file="Public/innerHeader"/>
 				<if condition="$permission_list['CLIENT.CREATE'] eq 1">
 					<div class="main_body">
-						<section class="content">
-							<div class="table_wrap">
-								<div class="nav_tab clearfix">
-									<div class="nav_tab_li active">
-										<a href="javascript:void(0)">创建参会人员</a>
+						<form class="form-horizontal" role="form" method="post" id="form" action="" onsubmit="return checkIsEmpty()">
+							<section class="content">
+								<div class="table_wrap clearfix">
+									<div class="nav_tab clearfix">
+										<div class="nav_tab_li active">
+											<a href="javascript:void(0)">创建参会人员</a>
+										</div>
 									</div>
 								</div>
-							</div>
-							<form class="form-horizontal" role="form" method="post" id="form" action="" onsubmit="return checkIsEmpty()">
 								<input type="hidden" name="requestType" value="create">
 								<div class="modal-body">
 									<div class="form-group">
@@ -61,16 +61,16 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="birthdate" class="col-sm-1 control-label">出生日期：</label>
+										<label for="birthday" class="col-sm-1 control-label">出生日期：</label>
 										<div class="col-sm-11">
-											<input type="text" class="form-control" name="birthdate" id="birthdate">
+											<input type="text" class="form-control" name="birthday" id="birthday">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="place" class="col-sm-1 control-label">地址：</label>
+										<label for="address" class="col-sm-1 control-label">地址：</label>
 										<div class="col-sm-11">
 											<div class="input-group address_map">
-												<input type="text" class="form-control" name="place" id="place">
+												<input type="text" class="form-control" name="address" id="address">
 												<span class="input-group-addon glyphicon glyphicon-send get_map"></span>
 											</div>
 											<div id="allmap" class="hide" style="width: 100%; height: 400px;"></div>
@@ -113,6 +113,15 @@
 										</div>
 									</div>
 									<div class="form-group">
+										<label for="is_new" class="col-sm-1 control-label">是否新客：</label>
+										<div class="col-sm-11">
+											<select id="is_new" name="is_new" class="form-control">
+												<option value="1">新客</option>
+												<option value="0">老客</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
 										<label for="develop_consultant" class="col-sm-1 control-label">开拓顾问：</label>
 										<div class="col-sm-11">
 											<div id="develop_consultant"></div>
@@ -122,18 +131,6 @@
 										<label for="service_consultant" class="col-sm-1 control-label">服务顾问：</label>
 										<div class="col-sm-11">
 											<div id="service_consultant"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="accompany" class="col-sm-1 control-label">陪同人姓名：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control accompany" name="accompany" id="accompany">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="accompany_mobile" class="col-sm-1 control-label">陪同人手机：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control accompany_mobile" name="accompany_mobile" id="accompany_mobile">
 										</div>
 									</div>
 									<div class="form-group">
@@ -154,7 +151,7 @@
 											<input type="text" class="form-control column1" name="column1" id="column1">
 										</div>
 									</div>
-									<div class="form-group">
+									<!--<div class="form-group">
 										<label for="column2" class="col-sm-1 control-label">保留字段2：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control column2" name="column2" id="column2">
@@ -195,13 +192,13 @@
 										<div class="col-sm-11">
 											<input type="text" class="form-control column8" name="column8" id="column8">
 										</div>
-									</div>
+									</div>-->
 								</div>
 								<div class="modal-footer text_center">
 									<button type="submit" class="btn btn-primary">提交</button>
 								</div>
-							</form>
-						</section>
+							</section>
+						</form>
 					</div>
 				</if>
 			</div>

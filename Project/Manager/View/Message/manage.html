@@ -234,10 +234,14 @@
 							<div class="form-group">
 								<label for="use_style" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>使用方式：</label>
 								<div class="col-sm-10">
+									<!-- 此处静态地枚举所有的系统操作的自动提醒 -->
+									<!-- 若添加了一个类型则需要到以下几处添加处理 -->
+									<!-- D85D48D80FC93AFE0620F1549178C1D02B618F4A -->
 									<select name="type" id="use_style" class="form-control">
 										<option value="1">签到提醒</option>
 										<option value="2">取消签到提醒</option>
-										<option value="3">收款提醒开拓顾问</option>
+										<option value="3">收款后提醒开拓顾问</option>
+										<option value="4">发送邀请</option>
 									</select>
 								</div>
 							</div>

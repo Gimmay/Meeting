@@ -25,12 +25,31 @@
 			</if>
 			<if condition="$permission_list['MEETING.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq Meeting'>active</if>">
-					<a href="<{:U('Meeting/manage')}>" class="side-item-link">
+					<a href="<{:U('Meeting/manage', ['type'=>'ing'])}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-th"></i> <span class="nav-label">会议列表</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span>
 					</a>
 				</li>
 			</if>
 		</ul>
+	</div>
+	<div class="message_box" style="position: absolute; bottom: 0; width: 100%; padding: 15px 20px 15px 25px; background: #343F55; border-top: 1px solid grey;">
+		<a href="javascript:void(0)" style="width: 100%; height: 100%; display: inline-block; color: white">
+			<span class="icon_nav glyphicon glyphicon-envelope"></span>
+			<span style="margin-left: 15px">站内信</span>
+			<if condition="count($system_message) gt 0">
+				<span style="min-width: 20px; min-height: 20px; line-height: 20px; border-radius: 50%; background: red; display: inline-block; font-size: 10px; text-align: center"><{:count($system_message)}></span>
+			</if>
+		</a>
+	</div>
+	<div class="message_modal hide">
+		<div class="mes_title">站内信 <span class="mes_close">×</span></div>
+		<div class="mes_list">
+			<volist name="system_message" id="message">
+				<div class="mes_item">
+					<b><{$i}>、</b><{$message}>
+				</div>
+			</volist>
+		</div>
 	</div>
 </div>

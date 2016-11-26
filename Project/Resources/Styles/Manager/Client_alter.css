@@ -1,3 +1,15 @@
-/**
- * Created by 1195 on 2016-9-29.
- */
+.modal-footer .btn{
+	position   : fixed;
+	bottom     : 40px;
+	right      : 40px;
+	width      : 70px;
+	height     : 60px;
+	background : #00A0E8;
+	border     : none;
+	font-size  : 16px;
+	opacity    : 0.5;
+}
+
+.modal-footer .btn:hover{
+	opacity : 1;
+}

@@ -209,43 +209,46 @@
 													<div class="btn-group" data-id="<{$single.cid}>" data-join-id="<{$single.id}>">
 														<switch name="single.sign_status">
 															<case value="0">
-																<if condition="$permission_list['SIGN_PLACE-CLIENT.SIGN'] and $single['review_status'] eq 1">
+																<if condition="$permission_list['SIGN_PLACE-CLIENT.SIGN'] and $single['review_status'] eq 1 and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
 																</if>
 															</case>
 															<case value="1">
-																<if condition="$permission_list['SIGN_PLACE-CLIENT.ANTI-SIGN']">
+																<if condition="$permission_list['SIGN_PLACE-CLIENT.ANTI-SIGN'] and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button>
 																</if>
 															</case>
 															<case value="2">
-																<if condition="$permission_list['SIGN_PLACE-CLIENT.SIGN'] and $single['review_status'] eq 1">
+																<if condition="$permission_list['SIGN_PLACE-CLIENT.SIGN'] and $single['review_status'] eq 1 and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
 																</if>
 															</case>
 														</switch>
 														<switch name="single.review_status">
 															<case value="0">
-																<if condition="$permission_list['SIGN_PLACE-CLIENT.REVIEW']">
+																<if condition="$permission_list['SIGN_PLACE-CLIENT.REVIEW'] and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
 																</if>
 															</case>
 															<case value="1">
-																<if condition="$permission_list['SIGN_PLACE-CLIENT.ANTI-REVIEW']">
+																<if condition="$permission_list['SIGN_PLACE-CLIENT.ANTI-REVIEW'] and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button>
 																</if>
 															</case>
 															<case value="2">
-																<if condition="$permission_list['SIGN_PLACE-CLIENT.REVIEW']">
+																<if condition="$permission_list['SIGN_PLACE-CLIENT.REVIEW'] and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
 																</if>
 															</case>
 														</switch>
-														<if condition="$permission_list['SIGN_PLACE-CLIENT.EARN-PAYMENT']">
+														<if condition="$permission_list['SIGN_PLACE-CLIENT.EARN-PAYMENT'] and $single['status'] eq 1">
 															<a class="btn btn-default btn-xs btn_receivables" data-toggle="modal" data-target="#add_receivables">收款</a>
 														</if>
 														<if condition="$permission_list['SIGN_PLACE-CLIENT.ALTER']">
 															<a href="<{:U('Client/alter',['id'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
+														</if>
+														<if condition="$permission_list['SIGN_PLACE-CLIENT.DELETE']">
+															<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_client">删除</button>
 														</if>
 														<if condition="$permission_list['SIGN_PLACE-CLIENT.DELETE']">
 															<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_client">删除</button>

@@ -2,12 +2,12 @@
  * Created by qyqy on 2016-9-21.
  */
 function checkIsEmpty(){
-	var $code   = $('#code');
-	var $name   = $('#selected_name');
-	var $password = $('#password');
-	var $selected_position = $('#selected_position');
+	var $code                = $('#code');
+	var $name                = $('#selected_name');
+	var $password            = $('#password');
+	var $selected_position   = $('#selected_position');
 	var $selected_department = $('#selected_department');
-	var $mobile = $('#mobile');
+	var $mobile              = $('#mobile');
 	if($code.val() == ''){
 		CreateObject.object.toast.toast("工号不能为空");
 		$code.focus();
@@ -18,12 +18,6 @@ function checkIsEmpty(){
 		$name.focus();
 		return false;
 	}
-	if($password.val() == ''){
-		CreateObject.object.toast.toast("密码不能为空");
-		$password.focus();
-		return false;
-	}
-
 	if($selected_position.text() == ''){
 		CreateObject.object.toast.toast("职位不能为空");
 		$selected_position.focus();
@@ -41,7 +35,6 @@ function checkIsEmpty(){
 	}
 	return true;
 }
-
 $(function(){
 	var $code          = $('#code');
 	var $status        = $('#status');
@@ -126,9 +119,9 @@ $(function(){
 		$modal.modal('hide');
 	});
 	CreateObject.object.deptSelect.onQuasarSelect(function(){
-		var dept = CreateObject.object.deptSelect.getHtml();
-		var end = dept.lastIndexOf(')');
-		var start = dept.lastIndexOf('(');
+		var dept    = CreateObject.object.deptSelect.getHtml();
+		var end     = dept.lastIndexOf(')');
+		var start   = dept.lastIndexOf('(');
 		var company = dept.substr(start+1, end-start-1);
 		CreateObject.object.companySelect.setValue(company);
 		CreateObject.object.companySelect.setHtml(company);

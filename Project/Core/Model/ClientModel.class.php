@@ -56,6 +56,7 @@
 		public function findClient($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
+			if(isset($filter['isNew'])) $where['is_new'] = $filter['isNew'];
 			if(isset($filter['name'])) $where['name'] = $filter['name'];
 			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['status'])){

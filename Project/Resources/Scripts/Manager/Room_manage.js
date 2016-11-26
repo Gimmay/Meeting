@@ -99,6 +99,13 @@ function change_room(){
 						data    :{requestType:'room_add', rid:rid, cid:id, orid:orid},
 						callback:function(r){
 							console.log(r);
+							if(r.status){
+								ThisObject.object.toast.toast('换房成功');
+								$('#change_room').modal('hide');
+								location.reload();
+							}else{
+								ThisObject.object.toast.toast('换房失败');
+							}
 						}
 					});
 				});
@@ -111,10 +118,19 @@ function change_room(){
 				$('.c_change').on('click', function(){
 					var rid  = $(this).parents('tr').attr('data-id'); // 选择房间的ID
 					var ocid = $(this).siblings('.active').attr('data-id'); // 选择房间被选择人员的ID
+					ThisObject.object.loading.loading();
 					Common.ajax({
 						data    :{requestType:'room_change', rid:rid, ocid:ocid, cid:id, orid:orid},
 						callback:function(r){
-							console.log(r);
+							ThisObject.object.loading.complete();
+							if(r.status){
+								ThisObject.object.toast.toast('换房成功');
+								$('#change_room').modal('hide');
+								$('.right_details').width(0);
+								location.reload();
+							}else{
+								ThisObject.object.toast.toast('换房失败');
+							}
 						}
 					})
 				});

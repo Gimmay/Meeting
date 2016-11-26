@@ -49,14 +49,21 @@
 								<ul class="list_item_ul">
 									<volist name="unit_list" id="single">
 										<li class="client_item">
-											<a href="<{:U('client', ['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>">
-												<span class="name"><{$single.name}></span>
-												<if condition="$single.sign_status eq 1">
-													<span class="status signed">已签到</span>
-													<else/>
-													<span class="status unsigned">未签到</span>
-												</if>
-											</a>
+											<if condition="$single.status eq 0">
+												<a href="<{:U('client', ['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>">
+													<span class="name"><{$single.name}></span>
+													<span class="status">已禁用</span>
+												</a>
+												<else/>
+												<a href="<{:U('client', ['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>">
+													<span class="name"><{$single.name}></span>
+													<if condition="$single.sign_status eq 1">
+														<span class="status signed">已签到</span>
+														<else/>
+														<span class="status unsigned">未签到</span>
+													</if>
+												</a>
+											</if>
 										</li>
 									</volist>
 								</ul>

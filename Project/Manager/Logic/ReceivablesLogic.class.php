@@ -8,6 +8,7 @@
 	namespace Manager\Logic;
 
 	use Core\Logic\SMSLogic;
+	use Think\Page;
 
 	class ReceivablesLogic extends ManagerLogic{
 		public function _initialize(){
@@ -175,7 +176,7 @@
 					]);
 					if($employee_result){
 						$message_logic = new MessageLogic();
-						$sms_send      = $message_logic->send($mid, 0, 0, 3, [$employee_result['id']]);
+						$sms_send      = $message_logic->send($mid, C('AUTO_SEND_TYPE'), 0, 3, [$employee_result['id']]);
 					}
 
 					return array_merge($receivables_result, [
@@ -200,6 +201,7 @@
 					$pos_machine_model = D('Core/PosMachine');
 					C('TOKEN_ON', false);
 					$data               = I('post.', '');
+					$data['mid']        = I('get.mid', 0, 'int');
 					$data['creatime']   = time();    //创建时间
 					$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
 					$pos_machine_result = $pos_machine_model->createRecord($data);
@@ -304,12 +306,213 @@
 					//											'__ajax__' => false
 					//										];
 				break;
+				case 'ticket':
+					/** @var \Core\Model\CouponModel $coupon_model */
+					$coupon_model  = D('Core/Coupon');
+					$coupon_result = $coupon_model->findCoupon(2, [
+						'status' => 'not deleted',
+						'type'   => 1,
+						'mid'    => I('get.mid', 0, 'int')
+					]);
+					$data          = [];
+					foreach($coupon_result as $k => $v){
+						$data[$k]['id']    = $v['id'];
+						$data[$k]['name']  = $v['name'];
+						$data[$k]['price'] = $v['price'];
+						$data[$k]['type']  = $v['type'];
+					}
+
+					return array_merge($data, ['__ajax__' => true]);
+				break;
+				case 'coupon':
+					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+					$coupon_item_model = D('Core/CouponItem');
+					/** @var \Core\Model\CouponModel $coupon_model */
+					$coupon_model  = D('Core/Coupon');
+					$coupon_result = $coupon_model->findCoupon(2, [
+						'status' => 1,
+						'mid'    => I('get.mid', 0, 'int'),
+						'type'   => 2
+					]);
+
+//					foreach($coupon_result as $k => $v){
+//						$coupon_item_result = $coupon_item_model->findRecord(2, [
+//							'status'    => 0,
+//							'coupon_id' => $v['id'],
+//							'mid'       => I('get.mid', 0, 'int')
+//						]);
+//						if(!$coupon_item_result){
+//							$coupon_result = [];
+//						}
+//					}
+
+					//					$coupon_item_result = $coupon_item_model->findRecord(2, [
+					//						'mid'    => I('get.mid', 0, 'int'),
+					//						'status' => 0
+					//					]);
+					//					$new_list           = [];
+					//					foreach($coupon_item_result as $k => $v){
+					//						$coupon_result = $coupon_model->findCoupon(1, [
+					//							'id'     => $v['coupon_id'],
+					//							'status' => 'not deleted',
+					//							'type'   => 2
+					//						]);
+					//						if($coupon_result['type'] == 2){
+					//							$v['coupon_name']                    = $coupon_result['name'];
+					//							$new_list["$coupon_result[name] "][] = $v;//空格识别数字健
+					//						}
+					//					}
+					return array_merge($coupon_result, ['__ajax__' => true]);
+				break;
+				case 'product':
+					/** @var \Core\Model\CouponModel $coupon_model */
+					$coupon_model  = D('Core/Coupon');
+					$coupon_result = $coupon_model->findCoupon(2, [
+						'status' => 'not deleted',
+						'type'   => 3,
+						'mid'    => I('get.mid', 0, 'int')
+					]);
+					$data          = [];
+					foreach($coupon_result as $k => $v){
+						$data[$k]['id']    = $v['id'];
+						$data[$k]['name']  = $v['name'];
+						$data[$k]['price'] = $v['price'];
+						$data[$k]['type']  = $v['type'];
+					}
+
+					return array_merge($data, ['__ajax__' => true]);
+				break;
+				case 'other':
+					/** @var \Core\Model\CouponModel $coupon_model */
+					$coupon_model  = D('Core/Coupon');
+					$coupon_result = $coupon_model->findCoupon(2, [
+						'status' => 'not deleted',
+						'type'   => 100,
+						'mid'    => I('get.mid', 0, 'int')
+					]);
+					$data          = [];
+					foreach($coupon_result as $k => $v){
+						$data[$k]['id']    = $v['id'];
+						$data[$k]['name']  = $v['name'];
+						$data[$k]['price'] = $v['price'];
+						$data[$k]['type']  = $v['type'];
+					}
+
+					return array_merge($data, ['__ajax__' => true]);
+				break;
+				//				case 'coupon':
+				//					/** @var \Core\Model\CouponModel $coupon_model */
+				//					$coupon_model = D('Core/Coupon');
+				//					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+				//					$coupon_item_model = D('Core/CouponItem');
+				//					$coupon_result     = $coupon_model->findCoupon(2, [
+				//						'mid'    => I('get.mid', 0, 'int'),
+				//						'type'   => "代金券",
+				//						'status' => 'not deleted'
+				//					]);
+				//					$coupon_item_ids   = [];
+				//					foreach($coupon_result as $k => $v){
+				//						$coupon_item_ids[] = $coupon_item_model->findRecord(2, [
+				//							'coupon_id' => $v['id'],
+				//							'status'    => 0
+				//						]);
+				//					}
+				//
+				//
+				//					return array_merge($coupon_result, ['__ajax__' => true]);
+				//				break;
+				case 'create_list':
+					/** @var \Core\Model\ReceivablesModel $receivables_model */
+					$receivables_model = D('Core/Receivables');
+					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+					$coupon_item_model   = D('Core/CouponItem');
+					$receivables_logic   = new \Core\Logic\ReceivablesLogic();
+					$makeOrderNumber     = $receivables_logic->makeOrderNumber();
+					$type                = I('post.type', '');
+					$mid                 = I('get.mid', 0, 'int');
+					$cid                 = I('post.client_name', 0, 'int');
+					$data                = I('post.');
+					$payee_id            = I('post.payee_id', 0, 'int');
+					$creator             = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$save_data           = [];
+					$coupon_item_project = [];   //项目
+					$coupon_item_code    = [];//代金券
+					$data['coupon_code'] = I('post.coupon_code');
+					$data['coupon_ids']  = I('post.select_code');
+					$place               = I('post.place', '');
+					C('TOKEN_ON', false);
+					foreach($type as $k => $v){
+						$save_data[] = [
+							'cid'          => $cid,
+							'mid'          => $mid,
+							'time'         => time(),
+							'type'         => $data['type'][$k],
+							'price'        => $data['price'][$k],
+							'method'       => $data['payMethod'][$k],
+							'pos_id'       => $data['pos'][$k],
+							'payee_id'     => $payee_id,
+							'order_number' => $makeOrderNumber,
+							'source_type'  => $data['source_type'][$k],
+							'coupon_ids'   => $data['coupon_ids'][$k],
+							'creatime'     => time(),    //创建时间
+							'creator'      => $creator,    //当前创建者
+							'place'        => $place,
+						];
+						if($data['type'][$k] != 2){
+							$coupon_item_project[] = [
+								'mid'       => $mid,
+								'coupon_id' => $save_data[$k]['coupon_code'],
+								'cid'       => $cid,
+								'creatime'  => time(),
+								'creator'   => $creator,
+								'status'    => 1
+							];
+						}
+						elseif($data['type'][$k] == 2){
+							$coupon_id = $data['coupon_code'];
+							foreach($coupon_id as $k1 => $v1) $coupon_item_code[] = $v1;
+						}
+					}// TODO
+					$result1            = $coupon_item_model->createMultiRecord($coupon_item_project);
+					$receivables_result = $receivables_model->createMultiRecord($save_data);
+					$coupon_item_result = $coupon_item_model->alterRecord([
+						'id' => ['in', $coupon_item_code]
+					], ['status' => 1, 'cid' => $cid]);
+
+					return array_merge($receivables_result, ['__ajax__' => false]);
+				break;
+				case 'get_coupon_code':
+					$coupon_id = I('post.id', 0, 'int');
+					$mid       = I('get.mid', 0, 'int');
+					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+					$coupon_item_model  = D('Core/CouponItem');
+					$coupon_item_result = $coupon_item_model->findRecord(2, [
+						'status'    => 0,
+						'coupon_id' => $coupon_id,
+						'mid'       => $mid
+					]);
+					$data               = [];
+					foreach($coupon_item_result as $k => $v){
+						$data[] = ['id' => $v['id'], 'name' => $v['code']];
+					}
+
+					return array_merge($data, ['__ajax__' => true]);
+				break;
+				//				case 'create_coupon_item':
+				//					$coupon_id = explode(',',I('post.coupon_id'));
+				//					/** @var \Core\Model\ReceivablesModel $receivables_model */
+				//					$receivables_model = D('Core/Receivables');
+				//					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+				//					$coupon_item_model  = D('Core/CouponItem');
+				//
+				//				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
 				break;
 			}
 		}
 
+		// 导入excel收款数据
 		private function saveReceivablesFromExcelData($data){
 			/** @var \Manager\Model\ReceivablesModel $self_model */
 			$self_model = D('Receivables');
@@ -327,29 +530,32 @@
 			$pos_machine_model = D('Core/PosMachine');
 			/** @var \Core\Model\CouponItemModel $coupon_item_model */
 			$coupon_item_model = D('Core/CouponItem');
+			$receivables_logic = new \Core\Logic\ReceivablesLogic();
 			$table_column      = $self_model->getColumn();
 			$count             = 0;
 			$error_msg         = '';
+			$mid               = I('get.mid', 0, 'int');
+			$creator           = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 			foreach($data as $key1 => $val1){
 				$save_data   = [];
 				$client_name = '';
 				foreach($val1 as $key2 => $val2){
 					switch($table_column[$key2]['name']){
-						case 'cid':
+						case 'cid': // 根据参会人员名称反查ID
 							$client_name = $val2;
 							$client      = $client_model->findClient(1, ['name' => $val2, 'status' => 'not deleted']);
 							if($client) $val2 = $client['id'];
 							else $val2 = null;
 						break;
-						case 'payee_id':
+						case 'payee_id': // 根据员工名称反查ID
 							$payee = $employee_model->findEmployee(1, ['name' => $val2, 'status' => 'not deleted']);
 							if($payee) $val2 = $payee['id'];
 							else $val2 = null;
 						break;
-						case 'method':
+						case 'method': // 根据支付方式名称反查ID 存在则选择不存在则创建
 							$pay_method = $pay_method_model->findRecord(1, [
-								'keyword' => $val2,
-								'status'  => 'not deleted'
+								'name'   => $val2,
+								'status' => 'not deleted'
 							]);
 							if($pay_method) $val2 = $pay_method['id'];
 							else{
@@ -362,10 +568,10 @@
 								else $val2 = null;
 							}
 						break;
-						case 'type':
+						case 'type': // 根据收款类型名称反查ID 存在则选择不存在则创建 todo 删除
 							$receivables_type = $receivables_type_model->findRecord(1, [
-								'keyword' => $val2,
-								'status'  => 'not deleted'
+								'name'   => $val2,
+								'status' => 'not deleted'
 							]);
 							if($receivables_type) $val2 = $receivables_type['id'];
 							else{
@@ -378,10 +584,10 @@
 								else $val2 = null;
 							}
 						break;
-						case 'pos_id':
+						case 'pos_id': // 根据POS机名称反查ID 存在则选择不存在则创建
 							$pos_machine = $pos_machine_model->findRecord(1, [
-								'keyword' => $val2,
-								'status'  => 'not deleted'
+								'name'   => $val2,
+								'status' => 'not deleted'
 							]);
 							if($pos_machine) $val2 = $pos_machine['id'];
 							else{
@@ -396,8 +602,8 @@
 						break;
 						case 'coupon_ids':
 							$coupon_item = $coupon_item_model->findRecord(1, [
-								'keyword' => $val2,
-								'status'  => 'not deleted'
+								'code'   => $val2,
+								'status' => 'not deleted'
 							]);
 							if($coupon_item) $val2 = $coupon_item['id'];
 							else $val2 = null;
@@ -432,31 +638,24 @@
 								}
 							}
 						break;
+						case 'time':
+							$val2 = strtotime($val2);
+						break;
 					}
 					$save_data[$table_column[$key2]['name']] = $val2;
 				}
-				$result = $model->createRecord($save_data);
-				if($result['stauts']){
-					$count++;
-					$error_msg .= "$client_name, ";
-				}
+				$save_data['mid']          = $mid;
+				$save_data['order_number'] = $receivables_logic->makeOrderNumber();
+				$save_data['creator']      = $creator;
+				$save_data['creatime']     = time();
+				$result                    = $model->createRecord($save_data);
+				if($result['status']) $count++;
+				else $error_msg .= "$client_name, ";
 			}
 			$error_msg = trim($error_msg, ', ');
-			if($count == count($data)) return ['status' => true, 'message' => '全部导入成功'];
-			elseif($count == 0) return ['status' => false, 'message' => '没有导入任何数据'];
-			else return ['status' => true, 'message' => "部分数据未导入: $error_msg"];
-		}
-
-		public function findCouponItem(){
-			/** @var \Core\Model\CouponItemModel $coupon_item_model */
-			$coupon_item_model = D('Core/CouponItem');
-			$coupon_item_result_not = $coupon_item_model->listRecord(2, [
-				'main.status' => 0,
-				'sub.status'  => 1,
-				'mid'         => I('get.mid', 0, 'int')
-			]);
-
-			return $coupon_item_result_not;
+			if($count == count($data)) return ['status' => true, 'message' => '收款数据全部导入成功'];
+			elseif($count == 0) return ['status' => false, 'message' => '没有导入任何收款数据'];
+			else return ['status' => true, 'message' => "部分客户收款数据未导入: <br>$error_msg"];
 		}
 
 		public function findMeetingClient(){
@@ -488,11 +687,20 @@
 			/** @var \Core\Model\ReceivablesTypeModel $receivables_type_model */
 			$receivables_type_model = D('Core/ReceivablesType');
 			/** @var \Core\Model\PosMachineModel $pos_machine_model */
+			$receivables_count = $receivables_model->findRecord(0, [
+				'status' => 'not deleted',
+				'mid'    => I('get.mid', 0, 'int')
+			]);
+			/* 分页设置 */
+			$page_object = new Page(count($receivables_count), I('get._page_count', C('PAGE_RECORD_COUNT'), 'int'));
+			\ThinkPHP\Quasar\Page\setTheme1($page_object);
+			$page_show          = $page_object->show();
 			$pos_machine_model  = D('Core/PosMachine');
 			$mid                = I('get.mid', 0, 'int');
 			$cid                = I('get.cid', 0, 'int');
 			$keyword            = I('get.keyword', '');
 			$receivables_result = $receivables_model->findRecord(2, [
+				'_limit' => $page_object->firstRow.','.$page_object->listRows,
 				'mid'    => $mid,
 				'cid'    => $cid,
 				'status' => 'not deleted'
@@ -541,12 +749,23 @@
 				if(strpos($client_result['name'], $keyword) === false && $keyword != '') ;
 				else $new_list[] = $receivables_result[$k];
 			}
-			if(IS_POST){
-				$sms = new MessageLogic();
-				$sms->send($mid, 3, [$cid]);
-			}
 
 			return $new_list;
+		}
+
+		public function getClientReceivables($data, $keyword){
+			/** @var \Core\Model\ClientModel $client_model */
+			$client_model = D('Core/Client');
+			$new_list     = [];
+			foreach($data as $k => $v){
+				$client_result           = $client_model->findClient(1, ['id' => $v['cid']]);
+				$data[$k]['client_name'] = $client_result['name'];
+				$data[$k]['unit']        = $client_result['unit'];
+				if(strpos($client_result['name'], $keyword) === false && $keyword != '') ;
+				else $new_list[] = $data[$k];
+			}
+
+			return ($new_list);
 		}
 
 		public function setData($type, $data){

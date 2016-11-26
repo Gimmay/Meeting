@@ -2,9 +2,222 @@
 <html lang="zh-CN">
 <head>
 	<meta charset="UTF-8">
-	<title>Title</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>添加收款 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/calculator/calculator.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-position.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<!--	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/calculator/calculator.js"></script>-->
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
-	
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<div class="main_body" style="overflow: hidden;">
+					<section class="content">
+						<div class="table_wrap">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/receivablesType', ['mid'=>I('get.mid', 0, 'int')])}>">收款类型</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机</a>
+								</div>
+							</div>
+							<form class="form-horizontal" role="form" method="post" id="form">
+								<input type="hidden" name="requestType" value="create_list">
+								<div class="tab-content clearfix">
+									<div class="module">
+										<div class="pane"><h2><span class="glyphicon glyphicon-user"></span>参会人员信息</h2>
+										</div>
+										<div class="mo_content clearfix info">
+											<div class="col-sm-2" style="width: 240px; margin: 0; padding: 0;">
+												<span>姓名:</span><span><div id="client_name"></div></span>
+											</div>
+
+											<div style="min-width: 140px; float:left;margin: 0; padding: 0;">
+												<span>单位:</span><span>吉美国际</span></div>
+											<div class="col-sm-2" style="width: 260px; margin: 0; padding: 0;">
+												<span>收款人:</span><span><div id="payee_id"></div></span>
+											</div>
+											<div class="col-sm-2" style="width: 280px; margin: 0; padding: 0;">
+												<span>收款时间:</span><span><input type="text" class="form-control" id="receivables_time"></span>
+											</div>
+											<div class="col-sm-2" style="width: 280px; margin: 0; padding: 0;">
+												<span>收款地点:</span><span><input type="text" class="form-control" id="place"></span>
+											</div>
+										</div>
+									</div>
+									<div class="module">
+										<div class="pane"><h2><span class="glyphicon glyphicon-usd"></span>收款</h2></div>
+										<div class="mo_content mo_rece">
+											<div class="section_rece coupon">
+												<div class="title">代金券收款</div>
+
+												<div class="rece_li rece_new clearfix">
+													<input type="hidden" name="type[]" value="2">
+													<div class="rece_item">
+														<select name="name[]" class="form-control name"></select>
+													</div>
+													<div class="rece_item">
+														<select name="coupon_code[]" class="form-control coupon_code"></select>
+														<input type="hidden" class="select_code" name="select_code[]">
+													</div>
+													<div class="rece_item">
+														<input type="text" class="form-control price" name="price[]" placeholder="金额">
+													</div>
+													<div class="rece_item">
+														<select name="payMethod[]" class="form-control payMethod">
+															<option value="0">请选择支付方式</option>
+															<volist name="pay" id="info">
+																<option value="<{$info.id}>"><{$info.name}></option>
+															</volist>
+														</select>
+													</div>
+													<div class="rece_item">
+														<select name="pos[]" class="form-control pos">
+															<option value="0">请选择POS机</option>
+															<volist name="pos" id="info">
+																<option value="<{$info.id}>"><{$info.name}></option>
+															</volist>
+														</select>
+													</div>
+													<div class="rece_item">
+														<select name="source_type[]" class="form-control source_type">
+															<option value="1">会前收款</option>
+															<option value="2">会中收款</option>
+															<option value="3">会后收款</option>
+														</select>
+													</div>
+													<span class="add glyphicon glyphicon-plus"></span>
+												</div>
+												<input type="hidden" name="select_all_coupon" class="select_all_coupon">
+											</div>
+											<div class="section_rece other">
+												<div class="title">其他收款</div>
+												<div class="rece_li clearfix">
+													<div class="rece_item">
+														<select name="type[]" class="form-control project_type">
+															<option value="0">请选择项目类型</option>
+															<option value="1">门票</option>
+															<option value="3">产品</option>
+															<option value="4">其他</option>
+														</select>
+													</div>
+													<div class="rece_item">
+														<select name="name[]" class="form-control name"> </select>
+													</div>
+													<div class="rece_item">
+														<input type="text" class="form-control price" name="price[]" placeholder="金额">
+													</div>
+													<div class="rece_item">
+														<select name="payMethod[]" class="form-control payMethod">
+															<option value="0">请选择支付方式</option>
+															<volist name="pay" id="info">
+																<option value="<{$info.id}>"><{$info.name}></option>
+															</volist>
+														</select>
+													</div>
+													<div class="rece_item">
+														<select name="pos[]" class="form-control pos">
+															<option value="0">请选择POS机</option>
+															<volist name="pos" id="info">
+																<option value="<{$info.id}>"><{$info.name}></option>
+															</volist>
+														</select>
+													</div>
+													<div class="rece_item">
+														<select name="source_type[]" class="form-control source_type">
+															<option value="1">会前收款</option>
+															<option value="2">会中收款</option>
+															<option value="3">会后收款</option>
+														</select>
+													</div>
+													<span class="add glyphicon glyphicon-plus"></span>
+												</div>
+											</div>
+										</div>
+										<div class="foot">
+											总金额：<b class="color-red"></b>
+											<input class="submit" type="submit" value="确认收款"/>
+										</div>
+										<input type="hidden" name="total_amount" id="total_amount">
+									</div>
+								</div>
+							</form>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+			object:{
+				clientName     :$('#client_name').QuasarSelect({
+					name        :'client_name',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($client)}>',
+					idInput     :'selected_client_name',
+					idHidden    :'selected_client_name_form',
+					placeholder :'',
+					defaultValue:'<{$client_single[id]}>',
+					defaultHtml :'<{$client_single[name]}>',
+					hasEmptyItem:false
+				}),
+				payeeName      :$('#payee_id').QuasarSelect({
+					name        :'payee_id',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee)}>',
+					idInput     :'selected_payee_id',
+					idHidden    :'selected_payee_id_form',
+					placeholder :'',
+					defaultValue:'<{$employee_single[id]}>',
+					defaultHtml :'<{$employee_single[code]}>'+' - '+'<{$employee_single[name]}>',
+					hasEmptyItem:false
+				}),
+				receivablesTime:jeDate({
+					dateCell:"#receivables_time",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					//isClear:false,
+					isTime  :true,// 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
+				}),
+			}
+		};
+	</script>
+	<div class="hidden" id="pay_method_source_data"><{:json_encode($pay)}></div>
+	<div class="hidden" id="pos_machine_source_data"><{:json_encode($pos)}></div>
 </body>
 </html>

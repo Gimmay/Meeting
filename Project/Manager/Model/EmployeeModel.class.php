@@ -20,6 +20,7 @@
 
 		public function checkLogin($name, $pwd){
 			$str_obj = new StringPlus();
+			$input_password = $pwd;
 			$pwd     = $str_obj->makePassword($pwd, $name);
 			if($this->create()){
 				$user = $this->where([
@@ -28,6 +29,7 @@
 				])->find();
 				if($user){
 					if($user['status'] != 1) return ['status' => false, 'message' => '该用户已删除或者被禁用'];
+					if($input_password == '') session('MANAGER_EMPLOYEE_EMPTY_PASSWORD', 1);
 					session('MANAGER_EMPLOYEE_ID', $user['id']);
 					session('MANAGER_EMPLOYEE_CODE', $user['code']);
 					session('MANAGER_EMPLOYEE_NAME', $user['name']);

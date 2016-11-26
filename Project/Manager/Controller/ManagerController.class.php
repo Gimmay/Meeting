@@ -10,8 +10,10 @@
 	use Core\Controller\CoreController;
 	use Core\Logic\MeetingRoleLogic;
 	use Core\Logic\PermissionLogic;
+	use Core\Logic\SystemMessageLogic;
 	use Manager\Logic\EmployeeLogic;
 	use Manager\Logic\ManagerLogic;
+	use Manager\Logic\ReportLogic;
 
 	class ManagerController extends CoreController{
 		protected $permissionList  = null;
@@ -24,14 +26,17 @@
 			$meeting_role_logic    = new MeetingRoleLogic();
 			$permission_logic      = new PermissionLogic();
 			$logic                 = new ManagerLogic();
+			$system_message_logic = new SystemMessageLogic();
+			$report_entry_logic = new ReportLogic();
 			$this->permissionList  = $permission_logic->getPermissionList();
 			$this->meetingViewList = $meeting_role_logic->getMeetingView(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));
-			$meeting_name          = $logic->getMeetingName();
 			$this->assign('cv_name', CONTROLLER_NAME.'_'.ACTION_NAME);
 			$this->assign('c_name', CONTROLLER_NAME);
-			$this->assign('meeting_name', $meeting_name);
+			$this->assign('meeting_name', $logic->getMeetingName());
 			$this->assign('permission_list', $this->permissionList);
 			$this->assign('meeting_view_list', $this->meetingViewList);
+			$this->assign('visible_report', $report_entry_logic->getReportMenuList());
+			$this->assign('system_message', $system_message_logic->initMessage());
 		}
 
 		private function _checkLogin(){

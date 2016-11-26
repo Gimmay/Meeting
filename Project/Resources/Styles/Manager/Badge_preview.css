@@ -222,13 +222,22 @@ canvas{
 	height   : 400px;
 	position : relative;
 }
-.badge_box .title{
-	border-top: 1px solid #e1e1e1;
+
+.badge_boxw .title{
+	border-top  : 1px solid #E1E1E1;
 	height      : 40px;
 	line-height : 40px;
 	text-align  : center;
 	font-weight : bold;
 	font-size   : 14px;
 	width       : 100%;
+}
+
+#btn_print{
+	margin-left : 120px;
+	margin-top  : 20px;
+	background  : #00A0E8;
+	color       : #FFFFFF;
+	box-shadow  : none;
 }
 

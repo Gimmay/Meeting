@@ -306,14 +306,14 @@
 					$sign_count     = $join_model->findRecord(0, [
 						'mid'         => $mid,
 						'sign_status' => 1,
-						'status'      => 'not deleted'
+						'status'      => 1
 					]);
 					$not_sign_count = $join_model->findRecord(0, [
 						'mid'         => $mid,
 						'sign_status' => 'not signed',
-						'status'      => 'not deleted'
+						'status'      => 1
 					]);
-					$total          = $join_model->findRecord(0, ['mid' => $mid, 'status' => 'not deleted']);
+					$total          = $join_model->findRecord(0, ['mid' => $mid, 'status' => 1]);
 
 					return ['total' => $total, 'signCount' => $sign_count, 'notSignCount' => $not_sign_count];
 				break;

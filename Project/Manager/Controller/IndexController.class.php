@@ -33,6 +33,7 @@
 			$model       = D('Core/Client');
 			$client_list = $model->findClient(2);//查出所有客户或员工信息
 			C('TOKEN_ON', false);
+			$weixin_model->deleteRecord(['otype' => 1, 'wtype' => 1]);
 			foreach($client_list as $k1 => $v1){ //循环输出当前系统的客户名单
 				foreach($wx_list as $k2 => $v2){//循环输出微信获取的所有用户信息
 					if($v1['mobile'] == $v2['mobile'] && $v2['status'] != 4){//判断 当前系统的手机和微信获取的用户信息的手机做匹配同时没有取消关注
@@ -69,6 +70,7 @@
 			$model       = D('Core/Employee');
 			$client_list = $model->findEmployee(2);//查出所有客户或员工信息
 			C('TOKEN_ON', false);
+			$weixin_model->deleteRecord(['otype' => 0, 'wtype' => 1]);
 			foreach($client_list as $k1 => $v1){ //循环输出当前系统的员工名单
 				foreach($wx_list as $k2 => $v2){//循环输出微信获取的所有用户信息
 					if($v1['mobile'] == $v2['mobile'] && $v2['status'] != 4){//判断 当前系统的手机和微信获取的用户信息的手机做匹配

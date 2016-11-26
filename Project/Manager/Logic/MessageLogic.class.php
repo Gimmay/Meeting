@@ -146,27 +146,14 @@
 						/** @var \Core\Model\AssignMessageModel $assign_message_model */
 						$assign_message_model = D('Core/AssignMessage');
 						$mid                  = I('get.mid', 0, 'int');
-						$type                 = I('post.type', 0, 'int');
-						$exist_record         = $assign_message_model->findRecord(1, ['mid' => $mid, 'type' => $type]);
-						if($exist_record){
-							$data = I('post.');
-							unset($data['id']);
-							$data['status']     = 1;
-							$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-							$data['creatime']   = time();
-							$data['message_id'] = I('post.id', 0, 'int');
-							$data['mid']        = $mid;
-							$result             = $assign_message_model->alterRecord(['id' => $exist_record['id']], $data);
-						}
-						else{
-							$data = I('post.');
-							unset($data['id']);
-							$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-							$data['creatime']   = time();
-							$data['message_id'] = I('post.id', 0, 'int');
-							$data['mid']        = $mid;
-							$result             = $assign_message_model->createRecord($data);
-						}
+						$message_id           = I('post.id', 0, 'int');
+						$data                 = I('post.');
+						unset($data['id']);
+						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$data['creatime']   = time();
+						$data['message_id'] = $message_id;
+						$data['mid']        = $mid;
+						$result             = $assign_message_model->createRecord($data);
 						if($result['status']) return ['status' => true, 'message' => '分配成功', '__ajax__' => false];
 						else return ['status' => false, 'message' => '分配失败', '__ajax__' => false];
 					}
@@ -195,15 +182,41 @@
 						$assign_type = '';
 						foreach($assigned_message_list['id'] as $k => $v){
 							if($v == $val['id']){
+								// 此处枚举出系统所有的自动发送信息的操作
+								// 与以下位置相互关联
+								// D85D48D80FC93AFE0620F1549178C1D02B618F4A
 								switch($assigned_message_list['type'][$k]){
 									case 1:
-										$assign_type .= '签到提醒, ';
+										$assign_type .= '<a title=\'点击取消分配\' href=\''.U('RequestHandler/getHandler', [
+												'mid'         => $option['mid'],
+												'type'        => 1,
+												'message_id'  => $v,
+												'requestType' => 'cancel_assign_message'
+											]).'\'>签到提醒</a>, ';
 									break;
 									case 2:
-										$assign_type .= '取消签到提醒, ';
+										$assign_type .= '<a title=\'点击取消分配\' href=\''.U('RequestHandler/getHandler', [
+												'mid'         => $option['mid'],
+												'type'        => 2,
+												'message_id'  => $v,
+												'requestType' => 'cancel_assign_message'
+											]).'\'>取消签到提醒</a>, ';
 									break;
 									case 3:
-										$assign_type .= '收款提醒开拓顾问, ';
+										$assign_type .= '<a title=\'点击取消分配\' href=\''.U('RequestHandler/getHandler', [
+												'mid'         => $option['mid'],
+												'type'        => 3,
+												'message_id'  => $v,
+												'requestType' => 'cancel_assign_message'
+											]).'\'>收款提醒开拓顾问</a>, ';
+									break;
+									case 4:
+										$assign_type .= '<a title=\'点击取消分配\' href=\''.U('RequestHandler/getHandler', [
+												'mid'         => $option['mid'],
+												'type'        => 4,
+												'message_id'  => $v,
+												'requestType' => 'cancel_assign_message'
+											]).'\'>发送邀请</a>, ';
 									break;
 								}
 								$flag = true;
@@ -254,7 +267,7 @@
 
 		/**
 		 * @param int   $mid           会议ID
-		 * @param int   $message_type  信息类型 0：全部 1：短信 2：微信
+		 * @param int   $message_type  信息类型 0：全部 1：短信 2：微信 3：收款后推送给开拓顾问 4：发送邀请
 		 * @param int   $receiver_type 接收者类型 0：员工 1：参会人员
 		 * @param int   $temp_type     消息模板类型
 		 * @param array $receiver_list 接收者ID列表
@@ -266,6 +279,7 @@
 			/** @var \Core\Model\MeetingModel $meeting_model */
 			/** @var \Core\Model\EmployeeModel $employee_model */
 			/** @var \Core\Model\ClientModel $client_model */
+			/** @var \Core\Model\JoinModel $join_model $join_model */
 			/** @var \Core\Model\MessageModel $message_model */
 			/** @var \Core\Model\WeixinIDModel $weixin_model */
 			$weixin_model         = D('Core/WeixinID');
@@ -274,26 +288,55 @@
 			$meeting_model        = D('Core/Meeting');
 			$employee_model       = D('Core/Employee');
 			$client_model         = D('Core/Client');
+			$join_model           = D('Core/Join');
 			$send_message_logic   = new SendMessageLogic();
 			$sms_logic            = new SMSLogic();
 			$wxcorp_logic         = new WxCorpLogic();
 			$weixin_message_temp  = $sms_message_temp = [];
-			$assign_message       = $assign_message_model->findRecord(1, [
-				'mid'  => $mid,
-				'type' => $temp_type
+			// 查询出微信和微信的消息分配记录
+			// ************************************************************
+			// 注意：这里因为允许对一种操作类型分配多种消息模板
+			//		# 消息模板A为微信模板 消息模板B为短信模板
+			//		# M会议分配了消息模板A为签到提示 同时又分配了消息模板B为签到提示
+			//		# 而分配消息表允许类型（区分何种操作）和会议ID相同
+			//		# 所以根据消息类型、操作类型和会议ID查询分配记录会查询到多条记录
+			//		# 这里取最后分配的那一条
+			$weixin_assign_message = $assign_message_model->findRecord(1, [
+				'mid'          => $mid,
+				'type'         => $temp_type,
+				'message_type' => 2
 			]);
-			if($message_type == 2 || $message_type == 0) $weixin_message_temp = $message_model->findMessage(1, [
-				'id'     => $assign_message['message_id'],
-				'type'   => 2,
-				'status' => 'not deleted'
+			$sms_assign_message    = $assign_message_model->findRecord(1, [
+				'mid'          => $mid,
+				'type'         => $temp_type,
+				'message_type' => 1
 			]);
-			if($message_type == 1 || $message_type == 0) $sms_message_temp = $message_model->findMessage(1, [
-				'id'     => $assign_message['message_id'],
-				'type'   => 1,
-				'status' => 'not deleted'
-			]);
-			$meeting_record = $meeting_model->findMeeting(1, ['id' => $mid, 'status' => 'not deleted']);
+			// ************************************************************
 			$count          = ['weixin' => 0, 'sms' => 0];
+			$meeting_record = $meeting_model->findMeeting(1, ['id' => $mid, 'status' => 'not deleted']);
+			// 存在微信的消息分配记录 且指定发送微信信息或全部
+			if($weixin_assign_message && ($message_type == 2 || $message_type == 0)){
+				// 根据分配的消息记录查出微信的消息模板
+				$weixin_message_temp = $message_model->findMessage(1, [
+					'id'     => $weixin_assign_message['message_id'],
+					'type'   => 2,
+					'status' => 'not deleted'
+				]);
+				$found_temp          = true;
+			}
+			// 存在短信的消息分配记录 且指定发送短信信息或全部
+			if($sms_assign_message && ($message_type == 1 || $message_type == 0)){
+				// 根据分配的消息记录查出短信的消息模板
+				$sms_message_temp = $message_model->findMessage(1, [
+					'id'     => $sms_assign_message['message_id'],
+					'type'   => 1,
+					'status' => 'not deleted'
+				]);
+				$found_temp       = true;
+			}
+			// 不存在指定的消息记录
+			if(!isset($found_temp) || !$found_temp) return ['status' => false, 'message' => '发送失败: 没有消息模板'];
+			// 根据接收者逐一发送
 			foreach($receiver_list as $val){
 				if($receiver_type == 0){
 					$employee = $employee_model->findEmployee(1, ['id' => $val, 'status' => 'not deleted']);
@@ -310,7 +353,7 @@
 						case 2:
 							$weixin_record = $weixin_model->findRecord(1, [
 								'oid'   => $employee['id'],
-								'otype' => 0,
+								'otype' => $receiver_type,
 								'wtype' => 1
 							]);
 							$content       = $this->replaceTempToMessage($weixin_message_temp['context'], $meeting_record, $employee);
@@ -331,7 +374,7 @@
 							else $send_message_logic->create($content, $employee['id'], 0, 0);
 							$weixin_record = $weixin_model->findRecord(1, [
 								'oid'   => $employee['id'],
-								'otype' => 0,
+								'otype' => $receiver_type,
 								'wtype' => 1
 							]);
 							$content       = $this->replaceTempToMessage($weixin_message_temp['context'], $meeting_record, $employee);
@@ -345,7 +388,13 @@
 					}
 				}
 				if($receiver_type == 1){
-					$client = $client_model->findClient(1, ['id' => $val, 'status' => 'not deleted']);
+					$client              = $client_model->findClient(1, ['id' => $val, 'status' => 'not deleted']);
+					$join_record         = $join_model->findRecord(1, [
+						'mid'    => $mid,
+						'cid'    => $client['id'],
+						'status' => 'not deleted'
+					]);
+					$client['sign_code'] = $join_record['sign_code'];
 					switch($message_type){
 						case 1:
 							$content     = $this->replaceTempToMessage($sms_message_temp['context'], $meeting_record, $client);
@@ -359,7 +408,7 @@
 						case 2:
 							$weixin_record = $weixin_model->findRecord(1, [
 								'oid'   => $client['id'],
-								'otype' => 0,
+								'otype' => $receiver_type,
 								'wtype' => 1
 							]);
 							$content       = $this->replaceTempToMessage($weixin_message_temp['context'], $meeting_record, $client);
@@ -380,7 +429,7 @@
 							else $send_message_logic->create($content, $client['id'], 0, 0);
 							$weixin_record = $weixin_model->findRecord(1, [
 								'oid'   => $client['id'],
-								'otype' => 0,
+								'otype' => $receiver_type,
 								'wtype' => 1
 							]);
 							$content       = $this->replaceTempToMessage($weixin_message_temp['context'], $meeting_record, $client);
@@ -395,14 +444,14 @@
 				}
 			}
 			if($count['weixin'] == count($receiver_list) && $count['sms'] == count($receiver_list)) return [
-				'status' => true,
-				'全部发送成功'
+				'status'  => true,
+				'message' => '全部发送成功'
 			];
 			else{
-				if($count['weixin'] == count($receiver_list)) return ['status' => true, '微信信息全部发送成功'];
-				if($count['sms'] == count($receiver_list)) return ['status' => true, '短信信息全部发送成功'];
+				if($count['weixin'] == count($receiver_list)) return ['status' => true, 'message' => '微信信息全部发送成功'];
+				if($count['sms'] == count($receiver_list)) return ['status' => true, 'message' => '短信信息全部发送成功'];
 			}
 
-			return ['status' => false, '信息发送失败'];
+			return ['status' => false, 'message' => '信息发送失败'];
 		}
 	}

@@ -24,6 +24,7 @@
 			if(isset($filter['coupon_id'])) $where['coupon_id'] = $filter['coupon_id'];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
+			if(isset($filter['code'])) $where['code'] = $filter['code'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted') $where['status'] = ['neq', 3];
@@ -73,10 +74,10 @@
 		}
 
 		public function listRecord($type = 2, $filter = []){
-			$where = '0 = 0';
-			$limit = '';
-			$order = '';
-			$field = '*';
+			$where   = '0 = 0';
+			$limit   = '';
+			$order   = '';
+			$field   = '*, workflow_coupon_item.id id';
 			if(isset($filter['id'])) $where .= " and id = $filter[id]";
 			if(isset($filter['coupon_id'])) $where .= " and workflow_coupon.id = $filter[coupon_id]";
 			if(isset($filter['mid'])) $where .= " and workflow_coupon_item.mid = $filter[mid]";

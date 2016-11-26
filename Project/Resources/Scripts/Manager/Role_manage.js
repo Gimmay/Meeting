@@ -14,12 +14,12 @@ var ScriptObject = {
 			var id          = $(this).attr('data-id');
 			var code        = $(this).attr('data-group');
 			var group_name  = $(this).attr('data-name');
-			var employee_id = $('input[name=hide_employee_id]').val();
+			var role_id     = $('input[name=hide_role_id]').val();
 			var name        = $(this).text();
 			var select_temp = '';
 			ManageObject.object.loading.loading(true);
 			Common.ajax({
-				data:{requestType:'assign_permission', pid:id, id:employee_id}, callback:function(data){
+				data:{requestType:'assign_permission', pid:id, id:role_id}, callback:function(data){
 					ManageObject.object.loading.complete();
 					console.log(data);
 					var htm = '';
@@ -61,13 +61,13 @@ var ScriptObject = {
 			var type        = $(this).attr('data-type');
 			var code        = $(this).attr('data-group');
 			var group_name  = $(this).attr('data-name');
-			var employee_id = $('input[name=hide_employee_id]').val();
+			var role_id     = $('input[name=hide_role_id]').val();
 			var name        = $(this).text();
 			var b_name      = name.substring(name.lastIndexOf(")")+1);
 			var select_temp = '';
 			ManageObject.object.loading.loading(true);
 			Common.ajax({
-				data:{requestType:'anti_assign_permission', pid:id, id:employee_id}, callback:function(data){
+				data:{requestType:'anti_assign_permission', pid:id, id:role_id}, callback:function(data){
 					ManageObject.object.loading.complete();
 					var htm = '';
 					if(data.status){
@@ -81,10 +81,10 @@ var ScriptObject = {
 											  .replace('$name', group_name).replace('$id', code);
 							$('#authorize_all').prepend(htm);
 							setTimeout(function(){
-								str = ScriptObject.authorizeRoleTemp.replace('$id', id)
-												  .replace('$name', name)
-												  .replace('$group-name', group_name)
-												  .replace('$group-code', code);
+								var str = ScriptObject.authorizeRoleTemp.replace('$id', id)
+													  .replace('$name', name)
+													  .replace('$group-name', group_name)
+													  .replace('$group-code', code);
 								$('#authorize_all #'+code).find('section').prepend(str);
 								/*	ScriptObject.unbindEvent();
 								 ScriptObject.bindEvent();*/
@@ -132,19 +132,19 @@ var ScriptObject = {
 		 */
 		$('#authorize_select .check_all').on('click', function(){
 			var code = $(this).parents('.pannel_n').attr('id');
-			self.antiAssgignGroup(code);
+			self.antiAssignGroup(code);
 		});
 		/**
 		 * 一个模块权限全选  -- 未分配权限
 		 */
 		$('#authorize_all .check_all').on('click', function(){
 			var code = $(this).parents('.pannel_n').attr('id');
-			self.antiAssgignGroup(code);
+			self.assignGroup(code);
 		});
 	},
 	unSearchAuthorize:function(){
 		var self    = this;
-		var eid     = $('input[name=hide_employee_id]').val();
+		var eid     = $('input[name=hide_role_id]').val();
 		var keyword = $('#authorize_search input').val();
 		ManageObject.object.loading.loading(true);
 		Common.ajax({
@@ -160,7 +160,7 @@ var ScriptObject = {
 		ScriptObject.bindEvent();
 	},
 	searchAuthorize  :function(){
-		var eid     = $('input[name=hide_employee_id]').val();
+		var eid     = $('input[name=hide_role_id]').val();
 		var keyword = $('#authorize_search input').val();
 		ManageObject.object.loading.loading(true);
 		Common.ajax({
@@ -196,6 +196,7 @@ var ScriptObject = {
 	},
 	writeInSelectHtml:function(data, data_id){
 		var str = '', htm = '';
+		$('#authorize_select').html('');
 		if(data){
 			$.each(data, function(index, value){
 				//console.log(value);
@@ -216,11 +217,12 @@ var ScriptObject = {
 					ScriptObject.bindEvent();
 				}, 1000);
 			});
-			$('input[name=hide_employee_id]').val(data_id);
+			$('input[name=hide_role_id]').val(data_id);
 		}
 	},
 	writeInAllHtml   :function(data, data_id){
 		var str = '', htm = '';
+		$('#authorize_all').html('');
 		if(data){
 			$.each(data, function(index, value){
 				//var group_code= value.group_code.replace(/(^\s*)|(\s*$)/g, "");
@@ -242,19 +244,27 @@ var ScriptObject = {
 			});
 		}
 	},
-	antiAssgignGroup :function(code){
+	antiAssignGroup  :function(code){
+		var role_id = $('input[name=hide_role_id]').val();
+		ManageObject.object.loading.loading(true);
 		Common.ajax({
-			data    :{requestType:'anti_assign_permission_group', code:code},
+			data    :{requestType:'anti_assign_permission_group', code:code, id:role_id},
 			callback:function(r){
-				console.log(r);
+				ManageObject.object.loading.complete();
+				if(r.status){
+				}
 			}
 		})
 	},
 	assignGroup      :function(code){
+		var role_id = $('input[name=hide_role_id]').val();
+		ManageObject.object.loading.loading(true);
 		Common.ajax({
-			data    :{requestType:'anti_assign_permission_group', code:code},
+			data    :{requestType:'assign_permission_group', code:code, id:role_id},
 			callback:function(r){
-				console.log(r);
+				ManageObject.object.loading.complete();
+				if(r.status){
+				}
 			}
 		})
 	}

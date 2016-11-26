@@ -17,6 +17,53 @@
 			$this->meetingID = $this->initMeetingID($this);
 		}
 
+		public function create(){
+			if(IS_POST){
+				$logic = new ReportLogic();
+				$type   = I('post.requestType');
+				$result = $logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']) $this->success($result['message']);
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
+			}
+		}
+
+		public function fineReport(){
+			$report_id = I('get.id', 0, 'int');
+			/** @var \Core\Model\ReportEntryModel $model */
+			$model = D('Core/ReportEntry');
+			/** @var \Core\Model\AssignRoleModel $assign_role_model */
+			$assign_role_model = D('Core/AssignRole');
+			$report            = $model->findRecord(1, ['id' => $report_id]);
+			if($report['status'] == 0) echo '该报表已被禁用';
+			if($report['status'] == 2) echo '该报表已被删除';
+			$role           = explode(',', $report['role']);
+			$my_role        = $assign_role_model->getRoleByUser(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'), 0, [
+				'column' => 'id',
+				'format' => 'array'
+			]);
+			$has_permission = false;
+			foreach($role as $val){
+				if(in_array($val, $my_role)){
+					$has_permission = true;
+					break;
+				}
+			}
+			if($has_permission){
+				$this->assign('url', $report['url']);
+				$this->display();
+				exit;
+			}
+			else $this->error('您没有查看该报表的权限');
+		}
+
 		public function joinReceivables(){
 			/** @var \Manager\Model\ReportModel $model */
 			$model   = D('Report');
@@ -40,11 +87,16 @@
 				'keyword' => I('get.keyword', ''),
 			], $options));
 			$statistics        = [
-				'price' => 0,
-				'join'  => count($all_record)
+				'price'       => 0,
+				'join'        => count($all_record),
+				'sign'        => 0,
+				'receivables' => 0
 			];
-			foreach($all_record as $val) $statistics['price'] += $val['price'];
-
+			foreach($all_record as $val){
+				$statistics['price'] += $val['price'];
+				if($val['price']) $statistics['receivables']++;
+				if($val['sign_status'] == 1) $statistics['sign']++;
+			}
 			$this->assign('statistics', $statistics);
 			$this->assign('list', $list);
 			$this->assign('page_show', $page_show);
@@ -53,12 +105,16 @@
 
 		public function receivablesDetail(){
 			$cid = I('get.cid', 0, 'int');
-			$mid = $this->meetingID;
 			/** @var \Core\Model\ReceivablesModel $receivables_model */
 			$receivables_model = D('Core/Receivables');
-			$list              = $receivables_model->findRecord(2, ['cid' => $cid, 'mid' => $this->meetingID]);
-			print_r($list);
-			exit;
+			$self_logic        = new ReportLogic();
+			$list              = $receivables_model->findRecord(2, [
+				'cid'    => $cid,
+				'mid'    => $this->meetingID,
+				'status' => 'not deleted'
+			]);
+			$list              = $self_logic->setData('receivablesDetail:set_column', $list, ['keyword' => I('get.keyword', '')]);
+			$this->assign('list', $list);
 			$this->display();
 		}
 
@@ -70,17 +126,23 @@
 			switch($type){
 				case 'joinReceivables':
 					/** @var \Manager\Model\ReportModel $model */
-					$model       = D('Report');
-					$logic       = new ReportLogic();
-					$excel_logic = new ExcelLogic();
-					$options     = [];
+					$model = D('Report');
+					/** @var \Core\Model\MeetingModel $meeting_model */
+					$meeting_model = D('Core/Meeting');
+					$logic         = new ReportLogic();
+					$excel_logic   = new ExcelLogic();
+					$options       = [];
+					$meeting       = $meeting_model->findMeeting(1, [
+						'id'     => $this->meetingID,
+						'status' => 'not deleted'
+					]);
 					if(isset($_GET['mid'])) $options['mid'] = $this->meetingID;
-					$list = $model->getJoinReceivablesList(2, array_merge([
+					$list         = $model->getJoinReceivablesList(2, array_merge([
 						'status'  => 'not deleted',
 						'keyword' => I('get.keyword', ''),
 						'_order'  => I('get._column', 'name').' '.I('get._sort', 'desc'),
 					], $options));
-					$list = $logic->extendData('exportExcel:joinReceivables', $list, [
+					$list         = $logic->setData('exportExcel:joinReceivables', $list, [
 						'exceptColumn' => [
 							'cid',
 							'mid',
@@ -88,9 +150,10 @@
 							'status'
 						]
 					]);
+					$meeting_name = trim($meeting['name']);
 					$excel_logic->exportCustomData($list, [
-						'fileName'    => '导出参会收款数据',
-						'title'       => '导出参会收款数据',
+						'fileName'    => "[$meeting_name]_导出参会收款数据",
+						'title'       => "[$meeting_name]_导出参会收款数据",
 						'subject'     => '导出参会收款数据',
 						'description' => '吉美会议系统导出参会收款数据',
 						'company'     => '吉美集团',

@@ -305,6 +305,9 @@ textarea{
 	color       : #337AB7 !important;
 	font-weight : bold;
 }
+.color-00a0e8 {
+	color       : #00A0E8 !important;
+}
 
 .btn_role{
 	background   : #F8AC59 !important;
@@ -394,7 +397,7 @@ textarea{
 /* formal page wrap  */
 #mt_container{
 	position  : relative;
-	min-width : 1024px;
+	min-width : 1248px;
 	height    : 100%;
 	margin    : 0 auto;
 	overflow  : hidden;
@@ -856,6 +859,7 @@ textarea{
 .nav_tab{
 	background : #ECF1F4;
 	position   : relative;
+	width      : 100%;
 }
 
 .nav_tab .nav_tab_li{
@@ -929,24 +933,109 @@ textarea{
 	top : 0 !important;
 }
 
+/** 站内信入口 **/
+.message_box{
+	position   : absolute;
+	bottom     : 0;
+	width      : 100%;
+	padding    : 15px 20px 15px 25px;
+	background : #343F55;
+	border-top : 1px solid grey;
+}
+
+.message_box > a{
+	width   : 100%;
+	height  : 100%;
+	display : inline-block;
+	color   : white
+}
+
+.message_box .num{
+	min-width     : 20px;
+	min-height    : 20px;
+	line-height   : 20px;
+	border-radius : 50%;
+	background    : #FB5050;
+	display       : inline-block;
+	font-size     : 10px;
+	text-align    : center
+}
+
+/** 站内信模态框 **/
+.message_modal{
+	z-index: 999;
+	position    : fixed;
+	left        : 50%;
+	top         : 50%;
+	margin-left : -250px;
+	margin-top  : -300px;
+	width       : 500px;
+	height      : 480px;
+	background  : #FFFFFF;
+	border      : 1px solid #E1E1E1;
+	box-shadow  : 0 0 10px 1px #E1E1E1;
+}
+
+.message_modal .mes_title{
+	height      : 40px;
+	font-size   : 16px;
+	line-height : 40px;
+	text-align  : center;
+	color       : #FFFFFF;
+	background  : #00A0E8;
+}
+
+.message_modal .mes_title .mes_close{
+	display       : block;
+	cursor        : pointer;
+	position      : absolute;
+	top           : 5px;
+	right         : 5px;
+	width         : 30px;
+	height        : 30px;
+	line-height   : 30px;
+	text-align    : center;
+	border-radius : 50%;
+	background    : #FFFFFF;
+	border        : 1px solid #E1E1E1;
+	color         : #999999;
+	font-size     : 30px;
+}
+
+.message_modal .mes_title .mes_close:hover{
+	border : 1px solid #999999;
+	color  : #555555;
+}
+
+.message_modal .mes_list{
+	width      : 100%;
+	max-height : 460px;
+	padding    : 0 30px;
+	overflow-y : auto;
+}
+
+.message_modal .mes_list .mes_item{
+	border-bottom : 1px solid #E1E1E1;
+	padding       : 10px 0;
+}
+
 /* css3 keyframes */
 @-webkit-keyframes rotate{
-	from{ transform : rotate(0deg); }
-	to{ transform : rotate(360deg) }
+	from{
+		-webkit-transform : rotate(0deg);
+		transform:rotate(0deg)
+	}
+	to{
+		-webkit-transform : rotate(360deg);
+		transform:rotate(360deg)
+	}
 }
 
 @keyframes rotate{
-	from{ transform : rotate(0deg); }
-	to{ transform : rotate(360deg) }
+	from{
+		transform : rotate(0deg)
+	}
+	to{
+		transform : rotate(360deg)
+	}
 }
-
-
-
-
-
-
-
-
-
-
-

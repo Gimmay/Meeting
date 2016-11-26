@@ -82,10 +82,10 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="place" class="col-sm-1 control-label">地址：</label>
+										<label for="address" class="col-sm-1 control-label">地址：</label>
 										<div class="col-sm-11">
 											<div class="input-group address_map">
-												<input type="text" class="form-control" name="place" id="place" value="<{$info.address}>">
+												<input type="text" class="form-control" name="address" id="address" value="<{$info.address}>">
 												<span class="input-group-addon glyphicon glyphicon-send get_map"></span>
 											</div>
 											<div id="allmap" class="hide" style="width: 100%; height: 400px;"></div>
@@ -116,12 +116,6 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="telephone" class="col-sm-1 control-label">电话号码：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control telephone" name="telephone" id="telephone" value="<{$info.telephone}>">
-										</div>
-									</div>
-									<div class="form-group">
 										<label for="email" class="col-sm-1 control-label">电子邮箱：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control email" name="email" id="email" value="<{$info.email}>">
@@ -131,6 +125,26 @@
 										<label for="unit" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>单位名称：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control unit" name="unit" id="unit" value="<{$info.unit}>">
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="is_new" class="col-sm-1 control-label">是否新客：</label>
+										<div class="col-sm-11">
+											<switch name="info.is_new">
+												<case value="1">
+													<!--suppress XmlDuplicatedId -->
+													<select id="is_new" name="is_new" class="form-control">
+														<option value="1" selected>新客</option>
+														<option value="0">老客</option>
+													</select></case>
+												<case value="0">
+													<!--suppress XmlDuplicatedId -->
+													<select id="is_new" name="is_new" class="form-control">
+														<option value="1">新客</option>
+														<option value="0" selected>老客</option>
+													</select>
+												</case>
+											</switch>
 										</div>
 									</div>
 									<div class="form-group">
@@ -146,21 +160,9 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="accompany" class="col-sm-1 control-label">陪同人姓名：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control accompany" name="accompany" id="accompany" value="<{$info.accompany}>">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="accompany_mobile" class="col-sm-1 control-label">陪同人手机：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control accompany_mobile" name="accompany_mobile" id="accompany_mobile" value="<{$info.accompany_mobile}>">
-										</div>
-									</div>
-									<div class="form-group">
 										<label for="registration_date" class="col-sm-1 control-label">报名时间：</label>
 										<div class="col-sm-11">
-											<input class="form-control" id="registration_date" name="registration_date" value="<{$info.registration_date}>">
+											<input class="form-control" id="registration_date" name="registration_date" value="<{$join_record.registration_date}>">
 										</div>
 									</div>
 									<div class="form-group">
@@ -175,7 +177,7 @@
 											<input type="text" class="form-control column1" name="column1" id="column1" value="<{$info.column1}>">
 										</div>
 									</div>
-									<div class="form-group">
+									<!--<div class="form-group">
 										<label for="column2" class="col-sm-1 control-label">保留字段2：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control column2" name="column2" id="column2" value="<{$info.column2}>">
@@ -216,7 +218,7 @@
 										<div class="col-sm-11">
 											<input type="text" class="form-control column8" name="column8" id="column8" value="<{$info.column8}>">
 										</div>
-									</div>
+									</div>-->
 								</div>
 								<div class="modal-footer text_center">
 									<button type="submit" class="btn btn-primary">提交</button>

@@ -30,8 +30,8 @@
 				/** @var \Core\Model\MeetingModel $meeting_model */
 				$meeting_model = D('Core/Meeting');
 				$meeting       = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
-				setcookie('MANAGER_MEETING_NAME', $meeting['name']);
-				setcookie('MANAGER_MEETING_ID', $meeting['id']);
+				setcookie('MANAGER_MEETING_NAME', $meeting['name'], '/');
+				setcookie('MANAGER_MEETING_ID', $meeting['id'], '/');
 
 				return $meeting['name'];
 			}

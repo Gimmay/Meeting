@@ -16,19 +16,17 @@ $(function(){
 			$(this).find('.arrow').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-left');
 		}
 	});
-
-	$('.no_link').on('click',function(){
+	$('.no_link').on('click', function(){
 		if($(this).parent('.side_item').hasClass('cls')){
-			$(this).parent('.side_item').find('.nav-second-level').css('height','auto');
+			$(this).parent('.side_item').find('.nav-second-level').css('height', 'auto');
 			$(this).find('.arrow').removeClass('glyphicon-chevron-left').addClass('glyphicon-chevron-down');
 			$(this).parent('.side_item').removeClass('cls');
 		}else{
-			$(this).parent('.side_item').find('.nav-second-level').css('height',0);
+			$(this).parent('.side_item').find('.nav-second-level').css('height', 0);
 			$(this).find('.arrow').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-left');
 			$(this).parent('.side_item').addClass('cls');
 		}
 	});
-
 	/*
 	 *  分配角色
 	 *  所有角色框中，点击成为已选角色
@@ -43,17 +41,14 @@ $(function(){
 		}else{
 		}
 	});
-
 	/*
-	*	个人中心下拉列表显示/隐藏
+	 *	个人中心下拉列表显示/隐藏
 	 */
 	$('.nav_info .name').hover(function(){
 		$(this).find('.hidden_dropDown').removeClass('hide');
-	},function(){
+	}, function(){
 		$(this).find('.hidden_dropDown').addClass('hide');
 	});
-
-
 	/*
 	 *	右边详情框
 	 */
@@ -63,6 +58,14 @@ $(function(){
 	// 关闭详情
 	$('.close_btn').on('click', function(){
 		$('.right_details').animate({width:'0'})
+	});
+	// 打开站内信
+	$('.message_box').on('click', function(){
+		$('.message_modal').removeClass('hide');
+	});
+	// 关闭站内信
+	$('.message_modal').find('.mes_close').on('click', function(){
+		$('.message_modal').addClass('hide');
 	});
 });
 var Common = {
@@ -100,7 +103,6 @@ var Common = {
 		});
 		return result;
 	},
-	
 	/*
 	 *   ==============================RegExp================================
 	 *   RegExp
@@ -114,36 +116,30 @@ var Common = {
 			var emailReg = /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)*\.[\w-]+$/i;
 			return emailReg.test(str);
 		};
-
 		//验证字符串是否为手机号码
 		this.isMobile = function(str){
 			var patrn = /^((13[0-9])|(15[0-35-9])|(18[0,2,3,5-9]))\d{8}$/;
 			return patrn.test(str);
 		};
-
 		//验证字符串是否为电话或者传真
 		this.isTel = function(str){
 			var patrn = /^[+]{0,1}(\d){1,3}[ ]?([-]?((\d)|[ ]){1,12})+$/;
 			return patrn.test(str);
 		};
-
 		//验证字符串是否为汉字
 		this.isCN = function(str){
 			var p = /^[\u4e00-\u9fa5\w]+$/;
 			return p.test(str);
 		};
-
 		//验证字符串是否为数字
 		this.isNum = function(str){
 			var p = /^\d+$/;
 			return p.test(str);
 		};
-
 		//验证字符串是否含有特殊字符
 		this.isUnSymbols = function(str){
 			var p = /^[\u4e00-\u9fa5\w \.,()，ê?。¡ê（ê¡§）ê?]+$/;
 			return p.test(str);
 		};
 	},
-	
 };

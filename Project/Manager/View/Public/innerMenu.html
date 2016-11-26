@@ -42,6 +42,9 @@
 						<i class="icon_nav glyphicon glyphicon-usd"></i> <span class="nav-label">收款管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 					<ul class="nav-second-level">
+						<li>
+							<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
+						</li>
 						<if condition="$permission_list['PAY_METHOD.VIEW'] eq 1">
 							<li>
 								<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
@@ -63,7 +66,7 @@
 			<if condition="$permission_list['COUPON.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq Coupon'>active</if>">
 					<a href="<{:U('Coupon/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
-						<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">券管理</span>
+						<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">项目管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
@@ -109,22 +112,15 @@
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
-			<if condition="$permission_list['REPORT.JOIN_RECEIVABLES'] eq 1">
-				<li class="side_item cls <if condition='$c_name eq Report'>active</if>">
-					<div class="side-item-link no_link">
-						<i class="icon_nav glyphicon glyphicon-list-alt"></i> <span class="nav-label">报表查询</span>
-						<span class="arrow glyphicon glyphicon-chevron-left"></span>
-					</div>
-					<ul class="nav-second-level">
-						<if condition="$permission_list['REPORT.JOIN_RECEIVABLES'] eq 1">
-							<li>
-								<a href="<{:U('Report/joinReceivables', ['mid'=>I('get.mid', 0, 'int')])}>">报名收款数据</a>
-							</li>
-						</if>
-					</ul>
+			<if condition="$permission_list['REPORT.VIEW'] eq 1">
+
+				<li class="side_item <if condition='$c_name eq Report'>active</if>">
+					<a href="<{:U('Report/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-list-alt"></i> <span class="nav-label">报表管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span></a>
 				</li>
 			</if>
-			<if condition="($permission_list['RECYCLE.VIEW-CLIENT'] eq 1) OR ($permission_list['RECYCLE.VIEW-EMPLOYEE'] eq 1) OR ($permission_list['RECYCLE.VIEW-ROLE'] eq 1) OR ($permission_list['RECYCLE.VIEW-MEETING'] eq 1) OR ($permission_list['RECYCLE.VIEW-COUPON'] eq 1) OR ($permission_list['RECYCLE.VIEW-COUPON_ITEM'] eq 1) OR ($permission_list['RECYCLE.VIEW-MESSAGE'] eq 1)">
+			<if condition="$permission_list['RECYCLE.VIEW'] eq 1">
 				<li class="side_item cls <if condition='$c_name eq Recycle'>active</if>">
 					<div class="side-item-link no_link">
 						<i class="icon_nav glyphicon glyphicon-trash"></i> <span class="nav-label">回收站管理</span>
@@ -171,5 +167,24 @@
 				</li>
 			</if>
 		</ul>
+	</div>
+	<div class="message_box">
+		<a href="javascript:void(0)">
+			<span class="icon_nav glyphicon glyphicon-envelope"></span>
+			<span style="margin-left: 15px">站内信</span>
+			<if condition="count($system_message) gt 0">
+				<span style="min-width: 20px; min-height: 20px; line-height: 20px; border-radius: 50%; background: red; display: inline-block; font-size: 10px; text-align: center"><{:count($system_message)}></span>
+			</if>
+		</a>
+	</div>
+	<div class="message_modal hide">
+		<div class="mes_title">站内信 <span class="mes_close">×</span></div>
+		<div class="mes_list">
+			<volist name="system_message" id="message">
+				<div class="mes_item">
+					<b><{$i}>、</b><{$message}>
+				</div>
+			</volist>
+		</div>
 	</div>
 </div>

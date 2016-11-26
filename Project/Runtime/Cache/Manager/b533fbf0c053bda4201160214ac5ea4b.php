@@ -63,6 +63,9 @@
 						<i class="icon_nav glyphicon glyphicon-usd"></i> <span class="nav-label">收款管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 					<ul class="nav-second-level">
+						<li>
+							<a href="<?php echo U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')]);?>">添加收款</a>
+						</li>
 						<?php if($permission_list['PAY_METHOD.VIEW'] == 1): ?><li>
 								<a href="<?php echo U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')]);?>">支付方式</a>
 							</li><?php endif; ?>
@@ -76,7 +79,7 @@
 				</li><?php endif; ?>
 			<?php if($permission_list['COUPON.VIEW'] == 1): ?><li class="side_item <?php if($c_name == Coupon): ?>active<?php endif; ?>">
 					<a href="<?php echo U('Coupon/manage', ['mid'=>I('get.mid', 0, 'int')]);?>" class="side-item-link">
-						<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">券管理</span>
+						<i class="icon_nav glyphicon glyphicon-tags"></i> <span class="nav-label">项目管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li><?php endif; ?>
 			<?php if($permission_list['MESSAGE.VIEW'] == 1): ?><li class="side_item <?php if($c_name == Message): ?>active<?php endif; ?>">
@@ -109,18 +112,12 @@
 						<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li><?php endif; ?>
-			<?php if($permission_list['REPORT.JOIN_RECEIVABLES'] == 1): ?><li class="side_item cls <?php if($c_name == Report): ?>active<?php endif; ?>">
-					<div class="side-item-link no_link">
-						<i class="icon_nav glyphicon glyphicon-list-alt"></i> <span class="nav-label">报表查询</span>
-						<span class="arrow glyphicon glyphicon-chevron-left"></span>
-					</div>
-					<ul class="nav-second-level">
-						<?php if($permission_list['REPORT.JOIN_RECEIVABLES'] == 1): ?><li>
-								<a href="<?php echo U('Report/joinReceivables', ['mid'=>I('get.mid', 0, 'int')]);?>">报名收款数据</a>
-							</li><?php endif; ?>
-					</ul>
+			<?php if($permission_list['REPORT.VIEW'] == 1): ?><li class="side_item <?php if($c_name == Report): ?>active<?php endif; ?>">
+					<a href="<?php echo U('Report/manage', ['mid'=>I('get.mid', 0, 'int')]);?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-list-alt"></i> <span class="nav-label">报表管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span></a>
 				</li><?php endif; ?>
-			<?php if(($permission_list['RECYCLE.VIEW-CLIENT'] == 1) OR ($permission_list['RECYCLE.VIEW-EMPLOYEE'] == 1) OR ($permission_list['RECYCLE.VIEW-ROLE'] == 1) OR ($permission_list['RECYCLE.VIEW-MEETING'] == 1) OR ($permission_list['RECYCLE.VIEW-COUPON'] == 1) OR ($permission_list['RECYCLE.VIEW-COUPON_ITEM'] == 1) OR ($permission_list['RECYCLE.VIEW-MESSAGE'] == 1)): ?><li class="side_item cls <?php if($c_name == Recycle): ?>active<?php endif; ?>">
+			<?php if($permission_list['RECYCLE.VIEW'] == 1): ?><li class="side_item cls <?php if($c_name == Recycle): ?>active<?php endif; ?>">
 					<div class="side-item-link no_link">
 						<i class="icon_nav glyphicon glyphicon-trash"></i> <span class="nav-label">回收站管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span>
@@ -151,13 +148,27 @@
 				</li><?php endif; ?>
 		</ul>
 	</div>
+	<div class="message_box">
+		<a href="javascript:void(0)"> <span class="icon_nav glyphicon glyphicon-envelope"></span>
+			<span style="margin-left: 15px">站内信</span>
+			<?php if(count($system_message) > 0): ?><span style="min-width: 20px; min-height: 20px; line-height: 20px; border-radius: 50%; background: red; display: inline-block; font-size: 10px; text-align: center"><?php echo count($system_message);?></span><?php endif; ?>
+		</a>
+	</div>
+	<div class="message_modal hide">
+		<div class="mes_title">站内信 <span class="mes_close">×</span></div>
+		<div class="mes_list">
+			<?php if(is_array($system_message)): $i = 0; $__LIST__ = $system_message;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$message): $mod = ($i % 2 );++$i;?><div class="mes_item">
+					<b><?php echo ($i); ?>、</b><?php echo ($message); ?>
+				</div><?php endforeach; endif; else: echo "" ;endif; ?>
+		</div>
+	</div>
 </div>
 			<div class="mt_wrapper">
 				<!--会议系统头部  公用-->
 <div class="mt_topbar clearfix">
 	<div class="topbar_left">
 		<a class="meeting_name "><i class="glyphicon glyphicon-fire"></i><?php echo ($meeting_name); ?></a>
-		<a href="<?php echo U('Meeting/manage');?>" class="back_meetingList"><i class="glyphicon glyphicon-list"></i>返回会议列表</span></a>
+		<a href="<?php echo U('Meeting/manage', ['type'=>'ing']);?>" class="back_meetingList"><i class="glyphicon glyphicon-list"></i>返回会议列表</span></a>
 	</div>
 	<ul class="nav_info clearfix">
 		<li class="name">
@@ -220,10 +231,10 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="place" class="col-sm-1 control-label">地址：</label>
+										<label for="address" class="col-sm-1 control-label">地址：</label>
 										<div class="col-sm-11">
 											<div class="input-group address_map">
-												<input type="text" class="form-control" name="place" id="place" value="<?php echo ($info["address"]); ?>">
+												<input type="text" class="form-control" name="address" id="address" value="<?php echo ($info["address"]); ?>">
 												<span class="input-group-addon glyphicon glyphicon-send get_map"></span>
 											</div>
 											<div id="allmap" class="hide" style="width: 100%; height: 400px;"></div>
@@ -254,12 +265,6 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="telephone" class="col-sm-1 control-label">电话号码：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control telephone" name="telephone" id="telephone" value="<?php echo ($info["telephone"]); ?>">
-										</div>
-									</div>
-									<div class="form-group">
 										<label for="email" class="col-sm-1 control-label">电子邮箱：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control email" name="email" id="email" value="<?php echo ($info["email"]); ?>">
@@ -269,6 +274,21 @@
 										<label for="unit" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>单位名称：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control unit" name="unit" id="unit" value="<?php echo ($info["unit"]); ?>">
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="is_new" class="col-sm-1 control-label">是否新客：</label>
+										<div class="col-sm-11">
+											<?php switch($info["is_new"]): case "1": ?><!--suppress XmlDuplicatedId -->
+													<select id="is_new" name="is_new" class="form-control">
+														<option value="1" selected>新客</option>
+														<option value="0">老客</option>
+													</select><?php break;?>
+												<?php case "0": ?><!--suppress XmlDuplicatedId -->
+													<select id="is_new" name="is_new" class="form-control">
+														<option value="1">新客</option>
+														<option value="0" selected>老客</option>
+													</select><?php break; endswitch;?>
 										</div>
 									</div>
 									<div class="form-group">
@@ -284,21 +304,9 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="accompany" class="col-sm-1 control-label">陪同人姓名：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control accompany" name="accompany" id="accompany" value="<?php echo ($info["accompany"]); ?>">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="accompany_mobile" class="col-sm-1 control-label">陪同人手机：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control accompany_mobile" name="accompany_mobile" id="accompany_mobile" value="<?php echo ($info["accompany_mobile"]); ?>">
-										</div>
-									</div>
-									<div class="form-group">
 										<label for="registration_date" class="col-sm-1 control-label">报名时间：</label>
 										<div class="col-sm-11">
-											<input class="form-control" id="registration_date" name="registration_date" value="<?php echo ($info["registration_date"]); ?>">
+											<input class="form-control" id="registration_date" name="registration_date" value="<?php echo ($join_record["registration_date"]); ?>">
 										</div>
 									</div>
 									<div class="form-group">
@@ -313,7 +321,7 @@
 											<input type="text" class="form-control column1" name="column1" id="column1" value="<?php echo ($info["column1"]); ?>">
 										</div>
 									</div>
-									<div class="form-group">
+									<!--<div class="form-group">
 										<label for="column2" class="col-sm-1 control-label">保留字段2：</label>
 										<div class="col-sm-11">
 											<input type="text" class="form-control column2" name="column2" id="column2" value="<?php echo ($info["column2"]); ?>">
@@ -354,7 +362,7 @@
 										<div class="col-sm-11">
 											<input type="text" class="form-control column8" name="column8" id="column8" value="<?php echo ($info["column8"]); ?>">
 										</div>
-									</div>
+									</div>-->
 								</div>
 								<div class="modal-footer text_center">
 									<button type="submit" class="btn btn-primary">提交</button>

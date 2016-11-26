@@ -145,7 +145,7 @@
 										<button type="submit" class="btn btn-default main_search">搜索</button>
 									</span>
 									</div>
-									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有&nbsp;(<{$statistics.total}>人)</a>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有&nbsp;(<{$statistics.enabled_total}> / <{$statistics.total}>人)</a>
 								</form>
 								<form action="" method="get" class="sign_check">
 									<div class="input-group pull-left check_signed">
@@ -254,48 +254,48 @@
 													<div class="btn-group" data-id="<{$single.cid}>" data-join-id="<{$single.id}>">
 														<switch name="single.sign_status">
 															<case value="0">
-																<if condition="$permission_list['CLIENT.SIGN'] and $single['review_status'] eq 1">
+																<if condition="$permission_list['CLIENT.SIGN'] and $single['review_status'] eq 1 and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
 																</if>
 															</case>
 															<case value="1">
-																<if condition="$permission_list['CLIENT.ANTI-SIGN']">
+																<if condition="$permission_list['CLIENT.ANTI-SIGN'] and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button>
 																</if>
 															</case>
 															<case value="2">
-																<if condition="$permission_list['CLIENT.SIGN'] and $single['review_status'] eq 1">
+																<if condition="$permission_list['CLIENT.SIGN'] and $single['review_status'] eq 1 and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
 																</if>
 															</case>
 														</switch>
-														<if condition="($single['review_status'] eq 1) and ($permission_list['CLIENT.SEND-INVITATION'])">
+														<if condition="$single['review_status'] eq 1 and $permission_list['CLIENT.SEND-INVITATION'] and $single['status'] eq 1">
 															<button type="button" class="btn btn-default btn-xs send_message_btn">发送邀请</button>
 														</if>
 														<switch name="single.review_status">
 															<case value="0">
-																<if condition="$permission_list['CLIENT.REVIEW']">
+																<if condition="$permission_list['CLIENT.REVIEW'] and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
 																</if>
 															</case>
 															<case value="1">
-																<if condition="$permission_list['CLIENT.ANTI-REVIEW']">
+																<if condition="$permission_list['CLIENT.ANTI-REVIEW'] and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button>
 																</if>
 															</case>
 															<case value="2">
-																<if condition="$permission_list['CLIENT.REVIEW']">
+																<if condition="$permission_list['CLIENT.REVIEW'] and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
 																</if>
 															</case>
 														</switch>
-														<if condition="$permission_list['CLIENT.EARN-PAYMENT']">
-															<a class="btn btn-default btn-xs btn_receivables" data-toggle="modal" data-target="#add_receivables">收款</a>
+														<if condition="$permission_list['CLIENT.EARN-PAYMENT'] and $single['status'] eq 1">
+															<a href="<{:U('Receivables/create',['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs btn_receivables">收款</a>
 														</if>
-														<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE']">
+														<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE'] and $single['status'] eq 1">
 															<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
 														</if>
-														<if condition="$permission_list['CLIENT.PRINT-BADGE'] eq 1">
+														<if condition="$permission_list['CLIENT.PRINT-BADGE'] eq 1 and $single['status'] eq 1">
 															<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int'), 'cid'=>$single['cid']])}>" class="btn btn-default btn-xs print_badge">打印胸卡</a>
 														</if>
 														<if condition="$permission_list['CLIENT.ALTER']">
@@ -603,127 +603,6 @@
 			</div>
 		</div>
 	</if>
-	<if condition="$permission_list['CLIENT.EARN-PAYMENT'] eq 1">
-		<!-- 添加收款 -->
-		<div class="modal fade" id="add_receivables" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">
-							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-						<h2 class="modal-title">收款</h2>
-					</div>
-					<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
-						<input type="hidden" name="requestType" value="create_receivables">
-						<input type="hidden" name="cid" value="">
-						<div class="modal-body">
-							<div class="form-group">
-								<label for="client_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>客户姓名：</label>
-								<div class="col-sm-10">
-									<input type="text" id="client_name" class="form-control" value="<{$meeting_info.name}>" disabled>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="price" class="col-sm-2 control-label">金额：</label>
-								<div class="col-sm-10">
-									<input type="text" name="price" id="price" class="form-control">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="method" class="col-sm-2 control-label">支付方式：</label>
-								<div class="col-sm-10">
-									<select name="method" class="form-control" id="method">
-										<volist name="pay_method_list" id="single">
-											<option value="<{$single.value}>"><{$single.html}></option>
-										</volist>
-									</select>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="type" class="col-sm-2 control-label">收款类型：</label>
-								<div class="col-sm-10">
-									<select name="type" class="form-control" id="type">
-										<volist name="receivables_type_list" id="single">
-											<option value="<{$single.value}>"><{$single.html}></option>
-										</volist>
-
-									</select>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="pos_id" class="col-sm-2 control-label">POS机：</label>
-								<div class="col-sm-10">
-									<select name="pos_id" class="form-control" id="pos_id">
-										<volist name="pos_machine_list" id="single">
-											<option value="<{$single.value}>"><{$single.html}></option>
-										</volist>
-									</select>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="payee_id" class="col-sm-2 control-label">收款人：</label>
-								<div class="col-sm-10">
-									<div id="payee_id"></div>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label">代金券：</label>
-								<div class="col-sm-10">
-									<div class="coupon_area ">
-										<div class="coupon_box">
-											<div class="coupon_list">
-												<if condition="$coupon_code_list">
-													<volist name="coupon_code_list" id="list">
-														<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="<{$list.id}>"><{$list.code}></a>
-													</volist>
-													<else/>
-													<div style="padding: 10px; text-align: center; font-size: 14px; color: rgba(0,0,0,.72)">&lt;无代金券可用&gt;</div>
-												</if>
-											</div>
-										</div>
-									</div>
-								</div>
-								<input type="hidden" name="coupon_code">
-							</div>
-
-							<div class="form-group">
-								<label for="place" class="col-sm-2 control-label">收款地点：</label>
-								<div class="col-sm-10">
-									<input type="text" name="place" id="place" class="form-control">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="source_type" class="col-sm-2 control-label">来源状态：</label>
-								<div class="col-sm-10">
-									<select name="source_type" id="source_type" class="form-control">
-										<option value="0">会前收款</option>
-										<option value="1">会中收款</option>
-										<option value="2">会后收款</option>
-									</select>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="receivables_time" class="col-sm-2 control-label">收款时间：</label>
-								<div class="col-sm-10">
-									<input class="form-control" id="receivables_time" name="receivables_time" value="<{:date('Y-m-d H:i:s')}>">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="comment" class="col-sm-2 control-label">备注：</label>
-								<div class="col-sm-10">
-									<textarea class="form-control comment" name="comment" id="comment"></textarea>
-								</div>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-							<button type="submit" class="btn btn-primary">确认</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</if>
 	<script>
 		var ManageObject = {
 			object:{
@@ -792,14 +671,6 @@
 					defaultValue:'<{$employee_info[id]}>',
 					defaultHtml :'<{$employee_info[code]}>'+' - '+'<{$employee_info[name]}>',
 					hasEmptyItem:false
-				}),
-				receivablesTime     :jeDate({
-					dateCell:"#receivables_time",
-					format  :"YYYY-MM-DD hh:mm:ss",
-					//isClear:false,
-					isTime  :true,// 时分秒--true
-					/*	minDate :"2015-10-19 00:00:00",
-					 maxDate :"2016-11-8 00:00:00"*/
 				}),
 				toast               :$().QuasarToast(),
 				loading             :$().QuasarLoading(),

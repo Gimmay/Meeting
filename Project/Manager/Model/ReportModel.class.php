@@ -57,9 +57,8 @@
 	(year(now()) - year(sub.birthday)) age,
 	sub.mobile,
 	(select sum(price) from workflow_receivables where workflow_receivables.mid = meeting.id and workflow_receivables.cid = main.cid) price,
+	main.sign_status,
 	sub.unit,
-	sub.accompany,
-	sub.accompany_mobile,
 	sub.team,
 	sub.service_consultant,
 	sub.develop_consultant,
@@ -69,7 +68,7 @@
 	sub.comment
 from workflow_join main
 join user_client sub on main.cid = sub.id
-join workflow_meeting meeting on main.mid = meeting.id and meeting.status in (1, 2, 3)
+join workflow_meeting meeting on main.mid = meeting.id and meeting.status in (1, 2, 3, 4)
 $where
 ) temp
 $order

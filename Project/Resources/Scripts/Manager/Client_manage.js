@@ -521,7 +521,7 @@ function getIframeData(){
 			if(str.toString().indexOf(name)> -1){
 			}else{
 				// 若未找到则全部存到保留字段1
-				$(this).find('option').eq('17').attr('selected', true);
+				$(this).find('option').eq('16').attr('selected', true);
 			}
 		});
 		$('.icheck_excel').iCheck({

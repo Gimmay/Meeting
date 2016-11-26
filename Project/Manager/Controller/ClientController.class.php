@@ -83,45 +83,39 @@
 				/* 统计数据 */
 				$signed_count   = $model->findRecord(0, array_merge([
 					'sign_status' => 1,
-					'status'      => 'not deleted',
+					'status'      => 1,
 					'mid'         => $this->meetingID
 				], $options));
 				$reviewed_count = $model->findRecord(0, array_merge([
 					'review_status' => 1,
-					'status'        => 'not deleted',
+					'status'        => 1,
 					'mid'           => $this->meetingID
 				], $options));
 				$all_count      = $model->findRecord(0, array_merge([
 					'status' => 'not deleted',
 					'mid'    => $this->meetingID
 				], $options));
+				/* 获取记录总数 */
+				$temp_total_list = $model->findRecord(2, array_merge([
+					//'keyword' => I('get.keyword', ''),
+					'status' => 1,
+					'mid'    => $this->meetingID
+				], $options));
 				/* 特殊处理收款列表和统计 */
 				$receivables_count = $not_receivables_count = 0;
 				if(isset($_GET['receivables'])){
-					/* 获取记录总数 */
-					$temp_total_list  = $model->findRecord(2, array_merge([
-						'keyword' => I('get.keyword', ''),
-						'status'  => 'not deleted',
-						'mid'     => $this->meetingID
-					], $options));
 					$temp_client_list = $logic->getReceivablesList($temp_total_list, I('get.receivables', 1, 'int'));
 					if(I('get.receivables') == 1){
 						$receivables_count     = count($temp_client_list);
-						$not_receivables_count = ($all_count-count($temp_client_list));
+						$not_receivables_count = (count($temp_total_list)-count($temp_client_list));
 					}
 					if(I('get.receivables') == 0){
 						$not_receivables_count = count($temp_client_list);
-						$receivables_count     = ($all_count-count($temp_client_list));
+						$receivables_count     = (count($temp_total_list)-count($temp_client_list));
 					}
 					$client_list = $logic->getReceivablesList($client_list, I('get.receivables', 1, 'int'));
 				}
 				else{
-					/* 获取记录总数 */
-					$temp_total_list       = $model->findRecord(2, array_merge([
-						'keyword' => I('get.keyword', ''),
-						'status'  => 'not deleted',
-						'mid'     => $this->meetingID
-					], $options));
 					$receivables_count     = count($logic->getReceivablesList($temp_total_list, 1));
 					$not_receivables_count = count($logic->getReceivablesList($temp_total_list, 0));
 					$client_list           = $logic->getReceivablesList($client_list, 1, false);
@@ -144,12 +138,13 @@
 				$this->assign('sign_place_list', $sign_place_list);
 				$this->assign('statistics', [
 					'signed'          => $signed_count,
-					'not_signed'      => $all_count-$signed_count,
+					'not_signed'      => count($temp_total_list)-$signed_count,
 					'reviewed'        => $reviewed_count,
-					'not_reviewed'    => $all_count-$reviewed_count,
+					'not_reviewed'    => count($temp_total_list)-$reviewed_count,
 					'total'           => $all_count,
 					'receivables'     => $receivables_count,
-					'not_receivables' => $not_receivables_count
+					'not_receivables' => $not_receivables_count,
+					'enabled_total'   => count($temp_total_list)
 				]);
 				$this->assign('employee_info', $employee_personal_result);
 				$this->assign('pay_method_list', $pay_method_list);
@@ -238,7 +233,14 @@
 					'sign_qrcode',
 					'cid',
 					'creatime',
-					'join_status'
+					'join_status',
+					'column2',
+					'column3',
+					'column4',
+					'column5',
+					'column6',
+					'column7',
+					'column8'
 				]);
 				$excel_logic->exportCustomData($client_list, [
 					'fileName'    => "[$meeting[name]]参会人员客户列表",
@@ -269,10 +271,12 @@
 			}
 			if($this->permissionList['CLIENT.ALTER']){
 				/** @var \Core\Model\ClientModel $model */
-				$model      = D('Core/Client');
-				$logic      = new ClientLogic();
-				$data['id'] = I('get.id', 0, 'int');
-				$info       = $model->findClient(1, $data);
+				$model = D('Core/Client');
+				/** @var \Core\Model\JoinModel $join_model */
+				$join_model  = D('Core/Join');
+				$logic       = new ClientLogic();
+				$info        = $model->findClient(1, ['id' => I('get.id', 0, 'int')]);
+				$join_record = $join_model->findRecord(1, ['mid' => $this->meetingID, 'cid' => $info['id']]);
 				/** @var \Manager\Model\EmployeeModel $employee_model */
 				$employee_model     = D('Employee');
 				$info               = $logic->setExtendColumnForAlter($info);
@@ -281,6 +285,7 @@
 				$this->assign('employee_name_list', $employee_name_list);
 				$this->assign('employee_list', $employee_list);
 				$this->assign('info', $info);
+				$this->assign('join_record', $join_record);
 				$this->display();
 			}
 			else $this->error('您没有修改参会人员的权限');

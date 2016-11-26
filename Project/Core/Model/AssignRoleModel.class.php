@@ -17,7 +17,7 @@
 			parent::_initialize();
 		}
 
-		public function findRecord($type, $filter = []){
+		public function findRecord($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id']) && $filter['id']) $where['id'] = $filter['id'];
 			if(isset($filter['rid']) && $filter['rid']) $where['rid'] = $filter['rid'];
@@ -105,14 +105,18 @@
 			return $result;
 		}
 
-		public function getRoleByUser($oid, $type = 0){
+		public function getRoleByUser($oid, $type = 0, $result_conf = ['column' => 'name', 'format' => 'string']){
 			$where['main.type']  = $type;
 			$where['main.oid']   = $oid;
 			$where['sub.status'] = ['neq', 2];
-			$result              = $this->alias('main')->join("system_role sub on sub.id = main.rid")->where($where)->field('sub.name')->select();
-			$role_name_arr       = [];
-			foreach($result as $val) $role_name_arr[] = $val['name'];
-
-			return implode(',', $role_name_arr);
+			$result              = $this->alias('main')->join("system_role sub on sub.id = main.rid")->where($where)->field('sub.*')->select();
+			$role_result         = [];
+			foreach($result as $val){
+				if($result_conf['column'] == 'name') $role_result[] = $val['name'];
+				if($result_conf['column'] == 'id') $role_result[] = $val['id'];
+			}
+			if($result_conf['format'] == 'string') return implode(',', $role_result);
+			elseif($result_conf['format'] == 'array') return $role_result;
+			else return null;
 		}
 	}

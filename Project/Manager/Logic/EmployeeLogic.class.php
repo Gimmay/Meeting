@@ -24,31 +24,31 @@
 				case 'create':
 					$data = I('post.');
 					/** @var \Core\Model\EmployeeModel $model */
-					$model      = D('Core/Employee');
-					$str_obj    = new StringPlus();
-//					$exist_flag = false;
-//					if(!empty($data['mobile'])){
-//						$exist_record = $model->findEmployee(1, ['mobile' => $data['mobile']]);
-//						$exist_flag   = true;
-//					}
-//					elseif(!empty($data['code'])){
-//						$exist_record = $model->findEmployee(1, ['code' => $data['code']]);
-//						$exist_flag   = true;
-//					}
+					$model   = D('Core/Employee');
+					$str_obj = new StringPlus();
+					//					$exist_flag = false;
+					//					if(!empty($data['mobile'])){
+					//						$exist_record = $model->findEmployee(1, ['mobile' => $data['mobile']]);
+					//						$exist_flag   = true;
+					//					}
+					//					elseif(!empty($data['code'])){
+					//						$exist_record = $model->findEmployee(1, ['code' => $data['code']]);
+					//						$exist_flag   = true;
+					//					}
 					$data['status']      = $data['status'] == 1 ? 0 : (($data['status'] == 0) ? 1 : 1);
 					$data['creatime']    = time();
 					$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
 					$data['password']    = $str_obj->makePassword($data['password'], $data['code']);
 					$data['birthday']    = date('Y-m-d', strtotime($data['birthday']));
-//					if($exist_flag && isset($exist_record)){
-//						$result = $model->alterEmployee(['id' => $exist_record['id']], $data);
-//						if($result['status']) $employee_id = $exist_record['id'];
-//					}
-//					else{
-						$result = $model->createEmployee($data);
-						if($result['status']) $employee_id = $result['id'];
-//					}
+					//					if($exist_flag && isset($exist_record)){
+					//						$result = $model->alterEmployee(['id' => $exist_record['id']], $data);
+					//						if($result['status']) $employee_id = $exist_record['id'];
+					//					}
+					//					else{
+					$result = $model->createEmployee($data);
+					if($result['status']) $employee_id = $result['id'];
+					//					}
 					if($result['status'] && isset($employee_id)){
 						$result['message'] = '创建成功';
 						/** @var \Core\Model\WeixinIDModel $weixin_model */
@@ -182,10 +182,11 @@
 					if($this->permissionList['EMPLOYEE.RESET-PASSWORD']){
 						$str = new StringPlus();
 						/** @var \Core\Model\EmployeeModel $model */
-						$model            = D('Core/Employee');
-						$data             = I('post.');
-						$id               = I('post.id');           // 账户ID
-						$new_password     = I('post.password'); // 新密码
+						$model = D('Core/Employee');
+						$data  = I('post.');
+						$id    = I('post.id');           // 账户ID
+						//$new_password     = I('post.password'); // 新密码
+						$new_password     = C('DEFAULT_EMPLOYEE_PASSWORD');
 						$tmp              = $model->findEmployee(1, ['id' => $id]); //查询出这个ID的数据
 						$password         = $str->makePassword($new_password, $tmp['code']);    //新密码加密
 						$data['password'] = $password;

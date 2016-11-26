@@ -14,6 +14,20 @@
 
 		public function handlerRequest($type){
 			switch($type){
+				case 'cancel_assign_message':
+					if($this->permissionList['MESSAGE.SELECT']){
+						/** @var \Core\Model\AssignMessageModel $assign_message_model */
+						$assign_message_model = D('Core/AssignMessage');
+						$result               = $assign_message_model->dropRecord([
+							'mid'        => I('get.mid', 0, 'int'),
+							'message_id' => I('get.message_id', 0, 'int'),
+							'type'       => I('get.type', 0, 'int')
+						]);
+						if($result['status']) return ['status' => true, 'message' => '取消成功', '__ajax__' => false];
+						else return ['status' => false, 'message' => '取消失败', '__ajax__' => false];
+					}
+					else return ['message' => '您没有取消分配消息的权限', 'status' => false, '__ajax__' => false];
+				break;
 				case 'get:disable_employee':
 				case 'get:enable_employee':
 					/** @var \Core\Model\EmployeeModel $model */
@@ -50,13 +64,21 @@
 				case 'get:disable_client':
 				case 'get:enable_client':
 					/** @var \Core\Model\ClientModel $model */
-					$model  = D('Core/Client');
-					$id     = I('get.id', 0, 'int');
-					$status = strpos($type, 'disable') === false ? (strpos($type, 'enable') === false ? 0 : 1) : 0;
+					$model = D('Core/Client');
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model = D('Core/Join');
+					$id         = I('get.id', 0, 'int');
+					$jid        = I('get.jid', 0, 'int');
+					$status     = strpos($type, 'disable') === false ? (strpos($type, 'enable') === false ? 0 : 1) : 0;
 					C('TOKEN_ON', false);
-					$result = $model->alterClient(['id' => $id], ['status' => $status]);
+					$result  = $model->alterClient(['id' => $id], ['status' => $status]);
+					$result2 = $join_model->alterRecord(['id' => $jid], ['status' => $status]);
 
-					return array_merge($result, ['__ajax__' => false]);
+					return [
+						'status'   => $result['status'] || $result2['status'],
+						'message'  => $result['message'],
+						'__ajax__' => false
+					];
 				break;
 				case 'get:disable_sign_place':
 				case 'get:enable_sign_place':

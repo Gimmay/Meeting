@@ -48,6 +48,7 @@
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 				'status'  => 'not deleted',
+				'mid'=>I('get.mid',0,'int')
 			]);
 			$coupon_list = $coupon_logic->setExtendColumnForManage($coupon_list);
 			/** @var \Manager\Model\MeetingModel $meeting_model */

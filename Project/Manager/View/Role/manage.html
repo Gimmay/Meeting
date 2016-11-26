@@ -106,7 +106,7 @@
 												<td>
 													<div class="btn-group" data-id="<{$single.id}>">
 														<if condition="$max_role_level elt $single['level']">
-															<if condition="($permission_list['ROLE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['ROLE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['ROLE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['ROLE.VIEW-UNASSIGNED-PERMISSION'] eq 1)">
+															<if condition="($permission_list['ROLE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['ROLE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['ROLE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['ROLE.VIEW-UNASSIGNED-PERMISSION'] eq 1) and $single['status'] eq 1">
 																<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
 															</if>
 															<if condition="$permission_list['ROLE.ALTER'] eq 1">
@@ -338,7 +338,7 @@
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						</div>
-						<input type="hidden" name="hide_employee_id">
+						<input type="hidden" name="hide_role_id">
 					</form>
 				</div>
 			</div>

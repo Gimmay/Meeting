@@ -54,7 +54,13 @@
 						<div class="li">
 							<span class="lab">手机号：</span> <span><{$info.mobile}></span>
 						</div>
+						<if condition="$info.status eq 0">
+							<div class="li">
+								<span class="lab">状&nbsp;&nbsp;&nbsp;&nbsp;态：</span> <span style="font-weight: bold; color: red">已禁用</span>
+							</div>
+						</if>
 					</div>
+					<if condition="$info.status eq 1">
 					<div class="my_receivables">
 						<header>收款记录</header>
 						<section class="receivables_list">
@@ -71,6 +77,7 @@
 							</volist>
 						</section>
 					</div>
+					</if>
 				</div>
 			</div>
 		</div>
@@ -80,12 +87,14 @@
 		<!-- 会议ID值-->
 		<input type="hidden" name="meeting_id" value="<{:I('get.mid',0,'int')}>" id="h_mid">
 	</if>
+	<if condition="$info.status eq 1">
 	<div id="mb_footer">
 		<if condition="$permission_list['WEIXIN.CLIENT.RECEIVABLES'] eq 1">
 			<a href="<{:U('AddReceivables',['cid'=>$info['cid'],'mid'=>$info['mid']])}>" class="ft_a receivables_btn"><span>添加收款</span>
 			</a>
 		</if>
 	</div>
+		</if>
 	<script>
 		var ManageObject = {
 			object:{

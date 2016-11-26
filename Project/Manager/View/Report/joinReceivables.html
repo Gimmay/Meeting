@@ -63,26 +63,27 @@
 									<button type="submit" class="btn btn-default main_search">搜索</button>
 									<a type="reset" class="btn btn-default main_search" href="<{:U('joinReceivables', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
 								</form>
-								<a class="btn btn-default export_report pull-right bg-00a0e8" href="<{:U('exportExcel', ['type'=>'joinReceivables'])}>">导出报表</a>
+								<a class="btn btn-default export_report pull-right bg-00a0e8" href="<{:U('exportExcel', ['type'=>'joinReceivables', 'mid'=>I('get.mid', 0, 'int')])}>">导出报表</a>
 							</div>
 							<div class="statistics">
-								<span>会议收款总计:<b><{$statistics.price}></b>元</span><span>参会人员总计:<b><{$statistics.join}></b>人</span>
+								<span>会议收款总计:<b><{$statistics.price}></b>元</span>
+								<span>参会人员总计:<b><{$statistics.join}></b>人</span>
+								<span>已收款人数:<b><{$statistics.receivables}></b>人</span>
+								<span>已签到人数:<b><{$statistics.sign}></b>人</span>
 							</div>
-
 							<div class="tab-content clearfix">
 								<div class="ticket_list">
 									<div class="screen_table clearfix">
 										<div class="pull-left color-red">勾选显示：</div>
 										&nbsp;&nbsp;
 										<div class="pull-left screen_check">
-											<label><input type="checkbox" checked>会议名称&nbsp;&nbsp;</label>
-											<label><input type="checkbox" checked>会议时间&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>姓名&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>性别&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>年龄&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>电话&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>单位&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>收款金额&nbsp;&nbsp;</label>
+											<label><input type="checkbox" checked>签到状态&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>陪同人&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>陪同电话&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>团队&nbsp;&nbsp;</label>
@@ -91,40 +92,34 @@
 											<label><input type="checkbox" checked>类型&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>状态&nbsp;&nbsp;</label>
 											<label><input type="checkbox" checked>报名方式&nbsp;&nbsp;</label>
-
 											<label><input type="checkbox" checked>备注&nbsp;&nbsp;</label>
 										</div>
 									</div>
-									<div class="table_box">
+									<div class="table_box table-responsive">
 										<table class="table table-bordered" id="report_table">
 											<thead>
 												<tr>
-													<th style=" width: 70px;">序号</th>
-													<th style=" width: 120px;" class="showTh" data-column="meeting_name">会议名称</th>
-													<th style=" width: 350px;" class="showTh" data-column="meeting_time">会议时间</th>
-													<th style=" width: 100px;" class="showTh" data-column="name">姓名</th>
-													<th style=" width: 60px;" class="showTh" data-column="gender">性别</th>
-													<th style=" width: 60px;" class="showTh" data-column="age">年龄</th>
-													<th style=" width: 100px;" class="showTh" data-column="mobile">电话</th>
-													<th style=" width: 100px;" class="showTh" data-column="unit">单位</th>
-													<th style=" width: 100px;" class="showTh" data-column="price">收款金额</th>
-													<th style=" width: 90px;" class="showTh" data-column="accompany">陪同人</th>
-													<th style=" width: 100px;" class="showTh" data-column="accompany_mobile">陪同电话</th>
-													<th style=" width: 90px;" class="showTh" data-column="team">团队</th>
-													<th style=" width: 90px;" class="showTh" data-column="service_consultant">服务顾问</th>
-													<th style=" width: 90px;" class="showTh" data-column="develop_consultant">开拓顾问</th>
-													<th style=" width: 60px;" class="showTh" data-column="type">类型</th>
-													<th style=" width: 60px;" class="showTh" data-column="status">状态</th>
-													<th style=" width: 80px;" class="showTh" data-column="registration_type">报名方式</th>
-													<th style=" width: 150px;" class="showTh" data-column="comment">备注</th>
+													<th width="70px">序号</th>
+													<th style=" width: 100px !important;" class="showTh" data-column="name">姓名</th>
+													<th style=" width: 60px !important ;" class="showTh" data-column="gender">性别</th>
+													<th style=" width: 60px !important;" class="showTh" data-column="age">年龄</th>
+													<th style=" width: 100px !important;" class="showTh" data-column="mobile">电话</th>
+													<th style=" width: 100px !important;" class="showTh" data-column="unit">单位</th>
+													<th style=" width: 100px !important;" class="showTh" data-column="price">收款金额</th>
+													<th style=" width: 100px !important;" class="showTh" data-column="sign_status">签到状态</th>
+													<th style=" width: 90px !important;" class="showTh" data-column="team">团队</th>
+													<th style=" width: 90px !important;" class="showTh" data-column="service_consultant">服务顾问</th>
+													<th style=" width: 90px !important;" class="showTh" data-column="develop_consultant">开拓顾问</th>
+													<th style=" width: 60px !important;" class="showTh" data-column="type">类型</th>
+													<th style=" width: 60px !important;" class="showTh" data-column="status">状态</th>
+													<th style=" width: 80px !important;" class="showTh" data-column="registration_type">报名方式</th>
+													<th style=" width: 150px !important;" class="showTh" data-column="comment">备注</th>
 												</tr>
 											</thead>
 											<tbody>
 												<volist name="list" id="single">
 													<tr>
 														<td><{$i}></td>
-														<td><{$single.meeting_name}></td>
-														<td><{$single.meeting_time}></td>
 														<td><{$single.name}></td>
 														<td>
 															<switch name="single.gender">
@@ -143,8 +138,16 @@
 																未收款
 															</present>
 														</td>
-														<td><{$single.accompany}></td>
-														<td><{$single.accompany_mobile}></td>
+														<td>
+															<switch name="single.sign_status">
+																<case value="1"><span style="color: green">已签到</span>
+																</case>
+																<case value="0"><span style="color: red">未签到</span>
+																</case>
+																<case value="2"><span style="color: red">未签到</span>
+																</case>
+															</switch>
+														</td>
 														<td><{$single.team}></td>
 														<td><{$single.service_consultant}></td>
 														<td><{$single.develop_consultant}></td>

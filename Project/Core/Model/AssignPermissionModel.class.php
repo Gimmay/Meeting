@@ -34,6 +34,19 @@
 			else return ['status' => false, 'message' => $this->getError()];
 		}
 
+		public function createMultiRecord($data){
+			try{
+				$result = $this->addAll($data);
+				if($result) return ['status' => true, 'message' => '授权成功', 'id' => $result];
+				else return ['status' => false, 'message' => '授权失败'];
+			}catch(Exception $error){
+				$message   = $error->getMessage();
+				$exception = $this->handlerException($message);
+				if(!$exception['status']) return $exception;
+				else return ['status' => false, 'message' => $this->getError()];
+			}
+		}
+
 		public function deleteRecord($condition){
 			if($this->create($condition)){
 				try{

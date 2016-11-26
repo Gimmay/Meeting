@@ -44,7 +44,7 @@ $(function(){
 	});
 	// 勾选显示
 	$('.screen_check').find('input[type=checkbox]').on('click', function(){
-		tableWidth();
+		//tableWidth();
 		var index      = $(this).parent('label').index();
 		var $table_obj = $('#report_table');
 		if($(this).prop('checked')){
@@ -77,9 +77,10 @@ $(function(){
 			}
 		});
 	})();
-	tableWidth();
+	//tableWidth();
 });
 // 计算表格的宽度
+/*
 function tableWidth(){
 	var zWidth = 0;
 	$('#report_table thead tr th.showTh').each(function(){
@@ -87,4 +88,4 @@ function tableWidth(){
 		zWidth += width;
 	});
 	$('#report_table').width(zWidth);
-}
+}*/

@@ -201,7 +201,7 @@ $(function(){
 				if(r.logo){
 					$right_details.find('.logo img').attr('src', r.logo)
 				}else{
-					$('.logo').hide();
+					$('.details_btn .logo').hide();
 				}
 				var str = '';
 				/*$.each(r,function(index,value){

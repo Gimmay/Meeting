@@ -7,6 +7,7 @@ var ThisObject = {
 	aActiveTemp         :'<a class="btn btn-default btn-sm active" href="javascript:void(0)" role="button" data-id="$id">$name</a>',
 	uploadInterval      :null,
 	word                :0,
+	option              :'<option value="$id" data-price="$price">$name</option>',
 	bindEvent           :function(){
 		var self = this;
 		// 选择代金券
@@ -101,6 +102,8 @@ $(function(){
 				$alter_receivables_object.find('#pos_id_a>option').prop('selected', false);
 				$alter_receivables_object.find('#pos_id_a').val(r.pos_id);
 				$alter_receivables_object.find('#pos_id_a>option[value='+r.pos_id+']').prop('selected', true);
+				ManageObject.object.payeeNameA.setValue(r.payee_id);
+				ManageObject.object.payeeNameA.setHtml(r.payee);
 			}
 		});
 		Common.ajax({
@@ -139,6 +142,55 @@ $(function(){
 		});
 	});
 	ThisObject.bindEvent();
+	/**
+	 * 1、收款类型分为门票和代金券
+	 * 2、当选择的select 值为1 ，则为门票
+	 * 3、当选择的select 值为2 ，则为代金券
+	 */
+	$('#type').on('change', function(){
+		if($(this).find('option:selected').val() == 1){
+			ManageObject.object.loading.loading();
+			var str = '';
+			Common.ajax({
+				data    :{requestType:'ticket', code:1},
+				callback:function(data){
+					ManageObject.object.loading.complete();
+					console.log(data);
+					$('.list_form').removeClass('hide');
+					$('.list_form .ticket_h').removeClass('hide');
+					$('.list_form .coupon_h').addClass('hide');
+					$('#add_receivables .modal-footer').removeClass('hide');
+					$.each(data, function(index, value){
+						console.log(value);
+						str += ThisObject.option.replace('$id', value.id).replace('$name', value.name)
+										 .replace('$price', value.price);
+					});
+					console.log(str);
+					$('#ticket_type').html(str).prepend('<option value="0" selected>请选择门票类型</option>');
+					$('#ticket_type').on('change', function(){
+						var price = $(this).find('option:selected').attr('data-price');
+						$('#price').val(price);
+					});
+				}
+			})
+		}else if($(this).find('option:selected').val() == 2){
+			ManageObject.object.loading.loading();
+			Common.ajax({
+				data    :{requestType:'coupon', code:2},
+				callback:function(data){
+					ManageObject.object.loading.complete();
+					console.log(data);
+					$('.list_form').removeClass('hide');
+					$('.list_form .ticket_h').addClass('hide');
+					$('.list_form .coupon_h').removeClass('hide');
+					$('#add_receivables .modal-footer').removeClass('hide');
+					$.each(data, function(index, value){
+						console.log(value);
+					});
+				}
+			})
+		}
+	})
 });
 // 添加收款不为空控制
 function checkIsEmpty(){
@@ -187,8 +239,13 @@ function getIframeData(){
 		processData:false,
 		contentType:false
 	}).done(function(data){
-		var imgUrl = data.imageUrl;
-		$('#badge_bg').attr('src', imgUrl);
+		console.log(data);
+		if(data.status){
+			ManageObject.object.toast.toast(data.message);
+			location.reload(); // 刷新本页面
+		}else{
+			ManageObject.object.toast.toast('导入失败，请按照Excel模板格式填写。');
+		}
 	});
 	return false;
 }

@@ -75,7 +75,7 @@
 										<button type="submit" class="btn btn-default main_search">搜索会议</button>
 									</span>
 									</div>
-									<a type="reset" class="btn btn-default main_search" href="/Meeting/manage.aspx">查看所有</a>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('')}>">查看所有</a>
 								</form>
 							</div>
 							<div class="table_wrap">
@@ -84,12 +84,23 @@
 										<li class="meeting_li clearfix">
 											<div class="col-sm-12">
 											<span class="check_item">
-											<input type="checkbox" class="icheck" value="<{$vo.id}>" placeholder="">
-										</span> <a class="list_img" href="<{:U('Meeting/index', ['mid'=>$vo['id']])}>">
-												<img src="<{$vo.logo}>" alt=""> </a>
+												<input type="checkbox" class="icheck" value="<{$vo.id}>" placeholder="">
+											</span>
+												<if condition="in_array($vo['status'], [1,2,3,4])">
+													<a class="list_img" href="<{:U('Meeting/index', ['mid'=>$vo['id']])}>">
+														<img src="<{$vo.logo}>" alt="">
+													</a>
+													<else/>
+													<a class="list_img">
+														<img src="<{$vo.logo}>" alt="">
+													</a>
+												</if>
 												<div class="content-box">
 													<h3>
-														<a href="<{:U('Meeting/index', ['mid'=>$vo['id']])}>" class="meeting_name"><{$vo.name}></a>
+														<if condition="in_array($vo['status'], [1,2,3,4])">
+															<a href="<{:U('Meeting/index', ['mid'=>$vo['id']])}>" class="meeting_name"><{$vo.name}></a>
+															<else/><a class="meeting_name"><{$vo.name}></a>
+														</if>
 														<switch name="vo.status">
 															<case value="0"><span class="status disable">禁用</span>
 															</case>
@@ -115,17 +126,17 @@
 														</div>
 													</div>
 													<ul class="fun_btn clearfix" data-id="<{$vo.id}>">
-														<if condition="$permission_list['SIGN_PLACE.VIEW'] eq 1">
+														<if condition="$permission_list['SIGN_PLACE.VIEW'] eq 1 and in_array($vo['status'], [1,2,3,4])">
 															<li class="fun_li">
 																<a href="<{:U('SignPlace/manage',['mid'=>$vo['id']])}>"><i class="glyphicon glyphicon-star"></i>签到点</a>
 															</li>
 														</if>
-														<if condition="$permission_list['CLIENT.VIEW'] eq 1">
+														<if condition="$permission_list['CLIENT.VIEW'] eq 1 and in_array($vo['status'], [1,2,3,4])">
 															<li class="fun_li">
 																<a href="<{:U('Client/manage',['mid'=>$vo['id']])}>"><i class="glyphicon glyphicon-user"></i>参会人员</a>
 															</li>
 														</if>
-														<if condition="$permission_list['MEETING.ASSIGN-MANAGER'] eq 1">
+														<if condition="$permission_list['MEETING.ASSIGN-MANAGER'] eq 1 and in_array($vo['status'], [1,2,3,4])">
 															<li class="fun_li">
 																<a class="management_btn" data-toggle="modal" data-target="#role_list_modal"><i class="glyphicon glyphicon-th"></i>会议管理人员</a>
 															</li>
@@ -453,7 +464,6 @@
 				</div>
 			</div>
 		</div>
-
 		<!-- 添加会议管理人员 -->
 		<div class="modal fade" id="add_management" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog" style="width: 65%">

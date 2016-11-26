@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>券模块 - 会议系统</title>
+	<title>项目模块 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<!--<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/custom.css">-->
@@ -36,7 +36,7 @@
 							<div class="function_list clearfix">
 								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_coupon">
 									<i></i>
-									<p>新增券</p>
+									<p>新增项目</p>
 								</div>
 								<div class="function_btn bg-danger batch_delete_btn_confirm">
 									<i></i>
@@ -45,9 +45,19 @@
 							</div>
 						</header>
 						<div class="repertory clearfix">
+							<div class="tabs">
+								<ul class="tabsUl clearfix">
+									<li class="active" id="filter_btn_all">
+										<a href="javascript:void(0)">全部</a>
+									</li>
+									<li class="" id="filter_btn_using">
+										<a href="javascript:void(0)">使用中</a>
+									</li>
+								</ul>
+							</div>
 							<form action="" method="get">
 								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="券/拼音简码" value="<{:I('get.keyword', '')}>">
+									<input type="search" name="keyword" class="form-control" placeholder="项目/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default main_search">搜索</button>
 									</span>
@@ -154,9 +164,10 @@
 							<div class="col-sm-10">
 
 								<select name="type" id="coupon_type" class="form-control">
-									<volist name="type" id="info">
-										<option value="<{$info['id']}>"><{$info['name']}></option>
-									</volist>
+									<option value="1">门票</option>
+									<option value="2">代金券</option>
+									<option value="3">产品</option>
+									<option value="100">其他</option>
 								</select>
 
 								<!--<div id="coupon_type1"></div>-->
@@ -276,9 +287,10 @@
 							<label for="coupon_type_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>类型：</label>
 							<div class="col-sm-10">
 								<select name="type" id="coupon_type_a" class="form-control">
-									<volist name="type" id="info">
-										<option value="<{$info['id']}>"><{$info['name']}></option>
-									</volist>
+									<option value="1">门票</option>
+									<option value="2">代金券</option>
+									<option value="3">产品</option>
+									<option value="100">其他</option>
 								</select>
 								<!--<input type="text" class="form-control price" name="type" id="type">-->
 							</div>

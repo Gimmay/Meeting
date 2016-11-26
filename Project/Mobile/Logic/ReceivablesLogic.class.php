@@ -68,7 +68,7 @@
 						$employee_result = $employee_model->findEmployee(1, ['keyword' => $client_result['develop_consultant']]);
 						if($employee_result){
 							$message_logic = new MessageLogic();
-							$sms_send      = $message_logic->send($mid, 0, 0, 3, [$employee_result['id']]);
+							$sms_send      = $message_logic->send($mid, C('AUTO_SEND_TYPE'), 0, 3, [$employee_result['id']]);
 						}
 
 						return array_merge($receivables_result, [
@@ -199,17 +199,19 @@
 			$coupon_model       = D('Core/Coupon');
 			$coupon_item_result = $coupon_item_model->findRecord(2, [
 				'mid'    => I('get.mid', 0, 'int'),
-				'status' => '0'
+				'status' => 0
 			]);
 			$new_list           = [];
 			foreach($coupon_item_result as $k => $v){
 				$coupon_result         = $coupon_model->findCoupon(1, [
 					'id'     => $v['coupon_id'],
-					'status' => 'not deleted'
+					'status' => 'not deleted',
+					'type'=>2
 				]);
-				$v['coupon_name']      = $coupon_result['name'];
-				$group                 = $v['coupon_name'];
-				$new_list["$group "][] = $v;//空格识别数字健
+				if($coupon_result['type']==2){
+					$v['coupon_name']                    = $coupon_result['name'];
+					$new_list["$coupon_result[name] "][] = $v;//空格识别数字健
+				}
 			}
 
 			return $new_list;

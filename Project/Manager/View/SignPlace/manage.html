@@ -106,7 +106,7 @@
 												</td>
 												<td>
 													<div class="btn-group" data-id="<{$single.id}>">
-														<if condition="$permission_list['SIGN_PLACE-CLIENT.VIEW'] eq 1">
+														<if condition="$permission_list['SIGN_PLACE-CLIENT.VIEW'] eq 1 and $single['status'] eq 1">
 															<a href="<{:U('clientList',['mid'=>$_GET['mid'], 'sid'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">参会人员</a>
 														</if>
 														<if condition="$permission_list['SIGN_PLACE.ALTER'] eq 1">

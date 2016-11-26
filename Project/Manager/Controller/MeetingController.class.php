@@ -20,6 +20,43 @@
 
 		public function index(){
 			if($this->permissionList['MEETING.VIEW']){
+				$this->meetingID = $this->initMeetingID($this);
+				/** @var \Core\Model\JoinModel $join_model */
+				$join_model = D('Core/Join');
+				/** @var \Core\Model\ReceivablesTypeModel $receivables_model */
+				$receivables_model = D('Core/Receivables');
+				// 获取参会统计数据
+				$join_record = $join_model->findRecord(2, [
+					'mid'    => $this->meetingID,
+					'status' => 1
+				]);
+				// 获取签到统计数据
+				$sign_count = $join_model->findRecord(0, [
+					'mid'         => $this->meetingID,
+					'status'      => 1,
+					'sign_status' => 1
+				]);
+				// 获取收款统计数据
+				$receivables_record       = $receivables_model->findRecord(2, [
+					'mid'    => $this->meetingID,
+					'status' => 'not deleted'
+				]);
+				$cid_id_arr               = [];
+				$receivables_client_count = $price = 0;
+				foreach($receivables_record as $val){
+					$cid_id_arr[] = $val['cid'];
+					$price        += $val['price'];
+				}
+				foreach($join_record as $val){
+					if(in_array($val['cid'], $cid_id_arr)) $receivables_client_count++;
+				}
+				$this->assign('statistics', [
+					'joined'             => count($join_record),
+					'signed'             => $sign_count,
+					'receivables'        => count($receivables_record),
+					'receivables_client' => $receivables_client_count,
+					'receivables_price'  => $price
+				]);
 				$this->display();
 			}
 			else $this->error('您没有查看会议详情的权限');

@@ -19,8 +19,8 @@
 		protected $meetingID  = 0;
 
 		public function _initialize(){
-//			$_SESSION['MOBILE_WEIXIN_ID']   = 1090;
-//			$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
+			$_SESSION['MOBILE_WEIXIN_ID']   = 1090;
+			$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
 			parent::_initialize();
 			$meeting_logic = new MeetingLogic();
 			$meeting_logic->initializeStatus();

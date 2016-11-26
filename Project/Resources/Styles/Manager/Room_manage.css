@@ -68,7 +68,7 @@
 	cursor       : pointer;
 }
 .client_list > span.cspan.active {
-	border-color: #fb5050;
+	border-color: #00A0E8;
 }
 
 

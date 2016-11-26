@@ -23,7 +23,7 @@
 	COLUMN_TYPE `TYPE`
 FROM information_schema.`COLUMNS`
 WHERE TABLE_SCHEMA = \'gimmay_meeting\' AND TABLE_NAME = \'user_client\'
-AND COLUMN_NAME NOT IN (\'id\', \'password\', \'status\', \'creatime\', \'creator\', \'pinyin_code\'))
+AND COLUMN_NAME NOT IN (\'id\', \'password\', \'status\', \'creatime\', \'creator\', \'pinyin_code\', \'column2\', \'column3\', \'column4\', \'column5\', \'column6\', \'column7\', \'column8\'))
 UNION SELECT \'registration_date\', \'报名时间\', \'date\'
 UNION SELECT \'traffic_method\', \'交通方式\', \'varchar(20)\'
 UNION SELECT \'inviter_id\', \'邀约人\', \'int(11)\'
@@ -45,7 +45,7 @@ UNION SELECT \'price\', \'收款\', \'decimal(12, 2)\'
 	COLUMN_TYPE `TYPE`
 FROM information_schema.`COLUMNS`
 WHERE TABLE_SCHEMA = \'gimmay_meeting\' AND TABLE_NAME = \'user_client\'
-AND COLUMN_NAME NOT IN (\'id\', \'password\', \'status\', \'creatime\', \'creator\', \'pinyin_code\'))');
+AND COLUMN_NAME NOT IN (\'id\', \'password\', \'status\', \'creatime\', \'creator\', \'pinyin_code\', \'column2\', \'column3\', \'column4\', \'column5\', \'column6\', \'column7\', \'column8\'))');
 			if($just_desc){
 				$list[0] = [];
 				foreach($result as $val) array_push($list[0], $val['desc']);

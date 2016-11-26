@@ -1,0 +1,90 @@
+/**选择收件人**/
+.mes_people .m_color{
+	color : #FB5050;
+}
+
+.mes_people a{
+	margin-left : 15px;
+	color       : #00A0E8;
+}
+
+.mes_people a:hover{
+	color : #4EB900;
+}
+
+.choose_people{
+}
+
+.d_list .add{
+	position    : absolute;
+	top         : 0;
+	right       : 20px;
+	width       : 50px;
+	height      : 27px;
+	line-height : 27px;
+	border      : 1px solid #E1E1E1;
+	text-align  : center;
+	background  : #00A0E8;
+	color       : #FFFFFF;
+	cursor      : pointer;
+}
+
+.choose_people .d1{
+	padding : 10px 20px;
+}
+
+.choose_people .d1 span{
+	margin-right : 10px;
+	font-size    : 14px;
+}
+
+.choose_people .d1 .btn_save{
+	float : right;
+}
+
+.search_sm{
+	padding : 5px 15px;
+}
+
+#change_room .repertory{
+	padding    : 10px 0;
+	border-top : none;
+}
+
+.client_list{
+	width     : 100%;
+	overflow  : hidden;
+	font-size : 0;
+}
+
+.client_list > span{
+	display      : inline-block;
+	font-size    : 12px;
+	background   : #FFFFFF;
+	border       : 1px solid #E1E1E1;
+	padding      : 4px 10px;
+	margin-right : 10px;
+	cursor       : pointer;
+}
+
+.client_list.full > span.active{
+	background : #00A0E8;
+	color      : #FFFFFF;
+	border     : #00A0E8;
+}
+
+.client_list > span.c_add{
+	background   : #FB5050;
+	border-color : #FB5050;
+	color        : #FFFFFF;
+	cursor       : pointer;
+	font-weight  : bold;
+}
+
+.client_list > span.c_change{
+	background   : #23C6C8;
+	border-color : #23C6C8;
+	color        : #FFFFFF;
+	cursor       : pointer;
+	font-weight  : bold;
+}

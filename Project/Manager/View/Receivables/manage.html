@@ -38,6 +38,9 @@
 					<section class="content">
 						<div class="table_wrap">
 							<div class="nav_tab clearfix">
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
+								</div>
 								<div class="nav_tab_li active">
 									<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
 								</div>
@@ -81,6 +84,7 @@
 												<th width="6%">客户</th>
 												<th width="8%">单位</th>
 												<th width="6%">收款金额</th>
+												<th width="6%">收款人</th>
 												<th width="6%">收款类型</th>
 												<th width="6%">支付方式</th>
 												<th width="6%">POS机</th>
@@ -88,7 +92,6 @@
 												<th width="8%">收款时间</th>
 												<th width="6%">收款地点</th>
 												<th width="6%">来源状态</th>
-												<th width="6%">备注</th>
 												<th width="10%">操作</th>
 											</tr>
 										</thead>
@@ -99,6 +102,7 @@
 													<td class="client_name"><{$list.client_name}></td>
 													<td class="meeting_name"><{$list.unit}></td>
 													<td class="price"><{$list.price}></td>
+													<td class="payee"><{$list.payee}></td>
 													<td class="receivables_type">
 														<{$list.type_name}>
 													</td>
@@ -118,7 +122,6 @@
 															<case value="2">会后收款</case>
 														</switch>
 													</td>
-													<td class="comment"><{$list.comment}></td>
 													<td>
 														<div class="btn-group" data-id="<{$list.id}>">
 															<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_receivables">修改</button>
@@ -151,107 +154,106 @@
 					<input type="hidden" name="cid" value="">
 					<div class="modal-body">
 						<div class="form-group">
-							<label for="client_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>客户姓名：</label>
-							<div class="col-sm-10">
-								<div id="client_name"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="price" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>金额：</label>
-							<div class="col-sm-10">
-								<input type="text" name="price" id="price" class="form-control">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="method" class="col-sm-2 control-label">支付方式：</label>
-							<div class="col-sm-10">
-								<!--<div id="method"></div>-->
-								<select name="method" class="form-control" id="method">
-									<volist name="pay" id="pay_info">
-										<option value="<{$pay_info.id}>"><{$pay_info.name}></option>
-									</volist>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
 							<label for="type" class="col-sm-2 control-label">收款类型：</label>
 							<div class="col-sm-10">
-								<!--<div id="type"></div>-->
 								<select name="type" class="form-control" id="type">
-									<volist name="type" id="type_info">
-										<option value="<{$type_info.value}>"><{$type_info.html}></option>
-									</volist>
-
+									<option value="0">请选择收款类型</option>
+									<option value="1">门票</option>
+									<option value="2">代金券</option>
 								</select>
 							</div>
 						</div>
-						<div class="form-group">
-							<label for="pos" class="col-sm-2 control-label">pos机：</label>
-							<div class="col-sm-10">
-								<!--<div id="pos"></div>-->
-								<select name="pos_id" class="form-control" id="pos">
-									<volist name="pos" id="pos_info">
-										<option value="<{$pos_info.id}>"><{$pos_info.name}></option>
-									</volist>
-								</select>
+						<div class="list_form hide">
+							<div class="form-group">
+								<label for="client_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>客户姓名：</label>
+								<div class="col-sm-10">
+									<div id="client_name"></div>
+								</div>
 							</div>
-						</div>
-						<div class="form-group">
-							<label for="payee_id" class="col-sm-2 control-label">收款人：</label>
-							<div class="col-sm-10">
-								<div id="payee_id"></div>
+							<div class="form-group ticket_h hide">
+								<label for="ticket_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>门票类型：</label>
+								<div class="col-sm-10">
+									<select name="ticket_type" class="form-control" id="ticket_type"> </select>
+								</div>
 							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">代金券：</label>
-							<div class="col-sm-10">
-								<div class="coupon_area ">
-									<div class="coupon_box">
-										<div class="coupon_list">
-											<if condition="$coupon_item">
-												<volist name="coupon_item" id="list">
-													<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="<{$list.id}>"><{$list.code}></a>
-												</volist>
-												<else/>
+							<div class="form-group coupon_h hide">
+								<label class="col-sm-2 control-label">代金券：</label>
+								<div class="col-sm-10">
+									<div class="coupon_area ">
+										<div class="coupon_box">
+											<div class="coupon_list">
 												<div style="padding: 10px; text-align: center; font-size: 14px; color: rgba(0,0,0,.72)">&lt;无代金券&gt;</div>
-											</if>
+											</div>
 										</div>
 									</div>
 								</div>
+								<input type="hidden" name="coupon_code">
 							</div>
-							<input type="hidden" name="coupon_code">
-						</div>
-
-						<div class="form-group">
-							<label for="place" class="col-sm-2 control-label">收款地点：</label>
-							<div class="col-sm-10">
-								<input type="text" name="place" id="place" class="form-control">
+							<div class="form-group">
+								<label for="price" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>金额：</label>
+								<div class="col-sm-10">
+									<input type="text" name="price" id="price" class="form-control">
+								</div>
 							</div>
-						</div>
-						<div class="form-group">
-							<label for="source_type" class="col-sm-2 control-label">来源状态：</label>
-							<div class="col-sm-10">
-								<select name="source_type" id="source_type" class="form-control">
-									<option value="0">会前收款</option>
-									<option value="1">会中收款</option>
-									<option value="2">会后收款</option>
-								</select>
+							<div class="form-group">
+								<label for="method" class="col-sm-2 control-label">支付方式：</label>
+								<div class="col-sm-10">
+									<!--<div id="method"></div>-->
+									<select name="method" class="form-control" id="method">
+										<volist name="pay" id="pay_info">
+											<option value="<{$pay_info.id}>"><{$pay_info.name}></option>
+										</volist>
+									</select>
+								</div>
 							</div>
-						</div>
-						<div class="form-group">
-							<label for="receivables_time" class="col-sm-2 control-label">收款时间：</label>
-							<div class="col-sm-10">
-								<input class="form-control" id="receivables_time" name="receivables_time" value="<{:date('Y-m-d H:i:s')}>">
+							<div class="form-group">
+								<label for="pos" class="col-sm-2 control-label">pos机：</label>
+								<div class="col-sm-10">
+									<!--<div id="pos"></div>-->
+									<select name="pos_id" class="form-control" id="pos">
+										<volist name="pos" id="pos_info">
+											<option value="<{$pos_info.id}>"><{$pos_info.name}></option>
+										</volist>
+									</select>
+								</div>
 							</div>
-						</div>
-						<div class="form-group">
-							<label for="comment" class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-10">
-								<textarea class="form-control comment" name="comment" id="comment"></textarea>
+							<div class="form-group">
+								<label for="payee_id" class="col-sm-2 control-label">收款人：</label>
+								<div class="col-sm-10">
+									<div id="payee_id"></div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="place" class="col-sm-2 control-label">收款地点：</label>
+								<div class="col-sm-10">
+									<input type="text" name="place" id="place" class="form-control">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="source_type" class="col-sm-2 control-label">来源状态：</label>
+								<div class="col-sm-10">
+									<select name="source_type" id="source_type" class="form-control">
+										<option value="0">会前收款</option>
+										<option value="1">会中收款</option>
+										<option value="2">会后收款</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="receivables_time" class="col-sm-2 control-label">收款时间：</label>
+								<div class="col-sm-10">
+									<input class="form-control" id="receivables_time" name="receivables_time" value="<{:date('Y-m-d H:i:s')}>">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="comment" class="col-sm-2 control-label">备注：</label>
+								<div class="col-sm-10">
+									<textarea class="form-control comment" name="comment" id="comment"></textarea>
+								</div>
 							</div>
 						</div>
 					</div>
-					<div class="modal-footer">
+					<div class="modal-footer hide">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						<button type="submit" class="btn btn-primary">确认</button>
 					</div>
@@ -442,7 +444,7 @@
 				clientName      :$('#client_name').QuasarSelect({
 					name        :'client_name',
 					classStyle  :'form-control',
-					data        :'<{:json_encode($client_type)}>',
+					data        :'<{:json_encode($client_list)}>',
 					idInput     :'selected_client_name',
 					idHidden    :'selected_client_name_form',
 					placeholder :'',

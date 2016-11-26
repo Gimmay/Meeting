@@ -51,6 +51,11 @@
 						<div class="li">
 							<span class="lab">手机号：</span> <span><{$info.mobile}></span>
 						</div>
+						<if condition="$info.status eq 0">
+						<div class="li">
+							<span class="lab">状&nbsp;&nbsp;&nbsp;&nbsp;态：</span> <span style="font-weight: bold; color: red">已禁用</span>
+						</div>
+						</if>
 					</div>
 				</div>
 			</div>
@@ -62,7 +67,7 @@
 		<input type="hidden" name="meeting_id" value="<{:I('get.mid',0,'int')}>" id="h_mid">
 	</if>
 	<div id="mb_footer">
-		<if condition="$list.review_status neq 1 and $list.sign_status neq 1">
+		<if condition="$list.review_status neq 1 and $list.sign_status neq 1 and $list.status eq 1">
 			<if condition="$permission_list['WEIXIN.CLIENT.REVIEW']">
 				<a href="javascript:void(0)" class="ft_a auditing"> <span>审核</span> </a>
 			</if>
@@ -70,7 +75,7 @@
 				<a href="javascript:void(0)" class="ft_a sign" style="display: none"> <span>签到</span> </a>
 			</if>
 		</if>
-		<if condition="$list.review_status neq 1 and $list.sign_status eq 1">
+		<if condition="$list.review_status neq 1 and $list.sign_status eq 1 and $list.status eq 1">
 			<if condition="$permission_list['WEIXIN.CLIENT.REVIEW']">
 				<a href="javascript:void(0)" class="ft_a auditing"> <span>审核</span> </a>
 			</if>
@@ -78,7 +83,7 @@
 				<a href="javascript:void(0)" class="ft_a sign" style="display: none"> <span>签到</span> </a>
 			</if>
 		</if>
-		<if condition="$list.review_status eq 1 and $list.sign_status neq 1">
+		<if condition="$list.review_status eq 1 and $list.sign_status neq 1 and $list.status eq 1">
 			<if condition="$permission_list['WEIXIN.CLIENT.ANTI-REVIEW']">
 				<a href="javascript:void(0)" class="ft_a auditing not"> <span>取消审核</span> </a>
 			</if>
@@ -86,7 +91,7 @@
 				<a href="javascript:void(0)" class="ft_a sign"> <span>签到</span> </a>
 			</if>
 		</if>
-		<if condition="$list.review_status eq 1 and $list.sign_status eq 1">
+		<if condition="$list.review_status eq 1 and $list.sign_status eq 1 and $list.status eq 1">
 			<if condition="$permission_list['WEIXIN.CLIENT.ANTI-REVIEW']">
 				<a href="javascript:void(0)" class="ft_a auditing not"> <span>取消审核</span> </a>
 			</if>

@@ -39,6 +39,9 @@
 						<div class="table_wrap">
 							<div class="nav_tab clearfix">
 								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
+								</div>
+								<div class="nav_tab_li">
 									<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
 								</div>
 								<div class="nav_tab_li">
@@ -77,29 +80,29 @@
 										</thead>
 										<tbody>
 											<volist name="type_info" id="list">
-											<tr>
-												<td><{$i}></td>
-												<td class="receivablesType"><{$list.name}></td>
-												<td>
-													<switch name="list.status">
-														<case value="0">禁用</case>
-														<case value="1">可用</case>
-													</switch>
-												</td>
-												<td class="comment"><{$list.comment}></td>
-												<td>
-													<div class="btn-group" data-id="<{$list.id}>">
-														<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_receivablesType">修改</button>
-														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_receivablesType">删除</button>
-														<if condition="$list['status'] eq 0">
-															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_receivables_type', 'id'=>$list['id']])}>" class="btn btn-success btn-xs">启用</a>
-														</if>
-														<if condition="$list['status'] eq 1">
-															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_receivables_type', 'id'=>$list['id']])}>" class="btn btn-danger btn-xs">禁用</a>
-														</if>
-													</div>
-												</td>
-											</tr>
+												<tr>
+													<td><{$i}></td>
+													<td class="receivablesType"><{$list.name}></td>
+													<td>
+														<switch name="list.status">
+															<case value="0">禁用</case>
+															<case value="1">可用</case>
+														</switch>
+													</td>
+													<td class="comment"><{$list.comment}></td>
+													<td>
+														<div class="btn-group" data-id="<{$list.id}>">
+															<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_receivablesType">修改</button>
+															<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_receivablesType">删除</button>
+															<if condition="$list['status'] eq 0">
+																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_receivables_type', 'id'=>$list['id']])}>" class="btn btn-success btn-xs">启用</a>
+															</if>
+															<if condition="$list['status'] eq 1">
+																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_receivables_type', 'id'=>$list['id']])}>" class="btn btn-danger btn-xs">禁用</a>
+															</if>
+														</div>
+													</td>
+												</tr>
 											</volist>
 										</tbody>
 
@@ -189,7 +192,8 @@
 					<h2 class="modal-title">删除记录</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete_type"> <input type="hidden" name="id" value="">
+					<input type="hidden" name="requestType" value="delete_type">
+					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						是否删除？
 					</div>

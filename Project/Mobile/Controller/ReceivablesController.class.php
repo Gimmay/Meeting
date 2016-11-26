@@ -20,8 +20,8 @@
 		protected $meetingID  = 0;
 
 		public function _initialize(){
-//									$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
-//									$_SESSION['MOBILE_WEIXIN_ID']   = 1090;
+		//				$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
+		//				$_SESSION['MOBILE_WEIXIN_ID']   = 1090;
 			parent::_initialize();
 		}
 
@@ -97,14 +97,17 @@
 				$pay_method_model = D('Core/PayMethod');
 				/** @var \Core\Model\ReceivablesTypeModel $receivables_type_model */
 				$receivables_type_model = D('Core/ReceivablesType');
+				/** @var \Core\Model\PosMachineModel $pos_machine_model */
+				$pos_machine_model = D('Core/PosMachine');
 				/** @var \Core\Model\EmployeeModel $employee_model */
 				$employee_model = D('Core/Employee');
 				/** @var \Mobile\Model\ClientModel $client_model_type */
 				$client_model_type       = D('Client');
 				$coupon_item_type        = $receivables_logic->selectCouponItemType();
 				$client_result           = $client_model->findClient(1, ['id' => I('get.cid', 0, 'int')]);
-				$pay_method_result       = $pay_method_model->findRecord(2, ['status' => 'not deleted']);
-				$receivables_type_result = $receivables_type_model->findRecord(2, ['status' => 'not deleted']);
+				$pay_method_result       = $pay_method_model->findRecord(2, ['status' => 1]);
+				$receivables_type_result = $receivables_type_model->findRecord(2, ['status' => 1]);
+				$pos_machine_result      = $pos_machine_model->findRecord(2, ['status' => 1]);
 				$employee_result         = $employee_model->findEmployee(1, ['id' => $this->employeeID]);
 				$mid                     = I('get.mid', 0, 'int');
 				$client_result_type      = $client_model_type->getClientSelectList($mid);
@@ -115,6 +118,7 @@
 				$this->assign('coupon_item', $coupon_item_type);
 				$this->assign('method', $pay_method_result);
 				$this->assign('receivables_type', $receivables_type_result);
+				$this->assign('pos', $pos_machine_result);
 				$this->display();
 			}
 			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.CLIENT.RECEIVABLES']);
@@ -220,7 +224,7 @@
 				$meeting_result           = $meeting_model->findMeeting(1, ['id' => I('get.mid', 0, 'int')]);
 				$join_result              = $join_model->findRecord(0, [
 					'mid'    => I('get.mid', 0, 'int'),
-					'status' => 'not deleted'
+					'status' => 1
 				]);
 				$receivables_result_count = $receivables_model->findReceivablesCount(I('get.mid', 0, 'int'));
 				$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
@@ -272,37 +276,36 @@
 			$this->_getEmployeeID();
 			$permission_logic = new PermissionLogic();
 			if($permission_logic->hasPermission('WEIXIN.RECEIVABLES.VIEW-ALL', $this->employeeID)){
-//				/** @var \Core\Model\ReceivablesModel $receivables_model */
-//				$receivables_model = D('Core/Receivables');
-//				/** @var \Core\Model\ClientModel $client_model */
-//				$client_model = D('Core/Client');
-//				/** @var \Core\Model\EmployeeModel $employee_model */
-//				$employee_model   = D('Core/Employee');
+				//				/** @var \Core\Model\ReceivablesModel $receivables_model */
+				//				$receivables_model = D('Core/Receivables');
+				//				/** @var \Core\Model\ClientModel $client_model */
+				//				$client_model = D('Core/Client');
+				//				/** @var \Core\Model\EmployeeModel $employee_model */
+				//				$employee_model   = D('Core/Employee');
 				$logic            = new ReceivablesLogic();
 				$receivables_list = $logic->selectReceivablesListAll();
-//				$option           = [];
-//				if(isset($_GET['mid'])) $option['mid'] = I('get.mid', 0, 'int');
-//				$receivables_result = $receivables_model->findRecord(2, array_merge([
-//					'status' => 'not deleted'
-//				], $option));
-//				$cid                = [];
-//				$eid                = [];
-				$count              = [];
+				//				$option           = [];
+				//				if(isset($_GET['mid'])) $option['mid'] = I('get.mid', 0, 'int');
+				//				$receivables_result = $receivables_model->findRecord(2, array_merge([
+				//					'status' => 'not deleted'
+				//				], $option));
+				//				$cid                = [];
+				//				$eid                = [];
+				$count = [];
 				foreach($receivables_list as $k => $v){
 					$count['price_count'] += $v['price'];
-//					$cid[] = $v['cid'];
-//					$eid[] = $v['payee_id'];
+					//					$cid[] = $v['cid'];
+					//					$eid[] = $v['payee_id'];
 				}
-//				foreach($cid as $k => $v){
-//					$client_result                    = $client_model->findClient(1, ['id' => $v]);
-//					$receivables_result[$k]['unit']   = $client_result['unit'];
-//					$receivables_result[$k]['c_name'] = $client_result['name'];
-//				}
-//				foreach($eid as $k => $v){
-//					$employee_result                  = $employee_model->findEmployee(1, ['id' => $v]);
-//					$receivables_result[$k]['e_name'] = $employee_result['name'];
-//				}
-				
+				//				foreach($cid as $k => $v){
+				//					$client_result                    = $client_model->findClient(1, ['id' => $v]);
+				//					$receivables_result[$k]['unit']   = $client_result['unit'];
+				//					$receivables_result[$k]['c_name'] = $client_result['name'];
+				//				}
+				//				foreach($eid as $k => $v){
+				//					$employee_result                  = $employee_model->findEmployee(1, ['id' => $v]);
+				//					$receivables_result[$k]['e_name'] = $employee_result['name'];
+				//				}
 				$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
 				$this->assign('count', $count);
 				$this->assign('list', $receivables_list);
@@ -317,47 +320,47 @@
 			$permission_logic = new PermissionLogic();
 			if($permission_logic->hasPermission('WEIXIN.RECEIVABLES.VIEW', $this->employeeID)){
 				$logic = new ReceivablesLogic();
-//				/** @var \Core\Model\ReceivablesModel $receivables_model */
-//				$receivables_model = D('Core/Receivables');
-//				/** @var \Core\Model\ClientModel $client_model */
-//				$client_model = D('Core/Client');
-//				/** @var \Core\Model\EmployeeModel $employee_model */
-//				$employee_model = D('Core/Employee');
-//				/** @var \Core\Model\DepartmentModel $department_model */
-//				$department_model = D('Core/Department');
-				$option           = [];
-//				if(isset($_GET['mid'])) $option['mid'] = I('get.mid', 0, 'int');
-//				$receivables_result = $receivables_model->findRecord(2, array_merge([
-//					'payee_id' => $this->employeeID,
-//					'status'   => 'not deleted'
-//				], $option));
-//				$employee_list      = $employee_model->findEmployee(2, ['status' => 'not deleted']);
-//				$department_list    = $department_model->findDepartment(2, ['status' => 'not deleted']);
-//				$client_list        = $client_model->findClient(2, ['status' => 'not deleted']);
-				$receivables_list   = $logic->selectReceivablesList($this->employeeID);
-				$count              = [];
+				//				/** @var \Core\Model\ReceivablesModel $receivables_model */
+				//				$receivables_model = D('Core/Receivables');
+				//				/** @var \Core\Model\ClientModel $client_model */
+				//				$client_model = D('Core/Client');
+				//				/** @var \Core\Model\EmployeeModel $employee_model */
+				//				$employee_model = D('Core/Employee');
+				//				/** @var \Core\Model\DepartmentModel $department_model */
+				//				$department_model = D('Core/Department');
+				$option = [];
+				//				if(isset($_GET['mid'])) $option['mid'] = I('get.mid', 0, 'int');
+				//				$receivables_result = $receivables_model->findRecord(2, array_merge([
+				//					'payee_id' => $this->employeeID,
+				//					'status'   => 'not deleted'
+				//				], $option));
+				//				$employee_list      = $employee_model->findEmployee(2, ['status' => 'not deleted']);
+				//				$department_list    = $department_model->findDepartment(2, ['status' => 'not deleted']);
+				//				$client_list        = $client_model->findClient(2, ['status' => 'not deleted']);
+				$receivables_list = $logic->selectReceivablesList($this->employeeID);
+				$count            = [];
 				foreach($receivables_list as $k => $v){
-//					$temp_employee = [];
-//					foreach($employee_list as $k1 => $v1){
-//						if($v['payee_id'] == $v1['id']){
-//							$temp_employee                    = $v1;
-//							$receivables_result[$k]['e_name'] = $v1['name'];
-//							break;
-//						}
-//					}
-//					foreach($client_list as $k1 => $v1){
-//						if($v1['id'] == $v['cid']){
-//							$receivables_result[$k]['c_name'] = $v1['name'];
-//							$receivables_result[$k]['unit']   = $v1['unit'];
-//							break;
-//						}
-//					}
-//					foreach($department_list as $k1 => $v1){
-//						if($v1['id'] == $temp_employee['did']){
-//							$receivables_result[$k]['d_name'] = $v1['name'];
-//							break;
-//						}
-//					}
+					//					$temp_employee = [];
+					//					foreach($employee_list as $k1 => $v1){
+					//						if($v['payee_id'] == $v1['id']){
+					//							$temp_employee                    = $v1;
+					//							$receivables_result[$k]['e_name'] = $v1['name'];
+					//							break;
+					//						}
+					//					}
+					//					foreach($client_list as $k1 => $v1){
+					//						if($v1['id'] == $v['cid']){
+					//							$receivables_result[$k]['c_name'] = $v1['name'];
+					//							$receivables_result[$k]['unit']   = $v1['unit'];
+					//							break;
+					//						}
+					//					}
+					//					foreach($department_list as $k1 => $v1){
+					//						if($v1['id'] == $temp_employee['did']){
+					//							$receivables_result[$k]['d_name'] = $v1['name'];
+					//							break;
+					//						}
+					//					}
 					$count['price_count'] += $v['price'];
 				}
 				$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));

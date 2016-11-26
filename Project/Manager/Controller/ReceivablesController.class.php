@@ -10,6 +10,9 @@
 	use Manager\Logic\EmployeeLogic;
 	use Manager\Logic\ExcelLogic;
 	use Manager\Logic\ReceivablesLogic;
+	use Manager\Model\ClientModel;
+	use Manager\Model\EmployeeModel;
+	use Think\Page;
 
 	class ReceivablesController extends ManagerController{
 		public function _initialize(){
@@ -18,6 +21,44 @@
 		}
 
 		public function create(){
+			$receivables_logic = new ReceivablesLogic();
+			if(IS_POST){
+				$type   = I('post.requestType');
+				$result = $receivables_logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']) $this->success($result['message']);
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
+			}
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			/** @var \Core\Model\ClientModel $client_model */
+			$client_model = D('Core/Client');
+			/** @var \Core\Model\PayMethodModel $pay_method_model */
+			$pay_method_model  = D('Core/PayMethod');
+			$pay_method_result = $pay_method_model->findRecord(2, ['status' => '1']);
+			/** @var \Core\Model\PosMachineModel $pos_machine_model */
+			$pos_machine_model  = D('Core/PosMachine');
+			$pos_machine_result = $pos_machine_model->findRecord(2, ['status' => '1', 'mid' => $this->meetingID]);
+			$client_logic       = new ClientModel();
+			$client             = $client_logic->getClientSelectList($this->meetingID);
+			$employee_logic     = new EmployeeModel();
+			$employee           = $employee_logic->getEmployeeSelectList();
+			$client_result = $client_model->findClient(1,['id'=>I('get.cid',0,'int')]);
+			$employee_result    = $employee_model->findEmployee(1, ['id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')]);
+			$this->assign('client', $client);//遍历当前会议的所有的参会人员
+			$this->assign('employee', $employee);//遍历当前会议的所有的工作人员
+			$this->assign('pos', $pos_machine_result);//遍历pos机
+			$this->assign('pay', $pay_method_result); //遍例支付方式
+			$this->assign('client_single',$client_result);
+			$this->assign('employee_single',$employee_result);
+			$this->display();
 		}
 
 		public function manage(){
@@ -36,8 +77,24 @@
 				}
 				exit;
 			}
+			/** @var \Core\Model\CouponItemModel $coupon_item_model */
+			$coupon_item_model = D('Core/CouponItem');
+			/** @var \Core\Model\ReceivablesModel $receivables_model */
+			$receivables_model  = D('Core/Receivables');
 			$meeting_result     = $receivables_logic->findMeetingClient();
-			$coupon_item_result = $receivables_logic->findCouponItem();
+			$coupon_item_result = $coupon_item_model->listRecord(2, [
+				'main.status' => 0,
+				'sub.status'  => 1,
+				'mid'         => I('get.mid', 0, 'int')
+			]);
+			$receivables_count  = $receivables_model->findRecord(0, [
+				'status' => 'not deleted',
+				'mid'    => I('get.mid', 0, 'int')
+			]);
+			/* 分页设置 */
+			$page_object = new Page(count($receivables_count), I('get._page_count', C('PAGE_RECORD_COUNT'), 'int'));
+			\ThinkPHP\Quasar\Page\setTheme1($page_object);
+			$page_show          = $page_object->show();
 			$receivables_result = $receivables_logic->findReceivables();
 			/** @var \Manager\Model\ClientModel $client_model */
 			$client_model = D('Client');
@@ -45,7 +102,7 @@
 			$client_list  = $client_model->getClientSelectList($mid);
 			/** @var \Core\Model\PayMethodModel $pay_method_model */
 			$pay_method_model  = D('Core/PayMethod');
-			$pay_method_result = $pay_method_model->findRecord(2, ['status' => 'not deleted']);
+			$pay_method_result = $pay_method_model->findRecord(2, ['status' => 1]);
 			/** @var \Manager\Model\MeetingModel $meeting_model */
 			$meeting_model = D('Meeting');
 			$meeting_list  = $meeting_model->getMeetingForSelect();
@@ -60,19 +117,20 @@
 			$receivables_type_result = $receivables_type_model->getReceivablesTypeSelectList();
 			/** @var \Core\Model\PosMachineModel $pos_machine_model */
 			$pos_machine_model  = D('Core/PosMachine');
-			$pos_machine_result = $pos_machine_model->findRecord(2, ['status' => 'not deleted']);
+			$pos_machine_result = $pos_machine_model->findRecord(2, ['status' => 1]);
 			$time               = time();
 			$this->assign('type', $receivables_type_result);
-			$this->assign('client_type', $client_list);
-			$this->assign('pay', $pay_method_result);
-			$this->assign('pos', $pos_machine_result);
-			$this->assign('time', $time);
-			$this->assign('employee_info', $employee_result);
-			$this->assign('meeting_list', $meeting_list);
-			$this->assign('info', $receivables_result);
-			$this->assign('meeting_info', $meeting_result);
-			$this->assign('employee_list', $employee_list);
-			$this->assign('coupon_item', $coupon_item_result);
+			$this->assign('client_list', $client_list);//当前会议参会人员.
+			$this->assign('pay', $pay_method_result);//支付方式
+			$this->assign('pos', $pos_machine_result); //pos机.
+			$this->assign('time', $time);//当前时间
+			$this->assign('employee_info', $employee_result);//当前登录收款人.
+			$this->assign('meeting_list', $meeting_list);//所有会议
+			$this->assign('info', $receivables_result);//收款记录
+			$this->assign('meeting_info', $meeting_result);//当前开发会议
+			$this->assign('employee_list', $employee_list);//所有收款人
+			$this->assign('coupon_item', $coupon_item_result);//所有可用代金券
+			$this->assign('page_show', $page_show);//分页
 			$this->display();
 		}
 
@@ -148,6 +206,7 @@
 			$pos_machine_model  = D('Core/PosMachine');
 			$pos_machine_result = $pos_machine_model->findRecord(2, [
 				'status'  => 'not deleted',
+				'mid'     => I('get.mid', 0, 'int'),
 				'keyword' => I('get.keyword', '')
 			]);
 			$this->assign('pos', $pos_machine_result);
@@ -177,11 +236,22 @@
 			]);
 		}
 
+		public function manageList(){
+			/** @var \Mobile\Model\ReceivablesModel $receivables_model */
+			$receivables_model  = D('Mobile/Receivables');
+			$receivables_single = $receivables_model->getClientReceivablesAll($this->meetingID);
+			$receivables_logic  = new ReceivablesLogic();
+			$keyword            = I('get.keyword', '');
+			$receivables_result = $receivables_logic->getClientReceivables($receivables_single, $keyword);
+			$this->assign('info', $receivables_result);
+			$this->display();
+		}
+
 		public function exportReceivablesDataTemplate(){
 			if($this->permissionList['CLIENT.DOWNLOAD-IMPORT-EXCEL-TEMPLATE']){ // todo
 				/** @var \Manager\Model\ReceivablesModel $receivables_model */
 				$receivables_model = D('Receivables');
-				$header            = $receivables_model->getColumn(true);
+				$header            = $receivables_model->getColumn(true, true);
 				$excel_logic       = new ExcelLogic();
 				$excel_logic->exportCustomData($header, [
 					'fileName'    => '导入收款数据模板',

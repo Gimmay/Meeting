@@ -55,6 +55,7 @@
 									<span class="labe">支付方式:</span>
 									<div>
 										<select name="method" id="method" class="form-control input-sm">
+											<option>无</option>
 											<volist name="method" id="list">
 												<option value="<{$list.id}>"><{$list.name}></option>
 											</volist>
@@ -67,7 +68,21 @@
 									<span class="labe">收款类型:</span>
 									<div>
 										<select name="type" id="type" class="form-control input-sm">
+											<option>无</option>
 											<volist name="receivables_type" id="info">
+												<option value="<{$info.id}>"><{$info.name}></option>
+											</volist>
+										</select>
+									</div>
+								</div>
+							</li>
+							<li class="info_li">
+								<div class="item">
+									<span class="labe">pos机:</span>
+									<div>
+										<select name="pos" id="pos" class="form-control input-sm">
+											<option>无</option>
+											<volist name="pos" id="info">
 												<option value="<{$info.id}>"><{$info.name}></option>
 											</volist>
 										</select>
