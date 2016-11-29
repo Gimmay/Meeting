@@ -1,27 +1,18 @@
 <?php
-	namespace Mobile\Controller;
+	/**
+	 * Created by PhpStorm.
+	 * User: 0967
+	 * Date: 2016-11-29
+	 * Time: 14:16
+	 */
+	namespace Open\Controller;
 
-	use Core\Controller\CoreController;
-	use Core\Logic\PermissionLogic;
-
-	class MobileController extends CoreController{
+	class MobileController extends OpenController{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected function getWeixinID($redirect = 1){
-			if(!isset($_SESSION['MOBILE_WEIXIN_ID'])){
-				setcookie('WEIXIN_REDIRECT_URL', $_SERVER['REDIRECT_URL'], null, '/');
-				$this->redirect('Weixin/verify', ['redirect' => $redirect]);
-
-				return 0;
-			}
-			else return $_SESSION['MOBILE_WEIXIN_ID'];
-		}
-
-		public function logout(){
-			session_unset();
-			session_destroy();
-			echo '<h1>ok</h1>';
+		public function invite(){
+			$this->display();
 		}
 	}

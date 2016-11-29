@@ -34,8 +34,8 @@
 					}
 					else{
 						C('TOKEN_ON', false);
+
 						$data                = I('post.', '');
-						$data['type']        = I('post.room_type', '');
 						$data['code']        = I('post.room_number', '');
 						$data['mid']         = I('get.id', 0, 'int');
 						$data['hid']         = I('get.hid', 0, 'int');
@@ -45,6 +45,7 @@
 						$data['client_type'] = I('post.client_type', '');
 						$room_result         = $room_model->createRecord($data);
 						$person_id           = explode(',', $data['person']);
+
 						foreach($person_id as $v){
 							$data['rid']        = $room_result['id'];
 							$data['jid']        = $v;
@@ -107,9 +108,9 @@
 						'hid'    => I('get.hid', 0, 'int'),
 						'status' => 'not deleted'
 					]);
-					$new_list = [];
+					$new_list    = [];
 					foreach($room_result as $k1 => $v1){
-						if($v1['id']==$room_id) continue;
+						if($v1['id'] == $room_id) continue;
 						$assign_room_result = $assign_room_model->findRecord(2, [
 							'rid'              => $v1['id'],
 							'occupancy_status' => 1,
@@ -124,7 +125,7 @@
 							$assign_room_result[$k3]['name'] = $join_result['name'];
 						}
 						$v1['client'] = $assign_room_result;
-						$new_list[]  = $v1;
+						$new_list[]   = $v1;
 					}
 
 					return array_merge($new_list, ['__ajax__' => true]);
@@ -214,11 +215,11 @@
 					$orid               = I('post.orid', 0, 'int');
 					$rid                = I('post.rid', 0, 'int');
 					$assign_room_result = $assign_room_model->findRecord(1, [
-						'jid' => $jid,
-						'rid' => $orid,
-						'occupancy_status'=>1
+						'jid'              => $jid,
+						'rid'              => $orid,
+						'occupancy_status' => 1
 					]);
-					$assign_room_model->alterRecord(['id'=>$assign_room_result['id']], ['occupancy_status' => 0]);
+					$assign_room_model->alterRecord(['id' => $assign_room_result['id']], ['occupancy_status' => 0]);
 					$assign_room_creator = $assign_room_model->createRecord([
 						'rid'       => $rid,
 						'jid'       => $jid,
@@ -238,11 +239,11 @@
 					/** @var \Core\Model\AssignRoomModel $assign_room_model */
 					$assign_room_model  = D('Core/AssignRoom');
 					$assign_room_result = $assign_room_model->findRecord(1, [
-						'jid' => $ocid,
-						'rid' => $rid,
-						'occupancy_status'=>1
+						'jid'              => $ocid,
+						'rid'              => $rid,
+						'occupancy_status' => 1
 					]); //查出选择的用户那个房间信息.
-					$assign_room_model->alterRecord(['id'=>$assign_room_result['id']], ['occupancy_status' => 0]);//把这个用户的住房状态改为已退房
+					$assign_room_model->alterRecord(['id' => $assign_room_result['id']], ['occupancy_status' => 0]);//把这个用户的住房状态改为已退房
 					$assign_room_model->createRecord([
 						'jid'       => $ocid,
 						'rid'       => $orid,
@@ -251,11 +252,11 @@
 						'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
 					]);//把这个用户换到跟他交换的房间里去
 					$assign_room_results = $assign_room_model->findRecord(1, [
-						'jid' => $cid,
-						'rid' => $orid,
-						'occupancy_status'=>1
+						'jid'              => $cid,
+						'rid'              => $orid,
+						'occupancy_status' => 1
 					]); //查出选择的用户那个房间信息.
-					$assign_room_model->alterRecord(['id'=>$assign_room_results['id']], ['occupancy_status' => 0]);//把这个用户的住房状态改为已退房
+					$assign_room_model->alterRecord(['id' => $assign_room_results['id']], ['occupancy_status' => 0]);//把这个用户的住房状态改为已退房
 					$assign_room_alter = $assign_room_model->createRecord([
 						'jid'       => $cid,
 						'rid'       => $rid,
@@ -264,6 +265,39 @@
 						'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
 					]);//把这个用户换到跟他交换的房间里去
 					return array_merge($assign_room_alter, ['__ajax__' => true]);
+				break;
+				case 'create_roomType':
+					/** @var \Core\Model\RoomTypeModel $room_type_model */
+
+					$room_type_model  = D('Core/RoomType');
+					$data             = I('post.', '');
+					$data['creatime']  =time();
+					$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$data['hid'] = I('get.hid',0,'int');
+					$room_type_result = $room_type_model->createRecord($data);
+
+					return array_merge($room_type_result, ['__ajax__' => false]);
+				break;
+				case 'alter_roomType':
+					/** @var \Core\Model\RoomTypeModel $room_type_model */
+					$room_type_model = D('Core/RoomType');
+					$data = I('post.');
+					$room_type_result = $room_type_model->alterRecord(['id'=>$data['id']],$data);
+					return array_merge($room_type_result,['__ajax__'=>false]);
+				break;
+				case 'delete_roomType':
+					/** @var \Core\Model\RoomTypeModel $room_type_model */
+					$room_type_model = D('Core/RoomType');
+					$id = I('post.id',0,'int');
+					$room_type_result = $room_type_model->deleteRecord($id);
+					return array_merge($room_type_result,['__ajax__'=>false]);
+				break;
+				case 'get_type':
+					$id = I('post.id',0,'int');
+					/** @var \Core\Model\RoomTypeModel $room_type_model */
+					$room_type_model =D('Core/RoomType');
+					$room_type_result  = $room_type_model->findRecord(1,['id'=>$id,'status'=>1]);
+					return array_merge($room_type_result,['__ajax__'=>true]);
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少参数'];
@@ -316,16 +350,22 @@
 			$assign_room_model = D('Core/AssignRoom');
 			/** @var \Core\Model\RoomModel $room_model */
 			$room_model  = D('Core/Room');
+			/** @var \Core\Model\RoomTypeModel $room_type_model */
+			$room_type_model = D('Core/RoomType');
 			$room_result = $room_model->findRoom(2, [
 				'hid'     => I('get.hid', 0, 'int'),
 				'status'  => 'not deleted',
 				'keyword' => I('get.keyword', 0, 'int'),
 			]);
+
 			foreach($room_result as $k => $v){
+				$room_type_result = $room_type_model->findRecord(1,['id'=>$v['type']]);
+				$room_result[$k]['type_name'] = $room_type_result['name'];
+
 				$room_result[$k]['count'] = $assign_room_model->findRecord(0, [
-					'rid'    => $room_result[$k]['id'],
-					'status' => 1,
-					'occupancy_status'=>1
+					'rid'              => $v['id'],
+					'status'           => 1,
+					'occupancy_status' => 1
 				]);
 			}
 			return $room_result;

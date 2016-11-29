@@ -42,6 +42,9 @@
 				if($status == 'not deleted') $where['status'] = ['neq', 2];
 				else $where['status'] = $filter['status'];
 			}
+			if(isset($filter['keyword'])){
+				$where['name'] = ['like', "%$filter[keyword]%"];
+			}
 			switch((int)$type){
 				case 0: // count
 					if($where == []){
@@ -80,9 +83,35 @@
 			return $result;
 		}
 
-		public function alterRecord(){
+		public function alterRecord($filter, $data){
+			if($this->create($data)){
+				try{
+					$result = $this->where($filter)->save($data);
+					if($result) return ['status' => true, 'message' => '修改成功'];
+					else return ['status' => false, 'message' => '未做任何修改'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
+			}
+			else return ['status' => false, 'message' => $this->getError()];
 		}
 
-		public function deleteRecord(){
+		public function deleteRecord($filter){
+			if($this->create()){
+				try{
+					$result = $this->where($filter)->save(['status' => 2]);
+					if($result) return ['status' => true, 'message' => '删除成功'];
+					else return ['status' => false, 'message' => '删除失败'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
+			}
+			else return ['status' => false, 'message' => $this->getError()];
 		}
 	}

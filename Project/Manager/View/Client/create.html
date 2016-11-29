@@ -122,6 +122,18 @@
 										</div>
 									</div>
 									<div class="form-group">
+										<label for="type" class="col-sm-1 control-label">客户类型：</label>
+										<div class="col-sm-11">
+											<select id="type" name="type" class="form-control">
+												<option value="0">陪同</option>
+												<option value="1">终端</option>
+												<option value="2">内部员工</option>
+												<option value="3">嘉宾</option>
+												<option value="4">老早</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
 										<label for="develop_consultant" class="col-sm-1 control-label">开拓顾问：</label>
 										<div class="col-sm-11">
 											<div id="develop_consultant"></div>
@@ -228,7 +240,7 @@
 					emptyItemHtml:'---空---'
 				}),
 				birthDate              :jeDate({
-					dateCell:"#birthdate",
+					dateCell:"#birthday",
 					format  :"YYYY-MM-DD",
 					isClear :false, // isClear:false, // 时分秒--true
 					/*	minDate :"2015-10-19 00:00:00",
@@ -243,10 +255,6 @@
 				}),
 				toast                  :$().QuasarToast(),
 				loading                :$().QuasarLoading(),
-				citySelect             :$("#address").citySelect({
-					nodata:"none",
-					url   :'<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/city.min.js'
-				})
 			}
 		};
 		$(function(){

@@ -31,7 +31,10 @@
 					$where['sub.status']  = ['neq', 2];
 					$where['main.status'] = ['neq', 2];
 				}
-				else $where['main.status'] = $filter['status'];
+				else{
+					$where['main.status'] = $filter['status'];
+					$where['sub.status']  = $filter['status'];
+				}
 			};
 			if(isset($filter['keyword']) && $filter['keyword']){
 				$condition['name']   = ['like', "%$filter[keyword]%"];

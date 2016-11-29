@@ -401,9 +401,34 @@ $(function(){
 		$('#add_recipient2').find('input[name=room_id]').val(id);
 	});
 	$('.alter_btn').on('click', function(){
-		var id = $(this).parent('.btn-group').attr('data-id');
+		var id        = $(this).parent('.btn-group').attr('data-id');
+		var room_type = $(this).parents('tr').find('.room_type').text();
 		$('#alter_room ').find('input[name=id]').val(id);
 		choose($(this));
+	});
+	//选择房间类型自动获取数据
+	$('#distribution_room').find('#room_type').on('change', function(){
+		var id = $(this).find('option:selected').val();
+		Common.ajax({
+			data    :{requestType:'get_type', id:id},
+			callback:function(r){
+				console.log(r);
+				$('#distribution_room').find('#price').val(r.price);
+				$('#distribution_room').find('#capacity').val(r.capacity);
+			}
+		});
+	});
+	//选择房间类型自动获取数据
+	$('#alter_room').find('#room_type_a').on('change', function(){
+		var id = $(this).find('option:selected').val();
+		Common.ajax({
+			data    :{requestType:'get_type', id:id},
+			callback:function(r){
+				console.log(r);
+				$('#alter_room').find('#price_a').val(r.price);
+				$('#alter_room').find('#capacity_a').val(r.capacity);
+			}
+		});
 	});
 });
 function choose(e){

@@ -235,7 +235,8 @@
 							'status' => 'not deleted'
 						]);
 						$mobile            = $data['mobile'];
-						$registration_date = I('post.registration_date', date('Y-m-d'));
+						$registration_date = I('post.registration_date');
+						$registration_date = $registration_date?$registration_date:date('Y-m-d');
 						if($join_record){
 							if($join_record['join_status'] != 1){
 								C('TOKEN_ON', false);
@@ -528,7 +529,7 @@
 							]);
 							if($result['status']){
 								$message_logic = new MessageLogic();
-								$message_logic->send($mid, C('AUTO_SEND_TYPE'), 1, 1, [$id]);
+								$message_logic->send($mid, 1, 1, [$id]);
 							}
 
 							return array_merge($result, ['__ajax__' => true]);
@@ -564,7 +565,7 @@
 						]);
 						if($result['status']){
 							$message_logic = new MessageLogic();
-							$message_logic->send($mid, C('AUTO_SEND_TYPE'), 1, 2, [$id]);
+							$message_logic->send($mid, 1, 2, [$id]);
 						}
 
 						return array_merge($result, ['__ajax__' => true]);
@@ -605,11 +606,11 @@
 								}
 							}
 							if($count%50 == 0 && $count != 0){
-								$message_logic->send($mid, C('AUTO_SEND_TYPE'), 1, 1, $send_list);
+								$message_logic->send($mid, 1, 1, $send_list);
 								$send_list = [];
 							}
 						}
-						if($count<50 && $count>0) $message_logic->send($mid, C('AUTO_SEND_TYPE'), 1, 1, $send_list);
+						if($count<50 && $count>0) $message_logic->send($mid, 1, 1, $send_list);
 						if($count == 0) return [
 							'status'   => false,
 							'message'  => '批量签到失败',
@@ -658,11 +659,11 @@
 								$count++;
 							}
 							if($count%50 == 0 && $count != 0){
-								$message_logic->send($mid, C('AUTO_SEND_TYPE'), 1, 2, $send_list);
+								$message_logic->send($mid, 1, 2, $send_list);
 								$send_list = [];
 							}
 						}
-						if($count<50 && $count>0) $message_logic->send($mid, C('AUTO_SEND_TYPE'), 1, 2, $send_list);
+						if($count<50 && $count>0) $message_logic->send($mid, 1, 2, $send_list);
 						if($count == 0) return [
 							'status'   => false,
 							'message'  => '批量取消签到失败',
@@ -728,7 +729,7 @@
 							'id'     => $cid,
 							'status' => 'not deleted'
 						]);
-						$result        = $message_logic->send($mid, C('AUTO_SEND_TYPE'), 1, 4, [$record['id']]);
+						$result        = $message_logic->send($mid, 1, 4, [$record['id']]);
 
 						return array_merge($result, [
 							'status'   => true,
@@ -752,7 +753,7 @@
 						$count        = 0;
 						foreach($client_arr as $v){
 							$record = $client_model->findClient(1, ['id' => $v, 'status' => 'not deleted']);
-							$result = $message_logic->send($mid, C('AUTO_SEND_TYPE'), 1, 4, [$record['id']]);
+							$result = $message_logic->send($mid, 1, 4, [$record['id']]);
 							if($result['status']) $count++;
 						}
 						if($count == count($client_arr)) return [
@@ -966,7 +967,7 @@
 						]);
 						if($employee_result){
 							$message_logic = new MessageLogic();
-							$sms_send      = $message_logic->send($mid, C('AUTO_SEND_TYPE'), 0, 3, [$employee_result['id']]);
+							$sms_send      = $message_logic->send($mid, 0, 3, [$employee_result['id']]);
 						}
 
 						return array_merge($receivables_result, [

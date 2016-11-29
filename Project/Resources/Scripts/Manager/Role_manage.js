@@ -287,6 +287,8 @@ $(function(){
 	 */
 	$('.authorize_btn').on('click', function(){
 		var data_id = $(this).parent('.btn-group').attr('data-id');
+		var name    = $(this).parents('tr').find('.name').text();
+		$('#authorize_role').find('.role_name').text(name);
 		ScriptObject.initGetAuthorize(data_id);
 	});
 	// 角色修改

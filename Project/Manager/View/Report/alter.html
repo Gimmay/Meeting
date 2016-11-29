@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>修改报表 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/xheditor-1.2.2/xheditor-1.2.2.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/xheditor-1.2.2/xheditor_lang/zh-cn.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<if condition="$permission_list['MEETING.CREATE']">
+					<div class="main_body">
+						<section class="content">
+							<div class="table_wrap">
+								<div class="nav_tab clearfix">
+									<div class="nav_tab_li active">
+										<a href="javascript:void(0)">修改报表</a>
+									</div>
+								</div>
+							</div>
+							<form class="form-horizontal" role="form" method="post" action="" id="form">
+								<div class="modal-body" style=" padding: 30px 30px 15px 30px;">
+									<div class="form-group">
+										<label for="name" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>名称：</label>
+										<div class="col-sm-11">
+											<input type="text" class="form-control name" name="name" id="name" value="<{$info.name}>">
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="url" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>报表链接：</label>
+										<div class="col-sm-11">
+											<div class="input-group">
+												<input type="text" class="form-control url" name="url" id="url" value="<{$info.url}>">
+												<a class="input-group-addon preview bg-00a0e8" target="_blank" href="<{$info.url}>">预览</a>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="employee" class="col-sm-1 control-label ">可见的员工：</label>
+										<div class="col-sm-11">
+											<input type="text" class="form-control" name="employee" id="employee" value="<{$info.employee_str}>">
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="role" class="col-sm-1 control-label ">可见的角色：</label>
+										<div class="col-sm-11">
+											<input type="text" class="form-control" name="role" id="role" value="<{$info.role_str}>">
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="comment" class="col-sm-1 control-label">备注：</label>
+										<div class="col-sm-11">
+											<textarea class="form-control comment" name="comment" id="comment"><{$info.comment}></textarea>
+										</div>
+									</div>
+								</div>
+								<input type="hidden" name="requestType" value="create">
+								<div class="modal-footer text_center">
+									<button type="submit" class="btn btn-primary" onclick="return checkIsEmpty()">保存</button>
+								</div>
+								<!-- 选择员工id -->
+								<input type="hidden" id="employee_arr" name="employee_arr" value="<{$info.employee}>">
+								<!-- 选择角色id -->
+								<input type="hidden" id="role_arr" name="role_arr" value="<{$info.role}>">
+								<!-- requestType -->
+								<input type="hidden" name="requestType" value="alter">
+							</form>
+						</section>
+					</div>
+				</if>
+			</div>
+		</div>
+	</div>
+	<!-- 员工列表 -->
+	<div class="modal fade" id="add_employee" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 65%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title text-center">添加员工</h2>
+				</div>
+				<div class="choose_people">
+					<div class="search_sm">
+						<div class="col-sm-5">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="姓名/手机号/单位" value="">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default employee_search">搜索</button>
+								</span>
+							</div>
+						</div>
+						<a type="reset" class="btn btn-default employee_all">查看所有</a>
+					</div>
+					<div class="has_select">
+						<a data-id="-1" class="hide"></a>
+					</div>
+					<div class="d2">
+						<div class="table_wrap" style="max-height: 600px; overflow-y: auto">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="10%">序号</td>
+										<td width="10%">姓名</td>
+										<td width="10%">性别</td>
+										<td width="10%">部门</td>
+										<td width="10%">职务</td>
+										<td width="17%">手机号</td>
+										<td width="18%">单位</td>
+										<td width="15%">操作</td>
+									</tr>
+								</thead>
+								<tbody id="employee_body">
+								</tbody>
+							</table>
+						</div>
+						<input type="hidden" name="rid"> <input type="hidden" name="mid">
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$page_show}>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary save_employee">确认</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 角色列表 -->
+	<div class="modal fade" id="add_role" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 65%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title text-center">添加角色</h2>
+				</div>
+				<div class="choose_people">
+					<div class="search_sm">
+						<div class="col-sm-5">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="角色" value="">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default role_search">搜索</button>
+								</span>
+							</div>
+						</div>
+						<a type="reset" class="btn btn-default role_all">查看所有</a>
+					</div>
+					<div class="has_select">
+						<a data-id="-1" class="hide"></a>
+					</div>
+					<div class="d2">
+						<div class="table_wrap" style="max-height: 600px; overflow-y: auto">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="10%">序号</td>
+										<td width="20%">角色名</td>
+										<td width="15%">等级</td>
+										<td width="20%">备注</td>
+										<td width="35%">操作</td>
+									</tr>
+								</thead>
+								<tbody id="role_body">
+								</tbody>
+							</table>
+						</div>
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$page_show}>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary save_role">确认</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		var CreateObject = {
+			object:{
+				icheck :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				}),
+				toast  :$().QuasarToast(),
+				loading:$().QuasarLoading(),
+			}
+		};
+	</script>
+</body>
+</html>

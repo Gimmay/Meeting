@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>会议模块 - 会议系统</title>
+	<title>签到点管理 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
@@ -45,7 +45,7 @@
 								<if condition="$permission_list['SIGN_PLACE.CREATE'] eq 1">
 									<div class="function_btn bg-warning">
 										<a href="<{:U('create', ['mid'=>$_GET['mid']])}>"> <i></i>
-											<p>新建签到点</p>
+											<p>创建签到点</p>
 										</a>
 									</div>
 								</if>

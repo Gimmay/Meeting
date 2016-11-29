@@ -71,6 +71,26 @@
 			}
 			$this->display();
 		}
+		public function alterPassword(){
+			$logic = new MyLogic();
+			if(IS_POST){
+				$result = $logic->handlerRequest('alter_password');
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']){
+						unset($_SESSION['MANAGER_EMPLOYEE_MUST_ALTER_PASSWORD']);
+						$this->success($result['message'], U('Meeting/manage'));
+					}
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
+			}
+			$this->display();
+		}
 
 		public function logout(){
 			session_unset();

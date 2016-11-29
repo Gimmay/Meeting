@@ -14,6 +14,15 @@
 
 		public function handlerRequest($type){
 			switch($type){
+				case 'read_system_message':
+					/** @var \Core\Model\SystemMessageModel $system_message_model */
+					$system_message_model = D('Core/SystemMessage');
+					$result               = $system_message_model->readMessage([
+						'status' => 0,
+						'id'     => I('get.id', 0, 'int')
+					]);
+					return array_merge($result, ['__ajax__' => true]);
+				break;
 				case 'cancel_assign_message':
 					if($this->permissionList['MESSAGE.SELECT']){
 						/** @var \Core\Model\AssignMessageModel $assign_message_model */

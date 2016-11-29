@@ -102,9 +102,14 @@
 													<td class="client_name"><{$list.client_name}></td>
 													<td class="meeting_name"><{$list.unit}></td>
 													<td class="price"><{$list.price}></td>
-													<td class="payee"><{$list.payee}></td>
+													<td class="payee"><{$list.payee_name}></td>
 													<td class="receivables_type">
-														<{$list.type_name}>
+														<switch name="list.type">
+															<case value="1">门票</case>
+															<case value="2">代金券</case>
+															<case value="3">产品</case>
+															<case value="4">其他</case>
+														</switch>
 													</td>
 													<td class="pay_method">
 														<{$list.method_name}>

@@ -193,6 +193,7 @@ $(function(){
 				$right_details.find('.create_time').text(r.creatime);
 				$right_details.find('.brief').html(r.brief);
 				$right_details.find('.comment').html(r.comment);
+				$right_details.find('.message_type').html(r.message_type);
 				if(r.qrcode){
 					$right_details.find('.QRcode img').attr('src', r.qrcode)
 				}else{

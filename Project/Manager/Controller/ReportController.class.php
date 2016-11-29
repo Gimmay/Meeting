@@ -19,7 +19,7 @@
 
 		public function create(){
 			if(IS_POST){
-				$logic = new ReportLogic();
+				$logic  = new ReportLogic();
 				$type   = I('post.requestType');
 				$result = $logic->handlerRequest($type);
 				if($result['__ajax__']){
@@ -28,11 +28,92 @@
 				}
 				else{
 					unset($result['__ajax__']);
-					if($result['status']) $this->success($result['message']);
+					$url = $result['__return__'] ? $result['__return__'] : '';
+					if($result['status']) $this->success($result['message'], $url);
 					else $this->error($result['message'], '', 3);
 				}
 				exit;
 			}
+			$this->display();
+		}
+
+		public function manage(){
+			if(IS_POST){
+				$logic  = new ReportLogic();
+				$type   = I('post.requestType');
+				$result = $logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					$url = $result['__return__'] ? $result['__return__'] : '';
+					if($result['status']) $this->success($result['message'], $url);
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
+			}
+			/** @var \Core\Model\ReportEntryModel $model */
+			$model        = D('Core/ReportEntry');
+			$report_logic = new ReportLogic();
+			$list_count   = $model->findRecord(0, [
+				'keyword' => I('get.keyword', ''),
+				'status'  => 'not deleted',
+				'mid'     => $this->meetingID
+			]);
+			/* 分页设置 */
+			$page_object = new Page($list_count, C('PAGE_RECORD_COUNT'));
+			\ThinkPHP\Quasar\Page\setTheme1($page_object);
+			$page_show = $page_object->show();
+			$list      = $model->findRecord(2, [
+				'status'  => 'not deleted',
+				'keyword' => I('get.keyword', ''),
+				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
+				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
+				'mid'     => $this->meetingID
+			]);
+			$list      = $report_logic->setData('manage:set_list', $list);
+			$this->assign('list', $list);
+			$this->assign('page_show', $page_show);
+			$this->display();
+		}
+
+		public function alter(){
+			$logic = new ReportLogic();
+			if(IS_POST){
+				$type   = I('post.requestType');
+				$result = $logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					$url = $result['__return__'] ? $result['__return__'] : '';
+					if($result['status']) $this->success($result['message'], $url);
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
+			}
+			/** @var \Core\Model\ReportEntryModel $model */
+			$model = D('Core/ReportEntry');
+			$info  = $model->findRecord(1, ['id' => I('get.id', 0, 'int'), 'mid' => I('get.mid', 0, 'int')]);
+			$info  = $logic->setData('alter:set_column', $info);
+			$this->assign('info', $info);
+			$this->display();
+		}
+
+		public function detail(){
+			/** @var \Core\Model\ReportEntryModel $model */
+			$model = D('Core/ReportEntry');
+			$info  = $model->findRecord(1, [
+				'id'     => I('get.id', 0, 'int'),
+				'mid'    => I('get.mid', 0, 'int'),
+				'status' => 'not deleted'
+			]);
+			$this->assign('info', $info);
+			$this->display();
 		}
 
 		public function fineReport(){

@@ -73,7 +73,7 @@
 							'type' => 1
 						]);
 						if($message_result){
-							$sign_result = $assign_message_model->alterRecord(['id'=>$message_result['id']], ['message_id' => I('post.sign_mes', 0, 'int')]);
+							$sign_result = $assign_message_model->alterRecord(['id' => $message_result['id']], ['message_id' => I('post.sign_mes', 0, 'int')]);
 						}
 						else{
 							$sign_result = $assign_message_model->createRecord($data);
@@ -97,7 +97,7 @@
 							'type' => 2
 						]);
 						if($message_result){
-							$anti_sign_result = $assign_message_model->alterRecord(['id'=>$message_result['id']], [
+							$anti_sign_result = $assign_message_model->alterRecord(['id' => $message_result['id']], [
 								'message_id' => I('post.anti_sign_mes', 0, 'int'),
 								'type'       => 2
 							]);
@@ -124,7 +124,7 @@
 							'type' => 3
 						]);
 						if($message_result){
-							$receivables_result = $assign_message_model->alterRecord(['id'=>$message_result['id']], [
+							$receivables_result = $assign_message_model->alterRecord(['id' => $message_result['id']], [
 								'message_id' => I('post.receivables_mes', 0, 'int'),
 								'type'       => 3
 							]);
@@ -222,12 +222,15 @@
 				case 'create':
 					if($this->permissionList['MEETING.CREATE']){
 						/** @var \Core\Model\MeetingModel $model */
-						$model            = D('Core/Meeting');
-						$data             = I('post.');
-						$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-						$data['creatime'] = time();
-						$data['brief']    = $_POST['brief'];
-						$result           = $model->createMeeting($data);
+						$model                = D('Core/Meeting');
+						$data                 = I('post.');
+						$data['creator']      = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$data['creatime']     = time();
+						$data['brief']        = $_POST['brief'];
+						$message_weixin       = $data['message_weixin'] ? 1 : 0;
+						$message_sms          = $data['message_sms'] ? 1 : 0;
+						$data['message_type'] = bindec("$message_weixin$message_sms");
+						$result               = $model->createMeeting($data);
 						if($result['status']){
 							$meeting_id = $result['id'];
 							// 创建二维码
@@ -242,7 +245,7 @@
 							$remote_url  = '/'.trim($qrcode_file, './');
 							$record      = $model->findMeeting(1, ['id' => $meeting_id]);
 							C('TOKEN_ON', false);
-							$model->alterMeeting(['id'=>$record['id']], [
+							$model->alterMeeting(['id' => $record['id']], [
 								'qrcode' => $remote_url
 							]);
 							// 创建该员工对会议的可见记录
@@ -277,19 +280,22 @@
 				case 'alter':
 					if($this->permissionList['MEETING.ALTER']){
 						/** @var \Core\Model\MeetingModel $model */
-						$model          = D('Core/Meeting');
-						$qrcode_obj     = new QRCodeLogic();
-						$id             = I('get.mid', 0, 'int');
-						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myMeeting', [
+						$model                = D('Core/Meeting');
+						$qrcode_obj           = new QRCodeLogic();
+						$id                   = I('get.mid', 0, 'int');
+						$url                  = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myMeeting', [
 								'mid'  => $id,
 								'sign' => 1
 							]);
-						$qrcode_file    = $qrcode_obj->make($url);
-						$remote_url     = '/'.trim($qrcode_file, './');
-						$data           = I('post.');
-						$data['brief']  = $_POST['brief'];
-						$data['qrcode'] = $remote_url;
-						$result         = $model->alterMeeting(['id'=>$id], $data);
+						$qrcode_file          = $qrcode_obj->make($url);
+						$remote_url           = '/'.trim($qrcode_file, './');
+						$data                 = I('post.');
+						$data['brief']        = $_POST['brief'];
+						$message_weixin       = $data['message_weixin'] ? 1 : 0;
+						$message_sms          = $data['message_sms'] ? 1 : 0;
+						$data['message_type'] = bindec("$message_weixin$message_sms");
+						$data['qrcode']       = $remote_url;
+						$result               = $model->alterMeeting(['id' => $id], $data);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
@@ -327,6 +333,11 @@
 						$hotel                   = $hotel_model->findHotel(1, ['id' => $meeting_record['hid']]);
 						$meeting_record['hotel'] = $hotel['name'];
 					}
+					$message_type                   = decbin($meeting_record['message_type']);
+					$message_type                   = sprintf('%02d', $message_type);
+					$meeting_record['message_type'] = $message_type[0] ? '微信, ' : '';
+					$meeting_record['message_type'] .= $message_type[1] ? '短信, ' : '';
+					$meeting_record['message_type'] = trim($meeting_record['message_type'], ', ');
 
 					return array_merge($meeting_record, ['__ajax__' => true]);
 				break;
@@ -357,10 +368,10 @@
 					$meeting_model  = D('Core/Meeting');
 					$meeting_status = $meeting_model->findMeeting(1, ['id' => $id]);
 					if($meeting_status['status'] == 2){
-						$meeting_result = $meeting_model->alterMeeting(['id'=>$id], ['status' => 1]);
+						$meeting_result = $meeting_model->alterMeeting(['id' => $id], ['status' => 1]);
 					}
 					else{
-						$meeting_result = $meeting_model->alterMeeting(['id'=>$id], ['status' => 2]);
+						$meeting_result = $meeting_model->alterMeeting(['id' => $id], ['status' => 2]);
 					}
 
 					return array_merge($meeting_result, ['__ajax__' => true]);
@@ -406,47 +417,47 @@
 					return array_merge($employee_result, ['__ajax__' => true]);
 				break;
 				case 'get_employee2':
-//					$keyword = I('post.keyword', '');
-//					/** @var \Core\Model\EmployeeModel $employee_model */
-//					$employee_model = D('Core/Employee');
-//					/** @var \Core\Model\DepartmentModel $department_model */
-//					$department_model = D('Core/Department');
-//					/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
-//					$meeting_manager_model = D('Core/MeetingManager');
-//					$employee_result       = $employee_model->findEmployee(2, [
-//						'status'  => 'not deleted',
-//						'keyword' => $keyword
-//					]);
-//
-//					$employee_id           = [];
-//					foreach($employee_result as $k1 => $v1){
-//						$employee_id[] = $v1['id'];
-//					}
-//					$meeting_manager_result = $meeting_manager_model->findRecord(2, [
-//						'mid'    => I('post.mid', 0, 'int'),
-//						'status' => 'not deleted'
-//					]);
-//					$eid                    = [];
-//					foreach($meeting_manager_result as $key => $val){
-//						$eid[] = $val['eid'];
-//					}
-//					$id = [];
-//					foreach($employee_id as $kk => $vv){
-//						if(in_array($vv, $eid)){
-//							continue;
-//						}
-//						else{
-//							$id[] = $vv;
-//						}
-//					}
-//					$result = [];
-//					foreach($id as $k2 => $v3){
-//						$result[]              = $employee_model->findEmployee(1, ['id' => $v3]);
-//						$department_result     = $department_model->findDepartment(1, ['id' => $result[$k2]['did']]);
-//						$result[$k2]['d_name'] = $department_result['name'];
-//					}
-//
-//					return array_merge($employee_result, ['__ajax__' => true]);
+					//					$keyword = I('post.keyword', '');
+					//					/** @var \Core\Model\EmployeeModel $employee_model */
+					//					$employee_model = D('Core/Employee');
+					//					/** @var \Core\Model\DepartmentModel $department_model */
+					//					$department_model = D('Core/Department');
+					//					/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
+					//					$meeting_manager_model = D('Core/MeetingManager');
+					//					$employee_result       = $employee_model->findEmployee(2, [
+					//						'status'  => 'not deleted',
+					//						'keyword' => $keyword
+					//					]);
+					//
+					//					$employee_id           = [];
+					//					foreach($employee_result as $k1 => $v1){
+					//						$employee_id[] = $v1['id'];
+					//					}
+					//					$meeting_manager_result = $meeting_manager_model->findRecord(2, [
+					//						'mid'    => I('post.mid', 0, 'int'),
+					//						'status' => 'not deleted'
+					//					]);
+					//					$eid                    = [];
+					//					foreach($meeting_manager_result as $key => $val){
+					//						$eid[] = $val['eid'];
+					//					}
+					//					$id = [];
+					//					foreach($employee_id as $kk => $vv){
+					//						if(in_array($vv, $eid)){
+					//							continue;
+					//						}
+					//						else{
+					//							$id[] = $vv;
+					//						}
+					//					}
+					//					$result = [];
+					//					foreach($id as $k2 => $v3){
+					//						$result[]              = $employee_model->findEmployee(1, ['id' => $v3]);
+					//						$department_result     = $department_model->findDepartment(1, ['id' => $result[$k2]['did']]);
+					//						$result[$k2]['d_name'] = $department_result['name'];
+					//					}
+					//
+					//					return array_merge($employee_result, ['__ajax__' => true]);
 					$keyword = I('post.keyword', '');
 					/** @var \Core\Model\EmployeeModel $employee_model */
 					$employee_model = D('Core/Employee');
@@ -454,7 +465,10 @@
 					$department_model = D('Core/Department');
 					/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
 					$meeting_manager_model = D('Core/MeetingManager');
-					$employee_result       = $employee_model->findEmployee(2, ['status' => 'not deleted','keyword' => $keyword]);
+					$employee_result       = $employee_model->findEmployee(2, [
+						'status'  => 'not deleted',
+						'keyword' => $keyword
+					]);
 					foreach($employee_result as $k => $v){
 						$department_result             = $department_model->findDepartment(1, ['id' => $v['did']]);
 						$employee_result[$k]['d_name'] = $department_result['name'];
@@ -597,7 +611,7 @@
 					foreach($id as $k => $v){
 						$hid .= $v.',';
 					}
-					$meeting_result = $meeting_model->alterMeeting(['id'=>$mid], ['hid' => $hid]);
+					$meeting_result = $meeting_model->alterMeeting(['id' => $mid], ['hid' => $hid]);
 
 					return array_merge($meeting_result, ['__ajax__' => true]);
 				break;

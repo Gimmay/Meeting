@@ -124,6 +124,69 @@
 
 					return $new_list;
 				break;
+				case 'manage:set_list':
+					/** @var \Core\Model\AssignRoleModel $assign_role_model */
+					$assign_role_model = D('Core/AssignRole');
+					/** @var \Core\Model\RoleModel $role_model */
+					$role_model = D('Core/Role');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model    = D('Core/Employee');
+					$my_id             = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$my_role_arr       = $assign_role_model->getRoleByUser($my_id, 0, [
+						'column' => 'id',
+						'format' => 'array'
+					]);
+					$new_list          = $role_index = $employee_index = [];
+					$sys_role_list     = $role_model->findRole(2, ['status' => 1]);
+					$sys_employee_list = $employee_model->findEmployee(2, ['status' => 1]);
+					foreach($sys_employee_list as $val) $employee_index[$val['id']] = $val['name'];
+					foreach($sys_role_list as $val) $role_index[$val['id']] = $val['name'];
+					foreach($data as $key => $val){
+						$role_arr     = explode(',', $val['role']);
+						$employee_arr = explode(',', $val['employee']);
+						$can_view     = false;
+						foreach($my_role_arr as $v){
+							if(in_array($v, $role_arr) || in_array($my_id, $employee_arr)){
+								$can_view = true;
+								break;
+							}
+						}
+						if(!$can_view) continue;
+						$role = $employee = '';
+						foreach($role_arr as $v) $role .= "$role_index[$v],";
+						foreach($employee_arr as $v) $employee .= "$employee_index[$v],";
+						$role            = trim($role, ',');
+						$employee        = trim($employee, ',');
+						$val['role']     = $role;
+						$val['employee'] = $employee;
+						$new_list[]      = $val;
+					}
+
+					return $new_list;
+				break;
+				case 'alter:set_column':
+					$eid_arr  = explode(',', $data['employee']);
+					$rid_arr  = explode(',', $data['role']);
+					$employee = $role = '';
+					/** @var \Core\Model\RoleModel $role_model */
+					$role_model = D('Core/Role');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model = D('Core/Employee');
+					foreach($eid_arr as $val){
+						$temp_empl = $employee_model->findEmployee(1, ['id' => $val, 'status' => 1]);
+						$employee .= "$temp_empl[name], ";
+					}
+					foreach($rid_arr as $val){
+						$temp_role = $role_model->findRole(1, ['id' => $val, 'status' => 1]);
+						$role .= "$temp_role[name], ";
+					}
+					$role                 = trim($role, ', ');
+					$employee             = trim($employee, ', ');
+					$data['role_str']     = $role;
+					$data['employee_str'] = $employee;
+
+					return $data;
+				break;
 				default:
 					return $data;
 				break;
@@ -134,27 +197,89 @@
 			switch($type){
 				case 'get_role':
 					/** @var \Core\Model\RoleModel $role_model */
-					$role_model = D('Core/Role');
-					$role_list  = $role_model->findRole(2, ['status' => 1]);
+					$role_model    = D('Core/Role');
+					$employee_list = $role_model->findRole(2, ['status' => 1, 'keyword' => I('post.keyword', '')]);
 
-					return ['data' => $role_list, '__ajax__' => true];
+					return ['data' => $employee_list, '__ajax__' => true];
 				break;
 				case 'get_employee':
 					/** @var \Core\Model\EmployeeModel $employee_model */
 					$employee_model = D('Core/Employee');
-					$role_list      = $employee_model->findEmployee(2, ['status' => 1]);
+					/** @var \Core\Model\DepartmentModel $department_model */
+					$department_model = D('Core/Department');
+					$employee_list    = $employee_model->findEmployee(2, [
+						'status'  => 1,
+						'keyword' => I('post.keyword', '')
+					]);
+					$department_list  = $department_model->findDepartment(2, [
+						'status'  => 1,
+						'keyword' => I('post.keyword', '')
+					]);
+					$dept_index       = [];
+					foreach($department_list as $key => $val) $dept_index[$val['id']] = $val['name'];
+					foreach($employee_list as $key => $val){
+						$department                        = $dept_index[$val['did']];
+						$department                        = $department ? $department : '吉美集团';
+						$employee_list[$key]['department'] = $department;
+					}
 
-					return ['data' => $role_list, '__ajax__' => true];
+					return ['data' => $employee_list, '__ajax__' => true];
 				break;
 				case 'create':
+					$addSelfEmployeeID = function ($employee_str){
+						$my_id        = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$employee_arr = explode(',', $employee_str);
+						if(!in_array($my_id, $employee_arr)) $employee_arr[] = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+
+						return implode(',', $employee_arr);
+					};
 					/** @var \Core\Model\ReportEntryModel $model */
 					$model            = D('Core/ReportEntry');
 					$data             = I('post.');
 					$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$data['creatime'] = time();
+					$data['employee'] = $addSelfEmployeeID($data['employee_arr']);
+					$data['role']     = $data['role_arr'];
+					$data['mid']      = I('get.mid', 0, 'int');
 					$result           = $model->createRecord($data);
 
-					return array_merge($result, ['__ajax__' => false]);
+					return array_merge($result, [
+						'__ajax__'   => false,
+						'__return__' => U('manage', ['mid' => I('get.mid', 0, 'int')])
+					]);
+				break;
+				case 'alter':
+					$addSelfEmployeeID = function ($employee_str){
+						$my_id        = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$employee_arr = explode(',', $employee_str);
+						if(!in_array($my_id, $employee_arr)) $employee_arr[] = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+
+						return implode(',', $employee_arr);
+					};
+					/** @var \Core\Model\ReportEntryModel $model */
+					$model            = D('Core/ReportEntry');
+					$data             = I('post.');
+					$data['employee'] = $addSelfEmployeeID($data['employee_arr']);
+					$data['role']     = $data['role_arr'];
+					$result           = $model->alterRecord([
+						'id'  => I('get.id', 0, 'int'),
+						'mid' => I('get.mid', 0, 'int')
+					], $data);
+
+					return array_merge($result, [
+						'__ajax__'   => false,
+						'__return__' => U('manage', ['mid' => I('get.mid', 0, 'int')])
+					]);
+				break;
+				case 'delete':
+					/** @var \Core\Model\ReportEntryModel $model */
+					$model  = D('Core/ReportEntry');
+					$delete_id = explode(',', I('post.id'));
+					$result = $model->deleteRecord(['id' => ['in', $delete_id]]);
+
+					return array_merge($result, [
+						'__ajax__' => false
+					]);
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];

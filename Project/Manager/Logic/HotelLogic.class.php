@@ -36,12 +36,12 @@
 				case 'alter';
 					/** @var \Core\Model\HotelModel $room_model */
 					$room_model = D('Core/Hotel');
+					$id         = I('post.id', 0, 'int');
+					$data  = I('post.','');
 					C('TOKEN_ON', false);
-					$room_result = $room_model->alterHotel(['id' => I('post.id', 0, 'int')], [
-						'hotel_name' => I('post.hotel_name'),
-						'mid'        => I('post.meeting_name'),
-						'comment'    => I('post.comment')
-					]);
+					$room_result = $room_model->alterHotel(['id' => $id],
+						$data
+					);
 
 					return array_merge($room_result, ['__ajax__' => false]);
 				break;
@@ -59,35 +59,32 @@
 					$meeting_model  = D('Core/Meeting');
 					$meeting_list   = $meeting_model->findMeeting(2, ['status' => 'not deleted']);
 					$hotel_id_index = [];
-
 					foreach($data as $key => $val){
 						$hotel_id_index["index$val[id]"] = $key;
 						$data[$key]['meeting_name']      = '';
 						$data[$key]['meeting_status']    = [];
 					}
-
-
 					foreach($meeting_list as $val){
-						$hid_arr = explode(',', $val['hid']);
-						$last_index= null;
-						foreach($hid_arr as $key2=>$val2){
+						$hid_arr    = explode(',', $val['hid']);
+						$last_index = null;
+						foreach($hid_arr as $key2 => $val2){
 							$index = $hotel_id_index["index$val2"];
 							if(is_numeric($index)){
 								$last_index = $index;
-								$data[$index]['meeting_name']   .= "$val[name], ";
+								$data[$index]['meeting_name'] .= "$val[name], ";
 								$data[$index]['meeting_status'][] = $val['status'];
 							}
 						}
-						if(!($last_index===null)) $data[$last_index]['meeting_name'] = trim($data[$last_index]['meeting_name'], ', ');
+						if(!($last_index === null)) $data[$last_index]['meeting_name'] = trim($data[$last_index]['meeting_name'], ', ');
 					}
 					foreach($data as $val){
 						$condition_1 = in_array(1, $val['meeting_status']);
 						$condition_2 = in_array(2, $val['meeting_status']);
 						$condition_3 = in_array(3, $val['meeting_status']);
 						$condition_4 = in_array(4, $val['meeting_status']);
-						if($option['meetingType'] == 'using' && ($condition_1||$condition_2||$condition_3)) $new_list[] = $val;
+						if($option['meetingType'] == 'using' && ($condition_1 || $condition_2 || $condition_3)) $new_list[] = $val;
 						elseif($option['meetingType'] == 'finish' && $condition_4) $new_list[] = $val;
-						elseif($option['meetingType'] == 'not_use' && count($val['meeting_status'])==0) $new_list[] = $val;
+						elseif($option['meetingType'] == 'not_use' && count($val['meeting_status']) == 0) $new_list[] = $val;
 						elseif($option['meetingType'] == '') $new_list[] = $val;
 					}
 

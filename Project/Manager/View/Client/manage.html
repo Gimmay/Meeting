@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>客户模块 - 会议系统</title>
+	<title>参会人员 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
@@ -140,7 +140,7 @@
 								<form action="" method="get">
 									<div class="input-group repertory_text">
 										<input name="p" type="hidden" value="1">
-										<input type="search" name="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/拼音简码" value="<{:I('get.keyword', '')}>">
+										<input type="search" name="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/类型/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default main_search">搜索</button>
 									</span>
@@ -180,13 +180,14 @@
 											<td width="4%">性别</td>
 											<td width="5%">手机号</td>
 											<td width="9%">单位名称</td>
+											<td width="5%">类型</td>
+											<td width="10%">审核/签到/打印</td>
 											<td width="7%">签到时间</td>
 											<td width="5%">签到方式</td>
 											<td width="4%">收款</td>
 											<td width="4%">状态</td>
-											<td width="10%">审核/签到/打印</td>
 											<td width="7%">创建时间</td>
-											<td width="25%">操作</td>
+											<td width="20%">操作</td>
 										</tr>
 									</thead>
 									<tbody>
@@ -208,6 +209,25 @@
 												</td>
 												<td><{$single.mobile}></td>
 												<td><{$single.unit}></td>
+												<td><{$single.type}></td>
+												<td>
+													<switch name="single.review_status">
+														<case value="0">未审核</case>
+														<case value="1"><span class="color-info">已审核</span></case>
+														<case value="2"><span class="color-warning">取消审核</span></case>
+													</switch>
+													/
+													<switch name="single.sign_status">
+														<case value="0">未签到</case>
+														<case value="1"><span class="color-danger">已签到</span></case>
+														<case value="2"><span class="color-warning">取消签到</span></case>
+													</switch>
+													/
+													<switch name="single.print_status">
+														<case value="0">未打印</case>
+														<case value="1"><span class="color-warning">已打印</span></case>
+													</switch>
+												</td>
 												<td>
 													<notempty name="single['sign_time']"><{:date('Y-m-d H:i:s', $single['sign_time'])}></notempty>
 												</td>
@@ -229,24 +249,6 @@
 													<switch name="single.status">
 														<case value="0">禁用</case>
 														<case value="1">可用</case>
-													</switch>
-												</td>
-												<td>
-													<switch name="single.review_status">
-														<case value="0">未审核</case>
-														<case value="1"><span class="color-info">已审核</span></case>
-														<case value="2"><span class="color-warning">取消审核</span></case>
-													</switch>
-													/
-													<switch name="single.sign_status">
-														<case value="0">未签到</case>
-														<case value="1"><span class="color-danger">已签到</span></case>
-														<case value="2"><span class="color-warning">取消签到</span></case>
-													</switch>
-													/
-													<switch name="single.print_status">
-														<case value="0">未打印</case>
-														<case value="1"><span class="color-warning">已打印</span></case>
 													</switch>
 												</td>
 												<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
@@ -615,16 +617,6 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				//				receivablesTypeSelect:$('#receivables_type').QuasarSelect({
-				//					name        :'type',
-				//					classStyle  :'form-control',
-				//					data        :'<{:json_encode($receivables_type_list)}>',
-				//					idInput     :'selected_receivables_type',
-				//					idHidden    :'selected_receivables_type_form',
-				//					placeholder :'',
-				//					hasEmptyItem:false,
-				//					justInput   :true
-				//				}),
 				couponSelect        :$('#coupon').QuasarSelect({
 					name        :'coupon',
 					classStyle  :'form-control',
@@ -643,24 +635,6 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				//				method               :$('#method').QuasarSelect({
-				//					name        :'method',
-				//					classStyle  :'form-control',
-				//					data        :'<{:json_encode($pay_list)}>',
-				//					idInput     :'selected_method',
-				//					idHidden    :'selected_method_form',
-				//					placeholder :'',
-				//					hasEmptyItem:false
-				//				}),
-				//				type                 :$('#type').QuasarSelect({
-				//					name        :'type',
-				//					classStyle  :'form-control',
-				//					data        :'<{:json_encode($receivables_type_list)}>',
-				//					idInput     :'selected_type',
-				//					idHidden    :'selected_type_form',
-				//					placeholder :'',
-				//					hasEmptyItem:false
-				//				}),
 				payeeName           :$('#payee_id').QuasarSelect({
 					name        :'payee_id',
 					classStyle  :'form-control',

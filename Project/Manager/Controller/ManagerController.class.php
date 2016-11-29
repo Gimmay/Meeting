@@ -23,11 +23,12 @@
 		public function _initialize(){
 			parent::_initialize();
 			$this->_checkLogin();
+			$this->isNeedAlterPassword();
 			$meeting_role_logic    = new MeetingRoleLogic();
 			$permission_logic      = new PermissionLogic();
 			$logic                 = new ManagerLogic();
-			$system_message_logic = new SystemMessageLogic();
-			$report_entry_logic = new ReportLogic();
+			$system_message_logic  = new SystemMessageLogic();
+			$report_entry_logic    = new ReportLogic();
 			$this->permissionList  = $permission_logic->getPermissionList();
 			$this->meetingViewList = $meeting_role_logic->getMeetingView(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));
 			$this->assign('cv_name', CONTROLLER_NAME.'_'.ACTION_NAME);
@@ -78,5 +79,12 @@
 
 				return $meeting_id;
 			}
+		}
+
+		private function isNeedAlterPassword(){
+			$condition1 = I('session.MANAGER_EMPLOYEE_MUST_ALTER_PASSWORD');
+			$condition2 = !(strtolower(CONTROLLER_NAME) == 'my' && strtolower(ACTION_NAME) == 'alterpassword');
+			$condition3 = !(strtolower(CONTROLLER_NAME) == 'my' && strtolower(ACTION_NAME) == 'logout');
+			if($condition1 && $condition2 && $condition3) $this->redirect('My/alterPassword');
 		}
 	}

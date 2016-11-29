@@ -1,7 +1,7 @@
 <?php
 	return [
 		'LOAD_EXT_CONFIG'           => 'mysql_config',
-		'MODULE_ALLOW_LIST'         => ['Entry', 'Manager', 'Mobile'],
+		'MODULE_ALLOW_LIST'         => ['Entry', 'Manager', 'Mobile', 'Open'],
 		'DEFAULT_MODULE'            => 'Manager',
 		'DEFAULT_CONTROLLER'        => 'Meeting',
 		'DEFAULT_ACTION'            => 'manage',

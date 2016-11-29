@@ -176,7 +176,7 @@
 					]);
 					if($employee_result){
 						$message_logic = new MessageLogic();
-						$sms_send      = $message_logic->send($mid, C('AUTO_SEND_TYPE'), 0, 3, [$employee_result['id']]);
+						$sms_send      = $message_logic->send($mid, 0, 3, [$employee_result['id']]);
 					}
 
 					return array_merge($receivables_result, [
@@ -442,6 +442,7 @@
 					$place               = I('post.place', '');
 					C('TOKEN_ON', false);
 					foreach($type as $k => $v){
+						if($data['name'][$k] == 0) continue;
 						$save_data[] = [
 							'cid'          => $cid,
 							'mid'          => $mid,
@@ -687,6 +688,8 @@
 			/** @var \Core\Model\ReceivablesTypeModel $receivables_type_model */
 			$receivables_type_model = D('Core/ReceivablesType');
 			/** @var \Core\Model\PosMachineModel $pos_machine_model */
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
 			$receivables_count = $receivables_model->findRecord(0, [
 				'status' => 'not deleted',
 				'mid'    => I('get.mid', 0, 'int')
@@ -730,12 +733,14 @@
 					'id'     => $receivables_result[$k]['cid'],
 					'status' => 'not deleted'
 				]);
+				$employee_result = $employee_model->findEmployee(1,['id'=>$v['payee_id'],'status'=>1]);
 				$receivables_result[$k]['meeting_name'] = $meeting_result['name'];
 				$receivables_result[$k]['client_name']  = $client_result['name'];
 				$receivables_result[$k]['unit']         = $client_result['unit'];
 				$receivables_result[$k]['method_name']  = $method_result['name'];
 				$receivables_result[$k]['type_name']    = $receivables_type_result['name'];
 				$receivables_result[$k]['pos_name']     = $pos_machine_result['name'];
+				$receivables_result[$k]['payee_name']     = $employee_result['name'];
 				$code_id                                = explode(',', $receivables_result[$k]['coupon_ids']);
 				$coupon_item_code                       = '';
 				foreach($code_id as $kk => $vv){
@@ -749,7 +754,6 @@
 				if(strpos($client_result['name'], $keyword) === false && $keyword != '') ;
 				else $new_list[] = $receivables_result[$k];
 			}
-
 			return $new_list;
 		}
 

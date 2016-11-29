@@ -45,7 +45,7 @@
 				$receivables_client_count = $price = 0;
 				foreach($receivables_record as $val){
 					$cid_id_arr[] = $val['cid'];
-					$price        += $val['price'];
+					$price += $val['price'];
 				}
 				foreach($join_record as $val){
 					if(in_array($val['cid'], $cid_id_arr)) $receivables_client_count++;
@@ -162,6 +162,12 @@
 					$data['director_name']   = $tmp['name'];
 					$data['contacts_1_name'] = $tmp_one['name'];
 					$data['contacts_2_name'] = $tmp_two['name'];
+					// Warning：如果更改了消息类型数量 这里必须做更改
+					// B477A789FC61E5FC5221C889708449B460B207C5
+					$message_type           = decbin($data['message_type']);
+					$message_type           = sprintf('%02d', $message_type);
+					$data['message_weixin'] = $message_type[0];
+					$data['message_sms']    = $message_type[1];
 
 					return $data;
 				};

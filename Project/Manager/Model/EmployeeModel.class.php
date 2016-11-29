@@ -7,6 +7,7 @@
 	 */
 	namespace Manager\Model;
 
+	use Core\Logic\SystemMessageLogic;
 	use Quasar\StringPlus;
 
 	class EmployeeModel extends ManagerModel{
@@ -29,7 +30,11 @@
 				])->find();
 				if($user){
 					if($user['status'] != 1) return ['status' => false, 'message' => '该用户已删除或者被禁用'];
-					if($input_password == '') session('MANAGER_EMPLOYEE_EMPTY_PASSWORD', 1);
+					if($input_password == ''){
+						$system_message_logic = new SystemMessageLogic();
+						$system_message_logic->sendMessage($user['id'], 'alterPasswordWhenEmptyPassword');
+						session('MANAGER_EMPLOYEE_MUST_ALTER_PASSWORD', 1);
+					}
 					session('MANAGER_EMPLOYEE_ID', $user['id']);
 					session('MANAGER_EMPLOYEE_CODE', $user['code']);
 					session('MANAGER_EMPLOYEE_NAME', $user['name']);

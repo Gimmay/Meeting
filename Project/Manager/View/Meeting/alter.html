@@ -3,10 +3,11 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>会议模块 - 会议系统</title>
+	<title>会议信息 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/switch/bootstrap-switch.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
@@ -18,6 +19,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/switch/js/bootstrap-switch.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/xheditor-1.2.2/xheditor-1.2.2.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/xheditor-1.2.2/xheditor_lang/zh-cn.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
@@ -148,6 +150,31 @@
 										</div>
 									</div>
 									<div class="form-group">
+										<label class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>消息发送：</label>
+										<div class="col-sm-11 clearfix">
+											<div class="switch pull-left" data-on="primary" data-off="info" style="margin-right: 20px;">
+												微信：
+												<if condition="$info.message_weixin eq 1">
+													<!--suppress XmlDuplicatedId -->
+													<input type="checkbox" id="message_weixin" name="message_weixin" value="1" checked/>
+													<else/>
+													<!--suppress XmlDuplicatedId -->
+													<input type="checkbox" id="message_weixin" name="message_weixin" value="1"/>
+												</if>
+											</div>
+											<div class="switch pull-left" data-on="primary" data-off="info">
+												短信：
+												<if condition="$info.message_sms eq 1">
+													<!--suppress XmlDuplicatedId -->
+													<input type="checkbox" id="message_sms" name="message_sms" value="1" checked/>
+													<else/>
+													<!--suppress XmlDuplicatedId -->
+													<input type="checkbox" id="message_sms" name="message_sms" value="1"/>
+												</if>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
 										<label for="contacts_1_id" class="col-sm-1 control-label ">联系人：</label>
 										<div class="col-sm-11">
 											<div id="contacts_1_id"></div>
@@ -273,6 +300,8 @@
 					defaultValue:'<{$info.contacts_2_id}>',
 					defaultHtml :'<{$info.contacts_2_name}>'
 				}),
+				switchWeixin        :$('#message_weixin').bootstrapSwitch(),
+				switchSms           :$('#message_sms').bootstrapSwitch(),
 				toast               :$().QuasarToast(),
 				loading             :$().QuasarLoading(),
 				addressSelect       :$("#place").citySelect({

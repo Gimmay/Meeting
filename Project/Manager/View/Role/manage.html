@@ -86,7 +86,7 @@
 													<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
 												</td>
 												<td><{$i}></td>
-												<td><{$single.name}></td>
+												<td class="name"><{$single.name}></td>
 												<td>
 													<switch name="single.status">
 														<case value="0"><span class="color-danger">禁用</span></case>
@@ -304,7 +304,8 @@
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">
 							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-						<h2 class="modal-title" id="authorize_role_title">角色授权</h2>
+						<h2 class="modal-title" id="authorize_role_title">角色授权<span class="role_name" style="font-size: 12px; color: #FB5050; margin-left: 10px;"></span>
+						</h2>
 					</div>
 					<form class="form-horizontal" role="form" method="post">
 						<div class="modal-body role_body clearfix">

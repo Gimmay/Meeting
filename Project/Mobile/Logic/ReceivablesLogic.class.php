@@ -68,7 +68,7 @@
 						$employee_result = $employee_model->findEmployee(1, ['keyword' => $client_result['develop_consultant']]);
 						if($employee_result){
 							$message_logic = new MessageLogic();
-							$sms_send      = $message_logic->send($mid, C('AUTO_SEND_TYPE'), 0, 3, [$employee_result['id']]);
+							$sms_send      = $message_logic->send($mid, 0, 3, [$employee_result['id']]);
 						}
 
 						return array_merge($receivables_result, [

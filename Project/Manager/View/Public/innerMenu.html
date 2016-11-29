@@ -169,22 +169,70 @@
 		</ul>
 	</div>
 	<div class="message_box">
-		<a href="javascript:void(0)">
-			<span class="icon_nav glyphicon glyphicon-envelope"></span>
+		<a href="javascript:void(0)"> <span class="icon_nav glyphicon glyphicon-envelope"></span>
 			<span style="margin-left: 15px">站内信</span>
-			<if condition="count($system_message) gt 0">
-				<span style="min-width: 20px; min-height: 20px; line-height: 20px; border-radius: 50%; background: red; display: inline-block; font-size: 10px; text-align: center"><{:count($system_message)}></span>
+			<if condition="count($system_message['notRead']) gt 0">
+				<span id="message_count" style="min-width: 20px; min-height: 20px; line-height: 20px; border-radius: 50%; background: red; display: inline-block; font-size: 10px; text-align: center"><{:count($system_message['notRead'])}></span>
 			</if>
 		</a>
 	</div>
 	<div class="message_modal hide">
 		<div class="mes_title">站内信 <span class="mes_close">×</span></div>
 		<div class="mes_list">
-			<volist name="system_message" id="message">
-				<div class="mes_item">
-					<b><{$i}>、</b><{$message}>
+			<volist name="system_message.notRead" id="single">
+				<!--suppress XmlDuplicatedId -->
+				<div class="mes_item" id="system_message_<{$single.id}>" data-id="<{$single.id}>" onclick="readSystemMessage('<{$single.id}>')">
+					<{$i}>、<span class="content bold"><{$single.message}></span> <span class="sign">未读</span>
+					<button onclick="deleteSystemMessage('<{$single.id}>')" class="btn btn-default btn-xs del_btn" style="display: none">删除</button>
+				</div>
+			</volist>
+			<volist name="system_message.read" id="single">
+				<!--suppress XmlDuplicatedId -->
+				<div class="mes_item" id="system_message_<{$single.id}>" data-id="<{$single.id}>">
+					<{$i}>、<span class="content"><{$single.message}></span> <span class="sign">已读</span>
+					<button onclick="deleteSystemMessage('<{$single.id}>')" class="btn btn-default btn-xs">删除</button>
 				</div>
 			</volist>
 		</div>
 	</div>
+	<script>
+		function readSystemMessage(id){
+			var url = "<{:U('RequestHandler/getHandler', ['requestType'=>'read_system_message', 'id'=>'__ID__'])}>";
+			url     = url.replace('__ID__', id);
+			Common.ajax({
+				url     :url,
+				callback:function(r){
+					if(r.status){
+						var $message           = $('#system_message_'+id);
+						var $message_count_obj = $('#message_count');
+						var count              = $message_count_obj.text();
+						count--;
+						if(count<=0) $message_count_obj.remove();
+						else $message_count_obj.text(count);
+						$message.find('span.sign').text('已读');
+						$message.find('span.bold').removeClass('bold');
+						$message.find('button.del_btn').show();
+						$message.off('click').attr('onclick', null);
+					}
+				}
+			})
+		}
+		function deleteSystemMessage(id){
+			var url = "<{:U('RequestHandler/getHandler', ['requestType'=>'delete_system_message', 'id'=>'__ID__'])}>";
+			url     = url.replace('__ID__', id);
+			Common.ajax({
+				url     :url,
+				callback:function(r){
+					if(r.status){
+						var $message_count_obj = $('#message_count');
+						var count              = $message_count_obj.text();
+						count--;
+						if(count<=0) $message_count_obj.remove();
+						else $message_count_obj.text(count);
+						$('#system_message_'+id).remove();
+					}
+				}
+			})
+		}
+	</script>
 </div>

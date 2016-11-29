@@ -267,14 +267,14 @@
 
 		/**
 		 * @param int   $mid           会议ID
-		 * @param int   $message_type  信息类型 0：全部 1：短信 2：微信 3：收款后推送给开拓顾问 4：发送邀请
 		 * @param int   $receiver_type 接收者类型 0：员工 1：参会人员
-		 * @param int   $temp_type     消息模板类型
+		 * @param int   $temp_type     消息模板类型 1：签到 2：取消签到 3：收款后推送给开拓顾问 4：发送邀请
 		 * @param array $receiver_list 接收者ID列表
 		 *
+		 * @deprecated  信息类型 0：不发送 1：短信 2：微信 3：微信&短信
 		 * @return array
 		 */
-		public function send($mid, $message_type, $receiver_type, $temp_type, $receiver_list = []){
+		public function send($mid, $receiver_type, $temp_type, $receiver_list = []){
 			/** @var \Core\Model\AssignMessageModel $assign_message_model */
 			/** @var \Core\Model\MeetingModel $meeting_model */
 			/** @var \Core\Model\EmployeeModel $employee_model */
@@ -304,33 +304,37 @@
 			$weixin_assign_message = $assign_message_model->findRecord(1, [
 				'mid'          => $mid,
 				'type'         => $temp_type,
-				'message_type' => 2
+				'message_type' => 2,
+				'status'       => 1
 			]);
 			$sms_assign_message    = $assign_message_model->findRecord(1, [
 				'mid'          => $mid,
 				'type'         => $temp_type,
-				'message_type' => 1
+				'message_type' => 1,
+				'status'       => 1
 			]);
 			// ************************************************************
 			$count          = ['weixin' => 0, 'sms' => 0];
 			$meeting_record = $meeting_model->findMeeting(1, ['id' => $mid, 'status' => 'not deleted']);
+			// 不存在指定的消息记录
+			if($meeting_record['message_type'] == 0) return ['status' => false, 'message' => '会议配置已禁用发送消息'];
 			// 存在微信的消息分配记录 且指定发送微信信息或全部
-			if($weixin_assign_message && ($message_type == 2 || $message_type == 0)){
+			if($weixin_assign_message && ($meeting_record['message_type'] == 2 || $meeting_record['message_type'] == 3)){
 				// 根据分配的消息记录查出微信的消息模板
 				$weixin_message_temp = $message_model->findMessage(1, [
 					'id'     => $weixin_assign_message['message_id'],
 					'type'   => 2,
-					'status' => 'not deleted'
+					'status' => 1
 				]);
 				$found_temp          = true;
 			}
 			// 存在短信的消息分配记录 且指定发送短信信息或全部
-			if($sms_assign_message && ($message_type == 1 || $message_type == 0)){
+			if($sms_assign_message && ($meeting_record['message_type'] == 1 || $meeting_record['message_type'] == 3)){
 				// 根据分配的消息记录查出短信的消息模板
 				$sms_message_temp = $message_model->findMessage(1, [
 					'id'     => $sms_assign_message['message_id'],
 					'type'   => 1,
-					'status' => 'not deleted'
+					'status' => 1
 				]);
 				$found_temp       = true;
 			}
@@ -339,108 +343,64 @@
 			// 根据接收者逐一发送
 			foreach($receiver_list as $val){
 				if($receiver_type == 0){
-					$employee = $employee_model->findEmployee(1, ['id' => $val, 'status' => 'not deleted']);
-					switch($message_type){
-						case 1:
-							$content     = $this->replaceTempToMessage($sms_message_temp['context'], $meeting_record, $employee);
-							$send_result = $sms_logic->send($content, [$employee['mobile']], true);
-							if($send_result['status']){
-								$count['sms']++;
-								$send_message_logic->create($content, $employee['id'], 0, 1);
-							}
-							else $send_message_logic->create($content, $employee['id'], 0, 0);
-						break;
-						case 2:
-							$weixin_record = $weixin_model->findRecord(1, [
-								'oid'   => $employee['id'],
-								'otype' => $receiver_type,
-								'wtype' => 1
-							]);
-							$content       = $this->replaceTempToMessage($weixin_message_temp['context'], $meeting_record, $employee);
-							$send_result   = $wxcorp_logic->sendMessage('text', $content, ['user' => [$weixin_record['weixin_id']]], 'client');
-							if($send_result['status']){
-								$count['weixin']++;
-								$send_message_logic->create($content, $employee['id'], 0, 1);
-							}
-							else $send_message_logic->create($content, $employee['id'], 0, 0);
-						break;
-						case 0:
-							$content     = $this->replaceTempToMessage($sms_message_temp['context'], $meeting_record, $employee);
-							$send_result = $sms_logic->send($content, [$employee['mobile']], true);
-							if($send_result['status']){
-								$count['sms']++;
-								$send_message_logic->create($content, $employee['id'], 0, 1);
-							}
-							else $send_message_logic->create($content, $employee['id'], 0, 0);
-							$weixin_record = $weixin_model->findRecord(1, [
-								'oid'   => $employee['id'],
-								'otype' => $receiver_type,
-								'wtype' => 1
-							]);
-							$content       = $this->replaceTempToMessage($weixin_message_temp['context'], $meeting_record, $employee);
-							$send_result   = $wxcorp_logic->sendMessage('text', $content, ['user' => [$weixin_record['weixin_id']]], 'client');
-							if($send_result['status']){
-								$count['weixin']++;
-								$send_message_logic->create($content, $employee['id'], 0, 1);
-							}
-							else $send_message_logic->create($content, $employee['id'], 0, 0);
-						break;
-					}
+					$receiver = $employee_model->findEmployee(1, ['id' => $val, 'status' => 'not deleted']);
 				}
-				if($receiver_type == 1){
-					$client              = $client_model->findClient(1, ['id' => $val, 'status' => 'not deleted']);
-					$join_record         = $join_model->findRecord(1, [
+				elseif($receiver_type == 1){
+					$receiver              = $client_model->findClient(1, ['id' => $val, 'status' => 'not deleted']);
+					$join_record           = $join_model->findRecord(1, [
 						'mid'    => $mid,
-						'cid'    => $client['id'],
+						'cid'    => $receiver['id'],
 						'status' => 'not deleted'
 					]);
-					$client['sign_code'] = $join_record['sign_code'];
-					switch($message_type){
-						case 1:
-							$content     = $this->replaceTempToMessage($sms_message_temp['context'], $meeting_record, $client);
-							$send_result = $sms_logic->send($content, [$client['mobile']], true);
-							if($send_result['status']){
-								$count['sms']++;
-								$send_message_logic->create($content, $client['id'], 0, 1);
-							}
-							else $send_message_logic->create($content, $client['id'], 0, 0);
-						break;
-						case 2:
-							$weixin_record = $weixin_model->findRecord(1, [
-								'oid'   => $client['id'],
-								'otype' => $receiver_type,
-								'wtype' => 1
-							]);
-							$content       = $this->replaceTempToMessage($weixin_message_temp['context'], $meeting_record, $client);
-							$send_result   = $wxcorp_logic->sendMessage('text', $content, ['user' => [$weixin_record['weixin_id']]], 'client');
-							if($send_result['status']){
-								$count['weixin']++;
-								$send_message_logic->create($content, $client['id'], 0, 1);
-							}
-							else $send_message_logic->create($content, $client['id'], 0, 0);
-						break;
-						case 0:
-							$content     = $this->replaceTempToMessage($sms_message_temp['context'], $meeting_record, $client);
-							$send_result = $sms_logic->send($content, [$client['mobile']], true);
-							if($send_result['status']){
-								$count['sms']++;
-								$send_message_logic->create($content, $client['id'], 0, 1);
-							}
-							else $send_message_logic->create($content, $client['id'], 0, 0);
-							$weixin_record = $weixin_model->findRecord(1, [
-								'oid'   => $client['id'],
-								'otype' => $receiver_type,
-								'wtype' => 1
-							]);
-							$content       = $this->replaceTempToMessage($weixin_message_temp['context'], $meeting_record, $client);
-							$send_result   = $wxcorp_logic->sendMessage('text', $content, ['user' => [$weixin_record['weixin_id']]], 'client');
-							if($send_result['status']){
-								$count['weixin']++;
-								$send_message_logic->create($content, $client['id'], 0, 1);
-							}
-							else $send_message_logic->create($content, $client['id'], 0, 0);
-						break;
-					}
+					$receiver['sign_code'] = $join_record['sign_code'];
+				}
+				else $receiver = [];
+				if(!$receiver) continue;
+				switch($meeting_record['message_type']){
+					case 1:
+						$content     = $this->replaceTempToMessage($sms_message_temp['context'], $meeting_record, $receiver);
+						$send_result = $sms_logic->send($content, [$receiver['mobile']], true);
+						if($send_result['status']){
+							$count['sms']++;
+							$send_message_logic->create($content, $receiver['id'], 0, 1);
+						}
+						else $send_message_logic->create($content, $receiver['id'], 0, 0);
+					break;
+					case 2:
+						$weixin_record = $weixin_model->findRecord(1, [
+							'oid'   => $receiver['id'],
+							'otype' => $receiver_type,
+							'wtype' => 1
+						]);
+						$content       = $this->replaceTempToMessage($weixin_message_temp['context'], $meeting_record, $receiver);
+						$send_result   = $wxcorp_logic->sendMessage('text', $content, ['user' => [$weixin_record['weixin_id']]], 'client');
+						if($send_result['status']){
+							$count['weixin']++;
+							$send_message_logic->create($content, $receiver['id'], 0, 1);
+						}
+						else $send_message_logic->create($content, $receiver['id'], 0, 0);
+					break;
+					case 3:
+						$content     = $this->replaceTempToMessage($sms_message_temp['context'], $meeting_record, $receiver);
+						$send_result = $sms_logic->send($content, [$receiver['mobile']], true);
+						if($send_result['status']){
+							$count['sms']++;
+							$send_message_logic->create($content, $receiver['id'], 0, 1);
+						}
+						else $send_message_logic->create($content, $receiver['id'], 0, 0);
+						$weixin_record = $weixin_model->findRecord(1, [
+							'oid'   => $receiver['id'],
+							'otype' => $receiver_type,
+							'wtype' => 1
+						]);
+						$content       = $this->replaceTempToMessage($weixin_message_temp['context'], $meeting_record, $receiver);
+						$send_result   = $wxcorp_logic->sendMessage('text', $content, ['user' => [$weixin_record['weixin_id']]], 'client');
+						if($send_result['status']){
+							$count['weixin']++;
+							$send_message_logic->create($content, $receiver['id'], 0, 1);
+						}
+						else $send_message_logic->create($content, $receiver['id'], 0, 0);
+					break;
 				}
 			}
 			if($count['weixin'] == count($receiver_list) && $count['sms'] == count($receiver_list)) return [

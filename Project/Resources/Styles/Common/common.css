@@ -1022,20 +1022,24 @@ textarea{
 /* css3 keyframes */
 @-webkit-keyframes rotate{
 	from{
-		-webkit-transform : rotate(0deg);
-		transform:rotate(0deg)
+		/*-webkit-transform : rotate(0deg);*/
+		/*transform:rotate(0deg)*/
 	}
 	to{
-		-webkit-transform : rotate(360deg);
-		transform:rotate(360deg)
+		/*-webkit-transform : rotate(360deg);*/
+		/*transform:rotate(360deg)*/
 	}
 }
 
 @keyframes rotate{
 	from{
-		transform : rotate(0deg)
+		/*transform : rotate(0deg)*/
 	}
 	to{
-		transform : rotate(360deg)
+		/*transform : rotate(360deg)*/
 	}
+}
+
+.bold{
+	font-weight: bold;
 }
