@@ -12,12 +12,12 @@ var ScriptObject = {
 				callback:function(data){
 					console.log(data);
 					if(data.status){
-						ManageObject.object.toast.toast('发布成功！');
+						ThisObject.object.toast.toast('发布成功！');
 						t.removeClass('release_a').addClass('cancel_release_a').text('取消发布');
 						self.unbindEvent();
 						self.bindEvent();
 					}else{
-						ManageObject.object.toast.toast('发布失败！');
+						ThisObject.object.toast.toast('发布失败！');
 					}
 				}
 			})
@@ -31,12 +31,12 @@ var ScriptObject = {
 				callback:function(data){
 					console.log(data);
 					if(data.status){
-						ManageObject.object.toast.toast('取消发布成功！');
+						ThisObject.object.toast.toast('取消发布成功！');
 						t.removeClass('cancel_release_a').addClass('release_a').text('发布');
 						self.unbindEvent();
 						self.bindEvent();
 					}else{
-						ManageObject.object.toast.toast('取消发布失败！');
+						ThisObject.object.toast.toast('取消发布失败！');
 					}
 				}
 			})
@@ -81,7 +81,7 @@ $(function(){
 		if(str != ''){
 			$('#batch_delete_meeting').modal('show')
 		}else{
-			ManageObject.object.toast.toast('请选择会议！');
+			ThisObject.object.toast.toast('请选择会议！');
 		}
 		$('#batch_delete_meeting').find('input[name=id]').val(newStr);
 	});
@@ -101,25 +101,25 @@ $(function(){
 			data    :{requestType:'get_message_temp', id:mid},
 			callback:function(data){
 				console.log(data);
-				ManageObject.object.signMessageSelect.setValue(0);
-				ManageObject.object.signMessageSelect.setHtml('');
-				ManageObject.object.antiSignMessageSelect.setValue(0);
-				ManageObject.object.antiSignMessageSelect.setHtml('');
-				ManageObject.object.receivablesMessageSelect.setValue(0);
-				ManageObject.object.receivablesMessageSelect.setHtml('');
+				ThisObject.object.signMessageSelect.setValue(0);
+				ThisObject.object.signMessageSelect.setHtml('');
+				ThisObject.object.antiSignMessageSelect.setValue(0);
+				ThisObject.object.antiSignMessageSelect.setHtml('');
+				ThisObject.object.receivablesMessageSelect.setValue(0);
+				ThisObject.object.receivablesMessageSelect.setHtml('');
 				for(var i = 0; i<data.length; i++){
 					switch(parseInt(data[i]['assign_type'])){
 						case 1:
-							ManageObject.object.signMessageSelect.setValue(data[i]['message_id']);
-							ManageObject.object.signMessageSelect.setHtml(data[i]['name']);
+							ThisObject.object.signMessageSelect.setValue(data[i]['message_id']);
+							ThisObject.object.signMessageSelect.setHtml(data[i]['name']);
 							break;
 						case 2:
-							ManageObject.object.antiSignMessageSelect.setValue(data[i]['message_id']);
-							ManageObject.object.antiSignMessageSelect.setHtml(data[i]['name']);
+							ThisObject.object.antiSignMessageSelect.setValue(data[i]['message_id']);
+							ThisObject.object.antiSignMessageSelect.setHtml(data[i]['name']);
 							break;
 						case 3:
-							ManageObject.object.receivablesMessageSelect.setValue(data[i]['message_id']);
-							ManageObject.object.receivablesMessageSelect.setHtml(data[i]['name']);
+							ThisObject.object.receivablesMessageSelect.setValue(data[i]['message_id']);
+							ThisObject.object.receivablesMessageSelect.setHtml(data[i]['name']);
 							break;
 					}
 				}
@@ -150,14 +150,14 @@ $(function(){
 			var id = $(this).find('.icheck').val();
 			arr.push(id);
 		});
-		ManageObject.object.loading.loading();
+		ThisObject.object.loading.loading();
 		Common.ajax({
 			data    :{requestType:'choose_hotel', mid:mid, id:arr},
 			callback:function(r){
-				ManageObject.object.loading.complete();
+				ThisObject.object.loading.complete();
 				console.log(r);
 				$('#choose_hotel').modal('hide');
-				ManageObject.object.toast.toast('酒店选择成功！');
+				ThisObject.object.toast.toast('酒店选择成功！');
 				location.replace(document.referrer);
 			}
 		})
@@ -225,11 +225,11 @@ $(function(){
 		$('#role_list_modal').find('input[name=mid]').val(mid);
 		$('#add_management').find('input[name=mid]').val(mid);
 		var str = '', str2 = '';
-		ManageObject.object.loading.loading();
+		ThisObject.object.loading.loading();
 		Common.ajax({
 			data    :{requestType:'get_role', id:mid},
 			callback:function(data){
-				ManageObject.object.loading.complete();
+				ThisObject.object.loading.complete();
 				console.log(data);
 				$.each(data, function(index, value){
 					str += ScriptObject.roleListTemp.replace('$i', index+1).replace('$name', value.name)
@@ -242,11 +242,11 @@ $(function(){
 					var id = $(this).parent('.btn-group').attr('data-id');
 					$('#add_management').find('input[name=rid]').val(id);
 					var str = '', i = 0;
-					ManageObject.object.loading.loading();
+					ThisObject.object.loading.loading();
 					Common.ajax({
 						data    :{requestType:'get_employee', id:id, mid:mid},
 						callback:function(data){
-							ManageObject.object.loading.complete();
+							ThisObject.object.loading.complete();
 							console.log(data);
 							$.each(data, function(index, value){
 								if(value.gender == 0){
@@ -276,7 +276,7 @@ $(function(){
 				// 查看角色已添加员工
 				$('.see_employee').on('click', function(){
 					var rid = $(this).parent('.btn-group').attr('data-id');
-					ManageObject.object.loading.loading();
+					ThisObject.object.loading.loading();
 					get_employee_list(mid, rid);
 				});
 			}
@@ -286,11 +286,11 @@ $(function(){
 	$('#add_management').find('.main_search').on('click', function(){
 		var keyword = $(this).parents('.repertory_text').find('input[name=keyword]').val();
 		var mid     = $('#add_management').find('input[name=mid]').val();
-		ManageObject.object.loading.loading();
+		ThisObject.object.loading.loading();
 		Common.ajax({
 			data    :{requestType:'get_employee2', keyword:keyword, mid:mid},
 			callback:function(data){
-				ManageObject.object.loading.complete();
+				ThisObject.object.loading.complete();
 				console.log(data);
 				var str = '', i = 0;
 				$.each(data, function(index, value){
@@ -327,42 +327,45 @@ $(function(){
 			var id = $(this).find('.icheck').val();
 			arr.push(id);
 		});
-		ManageObject.object.loading.loading();
+		ThisObject.object.loading.loading();
 		if(arr != ''){
 			Common.ajax({
 				data    :{requestType:'save_employee', id:arr, rid:rid, mid:mid},
 				callback:function(data){
-					ManageObject.object.loading.complete();
+					ThisObject.object.loading.complete();
 					console.log(data);
 					if(data.status == 1){
 						$('#add_management').modal('hide');
-						ManageObject.object.toast.toast('添加成功！');
+						ThisObject.object.toast.toast('添加成功！');
 					}else if(data.status == 0){
 						$('#add_management').modal('hide');
-						ManageObject.object.toast.toast('添加成功！');
+						ThisObject.object.toast.toast('添加成功！');
 					}
 				}, error:function(){
-					/*ManageObject.object.toast.toast('添加失败');*/
+					/*ThisObject.object.toast.toast('添加失败');*/
 				}
 			});
 		}else{
-			ManageObject.object.loading.complete();
-			ManageObject.object.toast.toast('添加失败，未选择员工！！');
+			ThisObject.object.loading.complete();
+			ThisObject.object.toast.toast('添加失败，未选择员工！！');
 		}
 	});
 	// 点击过滤标签-全部
 	$('#filter_btn_all').on('click', function(){
-		var new_url = url_object.delUrlParam('type');
+		var new_url = ThisObject.url.thisPage;
+		new_url     = url_object.delUrlParam('type', new_url);
 		location.replace(new_url);
 	});
 	// 点击过滤标签-进行中
 	$('#filter_btn_ing').on('click', function(){
-		var new_url = url_object.setUrlParam('type', 'ing');
+		var new_url = ThisObject.url.thisPage;
+		new_url     = url_object.setUrlParam('type', 'ing', new_url);
 		location.replace(new_url);
 	});
 	// 点击过滤标签-已结束
 	$('#filter_btn_fin').on('click', function(){
-		var new_url = url_object.setUrlParam('type', 'fin');
+		var new_url = ThisObject.url.thisPage;
+		new_url     = url_object.setUrlParam('type', 'fin', new_url);
 		location.replace(new_url);
 	});
 });
@@ -370,7 +373,7 @@ function get_employee_list(mid, rid){
 	Common.ajax({
 		data    :{requestType:'see_employee', mid:mid, rid:rid},
 		callback:function(data){
-			ManageObject.object.loading.complete();
+			ThisObject.object.loading.complete();
 			var str = '';
 			if(data != ''){
 				$.each(data, function(index, value){
@@ -390,14 +393,14 @@ function get_employee_list(mid, rid){
 				$('#employee_body1').html(str);
 				$('.delete_employee').on('click', function(){
 					var id = $(this).parents('tr').attr('data-id');
-					ManageObject.object.loading.loading();
+					ThisObject.object.loading.loading();
 					Common.ajax({
 						data    :{requestType:'delete_employee', id:id, mid:mid, rid:rid},
 						callback:function(data){
-							ManageObject.object.loading.complete();
+							ThisObject.object.loading.complete();
 							console.log(data);
 							if(data.status){
-								ManageObject.object.toast.toast('删除成功！');
+								ThisObject.object.toast.toast('删除成功！');
 								get_employee_list(mid, rid);
 							}
 						}

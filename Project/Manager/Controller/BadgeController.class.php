@@ -67,8 +67,22 @@
 				$model = D('Core/Badge');
 				/** @var \Core\Model\MeetingModel $meeting_model */
 				$meeting_model = D('Core/Meeting');
+				$logic         = new BadgeLogic();
 				$meeting       = $meeting_model->findMeeting(1, ['id' => $this->meetingID, 'status' => 'not deleted']);
 				$info          = $model->findBadge(1, ['id' => $meeting['bid'], 'status' => 'not deleted']);
+				if(isset($_GET['cid'])){
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model = D('Core/Join');
+					$client     = $join_model->findRecord(1, [
+						'mid'     => $this->meetingID,
+						'cid'    => I('get.cid', 0, 'int'),
+						'status' => 'not deleted'
+					]);
+					$info       = $logic->setData('preview:init_temp', $info, [
+						'client'  => $client,
+						'meeting' => $meeting
+					]);
+				}
 				$this->assign('info', $info);
 				$this->display();
 			}

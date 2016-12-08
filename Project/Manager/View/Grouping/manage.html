@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>分组管理 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/calculator/calculator.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-position.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<!--	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/calculator/calculator.js"></script>-->
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<div class="main_body" style="overflow: hidden;">
+					<section class="content">
+						<div class="table_wrap">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="javascript:void(0)">分组管理</a>
+								</div>
+							</div>
+							<div class="repertory clearfix" style=" padding: 20px  0">
+								<form class="form-horizontal" role="form" method="get" id="form" action="">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
+										<span class="input-group-btn">
+											<button type="submit" class="btn btn-default main_search">搜索</button>
+										</span>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
+								</form>
+							</div>
+							<div class="tab-content clearfix">
+								<div class="group clearfix">
+									<div class="pull-left group_left">
+										<div class="header">
+											<h2>组列表</h2>
+											<span data-toggle="modal" data-target="#add_group_modal" class="glyphicon glyphicon-plus add_group"></span>
+										</div>
+										<div class="group_list">
+											<ul class="group_ul">
+												<volist name="group" id="info">
+													<li data-id="<{$info.id}>" class="<if condition='$info.id eq $_GET[gid]'>active</if>">
+														<a href="<{:U('Grouping/manage',['mid'=>$info['mid'],'gid'=>$info['id'],'date'=>I('get.date'),''])}>"><{$info.code}></a>
+														<span data-toggle="modal" data-target="#alter_group_modal" class="glyphicon glyphicon-edit alter_btn"></span>
+														<span data-toggle="modal" data-target="#delete_modal" class="glyphicon glyphicon-remove delete_btn"></span>
+													</li>
+												</volist>
+											</ul>
+										</div>
+									</div>
+									<div class="pull-right group_right">
+										<div class="header">
+											<div class="time">
+												<div class="input-group">
+													<div class="input-group-addon">时间</div>
+													<select name="meeting_time" id="meeting_time" class="form-control">
+														<for start="0" end="$time">
+															<option value="<{$i+1}>">开会 第<{$i+1}>天</option>
+														</for>
+													</select>
+												</div>
+											</div>
+											<span class="copy" data-toggle="modal" data-target="#copy_modal">沿用上一天数据</span>
+											<span class="title"><{$leader.code}>组(<{$count}>)人</span>
+											<span data-id="<{:I('get.gid',0,'int')}>" data-toggle="modal" data-target="#add_crew" class="add_client">添加组员</span>
+										</div>
+										<div class="mid">
+											<span>组长：<{$leader.leader_name_name}></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>副组长：<{$leader.deputy_leader_name}></span>
+										</div>
+										<div class="group_con">
+											<span data-id="<{:I('get.gid',0,'int')}>" class="empty" data-toggle="modal" data-target="#empty_modal"><b class="glyphicon glyphicon-trash"></b>清空</span>
+											<volist name="member" id="list">
+												<a href="javascript:void(0)"><{$list.client_name}><span data-id="<{$list.id}>" class="g_close">×</span></a>
+											</volist>
+										</div>
+									</div>
+								</div>
+								<div class="score_wrap">
+									<table class="score_table table table-bordered">
+										<caption>分数表</caption>
+										<thead>
+											<tr>
+												<th>组号/日期</th>
+												<for start="0" end="$time">
+													<th>开会 第<{$i+1}>天</th>
+												</for>
+												<th>合计</th>
+											</tr>
+										</thead>
+										<tbody>
+											<volist name="group" id="list">
+												<tr>
+													<td><{$list.code}></td>
+													<for start="0" end="$time">
+														<td class="write" data-id="<{$list.id}>" data-date="<{$i+1}>">
+															<{$list.score.$i.score}><span class="w_edit glyphicon glyphicon-edit" data-toggle="modal" data-target="#write_score"></span>
+														</td>
+													</for>
+													<td class="group_price"><{$list.count_score}></td>
+												</tr>
+											</volist>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 新建组 -->
+	<div class="modal fade" id="add_group_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 700px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">新建组</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+					<input type="hidden" name="requestType" value="add_group"> <input type="hidden" name="cid" value="">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="code" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组号：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="code" id="code">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="leader_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组长类型：</label>
+							<div class="col-sm-10">
+								<select class="form-control" name="leader_type" id="leader_type">
+									<option value="0">员工</option>
+									<option value="1">客户</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group leader_employee_wrap">
+							<label for="leader_employee" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组长：</label>
+							<div class="col-sm-10">
+								<div id="leader_employee"></div>
+							</div>
+						</div>
+						<div class="form-group leader_client_wrap hide">
+							<label for="leader_client" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组长：</label>
+							<div class="col-sm-10">
+								<div id="leader_client"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="deputy_leader_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>副组长类型：</label>
+							<div class="col-sm-10">
+								<select class="form-control" name="deputy_leader_type" id="deputy_leader_type">
+									<option value="0">员工</option>
+									<option value="1">客户</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group deputy_leader_employee_wrap">
+							<label for="deputy_leader_employee" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>副组长：</label>
+							<div class="col-sm-10">
+								<div id="deputy_leader_employee"></div>
+							</div>
+						</div>
+						<div class="form-group deputy_leader_client_wrap hide">
+							<label for="deputy_leader_client" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>副组长：</label>
+							<div class="col-sm-10">
+								<div id="deputy_leader_client"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="comment" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" id="comment"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 修改组 -->
+	<div class="modal fade" id="alter_group_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 700px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">修改组</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="gid" id="gid">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="code_alter" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组号：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="code" id="code_alter">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="leader_type_alter" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组长类型：</label>
+							<div class="col-sm-10">
+								<select class="form-control" name="leader_type" id="leader_type_alter">
+									<option value="0">员工</option>
+									<option value="1">客户</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group leader_alter_employee_wrap">
+							<label for="leader_alter_employee" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组长：</label>
+							<div class="col-sm-10">
+								<div id="leader_alter_employee"></div>
+							</div>
+						</div>
+						<div class="form-group leader_alter_client_wrap hide">
+							<label for="leader_alter_client" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组长：</label>
+							<div class="col-sm-10">
+								<div id="leader_alter_client"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="deputy_leader_type_alter" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>副组长类型：</label>
+							<div class="col-sm-10">
+								<select class="form-control" name="deputy_leader_type" id="deputy_leader_type_alter">
+									<option value="0">员工</option>
+									<option value="1">客户</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group deputy_leader_alter_employee_wrap">
+							<label for="deputy_leader_alter_employee" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>副组长：</label>
+							<div class="col-sm-10">
+								<div id="deputy_leader_alter_employee"></div>
+							</div>
+						</div>
+						<div class="form-group deputy_leader_alter_client_wrap hide">
+							<label for="deputy_leader_alter_client" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>副组长：</label>
+							<div class="col-sm-10">
+								<div id="deputy_leader_alter_client"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="comment_alter" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" id="comment_alter"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 删除组 -->
+	<div class="modal fade" id="delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">删除组</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="gid">
+					<div class="modal-body">
+						是否删除该组？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary confirm_delete">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 清空组员 -->
+	<div class="modal fade" id="empty_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">清空组员</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="empty"> <input type="hidden" name="gid">
+					<div class="modal-body">
+						是否清空该组组员？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary confirm_empty">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 填写分数表 -->
+	<div class="modal fade" id="write_score" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 700px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">分数</h2>
+				</div>
+				<form class="form-horizontal" role="form" id="score_form" method="post" action="">
+					<input type="hidden" name="requestType" value="write_score">
+					<input type="hidden" name="gid" value=""> <input type="hidden" name="date" id="" value="">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="score" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>分数：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="score" id="score">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary score_save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 组添加组员 -->
+	<div class="modal fade" id="add_crew" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 65%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title text-center">添加客户</h2>
+				</div>
+				<div class="choose_people">
+					<div class="d1">
+						<span>当前有<b class="current_attendee">0</b>人</span>
+						<span>已选择<b class="color-red selected_attendee">0</b>人</span>
+						<a href="javascript:void(0)" class="btn_save btn btn-sm btn-info">添加</a>
+					</div>
+					<div class="search_sm">
+						<div class="col-sm-5">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="姓名/手机号/单位" value="">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default ajax_search">搜索</button>
+								</span>
+							</div>
+						</div>
+						<a type="reset" class="btn btn-default ajax_search_all">查看所有</a>
+					</div>
+					<div class="d2">
+						<div class="table_wrap" style="max-height: 600px; overflow-y: auto">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="10%" class="all_check">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</td>
+										<td width="10%">序号</td>
+										<td width="10%">姓名</td>
+										<td width="10%">性别</td>
+										<td width="20%">职务</td>
+										<td width="20%">手机号</td>
+										<td width="20%">单位名称</td>
+									</tr>
+								</thead>
+								<tbody id="client_body">
+								</tbody>
+							</table>
+						</div>
+						<input type="hidden" name="rid"> <input type="hidden" name="mid">
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$page_show}>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 沿用上一天数据 -->
+	<div class="modal fade" id="copy_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">沿用上一天数据</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="copy">
+					<div class="modal-body">
+						是否沿用上一天的数据？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ThisObject = {
+			object:{
+				leaderEmployee           :$('#leader_employee').QuasarSelect({
+					name        :'leader_employee',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee)}>',
+					idInput     :'selected_leader_employee',
+					idHidden    :'selected_leader_employee_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				leaderClient             :$('#leader_client').QuasarSelect({
+					name        :'leader_client',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($client)}>',
+					idInput     :'selected_leader_client',
+					idHidden    :'selected_leader_client_form',
+					placeholder :'',
+					hasEmptyItem:false,
+				}),
+				deputyLeaderEmployee     :$('#deputy_leader_employee').QuasarSelect({
+					name        :'deputy_leader_employee',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee)}>',
+					idInput     :'selected_deputy_leader_employee',
+					idHidden    :'selected_deputy_leader_employee_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				deputyLeaderClient       :$('#deputy_leader_client').QuasarSelect({
+					name        :'deputy_leader_client',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($client)}>',
+					idInput     :'selected_deputy_leader_client',
+					idHidden    :'selected_deputy_leader_client_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				leaderAlterEmployee      :$('#leader_alter_employee').QuasarSelect({
+					name        :'leader_alter_employee',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee)}>',
+					idInput     :'selected_leader_alter_employee',
+					idHidden    :'selected_leader_alter_employee_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				leaderAlterClient        :$('#leader_alter_client').QuasarSelect({
+					name        :'leader_alter_client',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($client)}>',
+					idInput     :'selected_leader_alter_client',
+					idHidden    :'selected_leader_alter_client_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				deputyLeaderAlterEmployee:$('#deputy_leader_alter_employee').QuasarSelect({
+					name        :'deputy_leader_alter_employee',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee)}>',
+					idInput     :'selected_deputy_leader_alter_employee',
+					idHidden    :'selected_deputy_leader_alter_employee_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				deputyLeaderAlterClient  :$('#deputy_leader_alter_client').QuasarSelect({
+					name        :'deputy_leader_alter_client',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($client)}>',
+					idInput     :'selected_deputy_leader_alter_client',
+					idHidden    :'selected_deputy_leader_alter_client_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				/*	receivablesTime :jeDate({
+				 dateCell:"#receivables_time",
+				 format  :"YYYY-MM-DD hh:mm:ss",
+				 isTime  :true, // isClear:false, // 时分秒--true
+				 /!*	minDate :"2015-10-19 00:00:00",
+				 maxDate :"2016-11-8 00:00:00"*!/
+				 }),
+				 receivablesTimeA:jeDate({
+				 dateCell:"#receivables_time_a",
+				 format  :"YYYY-MM-DD hh:mm:ss",
+				 isTime  :true, // isClear:false, // 时分秒--true
+				 /!*	minDate :"2015-10-19 00:00:00",
+				 maxDate :"2016-11-8 00:00:00"*!/
+				 }),*/
+				toast                    :$().QuasarToast(),
+				loading                  :$().QuasarLoading(),
+				icheck                   :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				})
+			}
+		};
+	</script>
+</body>
+</html>

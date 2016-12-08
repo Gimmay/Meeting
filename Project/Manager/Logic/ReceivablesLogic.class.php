@@ -181,7 +181,7 @@
 
 					return array_merge($receivables_result, [
 						'__ajax__'   => false,
-						'__return__' => U('Receivables/Manage', ['mid' => $mid])
+						'__return__' => I('post.redirectUrl', '')
 					]);
 				break;
 				case 'create_pay':
@@ -285,10 +285,14 @@
 					/** @var \Core\Model\ReceivablesModel $receivables_model */
 					$receivables_model = D('Core/Receivables');
 					/** @var \Core\Model\ClientModel $client_model */
-					$client_model                      = D('Core/Client');
+					$client_model = D('Core/Client');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model                    = D('Core/Employee');
 					$receivables_result                = $receivables_model->findRecord(1, ['id' => $id]);
 					$client_result                     = $client_model->findClient(1, ['id' => $receivables_result['cid']]);
+					$employee_result                   = $employee_model->findEmployee(1, ['id' => $receivables_result['payee_id']]);
 					$receivables_result['client_name'] = $client_result['name'];
+					$receivables_result['payee_name']  = $employee_result['code'].' - '.$employee_result['name'];
 
 					return array_merge($receivables_result, ['__ajax__' => true]);
 				break;
@@ -306,7 +310,7 @@
 					//											'__ajax__' => false
 					//										];
 				break;
-				case 'ticket':
+				case 'ticket': //门票
 					/** @var \Core\Model\CouponModel $coupon_model */
 					$coupon_model  = D('Core/Coupon');
 					$coupon_result = $coupon_model->findCoupon(2, [
@@ -334,18 +338,16 @@
 						'mid'    => I('get.mid', 0, 'int'),
 						'type'   => 2
 					]);
-
-//					foreach($coupon_result as $k => $v){
-//						$coupon_item_result = $coupon_item_model->findRecord(2, [
-//							'status'    => 0,
-//							'coupon_id' => $v['id'],
-//							'mid'       => I('get.mid', 0, 'int')
-//						]);
-//						if(!$coupon_item_result){
-//							$coupon_result = [];
-//						}
-//					}
-
+					//					foreach($coupon_result as $k => $v){
+					//						$coupon_item_result = $coupon_item_model->findRecord(2, [
+					//							'status'    => 0,
+					//							'coupon_id' => $v['id'],
+					//							'mid'       => I('get.mid', 0, 'int')
+					//						]);
+					//						if(!$coupon_item_result){
+					//							$coupon_result = [];
+					//						}
+					//					}
 					//					$coupon_item_result = $coupon_item_model->findRecord(2, [
 					//						'mid'    => I('get.mid', 0, 'int'),
 					//						'status' => 0
@@ -364,7 +366,7 @@
 					//					}
 					return array_merge($coupon_result, ['__ajax__' => true]);
 				break;
-				case 'product':
+				case 'product': //产品
 					/** @var \Core\Model\CouponModel $coupon_model */
 					$coupon_model  = D('Core/Coupon');
 					$coupon_result = $coupon_model->findCoupon(2, [
@@ -382,7 +384,7 @@
 
 					return array_merge($data, ['__ajax__' => true]);
 				break;
-				case 'other':
+				case 'other':// 其他
 					/** @var \Core\Model\CouponModel $coupon_model */
 					$coupon_model  = D('Core/Coupon');
 					$coupon_result = $coupon_model->findCoupon(2, [
@@ -455,6 +457,7 @@
 							'order_number' => $makeOrderNumber,
 							'source_type'  => $data['source_type'][$k],
 							'coupon_ids'   => $data['coupon_ids'][$k],
+							'coupon_code'  => $data['name'][$k],
 							'creatime'     => time(),    //创建时间
 							'creator'      => $creator,    //当前创建者
 							'place'        => $place,
@@ -462,7 +465,7 @@
 						if($data['type'][$k] != 2){
 							$coupon_item_project[] = [
 								'mid'       => $mid,
-								'coupon_id' => $save_data[$k]['coupon_code'],
+								'coupon_id' => $data['name'][$k],
 								'cid'       => $cid,
 								'creatime'  => time(),
 								'creator'   => $creator,
@@ -473,14 +476,17 @@
 							$coupon_id = $data['coupon_code'];
 							foreach($coupon_id as $k1 => $v1) $coupon_item_code[] = $v1;
 						}
-					}// TODO
+					}
 					$result1            = $coupon_item_model->createMultiRecord($coupon_item_project);
 					$receivables_result = $receivables_model->createMultiRecord($save_data);
 					$coupon_item_result = $coupon_item_model->alterRecord([
 						'id' => ['in', $coupon_item_code]
 					], ['status' => 1, 'cid' => $cid]);
 
-					return array_merge($receivables_result, ['__ajax__' => false]);
+					return array_merge($receivables_result, [
+						'__ajax__'   => false,
+						'__return__' => I('post.redirectUrl', '')
+					]);
 				break;
 				case 'get_coupon_code':
 					$coupon_id = I('post.id', 0, 'int');
@@ -689,7 +695,7 @@
 			$receivables_type_model = D('Core/ReceivablesType');
 			/** @var \Core\Model\PosMachineModel $pos_machine_model */
 			/** @var \Core\Model\EmployeeModel $employee_model */
-			$employee_model = D('Core/Employee');
+			$employee_model    = D('Core/Employee');
 			$receivables_count = $receivables_model->findRecord(0, [
 				'status' => 'not deleted',
 				'mid'    => I('get.mid', 0, 'int')
@@ -733,14 +739,17 @@
 					'id'     => $receivables_result[$k]['cid'],
 					'status' => 'not deleted'
 				]);
-				$employee_result = $employee_model->findEmployee(1,['id'=>$v['payee_id'],'status'=>1]);
+				$employee_result                        = $employee_model->findEmployee(1, [
+					'id'     => $v['payee_id'],
+					'status' => 1
+				]);
 				$receivables_result[$k]['meeting_name'] = $meeting_result['name'];
 				$receivables_result[$k]['client_name']  = $client_result['name'];
 				$receivables_result[$k]['unit']         = $client_result['unit'];
 				$receivables_result[$k]['method_name']  = $method_result['name'];
 				$receivables_result[$k]['type_name']    = $receivables_type_result['name'];
 				$receivables_result[$k]['pos_name']     = $pos_machine_result['name'];
-				$receivables_result[$k]['payee_name']     = $employee_result['name'];
+				$receivables_result[$k]['payee_name']   = $employee_result['name'];
 				$code_id                                = explode(',', $receivables_result[$k]['coupon_ids']);
 				$coupon_item_code                       = '';
 				foreach($code_id as $kk => $vv){
@@ -754,6 +763,7 @@
 				if(strpos($client_result['name'], $keyword) === false && $keyword != '') ;
 				else $new_list[] = $receivables_result[$k];
 			}
+
 			return $new_list;
 		}
 
@@ -772,7 +782,7 @@
 			return ($new_list);
 		}
 
-		public function setData($type, $data){
+		public function setData($type, $data, $option = []){
 			switch($type){
 				case 'excel_data':
 					$new_list = [];
@@ -843,6 +853,87 @@
 					], $new_list);
 
 					return $new_list;
+				break;
+				case 'manage:set_price':
+					/** @var \Core\Model\ReceivablesModel $receivables_model */
+					$receivables_model = D('Core/Receivables');
+					$new_list          = [];
+					foreach($data as $key => $join){
+						$receivables_list = $receivables_model->findRecord(2, [
+							'status' => 1,
+							'mid'    => $option['mid'],
+							'cid'    => $join['cid']
+						]);
+						if($receivables_list){
+							$price = 0;
+							foreach($receivables_list as $val) $price += $val['price'];
+							$url           = U('details', ['cid' => $join['cid'], 'mid' => $option['mid']]);
+							$join['price'] = "<a href='$url' style='font-weight: bold; color: red'>$price</a>";
+							$join['isPay'] = true;
+						}
+						else{
+							$price         = '未收款';
+							$join['price'] = $price;
+							$join['isPay'] = false;
+						}
+						if($option['receivables'] === false) $new_list[] = $join;
+						elseif($option['receivables'] === 1){
+							if($receivables_list) $new_list[] = $join;
+						}
+						elseif($option['receivables'] === 0){
+							if(!$receivables_list) $new_list[] = $join;
+						}
+					}
+
+					return $new_list;
+				break;
+				case 'details:set_column':
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model = D('Core/Employee');
+					/** @var \Core\Model\ClientModel $client_model */
+					$client_model = D('Core/Client');
+					/** @var \Core\Model\PayMethodModel $pay_method_model */
+					$pay_method_model = D('Core/PayMethod');
+					/** @var \Core\Model\PosMachineModel $pos_machine_model */
+					$pos_machine_model = D('Core/PosMachine');
+					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+					$coupon_item_model = D('Core/CouponItem');
+					foreach($data as $key => $val){
+						$client          = $client_model->findClient(1, ['status' => 1, 'id' => $val['cid']]);
+						$payee           = $employee_model->findEmployee(1, [
+							'status' => 1,
+							'id'     => $val['payee_id']
+						]);
+						$pay_method      = $pay_method_model->findRecord(1, [
+							'status' => 1,
+							'id'     => $val['method']
+						]);
+						$pos_machine     = $pos_machine_model->findRecord(1, [
+							'status' => 1,
+							'id'     => $val['pos_id']
+						]);
+						$coupon_item_arr = explode(',', $val['coupon_ids']);
+						$coupon_item_str = '';
+						foreach($coupon_item_arr as $coupon){
+							$coupon_item_record = $coupon_item_model->findRecord(1, [
+								'id'     => $coupon,
+								'status' => 'not deleted'
+							]);
+							$coupon_item_str .= "$coupon_item_record[code], ";
+						}
+						$coupon_item_str            = trim($coupon_item_str, ', ');
+						$data[$key]['client_name']  = $client['name'];
+						$data[$key]['unit']         = $client['unit'];
+						$data[$key]['payee_name']   = $payee['name'];
+						$data[$key]['method_name']  = $pay_method['name'];
+						$data[$key]['pos_machine']  = $pos_machine['name'];
+						$data[$key]['coupon_codes'] = $coupon_item_str;
+					}
+
+					return $data;
+				break;
+				case 'manage:pagination':
+					return array_splice($data, $option['pagination'][0], $option['pagination'][1]);
 				break;
 				default:
 					return $data;

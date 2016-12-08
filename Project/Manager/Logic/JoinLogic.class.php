@@ -6,49 +6,9 @@
 	 * Time: 17:00
 	 */
 	namespace Manager\Logic;
-
-	use Core\Logic\QRCodeLogic;
-	use Quasar\StringPlus;
-
+	
 	class JoinLogic extends ManagerLogic{
-		private $config = [
-			'logo' => 'Project/Resources/Images/Common/profile_small.gif'
-		];
-
 		public function _initialize(){
 			parent::_initialize();
-		}
-
-		public function create($data){
-			/** @var \Core\Model\JoinModel $model */
-			$model            = D('Core/Join');
-			$data['creatime'] = time();
-			$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-			C('TOKEN_ON', false);
-
-			return $model->createRecord($data);
-		}
-		
-		public function makeQRCode($client_list, $data){
-			$qrcode_obj = new QRCodeLogic();
-			$str_obj    = new StringPlus();
-			/** @var \Core\Model\JoinModel $join_model */
-			$join_model = D('Core/Join');
-			$length     = count($client_list);
-			$count      = 0;
-			$result     = ['status' => false, 'message' => '数据更新失败'];
-			foreach($client_list as $val){
-				$url         = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Manager/client', ['cid'=>$val, 'mid'=>$data['mid']]);
-				$qrcode_file = $qrcode_obj->make($url);
-				$remote_url  = '/'.trim($qrcode_file, './');
-				$join_record = $join_model->findRecord(1, ['cid' => $val, 'mid' => $data['mid']]);
-				$result      = $join_model->alterRecord(['id' => $join_record['id']], [
-					'sign_qrcode' => $remote_url,
-					'sign_code'   => $str_obj->makeRandomString(8)
-				]);
-				if($result) $count++;
-			}
-			if($length == $count || $count == 0) return $result;
-			else return ['status' => true, 'message' => '数据部分未写入成功'];
 		}
 	}

@@ -56,19 +56,24 @@
  V2.20 2016-10-16 21:34
  UrlClass重构
 
+ V2.22 2016-11-16 00:24
+ 1、去除非必要的错误控制台输出
+ 2、UrlClass删除/设置参数不成功时返回原Url
+
+ V2.25 2016-11-20 16:00
+ String对象的扩展方法trim()、trimLeft()和trimRight()可指定字符进行消除
 
  =============================================================
  */
 //noinspection JSUnusedGlobalSymbols
 /**
  * 自定义通用JS工具
- * *若需要用到UrlClass并且URL模式为PATHINFO的话，可以在载入该js文件的标签内写入data-url-sys-param的属性键入需要排除的关键值
+ * *若需要用到UrlClass并且URL模式为PATHINFO的话，可以在载入该js文件的标签内写入data-mvc-name的属性键入需要排除的关键值
  *
  * @author Quasar
- * @version 2.20
- *
- * Updated on 2016-10-16 21:34
- * Created on 2016-01-09 10:00
+ * @version 2.25
+ * @Updated 2016-11-20 16:00
+ * @Created 2016-01-09 10:00
  */
 var Quasar = {
 	/**
@@ -96,13 +101,13 @@ var Quasar = {
 	 */
 	_setError          :function(status, code, info, from, data){
 		if(typeof arguments[0] == 'undefined' || typeof arguments[1] == 'undefined' || typeof arguments[2] == 'undefined' || typeof arguments[3] == 'undefined') return false;
-		Quasar._Error.status = arguments[0];
+		Quasar._Error.status = (!(arguments[0] == 0 || arguments[0] == -1));
 		Quasar._Error.code   = arguments[1];
 		Quasar._Error.info   = arguments[2];
 		Quasar._Error.from   = arguments[3];
 		if(arguments[4]) Quasar._Error.data = arguments[4];
 		else Quasar._Error.data = null;
-		if(!status) console.log(from+': '+'['+code+'] '+info);
+		if(status == -1) console.log(from+': '+'['+code+'] '+info); // todo 是否输出错误信息
 		return true;
 	},
 	/**
@@ -112,7 +117,10 @@ var Quasar = {
 	 */
 	BrowserCheckerClass:function(){
 		this.BrowserInfo = {
-			Name:null, Version:null, Engine:null, Platform:null
+			Name    :null,
+			Version :null,
+			Engine  :null,
+			Platform:null
 		};
 		/**
 		 * 已支持的浏览器列表
@@ -120,7 +128,7 @@ var Quasar = {
 		 * @private
 		 */
 		var _knonw_type_ = {
-			Name     :{
+			Name  :{
 				_IE  :'Internet Explorer',
 				_FF  :'Firefox',
 				_GC  :'Chrome',
@@ -129,8 +137,13 @@ var Quasar = {
 				_360 :'360安全浏览器',
 				_360C:'360极速浏览器',
 				_AS  :'Safari'
-			}, Engine:{
-				_We:'Webkit', _Tr:'Trident', _Ge:'Gecko', _Pr:'Presto', _Bl:'Blink'
+			},
+			Engine:{
+				_We:'Webkit',
+				_Tr:'Trident',
+				_Ge:'Gecko',
+				_Pr:'Presto',
+				_Bl:'Blink'
 			}
 		};
 
@@ -231,7 +244,7 @@ var Quasar = {
 		 */
 		this.setCookie = function(name, value, expiresHours, path){
 			if(arguments.length == 1){
-				Quasar._setError(false, 11, '函数缺少必要参数', 'CookieClass/setCookie()');
+				Quasar._setError(-1, 11, '函数缺少必要参数', 'CookieClass/setCookie()');
 				return false;
 			}
 			if(arguments.length == 2) expiresHours = 0;
@@ -254,7 +267,7 @@ var Quasar = {
 		 */
 		this.getCookie = function(name){
 			if(arguments.length<=0){
-				Quasar._setError(false, 11, '函数缺少必要参数', 'CookieClass/getCookie()');
+				Quasar._setError(-1, 11, '函数缺少必要参数', 'CookieClass/getCookie()');
 				return false;
 			}
 			var strCookie = document.cookie;
@@ -272,7 +285,7 @@ var Quasar = {
 		 */
 		this.delCookie = function(name){
 			if(arguments.length<=0){
-				Quasar._setError(false, 11, '函数缺少必要参数', 'CookieClass/delCookie()');
+				Quasar._setError(-1, 11, '函数缺少必要参数', 'CookieClass/delCookie()');
 				return false;
 			}
 			var date = new Date();
@@ -405,7 +418,7 @@ var Quasar = {
 		 */
 		this.setStateObjectParam = function(key, val){
 			if(arguments.length<2){
-				Quasar._setError(false, 11, '函数缺少必要参数', 'UrlClass/setStateObjectParam()');
+				Quasar._setError(-1, 11, '函数缺少必要参数', 'UrlClass/setStateObjectParam()');
 				return false;
 			}
 			if(typeof key == 'number' || typeof key == 'string'){
@@ -413,7 +426,7 @@ var Quasar = {
 				Quasar._setError(true, 0, '为_StateObject添加元素操作成功', 'UrlClass/setStateObjectParam()', key+'='+val);
 				return true;
 			}else{
-				Quasar._setError(false, 12, '参数类型错误', 'UrlClass/setStateObjectParam()');
+				Quasar._setError(-1, 12, '参数类型错误', 'UrlClass/setStateObjectParam()');
 				return false;
 			}
 		};
@@ -426,11 +439,11 @@ var Quasar = {
 		 */
 		this.delStateObjectParam = function(key){
 			if(!this.isTheStateObjectParamExist(key)){
-				Quasar._setError(false, 4002, '_StateObject元素不存在', 'UrlClass/delStateObjectParam()', key);
+				Quasar._setError(-1, 4002, '_StateObject元素不存在', 'UrlClass/delStateObjectParam()', key);
 				return false;
 			}
 			if(key.toLowerCase().toString() == 'title' || key.toLowerCase().toString() == 'url'){
-				Quasar._setError(false, 4003, '_StateObject元素不允许删除', 'UrlClass/delStateObjectParam()', key);
+				Quasar._setError(-1, 4003, '_StateObject元素不允许删除', 'UrlClass/delStateObjectParam()', key);
 				return false;
 			}else{
 				Quasar._setError(true, 0, '为_StateObject删除元素操作成功', 'UrlClass/delStateObjectParam()', key);
@@ -492,7 +505,7 @@ var Quasar = {
 				//noinspection JSDuplicatedDeclaration
 				var i = url.indexOf('?');
 				if(i == -1){
-					Quasar._setError(false, 3001, 'URL不存在参数', 'UrlClass/getUrlParamsJSON()');
+					Quasar._setError(0, 3001, 'URL不存在参数', 'UrlClass/getUrlParamsJSON()');
 					return null;
 				}
 				//noinspection JSDuplicatedDeclaration
@@ -510,8 +523,9 @@ var Quasar = {
 				//noinspection JSDuplicatedDeclaration
 				var i = (arguments.length<1) ? (url.indexOf(_Config.except)+_Config.except.length) : (url.indexOf(opt.except)+opt.except.length);
 				//if(!url.substr(i, url.length).match(/\/([.#\w\u4E00-\u9FA5\uF900-\uFA2D-]+)\/([.#\w\u4E00-\u9FA5\uF900-\uFA2D-]+)/)){
-				if(!url.substr(i, url.length).match(/\/([.#%$A-Za-z0-9\u0800-\u9FA5０-９Ａ-Ｚａ-ｚ\uFE10-\uFFEF_-]+)\/([.#%$A-Za-z0-9\u0800-\u9FA5０-９Ａ-Ｚａ-ｚ\uFE10-\uFFEF_-]+)/)){
-					Quasar._setError(false, 3001, 'URL不存在参数', 'UrlClass/getUrlParamsJSON()');
+				if(!url.substr(i, url.length)
+					   .match(/\/([.#%$A-Za-z0-9\u0800-\u9FA5０-９Ａ-Ｚａ-ｚ\uFE10-\uFFEF_-]+)\/([.#%$A-Za-z0-9\u0800-\u9FA5０-９Ａ-Ｚａ-ｚ\uFE10-\uFFEF_-]+)/)){
+					Quasar._setError(0, 3001, 'URL不存在参数', 'UrlClass/getUrlParamsJSON()');
 					return null;
 				}
 				//noinspection JSDuplicatedDeclaration
@@ -539,14 +553,14 @@ var Quasar = {
 		 */
 		this.parseJSONtoParamsString = function(json){
 			if(typeof json != 'object'){
-				Quasar._setError(false, 5001, '非法的JS对象', 'UrlClass/parseJSONtoParamsString()', json);
+				Quasar._setError(-1, 5001, '非法的JS对象', 'UrlClass/parseJSONtoParamsString()', json);
 				return null;
 			}
 			var count = 0, result = '';
 			for(var key in json.params){
 				if(json.params.hasOwnProperty(key)){
 					if(typeof json.params[key] == 'object'){
-						Quasar._setError(false, 5003, 'JS对象存在对象迭代', 'UrlClass/parseJSONtoParamsString()', json);
+						Quasar._setError(-1, 5003, 'JS对象存在对象迭代', 'UrlClass/parseJSONtoParamsString()', json);
 						return null;
 					}
 					if(_Config.mode == 0){
@@ -560,11 +574,11 @@ var Quasar = {
 					}
 				}
 				else{
-					Quasar._setError(false, 5002, '无法访问JS对象属性', 'UrlClass/parseJSONtoParamsString()', json);
+					Quasar._setError(-1, 5002, '无法访问JS对象属性', 'UrlClass/parseJSONtoParamsString()', json);
 					return null;
 				}
 			}
-			if(result == '') Quasar._setError(false, 5001, 'JSON数据不符合格式要求', 'UrlClass/parseJSONtoParamsString()', json);
+			if(result == '') Quasar._setError(-1, 5001, 'JSON数据不符合格式要求', 'UrlClass/parseJSONtoParamsString()', json);
 			else Quasar._setError(true, 0, '将未嵌套的JSON数据转为标准的URL参数串操作成功', 'UrlClass/parseJSONtoParamsString()', json);
 			return result;
 		};
@@ -587,7 +601,7 @@ var Quasar = {
 			}
 			var list = (arguments.length<2) ? this.getUrlParamsJSON() : this.getUrlParamsJSON(url, opt);
 			if(!list){
-				Quasar._setError(false, 3001, 'URL不存在参数', 'UrlClass/getUrlParam()');
+				Quasar._setError(0, 3001, 'URL不存在参数', 'UrlClass/getUrlParam()');
 				return null;
 			}
 			/** @namespace list.params */
@@ -596,7 +610,7 @@ var Quasar = {
 				return list.params[key];
 			}
 			else{
-				Quasar._setError(false, 3001, '指定的Key在URL中不存在', 'UrlClass/getUrlParam()');
+				Quasar._setError(0, 3001, '指定的Key在URL中不存在', 'UrlClass/getUrlParam()');
 				return null;
 			}
 		};
@@ -608,7 +622,7 @@ var Quasar = {
 		 * @param [url] 传入的URL字符串，默认值为当前页面的URL
 		 * @param [opt] 若传入自定义URL且当前URL模式不为0，可传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
 		 *
-		 * @returns boolean|string 操作失败返回false，操作成功返回删除参数后的url字符串
+		 * @returns string 操作失败返回false，操作成功返回删除参数后的url字符串
 		 */
 		this.delUrlParam = function(key, url, opt){
 			if(arguments.length<2){
@@ -628,13 +642,13 @@ var Quasar = {
 			}
 			var url_list = (arguments.length<2) ? this.getUrlParamsJSON() : this.getUrlParamsJSON(url, opt);
 			if(url_list == null){
-				Quasar._setError(false, 3001, 'URL不存在参数', 'UrlClass/delUrlParam()', key);
-				return false;
+				Quasar._setError(0, 3001, 'URL不存在参数', 'UrlClass/delUrlParam()', key);
+				return url;
 			}
 			// 1、key不存在
 			if(!((arguments.length<2) ? this.isTheUrlParamExist(key) : this.isTheUrlParamExist(key, url, opt))){
-				Quasar._setError(false, 3002, '指定的Key在URL中不存在', 'UrlClass/delUrlParam()', key);
-				return false;
+				Quasar._setError(0, 3002, '指定的Key在URL中不存在', 'UrlClass/delUrlParam()', key);
+				return url;
 			}
 			delete url_list.params[key];
 			if(_Config.mode == 0){
@@ -656,12 +670,12 @@ var Quasar = {
 		 * @param [url] 传入的URL字符串，默认值为当前页面的URL
 		 * @param [opt] 若传入自定义URL且当前URL模式不为0，可传入该值指定需要排除的关键字串和页面后缀，格式为{except:"/param1/param2/...", suffix:".html"}
 		 *
-		 * @returns boolean|string 操作失败返回false，操作成功返回设定参数后的URL
+		 * @returns string 操作失败返回false，操作成功返回设定参数后的URL
 		 */
 		this.setUrlParam = function(key, val, url, opt){
 			if(arguments.length<2){
-				Quasar._setError(false, 11, '函数缺少必要参数', 'UrlClass/setUrlParam()');
-				return false;
+				Quasar._setError(-1, 11, '函数缺少必要参数', 'UrlClass/setUrlParam()');
+				return url;
 			}else if(arguments.length == 3 && _Config.mode != 0){
 				opt        = {};
 				opt.except = _Config.except;
@@ -675,8 +689,8 @@ var Quasar = {
 				}
 			}
 			if(typeof key != 'number' && typeof key != 'string'){
-				Quasar._setError(false, 12, '参数类型错误', 'UrlClass/setUrlParam()');
-				return false;
+				Quasar._setError(-1, 12, '参数类型错误', 'UrlClass/setUrlParam()');
+				return url;
 			}
 			// 无参数的url&有参数的url两种情况
 			var list = (arguments.length == 2) ? this.getUrlParamsJSON() : this.getUrlParamsJSON(url, opt);
@@ -772,13 +786,13 @@ var Quasar = {
 					Quasar._setError(true, 0, '指定参数存在', 'UrlClass/isTheUrlParamExist()', key);
 					return true;
 				}else{
-					Quasar._setError(false, 3002, '指定的Key在URL中不存在', 'UrlClass/isTheUrlParamExist()', key);
+					Quasar._setError(0, 3002, '指定的Key在URL中不存在', 'UrlClass/isTheUrlParamExist()', key);
 					return false;
 				}
 			}else{
 				var param_json = (arguments.length<2) ? this.getUrlParamsJSON() : this.getUrlParamsJSON(url, opt);
 				if(param_json == null){
-					Quasar._setError(false, 3002, '指定的Key在URL中不存在', 'UrlClass/isTheUrlParamExist()', key);
+					Quasar._setError(0, 3002, '指定的Key在URL中不存在', 'UrlClass/isTheUrlParamExist()', key);
 					return false;
 				}
 				for(var pjkey in param_json['params']){
@@ -851,7 +865,7 @@ var Quasar = {
 		this.setUrl = function(url, mode){
 			if(arguments.length<2) mode = 1;
 			if(arguments.length<1){
-				Quasar._setError(false, 11, '函数缺少必要参数', 'UrlClass/setUrl()');
+				Quasar._setError(-1, 11, '函数缺少必要参数', 'UrlClass/setUrl()');
 				return false;
 			}
 			_StateObject.url = url;
@@ -898,9 +912,9 @@ var Quasar = {
 				if(mode == 0) return obj;
 				if(mode == 1){
 					_Config.mode = 1;
-					if("undefined" == typeof except) Quasar._setError(false, 9991, '缺少排除参数', 'UrlClass/_init()');
+					if("undefined" == typeof except) Quasar._setError(-1, 9991, '缺少排除参数', 'UrlClass/_init()');
 					else _Config.except = except.toString();
-					if("undefined" == typeof suffix) Quasar._setError(false, 9993, '缺少页面后缀', 'UrlClass/_init()');
+					if("undefined" == typeof suffix) Quasar._setError(-1, 9993, '缺少页面后缀', 'UrlClass/_init()');
 					else _Config.suffix = suffix.toString();
 				}
 			}
@@ -1012,7 +1026,10 @@ var Quasar = {
 				winHeight = document.documentElement.clientHeight;
 				winWidth  = document.documentElement.clientWidth;
 			}
-			return {width:winWidth, height:winHeight};
+			return {
+				width :winWidth,
+				height:winHeight
+			};
 		};
 		//noinspection JSUnusedGlobalSymbols
 		/**
@@ -1021,7 +1038,10 @@ var Quasar = {
 		 * @returns {{width: number, height: number}}
 		 */
 		this.getPageSize = function(){
-			return {width:document.body.offsetWidth, height:document.body.offsetHeight};
+			return {
+				width :document.body.offsetWidth,
+				height:document.body.offsetHeight
+			};
 		};
 		/**
 		 * 回到顶部
@@ -1273,27 +1293,30 @@ var Quasar = {
 		}
 	};
 	/**
-	 * 为String对象原型添加去除两端空格的函数
+	 * 为String对象原型添加去除两端空格和指定字符的函数
 	 *
+	 * @param char 需要消除的字符
 	 * @returns {string}
 	 */
-	String.prototype.trim      = function(){
-		return this.replace(/(^\s*)|(\s*$)/g, '');
+	String.prototype.trim = function(char){
+		return this.replace(new RegExp("(^[\\s"+char+"]*)|([\\s"+char+"]*$)", 'g'), '');
 	};
 	/**
-	 * 为String对象原型添加去除左边空格的函数
+	 * 为String对象原型添加去除左边空格和指定字符的函数
 	 *
+	 * @param char 需要消除的字符
 	 * @returns {string}
 	 */
-	String.prototype.trimLeft  = function(){
-		return this.replace(/(^\s*)/g, '');
+	String.prototype.trimLeft = function(char){
+		return this.replace(new RegExp("(^[\\s"+char+"]*)", 'g'), '');
 	};
 	/**
-	 * 为String对象原型添加去除右边空格的函数
+	 * 为String对象原型添加去除右边空格和指定字符的函数
 	 *
+	 * @param char 需要消除的字符
 	 * @returns {string}
 	 */
-	String.prototype.trimRight = function(){
-		return this.replace(/(\s*$)/g, '');
+	String.prototype.trimRight = function(char){
+		return this.replace(new RegExp("([\\s"+char+"]*$)", 'g'), '');
 	};
 })();

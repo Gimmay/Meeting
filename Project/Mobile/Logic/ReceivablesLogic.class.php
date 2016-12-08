@@ -20,7 +20,7 @@
 			$employee_id      = I('session.MOBILE_EMPLOYEE_ID', 0, 'int');
 			switch($type){
 				case 'create_receivables':
-					if($permission_logic->hasPermission('WEIXIN.CLIENT.RECEIVABLES', $employee_id)){
+					if($permission_logic->hasPermission('WECHAT.CLIENT.RECEIVABLES', $employee_id)){
 						/** @var \Core\Model\CouponItemModel $coupon_item_model */
 						$coupon_item_model = D('Core/CouponItem');
 						$data              = I('post.', '');

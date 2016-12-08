@@ -47,10 +47,10 @@
 				$signer           = '';
 				foreach($manager_record as $val){
 					$flag = $permission_logic->hasPermission([
-						'WEIXIN.CLIENT.VIEW',
-						'WEIXIN.CLIENT.REVIEW',
-						'WEIXIN.CLIENT.SIGN',
-						'WEIXIN.MEETING.VIEW'
+						'WECHAT.CLIENT.VIEW',
+						'WECHAT.CLIENT.REVIEW',
+						'WECHAT.CLIENT.SIGN',
+						'WECHAT.MEETING.VIEW'
 					], $val['eid']);
 					if($flag){
 						$employee = $employee_model->findEmployee(1, ['id' => $val['eid']]);
@@ -83,34 +83,34 @@
 		public function notPermission(){
 			$permission = I('get.permission', '');
 			switch(strtoupper($permission)){
-				case 'WEIXIN.CLIENT.VIEW':
+				case 'WECHAT.CLIENT.VIEW':
 					$this->assign('permission', '查看参会人员');
 				break;
-				case 'WEIXIN.CLIENT.REVIEW':
+				case 'WECHAT.CLIENT.REVIEW':
 					$this->assign('permission', '审核参会人员');
 				break;
-				case 'WEIXIN.CLIENT.SIGN':
+				case 'WECHAT.CLIENT.SIGN':
 					$this->assign('permission', '签到');
 				break;
-				case 'WEIXIN.CLIENT.RECEIVABLES':
+				case 'WECHAT.CLIENT.RECEIVABLES':
 					$this->assign('permission', '收款');
 				break;
-				case 'WEIXIN.CLIENT.CREATE':
+				case 'WECHAT.CLIENT.CREATE':
 					$this->assign('permission', '创建参会人员');
 				break;
-				case 'WEIXIN.CLIENT.ANTI-REVIEW':
+				case 'WECHAT.CLIENT.ANTI-REVIEW':
 					$this->assign('permission', '取消审核');
 				break;
-				case 'WEIXIN.CLIENT.ANTI-SIGN':
+				case 'WECHAT.CLIENT.ANTI-SIGN':
 					$this->assign('permission', '取消签到');
 				break;
-				case 'WEIXIN.MEETING.VIEW':
+				case 'WECHAT.MEETING.VIEW':
 					$this->assign('permission', '查看会议');
 				break;
-				case 'WEIXIN.RECEIVABLES.VIEW':
+				case 'WECHAT.RECEIVABLES.VIEW':
 					$this->assign('permission', '查看收款记录');
 				break;
-				case 'WEIXIN.RECEIVABLES.VIEW-ALL':
+				case 'WECHAT.RECEIVABLES.VIEW-ALL':
 					$this->assign('permission', '查看所有收款记录');
 				break;
 			}

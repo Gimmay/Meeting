@@ -1,25 +1,36 @@
 /**
  * Created by qyqy on 2016-10-8.
  */
-
-
 var couponManage = {
 	liTemp:'<li class="coupon_number_item"><span>$number</span></li>',
+	num   :0
 };
 $(function(){
-
-	//单个新增和批量新增
-	$('#create_way li').on('click', function(){
-		var index = $(this).index();
-		$('#create_way li').removeClass('active');
-		$(this).addClass('active');
-		$('.c_way').addClass('hide');
-		$('.c_way').eq(index).removeClass('hide');
-		if(index == 0){
-			$('#create_coupon').find('input[name=requestType]').val('create');
-		}
-		if(index == 1){
-			$('#create_coupon').find('input[name=requestType]').val('batch_create');
+	// 选择项目类型
+	$('#coupon_type').on('change', function(){
+		var id = $(this).find('option:selected').val();
+		if(id == 2){
+			$('.mode').removeClass('hide');
+			$('.single_box').removeClass('hide');
+			//单个新增和批量新增
+			$('#create_way li').on('click', function(){
+				var index = $(this).index();
+				$('#create_way li').removeClass('active');
+				$(this).addClass('active');
+				$('.c_way').addClass('hide');
+				$('.c_way').eq(index).removeClass('hide');
+				if(index == 0){
+					$('#create_coupon').find('input[name=requestType]').val('create');
+					couponManage.num = 0;
+				}
+				if(index == 1){
+					$('#create_coupon').find('input[name=requestType]').val('batch_create');
+					couponManage.num = 1;
+				}
+				console.log(couponManage.num);
+			});
+		}else{
+			$('.c_way,.mode').addClass('hide');
 		}
 	});
 	// 全选checkbox
@@ -48,7 +59,7 @@ $(function(){
 		$('#modify_coupon').find('input[name=price]').val(price);
 		$('#modify_coupon').find('input[name=start_time]').val(start_time);
 		$('#modify_coupon').find('input[name=end_time]').val(end_time);
-		$('#modify_coupon').find('input[name=comment]').val(comment);
+		$('#modify_coupon').find('textarea[name=comment]').val(comment);
 	});
 	// 删除代金券
 	$('.delete_btn').on('click', function(){
@@ -120,7 +131,7 @@ function checkCreate(){
 	var $end_time      = $('#end_time');
 	var $coupon_number = $('input[name=coupon_area]');
 	if($coupon_name.val() == ''){
-		ManageObject.object.toast.toast("代金券名不能为空");
+		ManageObject.object.toast.toast("项目名称不能为空");
 		$coupon_name.focus();
 		return false;
 	}
@@ -129,26 +140,7 @@ function checkCreate(){
 		$price.focus();
 		return false;
 	}
-	if($coupon_number.val() == ''){
-		ManageObject.object.toast.toast("代金券号不能为空");
-		$coupon_number.focus();
-		return false;
-	}
-	/*	if($number.val() == ''){
-	 ManageObject.object.toast.toast("数量不能为空");
-	 $number.focus();
-	 return false;
-	 }*/
-	if($start_time.val() == ''){
-		ManageObject.object.toast.toast("开始时间不能为空");
-		$start_time.focus();
-		return false;
-	}
-	if($end_time.val() == ''){
-		ManageObject.object.toast.toast("结束时间不能为空");
-		$end_time.focus();
-		return false;
-	}
+	return true;
 }
 // 修改代金券限制
 function checkAlter(){
@@ -157,13 +149,8 @@ function checkAlter(){
 	var $price            = $('#price_a');
 	var $start_time       = $('#start_time_a');
 	var $end_time         = $('#end_time_a');
-	/*if($selected_meeting.text() == ''){
-	 ManageObject.object.toast.toast("会议不能为空");
-	 $selected_meeting.focus();
-	 return false;
-	 }*/
 	if($coupon_name.val() == ''){
-		ManageObject.object.toast.toast("代金券名不能为空");
+		ManageObject.object.toast.toast("项目名称不能为空");
 		$coupon_name.focus();
 		return false;
 	}
@@ -172,14 +159,5 @@ function checkAlter(){
 		$price.focus();
 		return false;
 	}
-	if($start_time.val() == ''){
-		ManageObject.object.toast.toast("开始时间不能为空");
-		$start_time.focus();
-		return false;
-	}
-	if($end_time.val() == ''){
-		ManageObject.object.toast.toast("结束时间不能为空");
-		$end_time.focus();
-		return false;
-	}
+	return true;
 }

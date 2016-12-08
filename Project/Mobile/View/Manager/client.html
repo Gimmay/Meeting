@@ -23,7 +23,7 @@
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
-	<if condition="$permission_list['WEIXIN.CLIENT.VIEW'] eq 1">
+	<if condition="$permission_list['WECHAT.CLIENT.VIEW'] eq 1">
 		<div id="mb_wrap" style="padding-bottom: 1rem">
 			<div class="mb_body">
 				<div class="topbar">
@@ -68,34 +68,34 @@
 	</if>
 	<div id="mb_footer">
 		<if condition="$list.review_status neq 1 and $list.sign_status neq 1 and $list.status eq 1">
-			<if condition="$permission_list['WEIXIN.CLIENT.REVIEW']">
+			<if condition="$permission_list['WECHAT.CLIENT.REVIEW']">
 				<a href="javascript:void(0)" class="ft_a auditing"> <span>审核</span> </a>
 			</if>
-			<if condition="$permission_list['WEIXIN.CLIENT.SIGN']">
+			<if condition="$permission_list['WECHAT.CLIENT.SIGN']">
 				<a href="javascript:void(0)" class="ft_a sign" style="display: none"> <span>签到</span> </a>
 			</if>
 		</if>
 		<if condition="$list.review_status neq 1 and $list.sign_status eq 1 and $list.status eq 1">
-			<if condition="$permission_list['WEIXIN.CLIENT.REVIEW']">
+			<if condition="$permission_list['WECHAT.CLIENT.REVIEW']">
 				<a href="javascript:void(0)" class="ft_a auditing"> <span>审核</span> </a>
 			</if>
-			<if condition="$permission_list['WEIXIN.CLIENT.SIGN']">
+			<if condition="$permission_list['WECHAT.CLIENT.SIGN']">
 				<a href="javascript:void(0)" class="ft_a sign" style="display: none"> <span>签到</span> </a>
 			</if>
 		</if>
 		<if condition="$list.review_status eq 1 and $list.sign_status neq 1 and $list.status eq 1">
-			<if condition="$permission_list['WEIXIN.CLIENT.ANTI-REVIEW']">
+			<if condition="$permission_list['WECHAT.CLIENT.ANTI-REVIEW']">
 				<a href="javascript:void(0)" class="ft_a auditing not"> <span>取消审核</span> </a>
 			</if>
-			<if condition="$permission_list['WEIXIN.CLIENT.SIGN']">
+			<if condition="$permission_list['WECHAT.CLIENT.SIGN']">
 				<a href="javascript:void(0)" class="ft_a sign"> <span>签到</span> </a>
 			</if>
 		</if>
 		<if condition="$list.review_status eq 1 and $list.sign_status eq 1 and $list.status eq 1">
-			<if condition="$permission_list['WEIXIN.CLIENT.ANTI-REVIEW']">
+			<if condition="$permission_list['WECHAT.CLIENT.ANTI-REVIEW']">
 				<a href="javascript:void(0)" class="ft_a auditing not"> <span>取消审核</span> </a>
 			</if>
-			<if condition="$permission_list['WEIXIN.CLIENT.ANTI-REVIEW']">
+			<if condition="$permission_list['WECHAT.CLIENT.ANTI-REVIEW']">
 				<a href="javascript:void(0)" class="ft_a sign not"> <span>取消签到</span> </a>
 			</if>
 		</if>

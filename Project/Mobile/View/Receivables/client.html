@@ -23,7 +23,7 @@
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
-	<if condition="$permission_list['WEIXIN.CLIENT.VIEW'] eq 1">
+	<if condition="$permission_list['WECHAT.CLIENT.VIEW'] eq 1">
 		<div id="mb_wrap">
 			<div class="top_title">
 				<a  href="javascript:history.go(-1)"  class="back glyphicon glyphicon-chevron-left"></a>
@@ -31,7 +31,7 @@
 			<div class="mb_body">
 				<div class="topbar">
 					<div class="topbarBg"><img src="<{$Think.COMMON_IMAGE_PATH}>/topbarBg.jpg" alt=""></div>
-					<span class="photo"><img src="<{$weixin_info.avatar}>"></span>
+					<span class="photo"><img src="<{$wechat_info.avatar}>"></span>
 				</div>
 				<div class="content">
 					<div class="myInfor">
@@ -89,7 +89,7 @@
 	</if>
 	<if condition="$info.status eq 1">
 	<div id="mb_footer">
-		<if condition="$permission_list['WEIXIN.CLIENT.RECEIVABLES'] eq 1">
+		<if condition="$permission_list['WECHAT.CLIENT.RECEIVABLES'] eq 1">
 			<a href="<{:U('AddReceivables',['cid'=>$info['cid'],'mid'=>$info['mid']])}>" class="ft_a receivables_btn"><span>添加收款</span>
 			</a>
 		</if>

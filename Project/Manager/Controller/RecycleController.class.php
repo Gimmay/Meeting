@@ -26,7 +26,7 @@
 			$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
 			\ThinkPHP\Quasar\Page\setTheme1($page_object);
 			$page_show = $page_object->show();
-			/* 当前页的员工记录列表 */
+			/* 当前页的客户记录列表 */
 			$client_list = $model->findClient(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
@@ -36,7 +36,7 @@
 			if(IS_POST){
 				$client_id = I('post.id');
 				$recovery  = $model->recoveryClient($client_id);
-				if($recovery['status']) $this->success($recovery['message'], U('client'));
+				if($recovery['status']) $this->success($recovery['message'], U('client',['mid'=>I('get.mid',0,'int')]));
 				else $this->error($recovery['message']);
 				exit;
 			}
@@ -66,7 +66,7 @@
 			if(IS_POST){
 				$client_id = I('post.id');
 				$recovery  = $model->recoveryEmployee($client_id);
-				if($recovery['status']) $this->success($recovery['message'], U('employee'));
+				if($recovery['status']) $this->success($recovery['message'], U('employee',['mid'=>I('get.mid',0,'int')]));
 				else $this->error($recovery['message']);
 				exit;
 			}
@@ -96,7 +96,7 @@
 			if(IS_POST){
 				$client_id = I('post.id');
 				$recovery  = $model->recoveryClient($client_id);
-				if($recovery['status']) $this->success($recovery['message'], U('meeting'));
+				if($recovery['status']) $this->success($recovery['message'], U('meeting',['mid'=>I('get.mid',0,'int')]));
 				else $this->error($recovery['message']);
 				exit;
 			}
@@ -131,7 +131,7 @@
 			if(IS_POST){
 				$client_id = I('post.id');
 				$recovery  = $model->recoveryRole($client_id);
-				if($recovery['status']) $this->success($recovery['message'], U('Role'));
+				if($recovery['status']) $this->success($recovery['message'], U('Role',['mid'=>I('get.mid',0,'int')]));
 				else $this->error($recovery['message']);
 				exit;
 			}
@@ -167,7 +167,7 @@
 			if(IS_POST){
 				$client_id = I('post.id');
 				$recovery  = $coupon_model->recoveryRole($client_id);
-				if($recovery['status']) $this->success($recovery['message'], U('Coupon'));
+				if($recovery['status']) $this->success($recovery['message'], U('Coupon',['mid'=>I('get.mid',0,'int')]));
 				else $this->error($recovery['message']);
 				exit;
 			}

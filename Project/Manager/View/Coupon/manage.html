@@ -73,14 +73,16 @@
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="6%">序号</td>
-										<td width="8%">券名称</td>
+										<td width="8%">项目名称</td>
 										<td width="8%">类型</td>
 										<td width="8%">数量</td>
 										<td width="8%">价格</td>
 										<td width="10%">开始时间</td>
 										<td width="10%">结束时间</td>
 										<td width="8%">状态</td>
-										<td width="30%">操作</td>
+										<td width="8%">备注</td>
+										<td width="16%">操作</td>
+										<td width="6%">启禁用</td>
 									</tr>
 								</thead>
 								<tbody>
@@ -91,7 +93,18 @@
 											</td>
 											<td><{$i}></td>
 											<td class="name"><{$list.name}></td>
-											<td class="type"><{$list.type}></td>
+											<td class="type">
+												<switch name="list.type">
+													<case value="1">门票</case>
+													<case value="2">代金券</case>
+													<case value="3">产品</case>
+													<case value="5">定金</case>
+													<case value="6">课程费</case>
+													<case value="7">产品费</case>
+													<case value="8">场餐费</case>
+													<case value="4">其他</case>
+												</switch>
+											</td>
 											<td>
 												<a href="<{:U('details',['id'=>$list['id'], 'mid'=>I('get.mid',0,'int')])}>" class="link color-primary"><{$list.count}></a>
 											</td>
@@ -104,11 +117,16 @@
 													<case value="1">可用</case>
 												</switch>
 											</td>
+											<td class="comment"><{$list.comment}></td>
 											<td>
 												<div class="btn-group" data-id="<{$list.id}>">
 													<a href="<{:U('details',['id'=>$list['id'], 'mid'=>I('get.mid', 0, 'int')])}>" type="button" class="btn btn-default btn-xs seeList">查看列表</a>
 													<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>
 													<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button>
+												</div>
+											</td>
+											<td>
+												<div class="btn-group" data-id="<{$list.id}>">
 													<if condition="$list['status'] eq 0">
 														<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_coupon', 'id'=>$list['id']])}>" class="btn btn-success btn-xs">启用</a>
 													</if>
@@ -132,45 +150,46 @@
 			</div>
 		</div>
 	</div>
-	<!-- 新增券 -->
+	<!-- 新增项目 -->
 	<div class="modal fade" id="create_coupon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog" style="width: 60%">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="create_role_title">新增券</h2>
+					<h2 class="modal-title" id="create_role_title">新增项目</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkCreate()">
 					<input type="hidden" name="requestType" value="create">
 					<div class="modal-body">
 						<div class="form-group">
-							<label class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>方式：</label>
+							<label for="coupon_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>类型：</label>
+							<div class="col-sm-10">
+								<select name="type" id="coupon_type" class="form-control">
+									<option value="1">门票</option>
+									<option value="2">代金券</option>
+									<option value="3">产品</option>
+									<option value="5">定金</option>
+									<option value="6">课程费</option>
+									<option value="7">产品费</option>
+									<option value="8">场餐费</option>
+									<option value="4">其他</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="coupon_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>项目名称：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control name" name="name" id="coupon_name">
+							</div>
+						</div>
+						<div class="form-group mode hide">
+							<label class="col-sm-2 control-label">方式：</label>
 							<div class="col-sm-10" style="margin:0">
 								<ul class="nav nav-pills" id="create_way">
 									<li role="presentation" class="single active"><a href="#">单个新增</a></li>
 									<li role="presentation" class="mutil"><a href="#">批量新增</a></li>
 								</ul>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="coupon_name" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>券名称：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control name" name="name" id="coupon_name">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="coupon_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>类型：</label>
-							<div class="col-sm-10">
-
-								<select name="type" id="coupon_type" class="form-control">
-									<option value="1">门票</option>
-									<option value="2">代金券</option>
-									<option value="3">产品</option>
-									<option value="100">其他</option>
-								</select>
-
-								<!--<div id="coupon_type1"></div>-->
 							</div>
 						</div>
 						<div class="form-group">
@@ -180,9 +199,9 @@
 							</div>
 						</div>
 						<!-- 单个新增 -->
-						<div class="single_box c_way">
+						<div class="single_box hide c_way">
 							<div class="form-group">
-								<label class="col-sm-2 control-label"><b style="vertical-align: middle; color: red;">*</b>券号：</label>
+								<label class="col-sm-2 control-label">券号：</label>
 								<div class="col-sm-10">
 									<input type="text" name="coupon_c" class="coupon_area form-control">
 								</div>
@@ -215,22 +234,29 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label"><b style="vertical-align: middle; color: red;">*</b>券号：</label>
+								<label class="col-sm-2 control-label">券号：</label>
 								<div class="col-sm-10">
 									<button type="button" class="btn btn-default auto_get_number">自动获取</button>
 									<ul class="list_coupon_number clearfix">
 									</ul>
 								</div>
 							</div>
+							<div class="form-group">
+								<label for="create_role_comment" class="col-sm-2 control-label"></label>
+								<div class="col-sm-10">
+									<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、开始段、长度、数量等字段可自动获取券号。
+									</p>
+								</div>
+							</div>
 						</div>
 						<div class="form-group">
-							<label for="start_time" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>开始时间：</label>
+							<label for="start_time" class="col-sm-2 control-label">开始时间：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control start_time" name="start_time" id="start_time">
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="end_time" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>结束时间：</label>
+							<label for="end_time" class="col-sm-2 control-label">结束时间：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control end_time" name="end_time" id="end_time">
 							</div>
@@ -239,13 +265,6 @@
 							<label for="create_role_comment" class="col-sm-2 control-label">备注：</label>
 							<div class="col-sm-10">
 								<textarea class="form-control comment" name="comment" id="create_role_comment"></textarea>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="create_role_comment" class="col-sm-2 control-label"></label>
-							<div class="col-sm-10">
-								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、开始段、长度、数量等字段可自动获取券号。
-								</p>
 							</div>
 						</div>
 					</div>
@@ -258,21 +277,21 @@
 			</div>
 		</div>
 	</div>
-	<!-- 修改券 -->
+	<!-- 修改项目 -->
 	<div class="modal fade" id="modify_coupon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="modify_role_title">修改券</h2>
+					<h2 class="modal-title" id="modify_role_title">修改项目</h2>
 				</div>
 				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return checkAlter()">
 					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
 					<div class="modal-body">
 
 						<div class="form-group">
-							<label for="coupon_name_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>券名称：</label>
+							<label for="coupon_name_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>项目名称：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control name" name="name" id="coupon_name_a" value="">
 							</div>
@@ -290,7 +309,11 @@
 									<option value="1">门票</option>
 									<option value="2">代金券</option>
 									<option value="3">产品</option>
-									<option value="100">其他</option>
+									<option value="5">定金</option>
+									<option value="6">课程费</option>
+									<option value="7">产品费</option>
+									<option value="8">场餐费</option>
+									<option value="4">其他</option>
 								</select>
 								<!--<input type="text" class="form-control price" name="type" id="type">-->
 							</div>

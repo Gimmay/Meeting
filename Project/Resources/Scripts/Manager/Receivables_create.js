@@ -129,9 +129,8 @@ var ScriptObject = {
 			ss.push(id);
 			if($.inArray(id, arr2) == -1){
 				/*//alert('1');*/
-
 			}else{
-			/*	alert('2');*/
+				/*	alert('2');*/
 				$(this).remove();
 			}
 		});
@@ -162,8 +161,8 @@ var ScriptObject = {
 			}
 		);
 		/*$('.coupon_code').on('mousedown', function(){
-			ScriptObject.refreshSelectVal($(this));
-		});*/
+		 ScriptObject.refreshSelectVal($(this));
+		 });*/
 		// 其他收款选择项目类型
 		$('.rece_li').find('.project_type').on('change', function(){
 			var self = this;
@@ -222,6 +221,7 @@ var ScriptObject = {
 }
 	;
 $(function(){
+	$('#redirectUrl').val(document.referrer);
 	ScriptObject.bindEvent();
 	ScriptObject.setCouponName();
 	$('.other .add').on('click', function(){

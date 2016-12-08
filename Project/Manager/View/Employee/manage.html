@@ -76,8 +76,9 @@
 										<td width="10%">手机</td>
 										<td width="10%">部门</td>
 										<td width="15%">角色</td>
-										<td width="15%">创建日期</td>
+										<td width="9%">创建日期</td>
 										<td width="20%">操作</td>
+										<td width="6%">启禁用</td>
 									</tr>
 								</thead>
 								<tbody>
@@ -103,7 +104,9 @@
 												</switch>
 											</td>
 											<td><{$single.mobile}></td>
-											<td><a href="<{:U('manage', ['did'=>$single['did']])}>"><{$single.department}></a></td>
+											<td>
+												<a href="<{:U('manage', ['did'=>$single['did']])}>"><{$single.department}></a>
+											</td>
 											<td><{$single.role}></td>
 											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
 											<td>
@@ -126,6 +129,10 @@
 													<if condition="$permission_list['EMPLOYEE.DELETE'] eq 1">
 														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_employee">删除</button>
 													</if>
+												</div>
+											</td>
+											<td>
+												<div class="btn-group" data-id="<{$single.id}>">
 													<if condition="$single['status'] eq 0">
 														<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_employee', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
 													</if>
@@ -338,7 +345,10 @@
 							<div class="form-group">
 								<label for="password_reset" class="col-sm-2 control-label">密码：</label>
 								<div class="col-sm-10">
-									默认密码为<if condition="C('DEFAULT_EMPLOYEE_PASSWORD') eq ''">空<else/><b><{:C('DEFAULT_EMPLOYEE_PASSWORD')}></b></if>
+									默认密码为
+									<if condition="C('DEFAULT_EMPLOYEE_PASSWORD') eq ''">空
+										<else/>
+										<b><{:C('DEFAULT_EMPLOYEE_PASSWORD')}></b></if>
 									<input type="hidden" name="password" id="password_reset" value="<{:C('DEFAULT_EMPLOYEE_PASSWORD')}>">
 								</div>
 							</div>

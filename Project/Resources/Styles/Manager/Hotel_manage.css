@@ -1,3 +1,15 @@
-.xheLayout {
-	width: 100% !important;
+.xheLayout{
+	width : 100% !important;
 }
+
+.choose_hotel{
+	cursor : pointer;
+}
+
+.choose_hotel.active, .choose_hotel.active:hover, .choose_hotel:hover{
+	border-color : #00A0E8;
+	background   : #00A0E8;
+	color        : #FFFFFF;
+	text-shadow  : none;
+}
+

@@ -48,11 +48,21 @@
 						<i class="icon_nav glyphicon glyphicon-list-alt"></i> <span class="nav-label">会议信息</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li><?php endif; ?>
+			<?php if($permission_list['MEETING.CONFIGURE'] == 1): ?><li class="side_item <?php if($cv_name == Meeting_configure): ?>active<?php endif; ?>">
+					<a href="<?php echo U('Meeting/configure', ['mid'=>I('get.mid', 0, 'int')]);?>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-cog"></i> <span class="nav-label">会议配置</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li><?php endif; ?>
 			<?php if($permission_list['CLIENT.VIEW'] == 1): ?><li class="side_item <?php if($c_name == Client): ?>active<?php endif; ?>">
 					<a href="<?php echo U('Client/manage', ['mid'=>I('get.mid', 0, 'int')]);?>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">参会人员</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li><?php endif; ?>
+			<li class="side_item <?php if($c_name == Grouping): ?>active<?php endif; ?>">
+				<a href="<?php echo U('Grouping/manage', ['mid'=>I('get.mid', 0, 'int')]);?>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-compressed"></i> <span class="nav-label">分组管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
 			<?php if($permission_list['SIGN_PLACE.VIEW'] == 1): ?><li class="side_item <?php if($c_name == SignPlace): ?>active<?php endif; ?>">
 					<a href="<?php echo U('SignPlace/manage', ['mid'=>I('get.mid', 0, 'int')]);?>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-star"></i> <span class="nav-label">签到点管理</span>
@@ -107,11 +117,11 @@
 						<i class="icon_nav glyphicon glyphicon-plane"></i> <span class="nav-label">车辆管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li><?php endif; ?>
-			<?php if($permission_list['DINING_TABLE.VIEW'] == 1): ?><li class="side_item <?php if($c_name == DiningTable): ?>active<?php endif; ?>">
-					<a href="<?php echo U('DiningTable/manage', ['mid'=>I('get.mid', 0, 'int')]);?>" class="side-item-link">
-						<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>
-						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
-				</li><?php endif; ?>
+			<?php if($permission_list['DINING_TABLE.VIEW'] == 1): ?><!--<li class="side_item <?php if($c_name == DiningTable): ?>active<?php endif; ?>">-->
+					<!--<a href="<?php echo U('DiningTable/manage', ['mid'=>I('get.mid', 0, 'int')]);?>" class="side-item-link">-->
+						<!--<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>-->
+						<!--<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>-->
+				<!--</li>--><?php endif; ?>
 			<?php if($permission_list['REPORT.VIEW'] == 1): ?><li class="side_item <?php if($c_name == Report): ?>active<?php endif; ?>">
 					<a href="<?php echo U('Report/manage', ['mid'=>I('get.mid', 0, 'int')]);?>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-list-alt"></i> <span class="nav-label">报表管理</span>
@@ -124,25 +134,25 @@
 					</div>
 					<ul class="nav-second-level">
 						<?php if($permission_list['RECYCLE.VIEW-CLIENT'] == 1): ?><li>
-								<a href="<?php echo U('Recycle/client');?>">客户列表</a>
+								<a href="<?php echo U('Recycle/client',['mid'=>I('get.mid',0,'int')]);?>">客户列表</a>
 							</li><?php endif; ?>
 						<?php if($permission_list['RECYCLE.VIEW-EMPLOYEE'] == 1): ?><li>
-								<a href="<?php echo U('Recycle/employee');?>">员工列表</a>
+								<a href="<?php echo U('Recycle/employee',['mid'=>I('get.mid',0,'int')]);?>">员工列表</a>
 							</li><?php endif; ?>
 						<?php if($permission_list['RECYCLE.VIEW-ROLE'] == 1): ?><li>
-								<a href="<?php echo U('Recycle/role');?>">角色列表</a>
+								<a href="<?php echo U('Recycle/role',['mid'=>I('get.mid',0,'int')]);?>">角色列表</a>
 							</li><?php endif; ?>
 						<?php if($permission_list['RECYCLE.VIEW-MEETING'] == 1): ?><li>
-								<a href="<?php echo U('Recycle/meeting');?>">会议列表</a>
+								<a href="<?php echo U('Recycle/meeting',['mid'=>I('get.mid',0,'int')]);?>">会议列表</a>
 							</li><?php endif; ?>
 						<?php if($permission_list['RECYCLE.VIEW-COUPON'] == 1): ?><li>
-								<a href="<?php echo U('Recycle/coupon');?>">代金券</a>
+								<a href="<?php echo U('Recycle/coupon',['mid'=>I('get.mid',0,'int')]);?>">代金券</a>
 							</li><?php endif; ?>
 						<?php if($permission_list['RECYCLE.VIEW-COUPON_ITEM'] == 1): ?><li>
-								<a href="<?php echo U('Recycle/coupon_item');?>">代金券码</a>
+								<a href="<?php echo U('Recycle/coupon_item',['mid'=>I('get.mid',0,'int')]);?>">代金券码</a>
 							</li><?php endif; ?>
 						<?php if($permission_list['RECYCLE.VIEW-MESSAGE'] == 1): ?><li>
-								<a href="<?php echo U('Recycle/message');?>">消息管理</a>
+								<a href="<?php echo U('Recycle/message',['mid'=>I('get.mid',0,'int')]);?>">消息管理</a>
 							</li><?php endif; ?>
 					</ul>
 				</li><?php endif; ?>
@@ -339,6 +349,24 @@
 										</div>
 									</div>
 									<div class="form-group">
+										<label for="type" class="col-sm-1 control-label">客户类型：</label>
+										<div class="col-sm-11">
+											<select id="type" name="type" class="form-control">
+												<option value="陪同">陪同</option>
+												<option value="终端">终端</option>
+												<option value="内部员工">内部员工</option>
+												<option value="嘉宾">嘉宾</option>
+												<option value="老总">老早</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="team" class="col-sm-1 control-label">团队：</label>
+										<div class="col-sm-11">
+											<input type="text" class="form-control team" name="team" id="team" value="<?php echo ($info["team"]); ?>">
+										</div>
+									</div>
+									<div class="form-group">
 										<label for="develop_consultant" class="col-sm-1 control-label">开拓顾问：</label>
 										<div class="col-sm-11">
 											<div id="develop_consultant"></div>
@@ -462,11 +490,6 @@
 				}),
 				toast                  :$().QuasarToast(),
 				loading                :$().QuasarLoading(),
-				// 地址
-				citySelect             :$("#address").citySelect({
-					nodata:"none",
-					url   :'<?php echo (COMMON_SCRIPT_PATH); ?>/jQuery/cityselect/city.min.js'
-				})
 			}
 		};
 		$(function(){

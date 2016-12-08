@@ -75,7 +75,8 @@
 										<td width="5%">等级</td>
 										<td width="10%">备注</td>
 										<td width="8%">创建时间</td>
-										<td width="40%">操作</td>
+										<td width="30%">操作</td>
+										<td width="10%">启禁用</td>
 									</tr>
 								</thead>
 								<tbody>
@@ -115,6 +116,12 @@
 															<if condition="$permission_list['ROLE.DELETE'] eq 1">
 																<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_role">删除</button>
 															</if>
+														</if>
+													</div>
+												</td>
+												<td>
+													<div class="btn-group" data-id="<{$single.id}>">
+														<if condition="$max_role_level elt $single['level']">
 															<if condition="$single['status'] eq 0">
 																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_role', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
 															</if>
@@ -304,7 +311,8 @@
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">
 							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-						<h2 class="modal-title" id="authorize_role_title">角色授权<span class="role_name" style="font-size: 12px; color: #FB5050; margin-left: 10px;"></span>
+						<h2 class="modal-title text-center" id="authorize_role_title">
+							<span class="role_name" style="font-size: 16px; color: #FB5050; margin-left: 10px;"></span>&nbsp;&nbsp;&nbsp;&nbsp;角色授权
 						</h2>
 					</div>
 					<form class="form-horizontal" role="form" method="post">

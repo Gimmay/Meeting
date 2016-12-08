@@ -24,7 +24,7 @@
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
-	<if condition="$permission_list['WEIXIN.RECEIVABLES.VIEW'] eq 1">
+	<if condition="$permission_list['WECHAT.RECEIVABLES.VIEW'] eq 1">
 		<div id="mb_wrap">
 			<div class="top_title">
 				<a  href="javascript:history.go(-1)"  class="back glyphicon glyphicon-chevron-left"></a>
@@ -81,17 +81,17 @@
 	</if>
 	<div id="mb_footer">
 
-		<if condition="$permission_list['WEIXIN.MEETING.VIEW'] eq 1 and I('get.mid')">
+		<if condition="$permission_list['WECHAT.MEETING.VIEW'] eq 1 and I('get.mid')">
 			<a href="<{:U('meeting', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"><span>会议详情</span> </a>
 		</if>
-		<if condition="$permission_list['WEIXIN.CLIENT.VIEW'] eq 1 and I('get.mid')">
+		<if condition="$permission_list['WECHAT.CLIENT.VIEW'] eq 1 and I('get.mid')">
 			<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"><span>参会人员</span> </a>
 		</if>
-		<if condition="$permission_list['WEIXIN.RECEIVABLES.VIEW'] eq 1">
+		<if condition="$permission_list['WECHAT.RECEIVABLES.VIEW'] eq 1">
 			<a href="<{:U('myReceivables', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a"> <span>我的收款</span>
 			</a>
 		</if>
-		<if condition="$permission_list['WEIXIN.RECEIVABLES.VIEW-ALL'] eq 1">
+		<if condition="$permission_list['WECHAT.RECEIVABLES.VIEW-ALL'] eq 1">
 			<a href="<{:U('receivablesRecord', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a active"> <span>收款记录</span> </a>
 		</if>
 	</div>

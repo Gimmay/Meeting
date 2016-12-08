@@ -39,6 +39,7 @@
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
 			if(isset($filter['hid'])) $where['hid'] = $filter['hid'];
+			if(isset($filter['type'])) $where['type'] = $filter['type'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted') $where['status'] = ['neq', 3];

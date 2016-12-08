@@ -9,7 +9,7 @@
 
 	use Core\Logic\WxCorpLogic;
 
-	class WeixinController extends MobileController{
+	class WechatController extends MobileController{
 		public function _initialize(){
 			parent::_initialize();
 		}
@@ -20,26 +20,26 @@
 
 		public function verify(){
 			$redirect = I('get.redirect', 0, 'int');
-			if(!isset($_SESSION['MOBILE_WEIXIN_ID'])){
+			if(!isset($_SESSION['MOBILE_WECHAT_ID'])){
 				$wxcorp_logic   = new WxCorpLogic();
-				$weixin_user_id = $wxcorp_logic->getUserID();
-				if($weixin_user_id){
-					$redirect_url = I('cookie.WEIXIN_REDIRECT_URL', '');
-					setcookie('WEIXIN_REDIRECT_URL');
-					$_SESSION['MOBILE_WEIXIN_ID'] = $weixin_user_id;
+				$wechat_user_id = $wxcorp_logic->getUserID();
+				if($wechat_user_id){
+					$redirect_url = I('cookie.WECHAT_REDIRECT_URL', '');
+					setcookie('WECHAT_REDIRECT_URL');
+					$_SESSION['MOBILE_WECHAT_ID'] = $wechat_user_id;
 					redirect($redirect_url);
 
 					return true;
 				}
 				else{
-					if($redirect) $this->redirect('Weixin/notFollow');
+					if($redirect) $this->redirect('Wechat/notFollow');
 
 					return false;
 				}
 			}
 			else{
-				$redirect_url = I('cookie.WEIXIN_REDIRECT_URL', '');
-				setcookie('WEIXIN_REDIRECT_URL');
+				$redirect_url = I('cookie.WECHAT_REDIRECT_URL', '');
+				setcookie('WECHAT_REDIRECT_URL');
 				redirect($redirect_url);
 				return true;
 			}

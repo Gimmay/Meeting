@@ -52,8 +52,8 @@
 					//					}
 					if($result['status'] && isset($employee_id)){
 						$result['message'] = '创建成功';
-						/** @var \Core\Model\WeixinIDModel $weixin_model */
-						$weixin_model = D('Core/WeixinID');
+						/** @var \Core\Model\WechatModel $wechat_model */
+						$wechat_model = D('Core/Wechat');
 						$logic        = new WxCorpLogic();
 						$wx_list      = $logic->getAllUserList(); //查出wx接口获取的所有用户信息
 						foreach($wx_list as $k1 => $v1){
@@ -67,7 +67,7 @@
 								$data['wtype']      = 1;    //微信ID类型 企业号
 								$data['oid']        = $employee_id;    //对象ID
 								$data['department'] = $department;    //部门ID
-								$data['weixin_id']  = $v1['userid'];    //微信ID
+								$data['wid']  = $v1['userid'];    //微信ID
 								$data['mobile']     = $v1['mobile'];    //手机号码
 								$data['avatar']     = $v1['avatar'];    //头像地址
 								$data['gender']     = $v1['gender'];    //性别
@@ -75,7 +75,7 @@
 								$data['nickname']   = $v1['name'];    //昵称
 								$data['creatime']   = time();    //创建时间
 								$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
-								$weixin_model->createRecord($data);    //插入数据
+								$wechat_model->createRecord($data);    //插入数据
 							}
 						}
 					}

@@ -42,7 +42,7 @@
 			$pid_arr                 = [];
 			$creator                 = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 			foreach($list as $key => $val){
-				$pid_arr[] = $val['id'];
+				$pid_arr[]   = $val['id'];
 				$save_data[] = [
 					'pid'      => $val['id'],
 					'oid'      => $oid,
@@ -52,14 +52,14 @@
 				];
 			}
 			C('TOKEN_ON', false);
-			$result1 = $assign_permission_model->deleteRecord([
+			$assign_permission_model->deleteRecord([
 				'pid'  => ['in', $pid_arr],
 				'oid'  => $oid,
 				'type' => $type
 			]);
-			if($result1['status']) $result2 = $assign_permission_model->createMultiRecord($save_data);
-			else $result2 = ['status'=>false, 'message'=>'授权失败'];
-			return $result2;
+			$result = $assign_permission_model->createMultiRecord($save_data);
+
+			return $result;
 		}
 
 		public function multiAntiAssignPermission($p_group, $oid, $type){

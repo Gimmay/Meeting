@@ -18,16 +18,16 @@
 		/**
 		 * 获取访问者的微信ID
 		 *
-		 * @param int|string $weixin_id 微信ID
+		 * @param int|string $wechat_id 微信ID
 		 * @param int        $wtype     微信ID类型 0：公众号OPENID 1：企业号USERID
 		 *
 		 * @return int|null
 		 */
-		public function getVisitorID($weixin_id, $wtype = 1){
-			/** @var \Core\Model\WeixinIDModel $weixin_model */
-			$weixin_model = D('Core/WeixinID');
-			$visitor      = $weixin_model->findRecord(1, [
-				'weixin_id' => $weixin_id,
+		public function getVisitorID($wechat_id, $wtype = 1){
+			/** @var \Core\Model\WechatModel $wechat_model */
+			$wechat_model = D('Core/Wechat');
+			$visitor      = $wechat_model->findRecord(1, [
+				'wechat_id' => $wechat_id,
 				'wtype'     => $wtype,
 				'otype'     => 1
 			]);
@@ -41,14 +41,14 @@
 		 * @return array
 		 */
 		public function getClientInformation($cid){
-			/** @var \Core\Model\WeixinIDModel $weixin_model */
-			$weixin_model = D('Core/WeixinID');
+			/** @var \Core\Model\WechatModel $wechat_model */
+			$wechat_model = D('Core/Wechat');
 			/** @var \Core\Model\ClientModel $client_model */
 			$client_model = D('Core/Client');
 			$record       = $client_model->findClient(1, ['id' => $cid]);
 			if(!$record) return [];
-			$weixin_record    = $weixin_model->findRecord(1, ['oid' => $cid, 'otype' => 1]);
-			$record['avatar'] = $weixin_record['avatar'];
+			$wechat_record    = $wechat_model->findRecord(1, ['oid' => $cid, 'otype' => 1]);
+			$record['avatar'] = $wechat_record['avatar'];
 
 			return $record;
 		}
@@ -118,17 +118,17 @@
 					]);
 					if($result['status']){
 						/** @var \Core\Model\ClientModel $model */
-						/** @var \Core\Model\WeixinIDModel $weixin_model */
+						/** @var \Core\Model\WechatModel $wechat_model */
 						/** @var \Core\Model\MeetingModel $meeting_model */
 						$model          = D('Core/Client');
 						$wxcorp_logic   = new WxCorpLogic();
-						$weixin_model   = D('Core/WeixinID');
+						$wechat_model   = D('Core/Wechat');
 						$meeting_model  = D('Core/Meeting');
 						$meeting_record = $meeting_model->findMeeting(1, ['id' => $meeting_id]);
 						$record         = $model->findClient(1, ['id' => $cid]);
-						$weixin_record  = $weixin_model->findRecord(1, ['mobile' => $record['mobile']]);
+						$wechat_record  = $wechat_model->findRecord(1, ['mobile' => $record['mobile']]);
 						$time           = date('Y-m-d H:i:s');
-						$wxcorp_logic->sendMessage('text', "您参加的<$meeting_record[name]>于[$time]取消签到", ['user' => [$weixin_record['weixin_id']]], 'client');
+						$wxcorp_logic->sendMessage('text', "您参加的<$meeting_record[name]>于[$time]取消签到", ['user' => [$wechat_record['wid']]], 'client');
 					}
 
 					return array_merge($result, ['__ajax__' => true]);
@@ -165,7 +165,7 @@
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
 					$cid         = $option['cid'];
-					$mid         = I('get.mid', 0, 'int');
+					$mid         = $option['mid'];
 					$join_record = $join_model->findRecord(1, [
 						'cid' => $cid,
 						'mid' => $mid

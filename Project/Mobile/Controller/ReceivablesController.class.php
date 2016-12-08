@@ -15,13 +15,13 @@
 	use Think\Model;
 
 	class ReceivablesController extends MobileController{
-		protected $weixinID   = 0;
+		protected $wechatID   = 0;
 		protected $employeeID = 0;
 		protected $meetingID  = 0;
 
 		public function _initialize(){
 						$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
-						$_SESSION['MOBILE_WEIXIN_ID']   = 1090;
+						$_SESSION['MOBILE_WECHAT_ID']   = 1090;
 			parent::_initialize();
 		}
 
@@ -42,7 +42,7 @@
 			$get              = function (){
 				$logic = new ManagerLogic();
 
-				return $logic->getVisitorID($this->weixinID);
+				return $logic->getVisitorID($this->wechatID);
 			};
 			$this->employeeID = isset($_SESSION['MOBILE_EMPLOYEE_ID']) ? I('session.MOBILE_EMPLOYEE_ID', 0, 'int') : $get();
 			if($this->employeeID == 0){
@@ -54,10 +54,10 @@
 		}
 
 		public function meetingList(){
-			$this->weixinID = $this->getWeixinID();
+			$this->wechatID = $this->getWechatID();
 			$this->_getEmployeeID();
 			$permission_logic = new PermissionLogic();
-			if($permission_logic->hasPermission('WEIXIN.MEETING.VIEW', $this->employeeID)){
+			if($permission_logic->hasPermission('WECHAT.MEETING.VIEW', $this->employeeID)){
 				/** @var \Core\Model\MeetingModel $meeting_model */
 				$meeting_model = D('Core/Meeting');
 				$logic         = new ManagerLogic();
@@ -67,11 +67,11 @@
 				$this->assign('meeting_list', $meeting_list);
 				$this->display();
 			}
-			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.MEETING.VIEW']);
+			else $this->redirect('Error/notPermission', ['permission' => 'WECHAT.MEETING.VIEW']);
 		}
 
 		public function addReceivables(){
-			$this->weixinID = $this->getWeixinID();
+			$this->wechatID = $this->getWechatID();
 			$this->_getEmployeeID();
 			$this->_getMeetingParam();
 			$receivables_logic = new ReceivablesLogic();
@@ -90,7 +90,7 @@
 				exit;
 			}
 			$permission_logic = new PermissionLogic();
-			if($permission_logic->hasPermission('WEIXIN.CLIENT.RECEIVABLES', $this->employeeID)){
+			if($permission_logic->hasPermission('WECHAT.CLIENT.RECEIVABLES', $this->employeeID)){
 				/** @var \Core\Model\ClientModel $client_model */
 				$client_model = D('Core/Client');
 				/** @var \Core\Model\PayMethodModel $pay_method_model */
@@ -121,21 +121,21 @@
 				$this->assign('pos', $pos_machine_result);
 				$this->display();
 			}
-			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.CLIENT.RECEIVABLES']);
+			else $this->redirect('Error/notPermission', ['permission' => 'WECHAT.CLIENT.RECEIVABLES']);
 		}
 
 		public function client(){
-			$this->weixinID = $this->getWeixinID();
+			$this->wechatID = $this->getWechatID();
 			$this->_getEmployeeID();
 			$this->_getMeetingParam();
 			$permission_logic = new PermissionLogic();
-			if($permission_logic->hasPermission('WEIXIN.CLIENT.VIEW', $this->employeeID)){
+			if($permission_logic->hasPermission('WECHAT.CLIENT.VIEW', $this->employeeID)){
 				/** @var \Core\Model\JoinModel $join_model */
 				$join_model = D('Core/Join');
 				/** @var \Core\Model\ReceivablesModel $receivables_model */
 				$receivables_model = D('Core/Receivables');
-				/** @var \Core\Model\WeixinIDModel $weixin_id_model */
-				$weixin_id_model = D('Core/WeixinID');
+				/** @var \Core\Model\WechatModel $wechat_id_model */
+				$wechat_id_model = D('Core/Wechat');
 				/** @var \Core\Model\PayMethodModel $pay_method_model */
 				$pay_method_model = D('Core/PayMethod');
 				/** @var \Core\Model\ReceivablesTypeModel $receivables_type_model */
@@ -143,7 +143,7 @@
 				$cid                    = I('get.cid', 0, 'int');
 				$mid                    = I('get.mid', 0, 'int');
 				$join_result            = $join_model->findRecord(1, ['cid' => $cid, 'mid' => $mid]);
-				$weixin_record          = $weixin_id_model->findRecord(1, ['oid' => $cid, 'otype' => 1, 'wtype' => 1]);
+				$wechat_record          = $wechat_id_model->findRecord(1, ['oid' => $cid, 'otype' => 1, 'wtype' => 1]);
 				$receivables_result     = $receivables_model->findRecord(2, [
 					'cid'      => $cid,
 					'mid'      => $mid,
@@ -164,18 +164,18 @@
 				$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
 				$this->assign('info', $join_result);
 				$this->assign('list', $receivables_result);
-				$this->assign('weixin_info', $weixin_record);
+				$this->assign('wechat_info', $wechat_record);
 				$this->display();
 			}
-			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.CLIENT.VIEW']);
+			else $this->redirect('Error/notPermission', ['permission' => 'WECHAT.CLIENT.VIEW']);
 		}
 
 		public function clientList(){
-			$this->weixinID = $this->getWeixinID();
+			$this->wechatID = $this->getWechatID();
 			$this->_getEmployeeID();
 			$this->_getMeetingParam();
 			$permission_logic = new PermissionLogic();
-			if($permission_logic->hasPermission('WEIXIN.CLIENT.VIEW', $this->employeeID)){
+			if($permission_logic->hasPermission('WECHAT.CLIENT.VIEW', $this->employeeID)){
 				$receivables_logic = new ReceivablesLogic();
 				/** @var \Core\Model\JoinModel $join_model */
 				$join_model  = D('Core/Join');
@@ -206,15 +206,15 @@
 				$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
 				$this->display();
 			}
-			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.CLIENT.VIEW']);
+			else $this->redirect('Error/notPermission', ['permission' => 'WECHAT.CLIENT.VIEW']);
 		}
 
 		public function meeting(){
-			$this->weixinID = $this->getWeixinID();
+			$this->wechatID = $this->getWechatID();
 			$this->_getEmployeeID();
 			$this->_getMeetingParam();
 			$permission_logic = new PermissionLogic();
-			if($permission_logic->hasPermission('WEIXIN.MEETING.VIEW', $this->employeeID)){
+			if($permission_logic->hasPermission('WECHAT.MEETING.VIEW', $this->employeeID)){
 				/** @var \Core\Model\MeetingModel $meeting_model */
 				$meeting_model = D('Core/Meeting');
 				/** @var \Core\Model\JoinModel $join_model */
@@ -233,15 +233,15 @@
 				$this->assign('count', $receivables_result_count);
 				$this->display();
 			}
-			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.MEETING.VIEW']);
+			else $this->redirect('Error/notPermission', ['permission' => 'WECHAT.MEETING.VIEW']);
 		}
 
 		public function receivablesDetails(){
-			$this->weixinID = $this->getWeixinID();
+			$this->wechatID = $this->getWechatID();
 			$this->_getEmployeeID();
 			$this->_getMeetingParam();
 			$permission_logic = new PermissionLogic();
-			if($permission_logic->hasPermission('WEIXIN.RECEIVABLES.VIEW', $this->employeeID)){
+			if($permission_logic->hasPermission('WECHAT.RECEIVABLES.VIEW', $this->employeeID)){
 				$receivables_logic = new ReceivablesLogic();
 				/** @var \Core\Model\ReceivablesModel $receivables_model */
 				$receivables_model  = D('Core/Receivables');
@@ -268,14 +268,14 @@
 				// ↑↑↑ 微信分享接口 ↑↑↑
 				$this->display();
 			}
-			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.RECEIVABLES.VIEW']);
+			else $this->redirect('Error/notPermission', ['permission' => 'WECHAT.RECEIVABLES.VIEW']);
 		}
 
 		public function receivablesRecord(){
-			$this->weixinID = $this->getWeixinID();
+			$this->wechatID = $this->getWechatID();
 			$this->_getEmployeeID();
 			$permission_logic = new PermissionLogic();
-			if($permission_logic->hasPermission('WEIXIN.RECEIVABLES.VIEW-ALL', $this->employeeID)){
+			if($permission_logic->hasPermission('WECHAT.RECEIVABLES.VIEW-ALL', $this->employeeID)){
 				//				/** @var \Core\Model\ReceivablesModel $receivables_model */
 				//				$receivables_model = D('Core/Receivables');
 				//				/** @var \Core\Model\ClientModel $client_model */
@@ -311,14 +311,14 @@
 				$this->assign('list', $receivables_list);
 				$this->display();
 			}
-			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.RECEIVABLES.VIEW-ALL']);
+			else $this->redirect('Error/notPermission', ['permission' => 'WECHAT.RECEIVABLES.VIEW-ALL']);
 		}
 
 		public function myReceivables(){
-			$this->weixinID = $this->getWeixinID();
+			$this->wechatID = $this->getWechatID();
 			$this->_getEmployeeID();
 			$permission_logic = new PermissionLogic();
-			if($permission_logic->hasPermission('WEIXIN.RECEIVABLES.VIEW', $this->employeeID)){
+			if($permission_logic->hasPermission('WECHAT.RECEIVABLES.VIEW', $this->employeeID)){
 				$logic = new ReceivablesLogic();
 				//				/** @var \Core\Model\ReceivablesModel $receivables_model */
 				//				$receivables_model = D('Core/Receivables');
@@ -368,6 +368,6 @@
 				$this->assign('list', $receivables_list);
 				$this->display();
 			}
-			else $this->redirect('Error/notPermission', ['permission' => 'WEIXIN.RECEIVABLES.VIEW']);
+			else $this->redirect('Error/notPermission', ['permission' => 'WECHAT.RECEIVABLES.VIEW']);
 		}
 	}

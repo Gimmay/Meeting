@@ -7,8 +7,8 @@
 	 */
 	namespace Manager\Logic;
 
+	use Core\Logic\JoinLogic;
 	use Core\Logic\ReceivablesLogic;
-	use Core\Logic\SMSLogic;
 	use Core\Logic\WxCorpLogic;
 	use Quasar\StringPlus;
 
@@ -157,7 +157,7 @@
 			return $list;
 		}
 
-		public function getReceivablesList($list, $receivables = 1, $new = true){
+		public function getReceivablesList($list, $receivables = 1, $new = true, $pagination = []){
 			/** @var \Core\Model\ReceivablesModel $receivables_model */
 			$receivables_model = D('Core/Receivables');
 			$new_list          = [];
@@ -190,7 +190,7 @@
 				}
 			}
 
-			return $new ? $new_list : $list;
+			return $new ? ($pagination ? array_splice($new_list, $pagination[0], $pagination[1]) : $new_list) : $list;
 		}
 
 		public function handlerRequest($type){
@@ -210,6 +210,7 @@
 						if($exist_client){
 							$cid                 = $exist_client['id'];
 							$str_obj             = new StringPlus();
+							$data['status']      = 1;
 							$data['is_new']      = 0;
 							$data['creatime']    = time();
 							$data['creator']     = $creator;
@@ -236,7 +237,7 @@
 						]);
 						$mobile            = $data['mobile'];
 						$registration_date = I('post.registration_date');
-						$registration_date = $registration_date?$registration_date:date('Y-m-d');
+						$registration_date = $registration_date ? $registration_date : date('Y-m-d');
 						if($join_record){
 							if($join_record['join_status'] != 1){
 								C('TOKEN_ON', false);
@@ -268,18 +269,18 @@
 							$result = $join_model->createRecord($data);
 						}
 						/* 3.试图根据手机号创建微信用户记录 */
-						$weixin_logic     = new WxCorpLogic();
-						$weixin_user_list = $weixin_logic->getAllUserList();
-						foreach($weixin_user_list as $val){
+						$wechat_logic     = new WxCorpLogic();
+						$wechat_user_list = $wechat_logic->getAllUserList();
+						foreach($wechat_user_list as $val){
 							if($val['mobile'] == $mobile && $val['status'] != 4){
-								/** @var \Core\Model\WeixinIDModel $weixin_model */
-								$weixin_model = D('Core/WeixinID');
+								/** @var \Core\Model\WechatModel $wechat_model */
+								$wechat_model = D('Core/Wechat');
 								C('TOKEN_ON', false);
-								$weixin_model->deleteRecord([
-									'weixin_id' => $val['userid'],
-									'otype'     => 1,
-									'oid'       => $val['id'],
-									'wtype'     => 1
+								$wechat_model->deleteRecord([
+									'wid'   => $val['userid'],
+									'otype' => 1,
+									'oid'   => $val['id'],
+									'wtype' => 1
 								]);
 								$department = '';
 								foreach($val['department'] as $val2) $department .= $val2.',';
@@ -288,7 +289,7 @@
 								$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
 								$data['oid']        = $cid; // 对象ID
 								$data['wtype']      = 1; // 微信ID类型 企业号
-								$data['weixin_id']  = $val['userid']; // 微信ID
+								$data['wid']        = $val['userid']; // 微信ID
 								$data['department'] = $department; // 部门ID
 								$data['mobile']     = $val['mobile']; // 手机号码
 								$data['avatar']     = $val['avatar']; // 头像地址
@@ -297,7 +298,7 @@
 								$data['nickname']   = $val['name']; // 昵称
 								$data['creatime']   = time(); // 创建时间
 								$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); // 当前创建者
-								$weixin_model->createRecord($data); // 插入数据
+								$wechat_model->createRecord($data); // 插入数据
 								break;
 							}
 						}
@@ -408,7 +409,7 @@
 						]);
 						if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
 						$join_logic = new JoinLogic();
-						$result2    = $join_logic->makeQRCode([$cid], ['mid' => $mid]);
+						$result2    = $join_logic->makeQRCodeForSign([$cid], ['mid' => $mid]);
 
 						return array_merge($result2, ['__ajax__' => true]);
 					}
@@ -466,7 +467,7 @@
 						]);
 						if(!$result1['status']) return array_merge($result1, ['__ajax__' => false]);
 						$join_logic = new JoinLogic();
-						$result2    = $join_logic->makeQRCode($client_id_arr, ['mid' => $mid]);
+						$result2    = $join_logic->makeQRCodeForSign($client_id_arr, ['mid' => $mid]);
 
 						return array_merge($result2, ['__ajax__' => false]);
 					}
@@ -720,19 +721,20 @@
 				break;
 				case 'send_message':
 					if($this->permissionList['CLIENT.SEND-INVITATION']){
-						/** @var \Core\Model\ClientModel $client_model */
-						$client_model  = D('Core/Client');
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model    = D('Core/Join');
 						$message_logic = new MessageLogic();
 						$cid           = I('post.id', 0, 'int');
 						$mid           = I('post.mid', 0, 'int');
-						$record        = $client_model->findClient(1, [
-							'id'     => $cid,
+						$record        = $join_model->findRecord(1, [
+							'cid'    => $cid,
+							'mid'    => $mid,
 							'status' => 'not deleted'
 						]);
-						$result        = $message_logic->send($mid, 1, 4, [$record['id']]);
+						if($record['review_status']) $result = $message_logic->send($mid, 1, 4, [$record['cid']]);
+						else $result = ['status' => false, 'message' => '该客户未审核'];
 
 						return array_merge($result, [
-							'status'   => true,
 							'__ajax__' => true
 						]);
 					}
@@ -745,37 +747,42 @@
 				case 'multi_send_message':
 					if($this->permissionList['CLIENT.SEND-INVITATION']){
 						$message_logic = new MessageLogic();
-						/** @var \Core\Model\ClientModel $client_model */
-						$client_model = D('Core/Client');
-						$cid          = I('post.id', '');
-						$mid          = I('get.mid', 0, 'int');
-						$client_arr   = explode(',', $cid);
-						$count        = 0;
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model = D('Core/Join');
+						$cid        = I('post.id', '');
+						$mid        = I('get.mid', 0, 'int');
+						$client_arr = explode(',', $cid);
+						$count      = 0;
 						foreach($client_arr as $v){
-							$record = $client_model->findClient(1, ['id' => $v, 'status' => 'not deleted']);
-							$result = $message_logic->send($mid, 1, 4, [$record['id']]);
+							$record = $join_model->findRecord(1, [
+								'cid'    => $v,
+								'mid'    => $mid,
+								'status' => 'not deleted'
+							]);
+							if($record['review_status']) $result = $message_logic->send($mid, 1, 4, [$record['cid']]);
+							else $result = ['status' => false, 'message' => '该客户未审核'];
 							if($result['status']) $count++;
 						}
 						if($count == count($client_arr)) return [
 							'status'   => true,
 							'message'  => '全部发送成功',
-							'__ajax__' => true
+							'__ajax__' => false
 						];
 						elseif($count == 0) return [
 							'status'   => false,
 							'message'  => '发送失败',
-							'__ajax__' => true
+							'__ajax__' => false
 						];
 						else return [
 							'status'   => true,
 							'message'  => '部分发送成功',
-							'__ajax__' => true
+							'__ajax__' => false
 						];
 					}
 					else return [
 						'status'   => false,
 						'message'  => '您没有发送邀请的权限',
-						'__ajax__' => true
+						'__ajax__' => false
 					];
 				break;
 				case 'get_assign_sign_place':
@@ -997,17 +1004,12 @@
 			/** @var \Core\Model\ClientModel $core_model */
 			$core_model = D('Core/Client');
 			/** @var \Core\Model\JoinModel $join_model */
-			$join_model = D('Core/Join');
-			/** @var \Core\Model\ReceivablesModel $receivables_model */
-			$receivables_model = D('Core/Receivables');
-			$receivables_logic = new ReceivablesLogic();
-			/** @var \Core\Model\EmployeeModel $employee_model */
-			$employee_model  = D('Core/Employee');
+			$join_model      = D('Core/Join');
 			$table_column    = $model->getColumn();
 			$count           = 0;
 			$mid             = I('get.mid', 0, 'int');
 			$cur_employee_id = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-			$weixin_opt      = [];
+			$wechat_opt      = [];
 			$error_str       = ''; // 记录出错的记录的参会人员名称
 			// 遍历数据列表
 			foreach($excel_data as $key1 => $line){
@@ -1015,10 +1017,8 @@
 				$mobile             = '';
 				$name               = '';
 				$registration_date  = '';
-				$invitor            = null;
 				$service_consultant = null;
 				$develop_consultant = null;
-				$price              = 0;
 				$traffic_method     = '';
 				// 遍历单条数据的字段
 				foreach($line as $key2 => $val){
@@ -1044,24 +1044,6 @@
 						break;
 						case 'registration_date':
 							$registration_date = $val;
-						break;
-						case 'inviter_id':
-							$invitor = $val;
-							// 试图通过名称去查找员工表
-							if($invitor){
-								$record = $employee_model->findEmployee(1, [
-									'keyword' => $invitor,
-									'status'  => 1
-								]);
-								if($record){
-									$invitor = $record['id'];
-									$val     = $invitor;
-								}
-								else{
-									$invitor = null;
-									$val     = null;
-								}
-							}
 						break;
 						//						case 'develop_consultant':
 						//							$service_consultant = $val;
@@ -1099,9 +1081,6 @@
 						//								}
 						//							}
 						//						break;
-						case 'price':
-							$price = $val;
-						break;
 						case 'traffic_method':
 							$traffic_method = $val;
 						break;
@@ -1127,8 +1106,6 @@
 						if(!in_array($table_column[$key2]['name'], [
 							'registration_date',
 							'traffic_method',
-							'inviter_id',
-							'price',
 							'',
 							null
 						])
@@ -1138,22 +1115,18 @@
 						if(!in_array($table_column[$key2]['name'], [
 							'registration_date',
 							'traffic_method',
-							'inviter_id',
-							'price'
 						])
 						) $client_data[$table_column[$key2]['name']] = $val;
 						if(!in_array($table_column[$column_index]['name'], [
 							'registration_date',
 							'traffic_method',
-							'inviter_id',
-							'price',
 							'',
 							null
 						])
 						) $client_data[$table_column[$column_index]['name']] = $val;
 					}
 				}
-				if($mobile == ''&!$mobile) continue; // 若手机号未填则略过该条数据
+				if($mobile == '' && !$mobile) continue; // 若手机号未填则略过该条数据
 				// 判定是否存在该客户
 				$exist_client                   = $core_model->isExist($mobile);
 				$join_data                      = [];
@@ -1164,13 +1137,15 @@
 				$join_data['traffic_method']    = $traffic_method;
 				$join_data['registration_type'] = '线下';
 				$join_data['status']            = 1;
-				if($invitor != null) $join_data['inviter_id'] = $invitor;
 				C('TOKEN_ON', false);
 				// 若存在则用新数据覆盖旧数据同时设为老客
 				if($exist_client){
-					$core_model->alterClient(['id' => $exist_client['id']], array_merge($client_data, ['is_new' => 0]));
+					$core_model->alterClient(['id' => $exist_client['id']], array_merge($client_data, [
+						'is_new' => 0,
+						'status' => 1
+					]));
 					$join_data['cid'] = $exist_client['id'];
-					$weixin_opt[]     = [
+					$wechat_opt[]     = [
 						'id'     => $exist_client['id'],
 						'mobile' => $mobile
 					];
@@ -1180,7 +1155,7 @@
 					$client_result = $core_model->createClient($client_data);
 					if($client_result['status']){
 						$join_data['cid'] = $client_result['id'];
-						$weixin_opt[]     = [
+						$wechat_opt[]     = [
 							'id'     => $client_result['id'],
 							'mobile' => $mobile
 						];
@@ -1194,16 +1169,6 @@
 						$alter_join_result = $join_model->alterRecord(['id' => $exist_join_record['id']], $join_data);
 						if($alter_join_result['status']){
 							$count++;
-							// 若存在收款字段则添加收款记录
-							if(((int)$price)>0) $receivables_model->createRecord([
-								'cid'          => $join_data['cid'],
-								'mid'          => $mid,
-								'source_type'  => 0,
-								'creator'      => $cur_employee_id,
-								'creatime'     => time(),
-								'price'        => $price,
-								'order_number' => $receivables_logic->makeOrderNumber()
-							]);
 						}
 						else $error_str .= "$client_data[name],";
 					}
@@ -1212,24 +1177,12 @@
 						$join_result = $join_model->createRecord($join_data);
 						if($join_result['status']){
 							$count++;
-							if(((int)$price)>0){
-								// 若存在收款字段则添加收款记录
-								$receivables_model->createRecord([
-									'cid'          => $join_data['cid'],
-									'mid'          => $mid,
-									'source_type'  => 0,
-									'creator'      => $cur_employee_id,
-									'creatime'     => time(),
-									'price'        => $price,
-									'order_number' => $receivables_logic->makeOrderNumber()
-								]);
-							}
 						}
 						else $error_str .= "$client_data[name],";
 					}
 				}
 			}
-			$this->_asyncWeixinInfo($weixin_opt);
+			$this->_asyncWechatInfo($wechat_opt);
 			if($count === 0) return [
 				'status'  => false,
 				'message' => '没有导入任何数据'
@@ -1250,21 +1203,21 @@
 			}
 		}
 
-		private function _asyncWeixinInfo($client_list){
+		private function _asyncWechatInfo($client_list){
 			set_time_limit(0);
 			ignore_user_abort();
-			$weixin_logic = new WxCorpLogic();
-			$wx_list      = $weixin_logic->getAllUserList(); //查出wx接口获取的所有用户信息
-			/** @var \Core\Model\WeixinIDModel $weixin_model */
-			$weixin_model = D('Core/WeixinID');
+			$wechat_logic = new WxCorpLogic();
+			$wx_list      = $wechat_logic->getAllUserList(); //查出wx接口获取的所有用户信息
+			/** @var \Core\Model\WechatModel $wechat_model */
+			$wechat_model = D('Core/Wechat');
 			foreach($client_list as $key => $val){
 				foreach($wx_list as $key2 => $val2){
 					if($val['mobile'] == $val2['mobile'] && $val2['status'] != 4){
-						$weixin_model->deleteRecord([
-							'weixin_id' => $val2['userid'],
-							'otype'     => 1,
-							'oid'       => $val['id'],
-							'wtype'     => 1
+						$wechat_model->deleteRecord([
+							'wid'   => $val2['userid'],
+							'otype' => 1,
+							'oid'   => $val['id'],
+							'wtype' => 1
 						]);
 						$department = '';
 						foreach($val2['department'] as $v3) $department .= $v3.',';
@@ -1274,7 +1227,7 @@
 						$data['oid']        = $val['id'];    //对象ID
 						$data['wtype']      = 1;    //微信ID类型 企业号
 						$data['department'] = $department;    //部门ID
-						$data['weixin_id']  = $val2['userid'];    //微信ID
+						$data['wid']        = $val2['userid'];    //微信ID
 						$data['mobile']     = $val2['mobile'];    //手机号码
 						$data['avatar']     = $val2['avatar'];    //头像地址
 						$data['gender']     = $val2['gender'];    //性别
@@ -1282,7 +1235,7 @@
 						$data['nickname']   = $val2['name'];    //昵称
 						$data['creatime']   = time();    //创建时间
 						$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
-						$weixin_model->createRecord($data);    //插入数据
+						$wechat_model->createRecord($data);    //插入数据
 						break;
 					}
 				}

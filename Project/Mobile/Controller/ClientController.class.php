@@ -11,19 +11,19 @@
 	use Mobile\Logic\ClientLogic;
 
 	class ClientController extends MobileController{
-		protected $weixinID  = 0;
+		protected $wechatID  = 0;
 		protected $clientID  = 0;
 		protected $meetingID = 0;
 
 		public function _initialize(){
 			// quasar
 			//			$_SESSION['MOBILE_CLIENT_ID'] = 599;
-			//			$_SESSION['MOBILE_WEIXIN_ID'] = 1090;
+			//			$_SESSION['MOBILE_WECHAT_ID'] = 1090;
 			//			session_destroy();
 			//			session_unset();
 			//			exit;
 			//			$_SESSION['MOBILE_CLIENT_ID'] = '573';
-			//			$_SESSION['MOBILE_WEIXIN_ID'] = '0018';
+			//			$_SESSION['MOBILE_WECHAT_ID'] = '0018';
 			$meeting_logic = new MeetingLogic();
 			$meeting_logic->initializeStatus();
 			parent::_initialize();
@@ -32,7 +32,7 @@
 		private function _getClientID($redirect = true){
 			$get            = function (){
 				$logic     = new ClientLogic();
-				$client_id = $logic->getVisitorID($this->weixinID);
+				$client_id = $logic->getVisitorID($this->wechatID);
 				if($client_id) $_SESSION['MOBILE_CLIENT_ID'] = $client_id;
 
 				return $client_id;
@@ -73,7 +73,7 @@
 		}
 
 		public function myCenter(){
-			$this->weixinID = $this->getWeixinID();
+			$this->wechatID = $this->getWechatID();
 			$this->_getClientID();
 			$this->_getMeetingParam();
 			$logic = new ClientLogic();
@@ -102,18 +102,35 @@
 		public function myQRCode(){
 			$this->_getClientParam();
 			$this->_getMeetingParam();
+			if(IS_POST){
+				$logic = new ClientLogic();
+				$result = $logic->handlerRequest(I('post.requestType', ''), [
+					'cid' => $this->clientID,
+					'mid' => $this->meetingID
+				]);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']) $this->success($result['message'], I('post.redirectUrl', ''));
+					else $this->error($result['message']);
+				}
+				exit;
+			}
 			/** @var \Core\Model\JoinModel $join_model */
 			$join_model = D('Core/Join');
-			/** @var \Core\Model\WeixinIDModel $weixin_model */
-			$weixin_model = D('Core/WeixinID');
+			/** @var \Core\Model\WechatModel $wechat_model */
+			$wechat_model = D('Core/Wechat');
 			/** @var \Core\Model\MeetingModel $meeting_model */
 			$meeting_model = D('Core/Meeting');
 			$info          = $join_model->findRecord(1, ['cid' => $this->clientID, 'mid' => $this->meetingID]);
-			$weixin_info   = $weixin_model->findRecord(1, ['oid' => $this->clientID, 'otype' => 1, 'wtype' => 1]);
+			$wechat_info   = $wechat_model->findRecord(1, ['oid' => $this->clientID, 'otype' => 1, 'wtype' => 1]);
 			$meeting       = $meeting_model->findMeeting(1, ['id' => $this->meetingID, 'status' => 'not deleted']);
 			$this->assign('meeting', $meeting);
 			$this->assign('info', $info);
-			$this->assign('weixin', $weixin_info);
+			$this->assign('wechat', $wechat_info);
 			$this->display();
 		}
 
@@ -121,7 +138,7 @@
 		 * 会议列表
 		 */
 		public function myMeetingList(){
-			$this->weixinID = $this->getWeixinID();
+			$this->wechatID = $this->getWechatID();
 			$this->_getClientID();
 			$core_logic = new MeetingLogic();
 			$core_logic->initializeStatus();
@@ -166,7 +183,7 @@
 				}
 				exit;
 			}
-			$this->weixinID = $this->getWeixinID();
+			$this->wechatID = $this->getWechatID();
 			$this->_getMeetingParam();
 			$this->_getClientID();
 			/** @var \Core\Model\MeetingModel $meeting_model */

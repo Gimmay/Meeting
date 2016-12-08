@@ -46,9 +46,14 @@ $(function(){
 	// 修改
 	$('.alter_btn').on('click', function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
-		$('#alter_hotel ').find('input[name=id]').val(id);
-		var hotel_name = $(this).parents('tr').find('.hotel_name').text();
-		$('#alter_hotel').find('#hotel_name_a').val(hotel_name);
+		$('#alter_car ').find('input[name=id]').val(id);
+		$('#alter_car').find('#plate_number_a').val(plate_number);
+		$('#alter_car').find('#plate_number').val(hotel_name);
+		$('#alter_car').find('#color_a').val(hotel_name);
+		$('#alter_car').find('#model_a').val(hotel_name);
+		$('#alter_car').find('#capacity_a').val(hotel_name);
+		$('#alter_car').find('#client_type_a').val(hotel_name);
+		$('#alter_car').find('#comment_a').val(hotel_name);
 	});
 	// 点击过滤标签-全部
 	$('#filter_btn_all').on('click', function(){

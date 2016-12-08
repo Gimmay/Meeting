@@ -49,9 +49,9 @@
 						<header class="c_header">
 							<div class="function_list clearfix">
 								<if condition="$permission_list['ROLE.CREATE'] eq 1">
-									<div class="function_btn bg-warning" data-toggle="modal" data-target="#distribution_room">
+									<div class="function_btn bg-warning create_room" data-toggle="modal" data-target="#distribution_room">
 										<i></i>
-										<p>房间分配</p>
+										<p>新增房间</p>
 									</div>
 								</if>
 								<if condition="$permission_list['ROLE.DELETE'] eq 1">
@@ -70,7 +70,7 @@
 										<button type="submit" class="btn btn-default main_search">搜索</button>
 									</span>
 								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('details')}>">查看所有</a>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('Room/manage',['mid'=>I('get.mid',0,'int'),'hid'=>I('get.hid',0,'int')])}>">查看所有</a>
 							</form>
 						</div>
 						<div class="table_wrap">
@@ -184,14 +184,14 @@
 			</div>
 		</div>
 	</div>
-	<!-- 房间分配 -->
+	<!-- 新增房间 -->
 	<div class="modal fade" id="distribution_room" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog" style="width: 700px;">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">房间分配</h2>
+					<h2 class="modal-title">新增房间</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="" onsubmit=" return checkAssign()">
 					<input type="hidden" name="requestType" value="create">
@@ -217,13 +217,7 @@
 						<div class="form-group">
 							<label for="room_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>房间类型：</label>
 							<div class="col-sm-10">
-								<!--<input type="text" class="form-control room_type" name="room_type" id="room_type">-->
-								<select name="type" class="form-control" id="room_type">
-									<option>请选择类型</option>
-									<volist name="type" id="info">
-										<option value="<{$info.id}>"><{$info.name}></option>
-									</volist>
-								</select>
+								<select name="type" class="form-control" id="room_type"> </select>
 							</div>
 						</div>
 						<div class="form-group">
@@ -242,7 +236,7 @@
 							<label class="col-sm-2 control-label">入住人员：</label>
 							<div class="col-sm-10">
 								<span class="mr_17 hide">已选择（<strong class="m_color" id="selected_attendee_count_by_1"></strong>）</span>
-								<a data-toggle="modal" data-target="#add_recipient"><i class="glyphicon glyphicon-plus"></i>添加入住人员</a>
+								<a class="create_add_client" data-toggle="modal" data-target="#add_recipient"><i class="glyphicon glyphicon-plus"></i>添加入住人员</a>
 							</div>
 							<input type="hidden" name="person">
 						</div>
@@ -257,6 +251,8 @@
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						<button type="submit" class="btn btn-primary">确认</button>
 					</div>
+					<!-- 剩余房间类型的房间数 -->
+					<input type="hidden" name="surplus" id="surplus">
 				</form>
 			</div>
 		</div>
@@ -270,7 +266,7 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title">修改房间</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkStatus()">
 					<input type="hidden" name="requestType" value="alter_room"> <input type="hidden" name="id">
 					<div class="modal-body">
 						<!--<div class="form-group">
@@ -295,7 +291,7 @@
 							<label for="room_type_a" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>房间类型：</label>
 							<div class="col-sm-10">
 								<!--<input type="text" class="form-control room_type" name="room_type" id="room_type">-->
-								<select name=room_type" class="form-control" id="room_type_a">
+								<select name="type" class="form-control" id="room_type_a">
 									<option value="0">请选择类型</option>
 									<volist name="type" id="info">
 										<option value="<{$info.id}>"><{$info.name}></option>
@@ -330,7 +326,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- 添加人员 -->
+	<!-- 添加人员 >> 新增房间 -->
 	<div class="modal fade" id="add_recipient" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog" style="width: 60%">
 			<div class="modal-content">
@@ -351,18 +347,18 @@
 							<div class="input-group repertory_text">
 								<input type="search" name="keyword" class="form-control" placeholder="姓名" value="">
 								<span class="input-group-btn">
-									<button type="submit" class="btn btn-default main_search">搜索</button>
+									<button type="button" class="btn btn-default main_search">搜索</button>
 								</span>
 							</div>
 						</div>
-						<a type="reset" class="btn btn-default main_search" href="<{:U('', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
+						<a type="button" class="btn btn-default search_all">查看所有</a>
 					</div>
 					<div class="d2">
 						<div class="table_wrap">
 							<table class="table table-bordered" style="text-align: center">
 								<thead>
 									<tr>
-										<td width="10%" class="all_check_m">
+										<td width="10%" class="all_check_add">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="10%">序号</td>
@@ -370,31 +366,11 @@
 										<td width="10%">性别</td>
 										<td width="10%">职务</td>
 										<td width="20%">手机号</td>
-										<td width="20%">单位名称</td>
+										<td width="15%">单位名称</td>
 										<td width="20%">签到时间</td>
 									</tr>
 								</thead>
 								<tbody id="attendee_body">
-									<volist name="list" id="info">
-										<tr>
-											<td class="check_item_m">
-												<input type="checkbox" class="icheck" value="<{$info.id}>" placeholder="">
-											</td>
-											<td><{$i}></td>
-											<td class="name"><{$info.name}></td>
-											<td>
-												<switch name="info.gender">
-													<case value="0">未设置</case>
-													<case value="1">男</case>
-													<case value="2">女</case>
-												</switch>
-											</td>
-											<td><{$info.position}></td>
-											<td><{$info.mobile}></td>
-											<td><{$info.unit}></td>
-											<td><{$info.creatime|date='Y-m-d',###}></td>
-										</tr>
-									</volist>
 								</tbody>
 							</table>
 						</div>
@@ -408,7 +384,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- 添加人员2 -->
+	<!-- 添加人员2 >> 房间详情添加 -->
 	<div class="modal fade" id="add_recipient2" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog" style="width: 60%">
 			<div class="modal-content">
@@ -434,14 +410,14 @@
 								</span>
 							</div>
 						</div>
-						<a type="reset" class="btn btn-default main_search" href="/Meeting/manage.aspx">查看所有</a>
+						<a type="reset" class="btn btn-default search_all">查看所有</a>
 					</div>
 					<div class="d2">
 						<div class="table_wrap">
 							<table class="table table-bordered" style="text-align: center">
 								<thead>
 									<tr>
-										<td width="10%" class="all_check_m2">
+										<td width="10%" class="all_check_add2">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="10%">序号</td>
@@ -454,7 +430,7 @@
 									</tr>
 								</thead>
 								<tbody id="attendee_body_a">
-									<volist name="lists" id="info">
+									<!--<volist name="lists" id="info">
 										<tr>
 											<td class="check_item_m2">
 												<input type="checkbox" class="icheck" value="<{$info.id}>" placeholder="">
@@ -473,7 +449,7 @@
 											<td><{$info.unit}></td>
 											<td><{$info.creatime|date='Y-m-d',###}></td>
 										</tr>
-									</volist>
+									</volist>-->
 								</tbody>
 							</table>
 							<input type="hidden" name="person"> <input type="hidden" name="room_id">
@@ -571,15 +547,13 @@
 				<div class="modal-body">
 					<div class="room_list">
 						<div class="repertory clearfix">
-							<form action="" method="get">
-								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="房间/拼音简码" value="">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="房间/拼音简码" value="">
 								<span class="input-group-btn">
-									<button type="submit" class="btn btn-default main_search">搜索</button>
+									<button type="submit" class="btn btn-default ajax_search">搜索</button>
 								</span>
-								</div>
-								<a type="reset" class="btn btn-default main_search" href="/Room/details.aspx">查看所有</a>
-							</form>
+							</div>
+							<a type="reset" class="btn btn-default ajax_search_all">查看所有</a>
 						</div>
 						<div class="room_list">
 							<table class="table table-bordered">
@@ -619,6 +593,10 @@
 						</div>
 					</div>
 				</div>
+				<!-- 换房人的ID -->
+				<input type="hidden" name="id">
+				<!-- 换房房间的ID -->
+				<input type="hidden" name="orid">
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 					<button type="submit" class="btn btn-primary">确认</button>

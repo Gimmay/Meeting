@@ -22,6 +22,13 @@
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
+			<if condition="$permission_list['MEETING.CONFIGURE'] eq 1">
+				<li class="side_item <if condition='$cv_name eq Meeting_configure'>active</if>">
+					<a href="<{:U('Meeting/configure', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
+						<i class="icon_nav glyphicon glyphicon-cog"></i> <span class="nav-label">会议配置</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				</li>
+			</if>
 			<if condition="$permission_list['CLIENT.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq Client'>active</if>">
 					<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
@@ -29,6 +36,11 @@
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
+			<li class="side_item <if condition='$c_name eq Grouping'>active</if>">
+				<a href="<{:U('Grouping/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-compressed"></i> <span class="nav-label">分组管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
 			<if condition="$permission_list['SIGN_PLACE.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq SignPlace'>active</if>">
 					<a href="<{:U('SignPlace/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
@@ -106,11 +118,11 @@
 				</li>
 			</if>
 			<if condition="$permission_list['DINING_TABLE.VIEW'] eq 1">
-				<li class="side_item <if condition='$c_name eq DiningTable'>active</if>">
-					<a href="<{:U('DiningTable/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
-						<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>
-						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
-				</li>
+				<!--<li class="side_item <if condition='$c_name eq DiningTable'>active</if>">-->
+					<!--<a href="<{:U('DiningTable/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">-->
+						<!--<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>-->
+						<!--<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>-->
+				<!--</li>-->
 			</if>
 			<if condition="$permission_list['REPORT.VIEW'] eq 1">
 
@@ -129,38 +141,38 @@
 					<ul class="nav-second-level">
 						<if condition="$permission_list['RECYCLE.VIEW-CLIENT'] eq 1">
 							<li>
-								<a href="<{:U('Recycle/client')}>">客户列表</a>
+								<a href="<{:U('Recycle/client',['mid'=>I('get.mid',0,'int')])}>">客户列表</a>
 							</li>
 						</if>
 						<if condition="$permission_list['RECYCLE.VIEW-EMPLOYEE'] eq 1">
 							<li>
-								<a href="<{:U('Recycle/employee')}>">员工列表</a>
+								<a href="<{:U('Recycle/employee',['mid'=>I('get.mid',0,'int')])}>">员工列表</a>
 							</li>
 						</if>
 						<if condition="$permission_list['RECYCLE.VIEW-ROLE'] eq 1">
 							<li>
-								<a href="<{:U('Recycle/role')}>">角色列表</a>
+								<a href="<{:U('Recycle/role',['mid'=>I('get.mid',0,'int')])}>">角色列表</a>
 							</li>
 						</if>
 						<if condition="$permission_list['RECYCLE.VIEW-MEETING'] eq 1">
 							<li>
-								<a href="<{:U('Recycle/meeting')}>">会议列表</a>
+								<a href="<{:U('Recycle/meeting',['mid'=>I('get.mid',0,'int')])}>">会议列表</a>
 							</li>
 
 						</if>
 						<if condition="$permission_list['RECYCLE.VIEW-COUPON'] eq 1">
 							<li>
-								<a href="<{:U('Recycle/coupon')}>">代金券</a>
+								<a href="<{:U('Recycle/coupon',['mid'=>I('get.mid',0,'int')])}>">代金券</a>
 							</li>
 						</if>
 						<if condition="$permission_list['RECYCLE.VIEW-COUPON_ITEM'] eq 1">
 							<li>
-								<a href="<{:U('Recycle/coupon_item')}>">代金券码</a>
+								<a href="<{:U('Recycle/coupon_item',['mid'=>I('get.mid',0,'int')])}>">代金券码</a>
 							</li>
 						</if>
 						<if condition="$permission_list['RECYCLE.VIEW-MESSAGE'] eq 1">
 							<li>
-								<a href="<{:U('Recycle/message')}>">消息管理</a>
+								<a href="<{:U('Recycle/message',['mid'=>I('get.mid',0,'int')])}>">消息管理</a>
 							</li>
 						</if>
 					</ul>

@@ -64,42 +64,6 @@
 											</a>
 										</div>
 									</if>
-									<if condition="$permission_list['CLIENT.DELETE'] eq 1">
-										<div class="function_btn bg-danger batch_delete_btn_confirm">
-											<i></i>
-											<p>批量删除</p>
-										</div>
-									</if>
-									<if condition="$permission_list['CLIENT.REVIEW'] eq 1">
-										<div class="function_btn bg-f63	 batch_review_btn_confirm">
-											<i></i>
-											<p>批量审核</p>
-										</div>
-									</if>
-									<if condition="$permission_list['CLIENT.ANTI-REVIEW'] eq 1">
-										<div class="function_btn bg-f63	 batch_anti_review_btn_confirm">
-											<i></i>
-											<p>取消审核</p>
-										</div>
-									</if>
-									<if condition="$permission_list['CLIENT.SIGN'] eq 1">
-										<div class="function_btn bg-success batch_sign_point">
-											<i></i>
-											<p>批量签到</p>
-										</div>
-									</if>
-									<if condition="$permission_list['CLIENT.ANTI-SIGN'] eq 1">
-										<div class="function_btn bg-success batch_anti_sign_point">
-											<i></i>
-											<p>取消签到</p>
-										</div>
-									</if>
-									<if condition="$permission_list['CLIENT.SEND-INVITATION'] eq 1">
-										<div class="function_btn bg-f63	 batch_send_message_btn_confirm">
-											<i></i>
-											<p>批量发送消息</p>
-										</div>
-									</if>
 									<if condition="$permission_list['CLIENT.IMPORT-EXCEL'] eq 1">
 										<!-- 导入EXCEL -->
 										<div class="function_btn bg-28B778 import_excel_btn">
@@ -128,8 +92,46 @@
 											</a>
 										</div>
 									</if>
+								</div>
+								<div class="function_list clearfix">
+									<if condition="$permission_list['CLIENT.DELETE'] eq 1">
+										<div class="function_btn bg-danger batch_delete_btn_confirm">
+											<i></i>
+											<p>删除</p>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.REVIEW'] eq 1">
+										<div class="function_btn bg-f63	 batch_review_btn_confirm">
+											<i></i>
+											<p>审核</p>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.ANTI-REVIEW'] eq 1">
+										<div class="function_btn bg-f63	 batch_anti_review_btn_confirm">
+											<i></i>
+											<p>取消审核</p>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.SIGN'] eq 1">
+										<div class="function_btn bg-success batch_sign_point">
+											<i></i>
+											<p>签到</p>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.ANTI-SIGN'] eq 1">
+										<div class="function_btn bg-success batch_anti_sign_point">
+											<i></i>
+											<p>取消签到</p>
+										</div>
+									</if>
+									<if condition="$permission_list['CLIENT.SEND-INVITATION'] eq 1">
+										<div class="function_btn bg-00a0e8	 batch_send_message_btn_confirm">
+											<i></i>
+											<p>发送消息</p>
+										</div>
+									</if>
 									<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE'] eq 1">
-										<div class="function_btn bg-warning assign_sign_place">
+										<div class="function_btn bg-00a0e8 assign_sign_place">
 											<i></i>
 											<p>分配签到点</p>
 										</div>
@@ -138,7 +140,7 @@
 							</header>
 							<div class="repertory clearfix">
 								<form action="" method="get">
-									<div class="input-group repertory_text">
+									<div class="input-group repertory_text" style="width: 30%">
 										<input name="p" type="hidden" value="1">
 										<input type="search" name="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/类型/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
@@ -148,28 +150,40 @@
 									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有&nbsp;(<{$statistics.enabled_total}> / <{$statistics.total}>人)</a>
 								</form>
 								<form action="" method="get" class="sign_check">
-									<div class="input-group pull-left check_signed">
+									<div class="input-group pull-left check_signed color-1b7e5a">
 										<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;签到 (<{$statistics.signed}>)
 									</div>
-									<div class="input-group pull-left check_not_signed">
+									<div class="input-group pull-left check_not_signed color-1b7e5a">
 										<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;未签到 (<{$statistics.not_signed}>)
 									</div>
-									<div class="input-group pull-left check_reviewed">
+									<div class="input-group pull-left check_reviewed color-2489c5">
 										<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;审核 (<{$statistics.reviewed}>)
 									</div>
-									<div class="input-group pull-left check_not_reviewed">
+									<div class="input-group pull-left check_not_reviewed color-2489c5">
 										<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.not_reviewed}>)
 									</div>
-									<div class="input-group pull-left check_receivables">
+									<!--<div class="input-group pull-left check_receivables color-00a0e8">
 										<input type="radio" name="receivables" class="icheckRed">&nbsp;&nbsp;收款 (<{$statistics.receivables}>)
 									</div>
-									<div class="input-group pull-left check_not_receivables">
+									<div class="input-group pull-left check_not_receivables color-00a0e8">
 										<input type="radio" name="receivables" class="icheckRed">&nbsp;&nbsp;未收款 (<{$statistics.not_receivables}>)
+									</div>-->
+									<div class="input-group pull-left new_client color_red">
+										<input type="radio" name="client_type" class="icheckRed">&nbsp;&nbsp;新客 (<{$statistics.new}>)
+									</div>
+									<div class="input-group pull-left old_client color_red">
+										<input type="radio" name="client_type" class="icheckRed">&nbsp;&nbsp;老客 (<{$statistics.not_new}>)
+									</div>
+									<div class="input-group pull-left usable color_yellow">
+										<input type="radio" name="status" class="icheckYellow">&nbsp;&nbsp;可用 (<{$statistics.enabled}>)
+									</div>
+									<div class="input-group pull-left disable color_yellow">
+										<input type="radio" name="status" class="icheckYellow">&nbsp;&nbsp;禁用 (<{$statistics.disabled}>)
 									</div>
 								</form>
 							</div>
 							<div class="table_wrap">
-								<table class="table table-bordered" id="tableExcel" style="text-align: center">
+								<table class="table table-bordered table-hover" id="tableExcel" style="text-align: center">
 									<thead>
 										<tr>
 											<td width="2%" class="all_check">
@@ -179,15 +193,17 @@
 											<td width="5%">姓名</td>
 											<td width="4%">性别</td>
 											<td width="5%">手机号</td>
-											<td width="9%">单位名称</td>
+											<td width="6%">单位名称</td>
 											<td width="5%">类型</td>
+											<td width="4%">是否新客</td>
 											<td width="10%">审核/签到/打印</td>
 											<td width="7%">签到时间</td>
 											<td width="5%">签到方式</td>
-											<td width="4%">收款</td>
+											<!--<td width="4%">收款</td>-->
 											<td width="4%">状态</td>
 											<td width="7%">创建时间</td>
-											<td width="20%">操作</td>
+											<td width="19%">操作</td>
+											<td width="4%">启禁用</td>
 										</tr>
 									</thead>
 									<tbody>
@@ -210,17 +226,22 @@
 												<td><{$single.mobile}></td>
 												<td><{$single.unit}></td>
 												<td><{$single.type}></td>
+												<td><switch name="single.is_new">
+													<case value="9"></case>
+													<case value="1">新客</case>
+													<case value="0">老客</case>
+												</switch></td>
 												<td>
 													<switch name="single.review_status">
 														<case value="0">未审核</case>
-														<case value="1"><span class="color-info">已审核</span></case>
-														<case value="2"><span class="color-warning">取消审核</span></case>
+														<case value="1"><span class="color-f63">已审核</span></case>
+														<case value="2"><span class="color-f63">取消审核</span></case>
 													</switch>
 													/
 													<switch name="single.sign_status">
 														<case value="0">未签到</case>
-														<case value="1"><span class="color-danger">已签到</span></case>
-														<case value="2"><span class="color-warning">取消签到</span></case>
+														<case value="1"><span class="color-primary">已签到</span></case>
+														<case value="2"><span class="color-primary">取消签到</span></case>
 													</switch>
 													/
 													<switch name="single.print_status">
@@ -238,13 +259,13 @@
 														<case value="3">微信后台签到</case>
 													</switch>
 												</td>
-												<td>
+												<!--<td>
 													<present name="single['receivables']">
 														<span class="color-red">￥<{$single.receivables}></span>
 														<else/>
 														未收款
 													</present>
-												</td>
+												</td>-->
 												<td>
 													<switch name="single.status">
 														<case value="0">禁用</case>
@@ -254,7 +275,7 @@
 												<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
 												<td>
 													<div class="btn-group" data-id="<{$single.cid}>" data-join-id="<{$single.id}>">
-														<switch name="single.sign_status">
+														<!--<switch name="single.sign_status">
 															<case value="0">
 																<if condition="$permission_list['CLIENT.SIGN'] and $single['review_status'] eq 1 and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
@@ -270,11 +291,11 @@
 																	<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
 																</if>
 															</case>
-														</switch>
+														</switch>-->
 														<if condition="$single['review_status'] eq 1 and $permission_list['CLIENT.SEND-INVITATION'] and $single['status'] eq 1">
 															<button type="button" class="btn btn-default btn-xs send_message_btn">发送邀请</button>
 														</if>
-														<switch name="single.review_status">
+														<!--<switch name="single.review_status">
 															<case value="0">
 																<if condition="$permission_list['CLIENT.REVIEW'] and $single['status'] eq 1">
 																	<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
@@ -290,7 +311,7 @@
 																	<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
 																</if>
 															</case>
-														</switch>
+														</switch>-->
 														<if condition="$permission_list['CLIENT.EARN-PAYMENT'] and $single['status'] eq 1">
 															<a href="<{:U('Receivables/create',['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs btn_receivables">收款</a>
 														</if>
@@ -306,11 +327,15 @@
 														<if condition="$permission_list['CLIENT.DELETE']">
 															<button type="submit" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_client">删除</button>
 														</if>
+													</div>
+												</td>
+												<td>
+													<div class="btn-group" data-id="<{$single.cid}>" data-join-id="<{$single.id}>">
 														<if condition="$single['status'] eq 0 and $permission_list['CLIENT.ENABLE']">
-															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_client', 'id'=>$single['cid']])}>" class="btn btn-success btn-xs">启用</a>
+															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_client', 'id'=>$single['cid'], 'jid'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
 														</if>
 														<if condition="$single['status'] eq 1 and $permission_list['CLIENT.DISABLE']">
-															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_client', 'id'=>$single['cid']])}>" class="btn btn-danger btn-xs">禁用</a>
+															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_client', 'id'=>$single['cid'], 'jid'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
 														</if>
 													</div>
 												</td>
@@ -659,6 +684,10 @@
 				icheckRed           :$('.icheckRed').iCheck({
 					checkboxClass:'icheckbox_square-red',
 					radioClass   :'iradio_square-red'
+				}),
+				icheckYellow           :$('.icheckYellow').iCheck({
+					checkboxClass:'icheckbox_square-yellow',
+					radioClass   :'iradio_square-yellow'
 				})
 			}
 		}

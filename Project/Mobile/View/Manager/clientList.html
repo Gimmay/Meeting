@@ -24,7 +24,7 @@
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
-	<if condition="$permission_list['WEIXIN.CLIENT.VIEW'] eq 1">
+	<if condition="$permission_list['WECHAT.CLIENT.VIEW'] eq 1">
 		<div id="mb_wrap">
 			<div class="top_title">
 				<a href="javascript:history.go(-1)" class="back glyphicon glyphicon-chevron-left"></a>
@@ -75,15 +75,15 @@
 		</div>
 	</if>
 	<div id="mb_footer">
-		<if condition="$permission_list['WEIXIN.MEETING.VIEW'] eq 1">
+		<if condition="$permission_list['WECHAT.MEETING.VIEW'] eq 1">
 			<a href="<{:U('meeting', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a">
 				<i class="glyphicon glyphicon-th-large"></i> <span>会议详情</span> </a>
 		</if>
-		<if condition="$permission_list['WEIXIN.CLIENT.VIEW'] eq 1">
+		<if condition="$permission_list['WECHAT.CLIENT.VIEW'] eq 1">
 			<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a active">
 				<i class="glyphicon glyphicon-user"></i> <span>参会人员</span> </a>
 		</if>
-		<if condition="$permission_list['WEIXIN.CLIENT.CREATE'] eq 1">
+		<if condition="$permission_list['WECHAT.CLIENT.CREATE'] eq 1">
 			<a href="<{:U('addClient', ['mid'=>I('get.mid', 0, 'int')])}>" class="add_client glyphicon glyphicon-plus"></a>
 		</if>
 	</div>

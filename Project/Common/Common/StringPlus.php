@@ -19,7 +19,7 @@
 		 * @return string
 		 */
 		public function makePassword($pwd, $interfere = ''){
-			$disturb = function($str){
+			$disturb = function ($str){
 				$tmp = $str;
 				$tmp = str_replace('13', '@h', $tmp);
 				$tmp = str_replace('31', 'v@3', $tmp);
@@ -47,15 +47,15 @@
 
 				return $tmp;
 			};
-			$tmp  = md5("$pwd$interfere");
-			$str1 = substr($tmp, 5, 16);
-			$tmp  = md5(substr($tmp, 7, 13));
-			$str2 = substr($tmp, 11, 16);
-			$tmp  = md5(strrev($tmp));
-			$str3 = substr($tmp, 13, 16);
-			$tmp  = sha1($tmp);
-			$str4 = substr($tmp, 17, 16);
-			$tmp  = strtoupper("$str1$str2$str3$str4");
+			$tmp     = md5("$pwd$interfere");
+			$str1    = substr($tmp, 5, 16);
+			$tmp     = md5(substr($tmp, 7, 13));
+			$str2    = substr($tmp, 11, 16);
+			$tmp     = md5(strrev($tmp));
+			$str3    = substr($tmp, 13, 16);
+			$tmp     = sha1($tmp);
+			$str4    = substr($tmp, 17, 16);
+			$tmp     = strtoupper("$str1$str2$str3$str4");
 
 			return $tmp;
 		}
@@ -153,6 +153,38 @@
 					return $result;
 				break;
 			}
+		}
+
+		/**
+		 * 根据数字生成大写汉字金额
+		 *
+		 * @param string|double $number
+		 *
+		 * @return string
+		 */
+		public function parseNumberToUpperWord($number){
+			function _handler($list, $unit){
+				$unit_count = count($unit);
+				$result     = [];
+				foreach(array_reverse($list) as $val){
+					$result_count = count($result);
+					if($val != "0" || !($result_count%4)) $is_number = ($val == '0' ? '' : $val).($unit[($result_count-1)%$unit_count]);
+					else $is_number = is_numeric($result[0][0]) ? $val : '';
+					array_unshift($result, $is_number);
+				}
+
+				return $result;
+			}
+
+			$upper_word = ["零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖"];
+			$upper_unit = ["圆", "角", "分"];
+			$upper_bit  = ["拾", "佰", "仟", "万", "拾", "佰", "仟", "亿"];
+			list($integer, $decimal) = explode(".", $number, 2);
+			$decimal = array_filter([$decimal[1], $decimal[0]]);
+			$temp    = array_merge($decimal, [implode("", _handler(str_split($integer), $upper_bit)), ""]);
+			$temp    = implode("", array_reverse(_handler($temp, $upper_unit)));
+
+			return str_replace(array_keys($upper_word), $upper_word, $temp);
 		}
 
 		/**

@@ -280,12 +280,32 @@ textarea{
 	color : #EBEBEB !important;
 }
 
+.color-f63{
+	color : #FF6633 !important;
+}
+
 .color-28B778{
 	color : #28B778 !important;
 }
 
+.color-1b7e5a{
+	color : #1B7E5A !important;
+}
+
+.color-2489c5{
+	color : #2489C5 !important;
+}
+
 .color-warning{
 	color : #F8AC59 !important;
+}
+
+.color_yellow{
+	color : #FFCC33 !important;
+}
+
+.color_red{
+	color : #D54E21 !important;
 }
 
 .color-info{
@@ -302,11 +322,11 @@ textarea{
 }
 
 .color-primary{
-	color       : #337AB7 !important;
-	font-weight : bold;
+	color : #337AB7 !important;
 }
-.color-00a0e8 {
-	color       : #00A0E8 !important;
+
+.color-00a0e8{
+	color : #00A0E8 !important;
 }
 
 .btn_role{
@@ -477,7 +497,7 @@ textarea{
 	content    : '';
 	width      : 3px;
 	height     : 20px;
-	background : #FB5050;
+	background : #00A0E8;
 }
 
 .mt_navbar > .sidenav > .sidenav_list > .side_item > .side-item-link{
@@ -793,13 +813,14 @@ textarea{
 }
 
 .function_list .function_btn{
-	position : relative;
-	width    : 90px;
-	height   : 35px;
-	float    : left;
-	margin   : 10px 20px 10px 0;
-	cursor   : pointer;
-	overflow : hidden;
+	position      : relative;
+	width         : 90px;
+	height        : 35px;
+	float         : left;
+	margin        : 10px 20px 10px 0;
+	cursor        : pointer;
+	overflow      : hidden;
+	border-radius : 6px;
 }
 
 .function_list .function_btn p{
@@ -963,7 +984,7 @@ textarea{
 
 /** 站内信模态框 **/
 .message_modal{
-	z-index: 999;
+	z-index     : 999;
 	position    : fixed;
 	left        : 50%;
 	top         : 50%;
@@ -1041,5 +1062,5 @@ textarea{
 }
 
 .bold{
-	font-weight: bold;
+	font-weight : bold;
 }

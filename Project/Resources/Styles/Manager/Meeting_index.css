@@ -50,3 +50,20 @@
 	color       : #FFFFFF;
 }
 
+.frame_link{
+	margin-bottom : 10px;
+}
+
+.statistics{
+	padding-left : 20px;
+	height       : 40px;
+	line-height  : 40px;
+	background   : rgba(255, 102, 51, .7);
+}
+
+.statistics span{
+	line-height  : 40px;
+	font-size    : 14px;
+	margin-right : 20px;
+	color        : #FFFFFF;
+}

@@ -177,6 +177,17 @@
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
+				case 'get:disable_room_type':
+				case 'get:enable_room_type':
+					/** @var \Core\Model\RoomTypeModel$model */
+					$model  = D('Core/RoomType');
+					$id     = I('get.id', 0, 'int');
+					$status = strpos($type, 'disable') === false ? (strpos($type, 'enable') === false ? 0 : 1) : 0;
+					C('TOKEN_ON', false);
+					$result = $model->alterRecord(['id' => $id], ['status' => $status]);
+
+					return array_merge($result, ['__ajax__' => false]);
+				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数'];
 				break;

@@ -1,0 +1,309 @@
+.glyphicon{
+	cursor : pointer !important;
+}
+
+.repertory{
+	border : none;
+}
+
+.content{
+	height : 100%;
+}
+
+.group{
+	width        : 100%;
+	height       : 500px;
+	border       : 1px solid rgba(0, 0, 0, .2);
+	padding-left : 250px;
+	position     : relative;
+}
+
+.group .group_left{
+	position     : absolute;
+	left         : 0;
+	top          : 0;
+	width        : 250px;
+	height       : inherit;
+	border-right : 1px solid rgba(0, 0, 0, .2);
+}
+
+.group .group_left .header{
+	position : relative;
+}
+
+.group .group_left .header h2{
+	height        : 40px;
+	border-bottom : 1px solid #E1E1E1;
+	background    : rgba(0, 0, 0, .1);
+	line-height   : 40px;
+	text-align    : center;
+}
+
+.group .group_left .header .add_group{
+	position    : absolute;
+	top         : 5px;
+	right       : 5px;
+	width       : 30px;
+	height      : 30px;
+	font-size   : 16px;
+	cursor      : pointer;
+	text-align  : center;
+	line-height : 30px;
+	color       : #000000;
+}
+
+.group .group_left .group_list{
+	max-height : 458px;
+	overflow-y : auto;
+}
+
+.group .group_left .group_list .group_ul{
+	width : 100%;
+}
+
+.group .group_left .group_list .group_ul li{
+	position      : relative;
+	width         : 100%;
+	border-bottom : 1px dashed rgba(0, 0, 0, .1);
+}
+
+.group .group_left .group_list .group_ul li .alter_btn{
+	position    : absolute;
+	width       : 36px;
+	height      : 36px;
+	right       : 30px;
+	cursor      : pointer;
+	display     : none;
+	line-height : 36px;
+	font-size   : 16px;
+	font-weight : bold;
+}
+
+.group .group_left .group_list .group_ul li:hover .alter_btn{
+	display : block;
+	color   : #FFFFFF;
+}
+
+.group .group_left .group_list .group_ul li .delete_btn{
+	position    : absolute;
+	width       : 36px;
+	height      : 36px;
+	right       : 0;
+	cursor      : pointer;
+	display     : none;
+	line-height : 36px;
+	font-size   : 16px;
+	font-weight : bold;
+}
+
+.group .group_left .group_list .group_ul li:hover .delete_btn{
+	display : block;
+	color   : #FB5050;
+}
+
+.group .group_left .group_list .group_ul li:hover, .group .group_left .group_list .group_ul li.active{
+	background : rgba(0, 160, 232, 0.8);
+}
+
+.group .group_left .group_list .group_ul li:hover a, .group .group_left .group_list .group_ul li.active a{
+	color : #FFFFFF;
+}
+
+.group .group_left .group_list .group_ul li a{
+	display     : block;
+	padding     : 10px 20px;
+	width       : 100%;
+	font-size   : 16px;
+	font-weight : bold;
+}
+
+.group .group_right{
+	height : inherit;
+	width  : 100%;
+}
+
+.group .group_right .header{
+	height        : 40px;
+	border-bottom : 1px solid #E1E1E1;
+	background    : rgba(0, 0, 0, .01);
+	line-height   : 40px;
+	text-align    : center;
+	position      : relative;
+}
+
+.group .group_right .header .time{
+	position : absolute;
+	left     : 10px;
+	top      : 3px;
+	width    : 200px;
+}
+
+.group .group_right .header .copy{
+	display         : block;
+	position        : absolute;
+	left            : 230px;
+	color           : #FF6633;
+	text-decoration : underline;
+	cursor          : pointer;
+	text-align      : left;
+}
+
+.group .group_right .header span.title{
+	text-align  : center;
+	font-size   : 16px;
+	font-weight : bold;
+}
+
+.group .group_right .header span.add_client{
+	position    : absolute;
+	top         : 5px;
+	right       : 5px;
+	display     : block;
+	width       : 60px;
+	background  : #00A0E8;
+	color       : #FFFFFF;
+	cursor      : pointer;
+	height      : 30px;
+	line-height : 30px;
+}
+
+.group .group_right .group_con{
+	width     : 100%;
+	padding   : 25px 20px 0 20px;
+	font-size : 0;
+	position  : relative;
+}
+
+.group .group_right .group_con span.empty{
+	position    : absolute;
+	right       : 5px;
+	top         : 5px;
+	display     : block;
+	width       : 50px;
+	height      : 20px;
+	line-height : 20px;
+	color       : #FB5050;
+	cursor      : pointer;
+	font-weight : bold;
+	font-size   : 14px;
+}
+
+.group .group_right .group_con span.empty b{
+	margin-right : 2px;
+}
+
+.group .group_right .group_con a{
+	display    : inline-block;
+	position   : relative;
+	font-size  : 12px;
+	padding    : 10px 20px;
+	margin     : 5px 8px;
+	background : #FFFFFF;
+	border     : 1px solid rgba(0, 0, 0, .2);
+}
+
+.group .group_right .group_con a .g_close{
+	position    : absolute;
+	display     : none;
+	color       : rgba(0, 0, 0, 0.5);
+	top         : 0;
+	right       : 0;
+	font-size   : 16px;
+	width       : 16px;
+	line-height : 16px;
+	height      : 16px;
+	text-align  : center;
+}
+
+.group .group_right .group_con a:hover{
+	border-color : #00A0E8;
+	color        : #000000;
+}
+
+.group .group_right .group_con a:hover .g_close{
+	display    : block;
+	color      : #FFFFFF;
+	background : #00A0E8;
+}
+
+/**
+* 选择组员
+*/
+.choose_people{
+}
+
+.d_list .add{
+	position    : absolute;
+	top         : 0;
+	right       : 20px;
+	width       : 50px;
+	height      : 27px;
+	line-height : 27px;
+	border      : 1px solid #E1E1E1;
+	text-align  : center;
+	background  : #00A0E8;
+	color       : #FFFFFF;
+	cursor      : pointer;
+}
+
+.choose_people .d1{
+	padding : 10px 20px;
+}
+
+.choose_people .d1 span{
+	margin-right : 10px;
+	font-size    : 14px;
+}
+
+.choose_people .d1 .btn_save{
+	float : right;
+}
+
+.search_sm{
+	padding : 5px 15px;
+}
+
+.mid{
+	padding       : 10px 20px;
+	font-size     : 14px;
+	border-bottom : 1px solid #E1E1E1;
+}
+
+.score_wrap{
+	width : 100%;
+}
+
+.score_wrap .score_table{
+	width      : 100%;
+	text-align : center !important;
+	font-size  : 14px;
+}
+
+.score_wrap .score_table caption{
+	text-align  : center;
+	font-size   : 16px;
+	padding     : 10px 0;
+	font-weight : bold;
+	color       : #000000;
+}
+
+.score_wrap .score_table thead tr th{
+	text-align : center;
+}
+
+.score_wrap .score_table{
+	width : 100%;
+}
+
+.score_wrap .score_table .write .glyphicon-edit{
+	display   : none;
+	font-size : 16px;
+}
+
+.score_wrap .score_table .write:hover .glyphicon-edit{
+	display     : inline-block;
+	margin-left : 10px;
+}
+
+
+

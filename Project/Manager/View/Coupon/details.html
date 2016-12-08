@@ -23,7 +23,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>" ></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -39,37 +39,33 @@
 							<div class="function_list clearfix">
 								<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_coupon">
 									<i></i>
-									<p>添加券</p>
+									<p>添加项目</p>
 								</div>
 								<div class="function_btn bg-danger batch_delete_btn_confirm">
 									<i></i>
 									<p>批量删除</p>
 								</div>
-								<!--<div class="function_btn bg-danger batch_alter_btn_confirm">
-									<i></i>
-									<p>批量修改</p>
-								</div>-->
 							</div>
 						</header>
 						<div class="repertory clearfix">
 							<form action="" method="get">
 								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="券/拼音简码" value="<{:I('get.keyword', '')}>">
+									<input type="search" name="keyword" class="form-control" placeholder="项目/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default main_search">搜索券</button>
+										<button type="submit" class="btn btn-default main_search">搜索项目</button>
 									</span>
 								</div>
 								<a type="reset" class="btn btn-default main_search" href="<{:U('details',['id'=>$list['id']])}>">查看所有</a>
 							</form>
 							<form action="" method="get" class="checkbox_filter">
 								<div class="input-group pull-left unused_filter">
-									<input type="radio"  name="iCheck" class="icheck" >&nbsp;&nbsp;未使用 (<{$count_status0}>)
+									<input type="radio" name="iCheck" class="icheck">&nbsp;&nbsp;未使用 (<{$count_status0}>)
 								</div>
 								<div class="input-group pull-left used_filter">
-									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;已使用 (<{$count_status1}>)
+									<input type="radio" name="iCheck" class="icheck">&nbsp;&nbsp;已使用 (<{$count_status1}>)
 								</div>
 								<div class="input-group pull-left refund_filter">
-									<input type="radio"  name="iCheck" class="icheck">&nbsp;&nbsp;退费(<{$count_status2}>)
+									<input type="radio" name="iCheck" class="icheck">&nbsp;&nbsp;退费(<{$count_status2}>)
 								</div>
 							</form>
 						</div>
@@ -80,9 +76,9 @@
 										<td width="5%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="5%">券名称</td>
+										<td width="5%">项目名称</td>
 										<td width="10%">客户姓名</td>
-										<td width="10%">券码</td>
+										<td width="10%">项目码</td>
 										<td width="15%">开始时间</td>
 										<td width="15%">结束时间</td>
 										<td width="10%">状态</td>
@@ -90,34 +86,34 @@
 									</tr>
 								</thead>
 								<volist name="info" id="info">
-								<tbody>
-									<tr>
-										<td class="check_item">
-											<input type="checkbox" class="icheck" placeholder="" value="<{$info.id}>">
-										</td>
-										<td class="name"><{$info.couponName}></td>
-										<td><{$info.cid}></td>
-										<td class="coupon_code"><{$info.code}></td>
-										<td class="start_time"><{$coupon.start_time|date='Y-m-d',###}></td>
-										<td class="end_time"><{$coupon.end_time|date='Y-m-d',###}></td>
-										<td>
-										<switch name="info.status">
-											<case value="0">未使用</case>
-											<case value="1"><span style="color: red">已使用</span></case>
-											<case value="2">退费</case>
-											<case value="3">删除</case>
-										</switch>
-										</td>
-										<td>
-											<div class="btn-group" data-id="<{$info.id}>">
-												<if condition="$max_role_level elt $single['level']">
-													<!--<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>-->
-													<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button>
-												</if>
-											</div>
-										</td>
-									</tr>
-								</tbody>
+									<tbody>
+										<tr>
+											<td class="check_item">
+												<input type="checkbox" class="icheck" placeholder="" value="<{$info.id}>">
+											</td>
+											<td class="name"><{$info.couponName}></td>
+											<td><{$info.cid}></td>
+											<td class="coupon_code"><{$info.code}></td>
+											<td class="start_time"><{$coupon.start_time|date='Y-m-d',###}></td>
+											<td class="end_time"><{$coupon.end_time|date='Y-m-d',###}></td>
+											<td>
+												<switch name="info.status">
+													<case value="0">未使用</case>
+													<case value="1"><span style="color: red">已使用</span></case>
+													<case value="2">退费</case>
+													<case value="3">删除</case>
+												</switch>
+											</td>
+											<td>
+												<div class="btn-group" data-id="<{$info.id}>">
+													<if condition="$max_role_level elt $single['level']">
+														<!--<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>-->
+														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button>
+													</if>
+												</div>
+											</td>
+										</tr>
+									</tbody>
 								</volist>
 							</table>
 						</div>
@@ -230,8 +226,10 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"></label>
 							<div class="col-sm-10">
-								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;灰色输入框默认不可编写，券模板自动带出。</p>
-								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、开始段、长度、数量等字段可自动获取券号。</p>
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;灰色输入框默认不可编写，券模板自动带出。
+								</p>
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、开始段、长度、数量等字段可自动获取券号。
+								</p>
 							</div>
 						</div>
 						<input type="hidden" name="hide_coupon_area" id="hide_coupon_area" value="">
@@ -375,7 +373,7 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				meetingSelectAlter:$('#meeting_a,#meeting_b').QuasarSelect({
+				meetingSelectAlter :$('#meeting_a,#meeting_b').QuasarSelect({
 					name        :'meeting_name_a',
 					classStyle  :'form-control',
 					data        :'<{:json_encode($meeting_list)}>',
@@ -384,12 +382,12 @@
 					placeholder :'',
 					hasEmptyItem:false
 				}),
-				icheck       :$('.icheck').iCheck({
+				icheck             :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				}),
-				toast        :$().QuasarToast(),
-				loading      :$().QuasarLoading()
+				toast              :$().QuasarToast(),
+				loading            :$().QuasarLoading()
 			}
 		}
 	</script>

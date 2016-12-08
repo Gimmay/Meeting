@@ -7,7 +7,7 @@
 	 */
 	namespace Core\Logic;
 
-	use Quasar\WXCorpUniversalApi;
+	use Quasar\Wechat\WechatEAApi;
 
 	class WxCorpLogic extends CoreLogic{
 		private $_config = [
@@ -28,7 +28,7 @@
 		}
 
 		public function getAllUserList(){
-			$wxcorp_object = new WXCorpUniversalApi($this->_config['corpID'], $this->_config['corpSecret']);
+			$wxcorp_object = new WechatEAApi($this->_config['corpID'], $this->_config['corpSecret']);
 			$result        = $wxcorp_object->getUserList(1);
 
 			return $result;
@@ -38,20 +38,20 @@
 			if($app_type == 'client') $app_id = $this->_config['appID']['client'];
 			elseif($app_type == 'employee') $app_id = $this->_config['appID']['employee'];
 			else return ['status' => false, 'message' => '错误的应用类型'];
-			$wxcorp_object = new WXCorpUniversalApi($this->_config['corpID'], $this->_config['corpSecret']);
+			$wxcorp_object = new WechatEAApi($this->_config['corpID'], $this->_config['corpSecret']);
 			$result        = $wxcorp_object->sendMessage($type, $data, $app_id, $receiver);
 
 			return $result;
 		}
 
 		public function getUserID(){
-			$wxcorp_object = new WXCorpUniversalApi($this->_config['corpID'], $this->_config['corpSecret']);
+			$wxcorp_object = new WechatEAApi($this->_config['corpID'], $this->_config['corpSecret']);
 
 			return $wxcorp_object->getID();
 		}
 
 		public function getSignature($random_str, $time, $url= null){
-			$wxcorp_object = new WXCorpUniversalApi($this->_config['corpID'], $this->_config['corpSecret']);
+			$wxcorp_object = new WechatEAApi($this->_config['corpID'], $this->_config['corpSecret']);
 			return $wxcorp_object->getSignature($random_str, $time, $url);
 		}
 

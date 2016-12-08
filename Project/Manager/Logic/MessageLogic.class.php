@@ -266,12 +266,14 @@
 		}
 
 		/**
+		 * 发送消息
+		 * 信息类型 0：不发送 1：短信 2：微信 3：微信&短信
+		 *
 		 * @param int   $mid           会议ID
 		 * @param int   $receiver_type 接收者类型 0：员工 1：参会人员
 		 * @param int   $temp_type     消息模板类型 1：签到 2：取消签到 3：收款后推送给开拓顾问 4：发送邀请
 		 * @param array $receiver_list 接收者ID列表
 		 *
-		 * @deprecated  信息类型 0：不发送 1：短信 2：微信 3：微信&短信
 		 * @return array
 		 */
 		public function send($mid, $receiver_type, $temp_type, $receiver_list = []){
@@ -281,8 +283,8 @@
 			/** @var \Core\Model\ClientModel $client_model */
 			/** @var \Core\Model\JoinModel $join_model $join_model */
 			/** @var \Core\Model\MessageModel $message_model */
-			/** @var \Core\Model\WeixinIDModel $weixin_model */
-			$weixin_model         = D('Core/WeixinID');
+			/** @var \Core\Model\WechatModel $wechat_model */
+			$wechat_model         = D('Core/Wechat');
 			$assign_message_model = D('Core/AssignMessage');
 			$message_model        = D('Core/Message');
 			$meeting_model        = D('Core/Meeting');
@@ -292,7 +294,7 @@
 			$send_message_logic   = new SendMessageLogic();
 			$sms_logic            = new SMSLogic();
 			$wxcorp_logic         = new WxCorpLogic();
-			$weixin_message_temp  = $sms_message_temp = [];
+			$wechat_message_temp  = $sms_message_temp = [];
 			// 查询出微信和微信的消息分配记录
 			// ************************************************************
 			// 注意：这里因为允许对一种操作类型分配多种消息模板
@@ -301,7 +303,7 @@
 			//		# 而分配消息表允许类型（区分何种操作）和会议ID相同
 			//		# 所以根据消息类型、操作类型和会议ID查询分配记录会查询到多条记录
 			//		# 这里取最后分配的那一条
-			$weixin_assign_message = $assign_message_model->findRecord(1, [
+			$wechat_assign_message = $assign_message_model->findRecord(1, [
 				'mid'          => $mid,
 				'type'         => $temp_type,
 				'message_type' => 2,
@@ -314,22 +316,22 @@
 				'status'       => 1
 			]);
 			// ************************************************************
-			$count          = ['weixin' => 0, 'sms' => 0];
+			$count          = ['wechat' => 0, 'sms' => 0];
 			$meeting_record = $meeting_model->findMeeting(1, ['id' => $mid, 'status' => 'not deleted']);
 			// 不存在指定的消息记录
-			if($meeting_record['message_type'] == 0) return ['status' => false, 'message' => '会议配置已禁用发送消息'];
+			if($meeting_record['config_message_type'] == 0) return ['status' => false, 'message' => '会议配置已禁用发送消息'];
 			// 存在微信的消息分配记录 且指定发送微信信息或全部
-			if($weixin_assign_message && ($meeting_record['message_type'] == 2 || $meeting_record['message_type'] == 3)){
+			if($wechat_assign_message && ($meeting_record['config_message_type'] == 2 || $meeting_record['config_message_type'] == 3)){
 				// 根据分配的消息记录查出微信的消息模板
-				$weixin_message_temp = $message_model->findMessage(1, [
-					'id'     => $weixin_assign_message['message_id'],
+				$wechat_message_temp = $message_model->findMessage(1, [
+					'id'     => $wechat_assign_message['message_id'],
 					'type'   => 2,
 					'status' => 1
 				]);
 				$found_temp          = true;
 			}
 			// 存在短信的消息分配记录 且指定发送短信信息或全部
-			if($sms_assign_message && ($meeting_record['message_type'] == 1 || $meeting_record['message_type'] == 3)){
+			if($sms_assign_message && ($meeting_record['config_message_type'] == 1 || $meeting_record['config_message_type'] == 3)){
 				// 根据分配的消息记录查出短信的消息模板
 				$sms_message_temp = $message_model->findMessage(1, [
 					'id'     => $sms_assign_message['message_id'],
@@ -356,7 +358,7 @@
 				}
 				else $receiver = [];
 				if(!$receiver) continue;
-				switch($meeting_record['message_type']){
+				switch($meeting_record['config_message_type']){
 					case 1:
 						$content     = $this->replaceTempToMessage($sms_message_temp['context'], $meeting_record, $receiver);
 						$send_result = $sms_logic->send($content, [$receiver['mobile']], true);
@@ -367,15 +369,15 @@
 						else $send_message_logic->create($content, $receiver['id'], 0, 0);
 					break;
 					case 2:
-						$weixin_record = $weixin_model->findRecord(1, [
+						$wechat_record = $wechat_model->findRecord(1, [
 							'oid'   => $receiver['id'],
 							'otype' => $receiver_type,
 							'wtype' => 1
 						]);
-						$content       = $this->replaceTempToMessage($weixin_message_temp['context'], $meeting_record, $receiver);
-						$send_result   = $wxcorp_logic->sendMessage('text', $content, ['user' => [$weixin_record['weixin_id']]], 'client');
+						$content       = $this->replaceTempToMessage($wechat_message_temp['context'], $meeting_record, $receiver);
+						$send_result   = $wxcorp_logic->sendMessage('text', $content, ['user' => [$wechat_record['wid']]], 'client');
 						if($send_result['status']){
-							$count['weixin']++;
+							$count['wechat']++;
 							$send_message_logic->create($content, $receiver['id'], 0, 1);
 						}
 						else $send_message_logic->create($content, $receiver['id'], 0, 0);
@@ -388,27 +390,27 @@
 							$send_message_logic->create($content, $receiver['id'], 0, 1);
 						}
 						else $send_message_logic->create($content, $receiver['id'], 0, 0);
-						$weixin_record = $weixin_model->findRecord(1, [
+						$wechat_record = $wechat_model->findRecord(1, [
 							'oid'   => $receiver['id'],
 							'otype' => $receiver_type,
 							'wtype' => 1
 						]);
-						$content       = $this->replaceTempToMessage($weixin_message_temp['context'], $meeting_record, $receiver);
-						$send_result   = $wxcorp_logic->sendMessage('text', $content, ['user' => [$weixin_record['weixin_id']]], 'client');
+						$content       = $this->replaceTempToMessage($wechat_message_temp['context'], $meeting_record, $receiver);
+						$send_result   = $wxcorp_logic->sendMessage('text', $content, ['user' => [$wechat_record['wid']]], 'client');
 						if($send_result['status']){
-							$count['weixin']++;
+							$count['wechat']++;
 							$send_message_logic->create($content, $receiver['id'], 0, 1);
 						}
 						else $send_message_logic->create($content, $receiver['id'], 0, 0);
 					break;
 				}
 			}
-			if($count['weixin'] == count($receiver_list) && $count['sms'] == count($receiver_list)) return [
+			if($count['wechat'] == count($receiver_list) && $count['sms'] == count($receiver_list)) return [
 				'status'  => true,
 				'message' => '全部发送成功'
 			];
 			else{
-				if($count['weixin'] == count($receiver_list)) return ['status' => true, 'message' => '微信信息全部发送成功'];
+				if($count['wechat'] == count($receiver_list)) return ['status' => true, 'message' => '微信信息全部发送成功'];
 				if($count['sms'] == count($receiver_list)) return ['status' => true, 'message' => '短信信息全部发送成功'];
 			}
 

@@ -150,31 +150,6 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>消息发送：</label>
-										<div class="col-sm-11 clearfix">
-											<div class="switch pull-left" data-on="primary" data-off="info" style="margin-right: 20px;">
-												微信：
-												<if condition="$info.message_weixin eq 1">
-													<!--suppress XmlDuplicatedId -->
-													<input type="checkbox" id="message_weixin" name="message_weixin" value="1" checked/>
-													<else/>
-													<!--suppress XmlDuplicatedId -->
-													<input type="checkbox" id="message_weixin" name="message_weixin" value="1"/>
-												</if>
-											</div>
-											<div class="switch pull-left" data-on="primary" data-off="info">
-												短信：
-												<if condition="$info.message_sms eq 1">
-													<!--suppress XmlDuplicatedId -->
-													<input type="checkbox" id="message_sms" name="message_sms" value="1" checked/>
-													<else/>
-													<!--suppress XmlDuplicatedId -->
-													<input type="checkbox" id="message_sms" name="message_sms" value="1"/>
-												</if>
-											</div>
-										</div>
-									</div>
-									<div class="form-group">
 										<label for="contacts_1_id" class="col-sm-1 control-label ">联系人：</label>
 										<div class="col-sm-11">
 											<div id="contacts_1_id"></div>
@@ -300,8 +275,6 @@
 					defaultValue:'<{$info.contacts_2_id}>',
 					defaultHtml :'<{$info.contacts_2_name}>'
 				}),
-				switchWeixin        :$('#message_weixin').bootstrapSwitch(),
-				switchSms           :$('#message_sms').bootstrapSwitch(),
 				toast               :$().QuasarToast(),
 				loading             :$().QuasarLoading(),
 				addressSelect       :$("#place").citySelect({

@@ -105,14 +105,16 @@ from system_permission where id in (
 				$sql         = "SELECT `name`, id, `group_code`, `group_name` FROM system_permission
 WHERE id NOT IN (
 	SELECT pid FROM system_assign_permission where oid = $rid and type = 0
-) and (system_permission.pinyin_code like '$keyword' or system_permission.name like '$keyword');";
+) and (system_permission.pinyin_code like '$keyword' or system_permission.name like '$keyword' or system_permission.group_name like '$keyword');";
 				$permission = $this->query($sql);
 			}
 			else{
+				$keyword     = "%$keyword%";
 				$sql         = "SELECT `name`, id, `group_code`, `group_name` FROM system_permission
 WHERE id IN (
 	SELECT pid FROM system_assign_permission where oid = $rid and type = 0
-);";
+) and (system_permission.pinyin_code like '$keyword' or system_permission.name like '$keyword' or system_permission.group_name like '$keyword');";
+
 				$permission = $this->query($sql);
 			}
 			if($type == 'arr' || $type == 'str'){

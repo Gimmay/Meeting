@@ -1,251 +1,81 @@
 /**
- * Created by 1195 on 2016-10-19.
+ * Created by qyqy on 2016-12-7.
  */
-
-var ThisObject = {
-	aTemp               :'<a class="btn btn-default btn-sm " href="javascript:void(0)" role="button" data-id="$id">$name</a>',
-	aActiveTemp         :'<a class="btn btn-default btn-sm active" href="javascript:void(0)" role="button" data-id="$id">$name</a>',
-	uploadInterval      :null,
-	word                :0,
-	option              :'<option value="$id" data-price="$price">$name</option>',
-	bindEvent           :function(){
-		var self = this;
-		// 选择代金券
-		$('.coupon_list a').on('click', function(){
-			var id = $(this).attr('data-id');
-			if($(this).hasClass('active')){
-				$(this).removeClass('active');
-			}else{
-				$(this).addClass('active');
-			}
-		});
-		// 添加收款代金券选择
-		$('#add_receivables .coupon_list a').on('click', function(){
-			self.eachAddReceivables();
-		});
-		self.eachAddReceivables();
-		// 添加修改代金券选择
-		$('#alter_receivables .coupon_list a').on('click', function(){
-			self.eachAlterReceivables();
-		});
-		self.eachAlterReceivables();
-		$('.clear-marginleft').on('click', function(){
-			$('#price').val(0);
-		});
-		// 删除收款记录
-		$('.delete_btn').on('click', function(){
-			var id = $(this).parents('.btn-group').attr('data-id');
-			$('#delete_receivables').find('input[name=id]').val(id);
-		});
-		//导入excel
-		$('#excel_file').on('change', function(){
-			//ManageObject.object.loading.loading();
-			getIframeData();
-		});
-	},
-	unbindEvent         :function(){
-		$('.coupon_list a').off('click');
-	},
-	eachAddReceivables  :function(){
-		var arr = [];
-		$('#add_receivables .coupon_list a.active').each(function(){
-			var id = $(this).attr('data-id');
-			arr.push(id)
-		});
-		$('#add_receivables').find('input[name=coupon_code]').val(arr);
-	},
-	eachAlterReceivables:function(){
-		var arr = [];
-		$('#alter_receivables .coupon_list a.active').each(function(){
-			var id = $(this).attr('data-id');
-			arr.push(id)
-		});
-		$('#alter_receivables').find('input[name=coupon_code]').val(arr);
-	}
-};
+/*var ThisObject = {
+ optTemp          :'<option value="$numOpt">$name</option>',
+ tableTemp        :'<tr>\n\t<td class="check_item_excel"><input type="checkbox" class="icheck_excel" value="$id"></td>\n\t<td>$num</td><td class="excel_name" data-id="$id">$value</td>\n\t<td>\n\t\t<select name="client_info" id="" class="form-control select_h">\n\t\t\t$opt\n\t\t</select>\n\t</td>\n</tr>',
+ uploadInterval   :null,
+ signBntTemp      :'<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="$id">$signName</a>',
+ signActiveBntTemp:'<a class="btn btn-default btn-sm active" href="javascript:void(0)" role="button" data-id="$id">$signName</a>'
+ };*/
 $(function(){
-	var quasar_script          = document.getElementById('quasar_script');
-	var url_object             = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
-	var $add_receivables_modal = $('#add_receivables');
-	ManageObject.object.meetingName.onQuasarSelect(function(){
-		var value = ManageObject.object.meetingName.getValue();
-		$add_receivables_modal.find('input[name=mid]').val(value);
+	var quasar_script = document.getElementById('quasar_script');
+	// 实例化Url类
+	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
+	// 显示结果数
+	$('.table_length').find('select').on('change', function(){
+		var number = $(this).find('option:selected').text();
+		var url    = url_object.setUrlParam('_page_count', number);
+		location.replace(url);
 	});
-	ManageObject.object.clientName.onQuasarSelect(function(){
-		var value = ManageObject.object.clientName.getValue();
-		$add_receivables_modal.find('input[name=cid]').val(value);
-	});
-	// 修改收款
-	$('.modify_btn').on('click', function(){
-		var id = $(this).parents('.btn-group').attr('data-id');
-		Common.ajax({
-			data    :{requestType:'get_receivables_detail', id:id},
-			callback:function(r){
-				var $alter_receivables_object = $('#alter_receivables');
-				var time                      = new Date(r.time*1000).format('yyyy-MM-dd HH:mm:ss');
-				$alter_receivables_object.find('input[name=id]').val(id);
-				//noinspection JSUnresolvedVariable
-				$alter_receivables_object.find('#client_name_a').val(r.client_name);
-				$alter_receivables_object.find('#price_a').val(r.price);
-				$alter_receivables_object.find('#receivables_time_a').val(time);
-				$alter_receivables_object.find('#comment_a').val(r.comment);
-				$alter_receivables_object.find('#place_a').val(r.place);
-				$alter_receivables_object.find('#source_type_a>option').prop('selected', false);
-				$alter_receivables_object.find('#source_type_a').val(r.source_type);
-				$alter_receivables_object.find('#source_type_a>option[value='+r.source_type+']').prop('selected', true);
-				$alter_receivables_object.find('#type_a>option').prop('selected', false);
-				$alter_receivables_object.find('#type_a').val(r.type);
-				$alter_receivables_object.find('#type_a>option[value='+r.type+']').prop('selected', true);
-				$alter_receivables_object.find('#method_a>option').prop('selected', false);
-				$alter_receivables_object.find('#method_a').val(r.method);
-				$alter_receivables_object.find('#method_a>option[value='+r.method+']').prop('selected', true);
-				$alter_receivables_object.find('#pos_id_a>option').prop('selected', false);
-				$alter_receivables_object.find('#pos_id_a').val(r.pos_id);
-				$alter_receivables_object.find('#pos_id_a>option[value='+r.pos_id+']').prop('selected', true);
-				ManageObject.object.payeeNameA.setValue(r.payee_id);
-				ManageObject.object.payeeNameA.setHtml(r.payee);
+	// 页面显示列表数下拉框默认值处理
+	(function(){
+		var page_count = url_object.getUrlParam('_page_count');
+		$('.table_length').find('select option').each(function(){
+			var num = $(this).text();
+			if(page_count == num){
+				$('.table_length').find('select option:selected').removeProp('selected').removeAttr('selected');
+				$(this).prop('selected', true).attr('selected', true);
+				return true;
 			}
 		});
-		Common.ajax({
-			data    :{requestType:'alter_coupon', id:id},
-			callback:function(r){
-				var arr = [], str = '';
-				//$('#alter_receivables .no_c').hide();
-				$.each(r, function(index1, value1){
-					$.each(value1, function(index2, value2){
-						if(index1 == 'coupon_item_yes'){
-							if(value2 != null){
-								str += ThisObject.aActiveTemp.replace('$id', value2.id)
-												 .replace('$name', value2.code);
-								arr.push(value2.id);
-							}
-						}
-						if(index1 == 'coupon_item_not'){
-							if(value2 != null){
-								str += ThisObject.aTemp.replace('$id', value2.id)
-												 .replace('$name', value2.code);
-							}
-						}
-					});
-				});
-				if(str == ''){
-					$('#alter_receivables .no_c').show();
-				}else{
-					// 记录之前已选择的代金券
-					$('#alter_receivables').find('input[name=old_coupon_code]').val(arr);
-					//输出所有代金券
-					$('#alter_receivables .coupon_list').html(str);
-				}
-				ThisObject.unbindEvent();
-				ThisObject.bindEvent();
-			}
-		});
-	});
-	ThisObject.bindEvent();
-	/**
-	 * 1、收款类型分为门票和代金券
-	 * 2、当选择的select 值为1 ，则为门票
-	 * 3、当选择的select 值为2 ，则为代金券
-	 */
-	$('#type').on('change', function(){
-		if($(this).find('option:selected').val() == 1){
-			ManageObject.object.loading.loading();
-			var str = '';
-			Common.ajax({
-				data    :{requestType:'ticket', code:1},
-				callback:function(data){
-					ManageObject.object.loading.complete();
-					console.log(data);
-					$('.list_form').removeClass('hide');
-					$('.list_form .ticket_h').removeClass('hide');
-					$('.list_form .coupon_h').addClass('hide');
-					$('#add_receivables .modal-footer').removeClass('hide');
-					$.each(data, function(index, value){
-						console.log(value);
-						str += ThisObject.option.replace('$id', value.id).replace('$name', value.name)
-										 .replace('$price', value.price);
-					});
-					console.log(str);
-					$('#ticket_type').html(str).prepend('<option value="0" selected>请选择门票类型</option>');
-					$('#ticket_type').on('change', function(){
-						var price = $(this).find('option:selected').attr('data-price');
-						$('#price').val(price);
-					});
-				}
-			})
-		}else if($(this).find('option:selected').val() == 2){
-			ManageObject.object.loading.loading();
-			Common.ajax({
-				data    :{requestType:'coupon', code:2},
-				callback:function(data){
-					ManageObject.object.loading.complete();
-					console.log(data);
-					$('.list_form').removeClass('hide');
-					$('.list_form .ticket_h').addClass('hide');
-					$('.list_form .coupon_h').removeClass('hide');
-					$('#add_receivables .modal-footer').removeClass('hide');
-					$.each(data, function(index, value){
-						console.log(value);
-					});
-				}
-			})
-		}
-	})
-});
-// 添加收款不为空控制
-function checkIsEmpty(){
-	var $add_receivables = $('#add_receivables');
-	var name             = $add_receivables.find('#selected_client_name').val();
-	var price            = $add_receivables.find('#price').val();
-	if(name == ''){
-		ManageObject.object.toast.toast('客户姓名不能为空');
-		$add_receivables.find('#selected_client_name').focus();
-		return false;
-	}
-	if(price == ''){
-		ManageObject.object.toast.toast('金额不能为空');
-		$add_receivables.find('#price').focus();
-		return false;
-	}
-	return true;
-}
-// 修改收款不为空控制
-function checkIsEmptyAlter(){
-	var $alter_receivables = $('#alter_receivables');
-	var name               = $alter_receivables.find('#selected_client_name').val();
-	var price              = $alter_receivables.find('#price').val();
-	if(name == ''){
-		ManageObject.object.toast.toast('客户姓名不能为空');
-		$alter_receivables.find('#selected_client_name').focus();
-		return false;
-	}
-	if(price == ''){
-		ManageObject.object.toast.toast('金额不能为空');
-		$alter_receivables.find('#price').focus();
-		return false;
-	}
-	return true;
-}
-// 收款导入excel
-function getIframeData(){
-	var data = new FormData($('#file_form')[0]);
-	console.log(data);
-	$.ajax({
-		url        :'',
-		type       :'POST',
-		data       :data,
-		dataType   :'JSON',
-		cache      :false,
-		processData:false,
-		contentType:false
-	}).done(function(data){
-		console.log(data);
-		if(data.status){
-			ManageObject.object.toast.toast(data.message);
-			location.reload(); // 刷新本页面
+	})();
+	// 全选checkbox
+	$('.all_check').find('.iCheck-helper').on('click', function(){
+		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
+			$('.check_item').find('.icheckbox_square-green').addClass('checked');
 		}else{
-			ManageObject.object.toast.toast('导入失败，请按照Excel模板格式填写。');
+			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
 		}
 	});
-	return false;
-}
+	// 已收款客户列表
+	$('.check_receivables').find('.iCheck-helper').on('click', function(){
+		var $quasar = $('#quasar_script');
+		var mvc     = $quasar.attr('data-url-sys-param');
+		var suffix  = $quasar.attr('data-page-suffix');
+		var link    = new Quasar.UrlClass(1, mvc, suffix);
+		var param   = link.getUrlParam('receivables');
+		if(param == 1){
+			var new_url = link.delUrlParam('receivables');
+			location.replace(new_url);
+		}else{
+			var reviewed_url = link.setUrlParam('receivables', 1);
+			location.replace(reviewed_url);
+		}
+	});
+	// 未收款客户列表
+	$('.check_not_receivables').find('.iCheck-helper').on('click', function(){
+		var $quasar = $('#quasar_script');
+		var mvc     = $quasar.attr('data-url-sys-param');
+		var suffix  = $quasar.attr('data-page-suffix');
+		var link    = new Quasar.UrlClass(1, mvc, suffix);
+		var param   = link.getUrlParam('receivables');
+		if(param == 0){
+			var new_url = link.delUrlParam('receivables');
+			location.replace(new_url);
+		}else{
+			var reviewed_url = link.setUrlParam('receivables', 0);
+			location.replace(reviewed_url);
+		}
+	});
+	(function(){
+		// 人员状态列表（签到\审核\收款）
+		var mvc         = $('#quasar_script').attr('data-url-sys-param');
+		var suffix      = $('#quasar_script').attr('data-page-suffix');
+		var link        = new Quasar.UrlClass(1, mvc, suffix);
+		var receivables = link.getUrlParam('receivables');
+		if(receivables == 1) $('.check_receivables').find('.iradio_square-blue').addClass('checked');
+		if(receivables == 0) $('.check_not_receivables').find('.iradio_square-blue').addClass('checked');
+	})();
+});
+

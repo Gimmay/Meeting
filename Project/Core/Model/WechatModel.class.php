@@ -9,8 +9,8 @@
 
 	use Exception;
 
-	class WeixinIDModel extends CoreModel{
-		protected $tableName       = 'weixin_id';
+	class WechatModel extends CoreModel{
+		protected $tableName       = 'wechat';
 		protected $tablePrefix     = 'user_';
 		protected $autoCheckFields = true;
 
@@ -39,7 +39,7 @@
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['otype'])) $where['otype'] = $filter['otype'];
 			if(isset($filter['wtype'])) $where['wtype'] = $filter['wtype'];
-			if(isset($filter['weixin_id'])) $where['weixin_id'] = $filter['weixin_id'];
+			if(isset($filter['wid'])) $where['wid'] = $filter['wid'];
 			if(isset($filter['oid'])) $where['oid'] = $filter['oid'];
 			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['status'])){

@@ -45,10 +45,10 @@
 									<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
 								</div>
 								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
+									<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款详情</a>
 								</div>
 								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/receivablesType', ['mid'=>I('get.mid', 0, 'int')])}>">收款类型</a>
+									<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
 								</div>
 								<div class="nav_tab_li">
 									<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机</a>
@@ -64,14 +64,11 @@
 											<div class="col-sm-2" style="width: 240px; margin: 0; padding: 0;">
 												<span>姓名:</span><span><div id="client_name"></div></span>
 											</div>
-
-											<div style="min-width: 140px; float:left;margin: 0; padding: 0;">
-												<span>单位:</span><span>吉美国际</span></div>
 											<div class="col-sm-2" style="width: 260px; margin: 0; padding: 0;">
 												<span>收款人:</span><span><div id="payee_id"></div></span>
 											</div>
 											<div class="col-sm-2" style="width: 280px; margin: 0; padding: 0;">
-												<span>收款时间:</span><span><input type="text" class="form-control" id="receivables_time"></span>
+												<span>收款时间:</span><span><input type="text" class="form-control" id="receivables_time" value="<{:date('Y-m-d H:i:s')}>"></span>
 											</div>
 											<div class="col-sm-2" style="width: 280px; margin: 0; padding: 0;">
 												<span>收款地点:</span><span><input type="text" class="form-control" id="place"></span>
@@ -131,6 +128,10 @@
 															<option value="0">请选择项目类型</option>
 															<option value="1">门票</option>
 															<option value="3">产品</option>
+															<option value="5">定金</option>
+															<option value="6">课程费</option>
+															<option value="7">产品费</option>
+															<option value="8">场餐费</option>
 															<option value="4">其他</option>
 														</select>
 													</div>
@@ -174,6 +175,7 @@
 											<input class="submit" type="submit" value="确认收款"/>
 										</div>
 										<input type="hidden" name="total_amount" id="total_amount">
+										<input type="hidden" name="redirectUrl" id="redirectUrl">
 									</div>
 								</div>
 							</form>

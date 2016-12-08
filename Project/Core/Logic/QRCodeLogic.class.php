@@ -18,6 +18,10 @@
 
 		public function _initialize(){
 			parent::_initialize();
+			$this->reset();
+		}
+
+		public function reset(){
 			$str_obj               = new StringPlus();
 			$file_name             = $str_obj->makeGuid('qrcode', false).'.png';
 			$this->_config['path'] = UPLOAD_PATH.'/QRCode/'.date('Y-m-d')."/$file_name";
@@ -55,7 +59,7 @@
 				imagedestroy($qrcode);
 				imagedestroy($logo);
 			}
-
+			$this->reset();
 			return $file_path;
 		}
 	}

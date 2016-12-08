@@ -40,34 +40,24 @@
 			if($this->permissionList['CLIENT.VIEW']){
 				/** @var \Manager\Model\SignPlaceModel $sign_place_model */
 				$sign_place_model = D('Manager/SignPlace');
-				/** @var \Core\Model\CouponItemModel $coupon_item_model */
-				$coupon_item_model = D('Core/CouponItem');
-				/** @var \Manager\Model\PayMethodModel $pay_method_model */
-				$pay_method_model = D('PayMethod');
-				/** @var \Manager\Model\ReceivablesTypeModel $receivables_type_model */
-				$receivables_type_model = D('ReceivablesType');
-				/** @var \Manager\Model\PosMachineModel $pos_machine_model */
-				$pos_machine_model = D('PosMachine');
 				/** @var \Manager\Model\EmployeeModel $employee_model */
 				$employee_model = D('Employee');
-				/** @var \Core\Model\EmployeeModel $employee_personal_model */
-				$employee_personal_model = D('Core/Employee');
 				/** @var \Core\Model\JoinModel $model */
 				$model   = D('Core/Join');
 				$options = [];
 				/* 处理URL参数 */
 				if(isset($_GET['signed'])) $options['sign_status'] = I('get.signed', 0, 'int') == 1 ? 1 : 'not signed';
 				if(isset($_GET['reviewed'])) $options['review_status'] = I('get.reviewed', 0, 'int') == 1 ? 1 : 'not reviewed';
+				if(isset($_GET['client_type'])) $options['isNew'] = I('get.client_type', 0, 'int') == 1 ? 1 : 0;
+				if(isset($_GET['status'])) $options['status'] = I('get.status', 0, 'int') == 1 ? 1 : 0;
 				/* 获取记录总数 */
-				$total_list = $model->findRecord(2, array_merge([
+				$total_list = $model->findRecord(0, array_merge([
 					'keyword' => I('get.keyword', ''),
 					'status'  => 'not deleted',
 					'mid'     => $this->meetingID
 				], $options));
-				/* 特殊处理收款列表和统计 */
-				if(isset($_GET['receivables'])) $total_list = $logic->getReceivablesList($total_list, I('get.receivables', 1, 'int'));
 				/* 分页设置 */
-				$page_object = new Page(count($total_list), I('get._page_count', C('PAGE_RECORD_COUNT'), 'int'));
+				$page_object = new Page($total_list, I('get._page_count', C('PAGE_RECORD_COUNT'), 'int'));
 				\ThinkPHP\Quasar\Page\setTheme1($page_object);
 				$page_show = $page_object->show();
 				/* 当前页记录 */
@@ -78,58 +68,40 @@
 					'status'  => 'not deleted',
 					'mid'     => $this->meetingID
 				], $options));
-				/* 清除额外字段 */
-				$options = [];
 				/* 统计数据 */
-				$signed_count   = $model->findRecord(0, array_merge([
+				$signed_count   = $model->findRecord(0, [
 					'sign_status' => 1,
 					'status'      => 1,
 					'mid'         => $this->meetingID
-				], $options));
-				$reviewed_count = $model->findRecord(0, array_merge([
+				]);
+				$reviewed_count = $model->findRecord(0, [
 					'review_status' => 1,
 					'status'        => 1,
 					'mid'           => $this->meetingID
-				], $options));
-				$all_count      = $model->findRecord(0, array_merge([
+				]);
+				$enabled_count  = $model->findRecord(0, [
+					'status' => 1,
+					'mid'    => $this->meetingID
+				]);
+				$disabled_count  = $model->findRecord(0, [
+					'status' => 0,
+					'mid'    => $this->meetingID
+				]);
+				$new_count      = $model->findRecord(0, [
+					'isNew'  => 1,
+					'status' => 1,
+					'mid'    => $this->meetingID
+				]);
+				$all_count      = $model->findRecord(0, [
 					'status' => 'not deleted',
 					'mid'    => $this->meetingID
-				], $options));
+				]);
 				/* 获取记录总数 */
-				$temp_total_list = $model->findRecord(2, array_merge([
+				$temp_total_list = $model->findRecord(2, [
 					//'keyword' => I('get.keyword', ''),
 					'status' => 1,
 					'mid'    => $this->meetingID
-				], $options));
-				/* 特殊处理收款列表和统计 */
-				$receivables_count = $not_receivables_count = 0;
-				if(isset($_GET['receivables'])){
-					$temp_client_list = $logic->getReceivablesList($temp_total_list, I('get.receivables', 1, 'int'));
-					if(I('get.receivables') == 1){
-						$receivables_count     = count($temp_client_list);
-						$not_receivables_count = (count($temp_total_list)-count($temp_client_list));
-					}
-					if(I('get.receivables') == 0){
-						$not_receivables_count = count($temp_client_list);
-						$receivables_count     = (count($temp_total_list)-count($temp_client_list));
-					}
-					$client_list = $logic->getReceivablesList($client_list, I('get.receivables', 1, 'int'));
-				}
-				else{
-					$receivables_count     = count($logic->getReceivablesList($temp_total_list, 1));
-					$not_receivables_count = count($logic->getReceivablesList($temp_total_list, 0));
-					$client_list           = $logic->getReceivablesList($client_list, 1, false);
-				}
-				//支付类型
-				$pay_method_list = $pay_method_model->getPayMethodSelectList();
-				//收款类型
-				$receivables_type_list = $receivables_type_model->getReceivablesTypeSelectList();
-				//POS机
-				$pos_machine_list = $pos_machine_model->getPosMachineSelectList();
-				//当前收款人
-				$employee_personal_result = $employee_personal_model->findEmployee(1, ['id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')]);
-				/* 会议对应的券记录 */
-				$coupon_item_result = $coupon_item_model->findRecord(2, ['mid' => $this->meetingID, 'status' => 0]);
+				]);
 				/* 员工列表(for select component) */
 				$employee_list = $employee_model->getEmployeeSelectList();
 				/* 获取签到点列表(for select component) */
@@ -137,21 +109,18 @@
 				/* 向视图输出数据 */
 				$this->assign('sign_place_list', $sign_place_list);
 				$this->assign('statistics', [
-					'signed'          => $signed_count,
-					'not_signed'      => count($temp_total_list)-$signed_count,
-					'reviewed'        => $reviewed_count,
-					'not_reviewed'    => count($temp_total_list)-$reviewed_count,
-					'total'           => $all_count,
-					'receivables'     => $receivables_count,
-					'not_receivables' => $not_receivables_count,
-					'enabled_total'   => count($temp_total_list)
+					'signed'        => $signed_count,
+					'not_signed'    => count($temp_total_list)-$signed_count,
+					'reviewed'      => $reviewed_count,
+					'not_reviewed'  => count($temp_total_list)-$reviewed_count,
+					'new'           => $new_count,
+					'not_new'       => count($temp_total_list)-$new_count,
+					'enabled'       => $enabled_count,
+					'disabled'      => $disabled_count,
+					'total'         => $all_count,
+					'enabled_total' => count($temp_total_list)
 				]);
-				$this->assign('employee_info', $employee_personal_result);
-				$this->assign('pay_method_list', $pay_method_list);
-				$this->assign('pos_machine_list', $pos_machine_list);
-				$this->assign('receivables_type_list', $receivables_type_list);
 				$this->assign('employee_list', $employee_list);
-				$this->assign('coupon_code_list', $coupon_item_result);
 				$this->assign('list', $client_list);
 				$this->assign('page_show', $page_show);
 				$this->display();
@@ -225,6 +194,7 @@
 				], $options));
 				$client_list = $logic->alterColumnForExportExcel($client_list, [
 					'password',
+					'mobile_qrcode',
 					'mid',
 					'id',
 					'pinyin_code',

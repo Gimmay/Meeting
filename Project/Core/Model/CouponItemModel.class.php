@@ -83,7 +83,7 @@
 			if(isset($filter['mid'])) $where .= " and workflow_coupon_item.mid = $filter[mid]";
 			if(isset($filter['main.status'])){
 				$status = strtolower($filter['main.status']);
-				if($status == 'not deleted') $where .= " and workflow_coupon_item.status != 3";
+				if($status == 'not deleted') $where .= " and workflow_coupon_item.status != 2";
 				else $where .= " and workflow_coupon_item.status = ".$filter['main.status'];
 			}
 			if(isset($filter['sub.status'])){

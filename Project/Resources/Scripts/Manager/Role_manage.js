@@ -53,7 +53,7 @@ var ScriptObject = {
 				}
 			});
 		});
-		/*
+		/**
 		 * 点击已授予的权限，删除并将其移至未选择区域
 		 */
 		$('#authorize_select a').on('click', function(){
@@ -100,11 +100,30 @@ var ScriptObject = {
 				}
 			});
 		});
+		/**
+		 * 一个模块权限全选   -- 已分配权限
+		 */
+		$('#authorize_select .check_all').on('click', function(){
+			var code = $(this).parents('.pannel_n').attr('id');
+			var e    = $(this).parents('.pannel_n');
+			self.antiAssignGroup(code, e);
+		});
+		/**
+		 * 一个模块权限全选  -- 未分配权限
+		 */
+		$('#authorize_all .check_all').on('click', function(){
+			var code = $(this).parents('.pannel_n').attr('id');
+			var e    = $(this).parents('.pannel_n');
+			self.assignGroup(code, e);
+		});
 	},
 	unbindEvent      :function(){
 		$('#authorize_select a').off('click');
 		$('#authorize_all a').off('click');
+		$('#authorize_select .check_all').off('click');
+		$('#authorize_all .check_all').off('click');
 	},
+	// 初始化权限界面
 	initGetAuthorize :function(data_id){
 		var self = this;
 		// 初始化已选择的权限
@@ -112,7 +131,7 @@ var ScriptObject = {
 		Common.ajax({
 			data:{requestType:'get_assigned_permission', id:data_id}, async:false, callback:function(data){
 				ManageObject.object.loading.complete();
-				//$('#authorize_select').empty();
+				$('#authorize_select').empty();
 				console.log(data);
 				self.writeInSelectHtml(data, data_id);
 			}
@@ -127,21 +146,8 @@ var ScriptObject = {
 				self.writeInAllHtml(data, data_id);
 			}
 		});
-		/**
-		 * 一个模块权限全选   -- 已分配权限
-		 */
-		$('#authorize_select .check_all').on('click', function(){
-			var code = $(this).parents('.pannel_n').attr('id');
-			self.antiAssignGroup(code);
-		});
-		/**
-		 * 一个模块权限全选  -- 未分配权限
-		 */
-		$('#authorize_all .check_all').on('click', function(){
-			var code = $(this).parents('.pannel_n').attr('id');
-			self.assignGroup(code);
-		});
 	},
+	// 未选择权限搜索
 	unSearchAuthorize:function(){
 		var self    = this;
 		var eid     = $('input[name=hide_role_id]').val();
@@ -159,9 +165,10 @@ var ScriptObject = {
 		});
 		ScriptObject.bindEvent();
 	},
+	// 已选择权限搜索
 	searchAuthorize  :function(){
 		var eid     = $('input[name=hide_role_id]').val();
-		var keyword = $('#authorize_search input').val();
+		var keyword = $('#authorize_search_o input').val();
 		ManageObject.object.loading.loading(true);
 		Common.ajax({
 			data    :{requestType:'get_assigned_permission', id:eid, keyword:keyword},
@@ -178,6 +185,7 @@ var ScriptObject = {
 		});
 		ScriptObject.bindEvent();
 	},
+	// 创建角色不能为空
 	checkIsEmpty     :function(){
 		var $create_role_name = $('#create_role_name');
 		if($create_role_name.val() == ''){
@@ -186,6 +194,7 @@ var ScriptObject = {
 			return false;
 		}
 	},
+	// 修改角色不能为空
 	checkIsEmpty2    :function(){
 		var $modify_role_name = $('#modify_role_name');
 		if($modify_role_name.val() == ''){
@@ -194,6 +203,7 @@ var ScriptObject = {
 			return false;
 		}
 	},
+	// 写入已分配的权限
 	writeInSelectHtml:function(data, data_id){
 		var str = '', htm = '';
 		$('#authorize_select').html('');
@@ -220,6 +230,7 @@ var ScriptObject = {
 			$('input[name=hide_role_id]').val(data_id);
 		}
 	},
+	// 写入未分配的权限
 	writeInAllHtml   :function(data, data_id){
 		var str = '', htm = '';
 		$('#authorize_all').html('');
@@ -244,32 +255,38 @@ var ScriptObject = {
 			});
 		}
 	},
-	antiAssignGroup  :function(code){
+	// 收回权限   已分配权限 -》 未分配权限
+	antiAssignGroup  :function(code, e){
 		var role_id = $('input[name=hide_role_id]').val();
-		ManageObject.object.loading.loading(true);
+		// ManageObject.object.loading.loading(true);
 		Common.ajax({
 			data    :{requestType:'anti_assign_permission_group', code:code, id:role_id},
 			callback:function(r){
-				ManageObject.object.loading.complete();
+				//ManageObject.object.loading.complete();
 				if(r.status){
+					ManageObject.object.toast.toast(r.message);
+					//e.remove();
+					ScriptObject.initGetAuthorize('');
 				}
 			}
 		})
 	},
-	assignGroup      :function(code){
+	// 授权   未分配权限 -》 已分配权限
+	assignGroup      :function(code, e){
 		var role_id = $('input[name=hide_role_id]').val();
-		ManageObject.object.loading.loading(true);
+		//ManageObject.object.loading.loading(true);
 		Common.ajax({
 			data    :{requestType:'assign_permission_group', code:code, id:role_id},
 			callback:function(r){
-				ManageObject.object.loading.complete();
+				// ManageObject.object.loading.complete();
 				if(r.status){
+					ManageObject.object.toast.toast(r.message);
+					ScriptObject.initGetAuthorize('');
 				}
 			}
 		})
 	}
 }
-	;
 $(function(){
 	ScriptObject.bindEvent();
 	// 未选择权限搜索

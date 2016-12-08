@@ -32,7 +32,7 @@
 
 			<div class="my_title">
 				<div class="photo">
-					<img src="<{$weixin.avatar}>">
+					<img src="<{$wechat.avatar}>">
 				</div>
 				<p class="name"><{$info.name}></p>
 				<p class="address"><{$info.unit}></p>
@@ -54,14 +54,15 @@
 					<p>
 						<b>会议地点</b>：<{$meeting.place}>
 					</p>
-					<p>
-						<b>签到负责人</b>：各公司人事部负责人
-					</p>
 				</div>
 			</div>
 			<div class="my_box">
-				<div class="qr_code">
-					<img src="<{$info.sign_qrcode}>">
+				<!--<div class="qr_code">-->
+					<!--<img src="<{$info.sign_qrcode}>">-->
+				<!--</div>-->
+				<div class="qr_code" style="text-align: center">
+					<img src="<{$info.sign_code_qrcode}>">
+					<span>请让签到人员使用扫码枪扫描该二维码</span>
 				</div>
 			</div>
 		</div>

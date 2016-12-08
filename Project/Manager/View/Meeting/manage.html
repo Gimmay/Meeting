@@ -188,7 +188,6 @@
 							</div>
 						</section>
 					</div>
-
 					<div class="right_details">
 						<div class="d_con">
 						<span class="close_btn glyphicon glyphicon-remove">
@@ -237,7 +236,7 @@
 									<span>简介：</span> <span class="brief"></span>
 								</div>
 								<div class="li">
-									<span>消息类型：</span><span class="message_type"></span>
+									<span>消息类型：</span><span class="config_message_type"></span>
 								</div>
 							</div>
 							<!--	<div class="btn_fun">
@@ -307,118 +306,6 @@
 			</div>
 		</div>
 	</if>
-	<!-- 选择消息模板 -->
-	<!--<div class="modal fade" id="choose_message" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
-	<!--<div class="modal-dialog">-->
-	<!--<div class="modal-content">-->
-	<!--<div class="modal-header">-->
-	<!--<button type="button" class="close" data-dismiss="modal">-->
-	<!--<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>-->
-	<!--<h2 class="modal-title">选择消息模板</h2>-->
-	<!--</div>-->
-	<!--<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">-->
-	<!--<input type="hidden" name="requestType" value="message"> <input type="hidden" name="id" value="">-->
-	<!--<div class="modal-body">-->
-	<!--<div class="form-group">-->
-	<!--<label for="sign_mes" class="col-sm-2 control-label">签到：</label>-->
-	<!--<div class="col-sm-8">-->
-	<!--<div id="sign_mes"></div>-->
-	<!--</div>-->
-	<!--<div class="col-sm-2">-->
-	<!--<button type="button" class="btn btn-sm btn-primary mes_preview_btn">预览</button>-->
-	<!--</div>-->
-	<!--</div>-->
-	<!--<div class="form-group">-->
-	<!--<label for="unti_sign_mes" class="col-sm-2 control-label">取消签到：</label>-->
-	<!--<div class="col-sm-8">-->
-	<!--<div id="unti_sign_mes"></div>-->
-	<!--</div>-->
-	<!--<div class="col-sm-2">-->
-	<!--<button type="button" class="btn btn-sm btn-primary mes_preview_btn">预览</button>-->
-	<!--</div>-->
-	<!--</div>-->
-	<!--<div class="form-group">-->
-	<!--<label for="receivables_mes" class="col-sm-2 control-label">收款：</label>-->
-	<!--<div class="col-sm-8">-->
-	<!--<div id="receivables_mes"></div>-->
-	<!--</div>-->
-	<!--<div class="col-sm-2">-->
-	<!--<button type="button" class="btn btn-sm btn-primary mes_preview_btn">预览</button>-->
-	<!--</div>-->
-	<!--</div>-->
-	<!--<div class="mes_preview">-->
-	<!--</div>-->
-	<!--</div>-->
-	<!--<div class="modal-footer">-->
-	<!--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>-->
-	<!--<button type="submit" class="btn btn-primary">确认</button>-->
-	<!--</div>-->
-	<!--</form>-->
-	<!--</div>-->
-	<!--</div>-->
-	<!--</div>-->
-	<!--选择酒店-->
-	<!--<div class="modal fade" id="choose_hotel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
-	<!--<div class="modal-dialog" style="width: 60%">-->
-	<!--<div class="modal-content">-->
-	<!--<div class="modal-header">-->
-	<!--<button type="button" class="close" data-dismiss="modal">-->
-	<!--<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>-->
-	<!--<h2 class="modal-title text-center">可选酒店列表</h2>-->
-	<!--</div>-->
-	<!--<form class="form-horizontal" role="form" action="" method="post">-->
-	<!--<input type="hidden" name="requestType" value="choose_hotel"> <input type="hidden" name="id">-->
-	<!--<div class="modal-body">-->
-	<!--<table class="table table-bordered" style="text-align: center">-->
-	<!--<thead>-->
-	<!--<tr>-->
-	<!--<td width="5%" class="all_check_h">-->
-	<!--<input type="checkbox" class="icheck" placeholder="" value="">-->
-	<!--</td>-->
-	<!--<td width="5%">序号</td>-->
-	<!--<td width="10%">酒店名称</td>-->
-	<!--<td width="10%">星级</td>-->
-	<!--<td width="10%">类型</td>-->
-	<!--<td width="10%">地址</td>-->
-	<!--<td width="10%">联系方式</td>-->
-	<!--<td width="10%">简介</td>-->
-	<!--<td width="20%">备注</td>-->
-	<!--</tr>-->
-	<!--</thead>-->
-	<!--<tbody>-->
-	<!--<volist name="info" id="single">-->
-	<!--<tr>-->
-	<!--<td class="check_item_h">-->
-	<!--<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">-->
-	<!--</td>-->
-	<!--<td><{$i}></td>-->
-	<!--<td class="hotel_name"><{$single.name}></td>-->
-	<!--<td data-id="<{$single.id}>"><{$single.level}></td>-->
-	<!--<td><{$single.type}></td>-->
-	<!--<td><{$single.address}></td>-->
-	<!--<td><a href="<{:U('manage', ['did'=>$single['did']])}>"><{$single.contact}></a>-->
-	<!--</td>-->
-	<!--<td><{$single.brief}></td>-->
-	<!--<td><{$single.comment}></td>-->
-	<!--</tr>-->
-	<!--</volist>-->
-	<!--</tbody>-->
-	<!--</table>-->
-	<!--<input type="hidden" name="mid">-->
-	<!--<div class="page_wrap">-->
-	<!--<div class="pagination">-->
-	<!--<{$page_show}>-->
-	<!--</div>-->
-	<!--</div>-->
-	<!--</div>-->
-	<!--<div class="modal-footer">-->
-	<!--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>-->
-	<!--<button type="button" class="btn btn-primary btn_save_hotel">保存</button>-->
-	<!--</div>-->
-	<!--</form>-->
-	<!--</div>-->
-	<!--</div>-->
-	<!--</div>-->
 	<!--会议对应角色-->
 	<if condition="$permission_list['MEETING.ASSIGN-MANAGER'] eq 1">
 		<div class="modal fade" id="role_list_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -526,7 +413,7 @@
 				</div>
 			</div>
 		</div>
-		<!-- 添加会议管理人员 -->
+		<!-- 查看会议管理人员 -->
 		<div class="modal fade" id="see_management" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog" style="width: 65%">
 				<div class="modal-content">
@@ -587,7 +474,7 @@
 		</div>
 	</if>
 	<script>
-		var ManageObject = {
+		var ThisObject = {
 			object:{
 				signMessageSelect       :$('#sign_mes').QuasarSelect({
 					name        :'sign_mes',
@@ -622,6 +509,9 @@
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				})
+			},
+			url:{
+				thisPage:"<{:U('')}>"
 			}
 		}
 	</script>

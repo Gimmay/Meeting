@@ -25,7 +25,7 @@
 
 .ui-widget-content{
 	background : none !important;
-	color      : #FFFFFF;
+	color      : #000000;
 	border     : none;
 }
 
@@ -148,7 +148,7 @@ canvas{
 }
 
 .system_tem_list .w_box{
-	margin: 0 auto;
+	margin : 0 auto;
 }
 
 .system_tem_list ul li{

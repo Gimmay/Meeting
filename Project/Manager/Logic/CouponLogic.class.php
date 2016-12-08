@@ -19,7 +19,7 @@
 					$creator            = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 					$data['start_time'] = strtotime(I('post.start_time', ''));
 					$data['end_time']   = strtotime(I('post.end_time', ''));
-					$data['mid']   = I('get.mid',0,'int');
+					$data['mid']        = I('get.mid', 0, 'int');
 					$data['creator']    = $creator;//当前创建者
 					$data['creatime']   = time();//当前时间
 					/** @var \Core\Model\CouponItemModel $coupon_item_model */
@@ -59,6 +59,7 @@
 					$data['start_time'] = strtotime(I('post.start_time', ''));
 					$data['end_time']   = strtotime(I('post.end_time', ''));
 					$result             = $model->alterCoupon(['id' => I('post.id', 0, 'int')], $data);
+
 					return array_merge($result, ['__ajax__' => false]);
 				break;
 				case 'create';
@@ -81,7 +82,7 @@
 						$result_coupon_item = $coupon_item_model->createRecord($info);
 					}
 
-					return $result;
+					return array_merge($result, ['__ajax__' => false]);
 				break;
 				default:
 					return (['status' => false, 'message' => '参数错误']);

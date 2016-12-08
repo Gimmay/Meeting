@@ -54,20 +54,20 @@
 						</header>
 						<div class="repertory clearfix">
 							<div class="tabs">
-								<ul class="tabsUl clearfix">
-									<li class="<notpresent name='_GET[type]'>active</notpresent>" id="filter_btn_all">
-										<a href="javascript:void(0)">全部</a>
-									</li>
-									<li class="<if condition='$_GET[type] eq using'>active</if>" id="filter_btn_using">
-										<a href="javascript:void(0)">使用中</a>
-									</li>
-									<li class="<if condition='$_GET[type] eq not_use'>active</if>" id="filter_btn_not_use">
-										<a href="javascript:void(0)">未使用</a>
-									</li>
-									<li class="<if condition='$_GET[type] eq finish'>active</if>" id="filter_btn_finish">
-										<a href="javascript:void(0)">已结束</a>
-									</li>
-								</ul>
+								<!--<ul class="tabsUl clearfix">-->
+								<!--<li class="<notpresent name='_GET[type]'>active</notpresent>" id="filter_btn_all">-->
+								<!--<a href="javascript:void(0)">全部</a>-->
+								<!--</li>-->
+								<!--<li class="<if condition='$_GET[type] eq using'>active</if>" id="filter_btn_using">-->
+
+								<!--<li cl<a href="javascript:void(0)">使用中</a>-->
+								<!--</li>ass="<if condition='$_GET[type] eq not_use'>active</if>" id="filter_btn_not_use">-->
+								<!--<a href="javascript:void(0)">未使用</a>-->
+								<!--</li>-->
+								<!--<li class="<if condition='$_GET[type] eq finish'>active</if>" id="filter_btn_finish">-->
+								<!--<a href="javascript:void(0)">已结束</a>-->
+								<!--</li>-->
+								<!--</ul>-->
 							</div>
 							<form action="" method="get">
 								<div class="input-group repertory_text">
@@ -93,8 +93,8 @@
 										<td width="10%">地址</td>
 										<td width="10%">联系方式</td>
 										<td width="13%">状态</td>
-										<td width="25%">操作</td>
-										<td width="10%">选择</td>
+										<td width="20%">操作</td>
+										<td width="5%">启禁用</td>
 									</tr>
 								</thead>
 								<volist name="list" id="single">
@@ -120,17 +120,16 @@
 													<a href="<{:U('Room/manage',['mid'=>I('get.mid', 0, 'int'),'hid'=>$single['id']])}>" class="btn btn-default btn-xs delete_btn">房间管理</a>
 													<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_hotel">修改</button>
 													<button class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_hotel">删除</button>
+												</div>
+											</td>
+											<td>
+												<div class="btn-group" data-id="<{$single.id}>">
 													<if condition="$single['status'] eq 0">
 														<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_hotel', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
 													</if>
 													<if condition="$single['status'] eq 1">
 														<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_hotel', 'id'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
 													</if>
-												</div>
-											</td>
-											<td>
-												<div class="switch">
-													<input type="checkbox" class="select_hotel" data-size="small" checked/>
 												</div>
 											</td>
 										</tr>
@@ -336,7 +335,7 @@
 					radioClass   :'iradio_square-green'
 				}),
 				loading     :$().QuasarLoading(),
-				switchWeixin:$('.select_hotel').bootstrapSwitch(),
+				switchWechat:$('.select_hotel').bootstrapSwitch(),
 			}
 		}
 	</script>

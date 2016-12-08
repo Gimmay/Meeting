@@ -69,7 +69,7 @@ $(function(){
 	});
 });
 var Common = {
-	ajax:function(options){
+	ajax        :function(options){
 		var self   = this;
 		var result = null;
 		if(!options.hasOwnProperty('type')){
@@ -109,30 +109,30 @@ var Common = {
 	 *   正则判断字符串是否邮箱、手机号码、电话、传真、汉字、数字、特殊字符
 	 *   ==============================RegExp================================
 	 */
-	RegExpClass:function(){
+	RegExpClass :function(){
 
 		//验证字符串是否为email
-		this.isEmail = function(str){
+		this.isEmail     = function(str){
 			var emailReg = /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)*\.[\w-]+$/i;
 			return emailReg.test(str);
 		};
 		//验证字符串是否为手机号码
-		this.isMobile = function(str){
+		this.isMobile    = function(str){
 			var patrn = /^((13[0-9])|(15[0-35-9])|(18[0,2,3,5-9]))\d{8}$/;
 			return patrn.test(str);
 		};
 		//验证字符串是否为电话或者传真
-		this.isTel = function(str){
+		this.isTel       = function(str){
 			var patrn = /^[+]{0,1}(\d){1,3}[ ]?([-]?((\d)|[ ]){1,12})+$/;
 			return patrn.test(str);
 		};
 		//验证字符串是否为汉字
-		this.isCN = function(str){
+		this.isCN        = function(str){
 			var p = /^[\u4e00-\u9fa5\w]+$/;
 			return p.test(str);
 		};
 		//验证字符串是否为数字
-		this.isNum = function(str){
+		this.isNum       = function(str){
 			var p = /^\d+$/;
 			return p.test(str);
 		};
@@ -142,4 +142,7 @@ var Common = {
 			return p.test(str);
 		};
 	},
+	getLocalTime:function(val){
+		return new Date(parseInt(val)*1000).toLocaleString().replace(/:\d{1,2}$/, ' ');
+	}
 };

@@ -222,15 +222,13 @@
 				case 'create':
 					if($this->permissionList['MEETING.CREATE']){
 						/** @var \Core\Model\MeetingModel $model */
-						$model                = D('Core/Meeting');
-						$data                 = I('post.');
-						$data['creator']      = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-						$data['creatime']     = time();
-						$data['brief']        = $_POST['brief'];
-						$message_weixin       = $data['message_weixin'] ? 1 : 0;
-						$message_sms          = $data['message_sms'] ? 1 : 0;
-						$data['message_type'] = bindec("$message_weixin$message_sms");
-						$result               = $model->createMeeting($data);
+						$model                       = D('Core/Meeting');
+						$data                        = I('post.');
+						$data['creator']             = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$data['creatime']            = time();
+						$data['brief']               = $_POST['brief'];
+						$data['config_message_type'] = 0; // 默认消息发送不发送
+						$result                      = $model->createMeeting($data);
 						if($result['status']){
 							$meeting_id = $result['id'];
 							// 创建二维码
@@ -280,22 +278,19 @@
 				case 'alter':
 					if($this->permissionList['MEETING.ALTER']){
 						/** @var \Core\Model\MeetingModel $model */
-						$model                = D('Core/Meeting');
-						$qrcode_obj           = new QRCodeLogic();
-						$id                   = I('get.mid', 0, 'int');
-						$url                  = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myMeeting', [
+						$model          = D('Core/Meeting');
+						$qrcode_obj     = new QRCodeLogic();
+						$id             = I('get.mid', 0, 'int');
+						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myMeeting', [
 								'mid'  => $id,
 								'sign' => 1
 							]);
-						$qrcode_file          = $qrcode_obj->make($url);
-						$remote_url           = '/'.trim($qrcode_file, './');
-						$data                 = I('post.');
-						$data['brief']        = $_POST['brief'];
-						$message_weixin       = $data['message_weixin'] ? 1 : 0;
-						$message_sms          = $data['message_sms'] ? 1 : 0;
-						$data['message_type'] = bindec("$message_weixin$message_sms");
-						$data['qrcode']       = $remote_url;
-						$result               = $model->alterMeeting(['id' => $id], $data);
+						$qrcode_file    = $qrcode_obj->make($url);
+						$remote_url     = '/'.trim($qrcode_file, './');
+						$data           = I('post.');
+						$data['brief']  = $_POST['brief'];
+						$data['qrcode'] = $remote_url;
+						$result         = $model->alterMeeting(['id' => $id], $data);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
@@ -333,11 +328,11 @@
 						$hotel                   = $hotel_model->findHotel(1, ['id' => $meeting_record['hid']]);
 						$meeting_record['hotel'] = $hotel['name'];
 					}
-					$message_type                   = decbin($meeting_record['message_type']);
-					$message_type                   = sprintf('%02d', $message_type);
-					$meeting_record['message_type'] = $message_type[0] ? '微信, ' : '';
-					$meeting_record['message_type'] .= $message_type[1] ? '短信, ' : '';
-					$meeting_record['message_type'] = trim($meeting_record['message_type'], ', ');
+					$config_message_type                   = decbin($meeting_record['config_message_type']);
+					$config_message_type                   = sprintf('%02d', $config_message_type);
+					$meeting_record['config_message_type'] = $config_message_type[0] ? '微信, ' : '';
+					$meeting_record['config_message_type'] .= $config_message_type[1] ? '短信, ' : '';
+					$meeting_record['config_message_type'] = trim($meeting_record['config_message_type'], ', ');
 
 					return array_merge($meeting_record, ['__ajax__' => true]);
 				break;
@@ -614,6 +609,19 @@
 					$meeting_result = $meeting_model->alterMeeting(['id' => $mid], ['hid' => $hid]);
 
 					return array_merge($meeting_result, ['__ajax__' => true]);
+				break;
+				case 'set_config':
+					/** @var \Core\Model\MeetingModel $model */
+					$model                       = D('Core/Meeting');
+					$data                        = I('post.');
+					// Warning：如果更改了消息类型数量 这里去下面位置做更改
+					// B477A789FC61E5FC5221C889708449B460B207C5
+					$message_wechat              = $data['message_wechat'] ? 1 : 0;
+					$message_sms                 = $data['message_sms'] ? 1 : 0;
+					$data['config_message_type'] = bindec("$message_wechat$message_sms");
+					$result                      = $model->alterMeeting(['id' => I('get.mid', 0, 'int')], $data);
+
+					return array_merge($result, ['__ajax__' => false]);
 				break;
 				default:
 					return [

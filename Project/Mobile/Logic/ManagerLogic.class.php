@@ -7,8 +7,8 @@
 	 */
 	namespace Mobile\Logic;
 
+	use Core\Logic\JoinLogic;
 	use Core\Logic\WxCorpLogic;
-	use Manager\Logic\JoinLogic;
 	use Core\Logic\MeetingRoleLogic;
 	use Core\Logic\PermissionLogic;
 	use Quasar\StringPlus;
@@ -21,16 +21,16 @@
 		/**
 		 * 获取访问者的微信ID
 		 *
-		 * @param int|string $weixin_id 微信ID
+		 * @param int|string $wechat_id 微信ID
 		 * @param int        $wtype     微信ID类型 0：公众号OPENID 1：企业号USERID
 		 *
 		 * @return int|[]|null
 		 */
-		public function getVisitorID($weixin_id, $wtype = 1){
-			/** @var \Core\Model\WeixinIDModel $weixin_model */
-			$weixin_model = D('Core/WeixinID');
-			$visitor      = $weixin_model->findRecord(1, [
-				'weixin_id' => $weixin_id,
+		public function getVisitorID($wechat_id, $wtype = 1){
+			/** @var \Core\Model\WechatModel $wechat_model */
+			$wechat_model = D('Core/Wechat');
+			$visitor      = $wechat_model->findRecord(1, [
+				'wechat_id' => $wechat_id,
 				'wtype'     => $wtype,
 				'otype'     => 0
 			]);
@@ -48,8 +48,8 @@
 		 * @return array
 		 */
 		public function getEmployeeInformation($eid){
-			/** @var \Core\Model\WeixinIDModel $weixin_model */
-			$weixin_model = D('Core/WeixinID');
+			/** @var \Core\Model\WechatModel $wechat_model */
+			$wechat_model = D('Core/Wechat');
 			/** @var \Core\Model\EmployeeModel $employee_model */
 			$employee_model = D('Core/Employee');
 			/** @var \Core\Model\DepartmentModel $department_model */
@@ -58,8 +58,8 @@
 			if(!$record) return [];
 			$department           = $department_model->findDepartment(1, ['id' => $record['did']]);
 			$record['department'] = $department['name'];
-			$weixin_record        = $weixin_model->findRecord(1, ['oid' => $eid, 'otype' => 0]);
-			$record['avatar']     = $weixin_record['avatar'];
+			$wechat_record        = $wechat_model->findRecord(1, ['oid' => $eid, 'otype' => 0]);
+			$record['avatar']     = $wechat_record['avatar'];
 
 			return $record;
 		}
@@ -69,7 +69,7 @@
 			$employee_id      = I('session.MOBILE_EMPLOYEE_ID', 0, 'int');
 			switch($type){
 				case 'auditing'; //审核
-					if($permission_logic->hasPermission('WEIXIN.CLIENT.REVIEW', $employee_id)){
+					if($permission_logic->hasPermission('WECHAT.CLIENT.REVIEW', $employee_id)){
 						/** @var \Core\Model\JoinModel $join_model */
 						$join_model = D('Core/Join');
 						$client_id  = I('get.cid', 0, 'int');
@@ -81,7 +81,7 @@
 						], ['review_status' => 1, 'review_time' => time()]);
 						if(!$join_result['status']) return array_merge($join_result, ['__ajax__' => true]);
 						$join_logic = new JoinLogic();
-						$result2    = $join_logic->makeQRCode([$client_id], ['mid' => $meeting_id]);
+						$result2    = $join_logic->makeQRCodeForSign([$client_id], ['mid' => $meeting_id]);
 
 						return array_merge($result2, ['__ajax__' => true]);
 					}
@@ -92,7 +92,7 @@
 					];
 				break;
 				case 'cancel_auditing'; //取消审核
-					if($permission_logic->hasPermission('WEIXIN.CLIENT.ANTI-REVIEW', $employee_id)){
+					if($permission_logic->hasPermission('WECHAT.CLIENT.ANTI-REVIEW', $employee_id)){
 						/** @var \Core\Model\JoinModel $join_model */
 						$join_model  = D('Core/Join');
 						$client_id   = I('get.cid', 0, 'int');
@@ -118,7 +118,7 @@
 					];
 				break;
 				case 'sign': //签到
-					if($permission_logic->hasPermission('WEIXIN.CLIENT.SIGN', $employee_id)){
+					if($permission_logic->hasPermission('WECHAT.CLIENT.SIGN', $employee_id)){
 						/** @var \Core\Model\JoinModel $join_model */
 						$join_model = D('Core/Join');
 						C('TOKEN_ON', false);
@@ -141,7 +141,7 @@
 					];
 				break;
 				case 'cancel_sign'; //取消签到
-					if($permission_logic->hasPermission('WEIXIN.CLIENT.ANTI-SIGN', $employee_id)){
+					if($permission_logic->hasPermission('WECHAT.CLIENT.ANTI-SIGN', $employee_id)){
 						/** @var \Core\Model\JoinModel $join_model */
 						$join_model = D('Core/Join');
 						C('TOKEN_ON', false);
@@ -159,7 +159,7 @@
 					];
 				break;
 				case 'addClient:create':
-					if($permission_logic->hasPermission('WEIXIN.CLIENT.CREATE', $employee_id)){
+					if($permission_logic->hasPermission('WECHAT.CLIENT.CREATE', $employee_id)){
 						$data = I('post.');
 						/* 1.创建参会人员 */
 						/** @var \Core\Model\ClientModel $model */
@@ -168,6 +168,8 @@
 						if($exist_client){
 							$client_id           = $exist_client['id'];
 							$str_obj             = new StringPlus();
+							$data['status']      = 1;
+							$data['is_new']      = 0;
 							$data['creatime']    = time();
 							$data['creator']     = $option['employeeID'];
 							$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
@@ -217,12 +219,12 @@
 							$result = $join_model->createRecord($data);
 						}
 						/* 3.试图根据手机号创建微信用户记录 */
-						$weixin_logic     = new WxCorpLogic();
-						$weixin_user_list = $weixin_logic->getAllUserList();
-						foreach($weixin_user_list as $val){
+						$wechat_logic     = new WxCorpLogic();
+						$wechat_user_list = $wechat_logic->getAllUserList();
+						foreach($wechat_user_list as $val){
 							if($val['mobile'] == $mobile && $val['status'] != 4){
-								/** @var \Core\Model\WeixinIDModel $weixin_model */
-								$weixin_model = D('Core/WeixinID');
+								/** @var \Core\Model\WechatModel $wechat_model */
+								$wechat_model = D('Core/Wechat');
 								$department   = '';
 								foreach($val['department'] as $val2) $department .= $val2.',';
 								$department         = trim($department, ',');
@@ -230,7 +232,7 @@
 								$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
 								$data['oid']        = $client_id; // 对象ID
 								$data['wtype']      = 1; // 微信ID类型 企业号
-								$data['weixin_id']  = $val['userid']; // 微信ID
+								$data['wid']  = $val['userid']; // 微信ID
 								$data['department'] = $department; // 部门ID
 								$data['mobile']     = $val['mobile']; // 手机号码
 								$data['avatar']     = $val['avatar']; // 头像地址
@@ -240,7 +242,7 @@
 								$data['creatime']   = time(); // 创建时间
 								$data['creator']    = $option['employeeID']; // 当前创建者
 								C('TOKEN_ON', false);
-								$weixin_model->createRecord($data); // 插入数据
+								$wechat_model->createRecord($data); // 插入数据
 								break;
 							}
 						}
@@ -270,7 +272,7 @@
 						'fin' => []
 					];
 					$i                  = 0;
-					$condition_2        = $permission_logic->hasPermission('WEIXIN.MEETING.VIEW-ALL', I('session.MOBILE_EMPLOYEE_ID', 0, 'int'), 1);
+					$condition_2        = $permission_logic->hasPermission('WECHAT.MEETING.VIEW-ALL', I('session.MOBILE_EMPLOYEE_ID', 0, 'int'), 1);
 					foreach($data as $key => $val){
 						$condition_1 = in_array($val['id'], $meeting_view_list);
 						if($condition_1 || $condition_2){

@@ -7,8 +7,8 @@
 	 */
 	namespace Manager\Controller;
 
+	use Core\Logic\WxpayLogic;
 	use Manager\Logic\MeetingLogic;
-	use Manager\Logic\MessageLogic;
 	use Think\Page;
 
 	class MeetingController extends ManagerController{
@@ -16,6 +16,22 @@
 			parent::_initialize();
 			$core_logic = new \Core\Logic\MeetingLogic();
 			$core_logic->initializeStatus();
+		}
+
+		public function test(){ // todo 微信支付
+			$this->meetingID = $this->initMeetingID($this);
+			$wxpay_logic     = new WxpayLogic();
+			$wxpay_logic->webPay([
+				'mid'       => $this->meetingID,
+				'title'     => 'TE商品',
+				'detail'    => '商品描述了',
+				'attach'    => '请问',
+				'orderID'   => '292309583424832',
+				'price'     => 1234,
+				'tag'       => 'lhn',
+				'notifyUrl' => 'http://www.baidu.com',
+				'openid'    => 'oHFvew-OW-sCKB9-T95dFSHHx9qA'
+			]);
 		}
 
 		public function index(){
@@ -162,12 +178,6 @@
 					$data['director_name']   = $tmp['name'];
 					$data['contacts_1_name'] = $tmp_one['name'];
 					$data['contacts_2_name'] = $tmp_two['name'];
-					// Warning：如果更改了消息类型数量 这里必须做更改
-					// B477A789FC61E5FC5221C889708449B460B207C5
-					$message_type           = decbin($data['message_type']);
-					$message_type           = sprintf('%02d', $message_type);
-					$data['message_weixin'] = $message_type[0];
-					$data['message_sms']    = $message_type[1];
 
 					return $data;
 				};
@@ -199,5 +209,45 @@
 				$this->display();
 			}
 			else $this->error('您没有查看会议的权限');
+		}
+
+		public function configure(){
+			if(IS_POST){
+				$meeting_logic = new MeetingLogic();
+				$type          = strtolower(I('post.requestType', ''));
+				$result        = $meeting_logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['status']) $this->success($result['message']);
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
+			}
+			if($this->permissionList['MEETING.CONFIGURE']){
+				$this->meetingID = $this->initMeetingID($this);
+				$setMessageType  = function ($meeting){
+					$core_logic                       = new \Core\Logic\MeetingLogic();
+					$config                           = $core_logic->getConfig($this->meetingID);
+					$meeting['config_message_sms']    = $config['message_sms'];
+					$meeting['config_message_wechat'] = $config['message_wechat'];
+
+					return $meeting;
+				};
+				/** @var \Core\Model\MeetingModel $model */
+				$model = D('Core/Meeting');
+				/** @var \Core\Model\ConfigWechatModel $config_wechat_model */
+				$config_wechat_model = D('Core/ConfigWechat');
+				$config_wechat       = $config_wechat_model->findRecord(2, ['status' => 1]);
+				$meeting             = $model->findMeeting(1, ['id' => $this->meetingID]);
+				$meeting             = $setMessageType($meeting);
+				$this->assign('meeting', $meeting);
+				$this->assign('config_wechat', $config_wechat);
+				$this->display();
+			}
+			else $this->error('您没有进行会议设置的权限');
 		}
 	}
