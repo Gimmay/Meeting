@@ -51,7 +51,7 @@
 								<if condition="$permission_list['ROLE.CREATE'] eq 1">
 									<div class="function_btn bg-warning create_room" data-toggle="modal" data-target="#distribution_room">
 										<i></i>
-										<p>新增房间</p>
+										<p>房间分配</p>
 									</div>
 								</if>
 								<if condition="$permission_list['ROLE.DELETE'] eq 1">
@@ -104,7 +104,8 @@
 											<td class="price"><{$room_list.price}></td>
 											<td class="capacity"><{$room_list.capacity}></td>
 											<td>
-												<if condition="$room_list.count eq $room_list.capacity "> 住满
+												<if condition="$room_list.count eq $room_list.capacity ">
+													<b class="color-28B778">住满</b>
 													<elseif condition=" $room_list.count gt $room_list.capacity  "/>
 													已超过容纳人数(已住进<span style="color: red;"><{$room_list.count}>人</span>/<span style="color: royalblue;;">可容纳<{$room_list.capacity}>人</span>)
 													<else/>
@@ -191,7 +192,7 @@
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">新增房间</h2>
+					<h2 class="modal-title">房间分配</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="" onsubmit=" return checkAssign()">
 					<input type="hidden" name="requestType" value="create">
@@ -208,12 +209,19 @@
 								<input type="text" class="form-control room_number" name="room_number" id="room_number">
 							</div>
 						</div>
-						<div class="form-group">
+						<!--<div class="form-group">
 							<label for="room_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>房客类型：</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control room_type" name="client_type" id="client_type">
+								<select name="client_type" class="form-control" id="client_type">
+									<option value="陪同">陪同</option>
+									<option value="终端">终端</option>
+									<option value="内部员工">内部员工</option>
+									<option value="嘉宾">嘉宾</option>
+									<option value="老总">老总</option>
+									<option value="其他">其他</option>
+								</select>
 							</div>
-						</div>
+						</div>-->
 						<div class="form-group">
 							<label for="room_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>房间类型：</label>
 							<div class="col-sm-10">
@@ -223,20 +231,26 @@
 						<div class="form-group">
 							<label for="price" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>价格：</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control price" name="price" id="price">
+								<input type="text" class="form-control price" name="price" id="price" disabled>
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="capacity" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>可容纳人数：</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control capacity" name="capacity" id="capacity">
+								<input type="text" class="form-control capacity" name="capacity" id="capacity" disabled>
 							</div>
 						</div>
 						<div class="form-group mes_people">
 							<label class="col-sm-2 control-label">入住人员：</label>
 							<div class="col-sm-10">
-								<span class="mr_17 hide">已选择（<strong class="m_color" id="selected_attendee_count_by_1"></strong>）</span>
-								<a class="create_add_client" data-toggle="modal" data-target="#add_recipient"><i class="glyphicon glyphicon-plus"></i>添加入住人员</a>
+								<div class="list_item">
+									<span class="mr_17 hide">已选择（<strong class="m_color" id="selected_attendee_count_by_1"></strong>）</span>
+									<a class="create_add_client" data-toggle="modal" data-target="#add_recipient"><i class="glyphicon glyphicon-plus"></i>添加参会人员</a>
+								</div>
+								<div class="list_item">
+									<span class="mr_17 hide">已选择（<strong class="m_color" id="selected_attendee_count_by_2"></strong>）</span>
+									<a class="create_add_employee" data-toggle="modal" data-target="#add_recipient_employee"><i class="glyphicon glyphicon-plus"></i>添加内部员工</a>
+								</div>
 							</div>
 							<input type="hidden" name="person">
 						</div>
@@ -326,7 +340,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- 添加人员 >> 新增房间 -->
+	<!-- 添加人员 >> 新增房间 >> 客户 -->
 	<div class="modal fade" id="add_recipient" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog" style="width: 60%">
 			<div class="modal-content">
@@ -334,7 +348,7 @@
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 					</button>
-					<h2 class="modal-title">添加人员</h2>
+					<h2 class="modal-title">添加参会人员</h2>
 				</div>
 				<div class="choose_people">
 					<div class="d1">
@@ -362,15 +376,74 @@
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="10%">序号</td>
+										<td width="10%">单位名称</td>
 										<td width="10%">姓名</td>
+										<td width="10%">客户类型</td>
 										<td width="10%">性别</td>
 										<td width="10%">职务</td>
 										<td width="20%">手机号</td>
-										<td width="15%">单位名称</td>
 										<td width="20%">签到时间</td>
 									</tr>
 								</thead>
 								<tbody id="attendee_body">
+								</tbody>
+							</table>
+						</div>
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$page_show}>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加人员 >> 新增房间 >> 员工 -->
+	<div class="modal fade" id="add_recipient_employee" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 60%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title">添加内部员工</h2>
+				</div>
+				<div class="choose_people">
+					<div class="d1">
+						<span>当前有<b class="current_attendee">0</b>人</span>
+						<span>已选择<b class="color-red selected_attendee">0</b>人</span>
+						<a href="javascript:void(0)" class="btn_save btn btn-sm btn-info">添加入住</a>
+					</div>
+					<div class="search_sm">
+						<div class="col-sm-5">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="姓名" value="">
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default main_search">搜索</button>
+								</span>
+							</div>
+						</div>
+						<a type="button" class="btn btn-default search_all">查看所有</a>
+					</div>
+					<div class="d2">
+						<div class="table_wrap">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="10%" class="all_check_employee">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</td>
+										<td width="10%">序号</td>
+										<td width="10%">姓名</td>
+										<td width="10%">性别</td>
+										<td width="10%">部门</td>
+										<td width="10%">职务</td>
+										<td width="20%">手机号</td>
+										<td width="20%">单位</td>
+									</tr>
+								</thead>
+								<tbody id="employee_body">
 								</tbody>
 							</table>
 						</div>
@@ -421,11 +494,12 @@
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="10%">序号</td>
+										<td width="10%">单位名称</td>
 										<td width="10%">姓名</td>
+										<td width="10%">客户类型</td>
 										<td width="10%">性别</td>
 										<td width="10%">职务</td>
 										<td width="20%">手机号</td>
-										<td width="20%">单位名称</td>
 										<td width="20%">签到时间</td>
 									</tr>
 								</thead>

@@ -15,23 +15,24 @@
 		public function handlerRequest($type){
 			switch($type){
 				case 'create';
-					/** @var \Core\Model\HotelModel $room_model */
-					$room_model = D('Core/Hotel');
-					/** @var \Core\Model\MeetingModel $meeting_model */
-					$meeting_model = D('Core/Meeting');
-					C('TOKEN_ON', false);
-					$data             = I('post.', 0, '');
-					$data['mid']      = I('get.mid', 0, 'int');
-					$data['creatime'] = time();    //创建时间
-					$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
-					$hotel_result      = $room_model->createRecord($data);	//创建酒店
+					if($this->permissionList['HOTEL.CREATE']){
+						/** @var \Core\Model\HotelModel $room_model */
+						$room_model = D('Core/Hotel');
+						/** @var \Core\Model\MeetingModel $meeting_model */
+						$meeting_model = D('Core/Meeting');
+						C('TOKEN_ON', false);
+						$data             = I('post.', 0, '');
+						$data['mid']      = I('get.mid', 0, 'int');
+						$data['creatime'] = time();    //创建时间
+						$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+						$hotel_result     = $room_model->createRecord($data);    //创建酒店
+						$meeting_result   = $meeting_model->findMeeting(1, ['id' => I('get.mid', 0, 'int')]);//查出当前会议的信息
+						$hid              = $meeting_result['hid'].','.$hotel_result['id'];
+						$meeting_model->alterMeeting(['id' => $meeting_result['id']], ['hid' => $hid]);
 
-					$meeting_result = $meeting_model->findMeeting(1,['id'=>I('get.mid',0,'int')]);//查出当前会议的信息
-					$hid = $meeting_result['hid'].','.$hotel_result['id'];
-					$meeting_hid_alter = $meeting_model->alterMeeting(['id'=>$meeting_result['id']],['hid'=>$hid]);
-
-
-					return array_merge($hotel_result, ['__ajax__' => false]);
+						return array_merge($hotel_result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有创建酒店的权限', '__ajax__' => false];
 				break;
 				case 'delete';
 					/** @var \Core\Model\HotelModel $room_model */

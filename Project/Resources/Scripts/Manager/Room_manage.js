@@ -31,8 +31,9 @@ var ScriptObject = {
 	clientBtnTemp       :'<span class="cspan" data-id="$cid">$name</span>',
 	roomTypeTemp        :'<option value="$id">$name($surplusNumber/$totalNumber)</option>',
 	roomTypeSelectedTemp:'<option value="$id" selected>$name($surplusNumber/$totalNumber)</option>',
-	createAddClient     :'<tr>\n\t<td class="check_item_add">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$i</td>\n\t<td class="name">$name</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$unit</td>\n\t<td>$signDate</td>\n</tr>',
-	createAddClient2    :'<tr>\n\t<td class="check_item_add2">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$i</td>\n\t<td class="name">$name</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$unit</td>\n\t<td>$signDate</td>\n</tr>',
+	createAddClient     :'<tr>\n\t<td class="check_item_add">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$i</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$signDate</td>\n</tr>',
+	createAddClient2    :'<tr>\n\t<td class="check_item_add2">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$i</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$signDate</td>\n</tr>',
+	createAddEmployee   :'<tr><td class="check_item_employee"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$department</td><td>$position</td><td>$mobile</td><td>$company</td></tr>',
 	status              :0,
 	pastNumber          :0,
 	bindEvent           :function(){
@@ -48,17 +49,18 @@ var ScriptObject = {
 /**
  *
  * @param id  需要换房人的ID
- * @param rid  该房间的ID
+ * @param orid  外面该房间的ID
  * @param keyword  关键字
  */
-function change_room(id, rid, keyword){
+function change_room(id, orid, keyword){
 	Common.ajax({
-		data    :{requestType:'change_room', id:id, rid:rid, keyword:keyword},
+		data    :{requestType:'change_room', id:id, rid:orid, keyword:keyword},
 		callback:function(r){
 			$('#change_room').modal('show');
 			var str = '';
+			console.log(r);
 			$.each(r, function(index, value){
-				var strBtn = ''
+				var strBtn = '';
 				/**
 				 * -----------------------------房间交换-------------------------
 				 *  1、 当房间可容纳人数等于入住人数时，显示住满，只有交换按钮显示，只提供与房间内其他人员交换房的功能。
@@ -73,7 +75,7 @@ function change_room(id, rid, keyword){
 					str += ScriptObject.changeFulltemp.replace('$i', index+1).replace('$code', value.code)
 									   .replace('$situation', '住满').replace('$clientSpan', strBtn)
 									   .replace('$rid', value.id);
-				}else if(Number(value.capacity)>Number(value.client.length)>0){
+				}else if(Number(value.capacity)>Number(value.client.length) && Number(value.client.length)>0){
 					$.each(value.client, function(index1, value1){
 						strBtn += ScriptObject.clientBtnTemp.replace('$name', value1.name)
 											  .replace('$cid', value1.jid);
@@ -81,7 +83,7 @@ function change_room(id, rid, keyword){
 					str += ScriptObject.changeNotFulltemp.replace('$i', index+1).replace('$code', value.code)
 									   .replace('$situation', '未住满').replace('$clientSpan', strBtn)
 									   .replace('$rid', value.id);
-				}else if(Number(value.client.length) == 0){
+				}else if(value.client.length == 0){
 					$.each(value.client, function(index1, value1){
 						strBtn += ScriptObject.clientBtnTemp.replace('$name', value1.name)
 											  .replace('$cid', value1.jid);
@@ -187,12 +189,22 @@ $(function(){
 	$('#distribution_room').find('.create_add_client').on('click', function(){
 		getClientAdd(''); // 获取所有的客户列表
 	});
+	$('#distribution_room').find('.create_add_employee').on('click', function(){
+		getEmployeeAdd(''); // 获取所有的员工列表
+	});
 	$('#add_recipient').find('.main_search').on('click', function(){
 		var keyword = $('#add_recipient').find('input[name=keyword]').val();
 		getClientAdd(keyword); // 带关键字的获取客户列表
 	});
 	$('#add_recipient .search_all').on('click', function(){
 		getClientAdd(''); // 获取所有的客户列表
+	});
+	$('#add_recipient_employee').find('.main_search').on('click', function(){
+		var keyword = $('#add_recipient_employee').find('input[name=keyword]').val();
+		getEmployeeAdd(keyword); // 带关键字的获取客户列表
+	});
+	$('#add_recipient_employee .search_all').on('click', function(){
+		getEmployeeAdd(''); // 获取所有的客户列表
 	});
 	/**
 	 * 房间详情的操作
@@ -241,6 +253,40 @@ $(function(){
 		$('#distribution_room').find('#selected_attendee_count_by_1').text(nameStr);
 		ThisObject.object.loading.complete();
 		$('#add_recipient').modal('hide')
+	});
+	// 多选框点击事件 >>> 内部员工
+	$('#add_recipient_employee .check_item_employee').find('.iCheck-helper').on('click', function(){
+		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
+			$(this).parent('.icheckbox_square-green').addClass('checked');
+		}else{
+			$(this).parent('.icheckbox_square-green').removeClass('checked');
+		}
+		// 选中的人员
+		var str = '', i = 0;
+		$('#add_recipient_employee .check_item_employee  .icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
+			str += id+',';
+			i++;
+		});
+		$('#add_recipient_employee').find('.selected_attendee').text(i);
+	});
+	// 保存入住人  >>> 内部员工
+	$('#add_recipient_employee .btn_save').on('click', function(){
+		var n1  = 0;
+		var str = [], nameStr = [];
+		$('#add_recipient_employee .check_item_employee .icheckbox_square-green.checked').each(function(){
+			var id   = $(this).find('.icheck').val();
+			var name = $(this).parents('tr').find('.name').text();
+			str.push(id);
+			nameStr.push(name);
+			n1++;
+		});
+		ThisObject.object.loading.loading();
+		$('#distribution_room').find('.mr_17').removeClass('hide');
+		$('#distribution_room').find('input[name=person]').val(str);
+		$('#distribution_room').find('#selected_attendee_count_by_1').text(nameStr);
+		ThisObject.object.loading.complete();
+		$('#add_recipient_employee').modal('hide');
 	});
 	/*
 	 *  修改/修改入住人员
@@ -373,7 +419,7 @@ $(function(){
 				leave_btn();
 				$('.change_btn').on('click', function(){
 					var id   = $(this).parents('tr').attr('data-id'); // 需要换房人的ID
-					var orid = $(this).parents('.right_details').find('#orid').val();
+					var orid = $(this).parents('.right_details').find('#orid').val(); //
 					$('#change_room').find('input[name=id]').val(id);
 					$('#change_room').find('input[name=orid]').val(orid);
 					change_room(id, orid, '');
@@ -539,7 +585,7 @@ function getClientAdd(keyword){
 								   .replace('$name', value.name)
 								   .replace('$gender', gender).replace('$position', value.position)
 								   .replace('$mobile', value.mobile).replace('$unit', value.unit)
-								   .replace('$signDate', signTime)
+								   .replace('$signDate', signTime).replace('$clientType', value.type);
 			});
 			$('#add_recipient').find('#attendee_body').html(str);
 			$('.check_item_add').iCheck({
@@ -601,7 +647,134 @@ function getClientAddDetails(keyword){
 								   .replace('$name', value.name)
 								   .replace('$gender', gender).replace('$position', value.position)
 								   .replace('$mobile', value.mobile).replace('$unit', value.unit)
-								   .replace('$signDate', signTime)
+								   .replace('$signDate', signTime).replace('$clientType', value.type);
+			});
+			$('#add_recipient2').find('#attendee_body_a').html(str);
+			$('.check_item_add2').iCheck({
+				checkboxClass:'icheckbox_square-green',
+				radioClass   :'iradio_square-green'
+			});
+			$('#add_recipient2 .check_item_add2').find('.iCheck-helper').on('click', function(){
+				var n = 0;
+				$('#add_recipient2 .check_item_add2').find('.icheckbox_square-green.checked').each(function(){
+					n++;
+				});
+				$('#add_recipient2 .selected_attendee').text(n);
+			});
+			// 当前人数
+			var m = 0;
+			$('#add_recipient2 .check_item_add2').each(function(){
+				m++;
+			});
+			$('#add_recipient2').find('.current_attendee').text(m);
+			// 全选checkbox 选择入住人中全选
+			$('#add_recipient2 .all_check_add2').find('.iCheck-helper').on('click', function(){
+				if($(this).parent('.icheckbox_square-green').hasClass('checked')){
+					$('#add_recipient2 .check_item_add2').find('.icheckbox_square-green').addClass('checked');
+				}else{
+					$('#add_recipient2 .check_item_add2').find('.icheckbox_square-green').removeClass('checked');
+				}
+				// 选中的人员
+				var str = '', i = 0;
+				$('#add_recipient2 .check_item_add2  .icheckbox_square-green.checked').each(function(){
+					var id = $(this).find('.icheck').val();
+					str += id+',';
+					i++;
+				});
+				$('#add_recipient2').find('.selected_attendee').text(i);
+			});
+		}
+	});
+}
+function getEmployeeAdd(keyword){
+	var str = '';
+	Common.ajax({
+		data    :{requestType:'get_employee', keyword:keyword},
+		callback:function(r){
+			$.each(r, function(index, value){
+				var gender = '';
+				if(value.gender == 0){
+					gender = '未知';
+				}else if(value.gender == 1){
+					gender = '男';
+				}else if(value.gender == 2){
+					gender = '女';
+				}
+				if(value.sign_time != null){
+					var signTime = Common.getLocalTime(value.sign_time);
+				}else{
+					var signTime = '';
+				}
+				str += ScriptObject.createAddEmployee.replace('$num', index+1)
+								   .replace('$name', value.name)
+								   .replace('$id', value.id).replace('$position', value.position)
+								   .replace('$mobile', value.mobile).replace('$company', value.company)
+								   .replace('$gender', gender).replace('$department', value.d_name);
+			});
+			$('#add_recipient_employee').find('#employee_body').html(str);
+			$('.check_item_employee').iCheck({
+				checkboxClass:'icheckbox_square-green',
+				radioClass   :'iradio_square-green'
+			});
+			$('#add_recipient_employee .check_item_employee').find('.iCheck-helper').on('click', function(){
+				var n = 0;
+				$('#add_recipient_employee .check_item_employee').find('.icheckbox_square-green.checked')
+																 .each(function(){
+																	 n++;
+																 });
+				$('#add_recipient_employee .selected_attendee').text(n);
+			});
+			// 当前人数
+			var m = 0;
+			$('#add_recipient_employee .check_item_employee').each(function(){
+				m++;
+			});
+			$('#add_recipient_employee').find('.current_attendee').text(m);
+			// 全选checkbox 选择入住人中全选
+			$('#add_recipient_employee .all_check_employee').find('.iCheck-helper').on('click', function(){
+				if($(this).parent('.icheckbox_square-green').hasClass('checked')){
+					$('#add_recipient_employee .check_item_employee').find('.icheckbox_square-green')
+																	 .addClass('checked');
+				}else{
+					$('#add_recipient_employee .check_item_employee').find('.icheckbox_square-green')
+																	 .removeClass('checked');
+				}
+				// 选中的人员
+				var str = '', i = 0;
+				$('#add_recipient_employee .check_item_employee  .icheckbox_square-green.checked').each(function(){
+					var id = $(this).find('.icheck').val();
+					str += id+',';
+					i++;
+				});
+				$('#add_recipient_employee').find('.selected_attendee').text(i);
+			});
+		}
+	});
+}
+function getEmployeeAddDetails(keyword){
+	var str = '';
+	Common.ajax({
+		data    :{requestType:'get_client', keyword:keyword},
+		callback:function(r){
+			$.each(r, function(index, value){
+				var gender = '';
+				if(value.gender == 0){
+					gender = '未知';
+				}else if(value.gender == 1){
+					gender = '男';
+				}else if(value.gender == 2){
+					gender = '女';
+				}
+				if(value.sign_time != null){
+					var signTime = Common.getLocalTime(value.sign_time);
+				}else{
+					var signTime = '';
+				}
+				str += ScriptObject.createAddClient2.replace('$id', value.id).replace('$i', index+1)
+								   .replace('$name', value.name)
+								   .replace('$gender', gender).replace('$position', value.position)
+								   .replace('$mobile', value.mobile).replace('$unit', value.unit)
+								   .replace('$signDate', signTime).replace('$clientType', value.type);
 			});
 			$('#add_recipient2').find('#attendee_body_a').html(str);
 			$('.check_item_add2').iCheck({

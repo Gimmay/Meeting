@@ -7,6 +7,7 @@
 	 */
 	namespace Mobile\Logic;
 
+	use Core\Logic\ClientLogic;
 	use Core\Logic\JoinLogic;
 	use Core\Logic\WxCorpLogic;
 	use Core\Logic\MeetingRoleLogic;
@@ -119,20 +120,14 @@
 				break;
 				case 'sign': //签到
 					if($permission_logic->hasPermission('WECHAT.CLIENT.SIGN', $employee_id)){
-						/** @var \Core\Model\JoinModel $join_model */
-						$join_model = D('Core/Join');
-						C('TOKEN_ON', false);
-						$join_result = $join_model->alterRecord([
-							'mid' => I('get.mid', 0, 'int'),
-							'cid' => I('get.cid', 0, 'int')
-						], [
-							'sign_status'      => 1,
-							'sign_time'        => time(),
-							'sign_director_id' => $employee_id,
-							'sign_type'        => 3
+						$core_client_logic = new ClientLogic();
+						$result = $core_client_logic->sign([
+							'mid'  => I('get.mid', 0, 'int'),
+							'cid'  => I('get.cid', 0, 'int'),
+							'type' => 3,
+							'eid'  => $employee_id
 						]);
-
-						return array_merge($join_result, ['__ajax__' => true]);
+						return array_merge($result, ['__ajax__' => true]);
 					}
 					else return [
 						'status'   => false,

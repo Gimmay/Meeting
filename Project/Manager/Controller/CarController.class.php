@@ -31,25 +31,27 @@
 				}
 				exit;
 			}
-			/** @var \Manager\Model\MeetingModel $meeting_model */
-			$meeting_model = D('Meeting');
-			/** @var \Manager\Model\EmployeeModel $employee_model */
-			$employee_model = D('Employee');
-			
-			/** @var \Core\Model\CarModel $car_model */
-			$car_model = D('Core/Car');
-			/** @var \Manager\Model\CarModel $model */
-			$model         = D('Car');
-			$type          = I('get.type', '');
-			$list          = $car_model->findCar(2, ['status' => 'not deleted']);
-			$list          = $logic->setData('manage:set_and_filter', $list, ['type' => $type]);
-			$meeting_list  = $meeting_model->getMeetingForSelect();
-			$employee_list = $employee_model->getEmployeeNameSelectList();
-			$type_list     = $model->getTypeSelectList();
-			$this->assign('list', $list);
-			$this->assign('meeting', $meeting_list);
-			$this->assign('employee', $employee_list);
-			$this->assign('type', $type_list);
-			$this->display();
+			if($this->permissionList['CAR.VIEW']){
+				/** @var \Manager\Model\MeetingModel $meeting_model */
+				$meeting_model = D('Meeting');
+				/** @var \Manager\Model\EmployeeModel $employee_model */
+				$employee_model = D('Employee');
+				/** @var \Core\Model\CarModel $car_model */
+				$car_model = D('Core/Car');
+				/** @var \Manager\Model\CarModel $model */
+				$model         = D('Car');
+				$type          = I('get.type', '');
+				$list          = $car_model->findCar(2, ['status' => 'not deleted']);
+				$list          = $logic->setData('manage:set_and_filter', $list, ['type' => $type]);
+				$meeting_list  = $meeting_model->getMeetingForSelect();
+				$employee_list = $employee_model->getEmployeeNameSelectList();
+				$type_list     = $model->getTypeSelectList();
+				$this->assign('list', $list);
+				$this->assign('meeting', $meeting_list);
+				$this->assign('employee', $employee_list);
+				$this->assign('type', $type_list);
+				$this->display();
+			}
+			else $this->error('您没有查看车辆模块的权限');
 		}
 	}

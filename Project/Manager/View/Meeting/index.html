@@ -25,12 +25,6 @@
 						<section class="content">
 							<div class="table_wrap">
 								<header class="title">会议统计</header>
-								<div class="statistics">
-									<span>会议收款总计:<b>0</b>元</span>
-									<span>参会人员总计:<b>111</b>人</span>
-									<span>已收款人数:<b>0</b>人</span>
-									<span>已签到人数:<b>35</b>人</span>
-								</div>
 								<div class="modular clearfix">
 									<div class="m_item">
 										<div class="m_content" style="background: #46B9CB">
@@ -65,18 +59,18 @@
 									<span class="input-group-addon">手机版邀约外链</span>
 									<!--<input class="form-control" value="<iframe src='<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Mobile/invite', ['mid'=>I('get.mid', 0, 'int')])}>' frameborder='0'></iframe>" readonly placeholder="" id="mobile_invite_link">-->
 									<input class="form-control" value="<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Mobile/invite', ['mid'=>I('get.mid', 0, 'int')])}>" readonly placeholder="" id="mobile_invite_link">
-								<span class="input-group-btn">
-									<button class="btn btn-default" id="copy_btn_mobile" data-clipboard-target="mobile_invite_link">复制</button>
-								</span>
+									<span class="input-group-btn">
+										<button class="btn btn-default" id="copy_btn_mobile" data-clipboard-target="mobile_invite_link">复制</button>
+									</span>
 								</div>
-								<div class="input-group frame_link">
-									<span class="input-group-addon">电脑版邀约外链</span>
-									<!--<input class="form-control" value="<iframe src='<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Computer/invite', ['mid'=>I('get.mid', 0, 'int')])}>' frameborder='0'></iframe>" readonly placeholder="" id="computer_invite_link">-->
-									<input class="form-control" value="<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Computer/invite', ['mid'=>I('get.mid', 0, 'int')])}>" readonly placeholder="" id="computer_invite_link">
-								<span class="input-group-btn">
-									<button class="btn btn-default" id="copy_btn_computer" data-clipboard-target="computer_invite_link">复制</button>
-								</span>
-								</div>
+								<!--<div class="input-group frame_link">-->
+									<!--<span class="input-group-addon">电脑版邀约外链</span>-->
+									<!--&lt;!&ndash;<input class="form-control" value="<iframe src='<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Computer/invite', ['mid'=>I('get.mid', 0, 'int')])}>' frameborder='0'></iframe>" readonly placeholder="" id="computer_invite_link">&ndash;&gt;-->
+									<!--<input class="form-control" value="<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Computer/invite', ['mid'=>I('get.mid', 0, 'int')])}>" readonly placeholder="" id="computer_invite_link">-->
+									<!--<span class="input-group-btn">-->
+										<!--<button class="btn btn-default" id="copy_btn_computer" data-clipboard-target="computer_invite_link">复制</button>-->
+									<!--</span>-->
+								<!--</div>-->
 							</div>
 						</section>
 					</div>

@@ -23,72 +23,78 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'create':
-					$data = I('post.');
-					/** @var \Core\Model\EmployeeModel $model */
-					$model   = D('Core/Employee');
-					$str_obj = new StringPlus();
-					//					$exist_flag = false;
-					//					if(!empty($data['mobile'])){
-					//						$exist_record = $model->findEmployee(1, ['mobile' => $data['mobile']]);
-					//						$exist_flag   = true;
-					//					}
-					//					elseif(!empty($data['code'])){
-					//						$exist_record = $model->findEmployee(1, ['code' => $data['code']]);
-					//						$exist_flag   = true;
-					//					}
-					$data['status']      = $data['status'] == 1 ? 0 : (($data['status'] == 0) ? 1 : 1);
-					$data['creatime']    = time();
-					$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-					$data['password']    = $str_obj->makePassword($data['password'], $data['code']);
-					$data['birthday']    = date('Y-m-d', strtotime($data['birthday']));
-					//					if($exist_flag && isset($exist_record)){
-					//						$result = $model->alterEmployee(['id' => $exist_record['id']], $data);
-					//						if($result['status']) $employee_id = $exist_record['id'];
-					//					}
-					//					else{
-					$result = $model->createEmployee($data);
-					if($result['status']) $employee_id = $result['id'];
-					//					}
-					if($result['status'] && isset($employee_id)){
-						$result['message'] = '创建成功';
-						/** @var \Core\Model\WechatModel $wechat_model */
-						$wechat_model = D('Core/Wechat');
-						$logic        = new WxCorpLogic();
-						$wx_list      = $logic->getAllUserList(); //查出wx接口获取的所有用户信息
-						foreach($wx_list as $k1 => $v1){
-							if($v1['mobile'] == $data['mobile'] && $v1['status'] != 4){
-								C('TOKEN_ON', false);
-								$department = '';
-								foreach($v1['department'] as $v3) $department .= $v3.',';
-								$department         = trim($department, ',');
-								$data               = [];
-								$data['otype']      = 0;    //对象类型
-								$data['wtype']      = 1;    //微信ID类型 企业号
-								$data['oid']        = $employee_id;    //对象ID
-								$data['department'] = $department;    //部门ID
-								$data['wid']  = $v1['userid'];    //微信ID
-								$data['mobile']     = $v1['mobile'];    //手机号码
-								$data['avatar']     = $v1['avatar'];    //头像地址
-								$data['gender']     = $v1['gender'];    //性别
-								$data['is_follow']  = $v1['status'];    //是否关注
-								$data['nickname']   = $v1['name'];    //昵称
-								$data['creatime']   = time();    //创建时间
-								$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
-								$wechat_model->createRecord($data);    //插入数据
+					if($this->permissionList['EMPLOYEE.CREATE']){
+						$data = I('post.');
+						/** @var \Core\Model\EmployeeModel $model */
+						$model   = D('Core/Employee');
+						$str_obj = new StringPlus();
+						//					$exist_flag = false;
+						//					if(!empty($data['mobile'])){
+						//						$exist_record = $model->findEmployee(1, ['mobile' => $data['mobile']]);
+						//						$exist_flag   = true;
+						//					}
+						//					elseif(!empty($data['code'])){
+						//						$exist_record = $model->findEmployee(1, ['code' => $data['code']]);
+						//						$exist_flag   = true;
+						//					}
+						$data['status']      = $data['status'] == 1 ? 0 : (($data['status'] == 0) ? 1 : 1);
+						$data['creatime']    = time();
+						$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
+						$data['password']    = $str_obj->makePassword($data['password'], $data['code']);
+						$data['birthday']    = date('Y-m-d', strtotime($data['birthday']));
+						//					if($exist_flag && isset($exist_record)){
+						//						$result = $model->alterEmployee(['id' => $exist_record['id']], $data);
+						//						if($result['status']) $employee_id = $exist_record['id'];
+						//					}
+						//					else{
+						$result = $model->createEmployee($data);
+						if($result['status']) $employee_id = $result['id'];
+						//					}
+						if($result['status'] && isset($employee_id)){
+							$result['message'] = '创建成功';
+							/** @var \Core\Model\WechatModel $wechat_model */
+							$wechat_model = D('Core/Wechat');
+							$logic        = new WxCorpLogic();
+							$wx_list      = $logic->getAllUserList(); //查出wx接口获取的所有用户信息
+							foreach($wx_list as $k1 => $v1){
+								if($v1['mobile'] == $data['mobile'] && $v1['status'] != 4){
+									C('TOKEN_ON', false);
+									$department = '';
+									foreach($v1['department'] as $v3) $department .= $v3.',';
+									$department         = trim($department, ',');
+									$data               = [];
+									$data['otype']      = 0;    //对象类型
+									$data['wtype']      = 1;    //微信ID类型 企业号
+									$data['oid']        = $employee_id;    //对象ID
+									$data['department'] = $department;    //部门ID
+									$data['wid']        = $v1['userid'];    //微信ID
+									$data['mobile']     = $v1['mobile'];    //手机号码
+									$data['avatar']     = $v1['avatar'];    //头像地址
+									$data['gender']     = $v1['gender'];    //性别
+									$data['is_follow']  = $v1['status'];    //是否关注
+									$data['nickname']   = $v1['name'];    //昵称
+									$data['creatime']   = time();    //创建时间
+									$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+									$wechat_model->createRecord($data);    //插入数据
+								}
 							}
 						}
-					}
 
-					return array_merge($result, ['__ajax__' => false]);
+						return array_merge($result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有创建员工的权限', '__ajax__' => false];
 				break;
 				case 'alter':
-					/** @var \Core\Model\EmployeeModel $model */
-					$id     = I('get.id', 0, 'int');
-					$model  = D('Core/Employee');
-					$result = $model->alterEmployee(['id' => $id], I('post.'));
+					if($this->permissionList['EMPLOYEE.ALTER']){
+						/** @var \Core\Model\EmployeeModel $model */
+						$id     = I('get.id', 0, 'int');
+						$model  = D('Core/Employee');
+						$result = $model->alterEmployee(['id' => $id], I('post.'));
 
-					return array_merge($result, ['__ajax__' => false]);
+						return array_merge($result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有创建员工的权限', '__ajax__' => false];
 				break;
 				case 'get_assigned_role':
 					if($this->permissionList['EMPLOYEE.VIEW-ASSIGNED-ROLE']){

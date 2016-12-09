@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>参会人员 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body data-meeting-id="<{:I('get.mid')}>" data-place-id="<{:I('get.sid')}>">
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<if condition="$permission_list['CLIENT.VIEW'] eq 1">
+					<div class="main_body">
+						<section class="content">
+							<div class="table_wrap">
+								<div class="nav_tab clearfix">
+									<div class="nav_tab_li active">
+										<a href="javascript:void(0)">参会人员签到</a>
+									</div>
+								</div>
+							</div>
+							<!--<header class="c_header">-->
+								<!--<div class="function_list clearfix">-->
+									<!--<if condition="$permission_list['CLIENT.SIGN'] eq 1">-->
+										<!--<div class="function_btn bg-danger batch_sign_point">-->
+											<!--<i></i>-->
+											<!--<p>签到</p>-->
+										<!--</div>-->
+									<!--</if>-->
+								<!--</div>-->
+							<!--</header>-->
+							<div class="repertory clearfix">
+								<form action="" method="get" id="form">
+									<input type="search" id="search_input" class="form-control" placeholder="选中此处" value="<{$client.name}>" style="height: 60px; font-size: 30px">
+								</form>
+							</div>
+							<present name="client">
+								<div class="table_wrap">
+									<table class="table table-bordered">
+										<tr>
+											<td>姓名</td>
+											<td><{$client.name}></td>
+										</tr>
+										<tr>
+											<td>单位</td>
+											<td><{$client.unit}></td>
+										</tr>
+										<tr>
+											<td>手机号</td>
+											<td><{$client.mobile}></td>
+										</tr>
+										<tr>
+											<td>性别</td>
+											<td><switch name="client.gender">
+												<case value="0">未指定</case>
+												<case value="1">男</case>
+												<case value="2">女</case>
+											</switch></td>
+										</tr>
+										<tr>
+											<td>类型</td>
+											<td><{$client.type}></td>
+										</tr>
+										<tr>
+											<td>是否新客</td>
+											<td>
+												<switch name="client.is_new">
+													<case value="0">老客</case>
+													<case value="1">新客</case>
+												</switch>
+											</td>
+										</tr>
+										<tr>
+											<td>是否审核</td>
+											<td><if condition="$client['review_status'] eq 1">
+												<span class="color-green">已审核</span>
+												<else/>未审核
+											</if></td>
+										</tr>
+										<tr>
+											<td>是否签到</td>
+											<td><if condition="$client['sign_status'] eq 1">
+												<span class="color-green">已签到</span>
+												<else/>未签到
+											</if></td>
+										</tr>
+									</table>
+								</div>
+								<else/>
+								<div class="table_wrap">
+									<table class="table table-bordered">
+										<tr>
+											<td>没有获取到任何参会人员信息</td>
+										</tr>
+									</table>
+								</div>
+							</present>
+						</section>
+					</div>
+				</if>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

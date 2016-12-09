@@ -5,6 +5,11 @@ var ScriptObject = {
 	assignRoleTemp   :'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\'>$name</a>',
 	authorizeRoleTemp:'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\' data-group="$group-code" data-name="$group-name">$name</a>',
 	pannelTemp       :'<div class="pannel_n" id="$id" data-group="$group">\n\t<div>\n\t\t<header class="title">$name <button type="button" class="btn btn-sm check_all">全选</button></header>\n\t\t<section>\n\t\t\t\n\t\t</section>\n\t</div>\n</div>',
+	group            :{
+		groupCode:'',
+		groupName:'',
+		list     :[]
+	},
 	bindEvent        :function(){
 		var self = this;
 		/**
@@ -44,7 +49,7 @@ var ScriptObject = {
 							}, 1000);
 						}else{
 							select_temp = ScriptObject.authorizeRoleTemp.replace('$id', id).replace('$name', name)
-													  .replace('$group-code', code).replace('$group_name2', group_name);
+													  .replace('$group-code', code).replace('$group-name', group_name);
 							$('#authorize_select div[data-group='+code+']').find('section').prepend(select_temp);
 						}
 						ScriptObject.unbindEvent();
@@ -91,7 +96,7 @@ var ScriptObject = {
 							}, 1000);
 						}else{
 							select_temp = ScriptObject.authorizeRoleTemp.replace('$id', id).replace('$name', name)
-													  .replace('$group-code', code).replace('$group_name2', group_name);
+													  .replace('$group-code', code).replace('$group-name', group_name);
 							$('#authorize_all div[data-group='+code+']').find('section').prepend(select_temp);
 						}
 						ScriptObject.unbindEvent();
@@ -104,17 +109,137 @@ var ScriptObject = {
 		 * 一个模块权限全选   -- 已分配权限
 		 */
 		$('#authorize_select .check_all').on('click', function(){
-			var code = $(this).parents('.pannel_n').attr('id');
-			var e    = $(this).parents('.pannel_n');
-			self.antiAssignGroup(code, e);
+			var code    = $(this).parents('.pannel_n').attr('id');
+			var role_id = $('input[name=hide_role_id]').val();
+			var e       = $(this).parents('.pannel_n');
+			var name;
+			e.find('section a').each(function(){
+				var id   = $(this).attr('data-id');
+				name     = $(this).attr('data-name');
+				var text = $(this).text();
+				ScriptObject.group.list.push({id:id, name:text});
+			});
+			self.group.groupName = name;
+			self.group.groupCode = code;
+			console.log(self.group);
+			// ManageObject.object.loading.loading(true);
+			Common.ajax({
+				data    :{requestType:'anti_assign_permission_group', code:code, id:role_id},
+				callback:function(r){
+					//ManageObject.object.loading.complete();
+					if(r.status){
+						ManageObject.object.toast.toast(r.message);
+						if(r.status){
+							e.remove();
+							if($('#authorize_all div[data-group='+code+']').length == 0){
+								htm = self.pannelTemp.replace('$group', code)
+										  .replace('$name', name).replace('$id', code);
+								$('#authorize_all').prepend(htm);
+								setTimeout(function(){
+									var str = '';
+									console.log(self.group.list);
+									$.each(self.group.list, function(index, value){
+										console.log(value);
+										str += self.authorizeRoleTemp.replace('$id', value.id)
+												   .replace('$name', value.name)
+												   .replace('$group-name', self.group.groupName)
+												   .replace('$group-code', self.group.groupCode);
+									});
+									$('#authorize_all #'+code).find('section').html(str);
+									ScriptObject.group.groupCode = '';
+									ScriptObject.group.groupName = '';
+									ScriptObject.group.list      = [];
+								}, 1000);
+							}else{
+								var str = '';
+								console.log(self.group.list);
+								$.each(self.group.list, function(index, value){
+									console.log(value);
+									str += self.authorizeRoleTemp.replace('$id', value.id)
+											   .replace('$name', value.name)
+											   .replace('$group-name', self.group.groupName)
+											   .replace('$group-code', self.group.groupCode);
+								});
+								$('#authorize_all div[data-group='+code+']').find('section')
+																			.prepend(str);
+								ScriptObject.group.groupCode = '';
+								ScriptObject.group.groupName = '';
+								ScriptObject.group.list      = [];
+							}
+							self.unbindEvent();
+							self.bindEvent();
+						}
+					}
+				}
+			})
 		});
 		/**
 		 * 一个模块权限全选  -- 未分配权限
 		 */
 		$('#authorize_all .check_all').on('click', function(){
-			var code = $(this).parents('.pannel_n').attr('id');
-			var e    = $(this).parents('.pannel_n');
-			self.assignGroup(code, e);
+			var code    = $(this).parents('.pannel_n').attr('id');
+			var role_id = $('input[name=hide_role_id]').val();
+			var e       = $(this).parents('.pannel_n');
+			var name;
+			e.find('section a').each(function(){
+				var id   = $(this).attr('data-id');
+				name     = $(this).attr('data-name');
+				var text = $(this).text();
+				ScriptObject.group.list.push({id:id, name:text});
+			});
+			self.group.groupName = name;
+			self.group.groupCode = code;
+			console.log(self.group);
+			// ManageObject.object.loading.loading(true);
+			Common.ajax({
+				data    :{requestType:'assign_permission_group', code:code, id:role_id},
+				callback:function(r){
+					//ManageObject.object.loading.complete();
+					if(r.status){
+						ManageObject.object.toast.toast(r.message);
+						if(r.status){
+							e.remove();
+							if($('#authorize_select div[data-group='+code+']').length == 0){
+								htm = self.pannelTemp.replace('$group', code)
+										  .replace('$name', name).replace('$id', code);
+								$('#authorize_select').prepend(htm);
+								setTimeout(function(){
+									var str = '';
+									console.log(self.group.list);
+									$.each(self.group.list, function(index, value){
+										console.log(value);
+										str += self.authorizeRoleTemp.replace('$id', value.id)
+												   .replace('$name', value.name)
+												   .replace('$group-name', self.group.groupName)
+												   .replace('$group-code', self.group.groupCode);
+									});
+									$('#authorize_select #'+code).find('section').html(str);
+									ScriptObject.group.groupCode = '';
+									ScriptObject.group.groupName = '';
+									ScriptObject.group.list      = [];
+								}, 1000);
+							}else{
+								var str = '';
+								console.log(self.group.list);
+								$.each(self.group.list, function(index, value){
+									console.log(value);
+									str += self.authorizeRoleTemp.replace('$id', value.id)
+											   .replace('$name', value.name)
+											   .replace('$group-name', self.group.groupName)
+											   .replace('$group-code', self.group.groupCode);
+								});
+								$('#authorize_select div[data-group='+code+']').find('section')
+																			.prepend(str);
+								ScriptObject.group.groupCode = '';
+								ScriptObject.group.groupName = '';
+								ScriptObject.group.list      = [];
+							}
+							self.unbindEvent();
+							self.bindEvent();
+						}
+					}
+				}
+			})
 		});
 	},
 	unbindEvent      :function(){
@@ -167,6 +292,7 @@ var ScriptObject = {
 	},
 	// 已选择权限搜索
 	searchAuthorize  :function(){
+		var self    = this;
 		var eid     = $('input[name=hide_role_id]').val();
 		var keyword = $('#authorize_search_o input').val();
 		ManageObject.object.loading.loading(true);
@@ -174,13 +300,10 @@ var ScriptObject = {
 			data    :{requestType:'get_assigned_permission', id:eid, keyword:keyword},
 			async   :false,
 			callback:function(data){
+				console.log(data);
 				ManageObject.object.loading.complete();
 				var str = '';
-				$.each(data, function(index, value){
-					str += ScriptObject.authorizeRoleTemp.replace('$id', value.id).replace('$name', value.name)
-									   .replace('$type', value.type);
-				});
-				$('#authorize_all').html(str);
+				self.writeInSelectHtml(data, eid);
 			}
 		});
 		ScriptObject.bindEvent();
@@ -255,37 +378,6 @@ var ScriptObject = {
 			});
 		}
 	},
-	// 收回权限   已分配权限 -》 未分配权限
-	antiAssignGroup  :function(code, e){
-		var role_id = $('input[name=hide_role_id]').val();
-		// ManageObject.object.loading.loading(true);
-		Common.ajax({
-			data    :{requestType:'anti_assign_permission_group', code:code, id:role_id},
-			callback:function(r){
-				//ManageObject.object.loading.complete();
-				if(r.status){
-					ManageObject.object.toast.toast(r.message);
-					//e.remove();
-					ScriptObject.initGetAuthorize('');
-				}
-			}
-		})
-	},
-	// 授权   未分配权限 -》 已分配权限
-	assignGroup      :function(code, e){
-		var role_id = $('input[name=hide_role_id]').val();
-		//ManageObject.object.loading.loading(true);
-		Common.ajax({
-			data    :{requestType:'assign_permission_group', code:code, id:role_id},
-			callback:function(r){
-				// ManageObject.object.loading.complete();
-				if(r.status){
-					ManageObject.object.toast.toast(r.message);
-					ScriptObject.initGetAuthorize('');
-				}
-			}
-		})
-	}
 }
 $(function(){
 	ScriptObject.bindEvent();

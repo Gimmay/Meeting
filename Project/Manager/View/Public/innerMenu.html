@@ -34,6 +34,11 @@
 					<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">参会人员</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+					<ul class="nav-second-level">
+						<li>
+							<a href="<{:U('Client/sign', ['mid'=>I('get.mid', 0, 'int')])}>">签到</a>
+						</li>
+					</ul>
 				</li>
 			</if>
 			<li class="side_item <if condition='$c_name eq Grouping'>active</if>">
@@ -119,9 +124,9 @@
 			</if>
 			<if condition="$permission_list['DINING_TABLE.VIEW'] eq 1">
 				<!--<li class="side_item <if condition='$c_name eq DiningTable'>active</if>">-->
-					<!--<a href="<{:U('DiningTable/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">-->
-						<!--<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>-->
-						<!--<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>-->
+				<!--<a href="<{:U('DiningTable/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">-->
+				<!--<i class="icon_nav glyphicon glyphicon-glass"></i> <span class="nav-label">餐桌管理</span>-->
+				<!--<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>-->
 				<!--</li>-->
 			</if>
 			<if condition="$permission_list['REPORT.VIEW'] eq 1">

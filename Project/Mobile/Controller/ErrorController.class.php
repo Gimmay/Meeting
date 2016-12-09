@@ -7,6 +7,7 @@
 	 */
 	namespace Mobile\Controller;
 
+	use Core\Logic\MeetingLogic;
 	use Core\Logic\PermissionLogic;
 
 	class ErrorController extends MobileController{
@@ -35,29 +36,8 @@
 		public function notJoin(){
 			$meeting_id = I('get.mid', 0, 'int');
 			if($meeting_id != 0){
-				/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
-				$meeting_manager_model = D('Core/MeetingManager');
-				/** @var \Core\Model\EmployeeModel $employee_model */
-				$employee_model   = D('Core/Employee');
-				$permission_logic = new PermissionLogic();
-				$manager_record   = $meeting_manager_model->findRecord(2, [
-					'mid'    => $meeting_id,
-					'status' => 'not deleted'
-				]);
-				$signer           = '';
-				foreach($manager_record as $val){
-					$flag = $permission_logic->hasPermission([
-						'WECHAT.CLIENT.VIEW',
-						'WECHAT.CLIENT.REVIEW',
-						'WECHAT.CLIENT.SIGN',
-						'WECHAT.MEETING.VIEW'
-					], $val['eid']);
-					if($flag){
-						$employee = $employee_model->findEmployee(1, ['id' => $val['eid']]);
-						$signer .= $employee['name'].'、';
-					}
-				}
-				$signer = trim($signer, '、');
+				$meeting_logic = new MeetingLogic();
+				$signer        = implode('、', $meeting_logic->getSigner($meeting_id));
 				$this->assign('signer', $signer);
 			}
 			$this->display();

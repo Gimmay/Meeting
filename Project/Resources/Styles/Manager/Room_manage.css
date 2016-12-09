@@ -3,6 +3,10 @@
 	color : #FB5050;
 }
 
+.list_item{
+	margin-bottom : 10px;
+}
+
 .mes_people a{
 	margin-left : 15px;
 	color       : #00A0E8;
@@ -58,19 +62,19 @@
 }
 
 .client_list > span{
-	display      : inline-block;
-	font-size    : 12px;
-	background   : #FFFFFF;
-	border       : 1px solid #E1E1E1;
-	padding      : 4px 10px;
-	margin-right : 10px;
-	margin-bottom: 10px;
-	cursor       : pointer;
-}
-.client_list > span.cspan.active {
-	border-color: #00A0E8;
+	display       : inline-block;
+	font-size     : 12px;
+	background    : #FFFFFF;
+	border        : 1px solid #E1E1E1;
+	padding       : 4px 10px;
+	margin-right  : 10px;
+	margin-bottom : 10px;
+	cursor        : pointer;
 }
 
+.client_list > span.cspan.active{
+	border-color : #00A0E8;
+}
 
 .client_list.full > span.active{
 	background : #00A0E8;

@@ -48,11 +48,11 @@
 				}
 				exit;
 			}
-			/** @var \Core\Model\EmployeeModel $model */
-			$model = D('Core/Employee');
-			/** @var \Core\Model\RoleModel $role_model */
-			$role_model = D('Core/Role');
 			if($this->permissionList['EMPLOYEE.VIEW']){
+				/** @var \Core\Model\EmployeeModel $model */
+				$model = D('Core/Employee');
+				/** @var \Core\Model\RoleModel $role_model */
+				$role_model = D('Core/Role');
 				$logic = new EmployeeLogic();
 				/* 获取当前员工角色的最大等级 */
 				$max_role_level = $role_model->getMaxRoleLevel(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'));

@@ -15,76 +15,93 @@
 		public function handlerRequest($type){
 			switch($type){
 				case 'batch_create':
-					/** @var \Core\Model\CouponItemModel $coupon_item_model */
-					$coupon_item_model = D('Core/CouponItem');//实例化表
-					/** @var \Core\Model\CouponModel $coupon_model */
-					$code    = I('post.hide_coupon_area'); //代金券码
-					$request = explode(',', $code);    //打散代金券码
-					foreach($request as $v){
-						C('TOKEN_ON', false);            //令牌
-						$date['coupon_id'] = I('get.id',0,'int');  //代金券ID
-						$date['mid']       = I('get.mid',0,'int');   //会议ID
-						$date['code']      = $v;                        //代金券码
-						$date['creator']   = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); //创建者
-						$date['creatime']  = time();//创建时间
-						$coupon_item_result = $coupon_item_model->createRecord($date); //插入到数据库
-					}
+					if($this->permissionList['COUPON.CREATE']){
+						/** @var \Core\Model\CouponItemModel $coupon_item_model */
+						$coupon_item_model = D('Core/CouponItem');//实例化表
+						/** @var \Core\Model\CouponModel $coupon_model */
+						$code    = I('post.hide_coupon_area'); //代金券码
+						$request = explode(',', $code);    //打散代金券码
+						foreach($request as $v){
+							C('TOKEN_ON', false);            //令牌
+							$date['coupon_id']  = I('get.id', 0, 'int');  //代金券ID
+							$date['mid']        = I('get.mid', 0, 'int');   //会议ID
+							$date['code']       = $v;                        //代金券码
+							$date['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); //创建者
+							$date['creatime']   = time();//创建时间
+							$coupon_item_result = $coupon_item_model->createRecord($date); //插入到数据库
+						}
 
-					return ['status' => $coupon_item_result, 'message' => '创建代金券成功', '__ajax__' => false];
+						return array_merge($coupon_item_result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有创建券的权限', '__ajax__' => false];
 				break;
 				case 'alter_coupon':
-					$id = I('post.id', '');
-					/** @var \Core\Model\MeetingModel $meeting_model */
-					$meeting_model = D('Core/Meeting');
-					/** @var \Core\Model\CouponItemModel $coupon_item_model */
-					$coupon_item_model  = D('Core/CouponItem');
-					$coupon_item_result = $coupon_item_model->findRecord(1, ['id' => $id]);
-					$meeting_result     = $meeting_model->findMeeting(1, ['id' => $coupon_item_result['mid']]);
+					if($this->permissionList['COUPON.ALTER']){
+						$id = I('post.id', '');
+						/** @var \Core\Model\MeetingModel $meeting_model */
+						$meeting_model = D('Core/Meeting');
+						/** @var \Core\Model\CouponItemModel $coupon_item_model */
+						$coupon_item_model  = D('Core/CouponItem');
+						$coupon_item_result = $coupon_item_model->findRecord(1, ['id' => $id]);
+						$meeting_result     = $meeting_model->findMeeting(1, ['id' => $coupon_item_result['mid']]);
 
-					return array_merge($meeting_result, ['__ajax__' => true]);
+						return array_merge($meeting_result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有修改券的权限', '__ajax__' => true];
 				break;
 				case 'delete';
-					$id = I('post.id', '');
-					/** @var \Core\Model\CouponItemModel $model */
-					$model  = D('Core/CouponItem');
-					$result = $model->deleteRecord($id);
-					return array_merge($result, ['__ajax__' => false]);
+					if($this->permissionList['COUPON.ALTER']){
+						$id = I('post.id', '');
+						/** @var \Core\Model\CouponItemModel $model */
+						$model  = D('Core/CouponItem');
+						$result = $model->deleteRecord($id);
+
+						return array_merge($result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有删除券的权限', '__ajax__' => false];
 				break;
 				case 'multi_alter';
-					/** @var \Core\Model\CouponItemModel $coupon_item_model */
-					$coupon_item_model = D('Core/CouponItem');
-					C('TOKEN_ON', false);
-					$mid = I('post.meeting_name_a', '');
-					$ids = I('post.id', '');
-					$id  = explode(',', $ids);
-					foreach($id as $v){
-						$coupon_item_result = $coupon_item_model->alterRecord(['id' => $v], ['mid' => $mid]);
-					}
+					if($this->permissionList['COUPON.ALTER']){
+						/** @var \Core\Model\CouponItemModel $coupon_item_model */
+						$coupon_item_model = D('Core/CouponItem');
+						C('TOKEN_ON', false);
+						$mid = I('post.meeting_name_a', '');
+						$ids = I('post.id', '');
+						$id  = explode(',', $ids);
+						foreach($id as $v) $coupon_item_result = $coupon_item_model->alterRecord(['id' => $v], ['mid' => $mid]);
 
-					return array_merge($coupon_item_result, ['__ajax__' => false]);
+						return array_merge($coupon_item_result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有修改券的权限', '__ajax__' => false];
 				break;
 				case 'alter';
-					$id['id'] = I('post.id', '');
-					C('TOKEN_ON', false);            //令牌
-					$mid['mid'] = I('post.meeting_name_a', '');
-					/** @var \Core\Model\CouponItemModel $model */
-					$model  = D('Core/CouponItem');
-					$result = $model->alterRecord(['id' => $id], $mid);
+					if($this->permissionList['COUPON.ALTER']){
+						$id['id'] = I('post.id', '');
+						C('TOKEN_ON', false);            //令牌
+						$mid['mid'] = I('post.meeting_name_a', '');
+						/** @var \Core\Model\CouponItemModel $model */
+						$model  = D('Core/CouponItem');
+						$result = $model->alterRecord(['id' => $id], $mid);
 
-					return array_merge($result, ['__ajax__' => false]);
+						return array_merge($result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有修改券的权限', '__ajax__' => true];
 				break;
 				case 'create';
-					/** @var \Core\Model\CouponItemModel $model */
-					$model = D('Core/CouponItem');
-					C('TOKEN_ON', false);            //令牌
-					$data['coupon_id'] = I('get.id', '');
-					$data['mid']       = I('get.mid',0 ,'int');
-					$data['code']      = I('post.hide_coupon_area', '');
-					$data['creator']   = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); //创建者
-					$data['creatime']  = time();//创建时间
-					$result            = $model->createRecord($data);
+					if($this->permissionList['COUPON.CREATE']){
+						/** @var \Core\Model\CouponItemModel $model */
+						$model = D('Core/CouponItem');
+						C('TOKEN_ON', false);            //令牌
+						$data['coupon_id'] = I('get.id', '');
+						$data['mid']       = I('get.mid', 0, 'int');
+						$data['code']      = I('post.hide_coupon_area', '');
+						$data['creator']   = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); //创建者
+						$data['creatime']  = time();//创建时间
+						$result            = $model->createRecord($data);
 
-					return array_merge($result, ['__ajax__' => false]);
+						return array_merge($result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有创建券的权限', '__ajax__' => false];
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];

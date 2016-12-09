@@ -8,6 +8,7 @@
 	namespace Mobile\Controller;
 
 	use Core\Logic\MeetingLogic;
+	use Core\Logic\PermissionLogic;
 	use Mobile\Logic\ClientLogic;
 
 	class ClientController extends MobileController{
@@ -103,7 +104,7 @@
 			$this->_getClientParam();
 			$this->_getMeetingParam();
 			if(IS_POST){
-				$logic = new ClientLogic();
+				$logic  = new ClientLogic();
 				$result = $logic->handlerRequest(I('post.requestType', ''), [
 					'cid' => $this->clientID,
 					'mid' => $this->meetingID
@@ -125,12 +126,15 @@
 			$wechat_model = D('Core/Wechat');
 			/** @var \Core\Model\MeetingModel $meeting_model */
 			$meeting_model = D('Core/Meeting');
+			$meeting_logic = new MeetingLogic();
+			$signer        = implode('、', $meeting_logic->getSigner($this->meetingID));
 			$info          = $join_model->findRecord(1, ['cid' => $this->clientID, 'mid' => $this->meetingID]);
 			$wechat_info   = $wechat_model->findRecord(1, ['oid' => $this->clientID, 'otype' => 1, 'wtype' => 1]);
 			$meeting       = $meeting_model->findMeeting(1, ['id' => $this->meetingID, 'status' => 'not deleted']);
 			$this->assign('meeting', $meeting);
 			$this->assign('info', $info);
 			$this->assign('wechat', $wechat_info);
+			$this->assign('signer', $signer);
 			$this->display();
 		}
 

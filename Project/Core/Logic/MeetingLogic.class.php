@@ -52,4 +52,31 @@
 				'wechat'         => $meeting['config_wechat'],
 			];
 		}
+
+		public function getSigner($mid, $with_mobile = true){
+			/** @var \Core\Model\MeetingManagerModel $meeting_manager_model */
+			$meeting_manager_model = D('Core/MeetingManager');
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model   = D('Core/Employee');
+			$permission_logic = new PermissionLogic();
+			$manager_record   = $meeting_manager_model->findRecord(2, [
+				'mid'    => $mid,
+				'status' => 'not deleted'
+			]);
+			$signer           = [];
+			foreach($manager_record as $val){
+				$flag = $permission_logic->hasPermission([
+					'WECHAT.CLIENT.VIEW',
+					'WECHAT.CLIENT.REVIEW',
+					'WECHAT.CLIENT.SIGN',
+					'WECHAT.MEETING.VIEW'
+				], $val['eid']);
+				if($flag){
+					$employee = $employee_model->findEmployee(1, ['id' => $val['eid']]);
+					$signer[] = $with_mobile ? "<a href='tel:$employee[mobile]'>$employee[name]</a>" : $employee['name'];
+				}
+			}
+
+			return $signer;
+		}
 	}

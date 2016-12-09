@@ -74,32 +74,15 @@
 		public function handlerRequest($type, $option = []){
 			switch($type){
 				case 'myMeeting:sign':
-					/** @var \Core\Model\JoinModel $join_model */
-					$join_model  = D('Core/Join');
-					$cid         = $option['cid'];
-					$meeting_id  = I('get.mid', 0, 'int');
-					$join_record = $join_model->findRecord(1, [
-						'cid' => $cid,
-						'mid' => $meeting_id
+					$core_client_logic = new \Core\Logic\ClientLogic();
+					$result            = $core_client_logic->sign([
+						'mid'  => I('get.mid', 0, 'int'),
+						'cid'  => $option['cid'],
+						'eid'  => $option['eid'],
+						'type' => 2,
 					]);
-					if($join_record['review_status'] == 1){
-						C('TOKEN_ON', false);
-						$result = $join_model->alterRecord(['id' => $join_record['id']], [
-							'sign_time'        => time(),
-							'sign_status'      => 1,
-							//'sign_place_id'    => $option['eid'],
-							'sign_director_id' => $option['eid'],
-							'sign_type'        => 2
-						]);
-						if($result['status']){
-							$message_logic = new MessageLogic();
-							$message_logic->send($meeting_id, 1, 1, [$cid]);
-						}
 
-						return array_merge($result, ['__ajax__' => true]);
-					}
-
-					return ['status' => false, 'message' => '此客户信息还没有被审核', '__ajax__' => true];
+					return array_merge($result, ['__ajax__' => false]);
 				break;
 				case 'manage:anti_sign':
 					/** @var \Core\Model\JoinModel $join_model */

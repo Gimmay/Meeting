@@ -42,7 +42,7 @@
 										<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
 									</div>
 									<div class="nav_tab_li active">
-										<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
+										<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">客户列表</a>
 									</div>
 									<div class="nav_tab_li">
 										<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款详情</a>
@@ -126,15 +126,17 @@
 												<td><{$single.unit}></td>
 												<td><{$single.type}></td>
 												<td>
-													<if condition="$single['is_new'] eq 1">新客<else/>老客</if>
+													<if condition="$single['is_new'] eq 1">新客
+														<else/>
+														老客
+													</if>
 												</td>
 												<td><{$single.price}></td>
 												<td>
 													<div class="btn-group" data-id="<{$single.cid}>" data-join-id="<{$single.id}>">
+														<a href="javascript:void(0)" class="btn btn-default btn-xs btn_print">打印</a>
 														<a href="<{:U('Receivables/create',['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs btn_receivables">收款</a>
-														<if condition="$single['isPay']">
-															<a href="<{:U('Receivables/details',['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs btn_receivables">收款详情</a>
-														</if>
+														<a href="<{:U('Receivables/details',['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs btn_receivables">收款详情</a>
 													</div>
 												</td>
 											</tr>
@@ -151,6 +153,34 @@
 					</div>
 				</if>
 			</div>
+		</div>
+	</div>
+	<div id="print">
+		<div class="p_section">
+			<div class="header">
+				<p style="margin-bottom: 10px;">客户姓名：<span class="client_name">刘同学</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 单位：<span class="unit">吉美</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</p>
+			</div>
+			<div class="box">
+				<table width="100%" class="table_r">
+					<thead>
+						<tr>
+							<th>项目类型</th>
+							<th>项目名称/券码</th>
+							<th>支付方式</th>
+							<th>POS机</th>
+							<th>收款类型</th>
+							<th>收款人</th>
+							<th>收款时间</th>
+							<th>收款地点</th>
+							<th>金额</th>
+						</tr>
+					</thead>
+					<tbody class="receivables_body">
+					</tbody>
+				</table>
+			</div>
+			<div class="footer">总计：52525</div>
 		</div>
 	</div>
 	<script>

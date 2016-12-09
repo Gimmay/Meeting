@@ -34,7 +34,10 @@
 				}
 				exit;
 			}
-			$this->display();
+			if($this->permissionList['REPORT.CREATE']){
+				$this->display();
+			}
+			else $this->error('您没有创建报表的权限');
 		}
 
 		public function manage(){
@@ -54,29 +57,32 @@
 				}
 				exit;
 			}
-			/** @var \Core\Model\ReportEntryModel $model */
-			$model        = D('Core/ReportEntry');
-			$report_logic = new ReportLogic();
-			$list_count   = $model->findRecord(0, [
-				'keyword' => I('get.keyword', ''),
-				'status'  => 'not deleted',
-				'mid'     => $this->meetingID
-			]);
-			/* 分页设置 */
-			$page_object = new Page($list_count, C('PAGE_RECORD_COUNT'));
-			\ThinkPHP\Quasar\Page\setTheme1($page_object);
-			$page_show = $page_object->show();
-			$list      = $model->findRecord(2, [
-				'status'  => 'not deleted',
-				'keyword' => I('get.keyword', ''),
-				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
-				'mid'     => $this->meetingID
-			]);
-			$list      = $report_logic->setData('manage:set_list', $list);
-			$this->assign('list', $list);
-			$this->assign('page_show', $page_show);
-			$this->display();
+			if($this->permissionList['REPORT.VIEW']){
+				/** @var \Core\Model\ReportEntryModel $model */
+				$model        = D('Core/ReportEntry');
+				$report_logic = new ReportLogic();
+				$list_count   = $model->findRecord(0, [
+					'keyword' => I('get.keyword', ''),
+					'status'  => 'not deleted',
+					'mid'     => $this->meetingID
+				]);
+				/* 分页设置 */
+				$page_object = new Page($list_count, C('PAGE_RECORD_COUNT'));
+				\ThinkPHP\Quasar\Page\setTheme1($page_object);
+				$page_show = $page_object->show();
+				$list      = $model->findRecord(2, [
+					'status'  => 'not deleted',
+					'keyword' => I('get.keyword', ''),
+					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
+					'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
+					'mid'     => $this->meetingID
+				]);
+				$list      = $report_logic->setData('manage:set_list', $list);
+				$this->assign('list', $list);
+				$this->assign('page_show', $page_show);
+				$this->display();
+			}
+			else $this->error('您没有查看报表的权限');
 		}
 
 		public function alter(){
@@ -96,53 +102,62 @@
 				}
 				exit;
 			}
-			/** @var \Core\Model\ReportEntryModel $model */
-			$model = D('Core/ReportEntry');
-			$info  = $model->findRecord(1, ['id' => I('get.id', 0, 'int'), 'mid' => I('get.mid', 0, 'int')]);
-			$info  = $logic->setData('alter:set_column', $info);
-			$this->assign('info', $info);
-			$this->display();
+			if($this->permissionList['REPORT.VIEW']){
+				/** @var \Core\Model\ReportEntryModel $model */
+				$model = D('Core/ReportEntry');
+				$info  = $model->findRecord(1, ['id' => I('get.id', 0, 'int'), 'mid' => I('get.mid', 0, 'int')]);
+				$info  = $logic->setData('alter:set_column', $info);
+				$this->assign('info', $info);
+				$this->display();
+			}
+			else $this->error('您没有修改报表的权限');
 		}
 
 		public function detail(){
-			/** @var \Core\Model\ReportEntryModel $model */
-			$model = D('Core/ReportEntry');
-			$info  = $model->findRecord(1, [
-				'id'     => I('get.id', 0, 'int'),
-				'mid'    => I('get.mid', 0, 'int'),
-				'status' => 'not deleted'
-			]);
-			$this->assign('info', $info);
-			$this->display();
+			if($this->permissionList['REPORT.VIEW']){
+				/** @var \Core\Model\ReportEntryModel $model */
+				$model = D('Core/ReportEntry');
+				$info  = $model->findRecord(1, [
+					'id'     => I('get.id', 0, 'int'),
+					'mid'    => I('get.mid', 0, 'int'),
+					'status' => 'not deleted'
+				]);
+				$this->assign('info', $info);
+				$this->display();
+			}
+			else $this->error('您没有查看报表的权限');
 		}
 
 		public function fineReport(){
-			$report_id = I('get.id', 0, 'int');
-			/** @var \Core\Model\ReportEntryModel $model */
-			$model = D('Core/ReportEntry');
-			/** @var \Core\Model\AssignRoleModel $assign_role_model */
-			$assign_role_model = D('Core/AssignRole');
-			$report            = $model->findRecord(1, ['id' => $report_id]);
-			if($report['status'] == 0) echo '该报表已被禁用';
-			if($report['status'] == 2) echo '该报表已被删除';
-			$role           = explode(',', $report['role']);
-			$my_role        = $assign_role_model->getRoleByUser(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'), 0, [
-				'column' => 'id',
-				'format' => 'array'
-			]);
-			$has_permission = false;
-			foreach($role as $val){
-				if(in_array($val, $my_role)){
-					$has_permission = true;
-					break;
+			if($this->permissionList['REPORT.VIEW']){
+				$report_id = I('get.id', 0, 'int');
+				/** @var \Core\Model\ReportEntryModel $model */
+				$model = D('Core/ReportEntry');
+				/** @var \Core\Model\AssignRoleModel $assign_role_model */
+				$assign_role_model = D('Core/AssignRole');
+				$report            = $model->findRecord(1, ['id' => $report_id]);
+				if($report['status'] == 0) echo '该报表已被禁用';
+				if($report['status'] == 2) echo '该报表已被删除';
+				$role           = explode(',', $report['role']);
+				$my_role        = $assign_role_model->getRoleByUser(I('session.MANAGER_EMPLOYEE_ID', 0, 'int'), 0, [
+					'column' => 'id',
+					'format' => 'array'
+				]);
+				$has_permission = false;
+				foreach($role as $val){
+					if(in_array($val, $my_role)){
+						$has_permission = true;
+						break;
+					}
 				}
+				if($has_permission){
+					$this->assign('url', $report['url']);
+					$this->display();
+					exit;
+				}
+				else $this->error('您没有查看该报表的权限');
 			}
-			if($has_permission){
-				$this->assign('url', $report['url']);
-				$this->display();
-				exit;
-			}
-			else $this->error('您没有查看该报表的权限');
+			else $this->error('您没有查看报表的权限');
 		}
 
 		public function joinReceivables(){

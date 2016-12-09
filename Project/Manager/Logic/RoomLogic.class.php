@@ -347,6 +347,7 @@
 				case 'get_client':
 					$room_logic  = new RoomLogic();
 					$join_result = $room_logic->selectMeetingJoin();
+
 					return array_merge($join_result, ['__ajax__' => true]);
 				break;
 				default:
@@ -425,7 +426,10 @@
 			$join_model  = D('Core/Join');
 			$join_result = $join_model->findRecord(2, [
 				'mid'     => I('get.mid', 0, 'int'),
-				'keyword' => I('post.keyword')
+				'keyword' => I('post.keyword'),
+				'_order'  => 'sign_time desc,pinyin_code asc',
+
+
 			]);
 			/** @var \Core\Model\AssignRoomModel $assign_room_model */
 			$assign_room_model = D('Core/AssignRoom');
@@ -438,7 +442,7 @@
 				$id [] = $room_result[$k]['id'];
 			}
 			foreach($id as $k1 => $v1){
-				$assign_room_result = $assign_room_model->findRecord(2, ['rid' => $v1,'status'=>1]);
+				$assign_room_result = $assign_room_model->findRecord(2, ['rid' => $v1, 'status' => 1]);
 				foreach($assign_room_result as $k2 => $v2){
 					$jid [] = $assign_room_result[$k2]['jid'];
 				}

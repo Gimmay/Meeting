@@ -64,7 +64,7 @@
 				$client_list = $model->findRecord(2, array_merge([
 					'keyword' => I('get.keyword', ''),
 					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-					'_order'  => I('get._column', 'main.creatime').' '.I('get._sort', 'desc'),
+					'_order'  => I('get._column', 'main.sign_time').' '.I('get._sort', 'desc').', sub.pinyin_code',
 					'status'  => 'not deleted',
 					'mid'     => $this->meetingID
 				], $options));
@@ -83,7 +83,7 @@
 					'status' => 1,
 					'mid'    => $this->meetingID
 				]);
-				$disabled_count  = $model->findRecord(0, [
+				$disabled_count = $model->findRecord(0, [
 					'status' => 0,
 					'mid'    => $this->meetingID
 				]);
@@ -259,5 +259,33 @@
 				$this->display();
 			}
 			else $this->error('您没有修改参会人员的权限');
+		}
+
+		public function sign(){
+			if($this->permissionList['CLIENT.SIGN']){
+				if(isset($_GET['keyword'])){
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model        = D('Core/Join');
+					$core_client_logic = new \Core\Logic\ClientLogic();
+					$join_client       = $join_model->findRecord(1, ['keyword' => I('get.keyword', ''), 'status' => 1]);
+					if($join_client['sign_status'] != 1){
+						$result = $core_client_logic->sign([
+							'mid'  => $this->meetingID,
+							'cid'  => $join_client['cid'],
+							'eid'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+							'type' => 1
+						]);
+						if($result['status']){
+							$join_client['sign_status']      = $result['data']['sign_status'];
+							$join_client['sign_time']        = $result['data']['sign_time'];
+							$join_client['sign_director_id'] = $result['data']['sign_director_id'];
+							$join_client['sign_type']        = $result['data']['sign_type'];
+						}
+					}
+					$this->assign('client', $join_client);
+				}
+				$this->display();
+			}
+			else $this->error('您没有签到的权限');
 		}
 	}

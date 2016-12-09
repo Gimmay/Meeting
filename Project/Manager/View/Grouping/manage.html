@@ -105,8 +105,14 @@
 										<thead>
 											<tr>
 												<th>组号/日期</th>
-												<for start="0" end="$time">
-													<th>开会 第<{$i+1}>天</th>
+												<for start="0" end="$time" name="time">
+
+
+
+													<th>开会 第<{$time+1}>天
+
+													</th>
+
 												</for>
 												<th>合计</th>
 											</tr>

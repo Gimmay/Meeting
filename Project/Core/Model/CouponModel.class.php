@@ -126,8 +126,8 @@ $limit
 			if($this->create($data)){
 				try{
 					$result = $this->add($data);
-					if($result) return ['status' => true, 'message' => '创建代金券成功', 'id' => $result];
-					else return ['status' => false, 'message' => '没有创建代金券'];
+					if($result) return ['status' => true, 'message' => '创建项目成功', 'id' => $result];
+					else return ['status' => false, 'message' => '没有创建项目'];
 				}catch(Exception $error){
 					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);
@@ -143,7 +143,7 @@ $limit
 				try{
 					$result = $this->where(['id' => ['in', $id]])->save(['status' => 2]);
 					if($result) return ['status' => true, 'message' => '删除成功'];
-					else return ['status' => false, 'message' => '没有删除任何代金券'];
+					else return ['status' => false, 'message' => '没有删除任何项目'];
 				}catch(Exception $error){
 					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);

@@ -442,10 +442,11 @@
 					$data['coupon_code'] = I('post.coupon_code');
 					$data['coupon_ids']  = I('post.select_code');
 					$place               = I('post.place', '');
+					$temp =[];
 					C('TOKEN_ON', false);
 					foreach($type as $k => $v){
 						if($data['name'][$k] == 0) continue;
-						$save_data[] = [
+						$temp = [
 							'cid'          => $cid,
 							'mid'          => $mid,
 							'time'         => time(),
@@ -456,14 +457,15 @@
 							'payee_id'     => $payee_id,
 							'order_number' => $makeOrderNumber,
 							'source_type'  => $data['source_type'][$k],
-							'coupon_ids'   => $data['coupon_ids'][$k],
 							'coupon_code'  => $data['name'][$k],
 							'creatime'     => time(),    //创建时间
 							'creator'      => $creator,    //当前创建者
 							'place'        => $place,
 						];
+
 						if($data['type'][$k] != 2){
-							$coupon_item_project[] = [
+
+							$coupon_item_project = [
 								'mid'       => $mid,
 								'coupon_id' => $data['name'][$k],
 								'cid'       => $cid,
@@ -471,15 +473,23 @@
 								'creator'   => $creator,
 								'status'    => 1
 							];
+
+							$result1             = $coupon_item_model->createRecord($coupon_item_project);
+							$temp['coupon_ids']  = $result1['id'];
+
 						}
+
 						elseif($data['type'][$k] == 2){
 							$coupon_id = $data['coupon_code'];
 							foreach($coupon_id as $k1 => $v1) $coupon_item_code[] = $v1;
+							$temp['coupon_ids'] = $data['coupon_ids'][$k];
 						}
+						$save_data[] = $temp;
 					}
-					$result1            = $coupon_item_model->createMultiRecord($coupon_item_project);
+					//					$result1            = $coupon_item_model->createMultiRecord($coupon_item_project);
 					$receivables_result = $receivables_model->createMultiRecord($save_data);
-					$coupon_item_result = $coupon_item_model->alterRecord([
+
+					$coupon_item_model->alterRecord([
 						'id' => ['in', $coupon_item_code]
 					], ['status' => 1, 'cid' => $cid]);
 
@@ -503,6 +513,63 @@
 						$data[] = ['id' => $v['id'], 'name' => $v['code']];
 					}
 
+					return array_merge($data, ['__ajax__' => true]);
+				break;
+				case 'get_receivables':
+					$cid = I('post.id', 0, 'int');
+					$mid = I('get.mid', 0, 'int');
+					/** @var \Core\Model\ReceivablesModel $receivables_model */
+					$receivables_model = D('Core/Receivables');
+					/** @var \Core\Model\ClientModel $client_model */
+					$client_model = D('Core/Client');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model = D('Core/Employee');
+					/** @var \Core\Model\PayMethodModel $pay_method_model */
+					$pay_method_model = D('Core/PayMethod');
+					/** @var \Core\Model\PosMachineModel $pos_machine_model */
+					$pos_machine_model = D('Core/PosMachine');
+					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+					$coupon_item_model = D('Core/CouponItem');
+					/** @var \Core\Model\CouponModel $coupon_model */
+					$coupon_model       = D('Core/Coupon');
+					$receivables_result = $receivables_model->findRecord(2, [
+						'mid'    => $mid,
+						'cid'    => $cid,
+						'status' => 1
+					]);
+					$data               = [];
+					foreach($receivables_result as $k => $v){
+						$client_result      = $client_model->findClient(1, ['id' => $cid, 'status' => 1]);
+						$employee_result    = $employee_model->findEmployee(1, ['id' => $v['payee_id'], 'status' => 1]);
+						$pay_method_result  = $pay_method_model->findRecord(1, ['id' => $v['method'], 'status' => 1]);
+						$pos_machine_result = $pos_machine_model->findRecord(1, ['id' => $v['pos_id'], 'status' => 1]);
+						$coupon_item_result = $coupon_item_model->findRecord(1, [
+							'id'     => $v['coupon_ids'],
+							'status' => 1
+						]);
+						$coupon_result      = $coupon_model->findCoupon(1, [
+							'id'     => $coupon_item_result['coupon_id'],
+							'status' => 1
+						]);
+						$data[]             = [
+							'id'            => $v['id'],
+							'client_name'   => $client_result['name'],
+							'order_number'  => $v['order_number'],
+							'price'         => $v['price'],
+							'type'          => $v['type'],
+							'name'          => $coupon_result['name'],
+							'source_type'   => $v['source_type'],
+							'pos_name'      => $pos_machine_result['name'],
+							'unit'          => $client_result['unit'],
+							'method_name'   => $pay_method_result['name'],
+							'employee_name' => $employee_result['name'],
+							'coupon_name'   => $coupon_item_result['code'],
+							'comment'       => $v['comment'],
+							'place'         => $v['place'],
+							'time'          => $v['time'],
+						];
+					}
+					print_r($data);exit;
 					return array_merge($data, ['__ajax__' => true]);
 				break;
 				//				case 'create_coupon_item':
@@ -869,12 +936,10 @@
 							foreach($receivables_list as $val) $price += $val['price'];
 							$url           = U('details', ['cid' => $join['cid'], 'mid' => $option['mid']]);
 							$join['price'] = "<a href='$url' style='font-weight: bold; color: red'>$price</a>";
-							$join['isPay'] = true;
 						}
 						else{
 							$price         = '未收款';
 							$join['price'] = $price;
-							$join['isPay'] = false;
 						}
 						if($option['receivables'] === false) $new_list[] = $join;
 						elseif($option['receivables'] === 1){

@@ -41,10 +41,10 @@
 }
 
 .rece_li .rece_item{
-	width        : 200px;
-	float        : left;
-	margin-right : 10px;
-	position     : relative;
+	width         : 12.5%;
+	float         : left;
+	padding-right : 10px;
+	position      : relative;
 }
 
 .rece_li.title{
@@ -53,6 +53,7 @@
 }
 
 .rece_li .add, .rece_li .delete{
+	display     : block;
 	width       : 34px;
 	height      : 34px;
 	line-height : 34px;
@@ -88,26 +89,13 @@
 * 选择代金券
 */
 
-.coupon_body{
-	padding : 10px 30px;
+.coupon_list{
+	font-size  : 0;
+	max-height : 400px;
+	overflow-y : auto;
 }
 
-.coupon_body .sec_coupon{
-	width         : 100%;
-	padding       : 10px 0;
-	border-bottom : 2px solid #E1E1E1;
-}
-
-.coupon_body .sec_coupon .title{
-	font-size     : 14px;
-	margin-bottom : 5px;
-}
-
-.coupon_body .sec_coupon .coupon_list{
-	font-size : 0;
-}
-
-.coupon_body .sec_coupon .coupon_list a{
+.coupon_list a{
 	display    : inline-block;
 	border     : 1px solid #999999;
 	font-size  : 12px;
@@ -116,9 +104,24 @@
 	margin     : 8px;
 }
 
-.coupon_body .sec_coupon .coupon_list a.active, .coupon_body .sec_coupon .coupon_list a:hover{
+.coupon_list a.active, .coupon_list a:hover{
 	border-color : #00A0E8;
 	color        : #00A0E8;
+}
+
+.has_selected{
+	border-top : 1px solid #E1E1E1;
+	margin-top : 10px;
+}
+
+.has_selected a{
+	display    : inline-block;
+	border     : 1px solid #00A0E8;
+	font-size  : 12px;
+	padding    : 5px 15px;
+	background : #FFFFFF;
+	margin     : 8px;
+	color      : #00A0E8;
 }
 
 .c_modal{
@@ -188,6 +191,10 @@
 
 #receivables_record tbody tr:nth-child(even) td{
 	background : #FCF8E3;
+}
+
+.glyphicon{
+	top : 0 !important;
 }
 
 

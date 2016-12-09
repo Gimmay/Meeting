@@ -3,10 +3,11 @@
  */
 
 var ScriptObject = {
-	couponLiTemp       :'<div class="rece_li clearfix rece_new">\n\t<input type="hidden" name="type[]" value="2">\n\t<div class="rece_item">\n\t\t<select name="name[]" class="form-control name">{::COUPON_NAME::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="coupon_code[]" class="form-control coupon_code"></select>\n\t\t<input type="hidden" class="select_code" name="select_code[]">\n\t</div>\n\t<div class="rece_item">\n\t\t<input type="text" class="form-control price" name="price[]" placeholder="金额">\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="payMethod[]" class="form-control payMethod">{::PAY_METHOD::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="pos[]" class="form-control pos">{::POS_MACHINE::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="source_type[]" class="form-control source_type" id="source_type">\n\t\t\t<option value="1">会前收款</option>\n\t\t\t<option value="2">会中收款</option>\n\t\t\t<option value="3">会后收款</option>\n\t\t</select>\n\t</div>\n\t<span class="delete glyphicon glyphicon-minus"></span>\n</div>',
-	otherLiTemp        :'<div class="rece_li clearfix">\n\t<div class="rece_item">\n\t\t<select name="type[]" class="form-control project_type">\n\t\t\t<option value="0">请选择项目类型</option>\n\t\t\t<option value="1">门票</option>\n\t\t\t<option value="3">产品</option>\n\t\t\t<option value="4">其他</option>\n\t\t</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="name[]" class="form-control name"></select>\n\t</div>\n\t<div class="rece_item">\n\t\t<input type="text" class="form-control price" name="price[]" placeholder="金额">\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="payMethod[]" class="form-control payMethod">{::PAY_METHOD::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="pos[]" class="form-control pos">{::POS_MACHINE::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="source_type[]" class="form-control source_type" id="source_type">\n\t\t\t<option value="1">会前收款</option>\n\t\t\t<option value="2">会中收款</option>\n\t\t\t<option value="3">会后收款</option>\n\t\t</select>\n\t</div>\n\t<span class="delete glyphicon glyphicon-minus"></span>\n</div>',
+	couponLiTemp       :'<div class="rece_li clearfix rece_new">\n\t<div class="rece_item">\n\t\t&nbsp;\n\t</div>\n\t<div class="rece_item">\n\t\t&nbsp;\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="payMethod[]" class="form-control payMethod">{::PAY_METHOD::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<input type="text" class="form-control price" name="price[]" placeholder="金额">\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="pos[]" class="form-control pos">{::POS_MACHINE::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="source_type[]" class="form-control source_type" id="source_type">\n\t\t\t<option value="1">会前收款</option>\n\t\t\t<option value="2">会中收款</option>\n\t\t\t<option value="3">会后收款</option>\n\t\t</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<input type="text" class="form-control comment" name="comment[]" placeholder="备注">\n\t</div>\n\t<div class="rece_item">\n\t\t<span class="delete glyphicon glyphicon-minus"></span>\n\t</div>\n</div>',
+	otherLiTemp        :'<div class="rece_li clearfix">\n\t<div class="rece_item">\n\t\t<select name="type[]" class="form-control project_type">\n\t\t\t<option value="0">项目类型</option>\n\t\t\t<option value="1">门票</option>\n\t\t\t<option value="3">产品</option>\n\t\t\t<option value="4">其他</option>\n\t\t</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="name[]" class="form-control name"></select>\n\t</div>\n\t<div class="rece_item">\n\t\t<input type="text" class="form-control price" name="price[]" placeholder="金额">\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="payMethod[]" class="form-control payMethod">{::PAY_METHOD::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="pos[]" class="form-control pos">{::POS_MACHINE::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="source_type[]" class="form-control source_type" id="source_type">\n\t\t\t<option value="1">会前收款</option>\n\t\t\t<option value="2">会中收款</option>\n\t\t\t<option value="3">会后收款</option>\n\t\t</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<span class="delete glyphicon glyphicon-minus"></span>\n\t</div>\n</div>',
 	secCouponTemp      :'<div class="sec_coupon">\n\t<div class="title">$couponName</div>\n\t<div class="coupon_list">\n\t\t$htm\n\t</div>\n</div>',
 	optionTemp         :'<option value="$val" data-price="$price">$name</option>',
+	couponATemp        :'<a href="javascript:void(0)" data-id="$id">$code</a>',
 	selectedCouponId   :[],
 	/**
 	 * 两个数组去重复
@@ -48,7 +49,7 @@ var ScriptObject = {
 					str += self.optionTemp.replace('$val', value.id).replace('$name', value.name)
 							   .replace('$price', value.price);
 				});
-				var opts = '<option value="0">请选择代金券类型</option>';
+				var opts = '<option value="0">代金券类型</option>';
 				$('.coupon .rece_new').find('.name').html(opts+str);
 				$('.coupon .rece_new .name').on('change', function(){
 					var id      = $(this).find('option:selected').val();
@@ -72,47 +73,35 @@ var ScriptObject = {
 		Common.ajax({
 			data    :{requestType:'get_coupon_code', id:id},
 			callback:function(r){
+				console.log(r);
 				/**
 				 * str : js编写的代金券码的HMTL内容。
 				 * arrId : 该代金券类型所有的代金券码的ID的数组。
 				 */
-				var str = "<option value='0' data-price=''>请选择代金券码</option>", arrId = [];
-				var allCouponId                                                     = $('.select_all_coupon').val();
-				var arr2                                                            = allCouponId.split(","); // 将 select_all_coupon 标签中所有的ID（string）转化为数组格式。
-				if(arr2 != ''){
-					$.each(r, function(index, value){
-						if($.inArray(value.id, arr2) == -1){
-							str += self.optionTemp.replace('$val', value.id).replace('$name', value.name)
-									   .replace('$price', price);
-							arrId.push(value.id);
-						}
-					});
-				}else{
-					$.each(r, function(index, value){
-						str += self.optionTemp.replace('$val', value.id).replace('$name', value.name)
-								   .replace('$price', price);
-						arrId.push(value.id);
-					});
-				}
-				element.parents('.rece_li').find('.coupon_code').html(str);   // select 代金券码写入
-				// 代金券码选择，将代金券金额写入金额栏里面
-				$('.coupon_code').on('change', function(){
-					var price = $(this).find('option:selected').attr('data-price');
-					var val   = $(this).val();
-					$(this).parents('.rece_li').find('.price').val(price);
-					$(this).parent('.rece_item').find('.select_code').val(val);
-					self.totalAmount();
-					var selectArr = []; // 创建空数组 -- 选择代金码ID
-					$('.select_code').each(function(){
-						var val = $(this).val();
-						selectArr.push(val);
-					});
-					$('.select_all_coupon').val(selectArr);
+				var str = '';
+				$.each(r, function(index, value){
+					str += self.couponATemp.replace('$id', value.id).replace('$code', value.name)
 				});
-				var allCouponCode = $('.select_all_coupon').val(); // 所有已选择的代金券码ID
-				/*	var a   = self.arrayDeleteRepeat(arrId, allCouponCode);*/
-				ScriptObject.unbindEvent();
-				ScriptObject.bindEvent();
+				$('#coupon_modal .coupon_list').html(str);
+				$('.coupon_list a').on('click', function(){
+					if($(this).hasClass('.active')){
+						$(this).removeClass('active');
+					}else{
+						$(this).addClass('active');
+					}
+				});
+				$('#coupon_modal .coupon_save').on('click', function(){
+					var arr = [], arrName = [];
+					$('.coupon_list a.active').each(function(){
+						var id   = $(this).attr('data-id');
+						var name = $(this).text();
+						arr.push(id);
+						arrName.push(name);
+					});
+					$('.select_code').val(arr);
+					$('#select_coupon_name').val(arrName);
+					$('#coupon_modal').modal('hide');
+				});
 			}
 		})
 	},
@@ -143,7 +132,7 @@ var ScriptObject = {
 	 */
 	setSecondSelectList:function(_self, list){
 		var self = this;
-		var html = '<option value="0">请选择名称</option>';
+		var html = '<option value="0">名称</option>';
 		for(var i = 0; i<list.length; i++){
 			html += "<option data-price='"+list[i]['price']+"' value='"+list[i]['id']+"'>"+list[i]['name']+"</option>";
 		}
@@ -228,8 +217,8 @@ $(function(){
 		var setSelectList = function(temp){
 			var pay_method_source_data  = JSON.parse($('#pay_method_source_data').text());
 			var pos_machine_source_data = JSON.parse($('#pos_machine_source_data').text());
-			var html_pos_machine        = '<option value="0">请选择POS机</option>';
-			var html_pay_method         = '<option value="0">请选择支付方式</option>';
+			var html_pos_machine        = '<option value="0">POS机</option>';
+			var html_pay_method         = '<option value="0">支付方式</option>';
 			var i;
 			for(i = 0; i<pos_machine_source_data.length; i++) html_pos_machine += '<option value="'+pos_machine_source_data[i]['id']+'">'+pos_machine_source_data[i]['name']+'</option>';
 			for(i = 0; i<pay_method_source_data.length; i++) html_pay_method += '<option value="'+pay_method_source_data[i]['id']+'">'+pay_method_source_data[i]['name']+'</option>';
@@ -250,8 +239,8 @@ $(function(){
 		var setSelectList = function(temp){
 			var pay_method_source_data  = JSON.parse($('#pay_method_source_data').text());
 			var pos_machine_source_data = JSON.parse($('#pos_machine_source_data').text());
-			var html_pos_machine        = '<option value="0">请选择POS机</option>';
-			var html_pay_method         = '<option value="0">请选择支付方式</option>';
+			var html_pos_machine        = '<option value="0">POS机</option>';
+			var html_pay_method         = '<option value="0">支付方式</option>';
 			var i;
 			for(i = 0; i<pos_machine_source_data.length; i++) html_pos_machine += '<option value="'+pos_machine_source_data[i]['id']+'">'+pos_machine_source_data[i]['name']+'</option>';
 			for(i = 0; i<pay_method_source_data.length; i++) html_pay_method += '<option value="'+pay_method_source_data[i]['id']+'">'+pay_method_source_data[i]['name']+'</option>';
@@ -276,6 +265,28 @@ $(function(){
 		});
 		ScriptObject.unbindEvent();
 		ScriptObject.bindEvent();
+	});
+	// 选择代金券
+	$('.select_code_wrap').on('click', function(){
+		Common.ajax({
+			data    :{requestType:'coupon'},
+			callback:function(r){
+				console.log(r);
+				var str = '';
+				/*	$.each(r, function(index, value){
+				 str += self.optionTemp.replace('$val', value.id).replace('$name', value.name)
+				 .replace('$price', value.price);
+				 });
+				 var opts = '<option value="0">代金券类型</option>';
+				 $('.coupon .rece_new').find('.name').html(opts+str);
+				 $('.coupon .rece_new .name').on('change', function(){
+				 var id      = $(this).find('option:selected').val();
+				 var price   = $(this).find('option:selected').attr('data-price');
+				 var element = $(this);
+				 self.setCouponCode(id, element, price);
+				 });*/
+			}
+		});
 	});
 });
 

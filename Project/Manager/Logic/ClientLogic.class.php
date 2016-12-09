@@ -510,41 +510,19 @@
 				break;
 				case 'sign': // 签到
 					if($this->permissionList['CLIENT.SIGN']){
-						/** @var \Core\Model\JoinModel $join_model */
-						$join_model    = D('Core/Join');
-						$id            = I('post.id', 0, 'int');
-						$mid           = I('post.mid', 0, 'int');
-						$sign_director = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-						$join_record   = $join_model->findRecord(1, [
-							'cid'    => $id,
-							'mid'    => $mid,
-							'status' => 'not deleted'
+						$core_client_logic = new \Core\Logic\ClientLogic();
+						$result = $core_client_logic->sign([
+							'mid'  => I('post.mid', 0, 'int'),
+							'cid'  => I('post.id', 0, 'int'),
+							'type' => 1,
+							'eid'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
 						]);
-						if($join_record['review_status'] == 1){
-							C('TOKEN_ON', false);
-							$result = $join_model->alterRecord(['id' => $join_record['id']], [
-								'sign_status'      => 1,
-								'sign_time'        => time(),
-								'sign_director_id' => $sign_director,
-								'sign_type'        => 1
-							]);
-							if($result['status']){
-								$message_logic = new MessageLogic();
-								$message_logic->send($mid, 1, 1, [$id]);
-							}
-
-							return array_merge($result, ['__ajax__' => true]);
-						}
-						else return [
-							'status'   => false,
-							'message'  => '此客户信息还没有被审核',
-							'__ajax__' => true
-						];
+						return array_merge($result, ['__ajax__' => true]);
 					}
 					else return [
 						'status'   => false,
 						'message'  => '您没有签到的权限',
-						'__ajax__' => false
+						'__ajax__' => true
 					];
 				break; // 取消签到
 				case 'anti_sign':
@@ -687,7 +665,7 @@
 						'__ajax__' => false
 					];
 				break;
-				case 'delete';
+				case 'delete':
 					if($this->permissionList['CLIENT.DELETE']){
 						/** @var \Core\Model\JoinModel $join_model */
 						$join_model = D('Core/Join');

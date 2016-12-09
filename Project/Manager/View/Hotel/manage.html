@@ -38,13 +38,13 @@
 					<section class="content">
 						<header class="c_header">
 							<div class="function_list clearfix">
-								<if condition="$permission_list['ROLE.CREATE'] eq 1">
+								<if condition="$permission_list['HOTEL.CREATE'] eq 1">
 									<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_room">
 										<i></i>
 										<p>新建酒店</p>
 									</div>
 								</if>
-								<if condition="$permission_list['ROLE.DELETE'] eq 1">
+								<if condition="$permission_list['HOTEL.DELETE'] eq 1">
 									<div class="function_btn bg-danger batch_delete_btn_confirm">
 										<i></i>
 										<p>批量删除</p>
@@ -213,7 +213,7 @@
 		</div>
 	</div>
 	<!-- 修改酒店信息 -->
-	<if condition="$permission_list['ROLE.ALTER'] eq 1">
+	<if condition="$permission_list['HOTEL.ALTER'] eq 1">
 		<div class="modal fade" id="alter_hotel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog" style=" width: 50%">
 				<div class="modal-content">
@@ -279,7 +279,7 @@
 		</div>
 	</if>
 	<!-- 删除酒店 -->
-	<if condition="$permission_list['ROLE.DELETE'] eq 1">
+	<if condition="$permission_list['HOTEL.DELETE'] eq 1">
 		<div class="modal fade" id="delete_hotel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -303,7 +303,7 @@
 		</div>
 	</if>
 	<!-- 批量删除 -->
-	<if condition="$permission_list['ROLE.DELETE'] eq 1">
+	<if condition="$permission_list['HOTEL.DELETE'] eq 1">
 		<div class="modal fade" id="batch_delete_hotel" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
