@@ -123,17 +123,23 @@
 												<td class="comment"><{$list.comment}></td>
 												<td>
 													<div class="btn-group" data-id="<{$list.id}>">
-														<a href="<{:U('details',['id'=>$list['id'], 'mid'=>I('get.mid', 0, 'int')])}>" type="button" class="btn btn-default btn-xs seeList">查看列表</a>
-														<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>
-														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button>
+														<if condition="$list['status'] eq 1">
+															<a href="<{:U('details',['id'=>$list['id'], 'mid'=>I('get.mid', 0, 'int')])}>" type="button" class="btn btn-default btn-xs seeList">查看列表</a>
+														</if>
+														<if condition="$permission_list['COUPON.ALTER']">
+															<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>
+														</if>
+														<if condition="$permission_list['COUPON.DELETE']">
+															<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button>
+														</if>
 													</div>
 												</td>
 												<td>
 													<div class="btn-group" data-id="<{$list.id}>">
-														<if condition="$list['status'] eq 0">
+														<if condition="$list['status'] eq 0 and $permission_list['COUPON.ENABLE']">
 															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_coupon', 'id'=>$list['id']])}>" class="btn btn-success btn-xs">启用</a>
 														</if>
-														<if condition="$list['status'] eq 1">
+														<if condition="$list['status'] eq 1 and $permission_list['COUPON.DISABLE']">
 															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_coupon', 'id'=>$list['id']])}>" class="btn btn-danger btn-xs">禁用</a>
 														</if>
 													</div>
@@ -170,6 +176,9 @@
 							<label for="coupon_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>类型：</label>
 							<div class="col-sm-10">
 								<select name="type" id="coupon_type" class="form-control">
+									<!-- 收款类型对应表 -->
+									<!-- 以下位置都需要同步 -->
+									<!-- E682C6E7495F65F68BFB92D12F5385C45CA4B455 -->
 									<option value="1">门票</option>
 									<option value="2">代金券</option>
 									<option value="3">产品</option>
@@ -298,6 +307,9 @@
 							<label for="coupon_type_a" class="col-sm-2 control-label "><b style="vertical-align: middle;color: red;">*</b>类型：</label>
 							<div class="col-sm-10">
 								<select name="type" id="coupon_type_a" class="form-control">
+									<!-- 收款类型对应表 -->
+									<!-- 以下位置都需要同步 -->
+									<!-- E682C6E7495F65F68BFB92D12F5385C45CA4B455 -->
 									<option value="1">门票</option>
 									<option value="2">代金券</option>
 									<option value="3">产品</option>

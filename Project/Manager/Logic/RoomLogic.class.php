@@ -156,11 +156,17 @@
 					else return ['status' => false, 'message' => '您没有分配房间的权限', '__ajax__' => true];
 				break;
 				case 'get_employee':
-					/** @var \Core\Model\ClientModel $client_model */
-					$client_model  = D('Core/Client');
-					$client_result = $client_model->findClient(2, ['type' => '内部员工']);
+					$keyword = I('post.keyword', '');
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model  = D('Core/Join');
+					$join_result = $join_model->findRecord(2, [
+						'status'  => 1,
+						'type'    => '内部员工',
+						'mid'     => I('get.mid', 0, 'int'),
+						'keyword' => $keyword
+					]);
 
-					return array_merge($client_result, ['__ajax__' => true]);
+					return array_merge($join_result, ['__ajax__' => true]);
 				break;
 				case 'alter_room':
 					if($this->permissionList['ROOM.ALTER']){
@@ -474,7 +480,7 @@
 				'mid'     => I('get.mid', 0, 'int'),
 				'keyword' => I('post.keyword'),
 				'_order'  => 'sign_time desc,pinyin_code asc',
-				'status'  => 1
+				'status'  => 1,
 			]);
 			/** @var \Core\Model\AssignRoomModel $assign_room_model */
 			$assign_room_model = D('Core/AssignRoom');

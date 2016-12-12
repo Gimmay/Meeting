@@ -15,21 +15,25 @@
 		}
 
 		public function handlerException($message){
-			if(stripos($message, 'Duplicate entry')) return [
+			if(stripos($message, 'Duplicate entry') !== false) return [
 				'status'  => false,
 				'message' => "该记录已经存在"
 			];
-			if(stripos($message, 'a foreign key constraint fails')) return [
+			if(stripos($message, 'a foreign key constraint fails') !== false) return [
 				'status'  => false,
 				'message' => "部分字段违反外键约束"
 			];
-			if(stripos($message, 'doesn\'t have a default value')) return [
+			if(stripos($message, 'doesn\'t have a default value') !== false) return [
 				'status'  => false,
 				'message' => "未提交非空字段"
 			];
-			if(stripos($message, 'Incorrect decimal value')) return [
+			if(stripos($message, 'Incorrect decimal value') !== false) return [
 				'status'  => false,
-				'message' => "未提交非空字段"
+				'message' => "错误的浮点数据"
+			];
+			if(stripos($message, 'Incorrect date value') !== false) return [
+				'status'  => false,
+				'message' => "错误的日期类型"
 			];
 
 			return ['status' => true];

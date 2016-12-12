@@ -83,17 +83,17 @@
 											<div class="header">
 												<div class="time">
 													<div class="input-group">
-														<div class="input-group-addon">时间</div>
+														<div class="input-group-addon">会议进度</div>
 														<select name="meeting_time" id="meeting_time" class="form-control">
 															<for start="0" end="$time">
-																<option value="<{$i+1}>">开会 第<{$i+1}>天</option>
+																<option value="<{$i+1}>">第<{$i+1}>天</option>
 															</for>
 														</select>
 													</div>
 												</div>
 												<if condition="$permission_list['GROUP.ASSIGN-CLIENT']">
-													<span class="copy" data-toggle="modal" data-target="#copy_modal">沿用上一天数据</span>
-													<span class="title"><{$leader.code}>组(<{$count}>)人</span>
+													<span class="copy" data-toggle="modal" data-target="#copy_modal">沿用上一天组员</span>
+													<span class="title"><{$leader.code}>(<{$count}>)人</span>
 													<span data-id="<{:I('get.gid',0,'int')}>" data-toggle="modal" data-target="#add_crew" class="add_client">添加组员</span>
 												</if>
 											</div>
@@ -117,7 +117,7 @@
 												<tr>
 													<th>组号/日期</th>
 													<for start="0" end="$time" name="time">
-														<th>开会 第<{$time+1}>天
+														<th>第<{$time+1}>天
 														</th>
 													</for>
 													<th>合计</th>
@@ -378,7 +378,7 @@
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 					</button>
-					<h2 class="modal-title text-center">添加客户</h2>
+					<h2 class="modal-title text-center">添加组员</h2>
 				</div>
 				<div class="choose_people">
 					<div class="d1">
@@ -406,11 +406,12 @@
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
 										<td width="10%">序号</td>
+										<td width="20%">单位名称</td>
 										<td width="10%">姓名</td>
+										<td width="10%">顾客类型</td>
 										<td width="10%">性别</td>
 										<td width="20%">职务</td>
 										<td width="20%">手机号</td>
-										<td width="20%">单位名称</td>
 									</tr>
 								</thead>
 								<tbody id="client_body">

@@ -64,6 +64,33 @@ var ThisObject = {
 	}
 };
 $(function(){
+	$('.print').on('click', function(){
+		var id = $(this).attr('data-id');
+		Common.ajax({
+			data    :{requestType:'get_receivables', id:id},
+			callback:function(r){
+				console.log(r);
+			}
+		})
+	});
+	/*$('.plus').on('click', function(){
+	 if($(this).parents('.rece_item').find('.rece_body').hasClass('hide')){
+	 $(this).parents('.rece_item').find('.rece_body').removeClass('hide');
+	 $(this).removeClass('glyphicon-plus').addClass('glyphicon-minus');
+	 }else{
+	 $(this).parents('.rece_item').find('.rece_body').addClass('hide');
+	 $(this).removeClass('glyphicon-minus').addClass('glyphicon-plus');
+	 }
+	 });*/
+	$('.rece_item .header').on('click', function(){
+		if($(this).parents('.rece_item').find('.rece_body').hasClass('hide')){
+			$(this).parents('.rece_item').find('.rece_body').removeClass('hide');
+			$(this).find('.plus').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+		}else{
+			$(this).parents('.rece_item').find('.rece_body').addClass('hide');
+			$(this).find('.plus').removeClass('glyphicon-minus').addClass('glyphicon-plus');
+		}
+	});
 	var quasar_script          = document.getElementById('quasar_script');
 	var url_object             = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
 	var $add_receivables_modal = $('#add_receivables');

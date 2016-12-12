@@ -358,4 +358,20 @@ function set_other_list(e){
 		$(this).parents('.rece_li').remove();
 	});
 }
+/*
+function check(){
+	var arr = [];
+	$('.payMethod').each(function(){
+		var opt = $(this).find('option:selected').val();
+		if(opt == 0){
+			arr.push(opt);
+		}
+	});
+	if(arr.indexOf('0') == 0){
+		ManageObject.object.toast.toast('请选择支付类型！');
+		return false;
+	}
+	return true;
+}
+*/
 

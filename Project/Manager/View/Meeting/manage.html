@@ -87,7 +87,7 @@
 												<input type="checkbox" class="icheck" value="<{$vo.id}>" placeholder="">
 											</span>
 												<if condition="in_array($vo['status'], [1,2,3,4])">
-													<a class="list_img" href="<{:U('Meeting/index', ['mid'=>$vo['id']])}>">
+													<a class="list_img" href="<{:U('Meeting/alter', ['mid'=>$vo['id']])}>">
 														<img src="<{$vo.logo}>" alt="">
 													</a>
 													<else/>
@@ -98,7 +98,7 @@
 												<div class="content-box">
 													<h3>
 														<if condition="in_array($vo['status'], [1,2,3,4])">
-															<a href="<{:U('Meeting/index', ['mid'=>$vo['id']])}>" class="meeting_name"><{$vo.name}></a>
+															<a href="<{:U('Meeting/alter', ['mid'=>$vo['id']])}>" class="meeting_name"><{$vo.name}></a>
 															<else/><a class="meeting_name"><{$vo.name}></a>
 														</if>
 														<switch name="vo.status">

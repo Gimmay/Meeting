@@ -21,7 +21,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-position.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
-	<!--	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/calculator/calculator.js"></script>-->
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery.jqprint-0.3.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
@@ -76,19 +76,72 @@
 
 										<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
 									</form>
-									<a class="btn btn-default export_report pull-right bg-00a0e8" href="<{:U('exportReceivablesData', ['mid'=>I('get.mid', 0, 'int')])}>">导出报表</a>
-									<a class="btn btn-default export_report pull-right bg-00a0e8" href="<{:U('exportReceivablesDataTemplate', ['mid'=>I('get.mid', 0, 'int')])}>" style="margin-right: 20px">下载Excel模板</a>
-									<a class="btn btn-default import_report pull-right bg-00a0e8" style="margin-right: 20px;">
-										<form action="" method="post" enctype="multipart/form-data" name="fileForm" id="file_form" target="fileUpload">
-											<input type="file" name="excel" accept=".xlsx, .xls" id="excel_file">
-											<input name="requestType" value="import_excel" type="hidden"> <i></i>
-										</form>
-										导入收款 </a>
-									<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-default export_report pull-right bg-00a0e8" style="margin-right: 20px;">添加收款</a>
+									<if condition="$permission_list['RECEIVABLES.EXPORT-EXCEL']">
+										<a class="btn btn-default export_report pull-right bg-00a0e8" href="<{:U('exportReceivablesData', ['mid'=>I('get.mid', 0, 'int')])}>">导出报表</a>
+									</if>
+									<if condition="$permission_list['RECEIVABLES.DOWNLOAD-IMPORT-EXCEL-TEMPLATE']">
+										<a class="btn btn-default export_report pull-right bg-00a0e8" href="<{:U('exportReceivablesDataTemplate', ['mid'=>I('get.mid', 0, 'int')])}>" style="margin-right: 20px">下载Excel模板</a>
+									</if>
+									<if condition="$permission_list['RECEIVABLES.IMPORT-EXCEL']">
+										<a class="btn btn-default import_report pull-right bg-00a0e8" style="margin-right: 20px;">
+											<form action="" method="post" enctype="multipart/form-data" name="fileForm" id="file_form" target="fileUpload">
+												<input type="file" name="excel" accept=".xlsx, .xls" id="excel_file">
+												<input name="requestType" value="import_excel" type="hidden"> <i></i>
+											</form>
+											导入收款 </a>
+									</if>
+									<if condition="$permission_list['RECEIVABLES.CREATE']">
+										<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-default export_report pull-right bg-00a0e8" style="margin-right: 20px;">添加收款</a>
+									</if>
 								</div>
 								<div class="tab-content clearfix">
 									<div class="ticket_list">
-										<table class="table table-striped">
+										<volist name="list" id="single">
+											<div class="rece_item">
+												<div class="header">
+													<span>客户：<{$single.client_name}></span><span>单位：<{$single.unit}></span><span>收款人：<{$single.payee_name}></span><span class="color-danger">收款金额：<{$single.price}></span><b class="plus glyphicon glyphicon-plus"></b>
+												</div>
+												<div class="rece_body hide">
+													<b class="print" data-id="<{$single.id}>">打印</b>
+													<div class="rece_details_item">
+														<table class="table table-bordered rece_details_table">
+															<thead>
+																<tr>
+																	<th>项目类型</th>
+																	<th>项目名字/代金券码</th>
+																	<th>支付方式</th>
+																	<th>POS机</th>
+																	<th>收款来源</th>
+																	<th>备注</th>
+																	<th>金额</th>
+																	<th>操作</th>
+																</tr>
+															</thead>
+															<tbody>
+																<volist name="single.option" id="option">
+																	<tr>
+																		<td><{$single.receivables_type}></td>
+																		<td><{$single.coupon_name}> <{$single.coupon_code}></td>
+																		<td><{$option.pay_method_name}></td>
+																		<td><{$option.pos_machine_name}></td>
+																		<td><{$option.source_type_name}></td>
+																		<td><{$option.comment}></td>
+																		<td><{$option.price}></td>
+																		<td>
+																			<div class="btn-group" data-id="<{$single.id}>">
+																				<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_receivables">修改</button>
+																				<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_receivables">删除</button>
+																			</div>
+																		</td>
+																	</tr>
+																</volist>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</volist>
+										<!--<table class="table table-striped">
 											<thead>
 												<tr>
 													<th width="4%">序号</th>
@@ -147,7 +200,7 @@
 													</tr>
 												</volist>
 											</tbody>
-										</table>
+										</table>-->
 									</div>
 								</div>
 							</div>
@@ -156,6 +209,64 @@
 				</if>
 			</div>
 		</div>
+	</div>
+	<div id="print">
+		<table id="p_table" width="100%" height="100%" border="1">
+			<thead>
+				<tr>
+					<td width="16.666"></td>
+					<td width="16.666"></td>
+					<td width="16.666"></td>
+					<td width="16.666"></td>
+					<td width="16.666"></td>
+					<td width="16.666"></td>
+				</tr>
+			</thead>
+			<tr>
+				<td><span class="img"><img src="<{$Think.COMMON_IMAGE_PATH}>/logo.png" alt=""></span></td>
+				<td colspan="4" style="text-align: center">收款收据</td>
+				<td>123456</td>
+			</tr>
+			<tr>
+				<td colspan="6" class="text-center">
+					2016-12-12
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6">
+					今收到 <span class="unit">会所</span> <span class="client_name">顾客姓名</span>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6">
+					交来：<span class="project_type"></span>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6">
+					金额（大写）<span class="price_capital">壹万元整</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="rmb" colspan="2" rowspan="2">
+					人民币小写： <span class="price">1000</span>
+				</td>
+				<td colspan="2"></td>
+				<td colspan="2"></td>
+			</tr>
+			<tr>
+				<td colspan="2"></td>
+				<td colspan="2"></td>
+			</tr>
+			<tr>
+				<td>核准：</td>
+				<td>会计：</td>
+				<td>记账：</td>
+				<td>开收据的人：</td>
+				<td>出纳：</td>
+				<td>接手人：</td>
+			</tr>
+		</table>
 	</div>
 	<!-- 添加收款 -->
 	<div class="modal fade" id="add_receivables" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -407,42 +518,6 @@
 	<script>
 		var ManageObject = {
 			object:{
-				//				method          :$('#method').QuasarSelect({
-				//					name        :'method',
-				//					classStyle  :'form-control',
-				//					data        :'<{:json_encode($pay_info)}>',
-				//					idInput     :'selected_method',
-				//					idHidden    :'selected_method_form',
-				//					placeholder :'',
-				//					hasEmptyItem:false
-				//				}),
-				//				methoda         :$('#method_a').QuasarSelect({
-				//					name        :'method',
-				//					classStyle  :'form-control',
-				//					data        :'<{:json_encode($pay_info)}>',
-				//					idInput     :'selected_method_a',
-				//					idHidden    :'selected_method_a_form',
-				//					placeholder :'',
-				//					hasEmptyItem:false
-				//				}),
-				//				type            :$('#type').QuasarSelect({
-				//					name        :'type',
-				//					classStyle  :'form-control',
-				//					data        :'<{:json_encode($type_info)}>',
-				//					idInput     :'selected_type',
-				//					idHidden    :'selected_type_form',
-				//					placeholder :'',
-				//					hasEmptyItem:false
-				//				}),
-				//				typea           :$('#type_a').QuasarSelect({
-				//					name        :'type',
-				//					classStyle  :'form-control',
-				//					data        :'<{:json_encode($type_info)}>',
-				//					idInput     :'selected_type_a',
-				//					idHidden    :'selected_type_a_form',
-				//					placeholder :'',
-				//					hasEmptyItem:false
-				//				}),
 				meetingName     :$('#meeting_name').QuasarSelect({
 					name        :'mid',
 					classStyle  :'form-control',
@@ -503,6 +578,9 @@
 				})
 			}
 		};
+		function jqprint(){
+			$("#print").jqprint();
+		}
 	</script>
 </body>
 </html>

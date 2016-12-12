@@ -33,8 +33,8 @@ var ScriptObject = {
 	roomTypeSelectedTemp:'<option value="$id" selected>$name($surplusNumber/$totalNumber)</option>',
 	createAddClient     :'<tr>\n\t<td class="check_item_add">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$i</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$signDate</td>\n</tr>',
 	createAddClient2    :'<tr>\n\t<td class="check_item_add2">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$i</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$signDate</td>\n</tr>',
-	createAddEmployee   :'<tr><td class="check_item_employee"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$department</td><td>$position</td><td>$mobile</td><td>$company</td></tr>',
-	createAddEmployee2  :'<tr><td class="check_item_employee2"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$department</td><td>$position</td><td>$mobile</td><td>$company</td></tr>',
+	createAddEmployee   :'<tr><td class="check_item_employee"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$position</td><td>$mobile</td><td>$unit</td></tr>\n',
+	createAddEmployee2  :'<tr><td class="check_item_employee2"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$position</td><td>$mobile</td><td>$unit</td></tr>',
 	status              :0,
 	pastNumber          :0,
 	bindEvent           :function(){
@@ -253,7 +253,7 @@ $(function(){
 		});
 		ThisObject.object.loading.loading();
 		$('#distribution_room').find('.mr_17').removeClass('hide');
-		$('#distribution_room').find('input[name=person]').val(str);
+		$('#distribution_room').find('input[name=client]').val(str);
 		$('#distribution_room').find('#selected_attendee_count_by_1').text(nameStr);
 		ThisObject.object.loading.complete();
 		$('#add_recipient').modal('hide')
@@ -287,8 +287,8 @@ $(function(){
 		});
 		ThisObject.object.loading.loading();
 		$('#distribution_room').find('.mr_17').removeClass('hide');
-		$('#distribution_room').find('input[name=person]').val(str);
-		$('#distribution_room').find('#selected_attendee_count_by_1').text(nameStr);
+		$('#distribution_room').find('input[name=employee]').val(str);
+		$('#distribution_room').find('#selected_attendee_count_by_2').text(nameStr);
 		ThisObject.object.loading.complete();
 		$('#add_recipient_employee').modal('hide');
 	});
@@ -575,6 +575,7 @@ function checkStatus(){
 	return true;
 }
 function getClientAdd(keyword){
+	$('#add_recipient .selected_attendee').text(0);
 	var str = '';
 	Common.ajax({
 		data    :{requestType:'get_client', keyword:keyword},
@@ -700,6 +701,7 @@ function getClientAddDetails(keyword){
 }
 function getEmployeeAdd(keyword){
 	var str = '';
+	$('#add_recipient_employee .selected_attendee').text('0');
 	Common.ajax({
 		data    :{requestType:'get_employee', keyword:keyword},
 		callback:function(r){
@@ -721,7 +723,8 @@ function getEmployeeAdd(keyword){
 								   .replace('$name', value.name)
 								   .replace('$id', value.id).replace('$position', value.position)
 								   .replace('$mobile', value.mobile).replace('$company', value.company)
-								   .replace('$gender', gender).replace('$department', value.d_name);
+								   .replace('$gender', gender).replace('$department', value.d_name)
+								   .replace('$unit', value.unit);
 			});
 			$('#add_recipient_employee').find('#employee_body').html(str);
 			$('.check_item_employee').iCheck({
@@ -786,7 +789,8 @@ function getEmployeeAddDetails(keyword){
 								   .replace('$name', value.name)
 								   .replace('$id', value.id).replace('$position', value.position)
 								   .replace('$mobile', value.mobile).replace('$company', value.company)
-								   .replace('$gender', gender).replace('$department', value.d_name);
+								   .replace('$gender', gender).replace('$department', value.d_name)
+								   .replace('$unit', value.unit);
 			});
 			$('#add_recipient2_employee').find('#employee_body2').html(str);
 			$('.check_item_employee2').iCheck({

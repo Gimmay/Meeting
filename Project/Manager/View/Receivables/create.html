@@ -65,7 +65,7 @@
 										</div>
 									</if>
 								</div>
-								<form class="form-horizontal" role="form" method="post" id="form">
+								<form class="form-horizontal" role="form" method="post" id="form" onsubmit="return check()">
 									<input type="hidden" name="requestType" value="create_list">
 									<div class="tab-content clearfix">
 										<div class="module">
@@ -146,6 +146,9 @@
 														<div class="rece_li clearfix">
 															<div class="rece_item">
 																<select name="type[]" class="form-control project_type">
+																	<!-- 收款类型对应表 -->
+																	<!-- 以下位置都需要同步 -->
+																	<!-- E682C6E7495F65F68BFB92D12F5385C45CA4B455 -->
 																	<option value="0">项目类型</option>
 																	<option value="1">门票</option>
 																	<option value="3">产品</option>
@@ -272,6 +275,12 @@
 					/*	minDate :"2015-10-19 00:00:00",
 					 maxDate :"2016-11-8 00:00:00"*/
 				}),
+				toast           :$().QuasarToast(),
+				loading         :$().QuasarLoading(),
+				icheck          :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				})
 			}
 		};
 	</script>

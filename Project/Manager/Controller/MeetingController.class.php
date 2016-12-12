@@ -35,8 +35,8 @@
 		}
 
 		public function index(){
+			$this->meetingID = $this->initMeetingID($this);
 			if($this->permissionList['MEETING.VIEW'] && $this->permissionList['MEETING.VIEW-BRIEF']){
-				$this->meetingID = $this->initMeetingID($this);
 				/** @var \Core\Model\JoinModel $join_model */
 				$join_model = D('Core/Join');
 				/** @var \Core\Model\ReceivablesTypeModel $receivables_model */

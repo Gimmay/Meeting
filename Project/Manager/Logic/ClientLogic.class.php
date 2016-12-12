@@ -221,6 +221,7 @@
 							$str_obj             = new StringPlus();
 							$data['creatime']    = time();
 							$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+							$data['birthday']    = $data['birthday'] ? $data['birthday'] : null;
 							$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
 							$data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
 							$result1             = $model->createClient($data);
@@ -511,12 +512,13 @@
 				case 'sign': // 签到
 					if($this->permissionList['CLIENT.SIGN']){
 						$core_client_logic = new \Core\Logic\ClientLogic();
-						$result = $core_client_logic->sign([
+						$result            = $core_client_logic->sign([
 							'mid'  => I('post.mid', 0, 'int'),
 							'cid'  => I('post.id', 0, 'int'),
 							'type' => 1,
 							'eid'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
 						]);
+
 						return array_merge($result, ['__ajax__' => true]);
 					}
 					else return [
@@ -965,6 +967,23 @@
 						'message'  => '您没有收款的权限',
 						'__ajax__' => false
 					];
+				break;
+				case 'gift':
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model = D('Core/join');
+					C('TOKEN_ON', false);
+					$id        = I('post.id', 0, 'int');
+					$join_list = $join_model->findRecord(1,['cid'=>$id,'status'=>1,'mid'=>I('get.mid',0,'int')]);
+//					if($join_list['gift_status'] == 1){
+//						return array_merge(['message' => '礼品已经领取', 'status' => false], [
+//							'__ajax__' => false
+//						]);
+//					}else{
+//					}
+					$join_result = $join_model->alterRecord(['id' => $join_list['id']], ['gift_status' => 1]);
+					return array_merge($join_result, [
+						'__ajax__' => false
+					]);
 				break;
 				default:
 					return [

@@ -199,7 +199,7 @@
 											<td width="10%">审核/签到/打印</td>
 											<td width="7%">签到时间</td>
 											<td width="5%">签到方式</td>
-											<!--<td width="4%">收款</td>-->
+											<td width="4%">礼品</td>
 											<td width="4%">状态</td>
 											<td width="7%">创建时间</td>
 											<td width="19%">操作</td>
@@ -261,13 +261,12 @@
 														<case value="3">微信后台签到</case>
 													</switch>
 												</td>
-												<!--<td>
-													<present name="single['receivables']">
-														<span class="color-red">￥<{$single.receivables}></span>
-														<else/>
-														未收款
-													</present>
-												</td>-->
+												<td>
+													<switch name="single.gift_status">
+														<case value="0">未领取</case>
+														<case value="1"><span style="color: red;">已领取</span></case>
+													</switch>
+												</td>
 												<td>
 													<switch name="single.status">
 														<case value="0">禁用</case>
@@ -323,6 +322,7 @@
 														<if condition="$permission_list['CLIENT.PRINT-BADGE'] eq 1 and $single['status'] eq 1">
 															<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int'), 'cid'=>$single['cid']])}>" class="btn btn-default btn-xs print_badge">打印胸卡</a>
 														</if>
+														<button type="button" class="btn btn-default btn-xs btn-gift" data-toggle="modal" data-target="#gift_modal">礼品</button>
 														<if condition="$permission_list['CLIENT.ALTER']">
 															<a href="<{:U('Client/alter',['id'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
 														</if>
@@ -470,6 +470,28 @@
 			</div>
 		</div>
 	</if>
+	<!-- 礼品 -->
+	<div class="modal fade" id="gift_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">礼品管理</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="gift"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否领取礼品
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认领取</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 	<if condition="$permission_list['CLIENT.REVIEW'] eq 1">
 		<!-- 批量审核 -->
 		<div class="modal fade" id="batch_review_client" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

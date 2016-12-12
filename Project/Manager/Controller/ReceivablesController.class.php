@@ -70,6 +70,52 @@
 			else $this->error('您没有添加收款的权限');
 		}
 
+		//		public function details(){
+		//			$receivables_logic = new ReceivablesLogic();
+		//			if(IS_POST){
+		//				$type   = I('post.requestType');
+		//				$result = $receivables_logic->handlerRequest($type);
+		//				if($result['__ajax__']){
+		//					unset($result['__ajax__']);
+		//					echo json_encode($result);
+		//				}
+		//				else{
+		//					unset($result['__ajax__']);
+		//					if($result['status']) $this->success($result['message']);
+		//					else $this->error($result['message'], '', 3);
+		//				}
+		//				exit;
+		//			}
+		//			if($this->permissionList['RECEIVABLES.VIEW']){
+		//				/** @var \Core\Model\ReceivablesModel $receivables_model */
+		//				$receivables_model = D('Core/Receivables');
+		//				$option            = [];
+		//				$keyword           = I('get.keyword', '');
+		//				if(isset($_GET['cid'])) $option['cid'] = I('get.cid', 0, 'int');
+		//				$receivables_total = $receivables_model->findRecord(0, array_merge([
+		//					'mid'     => $this->meetingID,
+		//					'status'  => 'not deleted',
+		//					'keyword' => $keyword
+		//				], $option));
+		//				/* 分页设置 */
+		//				$page_object = new Page(count($receivables_total), I('get._page_count', C('PAGE_RECORD_COUNT'), 'int'));
+		//				\ThinkPHP\Quasar\Page\setTheme1($page_object);
+		//				$receivables_list = $receivables_model->findRecord(2, array_merge([
+		//					'status'  => 1,
+		//					'mid'     => $this->meetingID,
+		//					'keyword' => $keyword,
+		//					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
+		//					'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
+		//				], $option));
+		//				$receivables_list = $receivables_logic->setData('details:set_column', $receivables_list);
+		//				$this->assign('list', $receivables_list);
+		//				$this->display();
+		//			}
+		//			else $this->error('您没有查看收款记录的权限');
+		//		}
+		/**
+		 * 改版后的收款详情页
+		 */
 		public function details(){
 			$receivables_logic = new ReceivablesLogic();
 			if(IS_POST){
@@ -305,7 +351,7 @@
 			}
 			else $this->error('您没有导出EXCEL收款数据的权限');
 		}
-		
+
 		public function exportReceivablesDataTemplate(){
 			if($this->permissionList['RECEIVABLES.DOWNLOAD-IMPORT-EXCEL-TEMPLATE']){
 				/** @var \Manager\Model\ReceivablesModel $receivables_model */
@@ -322,5 +368,11 @@
 				]);
 			}
 			else $this->error('您没有下载导入模板的权限');
+		}
+
+		public function printClient(){
+		}
+
+		public function printDetail(){
 		}
 	}

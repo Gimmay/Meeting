@@ -33,7 +33,7 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<if condition="$permission_list['COUPON.VIEW] eq 1">
+				<if condition="$permission_list['COUPON.VIEW'] eq 1">
 					<div class="main_body">
 						<section class="content">
 							<header class="c_header">
@@ -111,8 +111,10 @@
 												</td>
 												<td>
 													<div class="btn-group" data-id="<{$info.id}>">
-														<if condition="$max_role_level elt $single['level']">
+														<if condition="$permission_list['COUPON.ALTER']">
 															<!--<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>-->
+														</if>
+														<if condition="$permission_list['COUPON.DELETE']">
 															<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button>
 														</if>
 													</div>

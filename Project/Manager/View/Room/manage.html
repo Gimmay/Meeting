@@ -219,19 +219,6 @@
 								<input type="text" class="form-control room_number" name="room_number" id="room_number">
 							</div>
 						</div>
-						<!--<div class="form-group">
-							<label for="room_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>房客类型：</label>
-							<div class="col-sm-10">
-								<select name="client_type" class="form-control" id="client_type">
-									<option value="陪同">陪同</option>
-									<option value="终端">终端</option>
-									<option value="内部员工">内部员工</option>
-									<option value="嘉宾">嘉宾</option>
-									<option value="老总">老总</option>
-									<option value="其他">其他</option>
-								</select>
-							</div>
-						</div>-->
 						<div class="form-group">
 							<label for="room_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>房间类型：</label>
 							<div class="col-sm-10">
@@ -262,7 +249,7 @@
 									<a class="create_add_employee" data-toggle="modal" data-target="#add_recipient_employee"><i class="glyphicon glyphicon-plus"></i>添加内部员工</a>
 								</div>
 							</div>
-							<input type="hidden" name="person">
+							<input type="hidden" name="client"> <input type="hidden" name="employee">
 						</div>
 						<div class="form-group">
 							<label for="room_comment" class="col-sm-2 control-label">备注：</label>
@@ -447,7 +434,7 @@
 										<td width="10%">序号</td>
 										<td width="10%">姓名</td>
 										<td width="10%">性别</td>
-										<td width="10%">部门</td>
+										<!--	<td width="10%">部门</td>-->
 										<td width="10%">职务</td>
 										<td width="20%">手机号</td>
 										<td width="20%">单位</td>
@@ -586,7 +573,7 @@
 										<td width="10%">序号</td>
 										<td width="10%">姓名</td>
 										<td width="10%">性别</td>
-										<td width="10%">部门</td>
+										<!--<td width="10%">部门</td>-->
 										<td width="10%">职务</td>
 										<td width="20%">手机号</td>
 										<td width="20%">单位</td>

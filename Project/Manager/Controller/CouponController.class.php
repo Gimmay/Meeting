@@ -39,6 +39,7 @@
 				$list_total = $coupon_model->findCoupon(0, [
 					'keyword' => I('get.keyword', ''),
 					'status'  => 'not deleted',
+					'mid'=>I('get.mid',0,'int')
 				]);
 				/* 分页设置 */
 				$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));

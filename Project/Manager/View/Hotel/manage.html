@@ -118,7 +118,7 @@
 												</td>
 												<td>
 													<div class="btn-group" data-id="<{$single.id}>">
-														<if condition="$permission_list['ROOM.VIEW'] eq 1">
+														<if condition="$permission_list['ROOM.VIEW'] eq 1 and $single['status'] eq 1">
 															<a href="<{:U('Room/manage',['mid'=>I('get.mid', 0, 'int'),'hid'=>$single['id']])}>" class="btn btn-default btn-xs delete_btn">房间管理</a>
 														</if>
 														<if condition="$permission_list['HOTEL.ALTER'] eq 1">

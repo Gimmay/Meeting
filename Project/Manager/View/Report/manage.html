@@ -132,7 +132,9 @@
 												<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
 												<td>
 													<div class="btn-group" data-id="<{$single.id}>">
-														<a href="<{:U('detail', ['mid'=>$single['mid'], 'id'=>$single['id']])}>" target="_blank" class="btn btn-default btn-xs btn-default">查看</a>
+														<if condition="$single['status'] eq 1">
+															<a href="<{:U('detail', ['mid'=>$single['mid'], 'id'=>$single['id']])}>" target="_blank" class="btn btn-default btn-xs btn-default">查看</a>
+														</if>
 														<if condition="$permission_list['REPORT.ALTER']">
 															<a href="<{:U('alter', ['mid'=>$single['mid'], 'id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
 														</if>

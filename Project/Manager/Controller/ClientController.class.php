@@ -267,8 +267,12 @@
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model        = D('Core/Join');
 					$core_client_logic = new \Core\Logic\ClientLogic();
-					$join_client       = $join_model->findRecord(1, ['keyword' => I('get.keyword', ''), 'status' => 1]);
-					if($join_client['sign_status'] != 1){
+					$join_client       = $join_model->findRecord(1, [
+						'keyword' => I('get.keyword', ''),
+						'status'  => 1,
+						'mid'     => I('get.mid', 0, 'int')
+					]);
+					if($join_client['sign_status'] != 1 && $join_client){
 						$result = $core_client_logic->sign([
 							'mid'  => $this->meetingID,
 							'cid'  => $join_client['cid'],
@@ -282,7 +286,13 @@
 							$join_client['sign_type']        = $result['data']['sign_type'];
 						}
 					}
-					$this->assign('client', $join_client);
+					$info = 0;
+					if($join_client){
+						if($join_client['review_status']) $info = 2;
+						else $info = 1;
+						$this->assign('client', $join_client);
+					}
+					$this->assign('info_type', $info);
 				}
 				$this->display();
 			}

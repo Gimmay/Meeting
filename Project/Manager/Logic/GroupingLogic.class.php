@@ -167,6 +167,7 @@
 				case 'empty':
 					if($this->permissionList['GROUP.ASSIGN-CLIENT']){
 						$gid = I('post.gid', 0, 'int');
+						$time = I('get.date',0,'int');
 						C('TOKEN_ON', false);
 						/** @var \Core\Model\GroupMemberModel $group_member_model */
 						$group_member_model = D('Core/GroupMember');
@@ -175,7 +176,7 @@
 						//					foreach ($group_member_result as $k=>$v){
 						//						$id[].= $v['id'];
 						//					}
-						$group_member_delete = $group_member_model->deleteRecord(['gid' => $gid]);
+						$group_member_delete = $group_member_model->deleteRecord(['gid' => $gid,'time'=>$time]);
 
 						return array_merge($group_member_delete, ['__ajax__' => false]);
 					}
@@ -225,10 +226,21 @@
 					$time = I('get.date', 0, 'int');
 					$gid  = I('get.gid', 0, 'int');
 					$mid  = I('get.mid', 0, 'int');
+					$time = I('get.date', 0, 'int');
+					C('TOKEN_ON', false);
 					/** @var \Core\Model\GroupMemberModel $group_member_model */
 					$group_member_model = D('Core/GroupMember');
 					/** @var \Core\Model\GroupModel $group_model */
-					$group_model = D('Core/Group');
+					$group_model       = D('Core/Group');
+					$group_member_info = $group_member_model->findRecord(2, [
+						'gid'    => $gid,
+						'time'   => $time,
+						'status' => 1
+					]);
+					$id                = [];
+					if($group_member_info){
+						return array_merge(['status' => false, 'message' => '请先清空当前已添加的参会人员'], ['__ajax__' => false]);
+					}
 					if($time != 1){
 						$group_member_result = $group_member_model->findRecord(2, [
 							'gid'    => $gid,
@@ -240,7 +252,7 @@
 							$data[] = [
 								'gid'      => $gid,
 								'cid'      => $v['cid'],
-								'time'     => I('get.date', 0, 'int'),
+								'time'     => $time,
 								'creator'  => $v['creator'],
 								'creatime' => $v['time']
 							];

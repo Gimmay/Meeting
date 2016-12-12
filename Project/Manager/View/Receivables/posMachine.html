@@ -103,12 +103,16 @@
 														<td class="comment"><{$list.comment}></td>
 														<td>
 															<div class="btn-group" data-id="<{$list.id}>">
-																<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_pos_machine">修改</button>
-																<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_pos_machine">删除</button>
-																<if condition="$list['status'] eq 0">
+																<if condition="$permission_list['POS_MACHINE.ALTER'] eq 1">
+																	<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_pos_machine">修改</button>
+																</if>
+																<if condition="$permission_list['POS_MACHINE.DELETE'] eq 1">
+																	<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_pos_machine">删除</button>
+																</if>
+																<if condition="$list['status'] eq 0 and $permission_list['POS_MACHINE.ENABLE']">
 																	<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_pos_machine', 'id'=>$list['id']])}>" class="btn btn-success btn-xs">启用</a>
 																</if>
-																<if condition="$list['status'] eq 1">
+																<if condition="$list['status'] eq 1 and $permission_list['POS_MACHINE.DISABLE']">
 																	<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_pos_machine', 'id'=>$list['id']])}>" class="btn btn-danger btn-xs">禁用</a>
 																</if>
 															</div>

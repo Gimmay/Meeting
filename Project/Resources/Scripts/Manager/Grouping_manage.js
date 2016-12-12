@@ -2,7 +2,7 @@
  * Created by 1195 on 2016-12-2.
  */
 var ScriptObject = {
-	clientLiTemp:'<tr>\n\t<td class="check_item">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$num</td>\n\t<td class="name">$name</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$unit</td>\n</tr>',
+	clientLiTemp:'<tr>\n\t<td class="check_item">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$num</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n</tr>',
 };
 $(function(){
 	/**
@@ -264,7 +264,7 @@ function getClient(id, keyword){
 				str += ScriptObject.clientLiTemp.replace('$id', value.cid).replace('$num', index+1)
 								   .replace('$name', value.name).replace('$gender', gender)
 								   .replace('$position', value.position).replace('$mobile', value.mobile)
-								   .replace('$unit', value.unit);
+								   .replace('$unit', value.unit).replace('$clientType', value.type);
 			});
 			$('#add_crew').find('.current_attendee').text(i);
 			$('#add_crew').find('#client_body').html(str);

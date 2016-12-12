@@ -9,6 +9,10 @@ var ThisObject = {
 	signActiveBntTemp:'<a class="btn btn-default btn-sm active" href="javascript:void(0)" role="button" data-id="$id">$signName</a>'
 };
 $(function(){
+	$('.btn-gift').on('click', function(){
+		var id = $(this).parent('.btn-group').attr('data-id');
+		$('#gift_modal').find('input[name=id]').val(id);
+	});
 	var quasar_script = document.getElementById('quasar_script');
 	// 实例化Url类
 	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
