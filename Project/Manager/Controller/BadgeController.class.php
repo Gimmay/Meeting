@@ -34,14 +34,14 @@
 				}
 				exit;
 			}
-			if($this->permissionList['BADGE.VIEW']){
+			if($this->permissionList['BADGE.VIEW'] && $this->permissionList['BADGE.CREATE']){
 				/** @var \Core\Model\BadgeModel $model */
 				$model = D('Core/Badge');
 				$list  = $model->findBadge(2, ['status' => 'not deleted']);
 				$this->assign('list', $list);
 				$this->display();
 			}
-			else $this->error('您没有查看胸卡模块的权限');
+			else $this->error('您没有查看和创建胸卡模块的权限');
 		}
 
 		public function preview(){
@@ -74,7 +74,7 @@
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model = D('Core/Join');
 					$client     = $join_model->findRecord(1, [
-						'mid'     => $this->meetingID,
+						'mid'    => $this->meetingID,
 						'cid'    => I('get.cid', 0, 'int'),
 						'status' => 'not deleted'
 					]);

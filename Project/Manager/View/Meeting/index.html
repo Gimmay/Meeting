@@ -20,7 +20,7 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<if condition="$permission_list['MEETING.VIEW']">
+				<if condition="$permission_list['MEETING.VIEW'] and $permission_list['MEETING.VIEW-BRIEF']">
 					<div class="main_body">
 						<section class="content">
 							<div class="table_wrap">

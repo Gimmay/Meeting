@@ -33,6 +33,20 @@
 	cursor      : pointer;
 }
 
+.d_list .add_employee{
+	position    : absolute;
+	top         : 0;
+	right       : 20px;
+	width       : 50px;
+	height      : 27px;
+	line-height : 27px;
+	border      : 1px solid #E1E1E1;
+	text-align  : center;
+	background  : #00A0E8;
+	color       : #FFFFFF;
+	cursor      : pointer;
+}
+
 .choose_people .d1{
 	padding : 10px 20px;
 }

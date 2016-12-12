@@ -15,7 +15,7 @@
 		public function handlerRequest($type){
 			switch($type){
 				case 'add_group':
-					if($this->permissionList['GROUPING.CREATE']){
+					if($this->permissionList['GROUP.CREATE']){
 						C('TOKEN_ON', false);
 						$data             = I('post.');
 						$data['mid']      = I('get.mid', 0, 'int');
@@ -42,7 +42,7 @@
 					else return ['status' => false, 'message' => '您没有创建分组的权限', '__ajax__' => false];
 				break;
 				case 'save_client':
-					if($this->permissionList['GROUPING.ASSIGN-CLIENT']){
+					if($this->permissionList['GROUP.ASSIGN-CLIENT']){
 						$id   = explode(',', I('post.id', ''));
 						$gid  = I('get.gid', 0, 'int');
 						$time = I('get.date', 0, 'int');
@@ -66,7 +66,7 @@
 					else return ['status' => false, 'message' => '您没有分配人员的权限', '__ajax__' => true];
 				break;
 				case 'get_client':
-					if($this->permissionList['GROUPING.VIEW-CLIENT']){
+					if($this->permissionList['GROUP.VIEW-CLIENT']){
 						/** @var \Core\Model\JoinModel $join_model */
 						$join_model = D('Core/Join');
 						/** @var \Core\Model\GroupMemberModel $group_member_model */
@@ -97,7 +97,7 @@
 					else return ['status' => false, 'message' => '您没有查看人员分组的权限', '__ajax__' => true];
 				break;
 				case 'get_group_info':
-					if($this->permissionList['GROUPING.VIEW']){
+					if($this->permissionList['GROUP.VIEW']){
 						/** @var \Core\Model\GroupModel $group_model */
 						$group_model = D('Core/Group');
 						/** @var \Core\Model\ClientModel $client_model */
@@ -128,7 +128,7 @@
 					else return ['status' => false, 'message' => '您没有查看分组的权限', '__ajax__' => true];
 				break;
 				case 'alter':
-					if($this->permissionList['GROUPING.ALTER']){
+					if($this->permissionList['GROUP.ALTER']){
 						/** @var \Core\Model\GroupModel $group_model */
 						$group_model = D('Core/Group');
 						C('TOKEN_ON', false);
@@ -153,7 +153,7 @@
 					else return ['status' => false, 'message' => '您没有修改分组的权限', '__ajax__' => false];
 				break;
 				case 'delete_client':
-					if($this->permissionList['GROUPING.ASSIGN-CLIENT']){
+					if($this->permissionList['GROUP.ASSIGN-CLIENT']){
 						$id = I('post.cid', 0, 'int');
 						/** @var \Core\Model\GroupMemberModel $group_member_model */
 						$group_member_model = D('Core/GroupMember');
@@ -165,7 +165,7 @@
 					else return ['status' => true, 'message' => '您没有分配人员的权限', '__ajax__' => true];
 				break;
 				case 'empty':
-					if($this->permissionList['GROUPING.ASSIGN-CLIENT']){
+					if($this->permissionList['GROUP.ASSIGN-CLIENT']){
 						$gid = I('post.gid', 0, 'int');
 						C('TOKEN_ON', false);
 						/** @var \Core\Model\GroupMemberModel $group_member_model */
@@ -182,7 +182,7 @@
 					else return ['status' => true, 'message' => '您没有分配人员的权限', '__ajax__' => true];
 				break;
 				case 'write_score':
-					if($this->permissionList['GROUPING.ASSIGN-SCORE']){
+					if($this->permissionList['GROUP.ASSIGN-SCORE']){
 						$data = I('post.');
 						C('TOKEN_ON', false);
 						$data['time']     = I('post.date', 0, 'int');
@@ -208,7 +208,7 @@
 					else return ['status' => false, 'message' => '您没有分配分数的权限', '__ajax__' => true];
 				break;
 				case 'delete':
-					if($this->permissionList['GROUPING.DELETE']){
+					if($this->permissionList['GROUP.DELETE']){
 						/** @var \Core\Model\GroupModel $group_model */
 						$group_model  = D('Core/Group');
 						$id           = I('post.gid', 0, 'int');

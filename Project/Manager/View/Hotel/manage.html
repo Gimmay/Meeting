@@ -34,117 +34,125 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<div class="main_body">
-					<section class="content">
-						<header class="c_header">
-							<div class="function_list clearfix">
-								<if condition="$permission_list['HOTEL.CREATE'] eq 1">
-									<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_room">
-										<i></i>
-										<p>新建酒店</p>
-									</div>
-								</if>
-								<if condition="$permission_list['HOTEL.DELETE'] eq 1">
-									<div class="function_btn bg-danger batch_delete_btn_confirm">
-										<i></i>
-										<p>批量删除</p>
-									</div>
-								</if>
-							</div>
-						</header>
-						<div class="repertory clearfix">
-							<div class="tabs">
-								<!--<ul class="tabsUl clearfix">-->
-								<!--<li class="<notpresent name='_GET[type]'>active</notpresent>" id="filter_btn_all">-->
-								<!--<a href="javascript:void(0)">全部</a>-->
-								<!--</li>-->
-								<!--<li class="<if condition='$_GET[type] eq using'>active</if>" id="filter_btn_using">-->
+				<if condition="$permission_list['HOTEL.VIEW']">
+					<div class="main_body">
+						<section class="content">
+							<header class="c_header">
+								<div class="function_list clearfix">
+									<if condition="$permission_list['HOTEL.CREATE'] eq 1">
+										<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_room">
+											<i></i>
+											<p>新建酒店</p>
+										</div>
+									</if>
+									<if condition="$permission_list['HOTEL.DELETE'] eq 1">
+										<div class="function_btn bg-danger batch_delete_btn_confirm">
+											<i></i>
+											<p>批量删除</p>
+										</div>
+									</if>
+								</div>
+							</header>
+							<div class="repertory clearfix">
+								<div class="tabs">
+									<!--<ul class="tabsUl clearfix">-->
+									<!--<li class="<notpresent name='_GET[type]'>active</notpresent>" id="filter_btn_all">-->
+									<!--<a href="javascript:void(0)">全部</a>-->
+									<!--</li>-->
+									<!--<li class="<if condition='$_GET[type] eq using'>active</if>" id="filter_btn_using">-->
 
-								<!--<li cl<a href="javascript:void(0)">使用中</a>-->
-								<!--</li>ass="<if condition='$_GET[type] eq not_use'>active</if>" id="filter_btn_not_use">-->
-								<!--<a href="javascript:void(0)">未使用</a>-->
-								<!--</li>-->
-								<!--<li class="<if condition='$_GET[type] eq finish'>active</if>" id="filter_btn_finish">-->
-								<!--<a href="javascript:void(0)">已结束</a>-->
-								<!--</li>-->
-								<!--</ul>-->
-							</div>
-							<form action="" method="get">
-								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="酒店/拼音简码" value="">
+									<!--<li cl<a href="javascript:void(0)">使用中</a>-->
+									<!--</li>ass="<if condition='$_GET[type] eq not_use'>active</if>" id="filter_btn_not_use">-->
+									<!--<a href="javascript:void(0)">未使用</a>-->
+									<!--</li>-->
+									<!--<li class="<if condition='$_GET[type] eq finish'>active</if>" id="filter_btn_finish">-->
+									<!--<a href="javascript:void(0)">已结束</a>-->
+									<!--</li>-->
+									<!--</ul>-->
+								</div>
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" class="form-control" placeholder="酒店/拼音简码" value="">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default main_search">搜索</button>
 									</span>
-								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('manage')}>">查看所有</a>
-							</form>
-						</div>
-						<div class="table_wrap">
-							<table class="table table-bordered" style="text-align: center">
-								<thead>
-									<tr>
-										<td width="4%" class="all_check">
-											<input type="checkbox" class="icheck" placeholder="" value="">
-										</td>
-										<td width="3%">序号</td>
-										<td width="10%">酒店名称</td>
-										<td width="7%">星级</td>
-										<td width="8%">类型</td>
-										<td width="10%">地址</td>
-										<td width="10%">联系方式</td>
-										<td width="13%">状态</td>
-										<td width="20%">操作</td>
-										<td width="5%">启禁用</td>
-									</tr>
-								</thead>
-								<volist name="list" id="single">
-									<tbody>
-										<tr>
-											<td class="check_item">
-												<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
-											</td>
-											<td><{$i}></td>
-											<td class="hotel_name"><{$single.name}></td>
-											<td class="level"><{$single.level}></td>
-											<td class="type"><{$single.type}></td>
-											<td class="address"><{$single.address}></td>
-											<td class="contact"><{$single.contact}></td>
-											<td class="status">
-												<switch name="single.status">
-													<case value="0">禁用</case>
-													<case value="1">启用</case>
-												</switch>
-											</td>
-											<td>
-												<div class="btn-group" data-id="<{$single.id}>">
-													<a href="<{:U('Room/manage',['mid'=>I('get.mid', 0, 'int'),'hid'=>$single['id']])}>" class="btn btn-default btn-xs delete_btn">房间管理</a>
-													<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_hotel">修改</button>
-													<button class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_hotel">删除</button>
-												</div>
-											</td>
-											<td>
-												<div class="btn-group" data-id="<{$single.id}>">
-													<if condition="$single['status'] eq 0">
-														<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_hotel', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
-													</if>
-													<if condition="$single['status'] eq 1">
-														<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_hotel', 'id'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
-													</if>
-												</div>
-											</td>
-										</tr>
-									</tbody>
-								</volist>
-							</table>
-
-						</div>
-						<div class="page_wrap">
-							<div class="pagination">
-								<{$page_show}>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('manage')}>">查看所有</a>
+								</form>
 							</div>
-						</div>
-					</section>
-				</div>
+							<div class="table_wrap">
+								<table class="table table-bordered" style="text-align: center">
+									<thead>
+										<tr>
+											<td width="4%" class="all_check">
+												<input type="checkbox" class="icheck" placeholder="" value="">
+											</td>
+											<td width="3%">序号</td>
+											<td width="10%">酒店名称</td>
+											<td width="7%">星级</td>
+											<td width="8%">类型</td>
+											<td width="10%">地址</td>
+											<td width="10%">联系方式</td>
+											<td width="13%">状态</td>
+											<td width="20%">操作</td>
+											<td width="5%">启禁用</td>
+										</tr>
+									</thead>
+									<volist name="list" id="single">
+										<tbody>
+											<tr>
+												<td class="check_item">
+													<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
+												</td>
+												<td><{$i}></td>
+												<td class="hotel_name"><{$single.name}></td>
+												<td class="level"><{$single.level}></td>
+												<td class="type"><{$single.type}></td>
+												<td class="address"><{$single.address}></td>
+												<td class="contact"><{$single.contact}></td>
+												<td class="status">
+													<switch name="single.status">
+														<case value="0">禁用</case>
+														<case value="1">启用</case>
+													</switch>
+												</td>
+												<td>
+													<div class="btn-group" data-id="<{$single.id}>">
+														<if condition="$permission_list['ROOM.VIEW'] eq 1">
+															<a href="<{:U('Room/manage',['mid'=>I('get.mid', 0, 'int'),'hid'=>$single['id']])}>" class="btn btn-default btn-xs delete_btn">房间管理</a>
+														</if>
+														<if condition="$permission_list['HOTEL.ALTER'] eq 1">
+															<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_hotel">修改</button>
+														</if>
+														<if condition="$permission_list['HOTEL.DELETE'] eq 1">
+															<button class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_hotel">删除</button>
+														</if>
+													</div>
+												</td>
+												<td>
+													<div class="btn-group" data-id="<{$single.id}>">
+														<if condition="$single['status'] eq 0 and $permission_list['HOTEL.ENABLE']">
+															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_hotel', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
+														</if>
+														<if condition="$single['status'] eq 1 and $permission_list['HOTEL.DISABLE']">
+															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_hotel', 'id'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
+														</if>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</volist>
+								</table>
+
+							</div>
+							<div class="page_wrap">
+								<div class="pagination">
+									<{$page_show}>
+								</div>
+							</div>
+						</section>
+					</div>
+				</if>
 			</div>
 		</div>
 	</div>

@@ -29,159 +29,169 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<div class="main_body">
-					<section class="content">
-						<div class="table_wrap">
-							<!--<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="javascript:void(0)"><{$hotel_name.name}></a>
-								</div>
-							</div>-->
-							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="<{:U('Room/manage', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间列表</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Room/roomType', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间类型</a>
+				<if condition="$permission_list['ROOM.VIEW']">
+					<div class="main_body">
+						<section class="content">
+							<div class="table_wrap">
+								<!--<div class="nav_tab clearfix">
+									<div class="nav_tab_li active">
+										<a href="javascript:void(0)"><{$hotel_name.name}></a>
+									</div>
+								</div>-->
+								<div class="nav_tab clearfix">
+									<div class="nav_tab_li active">
+										<a href="<{:U('Room/manage', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间列表</a>
+									</div>
+									<if condition="$permission_list['ROOM_TYPE.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Room/roomType', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间类型</a>
+										</div>
+									</if>
 								</div>
 							</div>
-						</div>
-						<header class="c_header">
-							<div class="function_list clearfix">
-								<if condition="$permission_list['ROLE.CREATE'] eq 1">
-									<div class="function_btn bg-warning create_room" data-toggle="modal" data-target="#distribution_room">
-										<i></i>
-										<p>房间分配</p>
-									</div>
-								</if>
-								<if condition="$permission_list['ROLE.DELETE'] eq 1">
-									<div class="function_btn bg-danger batch_delete_btn_confirm">
-										<i></i>
-										<p>批量删除</p>
-									</div>
-								</if>
-							</div>
-						</header>
-						<div class="repertory clearfix">
-							<form action="" method="get">
-								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="房间/拼音简码" value="">
+							<header class="c_header">
+								<div class="function_list clearfix">
+									<if condition="$permission_list['ROOM.CREATE'] eq 1">
+										<div class="function_btn bg-warning create_room" data-toggle="modal" data-target="#distribution_room">
+											<i></i>
+											<p>房间分配</p>
+										</div>
+									</if>
+									<if condition="$permission_list['ROOM.DELETE'] eq 1">
+										<div class="function_btn bg-danger batch_delete_btn_confirm">
+											<i></i>
+											<p>批量删除</p>
+										</div>
+									</if>
+								</div>
+							</header>
+							<div class="repertory clearfix">
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" class="form-control" placeholder="房间/拼音简码" value="">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default main_search">搜索</button>
 									</span>
-								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('Room/manage',['mid'=>I('get.mid',0,'int'),'hid'=>I('get.hid',0,'int')])}>">查看所有</a>
-							</form>
-						</div>
-						<div class="table_wrap">
-							<table class="table table-bordered" style="text-align: center">
-								<thead>
-									<tr>
-										<td width="4%" class="all_check">
-											<input type="checkbox" class="icheck" placeholder="" value="">
-										</td>
-										<td width="3%">序号</td>
-										<td width="8%">房间号</td>
-										<td width="8%">房间类型</td>
-										<td width="8%">价格</td>
-										<td width="8%">可容纳人数</td>
-										<td width="10%">入住情况</td>
-										<td width="8%">房客类型</td>
-										<td width="10%">创建时间</td>
-										<td width="13%">备注</td>
-										<td width="20%">操作</td>
-									</tr>
-								</thead>
-								<volist name="room_info" id="room_list">
-									<tbody>
-										<tr>
-											<td class="check_item">
-												<input type="checkbox" class="icheck" placeholder="" value="<{$room_list.id}>">
-											</td>
-											<td><{$i}></td>
-											<td class="room_code"><{$room_list.code}></td>
-											<td class="room_type"><{$room_list.type_name}></td>
-											<td class="price"><{$room_list.price}></td>
-											<td class="capacity"><{$room_list.capacity}></td>
-											<td>
-												<if condition="$room_list.count eq $room_list.capacity ">
-													<b class="color-28B778">住满</b>
-													<elseif condition=" $room_list.count gt $room_list.capacity  "/>
-													已超过容纳人数(已住进<span style="color: red;"><{$room_list.count}>人</span>/<span style="color: royalblue;;">可容纳<{$room_list.capacity}>人</span>)
-													<else/>
-													未住满(已入住<span style="color: red;"><{$room_list.count}></span>人,可容纳<span style="color: red;"><{$room_list.capacity}>人</span>)
-												</if>
-											</td>
-											<td class="client_type"><{$room_list.client_type}></td>
-											<td class="come_time"><{$room_list.creatime|date='Y-m-d H:s',###}></td>
-											<td class="comment"><{$room_list.comment}></td>
-											<td>
-												<div class="btn-group" data-id="<{$room_list.id}>">
-													<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_room">修改</button>
-													<button class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_room">删除</button>
-													<button class="btn btn-default btn-xs details_btn">详情</button>
-												</div>
-											</td>
-										</tr>
-									</tbody>
-								</volist>
-							</table>
-						</div>
-						<div class="page_wrap">
-							<div class="pagination">
-								<{$page_show}>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('Room/manage',['mid'=>I('get.mid',0,'int'),'hid'=>I('get.hid',0,'int')])}>">查看所有</a>
+								</form>
 							</div>
-						</div>
-					</section>
-				</div>
-				<div class="right_details">
-					<div class="d_con">
+							<div class="table_wrap">
+								<table class="table table-bordered" style="text-align: center">
+									<thead>
+										<tr>
+											<td width="4%" class="all_check">
+												<input type="checkbox" class="icheck" placeholder="" value="">
+											</td>
+											<td width="3%">序号</td>
+											<td width="8%">房间号</td>
+											<td width="8%">房间类型</td>
+											<td width="8%">价格</td>
+											<td width="8%">可容纳人数</td>
+											<td width="10%">入住情况</td>
+											<td width="8%">房客类型</td>
+											<td width="10%">创建时间</td>
+											<td width="13%">备注</td>
+											<td width="20%">操作</td>
+										</tr>
+									</thead>
+									<volist name="room_info" id="room_list">
+										<tbody>
+											<tr>
+												<td class="check_item">
+													<input type="checkbox" class="icheck" placeholder="" value="<{$room_list.id}>">
+												</td>
+												<td><{$i}></td>
+												<td class="room_code"><{$room_list.code}></td>
+												<td class="room_type"><{$room_list.type_name}></td>
+												<td class="price"><{$room_list.price}></td>
+												<td class="capacity"><{$room_list.capacity}></td>
+												<td>
+													<if condition="$room_list.count eq $room_list.capacity ">
+														<b class="color-28B778">住满</b>
+														<elseif condition=" $room_list.count gt $room_list.capacity  "/>
+														已超过容纳人数(已住进<span style="color: red;"><{$room_list.count}>人</span>/<span style="color: royalblue;;">可容纳<{$room_list.capacity}>人</span>)
+														<else/>
+														未住满(已入住<span style="color: red;"><{$room_list.count}></span>人,可容纳<span style="color: red;"><{$room_list.capacity}>人</span>)
+													</if>
+												</td>
+												<td class="client_type"><{$room_list.client_type}></td>
+												<td class="come_time"><{$room_list.creatime|date='Y-m-d H:s',###}></td>
+												<td class="comment"><{$room_list.comment}></td>
+												<td>
+													<div class="btn-group" data-id="<{$room_list.id}>">
+														<if condition="$permission_list['ROOM.ALTER']">
+															<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_room">修改</button>
+														</if>
+														<if condition="$permission_list['ROOM.DELETE']">
+															<button class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_room">删除</button>
+														</if>
+														<button class="btn btn-default btn-xs details_btn">详情</button>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</volist>
+								</table>
+							</div>
+							<div class="page_wrap">
+								<div class="pagination">
+									<{$page_show}>
+								</div>
+							</div>
+						</section>
+					</div>
+					<div class="right_details">
+						<div class="d_con">
 						<span class="close_btn glyphicon glyphicon-remove">
 						</span>
-						<div class="title">
-							<span>详情</span>
+							<div class="title">
+								<span>详情</span>
+							</div>
+							<div class="info">
+								<div class="li">
+									<span>房间号：</span> <span class="room_code"></span>
+								</div>
+								<div class="li">
+									<span>房间类型：</span> <span class="room_type"></span>
+								</div>
+								<div class="li">
+									<span>价格（元）：</span> <span class="price"></span>
+								</div>
+								<div class="li">
+									<span>可容纳人数：</span> <span class="capacity"></span>
+								</div>
+								<div class="li">
+									<span>房客类型：</span> <span class="client_type"></span>
+								</div>
+								<div class="li">
+									<span>房客人数：</span> <span class="room_num"></span>
+								</div>
+								<div class="li">
+									<span>创建时间：</span> <span class="create_time"></span>
+								</div>
+								<div class="li">
+									<span>备注：</span> <span class="comment"></span>
+								</div>
+							</div>
+							<div class="btn_fun">
+								<a href="javascript:void(0)" class="add_client">添加参会人员</a>
+								<a href="javascript:void(0)" class="add_employee">添加内部员工</a>
+							</div>
+							<div class="d_list">
+								<if condition="$permission_list['ROOM.ASSIGN']">
+									<div class="list_title">入住人员列表</div>
+									<table class="table" width="100%">
+										<tbody id="list_c">
+										</tbody>
+									</table>
+								</if>
+							</div>
+							<!-- 隐藏的点击详情的房间ID -->
+							<input type="hidden" id="orid">
 						</div>
-						<div class="info">
-							<div class="li">
-								<span>房间号：</span> <span class="room_code"></span>
-							</div>
-							<div class="li">
-								<span>房间类型：</span> <span class="room_type"></span>
-							</div>
-							<div class="li">
-								<span>价格（元）：</span> <span class="price"></span>
-							</div>
-							<div class="li">
-								<span>可容纳人数：</span> <span class="capacity"></span>
-							</div>
-							<div class="li">
-								<span>房客类型：</span> <span class="client_type"></span>
-							</div>
-							<div class="li">
-								<span>房客人数：</span> <span class="room_num"></span>
-							</div>
-							<div class="li">
-								<span>创建时间：</span> <span class="create_time"></span>
-							</div>
-							<div class="li">
-								<span>备注：</span> <span class="comment"></span>
-							</div>
-						</div>
-						<!--<div class="btn_fun">
-							<a data-toggle="modal" data-target="#alter_room">修改</a> &lt;!&ndash;<a href="javascript:void(0)">退房</a>&ndash;&gt;
-						</div>-->
-						<div class="d_list">
-							<span class="add">添加</span>
-							<div class="list_title">入住人员列表</div>
-							<table class="table" width="100%">
-								<tbody id="list_c">
-								</tbody>
-							</table>
-						</div>
-						<!-- 隐藏的点击详情的房间ID -->
-						<input type="hidden" id="orid">
 					</div>
-				</div>
+				</if>
 			</div>
 		</div>
 	</div>
@@ -465,7 +475,7 @@
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 					</button>
-					<h2 class="modal-title">添加人员<span>（可添加<b class="can_live_p"></b>人）</span></h2>
+					<h2 class="modal-title">添加参会人员<span>（可添加<b class="can_live_p"></b>人）</span></h2>
 					<input type="hidden" name="can_live">
 				</div>
 				<div class="choose_people">
@@ -527,6 +537,64 @@
 								</tbody>
 							</table>
 							<input type="hidden" name="person"> <input type="hidden" name="room_id">
+						</div>
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$page_show}>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加人员 >> 房间详情添加 >> 员工 -->
+	<div class="modal fade" id="add_recipient2_employee" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 60%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title">添加内部员工</h2>
+				</div>
+				<div class="choose_people">
+					<div class="d1">
+						<span>当前有<b class="current_attendee">0</b>人</span>
+						<span>已选择<b class="color-red selected_attendee">0</b>人</span>
+						<a href="javascript:void(0)" class="btn_save btn btn-sm btn-info">添加入住</a>
+					</div>
+					<div class="search_sm">
+						<div class="col-sm-5">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="姓名" value="">
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default main_search">搜索</button>
+								</span>
+							</div>
+						</div>
+						<a type="button" class="btn btn-default search_all">查看所有</a>
+					</div>
+					<div class="d2">
+						<div class="table_wrap">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="10%" class="all_check_employee2">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</td>
+										<td width="10%">序号</td>
+										<td width="10%">姓名</td>
+										<td width="10%">性别</td>
+										<td width="10%">部门</td>
+										<td width="10%">职务</td>
+										<td width="20%">手机号</td>
+										<td width="20%">单位</td>
+									</tr>
+								</thead>
+								<tbody id="employee_body2">
+								</tbody>
+							</table>
 						</div>
 						<div class="page_wrap">
 							<ul class="pagination">

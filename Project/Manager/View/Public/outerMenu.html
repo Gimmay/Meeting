@@ -11,9 +11,8 @@
 			<if condition="$permission_list['EMPLOYEE.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq Employee'>active</if>">
 					<a href="<{:U('Employee/manage')}>" class="side-item-link">
-						<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">员工管理</span>
-						<span class="arrow glyphicon glyphicon-chevron-left"></span>
-					</a>
+						<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">用户管理</span>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 			<if condition="$permission_list['ROLE.VIEW'] eq 1">
@@ -27,8 +26,7 @@
 				<li class="side_item <if condition='$c_name eq Meeting'>active</if>">
 					<a href="<{:U('Meeting/manage', ['type'=>'ing'])}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-th"></i> <span class="nav-label">会议列表</span>
-						<span class="arrow glyphicon glyphicon-chevron-left"></span>
-					</a>
+						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 				</li>
 			</if>
 		</ul>
@@ -54,8 +52,8 @@
 			<volist name="system_message.read" id="single">
 				<!--suppress XmlDuplicatedId -->
 				<div class="mes_item" id="system_message_<{$single.id}>" data-id="<{$single.id}>">
-					<{$i}>、<span class="content"><{$single.message}></span> <span class="sign">已读</span>
-					<button onclick="deleteSystemMessage('<{$single.id}>')" class="btn btn-default btn-xs">删除</button>
+					<{$i}>、<span class="content"><{$single.message}></span> <span class="sign color_red">已读</span>
+					<!--<button onclick="deleteSystemMessage('<{$single.id}>')" class="btn btn-default btn-xs">删除</button>-->
 				</div>
 			</volist>
 		</div>

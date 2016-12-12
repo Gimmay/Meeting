@@ -5,14 +5,16 @@
 	<title><{$info.name}></title>
 	<style>
 		html, body, iframe{
-			width : 100%;
-			height : 100%;
-			margin : 0;
+			width   : 100%;
+			height  : 100%;
+			margin  : 0;
 			padding : 0;
 		}
 	</style>
 </head>
 <body>
-	<iframe src="<{$info.url}>" frameborder="0"></iframe>
+	<if condition="$permission_list['REPORT.VIEW']">
+		<iframe src="<{$info.url}>" frameborder="0"></iframe>
+	</if>
 </body>
 </html>

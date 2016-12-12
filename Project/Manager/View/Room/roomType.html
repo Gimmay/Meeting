@@ -30,73 +30,81 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<div class="main_body" style="overflow: hidden;">
-					<section class="content">
-						<div class="table_wrap">
-							<div class="nav_tab clearfix">
-								<div class="nav_tab_li">
-									<a href="<{:U('Room/manage', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间列表</a>
+				<if condition="$permission_list['ROOM_TYPE.VIEW']">
+					<div class="main_body" style="overflow: hidden;">
+						<section class="content">
+							<div class="table_wrap">
+								<div class="nav_tab clearfix">
+									<if condition="$permission_list['ROOM.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Room/manage', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间列表</a>
+										</div>
+									</if>
+									<div class="nav_tab_li active">
+										<a href="<{:U('Room/roomType', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间类型</a>
+									</div>
 								</div>
-								<div class="nav_tab_li active">
-									<a href="<{:U('Room/roomType', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间类型</a>
-								</div>
-							</div>
-							<div class="repertory clearfix" style=" padding: 20px  0">
-								<form class="form-horizontal" role="form" method="get" id="form" action="">
-									<div class="input-group repertory_text">
-										<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
+								<div class="repertory clearfix" style=" padding: 20px  0">
+									<form class="form-horizontal" role="form" method="get" id="form" action="">
+										<div class="input-group repertory_text">
+											<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
 											<span class="input-group-btn">
 												<button type="submit" class="btn btn-default main_search">搜索</button>
 											</span>
-									</div>
-									<a type="reset" class="btn btn-default main_search" href="<{:U('Room/roomType',['mid'=>I('get.mid',0,'int'),'hid'=>I('get.hid',0,'int')])}>">查看所有</a>
-								</form>
-								<a data-toggle="modal" data-target="#add_roomType" data-backdrop="static" class="btn btn-default export_report pull-right bg-00a0e8" style="margin-right: 20px;">新增房间类型</a>
-							</div>
-							<div class="tab-content clearfix">
-								<div class="ticket_list">
-									<table class="table table-striped">
-										<thead>
-											<tr>
-												<th width="10%">序号</th>
-												<th width="15%">名称</th>
-												<th width="10%">可容纳人数</th>
-												<th width="10%">价格</th>
-												<th width="10%">可用数量</th>
-												<th width="25%">备注</th>
-												<th width="25%">操作</th>
-											</tr>
-										</thead>
-										<tbody>
-											<volist name="type" id="list">
+										</div>
+										<a type="reset" class="btn btn-default main_search" href="<{:U('Room/roomType',['mid'=>I('get.mid',0,'int'),'hid'=>I('get.hid',0,'int')])}>">查看所有</a>
+									</form>
+									<a data-toggle="modal" data-target="#add_roomType" data-backdrop="static" class="btn btn-default export_report pull-right bg-00a0e8" style="margin-right: 20px;">新增房间类型</a>
+								</div>
+								<div class="tab-content clearfix">
+									<div class="ticket_list">
+										<table class="table table-striped">
+											<thead>
 												<tr>
-													<td><{$i}></td>
-													<td class="name"><{$list.name}></td>
-													<td class="capacity"><{$list.capacity}></td>
-													<td class="price"><{$list.price}></td>
-													<td class="number"><{$list.surplus}>/<{$list.number}></td>
-													<td class="comment"><{$list.comment}></td>
-													<td>
-														<div class="btn-group" data-id="<{$list.id}>">
-															<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_roomType">修改</button>
-															<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_roomType">删除</button>
-															<if condition="$list['status'] eq 0">
-																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_room_type', 'id'=>$list['id']])}>" class="btn btn-success btn-xs">启用</a>
-															</if>
-															<if condition="$list['status'] eq 1">
-																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_room_type', 'id'=>$list['id']])}>" class="btn btn-danger btn-xs">禁用</a>
-															</if>
-														</div>
-													</td>
+													<th width="10%">序号</th>
+													<th width="15%">名称</th>
+													<th width="10%">可容纳人数</th>
+													<th width="10%">价格</th>
+													<th width="10%">可用数量</th>
+													<th width="25%">备注</th>
+													<th width="25%">操作</th>
 												</tr>
-											</volist>
-										</tbody>
-									</table>
+											</thead>
+											<tbody>
+												<volist name="type" id="list">
+													<tr>
+														<td><{$i}></td>
+														<td class="name"><{$list.name}></td>
+														<td class="capacity"><{$list.capacity}></td>
+														<td class="price"><{$list.price}></td>
+														<td class="number"><{$list.surplus}>/<{$list.number}></td>
+														<td class="comment"><{$list.comment}></td>
+														<td>
+															<div class="btn-group" data-id="<{$list.id}>">
+																<if condition="$permission_list['ROOM_TYPE.ALTER']">
+																	<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_roomType">修改</button>
+																</if>
+																<if condition="$permission_list['ROOM_TYPE.DELETE']">
+																	<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_roomType">删除</button>
+																</if>
+																<if condition="$list['status'] eq 0 and $permission_list['ROOM_TYPE.ENABLE']">
+																	<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_room_type', 'id'=>$list['id']])}>" class="btn btn-success btn-xs">启用</a>
+																</if>
+																<if condition="$list['status'] eq 1 and $permission_list['ROOM_TYPE.DISABLE']">
+																	<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_room_type', 'id'=>$list['id']])}>" class="btn btn-danger btn-xs">禁用</a>
+																</if>
+															</div>
+														</td>
+													</tr>
+												</volist>
+											</tbody>
+										</table>
+									</div>
 								</div>
 							</div>
-						</div>
-					</section>
-				</div>
+						</section>
+					</div>
+				</if>
 			</div>
 		</div>
 	</div>

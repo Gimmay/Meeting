@@ -75,7 +75,7 @@
 				]);
 				$this->display();
 			}
-			else $this->error('您没有查看会议详情的权限');
+			else $this->error('您没有查看会议详情的权限', U('alter', ['mid' => $this->meetingID]));
 		}
 
 		public function create(){

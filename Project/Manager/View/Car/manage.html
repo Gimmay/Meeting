@@ -98,7 +98,7 @@
 										<td width="6%">记录状态</td>
 										<td width="10%">创建时间</td>
 										<td width="19%">操作</td>
-										<td width="17%">选择</td>
+										<td width="17%">启禁用</td>
 									</tr>
 								</thead>
 								<tbody>
@@ -109,7 +109,9 @@
 											</td>
 											<td><{$i}></td>
 											<td class="plate_number"><{$single.plate_number}></td>
-											<td class="information"><{$single.type}> / <{$single.color}> / <{$single.model}></td>
+											<td class="information">
+												<span class="type"><{$single.type}></span> /<span class="color"><{$single.color}></span> /<span class="model"><{$single.model}></span>
+											</td>
 											<td class="driver"><{$single.driver}></td>
 											<td class="number"><{$single.number}></td>
 											<td class="capacity"><{$single.capacity}></td>
@@ -141,6 +143,10 @@
 													</notempty>
 													<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_car">修改</button>
 													<button class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_car">删除</button>
+												</div>
+											</td>
+											<td>
+												<div class="btn-group" data-id="<{$info.id}>">
 													<if condition="$single['status'] eq 1">
 														<a class="btn btn-danger btn-xs" href="<{:U('RequestHandler/getHandler', ['id'=>$single['id'], 'requestType'=>'get:disable_car'])}>">禁用</a>
 													</if>
@@ -148,9 +154,6 @@
 														<a class="btn btn-success btn-xs" href="<{:U('RequestHandler/getHandler', ['id'=>$single['id'], 'requestType'=>'get:enable_car'])}>">启用</a>
 													</if>
 												</div>
-											</td>
-											<td>
-												<button data-id="<{$info.id}>" type="button" class="choose_hotel btn-default btn btn-xs">选择</button>
 											</td>
 										</tr>
 									</volist>

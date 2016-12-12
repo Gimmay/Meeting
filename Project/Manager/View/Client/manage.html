@@ -66,29 +66,29 @@
 									</if>
 									<if condition="$permission_list['CLIENT.IMPORT-EXCEL'] eq 1">
 										<!-- 导入EXCEL -->
-										<div class="function_btn bg-28B778 import_excel_btn">
+										<div class="function_btn bg-28B778 import_excel_btn" style="width: 110px;">
 											<form action="" method="post" enctype="multipart/form-data" name="fileForm" target="fileUpload">
 												<input type="file" name="excel" accept=".xlsx, .xls" id="excel_file">
 												<input name="requestType" value="import_excel" type="hidden"> <i></i>
 												<button type="submit" id="import_sub">提交</button>
-												<p>导入Excel</p>
+												<p>批量导入参会人员</p>
 											</form>
 										</div>
 										<iframe name="fileUpload" id="fileUpload_iframe" width="0" height="0" style=" display: none;"></iframe>
 									</if>
 									<if condition="$permission_list['CLIENT.EXPORT-EXCEL'] eq 1">
-										<div class="function_btn bg-info export_excel_btn">
+										<div class="function_btn bg-info export_excel_btn" style="width: 110px;">
 											<a href="<{:U('exportClientData', ['mid'=>I('get.mid', 0, 'int')])}>">
 												<i></i>
-												<p>导出Excel</p>
+												<p>导出参会人员信息</p>
 											</a>
 										</div>
 									</if>
 									<if condition="$permission_list['CLIENT.DOWNLOAD-IMPORT-EXCEL-TEMPLATE'] eq 1">
-										<div class="function_btn bg-f63 download_excel_temp">
+										<div class="function_btn bg-f63 download_excel_temp" style="width: 130px;">
 											<a href="<{:U('exportClientDataTemplate', ['mid'=>I('get.mid', 0, 'int')])}>">
 												<i></i>
-												<p>下载Excel模板</p>
+												<p>下载导入参会人员信息模板</p>
 											</a>
 										</div>
 									</if>
@@ -226,11 +226,13 @@
 												<td><{$single.mobile}></td>
 												<td><{$single.unit}></td>
 												<td><{$single.type}></td>
-												<td><switch name="single.is_new">
-													<case value="9"></case>
-													<case value="1">新客</case>
-													<case value="0">老客</case>
-												</switch></td>
+												<td>
+													<switch name="single.is_new">
+														<case value="9"></case>
+														<case value="1">新客</case>
+														<case value="0">老客</case>
+													</switch>
+												</td>
 												<td>
 													<switch name="single.review_status">
 														<case value="0">未审核</case>
@@ -312,9 +314,9 @@
 																</if>
 															</case>
 														</switch>-->
-														<if condition="$permission_list['CLIENT.EARN-PAYMENT'] and $single['status'] eq 1">
+														<!--<if condition="$permission_list['CLIENT.EARN-PAYMENT'] and $single['status'] eq 1">
 															<a href="<{:U('Receivables/create',['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs btn_receivables">收款</a>
-														</if>
+														</if>-->
 														<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE'] and $single['status'] eq 1">
 															<button type="submit" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>
 														</if>
@@ -613,7 +615,7 @@
 										<input type="checkbox" class="icheck" placeholder="" value="">
 									</th>
 									<th width="20%">序号</th>
-									<th width=30">您的Excal中的表头字段</th>
+									<th width=30">您的Excel中的表头字段</th>
 									<th width="40%">对应在系统中的字段</th>
 								</tr>
 							</thead>
@@ -622,8 +624,8 @@
 						</table>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary btn_save_excel">保存字段</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						<button type="submit" class="btn btn-primary btn_save_excel">确定导入</button>
 					</div>
 					<!--	</form>-->
 				</div>
@@ -685,7 +687,7 @@
 					checkboxClass:'icheckbox_square-red',
 					radioClass   :'iradio_square-red'
 				}),
-				icheckYellow           :$('.icheckYellow').iCheck({
+				icheckYellow        :$('.icheckYellow').iCheck({
 					checkboxClass:'icheckbox_square-yellow',
 					radioClass   :'iradio_square-yellow'
 				})

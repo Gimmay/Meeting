@@ -34,108 +34,118 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<div class="main_body" style="overflow: hidden;">
-					<section class="content">
-						<div class="table_wrap">
-							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="javascript:void(0)">分组管理</a>
+				<if condition="$permission_list['GROUP.VIEW']">
+					<div class="main_body" style="overflow: hidden;">
+						<section class="content">
+							<div class="table_wrap">
+								<div class="nav_tab clearfix">
+									<div class="nav_tab_li active">
+										<a href="javascript:void(0)">分组管理</a>
+									</div>
 								</div>
-							</div>
-							<div class="repertory clearfix" style=" padding: 20px  0">
-								<form class="form-horizontal" role="form" method="get" id="form" action="">
-									<div class="input-group repertory_text">
-										<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
+								<div class="repertory clearfix" style=" padding: 20px  0">
+									<form class="form-horizontal" role="form" method="get" id="form" action="">
+										<div class="input-group repertory_text">
+											<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
 										<span class="input-group-btn">
 											<button type="submit" class="btn btn-default main_search">搜索</button>
 										</span>
-									</div>
-									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
-								</form>
-							</div>
-							<div class="tab-content clearfix">
-								<div class="group clearfix">
-									<div class="pull-left group_left">
-										<div class="header">
-											<h2>组列表</h2>
-											<span data-toggle="modal" data-target="#add_group_modal" class="glyphicon glyphicon-plus add_group"></span>
 										</div>
-										<div class="group_list">
-											<ul class="group_ul">
-												<volist name="group" id="info">
-													<li data-id="<{$info.id}>" class="<if condition='$info.id eq $_GET[gid]'>active</if>">
-														<a href="<{:U('Grouping/manage',['mid'=>$info['mid'],'gid'=>$info['id'],'date'=>I('get.date'),''])}>"><{$info.code}></a>
-														<span data-toggle="modal" data-target="#alter_group_modal" class="glyphicon glyphicon-edit alter_btn"></span>
-														<span data-toggle="modal" data-target="#delete_modal" class="glyphicon glyphicon-remove delete_btn"></span>
-													</li>
-												</volist>
-											</ul>
-										</div>
-									</div>
-									<div class="pull-right group_right">
-										<div class="header">
-											<div class="time">
-												<div class="input-group">
-													<div class="input-group-addon">时间</div>
-													<select name="meeting_time" id="meeting_time" class="form-control">
-														<for start="0" end="$time">
-															<option value="<{$i+1}>">开会 第<{$i+1}>天</option>
-														</for>
-													</select>
-												</div>
+										<a type="reset" class="btn btn-default main_search" href="<{:U('', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
+									</form>
+								</div>
+								<div class="tab-content clearfix">
+									<div class="group clearfix">
+										<div class="pull-left group_left">
+											<div class="header">
+												<h2>组列表</h2>
+												<if condition="$permission_list['GROUP.CREATE'] eq 1">
+													<span data-toggle="modal" data-target="#add_group_modal" class="glyphicon glyphicon-plus add_group"></span>
+												</if>
 											</div>
-											<span class="copy" data-toggle="modal" data-target="#copy_modal">沿用上一天数据</span>
-											<span class="title"><{$leader.code}>组(<{$count}>)人</span>
-											<span data-id="<{:I('get.gid',0,'int')}>" data-toggle="modal" data-target="#add_crew" class="add_client">添加组员</span>
+											<div class="group_list">
+												<ul class="group_ul">
+													<volist name="group" id="info">
+														<li data-id="<{$info.id}>" class="<if condition='$info.id eq $_GET[gid]'>active</if>">
+															<a href="<{:U('Grouping/manage',['mid'=>$info['mid'],'gid'=>$info['id'],'date'=>I('get.date'),''])}>"><{$info.code}></a>
+															<if condition="$permission_list['GROUP.ALTER'] eq 1">
+																<span data-toggle="modal" data-target="#alter_group_modal" class="glyphicon glyphicon-edit alter_btn"></span>
+															</if>
+															<if condition="$permission_list['GROUP.DELETE'] eq 1">
+																<span data-toggle="modal" data-target="#delete_modal" class="glyphicon glyphicon-remove delete_btn"></span>
+															</if>
+														</li>
+													</volist>
+												</ul>
+											</div>
 										</div>
-										<div class="mid">
-											<span>组长：<{$leader.leader_name_name}></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>副组长：<{$leader.deputy_leader_name}></span>
-										</div>
-										<div class="group_con">
-											<span data-id="<{:I('get.gid',0,'int')}>" class="empty" data-toggle="modal" data-target="#empty_modal"><b class="glyphicon glyphicon-trash"></b>清空</span>
-											<volist name="member" id="list">
-												<a href="javascript:void(0)"><{$list.client_name}><span data-id="<{$list.id}>" class="g_close">×</span></a>
-											</volist>
+										<div class="pull-right group_right">
+											<div class="header">
+												<div class="time">
+													<div class="input-group">
+														<div class="input-group-addon">时间</div>
+														<select name="meeting_time" id="meeting_time" class="form-control">
+															<for start="0" end="$time">
+																<option value="<{$i+1}>">开会 第<{$i+1}>天</option>
+															</for>
+														</select>
+													</div>
+												</div>
+												<if condition="$permission_list['GROUP.ASSIGN-CLIENT']">
+													<span class="copy" data-toggle="modal" data-target="#copy_modal">沿用上一天数据</span>
+													<span class="title"><{$leader.code}>组(<{$count}>)人</span>
+													<span data-id="<{:I('get.gid',0,'int')}>" data-toggle="modal" data-target="#add_crew" class="add_client">添加组员</span>
+												</if>
+											</div>
+											<if condition="$permission_list['GROUP.VIEW-CLIENT']">
+												<div class="mid">
+													<span>组长：<{$leader.leader_name_name}></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>副组长：<{$leader.deputy_leader_name}></span>
+												</div>
+												<div class="group_con">
+													<span data-id="<{:I('get.gid',0,'int')}>" class="empty" data-toggle="modal" data-target="#empty_modal"><b class="glyphicon glyphicon-trash"></b>清空</span>
+													<volist name="member" id="list">
+														<a href="javascript:void(0)"><{$list.client_name}><span data-id="<{$list.id}>" class="g_close">×</span></a>
+													</volist>
+												</div>
+											</if>
 										</div>
 									</div>
-								</div>
-								<div class="score_wrap">
-									<table class="score_table table table-bordered">
-										<caption>分数表</caption>
-										<thead>
-											<tr>
-												<th>组号/日期</th>
-												<for start="0" end="$time" name="time">
-
-
-
-													<th>开会 第<{$time+1}>天
-
-													</th>
-
-												</for>
-												<th>合计</th>
-											</tr>
-										</thead>
-										<tbody>
-											<volist name="group" id="list">
+									<div class="score_wrap">
+										<table class="score_table table table-bordered">
+											<caption>分数表</caption>
+											<thead>
 												<tr>
-													<td><{$list.code}></td>
-													<for start="0" end="$time">
-														<td class="write" data-id="<{$list.id}>" data-date="<{$i+1}>">
-															<{$list.score.$i.score}><span class="w_edit glyphicon glyphicon-edit" data-toggle="modal" data-target="#write_score"></span>
-														</td>
+													<th>组号/日期</th>
+													<for start="0" end="$time" name="time">
+														<th>开会 第<{$time+1}>天
+														</th>
 													</for>
-													<td class="group_price"><{$list.count_score}></td>
+													<th>合计</th>
 												</tr>
-											</volist>
-										</tbody>
-									</table>
+											</thead>
+											<tbody>
+												<volist name="group" id="list">
+													<tr>
+														<td><{$list.code}></td>
+														<for start="0" end="$time">
+															<td class="write" data-id="<{$list.id}>" data-date="<{$i+1}>">
+																<{$list.score.$i.score}>
+																<if condition="$permission_list['GROUP.ASSIGN-SCORE']">
+																	<span class="w_edit glyphicon glyphicon-edit" data-toggle="modal" data-target="#write_score"></span>
+																</if>
+															</td>
+														</for>
+														<td class="group_price"><{$list.count_score}></td>
+													</tr>
+												</volist>
+											</tbody>
+										</table>
+									</div>
 								</div>
 							</div>
-						</div>
-					</section>
-				</div>
+						</section>
+					</div>
+				</if>
 			</div>
 		</div>
 	</div>

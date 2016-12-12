@@ -33,26 +33,36 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<if condition="$permission_list['CLIENT.VIEW'] eq 1">
+				<if condition="$permission_list['RECEIVABLES.VIEW'] eq 1">
 					<div class="main_body">
 						<section class="content">
 							<div class="table_wrap">
 								<div class="nav_tab clearfix">
-									<div class="nav_tab_li">
-										<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
-									</div>
-									<div class="nav_tab_li active">
-										<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">客户列表</a>
-									</div>
-									<div class="nav_tab_li">
-										<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款详情</a>
-									</div>
-									<div class="nav_tab_li">
-										<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
-									</div>
-									<div class="nav_tab_li">
-										<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机</a>
-									</div>
+									<if condition="$permission_list['RECEIVABLES.CREATE']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
+										</div>
+									</if>
+									<if condition="$permission_list['RECEIVABLES.VIEW']">
+										<div class="nav_tab_li active">
+											<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
+										</div>
+									</if>
+									<if condition="$permission_list['RECEIVABLES.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款详情</a>
+										</div>
+									</if>
+									<if condition="$permission_list['PAY_METHOD.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
+										</div>
+									</if>
+									<if condition="$permission_list['POS_MACHINE.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机</a>
+										</div>
+									</if>
 									<div class="table_length  pull-right">
 										显示： <select>
 										<option>5</option>

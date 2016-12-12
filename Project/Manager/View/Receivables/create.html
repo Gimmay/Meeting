@@ -34,163 +34,184 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<div class="main_body" style="overflow: hidden;">
-					<section class="content">
-						<div class="table_wrap">
-							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款详情</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机</a>
-								</div>
-							</div>
-							<form class="form-horizontal" role="form" method="post" id="form">
-								<input type="hidden" name="requestType" value="create_list">
-								<div class="tab-content clearfix">
-									<div class="module">
-										<div class="pane"><h2><span class="glyphicon glyphicon-user"></span>参会人员信息</h2>
+				<if condition="$permission_list['RECEIVABLES.CREATE']">
+					<div class="main_body" style="overflow: hidden;">
+						<section class="content">
+							<div class="table_wrap">
+								<div class="nav_tab clearfix">
+									<if condition="$permission_list['RECEIVABLES.CREATE']">
+										<div class="nav_tab_li active">
+											<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
 										</div>
-										<div class="mo_content clearfix info">
-											<div class="col-sm-2" style="width: 240px; margin: 0; padding: 0;">
-												<span>姓名:</span><span><div id="client_name"></div></span>
+									</if>
+									<if condition="$permission_list['RECEIVABLES.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
+										</div>
+									</if>
+									<if condition="$permission_list['RECEIVABLES.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款详情</a>
+										</div>
+									</if>
+									<if condition="$permission_list['PAY_METHOD.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
+										</div>
+									</if>
+									<if condition="$permission_list['POS_MACHINE.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机</a>
+										</div>
+									</if>
+								</div>
+								<form class="form-horizontal" role="form" method="post" id="form">
+									<input type="hidden" name="requestType" value="create_list">
+									<div class="tab-content clearfix">
+										<div class="module">
+											<div class="pane"><h2><span class="glyphicon glyphicon-user"></span>参会人员信息
+											</h2>
 											</div>
-											<div class="col-sm-2" style="width: 260px; margin: 0; padding: 0;">
-												<span>收款人:</span><span><div id="payee_id"></div></span>
-											</div>
-											<div class="col-sm-2" style="width: 280px; margin: 0; padding: 0;">
-												<span>收款时间:</span><span><input type="text" class="form-control" id="receivables_time" value="<{:date('Y-m-d H:i:s')}>"></span>
-											</div>
-											<div class="col-sm-2" style="width: 280px; margin: 0; padding: 0;">
-												<span>收款地点:</span><span><input type="text" class="form-control" id="place"></span>
+											<div class="mo_content clearfix info">
+												<div class="col-sm-2" style="width: 240px; margin: 0; padding: 0;">
+													<span>姓名:</span><span><div id="client_name"></div></span>
+												</div>
+												<div class="col-sm-2" style="width: 260px; margin: 0; padding: 0;">
+													<span>收款人:</span><span><div id="payee_id"></div></span>
+												</div>
+												<div class="col-sm-2" style="width: 280px; margin: 0; padding: 0;">
+													<span>收款时间:</span><span><input type="text" class="form-control" id="receivables_time" value="<{:date('Y-m-d H:i:s')}>"></span>
+												</div>
+												<div class="col-sm-2" style="width: 280px; margin: 0; padding: 0;">
+													<span>收款地点:</span><span><input type="text" class="form-control" id="place"></span>
+												</div>
 											</div>
 										</div>
-									</div>
-									<div class="module">
-										<div class="pane"><h2><span class="glyphicon glyphicon-usd"></span>收款</h2></div>
-										<div class="mo_content mo_rece">
-											<div class="section_rece coupon">
-												<div class="title">代金券收款</div>
-												<div class="rece_li rece_new clearfix">
-													<input type="hidden" name="type[]" value="2">
-													<div class="rece_item">
-														<select name="name[]" class="form-control name"></select>
-													</div>
-													<div class="rece_item">
-														<div class="input-group select_code_wrap" data-toggle="modal" data-target="#coupon_modal">
-															<input type="text" class="form-control" name="select_coupon_name" id="select_coupon_name" placeholder="代金券码">
-															<span class="input-group-addon glyphicon glyphicon-th-large select_code"></span>
+										<div class="module">
+											<div class="pane"><h2><span class="glyphicon glyphicon-usd"></span>收款</h2>
+											</div>
+											<div class="mo_content mo_rece">
+												<div class="section_rece coupon">
+													<div class="title">代金券收款</div>
+													<div class="rece_li rece_new clearfix">
+														<input type="hidden" name="type[]" value="2">
+														<div class="rece_item">
+															<select name="name[]" class="form-control name"></select>
 														</div>
-														<input type="hidden" class="select_code" name="select_code[]">
+														<div class="rece_item">
+															<div class="input-group select_code_wrap" data-toggle="modal" data-target="#coupon_modal">
+																<input type="text" class="form-control" name="select_coupon_name" id="select_coupon_name" placeholder="代金券码">
+																<span class="input-group-addon glyphicon glyphicon-th-large select_code"></span>
+															</div>
+															<input type="hidden" class="select_code" name="select_code[]">
+														</div>
+														<div class="rece_item pay_method_item">
+															<select name="payMethod[]" class="form-control payMethod">
+																<option value="0">支付方式</option>
+																<volist name="pay" id="info">
+																	<option value="<{$info.id}>"><{$info.name}></option>
+																</volist>
+															</select>
+														</div>
+														<div class="rece_item price_item">
+															<input type="text" class="form-control price" name="price[]" placeholder="金额">
+														</div>
+														<div class="rece_item pos_item">
+															<select name="pos[]" class="form-control pos">
+																<option value="0">POS机</option>
+																<volist name="pos" id="info">
+																	<option value="<{$info.id}>"><{$info.name}></option>
+																</volist>
+															</select>
+														</div>
+														<div class="rece_item source_type_item">
+															<select name="source_type[]" class="form-control source_type">
+																<option value="1">会前收款</option>
+																<option value="2">会中收款</option>
+																<option value="3">会后收款</option>
+															</select>
+														</div>
+														<div class="rece_item comemnt_item">
+															<input type="text" class="form-control comment" name="comment[]" placeholder="备注">
+														</div>
+														<div class="rece_item fun_item">
+															<span class="add glyphicon glyphicon-plus"></span>
+														</div>
 													</div>
-													<div class="rece_item pay_method_item">
-														<select name="payMethod[]" class="form-control payMethod">
-															<option value="0">支付方式</option>
-															<volist name="pay" id="info">
-																<option value="<{$info.id}>"><{$info.name}></option>
-															</volist>
-														</select>
-													</div>
-													<div class="rece_item price_item">
-														<input type="text" class="form-control price" name="price[]" placeholder="金额">
-													</div>
-													<div class="rece_item pos_item">
-														<select name="pos[]" class="form-control pos">
-															<option value="0">POS机</option>
-															<volist name="pos" id="info">
-																<option value="<{$info.id}>"><{$info.name}></option>
-															</volist>
-														</select>
-													</div>
-													<div class="rece_item source_type_item">
-														<select name="source_type[]" class="form-control source_type">
-															<option value="1">会前收款</option>
-															<option value="2">会中收款</option>
-															<option value="3">会后收款</option>
-														</select>
-													</div>
-													<div class="rece_item comemnt_item">
-														<input type="text" class="form-control comment" name="comment[]" placeholder="备注">
-													</div>
-													<div class="rece_item fun_item">
-														<span class="add glyphicon glyphicon-plus"></span>
+													<input type="hidden" name="select_all_coupon" class="select_all_coupon">
+												</div>
+												<div class="section_rece other">
+													<div class="title">其他收款</div>
+													<div class="rece_wrap">
+														<div class="rece_li clearfix">
+															<div class="rece_item">
+																<select name="type[]" class="form-control project_type">
+																	<option value="0">项目类型</option>
+																	<option value="1">门票</option>
+																	<option value="3">产品</option>
+																	<option value="5">定金</option>
+																	<option value="6">课程费</option>
+																	<option value="7">产品费</option>
+																	<option value="8">场餐费</option>
+																	<option value="4">其他</option>
+																</select>
+															</div>
+															<div class="rece_item">
+																<select name="name[]" class="form-control name">
+																	<option value="0">名称</option>
+																</select>
+															</div>
+															<div class="rece_item">
+																<select name="payMethod1[]" class="form-control payMethod">
+																	<option value="0">支付方式</option>
+																	<volist name="pay" id="info">
+																		<option value="<{$info.id}>"><{$info.name}></option>
+																	</volist>
+																</select>
+															</div>
+															<div class="rece_item">
+																<input type="text" class="form-control price" name="price1[]" placeholder="金额">
+															</div>
+															<div class="rece_item">
+																<select name="pos1[]" class="form-control pos">
+																	<option value="0">POS机</option>
+																	<volist name="pos" id="info">
+																		<option value="<{$info.id}>"><{$info.name}></option>
+																	</volist>
+																</select>
+															</div>
+															<div class="rece_item">
+																<select name="source_type1[]" class="form-control source_type">
+																	<option value="1">会前收款</option>
+																	<option value="2">会中收款</option>
+																	<option value="3">会后收款</option>
+																</select>
+															</div>
+															<div class="rece_item">
+																<input type="text" class="form-control comment" name="comment1[]" placeholder="备注">
+															</div>
+															<div class="rece_item">
+																<span class="add glyphicon glyphicon-plus"></span>
+															</div>
+														</div>
+														<span class="add_item glyphicon glyphicon-plus"></span>
+														<input type="hidden" class="num" value="1">
 													</div>
 												</div>
-												<input type="hidden" name="select_all_coupon" class="select_all_coupon">
 											</div>
-											<div class="section_rece other">
-												<div class="title">其他收款</div>
-												<div class="rece_li clearfix">
-													<div class="rece_item">
-														<select name="type[]" class="form-control project_type">
-															<option value="0">项目类型</option>
-															<option value="1">门票</option>
-															<option value="3">产品</option>
-															<option value="5">定金</option>
-															<option value="6">课程费</option>
-															<option value="7">产品费</option>
-															<option value="8">场餐费</option>
-															<option value="4">其他</option>
-														</select>
-													</div>
-													<div class="rece_item">
-														<select name="name[]" class="form-control name">
-															<option value="0">名称</option>
-														</select>
-													</div>
-													<div class="rece_item">
-														<input type="text" class="form-control price" name="price[]" placeholder="金额">
-													</div>
-													<div class="rece_item">
-														<select name="payMethod[]" class="form-control payMethod">
-															<option value="0">支付方式</option>
-															<volist name="pay" id="info">
-																<option value="<{$info.id}>"><{$info.name}></option>
-															</volist>
-														</select>
-													</div>
-													<div class="rece_item">
-														<select name="pos[]" class="form-control pos">
-															<option value="0">POS机</option>
-															<volist name="pos" id="info">
-																<option value="<{$info.id}>"><{$info.name}></option>
-															</volist>
-														</select>
-													</div>
-													<div class="rece_item">
-														<select name="source_type[]" class="form-control source_type">
-															<option value="1">会前收款</option>
-															<option value="2">会中收款</option>
-															<option value="3">会后收款</option>
-														</select>
-													</div>
-													<div class="rece_item">
-														<span class="add glyphicon glyphicon-plus"></span>
-													</div>
-												</div>
+											<div class="foot">
+												总金额：<b class="color-red"></b>
+												<input class="submit" type="submit" value="确认收款"/>
 											</div>
+											<input type="hidden" name="total_amount" id="total_amount">
+											<input type="hidden" name="redirectUrl" id="redirectUrl">
 										</div>
-										<div class="foot">
-											总金额：<b class="color-red"></b>
-											<input class="submit" type="submit" value="确认收款"/>
-										</div>
-										<input type="hidden" name="total_amount" id="total_amount">
-										<input type="hidden" name="redirectUrl" id="redirectUrl">
 									</div>
-								</div>
-							</form>
-						</div>
-					</section>
-				</div>
+								</form>
+							</div>
+						</section>
+					</div>
+				</if>
 			</div>
 		</div>
 	</div>

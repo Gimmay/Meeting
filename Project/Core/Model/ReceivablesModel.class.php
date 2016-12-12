@@ -22,7 +22,7 @@
 			if($this->create($data)){
 				try{
 					$result = $this->add($data);
-					if($result) return ['status' => true, 'message' => '收款成功'];
+					if($result) return ['status' => true, 'message' => '收款成功','id' => $result];
 					else return ['status' => false, 'message' => '收款失败'];
 				}catch(Exception $error){
 					$message   = $error->getMessage();

@@ -45,15 +45,34 @@ $(function(){
 	});
 	// 修改
 	$('.alter_btn').on('click', function(){
-		var id = $(this).parent('.btn-group').attr('data-id');
+		var id           = $(this).parent('.btn-group').attr('data-id');
+		var plate_number = $(this).parents('tr').find('.plate_number').text();
+		var driver       = $(this).parents('tr').find('.driver').text();
+		var type         = $(this).parents('tr').find('.type').text();
+		var color        = $(this).parents('tr').find('.color').text();
+		var model        = $(this).parents('tr').find('.model').text();
+		var capacity     = $(this).parents('tr').find('.capacity').text();
+		var client_type  = $(this).parents('tr').find('.client_type').text();
+		var comment      = $(this).parents('tr').find('.comment').text();
 		$('#alter_car ').find('input[name=id]').val(id);
 		$('#alter_car').find('#plate_number_a').val(plate_number);
-		$('#alter_car').find('#plate_number').val(hotel_name);
-		$('#alter_car').find('#color_a').val(hotel_name);
-		$('#alter_car').find('#model_a').val(hotel_name);
-		$('#alter_car').find('#capacity_a').val(hotel_name);
-		$('#alter_car').find('#client_type_a').val(hotel_name);
-		$('#alter_car').find('#comment_a').val(hotel_name);
+		$('#alter_car').find('#driver_a').val(driver);
+		$('#alter_car').find('#color_a').val(color);
+		$('#alter_car').find('#model_a').val(model);
+		$('#alter_car').find('#capacity_a').val(capacity);
+		$('#alter_car').find('#client_type_a').val(client_type);
+		$('#alter_car').find('#comment_a').val(comment);
+		Common.ajax({
+			data    :{requestType:'get_car', id:id},
+			callback:function(r){
+				console.log(r);
+			}
+		});
+		ManageObject.object.typeSelectAlter.setValue(type);
+		ManageObject.object.typeSelectAlter.setHtml(type);
+		ManageObject.object.driverSelectAlter.setValue(driver);
+		ManageObject.object.driverSelectAlter.setHtml(driver);
+		console.log();
 	});
 	// 点击过滤标签-全部
 	$('#filter_btn_all').on('click', function(){

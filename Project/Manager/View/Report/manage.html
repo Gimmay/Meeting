@@ -34,7 +34,7 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<if condition="$permission_list['MEETING.VIEW'] eq 1">
+				<if condition="$permission_list['REPORT.VIEW'] eq 1">
 					<div class="main_body">
 						<section class="content">
 							<div class="table_wrap">
@@ -58,14 +58,14 @@
 							</div>
 							<header class="c_header">
 								<div class="function_list clearfix">
-									<if condition="$permission_list['MEETING.CREATE'] eq 1">
+									<if condition="$permission_list['REPORT.CREATE'] eq 1">
 										<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
 											<a href="<{:U('Report/create', ['mid'=>I('get.mid', 0, 'int')])}>"> <i></i>
 												<p>创建报表</p>
 											</a>
 										</div>
 									</if>
-									<if condition="$permission_list['MEETING.DELETE'] eq 1">
+									<if condition="$permission_list['REPORT.DELETE'] eq 1">
 										<div class="function_btn bg-danger batch_delete_btn_confirm">
 											<i></i>
 											<p>批量删除</p>
@@ -133,8 +133,12 @@
 												<td>
 													<div class="btn-group" data-id="<{$single.id}>">
 														<a href="<{:U('detail', ['mid'=>$single['mid'], 'id'=>$single['id']])}>" target="_blank" class="btn btn-default btn-xs btn-default">查看</a>
-														<a href="<{:U('alter', ['mid'=>$single['mid'], 'id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
-														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_report">删除</button>
+														<if condition="$permission_list['REPORT.ALTER']">
+															<a href="<{:U('alter', ['mid'=>$single['mid'], 'id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
+														</if>
+														<if condition="$permission_list['REPORT_DELETE']">
+															<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_report">删除</button>
+														</if>
 													</div>
 												</td>
 											</tr>

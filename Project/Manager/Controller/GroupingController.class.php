@@ -34,7 +34,7 @@
 				}
 				exit;
 			}
-			if($this->permissionList['GROUPING.VIEW']){
+			if($this->permissionList['GROUP.VIEW']){
 				/** @var \Manager\Model\ClientModel $client */
 				$client      = D('Client');
 				$client_list = $client->getClientSelectList(I('get.mid', 0, 'int'));
@@ -70,7 +70,7 @@
 				$group_member_count  = $group_member_model->findRecord(0, [
 					'status' => 'not deleted',
 					'gid'    => I('get.gid', 0, 'int'),
-					'time'   => I('get.date',0,'int')
+					'time'   => I('get.date', 0, 'int')
 				]);
 				foreach($group_member_result as $k => $v){
 					$client_result                          = $client_model->findClient(1, ['id' => $v['cid']]);

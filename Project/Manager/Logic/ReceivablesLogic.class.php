@@ -389,7 +389,7 @@
 					$coupon_model  = D('Core/Coupon');
 					$coupon_result = $coupon_model->findCoupon(2, [
 						'status' => 'not deleted',
-						'type'   => 100,
+						'type'   => 4,
 						'mid'    => I('get.mid', 0, 'int')
 					]);
 					$data          = [];
@@ -424,26 +424,39 @@
 				//					return array_merge($coupon_result, ['__ajax__' => true]);
 				//				break;
 				case 'create_list':
+					//					$type = I('post.type');
+					//					$data = I('post.');
+					//
+					//					foreach ($type as $k=>$v){
+					//						if($data['name'][$k] == 0) continue;
+					//
+					//					}
+					//					exit;
 					/** @var \Core\Model\ReceivablesModel $receivables_model */
 					$receivables_model = D('Core/Receivables');
+					/** @var \Core\Model\CouponModel $coupon_model */
+					$coupon_model = D('Core/Coupon');
 					/** @var \Core\Model\CouponItemModel $coupon_item_model */
-					$coupon_item_model   = D('Core/CouponItem');
-					$receivables_logic   = new \Core\Logic\ReceivablesLogic();
-					$makeOrderNumber     = $receivables_logic->makeOrderNumber();
-					$type                = I('post.type', '');
-					$mid                 = I('get.mid', 0, 'int');
-					$cid                 = I('post.client_name', 0, 'int');
-					$data                = I('post.');
-					$payee_id            = I('post.payee_id', 0, 'int');
-					$creator             = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					$save_data           = [];
-					$coupon_item_project = [];   //项目
-					$coupon_item_code    = [];//代金券
-					$data['coupon_code'] = I('post.coupon_code');
-					$data['coupon_ids']  = I('post.select_code');
-					$place               = I('post.place', '');
-					$temp =[];
+					$coupon_item_model = D('Core/CouponItem');
+					/** @var \Core\Model\ReceivablesOptionModel $receivables_option_model */
+					$receivables_option_model = D('Core/ReceivablesOption');
+					$receivables_logic        = new \Core\Logic\ReceivablesLogic();
+					$makeOrderNumber          = $receivables_logic->makeOrderNumber();
+					$type                     = I('post.type', '');
+					$mid                      = I('get.mid', 0, 'int');
+					$cid                      = I('post.client_name', 0, 'int');
+					$data                     = I('post.');
+					$payee_id                 = I('post.payee_id', 0, 'int');
+					$creator                  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$save_data                = [];
+					$coupon_item_project      = [];   //项目
+					$coupon_item_code         = [];     //代金券
+					$data['coupon_code']      = I('post.coupon_code');
+					$data['coupon_ids']       = I('post.select_code');
+					$place                    = I('post.place', '');
+					$temp                     = [];
 					C('TOKEN_ON', false);
+					$option = [];
 					foreach($type as $k => $v){
 						if($data['name'][$k] == 0) continue;
 						$temp = [
@@ -451,47 +464,85 @@
 							'mid'          => $mid,
 							'time'         => time(),
 							'type'         => $data['type'][$k],
-							'price'        => $data['price'][$k],
-							'method'       => $data['payMethod'][$k],
-							'pos_id'       => $data['pos'][$k],
 							'payee_id'     => $payee_id,
 							'order_number' => $makeOrderNumber,
-							'source_type'  => $data['source_type'][$k],
 							'coupon_code'  => $data['name'][$k],
 							'creatime'     => time(),    //创建时间
 							'creator'      => $creator,    //当前创建者
 							'place'        => $place,
-						];
-
-						if($data['type'][$k] != 2){
-
-							$coupon_item_project = [
+							'coupon_ids'   => $data['select_code'][$k]
+						];//获取post 过来的数据.
+						//						print_r($k);
+						$receivables_result = $receivables_model->createRecord($temp);  //把post过来的数据插入到数据库.
+						if($v == 2){//判断是否代金券收款
+							$coupon_item_list = explode(',', $data['select_code'][$k]);
+							foreach($coupon_item_list as $kk => $vv){//把代金券给对应的客户使用.
+								$coupon_item_id = $coupon_item_model->findRecord(1, ['id' => $vv]);
+								$coupon_item_model->alterRecord(['id' => $coupon_item_id['id']], [
+									'cid'    => $cid,
+									'status' => 1
+								]);
+							}
+							foreach($data['payMethod'] as $k1 => $v1){
+								$option[] = [
+									'rid'         => $receivables_result['id'],
+									'price'       => $data['price'][$k],
+									'pay_method'  => $v1,
+									'pos_machine' => $data['pos'][$k],
+									'type'        => $data['source_type'][$k],
+									'comment'     => $data['comment'][$k],
+									'creatime'    => time(),    //创建时间
+									'creator'     => $creator,    //当前创建者
+								];
+							}
+							$receivables_option_model->createMultiRecord($option);
+						}
+						if($v != 2){//判断非代金券收款
+							$coupon_item_result = $coupon_item_model->createRecord([
+								//到项目类型里新增一条对应的收款类型
+								'coupon_id' => $temp['coupon_code'],
 								'mid'       => $mid,
-								'coupon_id' => $data['name'][$k],
 								'cid'       => $cid,
-								'creatime'  => time(),
-								'creator'   => $creator,
-								'status'    => 1
-							];
-
-							$result1             = $coupon_item_model->createRecord($coupon_item_project);
-							$temp['coupon_ids']  = $result1['id'];
-
+								'status'    => 1,
+								'creatime'  => time(),    //创建时间
+								'creator'   => $creator    //当前创建者
+							]);
+							$receivables_model->alterRecord(['id' => $receivables_result['id']], ['coupon_ids' => $coupon_item_result]); //把项目类型的id 插入到对应收款的coupon_ids
+							foreach($data["price$k"] as $k1 => $v1){
+								$option = [
+									'rid'         => $receivables_result['id'],
+									'price'       => $v1,
+									'pay_method'  => $data["payMethod$k"][$k1],
+									'pos_machine' => $data["pos$k"][$k1],
+									'type'        => $data["source_type$k"][$k1],
+									'comment'     => $data["comment$k"][$k1],
+									'creatime'    => time(),    //创建时间
+									'creator'     => $creator,    //当前创建者
+								];
+								$receivables_option_model->createRecord($option);
+							}
 						}
-
-						elseif($data['type'][$k] == 2){
-							$coupon_id = $data['coupon_code'];
-							foreach($coupon_id as $k1 => $v1) $coupon_item_code[] = $v1;
-							$temp['coupon_ids'] = $data['coupon_ids'][$k];
-						}
-						$save_data[] = $temp;
+						//						if($data['type'][$k] != 2){
+						//
+						//							$coupon_item_project = [
+						//								'mid'       => $mid,
+						//								'coupon_id' => $data['name'][$k],
+						//								'cid'       => $cid,
+						//								'creatime'  => time(),
+						//								'creator'   => $creator,
+						//								'status'    => 1
+						//							];
+						//
+						//							$result1             = $coupon_item_model->createRecord($coupon_item_project);
+						//							$temp['coupon_ids']  = $result1['id'];
+						//
+						//						}
+						//						elseif($data['type'][$k] == 2){
+						//							$coupon_id = $data['coupon_code'];
+						//							foreach($coupon_id as $k1 => $v1) $coupon_item_code[] = $v1;
+						//							$temp['coupon_ids'] = $data['coupon_ids'][$k];
+						//						}
 					}
-					//					$result1            = $coupon_item_model->createMultiRecord($coupon_item_project);
-					$receivables_result = $receivables_model->createMultiRecord($save_data);
-
-					$coupon_item_model->alterRecord([
-						'id' => ['in', $coupon_item_code]
-					], ['status' => 1, 'cid' => $cid]);
 
 					return array_merge($receivables_result, [
 						'__ajax__'   => false,
@@ -569,7 +620,7 @@
 							'time'          => $v['time'],
 						];
 					}
-					print_r($data);exit;
+
 					return array_merge($data, ['__ajax__' => true]);
 				break;
 				//				case 'create_coupon_item':

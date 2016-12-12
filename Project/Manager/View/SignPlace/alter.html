@@ -33,66 +33,68 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<div class="main_body">
-					<section class="content" style="padding: 10px;">
-						<div class="table_wrap">
-							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="javascript:void(0)">修改签到点</a>
+				<if condition="$permission_list['SIGN_PLACE.ALTER']">
+					<div class="main_body">
+						<section class="content" style="padding: 10px;">
+							<div class="table_wrap">
+								<div class="nav_tab clearfix">
+									<div class="nav_tab_li active">
+										<a href="javascript:void(0)">修改签到点</a>
+									</div>
 								</div>
 							</div>
-						</div>
-						<if condition="$permission_list['SIGN_PLACE.ALTER']">
-							<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
-								<div class="modal-body">
-									<div class="form-group">
-										<label for="mid" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>会议：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control" name="mid" id="mid" value="<{$meeting.name}>" disabled>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="name" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>签到点名称：</label>
-										<div class="col-sm-11">
-											<input type="text" class="form-control name" name="name" id="name" value="<{$info.name}>">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="place" class="col-sm-1 control-label">地址：</label>
-										<div class="col-sm-11">
-											<div class="input-group address_map">
-												<input type="text" class="form-control" name="place" id="place" value="<{$info.place}>">
-												<span class="input-group-addon glyphicon glyphicon-send get_map"></span>
+							<if condition="$permission_list['SIGN_PLACE.ALTER']">
+								<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+									<div class="modal-body">
+										<div class="form-group">
+											<label for="mid" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>会议：</label>
+											<div class="col-sm-11">
+												<input type="text" class="form-control" name="mid" id="mid" value="<{$meeting.name}>" disabled>
 											</div>
-											<div id="allmap" class="hide" style="width: 100%; height: 400px;"></div>
+										</div>
+										<div class="form-group">
+											<label for="name" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>签到点名称：</label>
+											<div class="col-sm-11">
+												<input type="text" class="form-control name" name="name" id="name" value="<{$info.name}>">
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="place" class="col-sm-1 control-label">地址：</label>
+											<div class="col-sm-11">
+												<div class="input-group address_map">
+													<input type="text" class="form-control" name="place" id="place" value="<{$info.place}>">
+													<span class="input-group-addon glyphicon glyphicon-send get_map"></span>
+												</div>
+												<div id="allmap" class="hide" style="width: 100%; height: 400px;"></div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="director_id" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>负责人：</label>
+											<div class="col-sm-11">
+												<div id="director_id"></div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="sign_director_id" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>签到负责人：</label>
+											<div class="col-sm-11">
+												<div id="sign_director_id"></div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="comment" class="col-sm-1 control-label">备注：</label>
+											<div class="col-sm-11">
+												<textarea class="form-control comment" name="comment" id="comment"><{$info.comment}></textarea>
+											</div>
 										</div>
 									</div>
-									<div class="form-group">
-										<label for="director_id" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>负责人：</label>
-										<div class="col-sm-11">
-											<div id="director_id"></div>
-										</div>
+									<div class="modal-footer text_center">
+										<button type="submit" class="btn btn-primary">保存</button>
 									</div>
-									<div class="form-group">
-										<label for="sign_director_id" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>签到负责人：</label>
-										<div class="col-sm-11">
-											<div id="sign_director_id"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="comment" class="col-sm-1 control-label">备注：</label>
-										<div class="col-sm-11">
-											<textarea class="form-control comment" name="comment" id="comment"><{$info.comment}></textarea>
-										</div>
-									</div>
-								</div>
-								<div class="modal-footer text_center">
-									<button type="submit" class="btn btn-primary">保存</button>
-								</div>
-							</form>
-						</if>
-					</section>
-				</div>
+								</form>
+							</if>
+						</section>
+					</div>
+				</if>
 			</div>
 		</div>
 	</div>

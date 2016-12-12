@@ -117,12 +117,29 @@
 			if($this->permissionList['REPORT.VIEW']){
 				/** @var \Core\Model\ReportEntryModel $model */
 				$model = D('Core/ReportEntry');
-				$info  = $model->findRecord(1, [
+				/** @var \Core\Model\AssignRoleModel $assign_role_model */
+				$assign_role_model = D('Core/AssignRole');
+				$my_id             = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+				$my_role_arr       = $assign_role_model->getRoleByUser($my_id, 0, [
+					'column' => 'id',
+					'format' => 'array'
+				]);
+				$info              = $model->findRecord(1, [
 					'id'     => I('get.id', 0, 'int'),
 					'mid'    => I('get.mid', 0, 'int'),
 					'status' => 'not deleted'
 				]);
-				$this->assign('info', $info);
+				$found             = false;
+				if(in_array($my_id, explode(',', $info['employee']))) $found = true;
+				else{
+					foreach(explode(',', $info['role']) as $role){
+						if(in_array($role, $my_role_arr)){
+							$found = true;
+							break;
+						}
+					}
+				}
+				if($found) $this->assign('info', $info);
 				$this->display();
 			}
 			else $this->error('您没有查看报表的权限');

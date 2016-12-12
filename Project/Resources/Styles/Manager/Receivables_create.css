@@ -35,6 +35,11 @@
 	font-size : 14px;
 }
 
+.rece_wrap{
+	width    : 100%;
+	position : relative;
+}
+
 .rece_li{
 	position : relative;
 	padding  : 10px 60px 10px 10px;
@@ -195,6 +200,22 @@
 
 .glyphicon{
 	top : 0 !important;
+}
+
+.add_item, .delete_item{
+	z-index     : 99;
+	display     : block;
+	position    : absolute;
+	width       : 34px;
+	height      : 34px;
+	text-align  : center;
+	line-height : 34px;
+	font-size   : 18px;
+	background  : red;
+	color       : #FFFFFF;
+	top         : 10px !important;
+	right       : 0;
+	cursor      : pointer;
 }
 
 

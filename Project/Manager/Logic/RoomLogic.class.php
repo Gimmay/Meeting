@@ -15,84 +15,93 @@
 		public function handlerRequest($type){
 			switch($type){
 				case 'create':
-					/** @var \Core\Model\RoomModel $room_model */
-					$room_model = D('Core/Room');
-					/** @var \Core\Model\AssignRoomModel $assign_room_model */
-					$assign_room_model = D('Core/AssignRoom');
-					$room_id           = I('post.room_number', '');
-					$room_list         = $room_model->findRoom(2, [
-						'hid'    => I('get.hid', 0, 'int'),
-						'status' => 'not deleted'
-					]);
-					$rid               = [];
-					foreach($room_list as $k1 => $v1){
-						$rid[] = $room_list[$k1]['code'];
-					}
-					if(in_array($room_id, $rid)){
-						return array_merge(['message' => '房间号已存在'], ['__ajax__' => false]);
-						exit;
-					}
-					else{
-						C('TOKEN_ON', false);
-						$data                = I('post.', '');
-						$data['code']        = I('post.room_number', '');
-						$data['mid']         = I('get.id', 0, 'int');
-						$data['hid']         = I('get.hid', 0, 'int');
-						$data['creatime']    = time();    //创建时间
-						$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
-						$data['person']      = I('post.person', '');
-						$data['client_type'] = I('post.client_type', '');
-						$room_result         = $room_model->createRecord($data);
-						$person_id           = explode(',', $data['person']);
-						foreach($person_id as $v){
-							$data['rid']        = $room_result['id'];
-							$data['jid']        = $v;
-							$data['come_time']  = strtotime(I('post.come_time'));
-							$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-							$data['creatime']   = time();
-							$assign_room_result = $assign_room_model->createRecord($data);
+					if($this->permissionList['ROOM.CREATE']){
+						/** @var \Core\Model\RoomModel $room_model */
+						$room_model = D('Core/Room');
+						/** @var \Core\Model\AssignRoomModel $assign_room_model */
+						$assign_room_model = D('Core/AssignRoom');
+						$room_id           = I('post.room_number', '');
+						$room_list         = $room_model->findRoom(2, [
+							'hid'    => I('get.hid', 0, 'int'),
+							'status' => 'not deleted'
+						]);
+						$rid               = [];
+						foreach($room_list as $k1 => $v1){
+							$rid[] = $room_list[$k1]['code'];
 						}
-					}
+						if(in_array($room_id, $rid)){
+							return array_merge(['message' => '房间号已存在'], ['__ajax__' => false]);
+							exit;
+						}
+						else{
+							C('TOKEN_ON', false);
+							$data                = I('post.', '');
+							$data['code']        = I('post.room_number', '');
+							$data['mid']         = I('get.id', 0, 'int');
+							$data['hid']         = I('get.hid', 0, 'int');
+							$data['creatime']    = time();    //创建时间
+							$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
+							$data['person']      = I('post.person', '');
+							$data['client_type'] = I('post.client_type', '');
+							$room_result         = $room_model->createRecord($data);
+							$person_id           = explode(',', $data['person']);
+							foreach($person_id as $v){
+								$data['rid']        = $room_result['id'];
+								$data['jid']        = $v;
+								$data['come_time']  = strtotime(I('post.come_time'));
+								$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+								$data['creatime']   = time();
+								$assign_room_result = $assign_room_model->createRecord($data);
+							}
+						}
 
-					return array_merge($room_result, ['__ajax__' => false]);
+						return array_merge($room_result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有创建房间的权限', '__ajax__' => false];
 				break;
 				case 'delete':
-					/** @var \Core\Model\RoomModel $room_model */
-					$room_model = D('Core/Room');
-					C('TOKEN_ON', false);
-					$room_result = $room_model->deleteRoom(I('post.id'));
+					if($this->permissionList['ROOM.DELETE']){
+						/** @var \Core\Model\RoomModel $room_model */
+						$room_model = D('Core/Room');
+						C('TOKEN_ON', false);
+						$room_result = $room_model->deleteRoom(I('post.id'));
 
-					return array_merge($room_result, ['__ajax__' => false]);
+						return array_merge($room_result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有删除房间的权限', '__ajax__' => false];
 				break;
 				case 'choose_client_2':
-					/** @var \Core\Model\AssignRoomModel $assign_room_model */
-					$assign_room_model = D('Core/AssignRoom');
-					/** @var \Core\Model\JoinModel $join_model */
-					$join_model         = D('Core/Join');
-					$rid                = I('post.rid', '');
-					$id                 = I('post.id', '');
-					$assign_room_result = [];
-					C('TOKEN_ON', false);
-					foreach($id as $k => $v){
-						$assign_room_result = $assign_room_model->createRecord([
-							'rid'              => $rid,
-							'jid'              => $v,
-							'come_time'        => time(),
-							'occupancy_status' => 1,
-							'status'           => 1,
-							'creatime'         => time(),
-							'creator'          => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
-							//当前创建者
-						]);
-						$assign_room_id[]   = $assign_room_result['id'];
-					}
-					foreach($assign_room_id as $k1 => $v2){
-						$assign_room_results[]                 = $assign_room_model->findRecord(1, ['id' => $v2]);
-						$join_result                           = $join_model->findRecord(1, ['id' => $assign_room_results[$k1]['jid']]);
-						$assign_room_results[$k1]['join_name'] = $join_result['name'];
-					}
+					if($this->permissionList['ROOM.ASSIGN']){
+						/** @var \Core\Model\AssignRoomModel $assign_room_model */
+						$assign_room_model = D('Core/AssignRoom');
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model         = D('Core/Join');
+						$rid                = I('post.rid', '');
+						$id                 = I('post.id', '');
+						$assign_room_result = $assign_room_id = [];
+						C('TOKEN_ON', false);
+						foreach($id as $k => $v){
+							$assign_room_result = $assign_room_model->createRecord([
+								'rid'              => $rid,
+								'jid'              => $v,
+								'come_time'        => time(),
+								'occupancy_status' => 1,
+								'status'           => 1,
+								'creatime'         => time(),
+								'creator'          => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+								//当前创建者
+							]);
+							$assign_room_id[]   = $assign_room_result['id'];
+						}
+						foreach($assign_room_id as $k1 => $v2){
+							$assign_room_results[]                 = $assign_room_model->findRecord(1, ['id' => $v2]);
+							$join_result                           = $join_model->findRecord(1, ['id' => $assign_room_results[$k1]['jid']]);
+							$assign_room_results[$k1]['join_name'] = $join_result['name'];
+						}
 
-					return array_merge($assign_room_result, ['__ajax__' => true]);
+						return array_merge($assign_room_result, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有分配房间的权限', '__ajax__' => true];
 				break;
 				case 'change_room':
 					$keyword = I('post.keyword', '');
@@ -131,42 +140,58 @@
 					return array_merge($new_list, ['__ajax__' => true]);
 				break;
 				case 'leave':
-					C('TOKEN_ON', false);
-					$id   = I('post.id', 0, 'int');
-					$time = strtotime(I('post.leave_time', ''));
-					/** @var \Core\Model\AssignRoomModel $assign_room_model */
-					$assign_room_model  = D('Core/AssignRoom');
-					$assign_room_result = $assign_room_model->alterRecord(['jid' => $id], [
-						'leave_time' => $time,
-						'status'     => 2
-					]);
+					if($this->permissionList['ROOM.ASSIGN']){
+						C('TOKEN_ON', false);
+						$id   = I('post.id', 0, 'int');
+						$time = strtotime(I('post.leave_time', ''));
+						/** @var \Core\Model\AssignRoomModel $assign_room_model */
+						$assign_room_model  = D('Core/AssignRoom');
+						$assign_room_result = $assign_room_model->alterRecord(['jid' => $id], [
+							'leave_time' => $time,
+							'status'     => 2
+						]);
 
-					return array_merge($assign_room_result, ['__ajax__' => false]);
+						return array_merge($assign_room_result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有分配房间的权限', '__ajax__' => true];
+				break;
+				case 'get_employee':
+					/** @var \Core\Model\ClientModel $client_model */
+					$client_model  = D('Core/Client');
+					$client_result = $client_model->findClient(2, ['type' => '内部员工']);
+
+					return array_merge($client_result, ['__ajax__' => true]);
 				break;
 				case 'alter_room':
-					/** @var \Core\Model\RoomModel $room_model */
-					$room_model   = D('Core/Room');
-					$data         = I('post.', '');
-					$data['code'] = I('post.room_code', '');
-					$id           = I('post.id', '');
-					C('TOKEN_ON', false);
-					$room_code = $room_model->findRoom(2, ['hid' => I('get.hid', 0, 'int'), 'status' => 'not deleted']);
-					$code_id   = [];
-					foreach($room_code as $k => $v){
-						$code_id[] = $room_code[$k]['code'];
-					}
-					$room_codes = $room_model->findRoom(1, ['id' => $id]);
-					if($data['code'] == $room_codes['code']){
-						$room_result = $room_model->alterRoom($id, $data);
-					}
-					elseif(in_array($data['code'], $code_id)){
-						return array_merge(['message' => '当前房间已存在'], ['__ajax__' => false]);
-					}
-					else{
-						$room_result = $room_model->alterRoom($id, $data);
-					}
+					if($this->permissionList['ROOM.ALTER']){
+						/** @var \Core\Model\RoomModel $room_model */
+						$room_model   = D('Core/Room');
+						$data         = I('post.', '');
+						$data['code'] = I('post.room_code', '');
+						$id           = I('post.id', '');
+						C('TOKEN_ON', false);
+						$room_code = $room_model->findRoom(2, [
+							'hid'    => I('get.hid', 0, 'int'),
+							'status' => 'not deleted'
+						]);
+						$code_id   = [];
+						foreach($room_code as $k => $v){
+							$code_id[] = $room_code[$k]['code'];
+						}
+						$room_codes = $room_model->findRoom(1, ['id' => $id]);
+						if($data['code'] == $room_codes['code']){
+							$room_result = $room_model->alterRoom($id, $data);
+						}
+						elseif(in_array($data['code'], $code_id)){
+							return array_merge(['message' => '当前房间已存在'], ['__ajax__' => false]);
+						}
+						else{
+							$room_result = $room_model->alterRoom($id, $data);
+						}
 
-					return array_merge($room_result, ['__ajax__' => false]);
+						return array_merge($room_result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有修改房间的权限', '__ajax__' => false];
 				break;
 				case 'details':
 					/** @var \Core\Model\AssignRoomModel $assign_room_model */
@@ -194,108 +219,129 @@
 					return array_merge($join, ['__ajax__' => true]);
 				break;
 				case 'alter':
-					/** @var \Core\Model\RoomModel $room_model */
-					$room_model = D('Core/Room');
-					C('TOKEN_ON', false);
-					$room_result = $room_model->alterRoom(I('post.id'), [
-						'hotel_name' => I('post.hotel_name'),
-						'mid'        => I('post.meeting_name'),
-						'comment'    => I('post.comment')
-					]);
+					if($this->permissionList['ROOM.ALTER']){
+						/** @var \Core\Model\RoomModel $room_model */
+						$room_model = D('Core/Room');
+						C('TOKEN_ON', false);
+						$room_result = $room_model->alterRoom(I('post.id'), [
+							'hotel_name' => I('post.hotel_name'),
+							'mid'        => I('post.meeting_name'),
+							'comment'    => I('post.comment')
+						]);
 
-					return array_merge($room_result, ['__ajax__' => false]);
+						return array_merge($room_result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有修改房间的权限', '__ajax__' => false];
 				break;
 				case 'room_add':
-					/** @var \Core\Model\AssignRoomModel $assign_room_model */
-					$assign_room_model = D('Core/AssignRoom');
-					C('TOKEN_ON', false);
-					$jid                = I('post.cid', 0, 'int');
-					$orid               = I('post.orid', 0, 'int');
-					$rid                = I('post.rid', 0, 'int');
-					$assign_room_result = $assign_room_model->findRecord(1, [
-						'jid'              => $jid,
-						'rid'              => $orid,
-						'occupancy_status' => 1
-					]);
-					$assign_room_model->alterRecord(['id' => $assign_room_result['id']], ['occupancy_status' => 0]);
-					$assign_room_creator = $assign_room_model->createRecord([
-						'rid'       => $rid,
-						'jid'       => $jid,
-						'come_time' => time(),
-						'creatime'  => time(),
-						'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
-					]);
+					if($this->permissionList['ROOM.CREATE']){
+						/** @var \Core\Model\AssignRoomModel $assign_room_model */
+						$assign_room_model = D('Core/AssignRoom');
+						C('TOKEN_ON', false);
+						$jid                = I('post.cid', 0, 'int');
+						$orid               = I('post.orid', 0, 'int');
+						$rid                = I('post.rid', 0, 'int');
+						$assign_room_result = $assign_room_model->findRecord(1, [
+							'jid'              => $jid,
+							'rid'              => $orid,
+							'occupancy_status' => 1
+						]);
+						$assign_room_model->alterRecord(['id' => $assign_room_result['id']], ['occupancy_status' => 0]);
+						$assign_room_creator = $assign_room_model->createRecord([
+							'rid'       => $rid,
+							'jid'       => $jid,
+							'come_time' => time(),
+							'creatime'  => time(),
+							'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+						]);
 
-					return array_merge($assign_room_creator, ['__ajax__' => true]);
+						return array_merge($assign_room_creator, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有创建房间的权限', '__ajax__' => false];
 				break;
 				case 'room_change':
-					C('TOKEN_ON', false);
-					$cid  = I('post.cid', '');    //当前选择换房时用户jid
-					$orid = I('post.orid', '');        //之前$ocid住的房间
-					$ocid = I('post.ocid', '');     //选择的那个用户的jid
-					$rid  = I('post.rid', '');        //之前$cid住的房间
-					/** @var \Core\Model\AssignRoomModel $assign_room_model */
-					$assign_room_model  = D('Core/AssignRoom');
-					$assign_room_result = $assign_room_model->findRecord(1, [
-						'jid'              => $ocid,
-						'rid'              => $rid,
-						'occupancy_status' => 1
-					]); //查出选择的用户那个房间信息.
-					$assign_room_model->alterRecord(['id' => $assign_room_result['id']], ['occupancy_status' => 0]);//把这个用户的住房状态改为已退房
-					$assign_room_model->createRecord([
-						'jid'       => $ocid,
-						'rid'       => $orid,
-						'come_time' => time(),
-						'creatime'  => time(),
-						'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
-					]);//把这个用户换到跟他交换的房间里去
-					$assign_room_results = $assign_room_model->findRecord(1, [
-						'jid'              => $cid,
-						'rid'              => $orid,
-						'occupancy_status' => 1
-					]); //查出选择的用户那个房间信息.
-					$assign_room_model->alterRecord(['id' => $assign_room_results['id']], ['occupancy_status' => 0]);//把这个用户的住房状态改为已退房
-					$assign_room_alter = $assign_room_model->createRecord([
-						'jid'       => $cid,
-						'rid'       => $rid,
-						'come_time' => time(),
-						'creatime'  => time(),
-						'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
-					]);//把这个用户换到跟他交换的房间里去
-					return array_merge($assign_room_alter, ['__ajax__' => true]);
+					if($this->permissionList['ROOM.ASSIGN']){
+						C('TOKEN_ON', false);
+						$cid  = I('post.cid', '');    //当前选择换房时用户jid
+						$orid = I('post.orid', '');        //之前$ocid住的房间
+						$ocid = I('post.ocid', '');     //选择的那个用户的jid
+						$rid  = I('post.rid', '');        //之前$cid住的房间
+						/** @var \Core\Model\AssignRoomModel $assign_room_model */
+						$assign_room_model  = D('Core/AssignRoom');
+						$assign_room_result = $assign_room_model->findRecord(1, [
+							'jid'              => $ocid,
+							'rid'              => $rid,
+							'occupancy_status' => 1
+						]); //查出选择的用户那个房间信息.
+						$assign_room_model->alterRecord(['id' => $assign_room_result['id']], ['occupancy_status' => 0]);//把这个用户的住房状态改为已退房
+						$assign_room_model->createRecord([
+							'jid'       => $ocid,
+							'rid'       => $orid,
+							'come_time' => time(),
+							'creatime'  => time(),
+							'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+						]);//把这个用户换到跟他交换的房间里去
+						$assign_room_results = $assign_room_model->findRecord(1, [
+							'jid'              => $cid,
+							'rid'              => $orid,
+							'occupancy_status' => 1
+						]); //查出选择的用户那个房间信息.
+						$assign_room_model->alterRecord(['id' => $assign_room_results['id']], ['occupancy_status' => 0]);//把这个用户的住房状态改为已退房
+						$assign_room_alter = $assign_room_model->createRecord([
+							'jid'       => $cid,
+							'rid'       => $rid,
+							'come_time' => time(),
+							'creatime'  => time(),
+							'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+						]);//把这个用户换到跟他交换的房间里去
+						return array_merge($assign_room_alter, ['__ajax__' => true]);
+					}
+					else return ['status' => false, 'message' => '您没有分配房间的权限', '__ajax__' => true];
 				break;
 				case 'create_roomType':
-					/** @var \Core\Model\RoomTypeModel $room_type_model */
-					$room_type_model  = D('Core/RoomType');
-					$data             = I('post.', '');
-					$data['creatime'] = time();
-					$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					$data['hid']      = I('get.hid', 0, 'int');
-					$result           = $room_type_model->findRecord(2, ['hid' => I('get.hid', 0, 'int')]);
-					foreach($result as $k => $v){
-						if($data['name'] == $v['name']){
-							return array_merge(['message' => '当前房间类型已存在', 'status' => false], ['__ajax__' => false]);
+					if($this->permissionList['ROOM_TYPE.CREATE']){
+						/** @var \Core\Model\RoomTypeModel $room_type_model */
+						$room_type_model  = D('Core/RoomType');
+						$data             = I('post.', '');
+						$data['creatime'] = time();
+						$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+						$data['hid']      = I('get.hid', 0, 'int');
+						$result           = $room_type_model->findRecord(2, ['hid' => I('get.hid', 0, 'int')]);
+						foreach($result as $k => $v){
+							if($data['name'] == $v['name']){
+								return array_merge([
+									'message' => '当前房间类型已存在',
+									'status'  => false
+								], ['__ajax__' => false]);
+							}
 						}
-					}
-					$room_type_result = $room_type_model->createRecord($data);
+						$room_type_result = $room_type_model->createRecord($data);
 
-					return array_merge($room_type_result, ['__ajax__' => false]);
+						return array_merge($room_type_result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有创建房间类型的权限', '__ajax__' => false];
 				break;
 				case 'alter_roomType':
-					/** @var \Core\Model\RoomTypeModel $room_type_model */
-					$room_type_model  = D('Core/RoomType');
-					$data             = I('post.');
-					$room_type_result = $room_type_model->alterRecord(['id' => $data['id']], $data);
+					if($this->permissionList['ROOM_TYPE.ALTER']){
+						/** @var \Core\Model\RoomTypeModel $room_type_model */
+						$room_type_model  = D('Core/RoomType');
+						$data             = I('post.');
+						$room_type_result = $room_type_model->alterRecord(['id' => $data['id']], $data);
 
-					return array_merge($room_type_result, ['__ajax__' => false]);
+						return array_merge($room_type_result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有修改房间类型的权限', '__ajax__' => false];
 				break;
 				case 'delete_roomType':
-					/** @var \Core\Model\RoomTypeModel $room_type_model */
-					$room_type_model  = D('Core/RoomType');
-					$id               = I('post.id', 0, 'int');
-					$room_type_result = $room_type_model->deleteRecord(['id' => $id]);
+					if($this->permissionList['ROOM_TYPE.DELETE']){
+						/** @var \Core\Model\RoomTypeModel $room_type_model */
+						$room_type_model  = D('Core/RoomType');
+						$id               = I('post.id', 0, 'int');
+						$room_type_result = $room_type_model->deleteRecord(['id' => $id]);
 
-					return array_merge($room_type_result, ['__ajax__' => false]);
+						return array_merge($room_type_result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有删除房间类型的权限', '__ajax__' => false];
 				break;
 				case 'get_type':
 					$id = I('post.id', 0, 'int');
@@ -428,8 +474,7 @@
 				'mid'     => I('get.mid', 0, 'int'),
 				'keyword' => I('post.keyword'),
 				'_order'  => 'sign_time desc,pinyin_code asc',
-
-
+				'status'  => 1
 			]);
 			/** @var \Core\Model\AssignRoomModel $assign_room_model */
 			$assign_room_model = D('Core/AssignRoom');

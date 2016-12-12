@@ -33,7 +33,8 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<div class="main_body" style="overflow: hidden">
+				<if condition="$permission_list['MESSAGE.ALTER'] eq 1">
+					<div class="main_body" style="overflow: hidden">
 					<section class="content">
 						<div class="table_wrap">
 							<div class="nav_tab clearfix">
@@ -139,6 +140,7 @@
 						</div>
 					</section>
 				</div>
+				</if>
 			</div>
 		</div>
 	</div>

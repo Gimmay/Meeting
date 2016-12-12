@@ -4,11 +4,13 @@
 
 var ScriptObject = {
 	couponLiTemp       :'<div class="rece_li clearfix rece_new">\n\t<div class="rece_item">\n\t\t&nbsp;\n\t</div>\n\t<div class="rece_item">\n\t\t&nbsp;\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="payMethod[]" class="form-control payMethod">{::PAY_METHOD::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<input type="text" class="form-control price" name="price[]" placeholder="金额">\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="pos[]" class="form-control pos">{::POS_MACHINE::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="source_type[]" class="form-control source_type" id="source_type">\n\t\t\t<option value="1">会前收款</option>\n\t\t\t<option value="2">会中收款</option>\n\t\t\t<option value="3">会后收款</option>\n\t\t</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<input type="text" class="form-control comment" name="comment[]" placeholder="备注">\n\t</div>\n\t<div class="rece_item">\n\t\t<span class="delete glyphicon glyphicon-minus"></span>\n\t</div>\n</div>',
-	otherLiTemp        :'<div class="rece_li clearfix">\n\t<div class="rece_item">\n\t\t<select name="type[]" class="form-control project_type">\n\t\t\t<option value="0">项目类型</option>\n\t\t\t<option value="1">门票</option>\n\t\t\t<option value="3">产品</option>\n\t\t\t<option value="4">其他</option>\n\t\t</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="name[]" class="form-control name"></select>\n\t</div>\n\t<div class="rece_item">\n\t\t<input type="text" class="form-control price" name="price[]" placeholder="金额">\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="payMethod[]" class="form-control payMethod">{::PAY_METHOD::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="pos[]" class="form-control pos">{::POS_MACHINE::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="source_type[]" class="form-control source_type" id="source_type">\n\t\t\t<option value="1">会前收款</option>\n\t\t\t<option value="2">会中收款</option>\n\t\t\t<option value="3">会后收款</option>\n\t\t</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<span class="delete glyphicon glyphicon-minus"></span>\n\t</div>\n</div>',
+	otherInnerTemp     :'<div class="rece_li clearfix rece_new">\n\t<div class="rece_item">\n\t\t&nbsp;\n\t</div>\n\t<div class="rece_item">\n\t\t&nbsp;\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="payMethod$i[]" class="form-control payMethod">{::PAY_METHOD::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<input type="text" class="form-control price" name="price$i[]" placeholder="金额">\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="pos$i[]" class="form-control pos">{::POS_MACHINE::}</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<select name="source_type$i[]" class="form-control source_type" id="source_type">\n\t\t\t<option value="1">会前收款</option>\n\t\t\t<option value="2">会中收款</option>\n\t\t\t<option value="3">会后收款</option>\n\t\t</select>\n\t</div>\n\t<div class="rece_item">\n\t\t<input type="text" class="form-control comment" name="comment$i[]" placeholder="备注">\n\t</div>\n\t<div class="rece_item">\n\t\t<span class="delete glyphicon glyphicon-minus"></span>\n\t</div>\n</div>',
+	otherLiTemp        :'<div class="rece_wrap">\n\t<span class="delete_item glyphicon glyphicon-minus"></span>\n\t<div class="rece_li clearfix">\n\t\t<div class="rece_item">\n\t\t\t<select name="type[]" class="form-control project_type">\n\t\t\t\t<option value="0">项目类型</option>\n\t\t\t\t<option value="1">门票</option>\n\t\t\t\t<option value="3">产品</option>\n\t\t\t\t<option value="4">其他</option>\n\t\t\t</select>\n\t\t</div>\n\t\t<div class="rece_item">\n\t\t\t<select name="name[]" class="form-control name"></select>\n\t\t</div>\n\t\t<div class="rece_item">\n\t\t\t<select name="payMethod$i[]" class="form-control payMethod">{::PAY_METHOD::}</select>\n\t\t</div>\n\t\t<div class="rece_item">\n\t\t\t<input type="text" class="form-control price" name="price$i[]" placeholder="金额">\n\t\t</div>\n\t\t<div class="rece_item">\n\t\t\t<select name="pos$i[]" class="form-control pos">{::POS_MACHINE::}</select>\n\t\t</div>\n\t\t<div class="rece_item">\n\t\t\t<select name="source_type$i[]" class="form-control source_type" id="source_type">\n\t\t\t\t<option value="1">会前收款</option>\n\t\t\t\t<option value="2">会中收款</option>\n\t\t\t\t<option value="3">会后收款</option>\n\t\t\t</select>\n\t\t</div>\n\t\t<div class="rece_item">\n\t\t\t<input type="text" class="form-control comment" name="comment$i[]" placeholder="备注">\n\t\t</div>\n\t\t<div class="rece_item text-center">\n\t\t\t<span class="add glyphicon glyphicon-plus"></span>\n\t\t</div>\n\t</div>\n\t<input type="hidden" class="num" value="$i">\n</div>\n',
 	secCouponTemp      :'<div class="sec_coupon">\n\t<div class="title">$couponName</div>\n\t<div class="coupon_list">\n\t\t$htm\n\t</div>\n</div>',
 	optionTemp         :'<option value="$val" data-price="$price">$name</option>',
 	couponATemp        :'<a href="javascript:void(0)" data-id="$id">$code</a>',
 	selectedCouponId   :[],
+	num                :2,
 	/**
 	 * 两个数组去重复
 	 */
@@ -29,7 +31,8 @@ var ScriptObject = {
 			}
 		}
 		return temparray.join(",")+"";
-	},
+	}
+	,
 	/**
 	 *  ------------------------------代金券注释---------------------------------
 	 */
@@ -59,7 +62,8 @@ var ScriptObject = {
 				});
 			}
 		});
-	},
+	}
+	,
 	/**
 	 *  通过ajax提交获取代金券中含有的代金券码详情 -- coupon_code
 	 *  requestType:get_coupon_code
@@ -104,7 +108,8 @@ var ScriptObject = {
 				});
 			}
 		})
-	},
+	}
+	,
 	/**
 	 * refreshSelectVal ：当点击代金券CODE下拉select时，触发改事件。
 	 */
@@ -124,7 +129,8 @@ var ScriptObject = {
 			}
 		});
 		console.log(ss);
-	},
+	}
+	,
 	/**
 	 *
 	 * @param _self  触发change事件的dom元素
@@ -141,7 +147,8 @@ var ScriptObject = {
 			$(_self).parent().parent().find('input.price').val(selected_item_price);
 			self.totalAmount();
 		});
-	},
+	}
+	,
 	bindEvent          :function(){
 		var self = this;
 		// 金额改变后，触发总金额方法
@@ -189,7 +196,8 @@ var ScriptObject = {
 					break;
 			}
 		});
-	},
+	}
+	,
 	unbindEvent        :function(){
 		$('.coupon_code').off('click');
 		$('.c_list a').off('click');
@@ -210,27 +218,47 @@ var ScriptObject = {
 }
 	;
 $(function(){
+	$('.other .add').on('click', function(){
+		var e = $(this);
+		set_other_list(e);
+	});
 	$('#redirectUrl').val(document.referrer);
 	ScriptObject.bindEvent();
 	ScriptObject.setCouponName();
-	$('.other .add').on('click', function(){
+	$('.other .add_item').on('click', function(){
 		var setSelectList = function(temp){
 			var pay_method_source_data  = JSON.parse($('#pay_method_source_data').text());
 			var pos_machine_source_data = JSON.parse($('#pos_machine_source_data').text());
 			var html_pos_machine        = '<option value="0">POS机</option>';
 			var html_pay_method         = '<option value="0">支付方式</option>';
 			var i;
-			for(i = 0; i<pos_machine_source_data.length; i++) html_pos_machine += '<option value="'+pos_machine_source_data[i]['id']+'">'+pos_machine_source_data[i]['name']+'</option>';
-			for(i = 0; i<pay_method_source_data.length; i++) html_pay_method += '<option value="'+pay_method_source_data[i]['id']+'">'+pay_method_source_data[i]['name']+'</option>';
+			for(i = 0; i<pos_machine_source_data.length; i++){
+				html_pos_machine += '<option value="'+pos_machine_source_data[i]['id']+'">'+pos_machine_source_data[i]['name']+'</option>';
+			}
+			for(i = 0; i<pay_method_source_data.length; i++){
+				html_pay_method += '<option value="'+pay_method_source_data[i]['id']+'">'+pay_method_source_data[i]['name']+'</option>';
+			}
 			temp = temp.replace('{::POS_MACHINE::}', html_pos_machine);
 			temp = temp.replace('{::PAY_METHOD::}', html_pay_method);
+			temp = temp.replace(/\$i/g, ScriptObject.num);
+			console.log(temp);
 			return temp;
 			console.log(temp);
 		};
 		var str           = setSelectList(ScriptObject.otherLiTemp);
+		console.log(str);
 		$('.mo_rece.mo_content .other').append(str);
-		$('.delete').on('click', function(){
-			$(this).parents('.rece_li').remove();
+		ScriptObject.num++;
+		//alert(ScriptObject.num);
+		$('.delete_item').off('click');
+		$('.delete_item').on('click', function(){
+			var index = $(this).index('.delete_item');
+			$(this).parents('.rece_wrap').remove();
+		});
+		$('.other .add').off('click');
+		$('.other .add').on('click', function(){
+			var e = $(this);
+			set_other_list(e);
 		});
 		ScriptObject.unbindEvent();
 		ScriptObject.bindEvent();
@@ -289,4 +317,45 @@ $(function(){
 		});
 	});
 });
+function set_other_list(e){
+	var setSelectList = function(temp){
+		var pay_method_source_data  = JSON.parse($('#pay_method_source_data').text());
+		var pos_machine_source_data = JSON.parse($('#pos_machine_source_data').text());
+		var html_pos_machine        = '<option value="0">POS机</option>';
+		var html_pay_method         = '<option value="0">支付方式</option>';
+		var i;
+		for(i = 0; i<pos_machine_source_data.length; i++) html_pos_machine += '<option value="'+pos_machine_source_data[i]['id']+'">'+pos_machine_source_data[i]['name']+'</option>';
+		for(i = 0; i<pay_method_source_data.length; i++) html_pay_method += '<option value="'+pay_method_source_data[i]['id']+'">'+pay_method_source_data[i]['name']+'</option>';
+		temp = temp.replace('{::POS_MACHINE::}', html_pos_machine);
+		temp = temp.replace('{::PAY_METHOD::}', html_pay_method);
+		return temp;
+	};
+	var str           = setSelectList(ScriptObject.otherInnerTemp);
+	console.log(str);
+	e.parents('.rece_wrap ').append(str);
+}
+function set_other_list(e){
+	var num           = e.parents('.rece_wrap').find('.num').val();
+	var setSelectList = function(temp){
+		var pay_method_source_data  = JSON.parse($('#pay_method_source_data').text());
+		var pos_machine_source_data = JSON.parse($('#pos_machine_source_data').text());
+		var html_pos_machine        = '<option value="0">POS机</option>';
+		var html_pay_method         = '<option value="0">支付方式</option>';
+		var i;
+		for(i = 0; i<pos_machine_source_data.length; i++) html_pos_machine += '<option value="'+pos_machine_source_data[i]['id']+'">'+pos_machine_source_data[i]['name']+'</option>';
+		for(i = 0; i<pay_method_source_data.length; i++) html_pay_method += '<option value="'+pay_method_source_data[i]['id']+'">'+pay_method_source_data[i]['name']+'</option>';
+		temp = temp.replace('{::POS_MACHINE::}', html_pos_machine);
+		temp = temp.replace('{::PAY_METHOD::}', html_pay_method);
+		temp = temp.replace(/\$i/g, num);
+		return temp;
+	};
+	var str           = setSelectList(ScriptObject.otherInnerTemp);
+	console.log(str);
+	e.parents('.rece_wrap ').append(str);
+	$('.other .delete').off('click');
+	$('.other .delete').on('click', function(){
+		var index = $(this).index('.delete');
+		$(this).parents('.rece_li').remove();
+	});
+}
 

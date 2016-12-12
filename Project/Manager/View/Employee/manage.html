@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>员工管理 - 会议系统</title>
+	<title>用户管理 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
@@ -31,128 +31,130 @@
 			<include file="Public/outerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/outerHeader"/>
-				<div class="main_body">
-					<section class="content">
-						<header class="c_header">
-							<div class="function_list clearfix">
-								<if condition="$permission_list['EMPLOYEE.CREATE'] eq 1">
-									<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_employee">
-										<a href="<{:U('Employee/create')}>"> <i></i>
-											<p>新增员工</p>
-										</a>
-									</div>
-								</if>
-								<if condition="$permission_list['EMPLOYEE.DELETE'] eq 1">
-									<div class="function_btn bg-danger batch_delete_btn_confirm">
-										<i></i>
-										<p>批量删除</p>
-									</div>
-								</if>
-							</div>
-						</header>
-						<div class="repertory clearfix">
-							<form action="" method="get">
-								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="工号/名称/拼音简码/手机号" value="<{:I('get.keyword', '')}>">
-									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default main_search">搜索员工</button>
-									</span>
+				<if condition="$permission_list['EMPLOYEE.VIEW'] eq 1">
+					<div class="main_body">
+						<section class="content">
+							<header class="c_header">
+								<div class="function_list clearfix">
+									<if condition="$permission_list['EMPLOYEE.CREATE'] eq 1">
+										<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_employee">
+											<a href="<{:U('Employee/create')}>"> <i></i>
+												<p>新增用户</p>
+											</a>
+										</div>
+									</if>
+									<if condition="$permission_list['EMPLOYEE.DELETE'] eq 1">
+										<div class="function_btn bg-danger batch_delete_btn_confirm">
+											<i></i>
+											<p>批量删除</p>
+										</div>
+									</if>
 								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('manage')}>">查看所有</a>
-							</form>
-						</div>
-						<div class="table_wrap">
-							<table class="table table-bordered" style="text-align: center">
-								<thead>
-									<tr>
-										<td width="4%" class="all_check">
-											<input type="checkbox" class="icheck" placeholder="" value="">
-										</td>
-										<td width="3%">序号</td>
-										<td width="5%">工号</td>
-										<td width="8%">名称</td>
-										<td width="5%">性别</td>
-										<td width="5%">状态</td>
-										<td width="10%">手机</td>
-										<td width="10%">部门</td>
-										<td width="15%">角色</td>
-										<td width="9%">创建日期</td>
-										<td width="20%">操作</td>
-										<td width="6%">启禁用</td>
-									</tr>
-								</thead>
-								<tbody>
-									<volist name="list" id="single">
-										<tr>
-											<td class="check_item">
-												<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
-											</td>
-											<td><{$i}></td>
-											<td><{$single.code}></td>
-											<td data-id="<{$single.id}>"><{$single.name}></td>
-											<td>
-												<switch name="single.gender">
-													<case value="0">未设置</case>
-													<case value="1">男</case>
-													<case value="2">女</case>
-												</switch>
-											</td>
-											<td>
-												<switch name="single.status">
-													<case value="0"><span class="color-danger">禁用</span></case>
-													<case value="1"><span class="color-info">可用</span></case>
-												</switch>
-											</td>
-											<td><{$single.mobile}></td>
-											<td>
-												<a href="<{:U('manage', ['did'=>$single['did']])}>"><{$single.department}></a>
-											</td>
-											<td><{$single.role}></td>
-											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
-											<td>
-												<div class="btn-group" data-id="<{$single.id}>">
-													<if condition="($max_role_level elt $single['roleLevel']) and ($permission_list['EMPLOYEE.ASSIGN-ROLE'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-ROLE'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-ROLE'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-ROLE'] eq 1) and $single['status'] eq 1">
-														<button type="button" class="btn btn-default btn-xs btn_distribution_role" data-toggle="modal" data-target="#distribution_role">分配角色</button>
-													</if>
-													<!--<if condition="($max_role_level elt $single['roleLevel']) and ($permission_list['EMPLOYEE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-PERMISSION'] eq 1)">
-														<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
-													</if>-->
-													<if condition="$permission_list['EMPLOYEE.ALTER'] eq 1">
-														<a href="<{:U('Employee/alter',['id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
-													</if>
-													<if condition="$permission_list['EMPLOYEE.ALTER-PASSWORD'] eq 1 and $single['status'] eq 1">
-														<button type="button" class="btn btn-default btn-xs btn_alter_password" data-toggle="modal" data-target="#alter_password">修改密码</button>
-													</if>
-													<if condition="$permission_list['EMPLOYEE.RESET-PASSWORD'] eq 1 and $single['status'] eq 1">
-														<button type="button" class="btn btn-default btn-xs btn_reset_password" data-toggle="modal" data-target="#reset_password">重置密码</button>
-													</if>
-													<if condition="$permission_list['EMPLOYEE.DELETE'] eq 1">
-														<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_employee">删除</button>
-													</if>
-												</div>
-											</td>
-											<td>
-												<div class="btn-group" data-id="<{$single.id}>">
-													<if condition="$single['status'] eq 0">
-														<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_employee', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
-													</if>
-													<if condition="$single['status'] eq 1">
-														<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_employee', 'id'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
-													</if>
-												</div>
-											</td>
-										</tr>
-									</volist>
-								</tbody>
-							</table>
-						</div>
-						<div class="page_wrap">
-							<div class="pagination">
-								<{$page_show}>
+							</header>
+							<div class="repertory clearfix">
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" class="form-control" placeholder="工号/名称/拼音简码/手机号" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default main_search">搜索用户</button>
+									</span>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('')}>">查看所有</a>
+								</form>
 							</div>
-						</div>
-					</section>
-				</div>
+							<div class="table_wrap">
+								<table class="table table-bordered" style="text-align: center">
+									<thead>
+										<tr>
+											<td width="4%" class="all_check">
+												<input type="checkbox" class="icheck" placeholder="" value="">
+											</td>
+											<td width="3%">序号</td>
+											<td width="5%">工号</td>
+											<td width="8%">名称</td>
+											<td width="5%">性别</td>
+											<td width="5%">状态</td>
+											<td width="10%">手机</td>
+											<td width="10%">部门</td>
+											<td width="15%">角色</td>
+											<td width="9%">创建日期</td>
+											<td width="20%">操作</td>
+											<td width="6%">启禁用</td>
+										</tr>
+									</thead>
+									<tbody>
+										<volist name="list" id="single">
+											<tr>
+												<td class="check_item">
+													<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
+												</td>
+												<td><{$i}></td>
+												<td><{$single.code}></td>
+												<td data-id="<{$single.id}>"><{$single.name}></td>
+												<td>
+													<switch name="single.gender">
+														<case value="0">未设置</case>
+														<case value="1">男</case>
+														<case value="2">女</case>
+													</switch>
+												</td>
+												<td>
+													<switch name="single.status">
+														<case value="0"><span class="color-danger">禁用</span></case>
+														<case value="1"><span class="color-info">可用</span></case>
+													</switch>
+												</td>
+												<td><{$single.mobile}></td>
+												<td>
+													<a href="<{:U('manage', ['did'=>$single['did']])}>"><{$single.department}></a>
+												</td>
+												<td><{$single.role}></td>
+												<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
+												<td>
+													<div class="btn-group" data-id="<{$single.id}>">
+														<if condition="($max_role_level elt $single['roleLevel']) and ($permission_list['EMPLOYEE.ASSIGN-ROLE'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-ROLE'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-ROLE'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-ROLE'] eq 1) and $single['status'] eq 1">
+															<button type="button" class="btn btn-default btn-xs btn_distribution_role" data-toggle="modal" data-target="#distribution_role">分配角色</button>
+														</if>
+														<!--<if condition="($max_role_level elt $single['roleLevel']) and ($permission_list['EMPLOYEE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-PERMISSION'] eq 1)">
+															<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
+														</if>-->
+														<if condition="$permission_list['EMPLOYEE.ALTER'] eq 1">
+															<a href="<{:U('Employee/alter',['id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
+														</if>
+														<if condition="$permission_list['EMPLOYEE.ALTER-PASSWORD'] eq 1 and $single['status'] eq 1">
+															<button type="button" class="btn btn-default btn-xs btn_alter_password" data-toggle="modal" data-target="#alter_password">修改密码</button>
+														</if>
+														<if condition="$permission_list['EMPLOYEE.RESET-PASSWORD'] eq 1 and $single['status'] eq 1">
+															<button type="button" class="btn btn-default btn-xs btn_reset_password" data-toggle="modal" data-target="#reset_password">重置密码</button>
+														</if>
+														<if condition="$permission_list['EMPLOYEE.DELETE'] eq 1">
+															<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_employee">删除</button>
+														</if>
+													</div>
+												</td>
+												<td>
+													<div class="btn-group" data-id="<{$single.id}>">
+														<if condition="$single['status'] eq 0 and $permission_list['EMPLOYEE.ENABLE']">
+															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_employee', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
+														</if>
+														<if condition="$single['status'] eq 1 and $permission_list['EMPLOYEE.DISABLE']">
+															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_employee', 'id'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
+														</if>
+													</div>
+												</td>
+											</tr>
+										</volist>
+									</tbody>
+								</table>
+							</div>
+							<div class="page_wrap">
+								<div class="pagination">
+									<{$page_show}>
+								</div>
+							</div>
+						</section>
+					</div>
+				</if>
 			</div>
 		</div>
 	</div>

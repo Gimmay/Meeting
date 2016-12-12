@@ -34,114 +34,126 @@
 			<include file="Public/innerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
-				<div class="main_body" style="overflow: hidden;">
-					<section class="content">
-						<div class="table_wrap">
-							<div class="nav_tab clearfix">
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
+				<if condition="$permission_list['RECEIVABLES.VIEW']">
+					<div class="main_body" style="overflow: hidden;">
+						<section class="content">
+							<div class="table_wrap">
+								<div class="nav_tab clearfix">
+									<if condition="$permission_list['RECEIVABLES.CREATE']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
+										</div>
+									</if>
+									<if condition="$permission_list['RECEIVABLES.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
+										</div>
+									</if>
+									<if condition="$permission_list['RECEIVABLES.VIEW']">
+										<div class="nav_tab_li active">
+											<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款详情</a>
+										</div>
+									</if>
+									<if condition="$permission_list['PAY_METHOD.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
+										</div>
+									</if>
+									<if condition="$permission_list['POS_MACHINE.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机</a>
+										</div>
+									</if>
 								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
-								</div>
-								<div class="nav_tab_li active">
-									<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款详情</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机</a>
-								</div>
-							</div>
-							<div class="repertory clearfix" style=" padding: 20px  0">
-								<form class="form-horizontal" role="form" method="get" id="form" action="">
-									<div class="input-group repertory_text">
-										<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
+								<div class="repertory clearfix" style=" padding: 20px  0">
+									<form class="form-horizontal" role="form" method="get" id="form" action="">
+										<div class="input-group repertory_text">
+											<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
 											<span class="input-group-btn">
 												<button type="submit" class="btn btn-default main_search">搜索</button>
 											</span>
-									</div>
+										</div>
 
-									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
-								</form>
-								<a class="btn btn-default export_report pull-right bg-00a0e8" href="<{:U('exportReceivablesData', ['mid'=>I('get.mid', 0, 'int')])}>">导出报表</a>
-								<a class="btn btn-default export_report pull-right bg-00a0e8" href="<{:U('exportReceivablesDataTemplate', ['mid'=>I('get.mid', 0, 'int')])}>" style="margin-right: 20px">下载Excel模板</a>
-								<a class="btn btn-default import_report pull-right bg-00a0e8" style="margin-right: 20px;">
-									<form action="" method="post" enctype="multipart/form-data" name="fileForm" id="file_form" target="fileUpload">
-										<input type="file" name="excel" accept=".xlsx, .xls" id="excel_file">
-										<input name="requestType" value="import_excel" type="hidden"> <i></i>
+										<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
 									</form>
-									导入收款 </a>
-								<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-default export_report pull-right bg-00a0e8" style="margin-right: 20px;">添加收款</a>
-							</div>
-							<div class="tab-content clearfix">
-								<div class="ticket_list">
-									<table class="table table-striped">
-										<thead>
-											<tr>
-												<th width="4%">序号</th>
-												<th width="6%">客户</th>
-												<th width="8%">单位</th>
-												<th width="6%">收款金额</th>
-												<th width="6%">收款人</th>
-												<th width="6%">收款类型</th>
-												<th width="6%">支付方式</th>
-												<th width="6%">POS机</th>
-												<th width="10%">代金券</th>
-												<th width="8%">收款时间</th>
-												<th width="6%">收款地点</th>
-												<th width="6%">来源状态</th>
-												<th width="10%">操作</th>
-											</tr>
-										</thead>
-										<tbody>
-											<volist name="list" id="single" key="k">
+									<a class="btn btn-default export_report pull-right bg-00a0e8" href="<{:U('exportReceivablesData', ['mid'=>I('get.mid', 0, 'int')])}>">导出报表</a>
+									<a class="btn btn-default export_report pull-right bg-00a0e8" href="<{:U('exportReceivablesDataTemplate', ['mid'=>I('get.mid', 0, 'int')])}>" style="margin-right: 20px">下载Excel模板</a>
+									<a class="btn btn-default import_report pull-right bg-00a0e8" style="margin-right: 20px;">
+										<form action="" method="post" enctype="multipart/form-data" name="fileForm" id="file_form" target="fileUpload">
+											<input type="file" name="excel" accept=".xlsx, .xls" id="excel_file">
+											<input name="requestType" value="import_excel" type="hidden"> <i></i>
+										</form>
+										导入收款 </a>
+									<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-default export_report pull-right bg-00a0e8" style="margin-right: 20px;">添加收款</a>
+								</div>
+								<div class="tab-content clearfix">
+									<div class="ticket_list">
+										<table class="table table-striped">
+											<thead>
 												<tr>
-													<td><{$k}></td>
-													<td class="client_name"><{$single.client_name}></td>
-													<td class="meeting_name"><{$single.unit}></td>
-													<td class="price"><{$single.price}></td>
-													<td class="payee"><{$single.payee_name}></td>
-													<td class="receivables_type">
-														<switch name="single.type">
-															<case value="1">门票</case>
-															<case value="2">代金券</case>
-															<case value="3">产品</case>
-															<case value="4">其他</case>
-														</switch>
-													</td>
-													<td class="pay_method">
-														<{$single.method_name}>
-													</td>
-													<td class="pos">
-														<{$single.pos_machine}>
-													</td>
-													<td class="coupon_code" data-id="<{$single.coupon_ids}>"><{$single.coupon_codes}></td>
-													<td class="time"><{$single.time|date="Y-m-d H:i:s",###}></td>
-													<td class="place"><{$single.place}></td>
-													<td class="source_type">
-														<switch name="single.source_type">
-															<case value="0">会前收款</case>
-															<case value="1">会中收款</case>
-															<case value="2">会后收款</case>
-														</switch>
-													</td>
-													<td>
-														<div class="btn-group" data-id="<{$single.id}>">
-															<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_receivables">修改</button>
-															<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_receivables">删除</button>
-														</div>
-													</td>
+													<th width="4%">序号</th>
+													<th width="6%">客户</th>
+													<th width="8%">单位</th>
+													<th width="6%">收款金额</th>
+													<th width="6%">收款人</th>
+													<th width="6%">收款类型</th>
+													<th width="6%">支付方式</th>
+													<th width="6%">POS机</th>
+													<th width="10%">代金券</th>
+													<th width="8%">收款时间</th>
+													<th width="6%">收款地点</th>
+													<th width="6%">来源状态</th>
+													<th width="10%">操作</th>
 												</tr>
-											</volist>
-										</tbody>
-									</table>
+											</thead>
+											<tbody>
+												<volist name="list" id="single" key="k">
+													<tr>
+														<td><{$k}></td>
+														<td class="client_name"><{$single.client_name}></td>
+														<td class="meeting_name"><{$single.unit}></td>
+														<td class="price"><{$single.price}></td>
+														<td class="payee"><{$single.payee_name}></td>
+														<td class="receivables_type">
+															<switch name="single.type">
+																<case value="1">门票</case>
+																<case value="2">代金券</case>
+																<case value="3">产品</case>
+																<case value="4">其他</case>
+															</switch>
+														</td>
+														<td class="pay_method">
+															<{$single.method_name}>
+														</td>
+														<td class="pos">
+															<{$single.pos_machine}>
+														</td>
+														<td class="coupon_code" data-id="<{$single.coupon_ids}>"><{$single.coupon_codes}></td>
+														<td class="time"><{$single.time|date="Y-m-d H:i:s",###}></td>
+														<td class="place"><{$single.place}></td>
+														<td class="source_type">
+															<switch name="single.source_type">
+																<case value="0">会前收款</case>
+																<case value="1">会中收款</case>
+																<case value="2">会后收款</case>
+															</switch>
+														</td>
+														<td>
+															<div class="btn-group" data-id="<{$single.id}>">
+																<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_receivables">修改</button>
+																<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_receivables">删除</button>
+															</div>
+														</td>
+													</tr>
+												</volist>
+											</tbody>
+										</table>
+									</div>
 								</div>
 							</div>
-						</div>
-					</section>
-				</div>
+						</section>
+					</div>
+				</if>
 			</div>
 		</div>
 	</div>

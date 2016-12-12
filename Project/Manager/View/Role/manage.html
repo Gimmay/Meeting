@@ -32,81 +32,81 @@
 			<include file="Public/outerMenu"/>
 			<div class="mt_wrapper">
 				<include file="Public/outerHeader"/>
-				<div class="main_body">
-					<section class="content">
-						<header class="c_header">
-							<div class="function_list clearfix">
-								<if condition="$permission_list['ROLE.CREATE'] eq 1">
-									<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_role">
-										<i></i>
-										<p>新增角色</p>
-									</div>
-								</if>
-								<if condition="$permission_list['ROLE.DELETE'] eq 1">
-									<div class="function_btn bg-danger batch_delete_btn_confirm">
-										<i></i>
-										<p>批量删除</p>
-									</div>
-								</if>
-							</div>
-						</header>
-						<div class="repertory clearfix">
-							<form action="" method="get">
-								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="角色/拼音简码" value="<{:I('get.keyword', '')}>">
+				<if condition="$permission_list['ROLE.VIEW']">
+					<div class="main_body">
+						<section class="content">
+							<header class="c_header">
+								<div class="function_list clearfix">
+									<if condition="$permission_list['ROLE.CREATE'] eq 1">
+										<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_role">
+											<i></i>
+											<p>新增角色</p>
+										</div>
+									</if>
+									<if condition="$permission_list['ROLE.DELETE'] eq 1">
+										<div class="function_btn bg-danger batch_delete_btn_confirm">
+											<i></i>
+											<p>批量删除</p>
+										</div>
+									</if>
+								</div>
+							</header>
+							<div class="repertory clearfix">
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" class="form-control" placeholder="角色/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default main_search">搜索角色</button>
 									</span>
-								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('manage')}>">查看所有</a>
-							</form>
-						</div>
-						<div class="table_wrap">
-							<table class="table table-bordered" style="text-align: center">
-								<thead>
-									<tr>
-										<td width="4%" class="all_check">
-											<input type="checkbox" class="icheck" placeholder="" value="">
-										</td>
-										<td width="3%">序号</td>
-										<td width="15%">名称</td>
-										<td width="5%">状态</td>
-										<td width="5%">用户数</td>
-										<td width="5%">等级</td>
-										<td width="10%">备注</td>
-										<td width="8%">创建时间</td>
-										<td width="30%">操作</td>
-										<td width="10%">启禁用</td>
-									</tr>
-								</thead>
-								<tbody>
-									<volist name="role_list" id="single">
-										<if condition="$max_role_level elt $single['level']">
-											<tr>
-												<td class="check_item">
-													<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
-												</td>
-												<td><{$i}></td>
-												<td class="name"><{$single.name}></td>
-												<td>
-													<switch name="single.status">
-														<case value="0"><span class="color-danger">禁用</span></case>
-														<case value="1"><span class="color-info">可用</span></case>
-													</switch>
-												</td>
-												<td>
-													<if condition="$single['count'] eq 0">
-														<{$single.count}>
-														<else/>
-														<a href="<{:U('Employee/manage', ['rid'=>$single['id']])}>" class="link color-primary"><{$single.count}></a>
-													</if>
-												</td>
-												<td><{$single.level}></td>
-												<td><{$single.comment}></td>
-												<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
-												<td>
-													<div class="btn-group" data-id="<{$single.id}>">
-														<if condition="$max_role_level elt $single['level']">
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('manage')}>">查看所有</a>
+								</form>
+							</div>
+							<div class="table_wrap">
+								<table class="table table-bordered" style="text-align: center">
+									<thead>
+										<tr>
+											<td width="4%" class="all_check">
+												<input type="checkbox" class="icheck" placeholder="" value="">
+											</td>
+											<td width="3%">序号</td>
+											<td width="15%">名称</td>
+											<td width="5%">状态</td>
+											<td width="5%">用户数</td>
+											<td width="5%">等级</td>
+											<td width="10%">备注</td>
+											<td width="8%">创建时间</td>
+											<td width="30%">操作</td>
+											<td width="10%">启禁用</td>
+										</tr>
+									</thead>
+									<tbody>
+										<volist name="role_list" id="single">
+											<if condition="$max_role_level elt $single['level']">
+												<tr>
+													<td class="check_item">
+														<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
+													</td>
+													<td><{$i}></td>
+													<td class="name"><{$single.name}></td>
+													<td>
+														<switch name="single.status">
+															<case value="0"><span class="color-danger">禁用</span></case>
+															<case value="1"><span class="color-info">可用</span></case>
+														</switch>
+													</td>
+													<td>
+														<if condition="$single['count'] eq 0">
+															<{$single.count}>
+															<else/>
+															<a href="<{:U('Employee/manage', ['rid'=>$single['id']])}>" class="link color-primary"><{$single.count}></a>
+														</if>
+													</td>
+													<td><{$single.level}></td>
+													<td><{$single.comment}></td>
+													<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
+													<td>
+														<div class="btn-group" data-id="<{$single.id}>">
 															<if condition="($permission_list['ROLE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['ROLE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['ROLE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['ROLE.VIEW-UNASSIGNED-PERMISSION'] eq 1) and $single['status'] eq 1">
 																<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
 															</if>
@@ -116,34 +116,32 @@
 															<if condition="$permission_list['ROLE.DELETE'] eq 1">
 																<button type="button" class="btn btn-default btn-xs delete_btn" data-toggle="modal" data-target="#delete_role">删除</button>
 															</if>
-														</if>
-													</div>
-												</td>
-												<td>
-													<div class="btn-group" data-id="<{$single.id}>">
-														<if condition="$max_role_level elt $single['level']">
-															<if condition="$single['status'] eq 0">
+														</div>
+													</td>
+													<td>
+														<div class="btn-group" data-id="<{$single.id}>">
+															<if condition="$single['status'] eq 0 and $permission_list['ROLE.ENABLE']">
 																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_role', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
 															</if>
-															<if condition="$single['status'] eq 1">
+															<if condition="$single['status'] eq 1 and $permission_list['ROLE.DISABLE']">
 																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_role', 'id'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
 															</if>
-														</if>
-													</div>
-												</td>
-											</tr>
-										</if>
-									</volist>
-								</tbody>
-							</table>
-						</div>
-						<div class="page_wrap">
-							<div class="pagination">
-								<{$page_show}>
+														</div>
+													</td>
+												</tr>
+											</if>
+										</volist>
+									</tbody>
+								</table>
 							</div>
-						</div>
-					</section>
-				</div>
+							<div class="page_wrap">
+								<div class="pagination">
+									<{$page_show}>
+								</div>
+							</div>
+						</section>
+					</div>
+				</if>
 			</div>
 		</div>
 	</div>

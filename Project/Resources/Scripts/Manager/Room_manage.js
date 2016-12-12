@@ -34,6 +34,7 @@ var ScriptObject = {
 	createAddClient     :'<tr>\n\t<td class="check_item_add">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$i</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$signDate</td>\n</tr>',
 	createAddClient2    :'<tr>\n\t<td class="check_item_add2">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$i</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$signDate</td>\n</tr>',
 	createAddEmployee   :'<tr><td class="check_item_employee"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$department</td><td>$position</td><td>$mobile</td><td>$company</td></tr>',
+	createAddEmployee2  :'<tr><td class="check_item_employee2"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$department</td><td>$position</td><td>$mobile</td><td>$company</td></tr>',
 	status              :0,
 	pastNumber          :0,
 	bindEvent           :function(){
@@ -210,8 +211,11 @@ $(function(){
 	 * 房间详情的操作
 	 * 添加入住人员  参会人员按钮
 	 */
-	$('.right_details').find('.add').on('click', function(){
+	$('.right_details').find('.add_client').on('click', function(){
 		getClientAddDetails(''); // 获取所有的客户列表
+	});
+	$('.right_details').find('.add_employee').on('click', function(){
+		getEmployeeAddDetails(''); // 获取所有的客户列表
 	});
 	$('#add_recipient2').find('.main_search').on('click', function(){
 		var keyword = $('#add_recipient2').find('input[name=keyword]').val();
@@ -411,9 +415,11 @@ $(function(){
 				$('#add_recipient2').find('input[name=can_live]').val(capacity-i);
 				$right_details.find('.room_num').text(i);
 				if(Number(i)>=Number(capacity)){
-					$('.right_details').find('.add').hide();
+					$('.right_details').find('.add_client').hide();
+					$('.right_details').find('.add_employee').hide();
 				}else{
-					$('.right_details').find('.add').show();
+					$('.right_details').find('.add_client').show();
+					$('.right_details').find('.add_employee').show();
 				}
 				$('#list_c').html(str);
 				leave_btn();
@@ -426,12 +432,18 @@ $(function(){
 				});
 			}
 		});
-		$('.add').on('click', function(){
+		$('.add_client').on('click', function(){
 			var per = $('#add_recipient2').find('input[name=can_live]').val();
 			$('#add_recipient2').modal('show');
 			$('#add_recipient2').find('.can_live_p').text(per);
 		});
 		$('#add_recipient2').find('input[name=room_id]').val(id);
+		$('.add_employee').on('click', function(){
+			var per = $('#add_recipient2_employee').find('input[name=can_live]').val();
+			$('#add_recipient2_employee').modal('show');
+			$('#add_recipient2_employee').find('.can_live_p').text(per);
+		});
+		$('#add_recipient2_employee').find('input[name=room_id]').val(id);
 	});
 	// 点击创建房间 获取房间类型及其消息
 	$('.create_room').on('click', function(){
@@ -754,7 +766,7 @@ function getEmployeeAdd(keyword){
 function getEmployeeAddDetails(keyword){
 	var str = '';
 	Common.ajax({
-		data    :{requestType:'get_client', keyword:keyword},
+		data    :{requestType:'get_employee', keyword:keyword},
 		callback:function(r){
 			$.each(r, function(index, value){
 				var gender = '';
@@ -770,45 +782,48 @@ function getEmployeeAddDetails(keyword){
 				}else{
 					var signTime = '';
 				}
-				str += ScriptObject.createAddClient2.replace('$id', value.id).replace('$i', index+1)
+				str += ScriptObject.createAddEmployee2.replace('$num', index+1)
 								   .replace('$name', value.name)
-								   .replace('$gender', gender).replace('$position', value.position)
-								   .replace('$mobile', value.mobile).replace('$unit', value.unit)
-								   .replace('$signDate', signTime).replace('$clientType', value.type);
+								   .replace('$id', value.id).replace('$position', value.position)
+								   .replace('$mobile', value.mobile).replace('$company', value.company)
+								   .replace('$gender', gender).replace('$department', value.d_name);
 			});
-			$('#add_recipient2').find('#attendee_body_a').html(str);
-			$('.check_item_add2').iCheck({
+			$('#add_recipient2_employee').find('#employee_body2').html(str);
+			$('.check_item_employee2').iCheck({
 				checkboxClass:'icheckbox_square-green',
 				radioClass   :'iradio_square-green'
 			});
-			$('#add_recipient2 .check_item_add2').find('.iCheck-helper').on('click', function(){
+			$('#add_recipient2_employee .check_item_employee2').find('.iCheck-helper').on('click', function(){
 				var n = 0;
-				$('#add_recipient2 .check_item_add2').find('.icheckbox_square-green.checked').each(function(){
-					n++;
-				});
-				$('#add_recipient2 .selected_attendee').text(n);
+				$('#add_recipient2_employee .check_item_employee2').find('.icheckbox_square-green.checked')
+																   .each(function(){
+																	   n++;
+																   });
+				$('#add_recipient2_employee .selected_attendee').text(n);
 			});
 			// 当前人数
 			var m = 0;
-			$('#add_recipient2 .check_item_add2').each(function(){
+			$('#add_recipient2_employee .check_item_employee2').each(function(){
 				m++;
 			});
-			$('#add_recipient2').find('.current_attendee').text(m);
+			$('#add_recipient2_employee').find('.current_attendee').text(m);
 			// 全选checkbox 选择入住人中全选
-			$('#add_recipient2 .all_check_add2').find('.iCheck-helper').on('click', function(){
+			$('#add_recipient2_employee .all_check_employee2').find('.iCheck-helper').on('click', function(){
 				if($(this).parent('.icheckbox_square-green').hasClass('checked')){
-					$('#add_recipient2 .check_item_add2').find('.icheckbox_square-green').addClass('checked');
+					$('#add_recipient2_employee .check_item_employee2').find('.icheckbox_square-green')
+																	   .addClass('checked');
 				}else{
-					$('#add_recipient2 .check_item_add2').find('.icheckbox_square-green').removeClass('checked');
+					$('#add_recipient2_employee .check_item_employee2').find('.icheckbox_square-green')
+																	   .removeClass('checked');
 				}
 				// 选中的人员
 				var str = '', i = 0;
-				$('#add_recipient2 .check_item_add2  .icheckbox_square-green.checked').each(function(){
+				$('#add_recipient2_employee .check_item_employee2  .icheckbox_square-green.checked').each(function(){
 					var id = $(this).find('.icheck').val();
 					str += id+',';
 					i++;
 				});
-				$('#add_recipient2').find('.selected_attendee').text(i);
+				$('#add_recipient2_employee').find('.selected_attendee').text(i);
 			});
 		}
 	});

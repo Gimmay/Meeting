@@ -35,22 +35,28 @@
 					else return ['status' => false, 'message' => '您没有创建酒店的权限', '__ajax__' => false];
 				break;
 				case 'delete';
-					/** @var \Core\Model\HotelModel $room_model */
-					$room_model = D('Core/Hotel');
-					C('TOKEN_ON', false);
-					$hotel_result = $room_model->deleteHotel(I('post.id'));
+					if($this->permissionList['HOTEL.DELETE']){
+						/** @var \Core\Model\HotelModel $room_model */
+						$room_model = D('Core/Hotel');
+						C('TOKEN_ON', false);
+						$hotel_result = $room_model->deleteHotel(I('post.id'));
 
-					return array_merge($hotel_result, ['__ajax__' => false]);
+						return array_merge($hotel_result, ['__ajax__' => false]);
+					}
+					else return ['status' => true, 'message' => '您没有删除酒店的权限', '__ajax__' => false];
 				break;
 				case 'alter';
-					/** @var \Core\Model\HotelModel $room_model */
-					$room_model = D('Core/Hotel');
-					$id         = I('post.id', 0, 'int');
-					$data       = I('post.', '');
-					C('TOKEN_ON', false);
-					$hotel_result = $room_model->alterHotel(['id' => $id], $data);
+					if($this->permissionList['HOTEL.ALTER']){
+						/** @var \Core\Model\HotelModel $room_model */
+						$room_model = D('Core/Hotel');
+						$id         = I('post.id', 0, 'int');
+						$data       = I('post.', '');
+						C('TOKEN_ON', false);
+						$hotel_result = $room_model->alterHotel(['id' => $id], $data);
 
-					return array_merge($hotel_result, ['__ajax__' => false]);
+						return array_merge($hotel_result, ['__ajax__' => false]);
+					}
+					else return ['status' => true, 'message' => '您没有修改酒店的权限', '__ajax__' => false];
 				break;
 				case 'get_hotel':
 					$id = I('post.id', 0, 'int');
@@ -63,37 +69,43 @@
 					return array_merge($data, ['__ajax__' => true]);
 				break;
 				case 'cancel_choose':
-					$id = I('post.id', 0, 'int');
-					C('TOKEN_ON', false);
-					/** @var \Core\Model\MeetingModel $meeting_model */
-					$meeting_model  = D('Core/Meeting');
-					$meeting_result = $meeting_model->findMeeting(1, ['id' => I('get.mid', 0, 'int')]);
-					$hid            = explode(',', $meeting_result['hid']);
-					$hotel_id       = [];
-					foreach($hid as $k => $v){
-						if($id == $v){
-							continue;
+					if($this->permissionList['HOTEL.ASSIGN']){
+						$id = I('post.id', 0, 'int');
+						C('TOKEN_ON', false);
+						/** @var \Core\Model\MeetingModel $meeting_model */
+						$meeting_model  = D('Core/Meeting');
+						$meeting_result = $meeting_model->findMeeting(1, ['id' => I('get.mid', 0, 'int')]);
+						$hid            = explode(',', $meeting_result['hid']);
+						$hotel_id       = [];
+						foreach($hid as $k => $v){
+							if($id == $v){
+								continue;
+							}
+							else{
+								$hotel_id[] = $v;
+							}
 						}
-						else{
-							$hotel_id[] = $v;
-						}
-					}
-					$hotel_id          = implode(',', $hotel_id);
-					$meeting_alter_hid = $meeting_model->alterMeeting(['id' => $meeting_result['id']], ['hid' => $hotel_id]);
+						$hotel_id          = implode(',', $hotel_id);
+						$meeting_alter_hid = $meeting_model->alterMeeting(['id' => $meeting_result['id']], ['hid' => $hotel_id]);
 
-					return array_merge($meeting_alter_hid, ['__ajax__' => true]);
+						return array_merge($meeting_alter_hid, ['__ajax__' => true]);
+					}
+					else return ['status' => true, 'message' => '您没有分配酒店的权限', '__ajax__' => false];
 				break;
 				case 'choose':
-					$id = I('post.id', 0, 'int');
-					C('TOKEN_ON', false);
-					/** @var \Core\Model\MeetingModel $meeting_model */
-					$meeting_model     = D('Core/Meeting');
-					$meeting_result    = $meeting_model->findMeeting(1, ['id' => I('get.mid', 0, 'int')]);
-					$hotel_id          = $id.','.$meeting_result['hid'];
-					$hotel_id          = trim($hotel_id, ',');
-					$meeting_alter_hid = $meeting_model->alterMeeting(['id' => $meeting_result['id']], ['hid' => $hotel_id]);
+					if($this->permissionList['HOTEL.ASSIGN']){
+						$id = I('post.id', 0, 'int');
+						C('TOKEN_ON', false);
+						/** @var \Core\Model\MeetingModel $meeting_model */
+						$meeting_model     = D('Core/Meeting');
+						$meeting_result    = $meeting_model->findMeeting(1, ['id' => I('get.mid', 0, 'int')]);
+						$hotel_id          = $id.','.$meeting_result['hid'];
+						$hotel_id          = trim($hotel_id, ',');
+						$meeting_alter_hid = $meeting_model->alterMeeting(['id' => $meeting_result['id']], ['hid' => $hotel_id]);
 
-					return array_merge($meeting_alter_hid, ['__ajax__' => true]);
+						return array_merge($meeting_alter_hid, ['__ajax__' => true]);
+					}
+					else return ['status' => true, 'message' => '您没有分配酒店的权限', '__ajax__' => false];
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数'];
