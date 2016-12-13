@@ -203,7 +203,6 @@
 							'sign_time'   => time(),
 							'sign_type'   => 1
 						]);
-
 						return array_merge($result, ['__ajax__' => false]);
 					}
 					else return ['status' => false, 'message' => '您没有为签到点的参会人员签到的权限', '__ajax__' => false];

@@ -131,12 +131,29 @@
 							'sign_time'        => time(),
 							'sign_status'      => 1,
 							//'sign_place_id'=>1,
-							'sign_director_id' => $option['cid'],
+							'sign_director_id' => $cid,
 							'sign_type'        => 2
 						]);
 						if($result['status']){
 							$message_logic = new MessageLogic();
 							$message_logic->send($meeting_id, 1, 1, [$cid]);
+							/** @var \Core\Model\SignResultModel $sign_result_model */
+							$sign_result_model = D('Core/SignResult');
+							$signed_count      = $join_model->findRecord(0, [
+								'mid'         => $meeting_id,
+								'cid'         => $cid,
+								'sign_status' => 1,
+								'status'      => 1
+							]);
+							C('TOKEN_ON', false);
+							$sign_result_model->createRecord([
+								'mid'       => $meeting_id,
+								'cid'       => $cid,
+								'sign_time' => time(),
+								'creatime'  => time(),
+								'creator'   => $cid,
+								'order'     => $signed_count+1
+							]);
 						}
 
 						return array_merge($result, ['__ajax__' => true]);

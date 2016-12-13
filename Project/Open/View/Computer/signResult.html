@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>参会人员 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body data-meeting-id="<{:I('get.mid')}>">
+	<div id="mt_success">
+		<p>热烈欢迎</p>
+		<p class="meeting_name"><{$meeting.name}></p>
+		<p>签到成功</p>
+		<p>来自<span class="unit"></span>的参会嘉宾<span class="client_name"></span></p>
+		<p>第<span class="order"></span>位签到成功</p>
+	</div>
+	<div class="background">
+		<img src="<{$Think.COMMON_IMAGE_PATH}>/signSuccess.jpg" alt="" style="width: 100%">
+	</div>
+	<script>
+		var ThisObject = {
+			data:{
+				refreshTime:parseInt("<{:C('SIGN_RESULT_REFRESH_TIME')}>")
+			}
+		};
+	</script>
+</body>
+</html>

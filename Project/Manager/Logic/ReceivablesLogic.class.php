@@ -177,7 +177,7 @@
 					]);
 					if($employee_result){
 						$message_logic = new MessageLogic();
-						$sms_send      = $message_logic->send($mid, 0, 3, [$employee_result['id']]);
+						$message_logic->send($mid, 0, 3, [$employee_result['id']]);
 					}
 
 					return array_merge($receivables_result, [
@@ -435,27 +435,19 @@
 					//					exit;
 					/** @var \Core\Model\ReceivablesModel $receivables_model */
 					$receivables_model = D('Core/Receivables');
-					/** @var \Core\Model\CouponModel $coupon_model */
-					$coupon_model = D('Core/Coupon');
 					/** @var \Core\Model\CouponItemModel $coupon_item_model */
 					$coupon_item_model = D('Core/CouponItem');
 					/** @var \Core\Model\ReceivablesOptionModel $receivables_option_model */
 					$receivables_option_model = D('Core/ReceivablesOption');
-					$receivables_logic        = new \Core\Logic\ReceivablesLogic();
-					$makeOrderNumber          = $receivables_logic->makeOrderNumber();
 					$type                     = I('post.type', '');
 					$mid                      = I('get.mid', 0, 'int');
 					$cid                      = I('post.client_name', 0, 'int');
 					$data                     = I('post.');
 					$payee_id                 = I('post.payee_id', 0, 'int');
 					$creator                  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					$save_data                = [];
-					$coupon_item_project      = [];   //项目
-					$coupon_item_code         = [];     //代金券
 					$data['coupon_code']      = I('post.coupon_code');
 					$data['coupon_ids']       = I('post.select_code');
 					$place                    = I('post.place', '');
-					$temp                     = [];
 					C('TOKEN_ON', false);
 					$option = [];
 					foreach($type as $k => $v){
@@ -466,7 +458,7 @@
 							'time'         => time(),
 							'type'         => $data['type'][$k],
 							'payee_id'     => $payee_id,
-							'order_number' => $makeOrderNumber,
+							'order_number' => $data['order_number'],
 							'coupon_code'  => $data['name'][$k],
 							'creatime'     => time(),    //创建时间
 							'creator'      => $creator,    //当前创建者
@@ -508,7 +500,7 @@
 								'creatime'  => time(),    //创建时间
 								'creator'   => $creator    //当前创建者
 							]);
-							$receivables_model->alterRecord(['id' => $receivables_result['id']], ['coupon_ids' => $coupon_item_result]); //把项目类型的id 插入到对应收款的coupon_ids
+							$receivables_model->alterRecord(['id' => $receivables_result['id']], ['coupon_ids' => $coupon_item_result['id']]); //把项目类型的id 插入到对应收款的coupon_ids
 							foreach($data["price$k"] as $k1 => $v1){
 								$option = [
 									'rid'         => $receivables_result['id'],
@@ -651,22 +643,25 @@
 					if($record){
 						$receivables_option_list = $receivables_option_model->findRecord(2, ['rid' => $record['id']]);
 						$price                   = 0;
-						$pay_method_count        = 0;
-						$pay_method_arr          = [
-							'id'    => [],
-							'name'  => [],
-							'price' => 0
-						];
+						$pay_method_i            = 0;
+						$pay_method_arr          = $pay_method_ids = $pay_method_index = [];
 						foreach($receivables_option_list as $key => $val){
 							$pay_method = $pay_method_model->findRecord(1, ['id' => $val['pay_method'], 'status' => 1]);
 							$price += $val['price'];
 							$receivables_option_list[$key]['source_type'] = $core_receivables_logic->getReceivablesSourceType($val['type']);
 							$receivables_option_list[$key]['pay_method']  = $pay_method['name'];
-							if(!in_array($val['pay_method'], $pay_method_arr['id'])){
-								$pay_method_arr['id'][]   = $val['pay_method'];
-								$pay_method_arr['name'][] = $pay_method['name'];
-								$pay_method_arr['price'] += $val['price'];
-								$pay_method_count++;
+							if(!in_array($val['pay_method'], $pay_method_ids)){
+								$pay_method_ids[$pay_method_i]        = $val['pay_method'];
+								$pay_method_index[$val['pay_method']] = $pay_method_i;
+								$pay_method_arr[$pay_method_i]        = [
+									'name'  => $pay_method['name'],
+									'price' => $val['price']
+								];
+								$pay_method_i++;
+							}
+							else{
+								$i = $pay_method_index[$val['pay_method']];
+								$pay_method_arr[$i]['price'] += $val['price'];
 							}
 						}
 						$client                              = $client_model->findClient(1, [
@@ -1180,7 +1175,7 @@
 						$data[$key]['client_name']      = $client['name'];
 						$data[$key]['unit']             = $client['unit'];
 						$data[$key]['payee_name']       = $payee['name'];
-						$data[$key]['coupon_code']      = $data[$key]['coupon_code'] ? "($coupon_item_str)" : '未使用';
+						$data[$key]['coupon_code']      = $coupon_item_str != '' ? "($coupon_item_str)" : '';
 						$data[$key]['coupon_name']      = $coupon_name;
 						$data[$key]['price']            = $price;
 						$data[$key]['receivables_type'] = $core_receivables_logic->getReceivablesType($val['type']);

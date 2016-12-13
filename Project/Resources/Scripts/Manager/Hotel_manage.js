@@ -129,3 +129,19 @@ $(function(){
 		}
 	});
 });
+function checkIsEmpty(){
+	var name = $('#create_room').find('#name').val();
+	if(name == ''){
+		ManageObject.object.toast.toast('酒店名称不能为空！');
+		return false;
+	}
+	return true;
+}
+function checkIsEmptyAlter(){
+	var name = $('#alter_hotel').find('#name_a').val();
+	if(name == ''){
+		ManageObject.object.toast.toast('酒店名称不能为空！');
+		return false;
+	}
+	return true;
+}

@@ -7,7 +7,6 @@
 	 */
 	namespace Manager\Controller;
 
-	use Manager\Logic\EmployeeLogic;
 	use Manager\Logic\ExcelLogic;
 	use Manager\Logic\ReceivablesLogic;
 	use Manager\Model\ClientModel;
@@ -47,6 +46,8 @@
 				$pay_method_model = D('Core/PayMethod');
 				/** @var \Core\Model\MeetingModel $meeting_model */
 				$meeting_model     = D('Core/Meeting');
+				$receivables_logic = new \Core\Logic\ReceivablesLogic();
+				$order_number      = $receivables_logic->makeOrderNumber();
 				$meeting_result    = $meeting_model->findMeeting(1, ['id' => $this->meetingID]);
 				$pay_method_result = $pay_method_model->findRecord(2, ['status' => '1']);
 				/** @var \Core\Model\PosMachineModel $pos_machine_model */
@@ -58,6 +59,7 @@
 				$employee           = $employee_logic->getEmployeeSelectList();
 				$client_result      = $client_model->findClient(1, ['id' => I('get.cid', 0, 'int')]);
 				$employee_result    = $employee_model->findEmployee(1, ['id' => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')]);
+				$this->assign('order_number', $order_number);
 				$this->assign('meeting', $meeting_result);
 				$this->assign('client', $client);//遍历当前会议的所有的参会人员
 				$this->assign('employee', $employee);//遍历当前会议的所有的工作人员
@@ -144,8 +146,9 @@
 					'keyword' => $keyword
 				], $option));
 				/* 分页设置 */
-				$page_object = new Page(count($receivables_total), I('get._page_count', C('PAGE_RECORD_COUNT'), 'int'));
+				$page_object = new Page($receivables_total, I('get._page_count', C('PAGE_RECORD_COUNT'), 'int'));
 				\ThinkPHP\Quasar\Page\setTheme1($page_object);
+				$page_show        = $page_object->show();
 				$receivables_list = $receivables_model->findRecord(2, array_merge([
 					'status'  => 1,
 					'mid'     => $this->meetingID,
@@ -155,6 +158,7 @@
 				], $option));
 				$receivables_list = $receivables_logic->setData('details:set_column', $receivables_list);
 				$this->assign('list', $receivables_list);
+				$this->assign('page_show', $page_show);
 				$this->display();
 			}
 			else $this->error('您没有查看收款记录的权限');

@@ -6,6 +6,7 @@ var ThisObject = {
 	aTemp               :'<a class="btn btn-default btn-sm " href="javascript:void(0)" role="button" data-id="$id">$name</a>',
 	aActiveTemp         :'<a class="btn btn-default btn-sm active" href="javascript:void(0)" role="button" data-id="$id">$name</a>',
 	uploadInterval      :null,
+	trTemp              :'<tr><td colspan="2" class="type2" style="text-align: center">$type</td>\n\t<td colspan="2" class="price2" style="text-align: center">$price</td>\n</tr>',
 	word                :0,
 	option              :'<option value="$id" data-price="$price">$name</option>',
 	bindEvent           :function(){
@@ -70,6 +71,29 @@ $(function(){
 			data    :{requestType:'get_receivables', id:id},
 			callback:function(r){
 				console.log(r);
+				var time = new Date(parseInt(r.creatime)*1000);
+				time     = time.format('yyyy年MM月dd日');
+				$('#print').find('.time').text(time);
+				$('#print').find('.unit').text(r.unit);
+				$('#print').find('.client_name').text(r.client);
+				$('#print').find('.project_type').text(r.receivables_type);
+				$('#print').find('.price_capital').text(r.price_word);
+				$('#print').find('.identifier').text(r.order_number);
+				$('#print').find('.price').text(r.price);
+				$('#print').find('.price').text(r.price);
+				var str = '', i = 0;
+				$.each(r.option.pay_method_list, function(index, value){
+					if(index == 0){
+						$('.type1').text(value.name);
+						$('.price1').text(value.price);
+					}else{
+						str += ThisObject.trTemp.replace('$type', value.name).replace('$price', value.price);
+					}
+					i++;
+				});
+				$('.sign_tr').find('.rmb').attr('rowspan', i);
+				$('.sign_tr').after(str);
+				$("#print").printArea();
 			}
 		})
 	});
@@ -218,7 +242,8 @@ $(function(){
 			})
 		}
 	})
-});
+})
+;
 // 添加收款不为空控制
 function checkIsEmpty(){
 	var $add_receivables = $('#add_receivables');

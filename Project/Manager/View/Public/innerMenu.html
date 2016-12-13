@@ -8,7 +8,7 @@
 	</div>
 	<div class="sidenav">
 		<ul class="sidenav_list" id="side_menu">
-			<if condition="$permission_list['MEETING.BRIEF']">
+			<if condition="$permission_list['MEETING.VIEW-BRIEF']">
 				<li class="side_item <if condition='$cv_name eq Meeting_index'>active</if>">
 					<a href="<{:U('Meeting/index', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-th-large"></i> <span class="nav-label">会议中心</span>

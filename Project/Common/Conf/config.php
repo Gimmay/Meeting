@@ -20,4 +20,5 @@
 		'DEFAULT_EMPLOYEE_PASSWORD' => '', // 默认的员工密码
 		'SHOW_PAGE_TRACE'           => false, // 是否显示tp调试工具
 		'AUTO_SEND_TYPE'            => 2, // 系统自动发送类型
+		'SIGN_RESULT_REFRESH_TIME'  => 10
 	];

@@ -33,8 +33,8 @@ var ScriptObject = {
 	roomTypeSelectedTemp:'<option value="$id" selected>$name($surplusNumber/$totalNumber)</option>',
 	createAddClient     :'<tr>\n\t<td class="check_item_add">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$i</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$signDate</td>\n</tr>',
 	createAddClient2    :'<tr>\n\t<td class="check_item_add2">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$i</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$signDate</td>\n</tr>',
-	createAddEmployee   :'<tr><td class="check_item_employee"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$position</td><td>$mobile</td><td>$unit</td></tr>\n',
-	createAddEmployee2  :'<tr><td class="check_item_employee2"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$position</td><td>$mobile</td><td>$unit</td></tr>',
+	createAddEmployee   :'<tr><td class="check_item_employee"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$unit</td><td>$position</td><td>$mobile</td></tr>\n',
+	createAddEmployee2  :'<tr><td class="check_item_employee2"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$unit</td><td>$position</td><td>$mobile</td></tr>',
 	status              :0,
 	pastNumber          :0,
 	bindEvent           :function(){
@@ -255,6 +255,9 @@ $(function(){
 		$('#distribution_room').find('.mr_17').removeClass('hide');
 		$('#distribution_room').find('input[name=client]').val(str);
 		$('#distribution_room').find('#selected_attendee_count_by_1').text(nameStr);
+		var employeeArr = $('#distribution_room').find('input[name=employee]').val();
+		var narr        = str.concat(employeeArr);
+		$('#distribution_room').find('input[name=person]').val(narr);
 		ThisObject.object.loading.complete();
 		$('#add_recipient').modal('hide')
 	});
@@ -289,6 +292,9 @@ $(function(){
 		$('#distribution_room').find('.mr_17').removeClass('hide');
 		$('#distribution_room').find('input[name=employee]').val(str);
 		$('#distribution_room').find('#selected_attendee_count_by_2').text(nameStr);
+		var clientArr = $('#distribution_room').find('input[name=client]').val();
+		var narr      = str.concat(clientArr);
+		$('#distribution_room').find('input[name=person]').val(narr);
 		ThisObject.object.loading.complete();
 		$('#add_recipient_employee').modal('hide');
 	});
@@ -551,9 +557,13 @@ function leave_btn(){
 function checkAssign(){
 	var capacity_v = $('#capacity').val();
 	var number     = $('input[name=person]').val();
-	var surplus    = $('#distribution_room').find('#surplus').val();
-	var a          = number.split(",");
-	var len        = a.length;
+	var n          = number.charAt(number.length-1);
+	if(n == ','){
+		number = number.substring(0, number.length-1)
+	}
+	var surplus = $('#distribution_room').find('#surplus').val();
+	var a       = number.split(",");
+	var len     = a.length;
 	if(capacity_v<len){
 		ThisObject.object.toast.toast('选择人数不能大于可容纳人数！');
 		return false;

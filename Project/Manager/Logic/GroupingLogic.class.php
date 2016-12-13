@@ -76,7 +76,8 @@
 							'mid'           => $mid,
 							'status'        => 1,
 							'review_status' => 1,
-							'keyword'       => I('post.keyword', '')
+							'keyword'       => I('post.keyword', ''),
+							'_order'        => 'unit asc,type asc'
 						]);
 						$group_member_result = $group_member_model->findRecord(2, [
 							'status' => 1,
@@ -166,8 +167,8 @@
 				break;
 				case 'empty':
 					if($this->permissionList['GROUP.ASSIGN-CLIENT']){
-						$gid = I('post.gid', 0, 'int');
-						$time = I('get.date',0,'int');
+						$gid  = I('post.gid', 0, 'int');
+						$time = I('get.date', 0, 'int');
 						C('TOKEN_ON', false);
 						/** @var \Core\Model\GroupMemberModel $group_member_model */
 						$group_member_model = D('Core/GroupMember');
@@ -176,7 +177,7 @@
 						//					foreach ($group_member_result as $k=>$v){
 						//						$id[].= $v['id'];
 						//					}
-						$group_member_delete = $group_member_model->deleteRecord(['gid' => $gid,'time'=>$time]);
+						$group_member_delete = $group_member_model->deleteRecord(['gid' => $gid, 'time' => $time]);
 
 						return array_merge($group_member_delete, ['__ajax__' => false]);
 					}

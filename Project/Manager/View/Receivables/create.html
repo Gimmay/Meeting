@@ -80,10 +80,13 @@
 													<span>收款人:</span><span><div id="payee_id"></div></span>
 												</div>
 												<div class="col-sm-2" style="width: 280px; margin: 0; padding: 0;">
-													<span>收款时间:</span><span><input type="text" class="form-control" id="receivables_time" value="<{:date('Y-m-d H:i:s')}>"></span>
+													<span>收款时间:</span><span><input type="text" class="form-control" id="receivables_time" name="time" value="<{:date('Y-m-d H:i:s')}>"></span>
 												</div>
 												<div class="col-sm-2" style="width: 280px; margin: 0; padding: 0;">
-													<span>收款地点:</span><span><input type="text" class="form-control" id="place"></span>
+													<span>收款地点:</span><span><input type="text" class="form-control" name="place" id="place"></span>
+												</div>
+												<div class="col-sm-2" style="width: 280px; margin: 0; padding: 0;">
+													<span>收据号:</span><span><input type="text" class="form-control" name="order_number" id="order_number"></span>
 												</div>
 											</div>
 										</div>

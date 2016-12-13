@@ -64,7 +64,7 @@
 				$client_list = $model->findRecord(2, array_merge([
 					'keyword' => I('get.keyword', ''),
 					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-					'_order'  => I('get._column', 'main.sign_time').' '.I('get._sort', 'desc').', sub.pinyin_code',
+					'_order'  => I('get._column', 'main.sign_time').' '.I('get._sort', 'desc').', sub.unit, sub.pinyin_code',
 					'status'  => 'not deleted',
 					'mid'     => $this->meetingID
 				], $options));

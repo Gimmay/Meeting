@@ -583,6 +583,23 @@
 								]);
 								if($result['status']){
 									$send_list[] = $val;
+									/** @var \Core\Model\SignResultModel $sign_result_model */
+									$sign_result_model = D('Core/SignResult');
+									$signed_count      = $join_model->findRecord(0, [
+										'mid'         => $mid,
+										'cid'         => $val,
+										'sign_status' => 1,
+										'status'      => 1
+									]);
+									C('TOKEN_ON', false);
+									$sign_result_model->createRecord([
+										'mid'       => $mid,
+										'cid'       => $val,
+										'sign_time' => time(),
+										'creatime'  => time(),
+										'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+										'order'     => $signed_count+1
+									]);
 									$count++;
 								}
 							}
@@ -973,14 +990,18 @@
 					$join_model = D('Core/join');
 					C('TOKEN_ON', false);
 					$id        = I('post.id', 0, 'int');
-					$join_list = $join_model->findRecord(1,['cid'=>$id,'status'=>1,'mid'=>I('get.mid',0,'int')]);
-//					if($join_list['gift_status'] == 1){
-//						return array_merge(['message' => '礼品已经领取', 'status' => false], [
-//							'__ajax__' => false
-//						]);
-//					}else{
-//					}
+					$join_list = $join_model->findRecord(1, ['cid'    => $id,
+															 'status' => 1,
+															 'mid'    => I('get.mid', 0, 'int')
+					]);
+					//					if($join_list['gift_status'] == 1){
+					//						return array_merge(['message' => '礼品已经领取', 'status' => false], [
+					//							'__ajax__' => false
+					//						]);
+					//					}else{
+					//					}
 					$join_result = $join_model->alterRecord(['id' => $join_list['id']], ['gift_status' => 1]);
+
 					return array_merge($join_result, [
 						'__ajax__' => false
 					]);
@@ -1090,7 +1111,7 @@
 							elseif(!stripos($val, '是') === -1) $val = 1;
 							elseif(!stripos($val, '老客') === -1) $val = 0;
 							elseif(!stripos($val, '否') === -1) $val = 0;
-							else $val = 1;
+							else $val = '';
 						break;
 					}
 					// 指定特殊列的值
