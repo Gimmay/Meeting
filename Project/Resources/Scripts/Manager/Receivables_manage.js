@@ -81,68 +81,35 @@ $(function(){
 	// 打印 print
 	$('.btn_print').on('click', function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
-		$('#print').css('left', 0);
 		Common.ajax({
 			data    :{requestType:'get_receivables', id:id},
 			callback:function(r){
 				console.log(r);
-				var htm = '';
-				$.each(r, function(index, value){
-					console.log(value);
-					$('#print').find('.client_name').text(value.client_name);
-					$('#print').find('.unit').text(value.unit);
-					// 判断项目类型
-					var project_type;
-					console.log(value.type);
-					switch(parseInt(value.type)){
-						case 1:
-							project_type = '门票';
-							break;
-						case 2:
-							project_type = '代金券';
-							break;
-						case 3:
-							project_type = '产品';
-							break;
-						case 4:
-							project_type = '其他';
-							break;
-						case 5:
-							project_type = '定金';
-							break;
-						case 6:
-							project_type = '课程费';
-							break;
-						case 7:
-							project_type = '产品费';
-							break;
-						case 8:
-							project_type = '场餐费';
-							break;
+				/*var time = new Date(parseInt(r.creatime)*1000);
+				time     = time.format('yyyy年MM月dd日');
+				$('#print').find('.time').text(time);
+				$('#print').find('.unit').text(r.unit);
+				$('#print').find('.client_name').text(r.client);
+				$('#print').find('.project_type').text(r.receivables_type);
+				$('#print').find('.price_capital').text(r.price_word);
+				$('#print').find('.identifier').text(r.order_number);
+				$('#print').find('.price').text(r.price);
+				$('#print').find('.price').text(r.price);
+				var str = '', i = 0;
+				$.each(r.option.pay_method_list, function(index, value){
+					if(index == 0){
+						$('.type1').text(value.name);
+						$('.price1').text(value.price);
+					}else{
+						str += ThisObject.trTemp.replace('$type', value.name).replace('$price', value.price);
 					}
-					console.log(project_type);
-					// 判断会前 会中 会后 收款
-					var source_type;
-					if(value.source_type == 1){
-						source_type = '会前收款';
-					}else if(value.source_type == 2){
-						source_type = '会中收款';
-					}else if(value.source_type == 3){
-						source_type = '会后收款';
-					}
-					// 收款时间
-					var time = Common.getLocalTime(value.time);
-					htm += ThisObject.receivablesTemp.replace('$projectType', project_type)
-									 .replace('$projectName', value.name)
-									 .replace('$payMethod', value.method_name).replace('$pos', value.pos_name)
-									 .replace('$receivablesType', source_type)
-									 .replace('$employeeName', value.employee_name)
-									 .replace('$time', time).replace('$place', value.place)
-									 .replace('$price', value.price)
+					i++;
 				});
-				$('.receivables_body').html(htm);
+				$('.sign_tr').find('.rmb').attr('rowspan', i);
+				$('.sign_tr').after(str);
+				$("#print").printArea();*/
 			}
-		});
+		})
 	});
 });
 

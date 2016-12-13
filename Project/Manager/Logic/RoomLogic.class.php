@@ -46,12 +46,12 @@
 							$room_result         = $room_model->createRecord($data);
 							$person_id           = explode(',', $data['person']);
 							foreach($person_id as $v){
-								$data['rid']        = $room_result['id'];
-								$data['jid']        = $v;
-								$data['come_time']  = strtotime(I('post.come_time'));
-								$data['creator']    = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-								$data['creatime']   = time();
-								$assign_room_result = $assign_room_model->createRecord($data);
+								$data['rid']       = $room_result['id'];
+								$data['jid']       = $v;
+								$data['come_time'] = strtotime(I('post.come_time'));
+								$data['creator']   = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+								$data['creatime']  = time();
+								$assign_room_model->createRecord($data);
 							}
 						}
 
@@ -160,10 +160,11 @@
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model  = D('Core/Join');
 					$join_result = $join_model->findRecord(2, [
-						'status'  => 1,
-						'type'    => '内部员工',
-						'mid'     => I('get.mid', 0, 'int'),
-						'keyword' => $keyword
+						'status'        => 1,
+						'type'          => '内部员工',
+						'mid'           => I('get.mid', 0, 'int'),
+						'keyword'       => $keyword,
+						'review_status' => 1,
 					]);
 
 					return array_merge($join_result, ['__ajax__' => true]);
@@ -455,32 +456,53 @@
 			$room_model = D('Core/Room');
 			/** @var \Core\Model\RoomTypeModel $room_type_model */
 			$room_type_model = D('Core/RoomType');
-			$room_result     = $room_model->findRoom(2, [
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			/** @var \Core\Model\JoinModel $join_model */
+			$join_model  = D('Core/Join');
+			$room_result = $room_model->findRoom(2, [
 				'hid'     => I('get.hid', 0, 'int'),
 				'status'  => 'not deleted',
 				'keyword' => I('get.keyword', 0, 'int'),
 			]);
+			$join_result = [];
 			foreach($room_result as $k => $v){
-				$room_type_result             = $room_type_model->findRecord(1, ['id' => $v['type']]);
-				$room_result[$k]['type_name'] = $room_type_result['name'];
-				$room_result[$k]['count']     = $assign_room_model->findRecord(0, [
+				$assign_room_result = $assign_room_model->findRecord(2, [
 					'rid'              => $v['id'],
 					'status'           => 1,
 					'occupancy_status' => 1
 				]);
+				$check_name         = '';
+				foreach($assign_room_result as $kk => $vv){
+					$join_result = $join_model->findRecord(1, ['id' => $vv['jid']]);
+					$check_name .= $join_result['name'].',';
+				}
+				$room_type_result                 = $room_type_model->findRecord(1, ['id' => $v['type']]);
+				$room_result[$k]['type_name']     = $room_type_result['name'];
+				$employee_result                  = $employee_model->findEmployee(1, ['id' => $v['creator']]);
+				$room_result[$k]['employee_name'] = $employee_result['name'];
+				$room_result[$k]['count']         = $assign_room_model->findRecord(0, [
+					'rid'              => $v['id'],
+					'status'           => 1,
+					'occupancy_status' => 1
+				]);
+				$room_result[$k]['check_name']    = $check_name;
+				$join_result                      = $room_result;
 			}
 
-			return $room_result;
+			return $join_result;
 		}
 
 		public function selectMeetingJoin(){
 			/** @var \Core\Model\JoinModel $join_model */
 			$join_model  = D('Core/Join');
 			$join_result = $join_model->findRecord(2, [
-				'mid'     => I('get.mid', 0, 'int'),
-				'keyword' => I('post.keyword'),
-				'_order'  => 'sign_time desc,pinyin_code asc',
-				'status'  => 1,
+				'mid'           => I('get.mid', 0, 'int'),
+				'keyword'       => I('post.keyword'),
+				'_order'        => 'sign_time desc,pinyin_code asc',
+				'status'        => 1,
+				'review_status' => 1,
+				'type'          => 'not employee'
 			]);
 			/** @var \Core\Model\AssignRoomModel $assign_room_model */
 			$assign_room_model = D('Core/AssignRoom');
@@ -493,6 +515,7 @@
 				$id [] = $room_result[$k]['id'];
 			}
 			foreach($id as $k1 => $v1){
+
 				$assign_room_result = $assign_room_model->findRecord(2, ['rid' => $v1, 'status' => 1]);
 				foreach($assign_room_result as $k2 => $v2){
 					$jid [] = $assign_room_result[$k2]['jid'];

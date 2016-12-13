@@ -89,9 +89,10 @@
 											<td width="8%">价格</td>
 											<td width="8%">可容纳人数</td>
 											<td width="10%">入住情况</td>
-											<td width="8%">房客类型</td>
+											<td width="8%">入住人员</td>
 											<td width="10%">创建时间</td>
 											<td width="13%">备注</td>
+											<td width="5%">创建房间者</td>
 											<td width="20%">操作</td>
 										</tr>
 									</thead>
@@ -115,9 +116,10 @@
 														未住满(已入住<span style="color: red;"><{$room_list.count}></span>人,可容纳<span style="color: red;"><{$room_list.capacity}>人</span>)
 													</if>
 												</td>
-												<td class="client_type"><{$room_list.client_type}></td>
+												<td class="client_type"><{$room_list.check_name}></td>
 												<td class="come_time"><{$room_list.creatime|date='Y-m-d H:s',###}></td>
 												<td class="comment"><{$room_list.comment}></td>
+												<td class="comment"><{$room_list.employee_name}></td>
 												<td>
 													<div class="btn-group" data-id="<{$room_list.id}>">
 														<if condition="$permission_list['ROOM.ALTER']">
@@ -435,16 +437,16 @@
 							<table class="table table-bordered" style="text-align: center">
 								<thead>
 									<tr>
-										<td width="5%" class="all_check_employee">
+										<td width="10%" class="all_check_employee">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="5%">序号</td>
+										<td width="10%">序号</td>
+										<td width="10%">姓名</td>
+										<td width="10%">性别</td>
+										<!--	<td width="10%">部门</td>-->
+										<td width="10%">职务</td>
+										<td width="20%">手机号</td>
 										<td width="20%">单位</td>
-										<td width="20%">姓名</td>
-										<td width="5%">性别</td>
-										<!--<td width="10%">部门</td>-->
-										<td width="20%">职务</td>
-										<td width="25%">手机号</td>
 									</tr>
 								</thead>
 								<tbody id="employee_body">
@@ -574,16 +576,16 @@
 							<table class="table table-bordered" style="text-align: center">
 								<thead>
 									<tr>
-										<td width="5%" class="all_check_employee2">
+										<td width="10%" class="all_check_employee2">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="5%">序号</td>
-										<td width="20%">单位</td>
-										<td width="20%">姓名</td>
-										<td width="5%">性别</td>
+										<td width="10%">序号</td>
+										<td width="10%">姓名</td>
+										<td width="10%">性别</td>
 										<!--<td width="10%">部门</td>-->
-										<td width="20%">职务</td>
-										<td width="25%">手机号</td>
+										<td width="10%">职务</td>
+										<td width="20%">手机号</td>
+										<td width="20%">单位</td>
 									</tr>
 								</thead>
 								<tbody id="employee_body2">

@@ -55,6 +55,12 @@
 					$where['sub.status']  = $filter['status'];
 				}
 			};
+			if(isset($filter['type'])){
+				$status = strtolower($filter['type']);
+				if($status == 'not employee'){
+					$where['sub.type'] = ['neq', '内部员工'];
+				}
+			};
 			if(isset($filter['sign_status'])){
 				$status = strtolower($filter['sign_status']);
 				if($status == 'not signed') $where['sign_status'] = ['neq', 1];
