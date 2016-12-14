@@ -10,7 +10,6 @@
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/ZeroClipboard/ZeroClipboard.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -30,7 +29,7 @@
 										<div class="m_content" style="background: #46B9CB">
 											<h3 class="t1">参会人员统计</h3>
 											<div class="desc">
-												<p>报名人数：<{$statistics.joined}>人</p>
+												<p>报名人数：<{$statistics.joined}>人 (员工：<{$statistics.employee}>人 / 客户：<{$statistics.client}>人)</p>
 												<p>签到人数：<{$statistics.signed}>人</p>
 											</div>
 											<div class="foot">
@@ -53,46 +52,11 @@
 									</div>
 								</div>
 							</div>
-							<div class="table_wrap">
-								<header class="title">邀约外链</header>
-								<div class="input-group frame_link">
-									<span class="input-group-addon">手机版邀约外链</span>
-									<!--<input class="form-control" value="<iframe src='<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Mobile/invite', ['mid'=>I('get.mid', 0, 'int')])}>' frameborder='0'></iframe>" readonly placeholder="" id="mobile_invite_link">-->
-									<input class="form-control" value="<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Mobile/invite', ['mid'=>I('get.mid', 0, 'int')])}>" readonly placeholder="" id="mobile_invite_link">
-									<span class="input-group-btn">
-										<button class="btn btn-default" id="mobile_invite_link_copy_btn" data-clipboard-target="mobile_invite_link">复制</button>
-									</span>
-								</div>
-								<div class="input-group frame_link">
-									<span class="input-group-addon">签到结果页面</span>
-									<!--<input class="form-control" value="<iframe src='<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Mobile/invite', ['mid'=>I('get.mid', 0, 'int')])}>' frameborder='0'></iframe>" readonly placeholder="" id="mobile_invite_link">-->
-									<input class="form-control" value="<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Computer/signResult', ['mid'=>I('get.mid', 0, 'int'), 'timeInterval'=>C('SIGN_RESULT_REFRESH_TIME')])}>" readonly placeholder="" id="computer_sign_result_link">
-									<span class="input-group-btn">
-										<button class="btn btn-default" id="computer_sign_result_link_copy_btn" data-clipboard-target="computer_sign_result_link">复制</button>
-									</span>
-								</div>
-								<!--<div class="input-group frame_link">-->
-								<!--<span class="input-group-addon">电脑版邀约外链</span>-->
-								<!--&lt;!&ndash;<input class="form-control" value="<iframe src='<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Computer/invite', ['mid'=>I('get.mid', 0, 'int')])}>' frameborder='0'></iframe>" readonly placeholder="" id="computer_invite_link">&ndash;&gt;-->
-								<!--<input class="form-control" value="<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Computer/invite', ['mid'=>I('get.mid', 0, 'int')])}>" readonly placeholder="" id="computer_invite_link">-->
-								<!--<span class="input-group-btn">-->
-								<!--<button class="btn btn-default" id="copy_btn_computer" data-clipboard-target="computer_invite_link">复制</button>-->
-								<!--</span>-->
-								<!--</div>-->
-							</div>
 						</section>
 					</div>
 				</if>
 			</div>
 		</div>
 	</div>
-	<script>
-		var ThisObject = {
-			object:{
-				copyButtonMobileInvite      :new ZeroClipboard(document.getElementById('mobile_invite_link_copy_btn')),
-				copyButtonComputerSignResult:new ZeroClipboard(document.getElementById('computer_sign_result_link_copy_btn'))
-			}
-		};
-	</script>
 </body>
 </html>

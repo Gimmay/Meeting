@@ -8,23 +8,16 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/switch/bootstrap-switch.min.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/switch/js/bootstrap-switch.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/xheditor-1.2.2/xheditor-1.2.2.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/xheditor-1.2.2/xheditor_lang/zh-cn.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
-	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=18h24xIQGKWEuIMgHzjsNxMD4HTc9Q7m"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/ZeroClipboard/ZeroClipboard.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -35,6 +28,7 @@
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
 				<if condition="$permission_list['MEETING.CONFIGURE']">
+
 					<div class="main_body">
 						<section class="content">
 							<div class="table_wrap">
@@ -46,6 +40,25 @@
 							</div>
 							<form class="form-horizontal" role="form" method="post" action="" id="form">
 								<div class="modal-body" style=" padding: 30px 30px 15px 30px;">
+									<div class="form-group">
+										<label class="col-sm-1 control-label">手机版邀约外链：</label>
+										<div class="input-group">
+											<input class="form-control" value="<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Mobile/invite', ['mid'=>I('get.mid', 0, 'int')])}>" readonly placeholder="" id="mobile_invite_link">
+											<span class="input-group-btn">
+												<button class="btn btn-default" id="mobile_invite_link_copy_btn" data-clipboard-target="mobile_invite_link" type="button">复制</button>
+											</span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-1 control-label">签到结果页面：</label>
+										<!--<input class="form-control" value="<iframe src='<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Mobile/invite', ['mid'=>I('get.mid', 0, 'int')])}>' frameborder='0'></iframe>" readonly placeholder="" id="mobile_invite_link">-->
+										<div class="input-group">
+											<input class="form-control" value="<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Computer/signResult', ['mid'=>I('get.mid', 0, 'int'), 'timeInterval'=>C('SIGN_RESULT_REFRESH_TIME')])}>" readonly placeholder="" id="computer_sign_result_link">
+											<span class="input-group-btn">
+												<button class="btn btn-default" id="computer_sign_result_link_copy_btn" data-clipboard-target="computer_sign_result_link" type="button">复制</button>
+											</span>
+										</div>
+									</div>
 									<div class="form-group">
 										<label class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>消息发送：</label>
 										<div class="col-sm-11 clearfix">
@@ -107,22 +120,13 @@
 		</div>
 	</div>
 	<script>
-		var CreateObject = {
+		var ThisObject = {
 			object:{
-				/*	contacts2IdSelect   :$('#contacts_2_id').QuasarSelect({
-				 name         :'contacts_2_id',
-				 classStyle   :'form-control',
-				 data         :'<{:json_encode($employee_list)}>',
-				 idInput      :'selected_contacts_2_id',
-				 idHidden     :'selected_contacts_2_id_form',
-				 placeholder  :'',
-				 hasEmptyItem :true,
-				 emptyItemHtml:'----- 空 -----',
-				 }),*/
-				switchWeixin:$('#message_wechat').bootstrapSwitch(),
-				switchSms   :$('#message_sms').bootstrapSwitch(),
-				toast       :$().QuasarToast(),
-				loading     :$().QuasarLoading(),
+				switchWeixin                :$('#message_wechat').bootstrapSwitch(),
+				switchSms                   :$('#message_sms').bootstrapSwitch(),
+				toast                       :$().QuasarToast(),
+				copyButtonMobileInvite      :new ZeroClipboard(document.getElementById('mobile_invite_link_copy_btn')),
+				copyButtonComputerSignResult:new ZeroClipboard(document.getElementById('computer_sign_result_link_copy_btn'))
 			}
 		};
 	</script>

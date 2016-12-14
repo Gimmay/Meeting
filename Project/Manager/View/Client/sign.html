@@ -15,13 +15,14 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/cityselect/jquery.cityselect.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
+	<!--<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery-1.4.4.min.js"></script>-->
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery.jqprint-0.3.js"></script>
 </head>
 <body data-meeting-id="<{:I('get.mid')}>" data-place-id="<{:I('get.sid')}>">
 	<div id="mt_container">
@@ -37,18 +38,9 @@
 									<div class="nav_tab_li active">
 										<a href="javascript:void(0)">参会人员签到</a>
 									</div>
+									<button class="btn print_btn" onclick="jqprint()">打印</button>
 								</div>
 							</div>
-							<!--<header class="c_header">-->
-							<!--<div class="function_list clearfix">-->
-							<!--<if condition="$permission_list['CLIENT.SIGN'] eq 1">-->
-							<!--<div class="function_btn bg-danger batch_sign_point">-->
-							<!--<i></i>-->
-							<!--<p>签到</p>-->
-							<!--</div>-->
-							<!--</if>-->
-							<!--</div>-->
-							<!--</header>-->
 							<div class="repertory clearfix">
 								<form action="" method="get" id="form">
 									<input type="search" id="search_input" class="form-control" placeholder="选中此处" value="<{$client.name}>" style="height: 60px; font-size: 30px">
@@ -136,5 +128,24 @@
 			</div>
 		</div>
 	</div>
+	<div id="print"><{$badge.data}></div>
+	<style>
+		#print{
+			position : fixed;
+			width    : 100%;
+			height   : 100%;
+			left     : 100%;
+			top      : 0;
+		}
+		.badge_muban{
+			width  : 100% !important;
+			height : 100% !important;
+		}
+	</style>
+	<script>
+		function jqprint(){
+			$(".badge_box").jqprint();
+		}
+	</script>
 </body>
 </html>

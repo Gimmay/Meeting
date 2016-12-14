@@ -152,8 +152,8 @@ canvas{
 }
 
 .system_tem_list ul li{
-	width            : 300px;
-	height           : 440px;
+	width            : 227px;
+	height           : 229px;
 	float            : left;
 	position         : relative;
 	overflow         : hidden;
@@ -169,8 +169,8 @@ canvas{
 }
 
 .system_tem_list ul li .system_ontent{
-	width  : 300px;
-	height : 400px;
+	width  : 227px;
+	height : 189px;
 }
 
 .system_tem_list ul li.active .select_icon{
@@ -198,6 +198,7 @@ canvas{
 	font-weight : bold;
 	font-size   : 14px;
 	width       : 100%;
+	border-top: 1px solid #e1e1e1;
 }
 
 .layer{

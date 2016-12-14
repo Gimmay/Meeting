@@ -143,4 +143,8 @@
 			}
 			else return ['status' => false, 'message' => $this->getError()];
 		}
+
+		public function dropClient($id){
+			return $this->execute("call delete_client($id)");
+		}
 	}

@@ -136,40 +136,72 @@ $(function(){
 	 location.replace(reviewed_url);
 	 }
 	 });*/
-	// 新客户列表
-	$('.new_client').find('.iCheck-helper').on('click', function(){
+	// 客户类型列表
+	$('.client').find('.iCheck-helper').on('click', function(){
 		var $quasar = $('#quasar_script');
 		var mvc     = $quasar.attr('data-url-sys-param');
 		var suffix  = $quasar.attr('data-page-suffix');
 		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('client_type');
-		var new_url = link.delUrlParam('p');
-		if(param == 1){
-			new_url = link.delUrlParam('client_type', new_url);
-			location.replace(new_url);
-		}else{
-			new_url = link.setUrlParam('client_type', 1, new_url);
-			location.replace(new_url);
-		}
-	});
-	// 老客户列表
-	$('.old_client').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('client_type');
+		var param   = link.getUrlParam('is_employee');
 		var new_url = link.delUrlParam('p');
 		if(param == 0){
-			new_url = link.delUrlParam('client_type', new_url);
+			new_url = link.delUrlParam('is_employee', new_url);
 			location.replace(new_url);
 		}else{
-			new_url = link.setUrlParam('client_type', 0, new_url);
+			new_url = link.setUrlParam('is_employee', 0, new_url);
 			location.replace(new_url);
 		}
 	});
+	// 员工类型列表
+	$('.employee').find('.iCheck-helper').on('click', function(){
+		var $quasar = $('#quasar_script');
+		var mvc     = $quasar.attr('data-url-sys-param');
+		var suffix  = $quasar.attr('data-page-suffix');
+		var link    = new Quasar.UrlClass(1, mvc, suffix);
+		var param   = link.getUrlParam('is_employee');
+		var new_url = link.delUrlParam('p');
+		if(param == 1){
+			new_url = link.delUrlParam('is_employee', new_url);
+			location.replace(new_url);
+		}else{
+			new_url = link.setUrlParam('is_employee', 1, new_url);
+			location.replace(new_url);
+		}
+	});
+//	// 新客户列表
+//	$('.new_client').find('.iCheck-helper').on('click', function(){
+//		var $quasar = $('#quasar_script');
+//		var mvc     = $quasar.attr('data-url-sys-param');
+//		var suffix  = $quasar.attr('data-page-suffix');
+//		var link    = new Quasar.UrlClass(1, mvc, suffix);
+//		var param   = link.getUrlParam('client_type');
+//		var new_url = link.delUrlParam('p');
+//		if(param == 1){
+//			new_url = link.delUrlParam('client_type', new_url);
+//			location.replace(new_url);
+//		}else{
+//			new_url = link.setUrlParam('client_type', 1, new_url);
+//			location.replace(new_url);
+//		}
+//	});
+//	// 老客户列表
+//	$('.old_client').find('.iCheck-helper').on('click', function(){
+//		var $quasar = $('#quasar_script');
+//		var mvc     = $quasar.attr('data-url-sys-param');
+//		var suffix  = $quasar.attr('data-page-suffix');
+//		var link    = new Quasar.UrlClass(1, mvc, suffix);
+//		var param   = link.getUrlParam('client_type');
+//		var new_url = link.delUrlParam('p');
+//		if(param == 0){
+//			new_url = link.delUrlParam('client_type', new_url);
+//			location.replace(new_url);
+//		}else{
+//			new_url = link.setUrlParam('client_type', 0, new_url);
+//			location.replace(new_url);
+//		}
+//	});
 	// 可用列表
-	$('.usable').find('.iCheck-helper').on('click', function(){
+	$('.enable').find('.iCheck-helper').on('click', function(){
 		var $quasar = $('#quasar_script');
 		var mvc     = $quasar.attr('data-url-sys-param');
 		var suffix  = $quasar.attr('data-page-suffix');
@@ -184,7 +216,7 @@ $(function(){
 			location.replace(new_url);
 		}
 	});
-	// 禁列表
+	// 禁用列表
 	$('.disable').find('.iCheck-helper').on('click', function(){
 		var $quasar = $('#quasar_script');
 		var mvc     = $quasar.attr('data-url-sys-param');
@@ -524,16 +556,19 @@ $(function(){
 		//var receivables = link.getUrlParam('receivables');
 		var client_type = link.getUrlParam('client_type');
 		var status      = link.getUrlParam('status');
+		var is_employee      = link.getUrlParam('is_employee');
 		if(signed == 1) $('.check_signed').find('.iradio_square-green').addClass('checked');
 		if(signed == 0) $('.check_not_signed').find('.iradio_square-green').addClass('checked');
 		if(reviewed == 1) $('.check_reviewed').find('.iradio_square-blue').addClass('checked');
 		if(reviewed == 0) $('.check_not_reviewed').find('.iradio_square-blue').addClass('checked');
 		/*if(receivables == 1) $('.check_receivables').find('.iradio_square-red').addClass('checked');
 		 if(receivables == 0) $('.check_not_receivables').find('.iradio_square-red').addClass('checked');*/
-		if(client_type == 1) $('.new_client').find('.iradio_square-red').addClass('checked');
-		if(client_type == 0) $('.old_client').find('.iradio_square-red').addClass('checked');
-		if(status == 1) $('.usable').find('.iradio_square-yellow').addClass('checked');
+//		if(client_type == 1) $('.new_client').find('.iradio_square-red').addClass('checked');
+//		if(client_type == 0) $('.old_client').find('.iradio_square-red').addClass('checked');
+		if(status == 1) $('.enable').find('.iradio_square-yellow').addClass('checked');
 		if(status == 0) $('.disable').find('.iradio_square-yellow').addClass('checked');
+		if(is_employee == 1) $('.employee').find('.iradio_square-red').addClass('checked');
+		if(is_employee == 0) $('.client').find('.iradio_square-red').addClass('checked');
 	})();
 	// 收款
 	$('.btn_receivables').on('click', function(){

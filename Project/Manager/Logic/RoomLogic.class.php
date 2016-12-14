@@ -515,7 +515,6 @@
 				$id [] = $room_result[$k]['id'];
 			}
 			foreach($id as $k1 => $v1){
-
 				$assign_room_result = $assign_room_model->findRecord(2, ['rid' => $v1, 'status' => 1]);
 				foreach($assign_room_result as $k2 => $v2){
 					$jid [] = $assign_room_result[$k2]['jid'];
@@ -534,7 +533,26 @@
 			return $client_list;
 		}
 
-		public function selectHotelRoom(){
-			return $this->field('name html, id value, name keyword')->where("status != 5 and status != 0")->select();
+		public function getCheckInCount($hid){
+			/** @var \Core\Model\RoomModel $room_model */
+			$room_model = D('Core/Room');
+			/** @var \Core\Model\AssignRoomModel $assign_room_model */
+			$assign_room_model = D('Core/AssignRoom');
+			$room_list         = $room_model->findRoom(2, ['hid' => $hid, 'status' => 1]);
+			$count             = 0;
+			foreach($room_list as $room){
+				$assigned_room_count = $assign_room_model->findRecord(0, [
+					'rid'              => $room['id'],
+					'occupancy_status' => 1
+				]);
+				$count += $assigned_room_count;
+			}
+
+			return $count;
+		}
+
+		public function getFull(){
+			/** @var \Core\Model\RoomModel $room_model */
+			$room_model = D('Core/Room');
 		}
 	}

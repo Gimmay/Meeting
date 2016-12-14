@@ -317,10 +317,16 @@
 						/** @var \Core\Model\ClientModel $model */
 						$model = D('Core/Client');
 						/** @var \Core\Model\JoinModel $join_model */
-						$join_model                 = D('Core/Join');
-						$str_obj                    = new StringPlus();
-						$id                         = I('get.id', 0, 'int');
-						$data                       = I('post.');
+						$join_model   = D('Core/Join');
+						$str_obj      = new StringPlus();
+						$data         = I('post.');
+						$id           = I('get.id', 0, 'int');
+						$exist_client = $model->findClient(1, ['mobile' => $data['mobile']]);
+						if($exist_client) return [
+							'status'   => false,
+							'message'  => '该手机号已存在',
+							'__ajax__' => false
+						];
 						$data['pinyin_code']        = $str_obj->makePinyinCode($data['name']);
 						$data['birthday']           = $data['birthday'] ? $data['birthday'] : null;
 						$result1                    = $model->alterClient(['id' => $id], $data);
@@ -689,7 +695,7 @@
 						/** @var \Core\Model\JoinModel $join_model */
 						$join_model = D('Core/Join');
 						//$id_arr     = explode(',', I('post.id'));
-						$join_id_arr = explode(',', I('post.join_id'));
+						$join_id_arr = explode(',', I('post.jid'));
 						//$result    = $model->deleteClient($id_arr);
 						/* 监测是否已审核 */
 						$delete_id_arr = [];
@@ -990,9 +996,10 @@
 					$join_model = D('Core/join');
 					C('TOKEN_ON', false);
 					$id        = I('post.id', 0, 'int');
-					$join_list = $join_model->findRecord(1, ['cid'    => $id,
-															 'status' => 1,
-															 'mid'    => I('get.mid', 0, 'int')
+					$join_list = $join_model->findRecord(1, [
+						'cid'    => $id,
+						'status' => 1,
+						'mid'    => I('get.mid', 0, 'int')
 					]);
 					//					if($join_list['gift_status'] == 1){
 					//						return array_merge(['message' => '礼品已经领取', 'status' => false], [

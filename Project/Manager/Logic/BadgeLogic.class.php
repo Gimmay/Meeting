@@ -82,4 +82,18 @@
 				break;
 			}
 		}
+
+		public function getBadge($mid){
+			/** @var \Core\Model\BadgeModel $model */
+			$model = D('Core/Badge');
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			$meeting       = $meeting_model->findMeeting(1, ['id' => $mid]);
+			if($meeting && $meeting['bid']){
+				$badge = $model->findBadge(1, ['id' => $meeting['bid']]);
+
+				return $badge;
+			}
+			else return null;
+		}
 	}

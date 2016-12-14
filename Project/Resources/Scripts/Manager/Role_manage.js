@@ -44,6 +44,8 @@ var ScriptObject = {
 												  .replace('$group-name', group_name)
 												  .replace('$group-code', code);
 								$('#authorize_select #'+code).find('section').prepend(str);
+								ScriptObject.unbindEvent();
+								ScriptObject.bindEvent();
 								/*ScriptObject.unbindEvent();
 								 ScriptObject.bindEvent();*/
 							}, 1000);
@@ -51,9 +53,9 @@ var ScriptObject = {
 							select_temp = ScriptObject.authorizeRoleTemp.replace('$id', id).replace('$name', name)
 													  .replace('$group-code', code).replace('$group-name', group_name);
 							$('#authorize_select div[data-group='+code+']').find('section').prepend(select_temp);
+							ScriptObject.unbindEvent();
+							ScriptObject.bindEvent();
 						}
-						ScriptObject.unbindEvent();
-						ScriptObject.bindEvent();
 					}
 				}
 			});
@@ -91,6 +93,8 @@ var ScriptObject = {
 													  .replace('$group-name', group_name)
 													  .replace('$group-code', code);
 								$('#authorize_all #'+code).find('section').prepend(str);
+								ScriptObject.unbindEvent();
+								ScriptObject.bindEvent();
 								/*	ScriptObject.unbindEvent();
 								 ScriptObject.bindEvent();*/
 							}, 1000);
@@ -98,9 +102,9 @@ var ScriptObject = {
 							select_temp = ScriptObject.authorizeRoleTemp.replace('$id', id).replace('$name', name)
 													  .replace('$group-code', code).replace('$group-name', group_name);
 							$('#authorize_all div[data-group='+code+']').find('section').prepend(select_temp);
+							ScriptObject.unbindEvent();
+							ScriptObject.bindEvent();
 						}
-						ScriptObject.unbindEvent();
-						ScriptObject.bindEvent();
 					}
 				}
 			});
@@ -146,6 +150,8 @@ var ScriptObject = {
 												   .replace('$group-code', self.group.groupCode);
 									});
 									$('#authorize_all #'+code).find('section').html(str);
+									self.unbindEvent();
+									self.bindEvent();
 									ScriptObject.group.groupCode = '';
 									ScriptObject.group.groupName = '';
 									ScriptObject.group.list      = [];
@@ -162,12 +168,12 @@ var ScriptObject = {
 								});
 								$('#authorize_all div[data-group='+code+']').find('section')
 																			.prepend(str);
+								self.unbindEvent();
+								self.bindEvent();
 								ScriptObject.group.groupCode = '';
 								ScriptObject.group.groupName = '';
 								ScriptObject.group.list      = [];
 							}
-							self.unbindEvent();
-							self.bindEvent();
 						}
 					}
 				}
@@ -214,6 +220,8 @@ var ScriptObject = {
 												   .replace('$group-code', self.group.groupCode);
 									});
 									$('#authorize_select #'+code).find('section').html(str);
+									self.unbindEvent();
+									self.bindEvent();
 									ScriptObject.group.groupCode = '';
 									ScriptObject.group.groupName = '';
 									ScriptObject.group.list      = [];
@@ -229,13 +237,13 @@ var ScriptObject = {
 											   .replace('$group-code', self.group.groupCode);
 								});
 								$('#authorize_select div[data-group='+code+']').find('section')
-																			.prepend(str);
+																			   .prepend(str);
+								self.unbindEvent();
+								self.bindEvent();
 								ScriptObject.group.groupCode = '';
 								ScriptObject.group.groupName = '';
 								ScriptObject.group.list      = [];
 							}
-							self.unbindEvent();
-							self.bindEvent();
 						}
 					}
 				}

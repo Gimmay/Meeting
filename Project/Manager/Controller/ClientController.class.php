@@ -7,6 +7,7 @@
 	 */
 	namespace Manager\Controller;
 
+	use Manager\Logic\BadgeLogic;
 	use Manager\Logic\ClientLogic;
 	use Manager\Logic\ExcelLogic;
 	use stdClass;
@@ -49,6 +50,7 @@
 				if(isset($_GET['signed'])) $options['sign_status'] = I('get.signed', 0, 'int') == 1 ? 1 : 'not signed';
 				if(isset($_GET['reviewed'])) $options['review_status'] = I('get.reviewed', 0, 'int') == 1 ? 1 : 'not reviewed';
 				if(isset($_GET['client_type'])) $options['isNew'] = I('get.client_type', 0, 'int') == 1 ? 1 : 0;
+				if(isset($_GET['is_employee'])) $options['type'] = I('get.is_employee', 0, 'int') == 1 ? '内部员工' : 'not employee';
 				if(isset($_GET['status'])) $options['status'] = I('get.status', 0, 'int') == 1 ? 1 : 0;
 				/* 获取记录总数 */
 				$total_list = $model->findRecord(0, array_merge([
@@ -65,7 +67,7 @@
 					'keyword' => I('get.keyword', ''),
 					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 					'_order'  => I('get._column', 'main.sign_time').' '.I('get._sort', 'desc').', sub.unit, sub.pinyin_code',
-					'status'  => 'not deleted',
+					'status'  => 1,
 					'mid'     => $this->meetingID
 				], $options));
 				/* 统计数据 */
@@ -89,6 +91,16 @@
 				]);
 				$new_count      = $model->findRecord(0, [
 					'isNew'  => 1,
+					'status' => 1,
+					'mid'    => $this->meetingID
+				]);
+				$client_count   = $model->findRecord(0, [
+					'type'   => 'not employee',
+					'status' => 1,
+					'mid'    => $this->meetingID
+				]);
+				$employee_count = $model->findRecord(0, [
+					'type'   => '内部员工',
 					'status' => 1,
 					'mid'    => $this->meetingID
 				]);
@@ -118,7 +130,9 @@
 					'enabled'       => $enabled_count,
 					'disabled'      => $disabled_count,
 					'total'         => $all_count,
-					'enabled_total' => count($temp_total_list)
+					'enabled_total' => count($temp_total_list),
+					'client'        => $client_count,
+					'employee'      => $employee_count
 				]);
 				$this->assign('employee_list', $employee_list);
 				$this->assign('list', $client_list);
@@ -288,9 +302,12 @@
 					}
 					$info = 0;
 					if($join_client){
+						$badge_logic = new BadgeLogic();
+						$badge       = $badge_logic->getBadge($this->meetingID);
 						if($join_client['review_status']) $info = 2;
 						else $info = 1;
 						$this->assign('client', $join_client);
+						$this->assign('badge', $badge);
 					}
 					$this->assign('info_type', $info);
 				}

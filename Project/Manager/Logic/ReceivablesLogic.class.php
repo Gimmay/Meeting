@@ -282,20 +282,69 @@
 					return array_merge($pay_method_result, ['__ajax__' => false]);
 				break;
 				case 'get_receivables_detail':
-					$id = I('post.id', 0, 'int');
-					/** @var \Core\Model\ReceivablesModel $receivables_model */
-					$receivables_model = D('Core/Receivables');
+					/** @var \Core\Model\ReceivablesModel $model */
+					$model = D('Core/Receivables');
+					/** @var \Core\Model\ReceivablesOptionModel $receivables_option_model */
+					$receivables_option_model = D('Core/ReceivablesOption');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model = D('Core/Employee');
 					/** @var \Core\Model\ClientModel $client_model */
 					$client_model = D('Core/Client');
-					/** @var \Core\Model\EmployeeModel $employee_model */
-					$employee_model                    = D('Core/Employee');
-					$receivables_result                = $receivables_model->findRecord(1, ['id' => $id]);
-					$client_result                     = $client_model->findClient(1, ['id' => $receivables_result['cid']]);
-					$employee_result                   = $employee_model->findEmployee(1, ['id' => $receivables_result['payee_id']]);
-					$receivables_result['client_name'] = $client_result['name'];
-					$receivables_result['payee_name']  = $employee_result['code'].' - '.$employee_result['name'];
+					/** @var \Core\Model\PayMethodModel $pay_method_model */
+					$pay_method_model       = D('Core/PayMethod');
+					$str_obj                = new StringPlus();
+					$core_receivables_logic = new \Core\Logic\ReceivablesLogic();
+					$id                     = I('post.id', 0, 'int');
+					$mid                    = I('get.mid', 0, 'int');
+					$record                 = $model->findRecord(1, ['id' => $id, 'status' => 1]);
+					if($record){
+						$receivables_option_list = $receivables_option_model->findRecord(2, ['rid' => $record['id']]);
+						$pay_method_arr          = [];
+						$price                   = 0;
+						foreach($receivables_option_list as $key => $val){
+							$pay_method                                   = $pay_method_model->findRecord(1, [
+								'id'     => $val['pay_method'],
+								'status' => 1
+							]);
+							$receivables_option_list[$key]['source_type'] = $core_receivables_logic->getReceivablesSourceType($val['type']);
+							$receivables_option_list[$key]['pay_method']  = $pay_method['name'];
+							$price += $val['price'];
+						}
+						$coupon_id_arr = explode(',', $record['coupon_ids']);
+						if($coupon_id_arr){
+							/** @var \Core\Model\CouponModel $coupon_model */
+							$coupon_model = D('Core/Coupon');
+							/** @var \Core\Model\CouponItemModel $coupon_item_model */
+							$coupon_item_model = D('Core/CouponItem');
+							$coupon_name       = '';
+							foreach($coupon_id_arr as $coupon){
+								$coupon_item_record = $coupon_item_model->findRecord(1, ['id' => $coupon]);
+								$coupon_record      = $coupon_model->findCoupon(1, ['id' => $coupon_item_record['coupon_id']]);
+								$coupon_name .= "$coupon_record[name], ";
+							}
+							$coupon_name = trim($coupon_name, ',');
+						}
+						else $coupon_name = '';
+						$client                              = $client_model->findClient(1, [
+							'status' => 1,
+							'id'     => $record['cid']
+						]);
+						$payee                               = $employee_model->findEmployee(1, [
+							'status' => 1,
+							'id'     => $record['payee_id']
+						]);
+						$record['option']                    = $receivables_option_list;
+						$record['option']['pay_method_list'] = $pay_method_arr;
+						$record['receivables_type']          = $core_receivables_logic->getReceivablesType($record['type']);
+						$record['client']                    = $client['name'];
+						$record['payee']                     = $payee['name'];
+						$record['price']                     = $price;
+						$record['coupon_name']               = $coupon_name;
+						$record['unit']                      = $client['unit'];
+						$record['price_word']                = $str_obj->parseNumberToUpperWord($price);
+					}
 
-					return array_merge($receivables_result, ['__ajax__' => true]);
+					return array_merge($record, ['__ajax__' => true]);
 				break;
 				case 'import_excel':
 					if($this->permissionList['RECEIVABLES.IMPORT-EXCEL']){

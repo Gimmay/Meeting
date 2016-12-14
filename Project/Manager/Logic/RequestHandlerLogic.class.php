@@ -21,6 +21,7 @@
 						'status' => 0,
 						'id'     => I('get.id', 0, 'int')
 					]);
+
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'cancel_assign_message':
@@ -179,9 +180,20 @@
 				break;
 				case 'get:disable_room_type':
 				case 'get:enable_room_type':
-					/** @var \Core\Model\RoomTypeModel$model */
+					/** @var \Core\Model\RoomTypeModel $model */
 					$model  = D('Core/RoomType');
 					$id     = I('get.id', 0, 'int');
+					$status = strpos($type, 'disable') === false ? (strpos($type, 'enable') === false ? 0 : 1) : 0;
+					C('TOKEN_ON', false);
+					$result = $model->alterRecord(['id' => $id], ['status' => $status]);
+
+					return array_merge($result, ['__ajax__' => false]);
+				break;
+				case 'post:disable_receivables':
+				case 'post:enable_receivables':
+					/** @var \Core\Model\ReceivablesModel $model */
+					$model  = D('Core/Receivables');
+					$id     = I('post.id', 0, 'int');
 					$status = strpos($type, 'disable') === false ? (strpos($type, 'enable') === false ? 0 : 1) : 0;
 					C('TOKEN_ON', false);
 					$result = $model->alterRecord(['id' => $id], ['status' => $status]);

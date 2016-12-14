@@ -30,12 +30,23 @@
 				/** @var \Core\Model\HotelModel $hotel_model */
 				$hotel_model = D('Core/Hotel');
 				/** @var \Core\Model\RoomTypeModel $room_type_model */
-				$room_type_model   = D('Core/RoomType');
-				$room_result       = $room_logic->findRoom();
-				$meeting_result    = $room_logic->findMeeting();
-				$hotel_result_name = $hotel_model->findHotel(1, ['id' => I('get.hid', 0, 'int')]);
-				$room_type_result  = $room_type_model->findRecord(2, ['status' => 1, 'hid' => I('get.hid', 0, 'int')]);
+				$room_type_model = D('Core/RoomType');
+				/** @var \Core\Model\JoinModel $join_model */
+				$join_model                 = D('Core/Join');
+				$room_logic                 = new RoomLogic();
+				$hotel_id                   = I('get.hid', 0, 'int');
+				$assigned_room_client_count = $room_logic->getCheckInCount($hotel_id);
+				$statistics                 = [
+					'assigned'  => $assigned_room_client_count,
+					'not_assigned' => 0,
+					'total'  => $join_model->findRecord(0, ['status' => 1, 'mid' => $this->meetingID])
+				];
+				$room_result                = $room_logic->findRoom();
+				$meeting_result             = $room_logic->findMeeting();
+				$hotel_result_name          = $hotel_model->findHotel(1, ['id' => $hotel_id]);
+				$room_type_result           = $room_type_model->findRecord(2, ['status' => 1, 'hid' => $hotel_id]);
 				$this->assign('type', $room_type_result);
+				$this->assign('statistics', $statistics);
 				$this->assign('hotel_name', $hotel_result_name);
 				$this->assign('room_info', $room_result);
 				$this->assign('info', $meeting_result);

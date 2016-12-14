@@ -31,11 +31,16 @@
 		}
 
 		public function makeOrderNumber(){
+//			$str_obj    = new StringPlus();
+//			$date       = date('YmdHis');
+//			$random_str = $str_obj->makeRandomString(8, 'NW+');
+//
+//			return "$date$random_str";
 			$str_obj    = new StringPlus();
-			$date       = date('YmdHis');
-			$random_str = $str_obj->makeRandomString(8, 'NW+');
+//			$date       = date('YmdHis');
+			$random_str = $str_obj->makeRandomString(6, 'N');
 
-			return "$date$random_str";
+			return "SJ$random_str";
 		}
 
 		public function getReceivablesType($value = null){

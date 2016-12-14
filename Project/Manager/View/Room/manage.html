@@ -44,9 +44,9 @@
 									</if>
 								</div>
 								<div class="count">
-									参会人员（员工）：已入住 <a href="" class="href">50</a>人，未入住
-									<span>100</span>人。</br>   </br>                                   房间：已住满 <a href="" class="href">30</a>间，未住满
-									<a href="" class="href">20</a>间。
+									参会人员（员工）：已入住 <a href="" class="href"><{$statistics.assigned}></a>人，未入住<span><{:($statistics['total']-$statistics['assigned'])}></span>人。
+									<br>
+									房间：已住满<a href="" class="href"><{$statistics.not_assigned}></a>间，未住满<a href="" class="href"><{$statistics.not_assigned}></a>间。
 								</div>
 							</div>
 							<header class="c_header">

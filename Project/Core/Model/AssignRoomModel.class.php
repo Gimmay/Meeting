@@ -39,7 +39,6 @@
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['rid'])) $where['rid'] = $filter['rid'];
 			if(isset($filter['jid'])) $where['jid'] = $filter['jid'];
-			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
 			if(isset($filter['occupancy_status'])) $where['occupancy_status'] = $filter['occupancy_status'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);

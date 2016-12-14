@@ -9,6 +9,7 @@ var ThisObject = {
 	trTemp              :'<tr><td colspan="2" class="type2" style="text-align: center">$type</td>\n\t<td colspan="2" class="price2" style="text-align: center">$price</td>\n</tr>',
 	word                :0,
 	option              :'<option value="$id" data-price="$price">$name</option>',
+	receivablesTemp     :'<div class="form-group">\n\t<label class="col-sm-2 control-label"><span class="delete_rece_btn glyphicon glyphicon-minus-sign"></span></label>\n\t<div class="col-sm-10">\n\t\t<div class="col-sm-3">\n\t\t\t<div class="form-group">\n\t\t\t\t<label class="col-sm-4 control-label">支付方式：</label>\n\t\t\t\t<div class="col-sm-8">\n\t\t\t\t\t<select name="method[]" class="form-control">\n\t\t\t\t\t</select>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t\t<div class="col-sm-3">\n\t\t\t<div class="form-group">\n\t\t\t\t<label class="col-sm-4 control-label">POS机：</label>\n\t\t\t\t<div class="col-sm-8">\n\t\t\t\t\t<select name="pos_id[]" class="form-control">\n\t\t\t\t\t</select>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t\t<div class="col-sm-3">\n\t\t\t<div class="form-group">\n\t\t\t\t<label class="col-sm-4 control-label">来源状态：</label>\n\t\t\t\t<div class="col-sm-8">\n\t\t\t\t\t<select name="source_type[]" class="form-control">\n\t\t\t\t\t\t<option value="0">会前收款</option>\n\t\t\t\t\t\t<option value="1">会中收款</option>\n\t\t\t\t\t\t<option value="2">会后收款</option>\n\t\t\t\t\t</select>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t\t<div class="col-sm-3">\n\t\t\t<div class="form-group">\n\t\t\t\t<label class="col-sm-4 control-label">备注：</label>\n\t\t\t\t<div class="col-sm-8">\n\t\t\t\t\t<input class="form-control comment" name="comment[]">\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>',
 	bindEvent           :function(){
 		var self = this;
 		// 选择代金券
@@ -34,8 +35,10 @@ var ThisObject = {
 			$('#price').val(0);
 		});
 		// 删除收款记录
-		$('.delete_btn').on('click', function(){
-			var id = $(this).parents('.btn-group').attr('data-id');
+		$('.delete_btn').on('click', function(e){
+			e.stopPropagation();
+			$('#delete_receivables').modal('show');
+			var id = $(this).parent('.header').attr('data-id');
 			$('#delete_receivables').find('input[name=id]').val(id);
 		});
 		//导入excel
@@ -97,15 +100,6 @@ $(function(){
 			}
 		})
 	});
-	/*$('.plus').on('click', function(){
-	 if($(this).parents('.rece_item').find('.rece_body').hasClass('hide')){
-	 $(this).parents('.rece_item').find('.rece_body').removeClass('hide');
-	 $(this).removeClass('glyphicon-plus').addClass('glyphicon-minus');
-	 }else{
-	 $(this).parents('.rece_item').find('.rece_body').addClass('hide');
-	 $(this).removeClass('glyphicon-minus').addClass('glyphicon-plus');
-	 }
-	 });*/
 	$('.rece_item .header').on('click', function(){
 		if($(this).parents('.rece_item').find('.rece_body').hasClass('hide')){
 			$(this).parents('.rece_item').find('.rece_body').removeClass('hide');
@@ -118,29 +112,41 @@ $(function(){
 	var quasar_script          = document.getElementById('quasar_script');
 	var url_object             = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
 	var $add_receivables_modal = $('#add_receivables');
-	ManageObject.object.meetingName.onQuasarSelect(function(){
+/*	ManageObject.object.meetingName.onQuasarSelect(function(){
 		var value = ManageObject.object.meetingName.getValue();
 		$add_receivables_modal.find('input[name=mid]').val(value);
 	});
 	ManageObject.object.clientName.onQuasarSelect(function(){
 		var value = ManageObject.object.clientName.getValue();
 		$add_receivables_modal.find('input[name=cid]').val(value);
-	});
+	});*/
 	// 修改收款
-	$('.modify_btn').on('click', function(){
-		var id = $(this).parents('.btn-group').attr('data-id');
+	/*$('.modify_btn').on('click', function(e){
+		e.stopPropagation();
+		var type = $(this).parents('.header').attr('data-type');
+		if(type == 2){
+			$('#alter_receivables .coupon_group').removeClass('hide');
+			$('#alter_receivables .coupon_group').addClass('hide');
+		}else{
+			$('#alter_receivables .coupon_group').addClass('hide');
+			$('#alter_receivables .coupon_group').removeClass('hide');
+		}
+		$('#alter_receivables').modal('show');
+		var id = $(this).parent('.header').attr('data-id');
 		Common.ajax({
 			data    :{requestType:'get_receivables_detail', id:id},
 			callback:function(r){
+				console.log(r);
 				var $alter_receivables_object = $('#alter_receivables');
 				var time                      = new Date(r.time*1000).format('yyyy-MM-dd HH:mm:ss');
 				$alter_receivables_object.find('input[name=id]').val(id);
 				//noinspection JSUnresolvedVariable
-				$alter_receivables_object.find('#client_name_a').val(r.client_name);
+				$alter_receivables_object.find('#client_name_a').val(r.client);
 				$alter_receivables_object.find('#price_a').val(r.price);
 				$alter_receivables_object.find('#receivables_time_a').val(time);
-				$alter_receivables_object.find('#comment_a').val(r.comment);
+				//$alter_receivables_object.find('#comment_a').val(r.comment);
 				$alter_receivables_object.find('#place_a').val(r.place);
+
 				$alter_receivables_object.find('#source_type_a>option').prop('selected', false);
 				$alter_receivables_object.find('#source_type_a').val(r.source_type);
 				$alter_receivables_object.find('#source_type_a>option[value='+r.source_type+']').prop('selected', true);
@@ -154,7 +160,7 @@ $(function(){
 				$alter_receivables_object.find('#pos_id_a').val(r.pos_id);
 				$alter_receivables_object.find('#pos_id_a>option[value='+r.pos_id+']').prop('selected', true);
 				ManageObject.object.payeeNameA.setValue(r.payee_id);
-				ManageObject.object.payeeNameA.setHtml(r.payee_name);
+				ManageObject.object.payeeNameA.setHtml(r.payee);
 			}
 		});
 		Common.ajax({
@@ -191,6 +197,21 @@ $(function(){
 				ThisObject.bindEvent();
 			}
 		});
+	});*/
+	$('.add_btn ').on('click', function(){
+		$(this).parents('.form-group').after(ThisObject.receivablesTemp);
+		Common.ajax({
+			data    :{requestType:'get_rece_list'},
+			callback:function(r){
+				console.log(r);
+			}
+		})
+		$('.delete_rece_btn').on('click', function(){
+			$(this).parents('.form-group').remove();
+		});
+	});
+	$('.delete_rece_btn').on('click', function(){
+		$(this).parents('.form-group').remove();
 	});
 	ThisObject.bindEvent();
 	/**
@@ -242,8 +263,15 @@ $(function(){
 			})
 		}
 	})
-})
-;
+
+	$('.cancel').on('click',function(e){
+		e.stopPropagation();
+		var id = $(this).parent('.header').attr('data-id');
+		$('#cancel_modal').find('input[name=id]').val(id);
+		$('#cancel_modal').modal('show');
+
+	})
+});
 // 添加收款不为空控制
 function checkIsEmpty(){
 	var $add_receivables = $('#add_receivables');

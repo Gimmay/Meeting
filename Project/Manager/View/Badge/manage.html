@@ -56,17 +56,20 @@
 							<!--自定义胸卡模板-->
 							<div class="badge_box custom_temp tab_c clearfix">
 								<div class="cart_view">
-									<div class="badge_muban" style="width: 300px; height: 400px;">
+									<div class="badge_muban" style="width: 227px; height:189px; position: relative;">
 										<!--<img src="<{$Think.COMMON_IMAGE_PATH}>/bg.jpg" id="badge_bg" alt="" style="width: 100%; height: 100%; position: absolute;">-->
-										<div class="cart_view_item ui-widget-content hide" id="client_name" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 5%;">客户姓名</div>
-										<div class="cart_view_item ui-widget-content hide" id="QRcode" style=" position: absolute; width: 150px; font-size:14px; text-align: center; left: 50%; margin-left: -75px; top: 25%;;">
+										<div class="cart_view_item ui-widget-content hide" id="client_name" style=" position: absolute; width: 227px; font-size:14px; text-align: left; left: 50%; padding-left: 50px; margin-left: -113px; top: 5%;">客户姓名:：<span class="client_name">刘同学</span>
+										</div>
+										<div class="cart_view_item ui-widget-content hide" id="unit" style=" position: absolute; width:227px; font-size:14px; text-align: left; left: 50%; padding-left: 50px;margin-left: -113px; top: 18%;;">单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;位：<span class="unit">瑞丽斯机构</span>
+										</div>
+										<div class="cart_view_item ui-widget-content hide" id="QRcode" style=" position: absolute; width: 100px; font-size:14px; text-align: center; left: 50%; margin-left: -50px; top: 30%;;">
 											<img src="<{$Think.COMMON_IMAGE_PATH}>/CheckIn_Code.jpg" alt="" width="100%">
 										</div>
-										<div class="cart_view_item ui-widget-content hide" id="meeting_name" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 65%;;">会议名称</div>
-										<div class="cart_view_item ui-widget-content hide" id="meeting_time" style=" position: absolute; width: 300px; font-size:14px; text-align: center; left: 50%; margin-left: -150px; top: 88%;;">会议时间</div>
-										<div class="cart_view_item ui-widget-content hide" id="sign_place" style=" position: absolute; width: 300px; font-size:14px; text-align: center; left: 50%; margin-left: -150px; top: 92%;;">签到点</div>
-										<div class="cart_view_item ui-widget-content hide" id="unit" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 15%;;">单位</div>
-										<div class="cart_view_item ui-widget-content hide" id="brief" style=" position: absolute; width: 300px; font-size:14px; text-align: center; left: 50%; margin-left: -150px; top: 75%;;">会议简介</div>
+										<!--<div class="cart_view_item ui-widget-content hide" id="meeting_name" style=" position: absolute; width: 300px; font-size:22px; text-align: center; left: 50%; margin-left: -150px; top: 65%;;">会议名称</div>-->
+										<!--<div class="cart_view_item ui-widget-content hide" id="meeting_time" style=" position: absolute; width: 300px; font-size:14px; text-align: center; left: 50%; margin-left: -150px; top: 88%;;">会议时间</div>-->
+										<div class="cart_view_item ui-widget-content hide" id="group" style=" position: absolute; width: 227px; font-size:14px; text-align: left; left: 50%;padding-left: 50px; margin-left: -113px; top: 85%;;">组号：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											<span class="group">A组</span></div>
+
 									</div>
 								</div>
 								<div class="cart_set">
@@ -79,7 +82,7 @@
 											</div>
 										</div>
 										<div class="form_li">
-											<p class="title">背景（宽度为300px，高度为400px的.png、.jpg图片，小于2M）</p>
+											<p class="title">背景（宽度为227px(6CM)，高度为189px(5CM)的.png、.jpg图片，小于2M）</p>
 											<form action="" id="uploadBgForm">
 												<input type="hidden" name="requestType" value="upload_image">
 												<div class="bg_up_file">
@@ -99,23 +102,23 @@
 												<li class="keyword no_choose client_name">
 													<span>客户姓名</span><i class="glyphicon glyphicon-trash"></i>
 												</li>
-												<li class="keyword no_choose QRcode">
-													<span>参会二维码</span><i class="glyphicon glyphicon-trash"></i>
-												</li>
-												<li class="keyword no_choose meeting_name">
-													<span>会议名称</span><i class="glyphicon glyphicon-trash"></i>
-												</li>
-												<li class="keyword no_choose time">
-													<span>会议时间</span><i class="glyphicon glyphicon-trash"></i>
-												</li>
-												<li class="keyword no_choose sign_place">
-													<span>签到点</span><i class="glyphicon glyphicon-trash"></i>
-												</li>
 												<li class="keyword no_choose unit">
 													<span>单位</span><i class="glyphicon glyphicon-trash"></i>
 												</li>
-												<li class="keyword no_choose brief">
-													<span>简介</span><i class="glyphicon glyphicon-trash"></i>
+												<li class="keyword no_choose QRcode">
+													<span>参会二维码</span><i class="glyphicon glyphicon-trash"></i>
+												</li>
+												<!--<li class="keyword no_choose meeting_name">
+													<span>会议名称</span><i class="glyphicon glyphicon-trash"></i>
+												</li>-->
+												<!--<li class="keyword no_choose time">
+													<span>会议时间</span><i class="glyphicon glyphicon-trash"></i>
+												</li>-->
+												<!--<li class="keyword no_choose sign_place">
+													<span>签到点</span><i class="glyphicon glyphicon-trash"></i>
+												</li>-->
+												<li class="keyword no_choose group">
+													<span>组号</span><i class="glyphicon glyphicon-trash"></i>
 												</li>
 												<!--<li class="add">
 													<span class="glyphicon glyphicon-plus"></span>

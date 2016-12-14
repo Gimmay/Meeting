@@ -137,8 +137,10 @@
 			if($this->permissionList['RECEIVABLES.VIEW']){
 				/** @var \Core\Model\ReceivablesModel $receivables_model */
 				$receivables_model = D('Core/Receivables');
-				$option            = [];
-				$keyword           = I('get.keyword', '');
+				/** @var \Manager\Model\EmployeeModel $employee_model */
+				$employee_model = D('Employee');
+				$option         = [];
+				$keyword        = I('get.keyword', '');
 				if(isset($_GET['cid'])) $option['cid'] = I('get.cid', 0, 'int');
 				$receivables_total = $receivables_model->findRecord(0, array_merge([
 					'mid'     => $this->meetingID,
@@ -150,15 +152,17 @@
 				\ThinkPHP\Quasar\Page\setTheme1($page_object);
 				$page_show        = $page_object->show();
 				$receivables_list = $receivables_model->findRecord(2, array_merge([
-					'status'  => 1,
+					'status'  => 'not deleted',
 					'mid'     => $this->meetingID,
 					'keyword' => $keyword,
 					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 					'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 				], $option));
 				$receivables_list = $receivables_logic->setData('details:set_column', $receivables_list);
+				$payee_list       = $employee_model->getEmployeeNameSelectList();
 				$this->assign('list', $receivables_list);
 				$this->assign('page_show', $page_show);
+				$this->assign('employee_list', $payee_list);
 				$this->display();
 			}
 			else $this->error('您没有查看收款记录的权限');
@@ -188,7 +192,8 @@
 				$join_total            = $join_model->findRecord(2, [
 					'status'  => 1,
 					'mid'     => $this->meetingID,
-					'keyword' => $keyword
+					'keyword' => $keyword,
+					'type'    => 'not employee'
 				]);
 				$total                 = count($join_total);
 				if(isset($_GET['receivables'])){
@@ -211,6 +216,7 @@
 					$page_object = new Page(count($join_total), I('get._page_count', C('PAGE_RECORD_COUNT'), 'int'));
 					\ThinkPHP\Quasar\Page\setTheme1($page_object);
 					$join_client = $join_model->findRecord(2, [
+						'type'    => 'not employee',
 						'status'  => 1,
 						'mid'     => $this->meetingID,
 						'keyword' => $keyword,

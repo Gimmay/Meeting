@@ -66,10 +66,10 @@ WHERE status = 1";
 		}
 
 		public function getPositionSelectList(){
-			return $this->field("distinct position as value, position as keyword, position as html")->select();
+			return $this->field("distinct position as value, position as keyword, position as html")->where(['status'=>1])->select();
 		}
 
 		public function getTitleSelectList(){
-			return $this->field("distinct title as value, title as keyword, title as html")->select();
+			return $this->field("distinct title as value, title as keyword, title as html")->where(['status'=>1])->select();
 		}
 	}

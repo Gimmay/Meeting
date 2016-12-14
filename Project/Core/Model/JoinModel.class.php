@@ -43,7 +43,6 @@
 			if(isset($filter['id'])) $where['main.id'] = $filter['id'];
 			if(isset($filter['isNew'])) $where['is_new'] = $filter['isNew'];
 			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
-			if(isset($filter['type'])) $where['sub.type'] = $filter['type'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted'){
@@ -56,10 +55,8 @@
 				}
 			};
 			if(isset($filter['type'])){
-				$status = strtolower($filter['type']);
-				if($status == 'not employee'){
-					$where['sub.type'] = ['neq', '内部员工'];
-				}
+				if($filter['type'] == 'not employee') $where['sub.type'] = ['neq', '内部员工'];
+				else $where['sub.type'] = $filter['type'];
 			};
 			if(isset($filter['sign_status'])){
 				$status = strtolower($filter['sign_status']);

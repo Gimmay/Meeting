@@ -42,9 +42,14 @@
 				/** @var \Core\Model\ReceivablesTypeModel $receivables_model */
 				$receivables_model = D('Core/Receivables');
 				// 获取参会统计数据
-				$join_record = $join_model->findRecord(2, [
+				$join_record     = $join_model->findRecord(2, [
 					'mid'    => $this->meetingID,
 					'status' => 1
+				]);
+				$employee_record = $join_model->findRecord(0, [
+					'mid'    => $this->meetingID,
+					'status' => 1,
+					'type'   => '内部员工'
 				]);
 				// 获取签到统计数据
 				$sign_count = $join_model->findRecord(0, [
@@ -71,7 +76,9 @@
 					'signed'             => $sign_count,
 					'receivables'        => count($receivables_record),
 					'receivables_client' => $receivables_client_count,
-					'receivables_price'  => $price
+					'receivables_price'  => $price,
+					'employee'           => $employee_record,
+					'client'             => count($join_record)-$employee_record
 				]);
 				$this->display();
 			}

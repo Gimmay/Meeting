@@ -35,4 +35,26 @@
 				else $this->error($result['message'], $redirect_url);
 			}
 		}
+
+		public function postHandler(){
+			$request_type = I('post.requestType', '');
+			if($request_type == ''){
+				$this->error('缺少必要的请求参数');
+				exit;
+			}
+			$logic  = new RequestHandlerLogic();
+			$result = $logic->handlerRequest($request_type);
+			if($result['__ajax__']){
+				unset($result['__ajax__']);
+				echo json_encode($result);
+			}
+			else{
+				if(isset($result['__return__'])) $redirect_url = $result['__return__'];
+				else $redirect_url = '';
+				unset($result['__ajax__']);
+				unset($result['__return__']);
+				if($result['status']) $this->success($result['message'], $redirect_url);
+				else $this->error($result['message'], $redirect_url);
+			}
+		}
 	}

@@ -10,9 +10,6 @@ $(function(){
 	(function(){
 		$search_input.focus();
 		$search_input.select();
-		if(url_object.isTheUrlParamExist('keyword')){
-			// todo sign
-		}
 	})();
 	$('form#form').on('submit', function(){
 		var keyword = $search_input.val();
