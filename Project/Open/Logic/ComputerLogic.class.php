@@ -18,16 +18,13 @@
 					/** @var \Core\Model\SignResultModel $sign_result_model */
 					$sign_result_model = D('Core/SignResult');
 					$result            = $sign_result_model->findRecord(1, [
-						'sign_time' => [
-							'start' => time()-C('SIGN_RESULT_REFRESH_TIME')
-						],
 						'mid'       => $option['mid'],
 						'status'    => 0,
 						'_order'    => 'sign_time'
 					]);
 					if($result){
-						//						C('TOKEN_ON', false);
-						//						$sign_result_model->alterRecord(['id' => $result['id']], ['status' => 1]);
+						C('TOKEN_ON', false);
+						$sign_result_model->alterRecord(['id' => $result['id']], ['status' => 1]);
 						/** @var \Core\Model\ClientModel $client_model */
 						$client_model = D('Core/Client');
 						$client       = $client_model->findClient(1, ['id' => $result['cid'], 'status' => 1]);

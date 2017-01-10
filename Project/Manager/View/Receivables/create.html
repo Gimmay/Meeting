@@ -117,7 +117,7 @@
 															</select>
 														</div>
 														<div class="rece_item price_item">
-															<input type="text" class="form-control price" name="price[]" placeholder="金额">
+															<input type="text" class="form-control price" name="price[]" placeholder="金额" value="0">
 														</div>
 														<div class="rece_item pos_item">
 															<select name="pos[]" class="form-control pos">
@@ -152,7 +152,7 @@
 																	<!-- 收款类型对应表 -->
 																	<!-- 以下位置都需要同步 -->
 																	<!-- E682C6E7495F65F68BFB92D12F5385C45CA4B455 -->
-																	<option value="0">项目类型</option>
+																	<option value="0">-----项目类型-----</option>
 																	<option value="1">门票</option>
 																	<option value="3">产品</option>
 																	<option value="5">定金</option>
@@ -176,7 +176,7 @@
 																</select>
 															</div>
 															<div class="rece_item">
-																<input type="text" class="form-control price" name="price1[]" placeholder="金额">
+																<input type="text" class="form-control price" name="price1[]" placeholder="金额" value="0">
 															</div>
 															<div class="rece_item">
 																<select name="pos1[]" class="form-control pos">
@@ -251,7 +251,7 @@
 				clientName     :$('#client_name').QuasarSelect({
 					name        :'client_name',
 					classStyle  :'form-control',
-					data        :'<{:json_encode($client)}>',
+					data        :'<{:json_encode($client, JSON_UNESCAPED_UNICODE)}>',
 					idInput     :'selected_client_name',
 					idHidden    :'selected_client_name_form',
 					placeholder :'',
@@ -262,7 +262,7 @@
 				payeeName      :$('#payee_id').QuasarSelect({
 					name        :'payee_id',
 					classStyle  :'form-control',
-					data        :'<{:json_encode($employee)}>',
+					data        :'<{:json_encode($employee, JSON_UNESCAPED_UNICODE)}>',
 					idInput     :'selected_payee_id',
 					idHidden    :'selected_payee_id_form',
 					placeholder :'',
@@ -284,6 +284,9 @@
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				})
+			},
+			data:{
+				meetingStatus:parseInt('<{$meeting_status}>')
 			}
 		};
 	</script>

@@ -2674,15 +2674,15 @@ class PHPExcel_Calculation {
 			//	Trap for mismatched braces and trigger an appropriate error
 			if ($openCount < $closeCount) {
 				if ($openCount > 0) {
-					return $this->_raiseFormulaError("Formula Error: Mismatched matrix braces '}'");
+					return trigger_error("Formula Error: Mismatched matrix braces '}'", E_USER_ERROR); // todo edit by Quasar
 				} else {
-					return $this->_raiseFormulaError("Formula Error: Unexpected '}' encountered");
+					return trigger_error("Formula Error: Unexpected '}' encountered", E_USER_ERROR); // todo edit by Quasar
 				}
 			} elseif ($openCount > $closeCount) {
 				if ($closeCount > 0) {
-					return $this->_raiseFormulaError("Formula Error: Mismatched matrix braces '{'");
+					return trigger_error("Formula Error: Mismatched matrix braces '{'", E_USER_ERROR); // todo edit by Quasar
 				} else {
-					return $this->_raiseFormulaError("Formula Error: Unexpected '{' encountered");
+					return trigger_error("Formula Error: Unexpected '{' encountered", E_USER_ERROR); // todo edit by Quasar
 				}
 			}
 		}
@@ -3716,7 +3716,6 @@ class PHPExcel_Calculation {
 		trigger_error($errorMessage, E_USER_ERROR);
 	}	//	function _raiseFormulaError()
 
-
 	/**
 	 * Extract range values
 	 *
@@ -3746,6 +3745,7 @@ class PHPExcel_Calculation {
 			// Extract range
 			$aReferences = PHPExcel_Cell::extractAllCellReferencesInRange($pRange);
 			$pRange = $pSheetName.'!'.$pRange;
+			$currentRow = null;  // todo edit by Quasar
 			if (!isset($aReferences[1])) {
 				//	Single cell in range
 				sscanf($aReferences[0],'%[A-Z]%d', $currentCol, $currentRow);

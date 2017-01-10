@@ -6,6 +6,7 @@
 	<title>会议模块 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/jquery-ui.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/switch/bootstrap-switch.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
@@ -13,6 +14,7 @@
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-ui.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/switch/js/bootstrap-switch.min.js"></script>
@@ -28,7 +30,6 @@
 			<div class="mt_wrapper">
 				<include file="Public/innerHeader"/>
 				<if condition="$permission_list['MEETING.CONFIGURE']">
-
 					<div class="main_body">
 						<section class="content">
 							<div class="table_wrap">
@@ -60,7 +61,7 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>消息发送：</label>
+										<label class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>消息发送：</label>
 										<div class="col-sm-11 clearfix">
 											<div class="switch pull-left" data-on="primary" data-off="info" style="margin-right: 20px;">
 												微信：
@@ -84,7 +85,7 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="config_wechat" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>公众号/企业号：</label>
+										<label for="config_wechat" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>公众号/企业号：</label>
 										<div class="col-sm-11">
 											<select class="form-control" name="config_wechat" id="config_wechat">
 												<option value="0">请选择</option>
@@ -107,6 +108,12 @@
 											</select>
 										</div>
 									</div>
+									<div class="form-group">
+										<label class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>参会人员字段控制：</label>
+										<div class="col-sm-11 clearfix">
+											<span class="glyphicon glyphicon-cog configure"></span>
+										</div>
+									</div>
 								</div>
 								<input type="hidden" name="requestType" value="set_config">
 								<div class="modal-footer text_center">
@@ -119,9 +126,84 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="client_create_configure" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 600px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title text-center">参会人员字段控制</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="client:set_column">
+					<div class="modal-body">
+						<div class="table">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th width="20%" class="all_check_blue">
+											<!--	<input type="checkbox" class="icheckBlue" placeholder="" value="">-->&nbsp;&nbsp;&nbsp;&nbsp;显示
+										</th>
+										<th width="60%">字段</th>
+										<th width="20%" class="all_check_green">
+											<!--<input type="checkbox" class="icheckGreen" placeholder="" value="">-->&nbsp;&nbsp;&nbsp;&nbsp;必输项
+										</th>
+									</tr>
+								</thead>
+								<tbody id="sort_tbody">
+									<volist name="column_list" id="single">
+										<tr>
+											<td class="check_blue">
+												<if condition="$single['view'] eq 1">
+													<input type="checkbox" class="icheckBlue" placeholder="" value="<{$single.view}>" checked>
+													<else/>
+													<input type="checkbox" class="icheckBlue" placeholder="" value="<{$single.view}>">
+												</if>
+												<input name="view[]" type="hidden" value="<{$single.view}>">
+											</td>
+											<td>
+												<if condition="$single['code'] eq 'CLIENT-COLUMN1' or $single['code'] eq 'CLIENT-COLUMN2' or  $single['code'] eq 'CLIENT-COLUMN3' or  $single['code'] eq 'CLIENT-COLUMN4' or  $single['code'] eq 'CLIENT-COLUMN5' or  $single['code'] eq 'CLIENT-COLUMN6' or  $single['code'] eq 'CLIENT-COLUMN7' or  $single['code'] eq 'CLIENT-COLUMN8'">
+													<input class="form-control" name="name[]" value="<{$single.name}>" placeholder="">
+													<else/>
+													<{$single.name}>
+													<input type="hidden" name="name[]" value="<{$single.name}>">
+												</if>
+												<input type="hidden" name="form[]" value="<{$single.form}>">
+												<input type="hidden" name="code[]" value="<{$single.code}>">
+											</td>
+											<td class="check_green">
+												<if condition="$single['must'] eq 1">
+													<input type="checkbox" class="icheckGreen" placeholder="" value="<{$single.must}>" checked>
+													<else/>
+													<input type="checkbox" class="icheckGreen" placeholder="" value="<{$single.must}>">
+												</if>
+												<input name="must[]" type="hidden" value="<{$single.must}>">
+											</td>
+										</tr>
+									</volist>
+								</tbody>
+							</table>
+						</div>
+						<div class="control">
+							<button class="btn btn-default btn-sm btn-primary gconfigure_save">保存</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 	<script>
 		var ThisObject = {
 			object:{
+				icheck                      :$('.icheckGreen').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				}),
+				icheckBlue                  :$('.icheckBlue').iCheck({
+					checkboxClass:'icheckbox_square-blue',
+					radioClass   :'iradio_square-blue'
+				}),
 				switchWeixin                :$('#message_wechat').bootstrapSwitch(),
 				switchSms                   :$('#message_sms').bootstrapSwitch(),
 				toast                       :$().QuasarToast(),
@@ -129,6 +211,10 @@
 				copyButtonComputerSignResult:new ZeroClipboard(document.getElementById('computer_sign_result_link_copy_btn'))
 			}
 		};
+		$(function() {
+			$( "#sort_tbody" ).sortable();
+			$( "#sort_tbody" ).disableSelection();
+		});
 	</script>
 </body>
 </html>

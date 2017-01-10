@@ -89,6 +89,10 @@ html, body{
 	background : #FFFFFF;
 }
 
+.password_wrap{
+	position : relative;
+}
+
 .login_group{
 	margin-top : 60px;
 	background : url("../../Images/Manager/User/login/login_group.png") no-repeat;
@@ -99,6 +103,7 @@ html, body{
 
 .login_group .input_group{
 	font-size : 0;
+	position  : relative;
 }
 
 .login_group .input_group label{
@@ -116,6 +121,22 @@ html, body{
 	font-size      : 14px;
 	line-height    : 35px;
 	padding        : 0 12px;
+}
+
+.login_group .input_group span.see{
+	display     : none;
+	width       : 35px;
+	height      : 35px;
+	position    : absolute;
+	right       : 20px;
+	top         : 0;
+	font-size   : 18px;
+	text-align  : center;
+	line-height : 35px;
+	z-index     : 99;
+}
+.password_wrap:hover span.see{
+	display : block;
 }
 
 .login_group .user_icon, .login_group .pass_icon{

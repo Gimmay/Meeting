@@ -82,10 +82,10 @@ $(function(){
 	$('.btn_print').on('click', function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
 		Common.ajax({
-			data    :{requestType:'get_receivables', id:id},
+			data    :{requestType:'manage:get_receivables', id:id},
 			callback:function(r){
 				console.log(r);
-				/*var time = new Date(parseInt(r.creatime)*1000);
+				var time = new Date();
 				time     = time.format('yyyy年MM月dd日');
 				$('#print').find('.time').text(time);
 				$('#print').find('.unit').text(r.unit);
@@ -107,7 +107,7 @@ $(function(){
 				});
 				$('.sign_tr').find('.rmb').attr('rowspan', i);
 				$('.sign_tr').after(str);
-				$("#print").printArea();*/
+				$("#print").printArea();
 			}
 		})
 	});

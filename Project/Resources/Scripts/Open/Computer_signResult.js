@@ -15,9 +15,9 @@ $(function(){
 				if(r['found']){
 					$client_name_obj.text(r.clientName);
 					$unit_obj.text(r.unit);
-					$order_obj.text(r.order);
+					$order_obj.text(r.signOrder);
 					$success_message_obj.slideDown();
-				}else $success_message_obj.slideUp();
+				}//else $success_message_obj.slideUp();
 			}
 		})
 	}, ThisObject.data.refreshTime*1000);

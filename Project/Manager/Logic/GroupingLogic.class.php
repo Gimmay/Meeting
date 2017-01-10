@@ -41,14 +41,38 @@
 					}
 					else return ['status' => false, 'message' => '您没有创建分组的权限', '__ajax__' => false];
 				break;
+				case 'batch_add_group':
+					if($this->permissionList['GROUP.CREATE']){
+						/** @var \Core\Model\GroupModel $group_model */
+						$group_model = D('Core/Group');
+						$mid         = I('get.mid', 0, 'int');
+						$code_arr = explode(',', I('post.group_area', ''));
+						$data = [];
+						foreach($code_arr as $code){
+							$data[] = [
+								'mid'      => $mid,
+								'code'     => $code,
+								'status'   => 1,
+								'creatime' => time(),
+								'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+							];
+						}
+						$result = $group_model->createMultiRecord($data);
+
+						return array_merge($result, ['__ajax__' => false]);
+					}
+					else return ['status' => false, 'message' => '您没有创建分组的权限', '__ajax__' => false];
+				break;
 				case 'save_client':
 					if($this->permissionList['GROUP.ASSIGN-CLIENT']){
 						$id   = explode(',', I('post.id', ''));
 						$gid  = I('get.gid', 0, 'int');
 						$time = I('get.date', 0, 'int');
+						$mid  = I('get.mid', 0, 'int');
 						$data = [];
 						foreach($id as $k => $v){
 							$data[] = [
+								'mid'      => $mid,
 								'gid'      => $gid,
 								'cid'      => $v,
 								'time'     => $time,
@@ -70,7 +94,9 @@
 						/** @var \Core\Model\JoinModel $join_model */
 						$join_model = D('Core/Join');
 						/** @var \Core\Model\GroupMemberModel $group_member_model */
-						$group_member_model  = D('Core/GroupMember');
+						$group_member_model = D('Core/GroupMember');
+						/** @var \Core\Model\GroupModel $group_model */
+						$group_model         = D('Core/Group');
 						$mid                 = I('get.mid', 0, 'int');
 						$join_result         = $join_model->findRecord(2, [
 							'mid'           => $mid,
@@ -81,7 +107,8 @@
 						]);
 						$group_member_result = $group_member_model->findRecord(2, [
 							'status' => 1,
-							'time'   => I('get.date', 0, 'int')
+							'time'   => I('get.date', 0, 'int'),
+							'gid'    => I('get.gid', 0, 'int')
 						]);
 						$cid                 = [];
 						foreach($group_member_result as $k => $v){
@@ -92,12 +119,32 @@
 							if(in_array($v['cid'], $cid)) continue;
 							else $new_list[] = $v;
 						}
+						$group_result  = $group_model->findRecord(2, [
+							'mid'    => $mid,
+							'status' => 1,
+						]);
+						$leader        = '';
+						$deputy_leader = '';
+						foreach($group_result as $k => $v){
+							if($v['leader_type'] == 1){
+								$leader .= rtrim($v['leader'].',');
+							}
+							if($v['deputy_leader_type'] == 1){
+								$deputy_leader .= rtrim($v['deputy_leader'].',');
+							}
+						}
+						$join_id   = explode(',', $leader.','.$deputy_leader);
+						$news_list = [];
+						foreach($new_list as $k => $v){
+							if(in_array($v['cid'], $join_id)) continue;
+							else $news_list[] = $v;
+						}
 
-						return array_merge($new_list, ['__ajax__' => true]);
+						return array_merge($news_list, ['__ajax__' => true]);
 					}
 					else return ['status' => false, 'message' => '您没有查看人员分组的权限', '__ajax__' => true];
 				break;
-				case 'get_group_info':
+				case'get_group_info':
 					if($this->permissionList['GROUP.VIEW']){
 						/** @var \Core\Model\GroupModel $group_model */
 						$group_model = D('Core/Group');
@@ -108,12 +155,12 @@
 						$id             = I('post.gid', 0, 'int');
 						$group_result   = $group_model->findRecord(1, ['id' => $id]);
 						if($group_result['leader_type'] == 0){
-							$employee_result                  = $employee_model->findEmployee(1, ['id' => $group_result['leader']]);
-							$group_result['leader_name_name'] = $employee_result['name'];
+							$employee_result             = $employee_model->findEmployee(1, ['id' => $group_result['leader']]);
+							$group_result['leader_name'] = $employee_result['name'];
 						}
 						elseif($group_result['leader_type'] == 1){
-							$client_result                    = $client_model->findClient(1, ['id' => $group_result['leader']]);
-							$group_result['leader_name_name'] = $client_result['name'];
+							$client_result               = $client_model->findClient(1, ['id' => $group_result['leader']]);
+							$group_result['leader_name'] = $client_result['name'];
 						}
 						if($group_result['deputy_leader_type'] == 0){
 							$employee_result                    = $employee_model->findEmployee(1, ['id' => $group_result['deputy_leader']]);
@@ -189,6 +236,7 @@
 						C('TOKEN_ON', false);
 						$data['time']     = I('post.date', 0, 'int');
 						$data['gid']      = I('post.gid', 0, 'int');
+						$data['mid']      = I('get.mid', 0, 'int');
 						$data['score']    = I('post.score', 0, 'int');
 						$data['creatime'] = time();    //创建时间
 						$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');    //当前创建者
@@ -224,21 +272,17 @@
 					else return ['status' => false, 'message' => '您没有删除分组的权限', '__ajax__' => false];
 				break;
 				case 'copy':
-					$time = I('get.date', 0, 'int');
 					$gid  = I('get.gid', 0, 'int');
 					$mid  = I('get.mid', 0, 'int');
 					$time = I('get.date', 0, 'int');
 					C('TOKEN_ON', false);
 					/** @var \Core\Model\GroupMemberModel $group_member_model */
 					$group_member_model = D('Core/GroupMember');
-					/** @var \Core\Model\GroupModel $group_model */
-					$group_model       = D('Core/Group');
-					$group_member_info = $group_member_model->findRecord(2, [
+					$group_member_info  = $group_member_model->findRecord(2, [
 						'gid'    => $gid,
 						'time'   => $time,
 						'status' => 1
 					]);
-					$id                = [];
 					if($group_member_info){
 						return array_merge(['status' => false, 'message' => '请先清空当前已添加的参会人员'], ['__ajax__' => false]);
 					}
@@ -251,6 +295,7 @@
 						$data                = [];
 						foreach($group_member_result as $k => $v){
 							$data[] = [
+								'mid'      => $mid,
 								'gid'      => $gid,
 								'cid'      => $v['cid'],
 								'time'     => $time,
@@ -269,6 +314,56 @@
 				default:
 					return ['status' => false, 'message' => '参数错误'];
 				break;
+			}
+		}
+
+		public function getGroupClient(){  //组合搜索  参会人姓名 单位
+			/** @var \Core\Model\ClientModel $client_model */
+			$client_model = D('Core/Client');
+			/** @var \Core\Model\GroupMemberModel $group_member_model */
+			$group_member_model = D('Core/GroupMember');
+			/** @var \Core\Model\GroupModel $group_model */
+			$group_model         = D('Core/Group');
+			$group_result        = $group_model->findRecord(2, [
+				'status'  => 'not deleted',
+				'mid'     => I('get.mid', 0, 'int'),
+				'keyword' => I('get.keyword', '')
+			]);
+			$new_list            = [];
+			$id                  = [];
+			$group_member_result = [];
+			$group_info          = [];
+			if($group_result[0] == ''){
+				$group_result = $group_model->findRecord(2, ['mid' => I('get.mid', 0, 'int'), 'status' => 1]);
+				foreach($group_result as $k => $v){
+					$id[] .= $v['id'];
+				}
+				foreach($id as $k => $v){
+					$group_member_result[] = $group_member_model->findRecord(2, [
+						'gid'    => $v,
+						'status' => 1,
+						'time'   => I('get.date', 0, 'int')
+					]);
+					foreach($group_member_result[$k] as $k1 => $v1){
+						$client_result                               = $client_model->findClient(1, [
+							'id'      => $v1['cid'],
+							'status'  => 1,
+							'keyword' => I('get.keyword', '')
+						]);
+						$group_member_result[$k][$k1]['client_name'] = $client_result['name'];
+						if($group_member_result[$k][$k1]['client_name'] == '') continue;
+						$new_list[] = $v;
+					}
+				}
+				foreach($new_list as $k => $v){
+					$group_info[] = $group_model->findRecord(1, ['id' => $v, 'status' => 1]);
+				}
+				$group_info = array_unique($group_info);
+
+				return $group_info;
+			}
+			else{
+				return $group_result;
 			}
 		}
 	}

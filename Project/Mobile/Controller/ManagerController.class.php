@@ -19,8 +19,8 @@
 		protected $meetingID  = 0;
 
 		public function _initialize(){
-			$_SESSION['MOBILE_WECHAT_ID']   = 1090;
-			$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
+//			$_SESSION['MOBILE_WECHAT_ID']   = 1090;
+//			$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
 			parent::_initialize();
 			$meeting_logic = new MeetingLogic();
 			$meeting_logic->initializeStatus();
@@ -75,6 +75,19 @@
 			}
 			$permission_logic = new PermissionLogic();
 			if($permission_logic->hasPermission('WECHAT.CLIENT.CREATE', $this->employeeID)){
+				$getColumnStatus = function ($mid){
+					/** @var \Core\Model\ColumnControlModel $column_control_model */
+					$column_control_model = D('Core/ColumnControl');
+					$column_list          = $column_control_model->findRecord(2, [
+						'mid'   => $mid,
+						'table' => 'user_client'
+					]);
+					$data                 = [];
+					foreach($column_list as $val) $data[$val['code']] = $val;
+
+					return $data;
+				};
+				$this->assign('column_status', $getColumnStatus($this->meetingID));
 				$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
 				$this->display();
 			}
@@ -187,6 +200,143 @@
 			$logic = new ManagerLogic();
 			$info  = $logic->getEmployeeInformation($this->employeeID);
 			$this->assign('info', $info);
+			$this->display();
+		}
+
+		public function report1(){
+			$this->wechatID = $this->getWechatID();
+			$this->_getEmployeeID();
+			$this->_getMeetingParam();
+			$permission_logic = new PermissionLogic();
+			if($permission_logic->hasPermission('WECHAT.REPORT-1', $this->employeeID)){
+				$statistics = [
+					'newClient' => 0,
+					'oldClient' => 0,
+					'signed'    => 0,
+					'notSigned' => 0,
+					'total'     => 0,
+					'unit'      => 0,
+					'price'     => 0
+				];
+				/** @var \Core\Model\JoinModel $join_model */
+				$join_model = D('Core/Join');
+				/** @var \Core\Model\ReceivablesModel $receivables_model */
+				$receivables_model = D('Core/Receivables');
+				/** @var \Core\Model\ReceivablesOptionModel $receivables_option_model */
+				$receivables_option_model = D('Core/ReceivablesOption');
+				/** @var \Core\Model\CouponModel $coupon_model */
+				$coupon_model = D('Core/Coupon');
+				/** @var \Core\Model\CouponItemModel $coupon_item_model */
+				$coupon_item_model = D('Core/CouponItem');
+				// 总数 会所
+				$total_list          = $join_model->findRecord(2, [
+					'mid'    => $this->meetingID,
+					'status' => 1,
+					'type'   => 'not employee'
+				]);
+				$statistics['total'] = count($total_list);
+				$unit_arr            = [];
+				foreach($total_list as $val){
+					if(in_array($val['unit'], $unit_arr)) continue;
+					$unit_arr[] = $val['unit'];
+				}
+				$statistics['unit'] = count($unit_arr);
+				// 新客老客数
+				$statistics['newClient'] = $join_model->findRecord(0, [
+					'mid'    => $this->meetingID,
+					'isNew'  => 1,
+					'status' => 1
+				]);
+				$statistics['oldClient'] = $join_model->findRecord(0, [
+					'mid'    => $this->meetingID,
+					'isNew'  => 0,
+					'status' => 1
+				]);
+				// 签到 未签到人数
+				$statistics['signedPT']    = $join_model->findRecord(0, [
+					'mid'         => $this->meetingID,
+					'sign_status' => 1,
+					'status'      => 1,
+					'type'        => '陪同'
+				]);
+				$statistics['notSignedPT'] = $join_model->findRecord(0, [
+					'mid'         => $this->meetingID,
+					'sign_status' => 'not signed',
+					'status'      => 1,
+					'type'        => '陪同'
+				]);
+				$statistics['signedZD']    = $join_model->findRecord(0, [
+					'mid'         => $this->meetingID,
+					'sign_status' => 1,
+					'status'      => 1,
+					'type'        => '终端'
+				]);
+				$statistics['notSignedZD'] = $join_model->findRecord(0, [
+					'mid'         => $this->meetingID,
+					'sign_status' => 'not signed',
+					'status'      => 1,
+					'type'        => '终端'
+				]);
+				// 现场收款
+				$receivables_list_at_meeting = $receivables_model->findRecord(2, [
+					'mid'         => $this->meetingID,
+					'status'      => 1,
+					'source_type' => 2
+				]);
+				foreach($receivables_list_at_meeting as $receivables){
+					$receivables_option = $receivables_option_model->findRecord(2, [
+						'rid'    => $receivables['id'],
+						'status' => 1
+					]);
+					foreach($receivables_option as $option) $statistics['price'] += $option['price'];
+				}
+				// 项目（代金券）
+				//$coupon_list = $coupon_model->findCoupon(2, ['mid' => $this->meetingID, 'status' => 1]);
+				/** @var \Mobile\Model\ManagerModel $my_model */
+				$my_model    = D('Manager');
+				$coupon_list = $my_model->getReceivablesPrice($this->meetingID);
+				foreach($coupon_list as $key => $coupon){
+					$coupon_item_list                = $coupon_item_model->findRecord(2, [
+						'coupon_id' => $coupon['id'],
+						'mid'       => $this->meetingID
+					]);
+					$sold_coupon_item_list           = $coupon_item_model->findRecord(2, [
+						'coupon_id' => $coupon['id'],
+						'mid'       => $this->meetingID,
+						'status'    => 1
+					]);
+					$coupon_list[$key]['count']      = count($coupon_item_list);
+					$coupon_list[$key]['sold_count'] = count($sold_coupon_item_list);
+				}
+				$this->assign('coupon_list', $coupon_list);
+				$this->assign('statistics', $statistics);
+				$this->display();
+			}
+			else $this->redirect('Error/notPermission', ['permission' => 'WECHAT.REPORT-1']);
+		}
+
+		public function report1Client(){
+			$this->wechatID = $this->getWechatID();
+			$this->_getEmployeeID();
+			$this->_getMeetingParam();
+			$logic            = new ManagerLogic();
+			$permission_logic = new PermissionLogic();
+			$client_list      = $logic->findData('clientList:find_client_list', ['mid' => I('get.mid', 0, 'int')]);
+			if(!isset($_GET['sign'])) $title = '所有参会人员';
+			elseif(I('get.sign', 0, 'int') === 0) $title = '未签到人员';
+			elseif(I('get.sign', 0, 'int') === 1) $title = '已签到人员';
+			else $title = '参会人员';
+			$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
+			$this->assign('title', $title);
+			$this->assign('client_list', $client_list);
+			$this->display();
+		}
+
+		public function report1Unit(){
+			/** @var \Mobile\Model\ManagerModel $model */
+			$model = D('Manager');
+			$list  = $model->getUnitList(I('get.mid', 0, 'int'));
+			$this->assign('list', $list);
 			$this->display();
 		}
 	}

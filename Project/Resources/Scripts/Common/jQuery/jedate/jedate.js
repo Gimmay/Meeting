@@ -211,7 +211,10 @@
         that.init();
     };
     var jeDate = function(options) {
-        return new InitDate(options || {});
+        try{
+            return new InitDate(options || {});
+        }
+        catch(error){}
     };
     InitDate.prototype = {
         init:function() {

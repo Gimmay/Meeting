@@ -3,8 +3,94 @@
  */
 var ScriptObject = {
 	clientLiTemp:'<tr>\n\t<td class="check_item">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$num</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n</tr>',
+	liTemp      :'<li class="coupon_number_item"><span>$number</span></li>',
+	num         :0
 };
 $(function(){
+
+	//单个新增和批量新增
+	$('#create_way li').on('click', function(){
+		var index = $(this).index();
+		if(index == 0){
+			$('.single_box').removeClass('hide');
+			$('.mutil_box').addClass('hide');
+		}else{
+			$('.single_box').addClass('hide');
+			$('.mutil_box').removeClass('hide');
+		}
+		$('#create_way li').removeClass('active');
+		$(this).addClass('active');
+		if(index == 0){
+			$('#add_group_modal').find('input[name=requestType]').val('add_group');
+			ScriptObject.num = 0;
+			$('#add_group_modal .submit').on('click');
+		}
+		if(index == 1){
+			$('#add_group_modal').find('input[name=requestType]').val('batch_add_group');
+			ScriptObject.num = 1;
+			$('#add_group_modal .submit').off('click');
+		}
+		console.log(ScriptObject.num);
+	});
+	// 自动批量获取组号
+	$('.auto_get_number').on('click', function(){
+		try{
+			var $prefix       = $('#prefix');
+			var $start_number = $('#start_number');
+			var $number       = $('#number');
+			var $lenght       = $('#length');
+			var suffix = $('#suffix').val();
+			var str           = '';
+			var str2          = '';
+			for(var i = 0; i<$number.val(); i++){
+				var len       = $lenght.val();
+				var s_number  = $start_number.val();
+				var n         = Number(s_number)+Number(i);
+				var realLen   = len-$prefix.val().length;
+				var aa        = PrefixInteger(n, realLen-1);
+				str += ($prefix.val()+''+aa)+suffix+',';
+				var li_number = $prefix.val()+''+aa+suffix;
+				str2 += ScriptObject.liTemp.replace('$number', li_number);
+			}
+			$('.list_coupon_number').html(str2);
+			var s, newStr = "";
+			s             = str.charAt(str.length-1);
+			if(s == ","){
+				for(var i = 0; i<str.length-1; i++){
+					newStr += str[i];
+				}
+			}
+			$('#add_group_modal').find('input[name=group_area]').val(newStr);
+		}catch(error){
+			console.log(error);
+			ThisObject.object.toast.toast('自动获取组号参数不符合，重新填写');
+		}
+	});
+	$("#add_group_modal .submit").on('click', function(){
+		return checkIsEmpty();
+	});
+	(function(){
+		var s_top  = $('.group_ul').offset().top;
+		// 人员状态列表（签到\审核\收款）
+		var mvc    = $('#quasar_script').attr('data-url-sys-param');
+		var suffix = $('#quasar_script').attr('data-page-suffix');
+		var link   = new Quasar.UrlClass(1, mvc, suffix);
+		var gid    = link.getUrlParam('gid');
+		$('.group_ul li').each(function(){
+			var id = $(this).attr('data-id');
+			if(id == gid){
+				var li_top = $(this).offset().top; // this  offset top
+				console.log(li_top);
+				var group_left_top = $('.group_left').offset().top;
+				console.log(group_left_top);
+				gdHeight = group_left_top+$('.group_left').height(); // div offset top;
+				console.log(gdHeight);
+				if(li_top>gdHeight){
+					$(".group_list").scrollTop(li_top-gdHeight+40+$('.group_left').height()/2);
+				}
+			}
+		});
+	})();
 	/**
 	 * 新建组
 	 * 组长类型改变事件
@@ -48,12 +134,12 @@ $(function(){
 					$alter_group_modal.find('.leader_alter_employee_wrap').removeClass('hide');
 					$alter_group_modal.find('.leader_alter_client_wrap').addClass('hide');
 					ThisObject.object.leaderAlterEmployee.setValue(r.leader);
-					ThisObject.object.leaderAlterEmployee.setHtml(r.leader_name_name);
+					ThisObject.object.leaderAlterEmployee.setHtml(r.leader_name);
 				}else if(r.leader_type == '1'){
 					$alter_group_modal.find('.leader_alter_employee_wrap').addClass('hide');
 					$alter_group_modal.find('.leader_alter_client_wrap').removeClass('hide');
 					ThisObject.object.leaderAlterClient.setValue(r.leader);
-					ThisObject.object.leaderAlterClient.setHtml(r.leader_name_name);
+					ThisObject.object.leaderAlterClient.setHtml(r.leader_name);
 				}
 				$alter_group_modal.find('#deputy_leader_type_alter option').eq(r.deputy_leader_type)
 								  .prop('selected', true);
@@ -107,6 +193,20 @@ $(function(){
 	$('.delete_btn').on('click', function(){
 		var gid = $(this).parent('li').attr('data-id');
 		$('#delete_modal').find('input[name=gid]').val(gid);
+	});
+	// 批量删除
+	$('#delete_group_modal').find('.group_list_reduce a').on('click',function(){
+		if($(this).hasClass('active')){
+			$(this).removeClass('active');
+		}else{
+			$(this).addClass('active');
+		}
+		var arr = [];
+		$('#delete_group_modal').find('.group_list_reduce a.active').each(function(){
+			var id =$(this).attr('data-id');
+			arr.push(id);
+		});
+		$('#delete_group_modal').find('#group_arr').val(arr);
 	});
 	// 添加组员
 	$('.add_client').on('click', function(){
@@ -244,6 +344,10 @@ function all_check(){
 		$('#add_crew').find('.selected_attendee').text(i);
 	})
 }
+//  num传入的数字，n需要的字符长度
+function PrefixInteger(num, n){
+	return (Array(n).join(0)+num).slice(-n);
+}
 function getClient(id, keyword){
 	Common.ajax({
 		data    :{requestType:'get_client', id:id, keyword:keyword},
@@ -275,4 +379,20 @@ function getClient(id, keyword){
 			all_check();
 		}
 	});
+}
+function checkIsEmpty(){
+	if($('#code').val() == ''){
+		ThisObject.object.toast.toast('组号不能为空！');
+		$('#code').focus();
+		return false;
+	}
+	return true;
+}
+function checkIsEmptyAlter(){
+	if($('#code_alter').val() == ''){
+		ThisObject.object.toast.toast('组号不能为空！');
+		$('#code_alter').focus();
+		return false;
+	}
+	return true;
 }

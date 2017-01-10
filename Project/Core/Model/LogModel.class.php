@@ -10,6 +10,10 @@
 	use Exception;
 
 	class LogModel extends CoreModel{
+		protected $tableName       = 'log';
+		protected $tablePrefix     = 'system_';
+		protected $autoCheckFields = true;
+
 		public function _initialize(){
 			parent::_initialize();
 		}

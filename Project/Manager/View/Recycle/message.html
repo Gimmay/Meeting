@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>会议恢复 - 会议系统</title>
+	<title>消息恢复 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
@@ -43,7 +43,7 @@
 							<header class="c_header">
 								<div class="function_list clearfix">
 									<if condition="$permission_list['RECYCLE.RESTORE-MESSAGE']">
-										<div class="function_btn bg-danger batch_recover_btn_confirm" data-toggle="modal" data-target="#batch_recover_meeting" data-backdrop="static">
+										<div class="function_btn bg-danger batch_recover_btn_confirm" data-toggle="modal" data-target="#batch_recover_message" data-backdrop="static">
 											<i></i>
 											<p>恢复</p>
 										</div>
@@ -54,9 +54,9 @@
 								<form action="" method="get">
 									<div class="input-group repertory_text">
 										<input name="p" type="hidden" value="1">
-										<input type="search" name="keyword" class="form-control" placeholder="会议名称/拼音简码" value="<{:I('get.keyword', '')}>">
+										<input type="search" name="keyword" class="form-control" placeholder="消息/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default main_search">搜索会议</button>
+										<button type="submit" class="btn btn-default main_search">搜索消息</button>
 									</span>
 									</div>
 									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
@@ -89,7 +89,7 @@
 												<td>
 													<div class="btn-group" data-id="<{$single.id}>">
 														<if condition="$permission_list['RECYCLE.RESTORE-MESSAGE']">
-															<button type="submit" class="btn btn-default btn-xs recover_btn" data-toggle="modal" data-target="#recover_meeting" data-backdrop="static">恢复</button>
+															<button type="submit" class="btn btn-default btn-xs recover_btn" data-toggle="modal" data-target="#recover_message" data-backdrop="static">恢复</button>
 														</if>
 													</div>
 												</td>
@@ -110,7 +110,7 @@
 		</div>
 	</div>
 	<!-- 删除消息 -->
-	<div class="modal fade" id="recover_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="recover_message" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -132,7 +132,7 @@
 		</div>
 	</div>
 	<!-- 批量恢复消息 -->
-	<div class="modal fade" id="batch_recover_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="batch_recover_message" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">

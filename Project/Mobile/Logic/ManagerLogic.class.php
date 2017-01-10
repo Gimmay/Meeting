@@ -31,9 +31,9 @@
 			/** @var \Core\Model\WechatModel $wechat_model */
 			$wechat_model = D('Core/Wechat');
 			$visitor      = $wechat_model->findRecord(1, [
-				'wechat_id' => $wechat_id,
-				'wtype'     => $wtype,
-				'otype'     => 0
+				'wid'   => $wechat_id,
+				'wtype' => $wtype,
+				'otype' => 0
 			]);
 			if($visitor['oid']){
 				session('MOBILE_EMPLOYEE_ID', $visitor['oid']);
@@ -121,12 +121,13 @@
 				case 'sign': //签到
 					if($permission_logic->hasPermission('WECHAT.CLIENT.SIGN', $employee_id)){
 						$core_client_logic = new ClientLogic();
-						$result = $core_client_logic->sign([
+						$result            = $core_client_logic->sign([
 							'mid'  => I('get.mid', 0, 'int'),
 							'cid'  => I('get.cid', 0, 'int'),
 							'type' => 3,
 							'eid'  => $employee_id
 						]);
+
 						return array_merge($result, ['__ajax__' => true]);
 					}
 					else return [
@@ -227,7 +228,7 @@
 								$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
 								$data['oid']        = $client_id; // 对象ID
 								$data['wtype']      = 1; // 微信ID类型 企业号
-								$data['wid']  = $val['userid']; // 微信ID
+								$data['wid']        = $val['userid']; // 微信ID
 								$data['department'] = $department; // 部门ID
 								$data['mobile']     = $val['mobile']; // 手机号码
 								$data['avatar']     = $val['avatar']; // 头像地址

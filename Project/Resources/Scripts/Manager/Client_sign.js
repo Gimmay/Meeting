@@ -10,8 +10,20 @@ $(function(){
 	(function(){
 		$search_input.focus();
 		$search_input.select();
+		if(url_object.isTheUrlParamExist('keyword')){
+			// todo sign
+		}
 	})();
-	$('form#form').on('submit', function(){
+	$('#search_input').keyup(function(){
+		if(event.keyCode == 13){
+			var keyword = $('#search_input').val();
+			keyword     = encodeURI(keyword);
+			keyword     = encodeURI(keyword);
+			var new_url = url_object.setUrlParam('keyword', keyword);
+			location.replace(new_url);
+		}
+	});
+	$('form#form').submit(function(){
 		var keyword = $search_input.val();
 		var new_url = url_object.setUrlParam('keyword', keyword);
 		location.replace(new_url);

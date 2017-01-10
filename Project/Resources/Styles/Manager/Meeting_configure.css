@@ -1,0 +1,49 @@
+
+.configure{
+	display     : block;
+	width       : 50px;
+	height      : 35px;
+	line-height : 35px;
+	text-align  : center;
+	color       : #00A0E8;
+	cursor      : pointer;
+/*	position    : absolute;
+	top         : 0;
+	right       : 10px;*/
+	font-size   : 24px;
+}
+
+.modal-footer .btn{
+	position   : fixed;
+	bottom     : 40px;
+	right      : 40px;
+	width      : 70px;
+	height     : 60px;
+	background : #00A0E8;
+	border     : none;
+	font-size  : 16px;
+	opacity    : 0.5;
+	z-index: 999;
+}
+
+.modal-footer .btn:hover{
+	opacity : 1;
+}
+
+
+.control{
+	padding    : 2px 0 12px 0;
+	text-align : right;
+}
+
+.control .gconfigure_save{
+	display : inline-block;
+	padding : 7px 10px;
+	border  : 1px solid #E1E1E1;
+}
+
+.table{
+	margin-bottom : 10px;
+	overflow      : auto;
+	max-height    : 400px;
+}

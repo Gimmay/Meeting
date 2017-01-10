@@ -7,6 +7,7 @@
 	 */
 	namespace Manager\Logic;
 
+	use Core\Logic\LogLogic;
 	use Core\Logic\SystemMessageLogic;
 	use Core\Logic\WxCorpLogic;
 	use Quasar\StringPlus;
@@ -48,6 +49,14 @@
 						//						if($result['status']) $employee_id = $exist_record['id'];
 						//					}
 						//					else{
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_coupon&workflow_coupon_item',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '创建代金券',
+							'type'     => 'create'
+						]);
 						$result = $model->createEmployee($data);
 						if($result['status']) $employee_id = $result['id'];
 						//					}

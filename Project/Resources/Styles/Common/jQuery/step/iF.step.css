@@ -1,0 +1,174 @@
+/***
+	iForms v2.0 —— Step
+	by WingMeng(.com) 2014-?
+	
+	UI menu:
+		1. The default style (默认风格) 
+		2. Yellow (黄色风格)
+		3. Blue (蓝色风格)
+		4. Red  (红色风格)
+			
+***/
+
+/* Reset */
+html{ background-color : white; }
+
+body{
+	margin  : 0;
+	padding : 0;
+	color   : #333333;
+	font    : 14px/1.8 Tahoma, Geneva, '\5B8B\4F53';
+}
+
+ol{
+	list-style : none outside none;
+	margin     : 0;
+	padding    : 0;
+}
+
+.ui-step{
+	color         : #B7B7B7;
+	padding       : 0 60px;
+	margin-bottom : 35px;
+	position      : relative;
+}
+
+.ui-step:after{
+	display    : block;
+	content    : "";
+	height     : 0;
+	font-size  : 0;
+	clear      : both;
+	overflow   : hidden;
+	visibility : hidden;
+}
+
+.ui-step li{
+	float    : left;
+	position : relative;
+}
+
+.ui-step .step-end{
+	width    : 120px;
+	position : absolute;
+	top      : 0;
+	right    : -60px;
+}
+
+.ui-step-line{
+	height           : 5px;
+	background-color : #E0E0E0;
+	box-shadow       : inset 0 1px 1px rgba(0, 0, 0, .2);
+	margin-top       : 15px;
+}
+
+.step-end .ui-step-line{ display : none; }
+
+.ui-step-cont{
+	width      : 120px;
+	position   : absolute;
+	top        : 0;
+	left       : -15px;
+	text-align : center;
+}
+
+.ui-step-cont-number{
+	display          : inline-block;
+	*zoom            : 1;
+	position         : absolute;
+	left             : 0;
+	top              : 0;
+	width            : 30px;
+	height           : 30px;
+	line-height      : 26px;
+	color            : #FFFFFF;
+	background       : url(ui-step_cover_30x30.png) center no-repeat \9;
+	border-radius    : 50%;
+	border-left      : 2px solid #FFFFFF;
+	border-right     : 2px solid #FFFFFF;
+	border           : 2px solid rgba(224, 224, 224, 1);
+	font-family      : tahoma;
+	font-weight      : bold;
+	font-size        : 16px;
+	background-color : #B9B9B9;
+	box-shadow       : inset 1px 1px 2px rgba(0, 0, 0, .2);
+}
+
+.ui-step-cont-text{
+	position  : relative;
+	top       : 34px;
+	left      : -42px;
+	font-size : 12px;
+}
+
+/** 步骤数定义 **/
+.ui-step-3 li{ width : 50%; }
+
+.ui-step-4 li{ width : 33.3%; }
+
+.ui-step-5 li{ width : 25%; }
+
+.ui-step-6 li{ width : 20%; }
+
+/** The default style (默认风格) **/
+/* Done */
+.step-done .ui-step-cont-number{ background-color : #85E085; }
+
+.step-done .ui-step-cont-text{ color : #85E085; }
+
+.step-done .ui-step-line{ background-color : #66CC66; }
+
+/* Active */
+.step-active .ui-step-cont-number{ background-color : #33CC33; }
+
+.step-active .ui-step-cont-text{
+	color       : #33CC33;
+	font-weight : bold;
+}
+
+.step-active .ui-step-line{ background-color : #E0E0E0; }
+
+/** Yellow **/
+/* Done */
+.ui-step-yellow .step-done .ui-step-cont-number{ background-color : #FFC966; }
+
+.ui-step-yellow .step-done .ui-step-cont-text{ color : #FFC966; }
+
+.ui-step-yellow .step-done .ui-step-line{ background-color : #FFCC33; }
+
+/* Active */
+.ui-step-yellow .step-active .ui-step-cont-number{ background-color : orange; }
+
+.ui-step-yellow .step-active .ui-step-cont-text{ color : orange; }
+
+.ui-step-yellow .step-active .ui-step-line{ background-color : #E0E0E0; }
+
+/** Blue **/
+/* Done */
+.ui-step-blue .step-done .ui-step-cont-number{ background-color : #6699FF; }
+
+.ui-step-blue .step-done .ui-step-cont-text{ color : #6699FF; }
+
+.ui-step-blue .step-done .ui-step-line{ background-color : #4C99E6; }
+
+/* Active */
+.ui-step-blue .step-active .ui-step-cont-number{ background-color : #0066CC; }
+
+.ui-step-blue .step-active .ui-step-cont-text{ color : #0066CC; }
+
+.ui-step-blue .step-active .ui-step-line{ background-color : #E0E0E0; }
+
+/** Red **/
+/* Done */
+.ui-step-red .step-done .ui-step-cont-number{ background-color : #FF9999; }
+
+.ui-step-red .step-done .ui-step-cont-text{ color : #FF9999; }
+
+.ui-step-red .step-done .ui-step-line{ background-color : #FC9C9C; }
+
+/* Active */
+.ui-step-red .step-active .ui-step-cont-number{ background-color : #FF6666; }
+
+.ui-step-red .step-active .ui-step-cont-text{ color : #FF6666; }
+
+.ui-step-red .step-active .ui-step-line{ background-color : #E0E0E0; }

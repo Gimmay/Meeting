@@ -75,6 +75,7 @@
 				$condition['mobile']      = ['like', "%$filter[keyword]%"];
 				$condition['name']        = ['like', "%$filter[keyword]%"];
 				$condition['type']        = ['like', "%$filter[keyword]%"];
+				$condition['column7']     = ['like', "%$filter[keyword]%"];
 				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
 				$condition['sign_code']   = ['like', "%$filter[keyword]%"];
 				$condition['_logic']      = 'or';
@@ -93,24 +94,24 @@
 				break;
 				case 1: // find
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode,  sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status')->find();
-						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode,  sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status')->find();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode, sign_code, replace_status, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status, column1, column2, column3, column4, column5, column6, column7, column8')->find();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode, sign_code, replace_status, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status, column1, column2, column3, column4, column5, column6, column7, column8')->find();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->where($where)->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode,  sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status')->find();
-						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->where($where)->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode,  sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status')->find();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->where($where)->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode, sign_code, replace_status, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status, column1, column2, column3, column4, column5, column6, column7, column8')->find();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->where($where)->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode, sign_code, replace_status, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status, column1, column2, column3, column4, column5, column6, column7, column8')->find();
 					}
 				break;
 				case 2: // select
 				default:
 					if(!isset($filter['_order'])) $filter['_order'] = 'main.creatime desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode,  sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status')->select();
-						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode,  sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status')->select();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode, sign_code, replace_status, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status, column1, column2, column3, column4, column5, column6, column7, column8')->select();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode, sign_code, replace_status, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status, column1, column2, column3, column4, column5, column6, column7, column8')->select();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->where($where)->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode,  sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status')->select();
-						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->where($where)->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode,  sign_code, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status')->select();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->limit($filter['_limit'])->where($where)->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode, sign_code, replace_status, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status, column1, column2, column3, column4, column5, column6, column7, column8')->select();
+						else $result = $this->alias('main')->join('join user_client sub on main.cid = sub.id')->where($where)->order($filter['_order'])->field('sub.*, registration_date, registration_type, review_status, review_time, sign_status, sign_time, sign_type, sign_qrcode, sign_code_qrcode, sign_code, replace_status, print_status, print_times, main.id id, sub.id cid, mid, main.status join_status, gift_status, column1, column2, column3, column4, column5, column6, column7, column8')->select();
 					}
 				break;
 			}

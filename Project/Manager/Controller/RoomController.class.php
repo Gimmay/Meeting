@@ -32,24 +32,32 @@
 				/** @var \Core\Model\RoomTypeModel $room_type_model */
 				$room_type_model = D('Core/RoomType');
 				/** @var \Core\Model\JoinModel $join_model */
-				$join_model                 = D('Core/Join');
-				$room_logic                 = new RoomLogic();
-				$hotel_id                   = I('get.hid', 0, 'int');
-				$assigned_room_client_count = $room_logic->getCheckInCount($hotel_id);
-				$statistics                 = [
-					'assigned'  => $assigned_room_client_count,
-					'not_assigned' => 0,
-					'total'  => $join_model->findRecord(0, ['status' => 1, 'mid' => $this->meetingID])
+				$join_model                = D('Core/Join');
+				$room_logic                = new RoomLogic();
+				$hotel_id                  = I('get.hid', 0, 'int');
+				$assigned_client_count     = $room_logic->getCheckInCount($hotel_id);
+				$not_assigned_client_count = $room_logic->getNotCheckInCount($hotel_id, I('get.mid', 0, 'int'));
+				$room_status               = $room_logic->getRoomStatus($hotel_id);
+				$room_type_count           = $room_logic->getRoomTypeCount($hotel_id);
+				$statistics                = [
+					'assigned_employee'   => $assigned_client_count['employee'],
+					'assigned_client'     => $assigned_client_count['client'],
+					'not_assign_employee' => $not_assigned_client_count['employee'],
+					'not_assign_client'   => $not_assigned_client_count['client'],
+					'full_room'           => $room_status['full'],
+					'available_room'      => $room_status['available'],
+					'total'               => $join_model->findRecord(0, ['status' => 1, 'mid' => $this->meetingID])
 				];
-				$room_result                = $room_logic->findRoom();
-				$meeting_result             = $room_logic->findMeeting();
-				$hotel_result_name          = $hotel_model->findHotel(1, ['id' => $hotel_id]);
-				$room_type_result           = $room_type_model->findRecord(2, ['status' => 1, 'hid' => $hotel_id]);
+				$room_result               = $room_logic->findRoom();
+				$meeting_result            = $room_logic->findMeeting();
+				$hotel_result_name         = $hotel_model->findHotel(1, ['id' => $hotel_id]);
+				$room_type_result          = $room_type_model->findRecord(2, ['status' => 1, 'hid' => $hotel_id]);
 				$this->assign('type', $room_type_result);
 				$this->assign('statistics', $statistics);
 				$this->assign('hotel_name', $hotel_result_name);
 				$this->assign('room_info', $room_result);
 				$this->assign('info', $meeting_result);
+				$this->assign('count', $room_type_count);
 				$this->display();
 			}
 			else $this->error('您没有查看房间模块的权限');
@@ -93,7 +101,9 @@
 					]);
 					$room_type_result[$k]['surplus'] = $v['number']-$room_count;
 				}
+				$room_type_count = $room_logic->getRoomTypeCount(I('get.hid', 0, 'int'));
 				$this->assign('type', $room_type_result);
+				$this->assign('count', $room_type_count);
 				$this->display();
 			}
 			else $this->error('您没有查看房间类型模块的权限');

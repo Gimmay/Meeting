@@ -62,12 +62,13 @@
 												<if condition="$permission_list['GROUP.CREATE'] eq 1">
 													<span data-toggle="modal" data-target="#add_group_modal" class="glyphicon glyphicon-plus add_group"></span>
 												</if>
+												<span data-toggle="modal" data-target="#delete_group_modal" class="glyphicon glyphicon-remove reduce_group"></span>
 											</div>
 											<div class="group_list">
 												<ul class="group_ul">
 													<volist name="group" id="info">
 														<li data-id="<{$info.id}>" class="<if condition='$info.id eq $_GET[gid]'>active</if>">
-															<a href="<{:U('Grouping/manage',['mid'=>$info['mid'],'gid'=>$info['id'],'date'=>I('get.date'),''])}>"><{$info.code}></a>
+															<a href="<{:U('Grouping/manage',['mid'=>$_GET[mid],'gid'=>$info['id'],'date'=>I('get.date'),'keyword'=>$info['keyword']])}>"><{$info.code}></a>
 															<if condition="$permission_list['GROUP.ALTER'] eq 1">
 																<span data-toggle="modal" data-target="#alter_group_modal" class="glyphicon glyphicon-edit alter_btn"></span>
 															</if>
@@ -93,18 +94,18 @@
 												</div>
 												<if condition="$permission_list['GROUP.ASSIGN-CLIENT']">
 													<span class="copy" data-toggle="modal" data-target="#copy_modal">沿用上一天组员</span>
-													<span class="title"><{$leader.code}>(<{$count}>)人</span>
+													<span class="title"><{$leader.code}>(<{$count+$leader.count}>)人(含组长)</span>
 													<span data-id="<{:I('get.gid',0,'int')}>" data-toggle="modal" data-target="#add_crew" class="add_client">添加组员</span>
 												</if>
 											</div>
 											<if condition="$permission_list['GROUP.VIEW-CLIENT']">
 												<div class="mid">
-													<span>组长：<{$leader.leader_name_name}></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>副组长：<{$leader.deputy_leader_name}></span>
+													<span>组长：<{$leader.leader_name}></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>副组长：<{$leader.deputy_leader_name}></span>
 												</div>
 												<div class="group_con">
 													<span data-id="<{:I('get.gid',0,'int')}>" class="empty" data-toggle="modal" data-target="#empty_modal"><b class="glyphicon glyphicon-trash"></b>清空</span>
 													<volist name="member" id="list">
-														<a href="javascript:void(0)"><{$list.client_name}><span data-id="<{$list.id}>" class="g_close">×</span></a>
+														<a href="javascript:void(0)"><{$list.client_name}>/<{$list.unit_name}><span data-id="<{$list.id}>" class="g_close">×</span></a>
 													</volist>
 												</div>
 											</if>
@@ -158,55 +159,120 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title text-center">新建组</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="add_group"> <input type="hidden" name="cid" value="">
 					<div class="modal-body">
-						<div class="form-group">
-							<label for="code" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组号：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" name="code" id="code">
+						<div class="form-group mode">
+							<label class="col-sm-2 control-label">方式：</label>
+							<div class="col-sm-10" style="margin:0">
+								<ul class="nav nav-pills" id="create_way">
+									<li role="presentation" class="single active"><a href="#">单个新增</a></li>
+									<li role="presentation" class="mutil "><a href="#">批量新增</a></li>
+								</ul>
 							</div>
+						</div>
+						<div class="single_box">
+							<div class="form-group">
+								<label for="code" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>组号：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="code" id="code">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="leader_type" class="col-sm-2 control-label">组长类型：</label>
+								<div class="col-sm-10">
+									<select class="form-control" name="leader_type" id="leader_type">
+										<option value="0">员工</option>
+										<option value="1">客户</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group leader_employee_wrap">
+								<label for="leader_employee" class="col-sm-2 control-label">组长：</label>
+								<div class="col-sm-10">
+									<div id="leader_employee"></div>
+								</div>
+							</div>
+							<div class="form-group leader_client_wrap hide">
+								<label for="leader_client" class="col-sm-2 control-label">组长：</label>
+								<div class="col-sm-10">
+									<div id="leader_client"></div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="deputy_leader_type" class="col-sm-2 control-label">副组长类型：</label>
+								<div class="col-sm-10">
+									<select class="form-control" name="deputy_leader_type" id="deputy_leader_type">
+										<option value="0">员工</option>
+										<option value="1">客户</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group deputy_leader_employee_wrap">
+								<label for="deputy_leader_employee" class="col-sm-2 control-label">副组长：</label>
+								<div class="col-sm-10">
+									<div id="deputy_leader_employee"></div>
+								</div>
+							</div>
+							<div class="form-group deputy_leader_client_wrap hide">
+								<label for="deputy_leader_client" class="col-sm-2 control-label">副组长：</label>
+								<div class="col-sm-10">
+									<div id="deputy_leader_client"></div>
+								</div>
+							</div>
+						</div>
+						<div class="mutil_box c_way hide">
+							<div class="form-group">
+								<label for="prefix" class="col-sm-2 control-label">前缀：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control prefix" name="prefix" id="prefix">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="start_number" class="col-sm-2 control-label">开始段：</label>
+								<div class="col-sm-10">
+									<input type="number" class="form-control start_number" name="start_number" id="start_number">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="suffix" class="col-sm-2 control-label">后缀：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control suffix" name="suffix" id="suffix">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="length" class="col-sm-2 control-label">长度：</label>
+								<div class="col-sm-10">
+									<input type="number" class="form-control length" name="length" id="length">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="number" class="col-sm-2 control-label">数量：</label>
+								<div class="col-sm-10">
+									<input type="number" class="form-control number" name="number" id="number">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">组号：</label>
+								<div class="col-sm-10">
+									<button type="button" class="btn btn-default auto_get_number">自动获取</button>
+									<ul class="list_coupon_number clearfix">
+									</ul>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label"></label>
+								<div class="col-sm-10">
+									<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、开始段、长度、数量等字段可自动获取券号。
+									</p>
+								</div>
+							</div>
+							<input type="hidden" name="group_area" value="">
 						</div>
 						<div class="form-group">
-							<label for="leader_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组长类型：</label>
+							<label for="capacity" class="col-sm-2 control-label">可容纳人数：</label>
 							<div class="col-sm-10">
-								<select class="form-control" name="leader_type" id="leader_type">
-									<option value="0">员工</option>
-									<option value="1">客户</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group leader_employee_wrap">
-							<label for="leader_employee" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组长：</label>
-							<div class="col-sm-10">
-								<div id="leader_employee"></div>
-							</div>
-						</div>
-						<div class="form-group leader_client_wrap hide">
-							<label for="leader_client" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组长：</label>
-							<div class="col-sm-10">
-								<div id="leader_client"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="deputy_leader_type" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>副组长类型：</label>
-							<div class="col-sm-10">
-								<select class="form-control" name="deputy_leader_type" id="deputy_leader_type">
-									<option value="0">员工</option>
-									<option value="1">客户</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group deputy_leader_employee_wrap">
-							<label for="deputy_leader_employee" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>副组长：</label>
-							<div class="col-sm-10">
-								<div id="deputy_leader_employee"></div>
-							</div>
-						</div>
-						<div class="form-group deputy_leader_client_wrap hide">
-							<label for="deputy_leader_client" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>副组长：</label>
-							<div class="col-sm-10">
-								<div id="deputy_leader_client"></div>
+								<input type="number" class="form-control capacity" name="capacity" id="capacity">
 							</div>
 						</div>
 						<div class="form-group">
@@ -218,7 +284,43 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认</button>
+						<button type="submit" class="btn btn-primary submit">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量删除组 -->
+	<div class="modal fade" id="delete_group_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 700px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">删除组</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="batch_delete">
+					<div class="modal-body">
+						<div class="group_list_reduce">
+							<a href="javascript:void(0)" data-id="1">1195/3</a>
+							<a href="javascript:void(0)" data-id="2">1195/3</a>
+							<a href="javascript:void(0)" data-id="3">1195/3</a>
+							<a href="javascript:void(0)" data-id="4">1195/3</a>
+							<a href="javascript:void(0)" data-id="1">1195/3</a>
+							<a href="javascript:void(0)" data-id="2">1195/3</a>
+							<a href="javascript:void(0)" data-id="3">1195/3</a>
+							<a href="javascript:void(0)" data-id="4">1195/3</a>
+							<a href="javascript:void(0)" data-id="1">1195/3</a>
+							<a href="javascript:void(0)" data-id="2">1195/3</a>
+							<a href="javascript:void(0)" data-id="3">1195/3</a>
+							<a href="javascript:void(0)" data-id="4">1195/3</a>
+						</div>
+					</div>
+					<input type="hidden" id="group_arr">
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary submit">确认</button>
 					</div>
 				</form>
 			</div>
@@ -233,17 +335,17 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title text-center">修改组</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmptyAlter()">
 					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="gid" id="gid">
 					<div class="modal-body">
 						<div class="form-group">
-							<label for="code_alter" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组号：</label>
+							<label for="code_alter" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>组号：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" name="code" id="code_alter">
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="leader_type_alter" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组长类型：</label>
+							<label for="leader_type_alter" class="col-sm-2 control-label">组长类型：</label>
 							<div class="col-sm-10">
 								<select class="form-control" name="leader_type" id="leader_type_alter">
 									<option value="0">员工</option>
@@ -252,19 +354,19 @@
 							</div>
 						</div>
 						<div class="form-group leader_alter_employee_wrap">
-							<label for="leader_alter_employee" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组长：</label>
+							<label for="leader_alter_employee" class="col-sm-2 control-label">组长：</label>
 							<div class="col-sm-10">
 								<div id="leader_alter_employee"></div>
 							</div>
 						</div>
 						<div class="form-group leader_alter_client_wrap hide">
-							<label for="leader_alter_client" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>组长：</label>
+							<label for="leader_alter_client" class="col-sm-2 control-label">组长：</label>
 							<div class="col-sm-10">
 								<div id="leader_alter_client"></div>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="deputy_leader_type_alter" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>副组长类型：</label>
+							<label for="deputy_leader_type_alter" class="col-sm-2 control-label">副组长类型：</label>
 							<div class="col-sm-10">
 								<select class="form-control" name="deputy_leader_type" id="deputy_leader_type_alter">
 									<option value="0">员工</option>
@@ -273,15 +375,21 @@
 							</div>
 						</div>
 						<div class="form-group deputy_leader_alter_employee_wrap">
-							<label for="deputy_leader_alter_employee" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>副组长：</label>
+							<label for="deputy_leader_alter_employee" class="col-sm-2 control-label">副组长：</label>
 							<div class="col-sm-10">
 								<div id="deputy_leader_alter_employee"></div>
 							</div>
 						</div>
 						<div class="form-group deputy_leader_alter_client_wrap hide">
-							<label for="deputy_leader_alter_client" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>副组长：</label>
+							<label for="deputy_leader_alter_client" class="col-sm-2 control-label">副组长：</label>
 							<div class="col-sm-10">
 								<div id="deputy_leader_alter_client"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="capacity_a" class="col-sm-2 control-label">可容纳人数：</label>
+							<div class="col-sm-10">
+								<input type="number" class="form-control capacity_a" name="capacity_a" id="capacity_a">
 							</div>
 						</div>
 						<div class="form-group">
@@ -357,7 +465,7 @@
 					<input type="hidden" name="gid" value=""> <input type="hidden" name="date" id="" value="">
 					<div class="modal-body">
 						<div class="form-group">
-							<label for="score" class="col-sm-2 control-label"><b style="vertical-align: middle;color: red;">*</b>分数：</label>
+							<label for="score" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>分数：</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" name="score" id="score">
 							</div>

@@ -15,12 +15,11 @@
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body data-meeting-id="<{:I('get.mid')}>">
-	<div id="mt_success">
+	<div id="mt_success" style="display: block">
 		<p>热烈欢迎</p>
-		<p class="meeting_name"><{$meeting.name}></p>
+		<p>来自<span class="unit colored"></span>的<span class="client_name colored"></span></p>
 		<p>签到成功</p>
-		<p>来自<span class="unit"></span>的参会嘉宾<span class="client_name"></span></p>
-		<p>第<span class="order"></span>位签到成功</p>
+		<p>您是第<span class="order colored"></span>位签到的贵宾</p>
 	</div>
 	<div class="background">
 		<img src="<{$Think.COMMON_IMAGE_PATH}>/signSuccess.jpg" alt="" style="width: 100%">

@@ -68,6 +68,27 @@ var ThisObject = {
 	}
 };
 $(function(){
+	var quasar_script = document.getElementById('quasar_script');
+	// 实例化Url类
+	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
+	// 显示结果数
+	$('.table_length').find('select').on('change', function(){
+		var number = $(this).find('option:selected').text();
+		var url    = url_object.setUrlParam('_page_count', number);
+		location.replace(url);
+	});
+	// 页面显示列表数下拉框默认值处理
+	(function(){
+		var page_count = url_object.getUrlParam('_page_count');
+		$('.table_length').find('select option').each(function(){
+			var num = $(this).text();
+			if(page_count == num){
+				$('.table_length').find('select option:selected').removeProp('selected').removeAttr('selected');
+				$(this).prop('selected', true).attr('selected', true);
+				return true;
+			}
+		});
+	})();
 	$('.print').on('click', function(){
 		var id = $(this).attr('data-id');
 		Common.ajax({
@@ -79,24 +100,49 @@ $(function(){
 				$('#print').find('.time').text(time);
 				$('#print').find('.unit').text(r.unit);
 				$('#print').find('.client_name').text(r.client);
-				$('#print').find('.project_type').text(r.receivables_type);
+				$('#print').find('.project_type').text(r.receivables_type+'('+r.coupon_name+')');
 				$('#print').find('.price_capital').text(r.price_word);
 				$('#print').find('.identifier').text(r.order_number);
 				$('#print').find('.price').text(r.price);
-				$('#print').find('.price').text(r.price);
-				var str = '', i = 0;
+				$('#print').find('.payee').text(r.payee);
+				/*if(r.comment == null){
+				 $('#print').find('.comment_wrap').removeClass('hide');
+				 $('#print').find('.comment').text(r.comment);
+				 }else{
+				 $('#print').find('.comment_wrap').addClass('hide');
+				 }*/
+				var str = '', i = 0, commentStr = '';
 				$.each(r.option.pay_method_list, function(index, value){
+					commentStr += value.comment+'';
+					console.log(value);
 					if(index == 0){
-						$('.type1').text(value.name);
-						$('.price1').text(value.price);
+						if(value.name == '刷卡'){
+							$('.type1').text(value.name+'('+value.pos_machine+')');
+							$('.price1').text(value.price);
+						}else{
+							$('.type1').text(value.name);
+							$('.price1').text(value.price);
+						}
 					}else{
-						str += ThisObject.trTemp.replace('$type', value.name).replace('$price', value.price);
+						if(value.name == '刷卡'){
+							str += ThisObject.trTemp.replace('$type', value.name+'('+value.pos_machine+')')
+											 .replace('$price', value.price);
+						}else{
+							str += ThisObject.trTemp.replace('$type', value.name).replace('$price', value.price);
+						}
 					}
 					i++;
 				});
+				if(commentStr){
+					$('#print').find('.comment_wrap').removeClass('hide');
+					$('#print').find('.comment').text(commentStr);
+				}else{
+					$('#print').find('.comment_wrap').addClass('hide');
+				}
 				$('.sign_tr').find('.rmb').attr('rowspan', i);
 				$('.sign_tr').after(str);
 				$("#print").printArea();
+				location.reload();
 			}
 		})
 	});
@@ -112,92 +158,92 @@ $(function(){
 	var quasar_script          = document.getElementById('quasar_script');
 	var url_object             = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
 	var $add_receivables_modal = $('#add_receivables');
-/*	ManageObject.object.meetingName.onQuasarSelect(function(){
-		var value = ManageObject.object.meetingName.getValue();
-		$add_receivables_modal.find('input[name=mid]').val(value);
-	});
-	ManageObject.object.clientName.onQuasarSelect(function(){
-		var value = ManageObject.object.clientName.getValue();
-		$add_receivables_modal.find('input[name=cid]').val(value);
-	});*/
+	/*	ManageObject.object.meetingName.onQuasarSelect(function(){
+	 var value = ManageObject.object.meetingName.getValue();
+	 $add_receivables_modal.find('input[name=mid]').val(value);
+	 });
+	 ManageObject.object.clientName.onQuasarSelect(function(){
+	 var value = ManageObject.object.clientName.getValue();
+	 $add_receivables_modal.find('input[name=cid]').val(value);
+	 });*/
 	// 修改收款
 	/*$('.modify_btn').on('click', function(e){
-		e.stopPropagation();
-		var type = $(this).parents('.header').attr('data-type');
-		if(type == 2){
-			$('#alter_receivables .coupon_group').removeClass('hide');
-			$('#alter_receivables .coupon_group').addClass('hide');
-		}else{
-			$('#alter_receivables .coupon_group').addClass('hide');
-			$('#alter_receivables .coupon_group').removeClass('hide');
-		}
-		$('#alter_receivables').modal('show');
-		var id = $(this).parent('.header').attr('data-id');
-		Common.ajax({
-			data    :{requestType:'get_receivables_detail', id:id},
-			callback:function(r){
-				console.log(r);
-				var $alter_receivables_object = $('#alter_receivables');
-				var time                      = new Date(r.time*1000).format('yyyy-MM-dd HH:mm:ss');
-				$alter_receivables_object.find('input[name=id]').val(id);
-				//noinspection JSUnresolvedVariable
-				$alter_receivables_object.find('#client_name_a').val(r.client);
-				$alter_receivables_object.find('#price_a').val(r.price);
-				$alter_receivables_object.find('#receivables_time_a').val(time);
-				//$alter_receivables_object.find('#comment_a').val(r.comment);
-				$alter_receivables_object.find('#place_a').val(r.place);
+	 e.stopPropagation();
+	 var type = $(this).parents('.header').attr('data-type');
+	 if(type == 2){
+	 $('#alter_receivables .coupon_group').removeClass('hide');
+	 $('#alter_receivables .coupon_group').addClass('hide');
+	 }else{
+	 $('#alter_receivables .coupon_group').addClass('hide');
+	 $('#alter_receivables .coupon_group').removeClass('hide');
+	 }
+	 $('#alter_receivables').modal('show');
+	 var id = $(this).parent('.header').attr('data-id');
+	 Common.ajax({
+	 data    :{requestType:'get_receivables_detail', id:id},
+	 callback:function(r){
+	 console.log(r);
+	 var $alter_receivables_object = $('#alter_receivables');
+	 var time                      = new Date(r.time*1000).format('yyyy-MM-dd HH:mm:ss');
+	 $alter_receivables_object.find('input[name=id]').val(id);
+	 //noinspection JSUnresolvedVariable
+	 $alter_receivables_object.find('#client_name_a').val(r.client);
+	 $alter_receivables_object.find('#price_a').val(r.price);
+	 $alter_receivables_object.find('#receivables_time_a').val(time);
+	 //$alter_receivables_object.find('#comment_a').val(r.comment);
+	 $alter_receivables_object.find('#place_a').val(r.place);
 
-				$alter_receivables_object.find('#source_type_a>option').prop('selected', false);
-				$alter_receivables_object.find('#source_type_a').val(r.source_type);
-				$alter_receivables_object.find('#source_type_a>option[value='+r.source_type+']').prop('selected', true);
-				$alter_receivables_object.find('#type_a>option').prop('selected', false);
-				$alter_receivables_object.find('#type_a').val(r.type);
-				$alter_receivables_object.find('#type_a>option[value='+r.type+']').prop('selected', true);
-				$alter_receivables_object.find('#method_a>option').prop('selected', false);
-				$alter_receivables_object.find('#method_a').val(r.method);
-				$alter_receivables_object.find('#method_a>option[value='+r.method+']').prop('selected', true);
-				$alter_receivables_object.find('#pos_id_a>option').prop('selected', false);
-				$alter_receivables_object.find('#pos_id_a').val(r.pos_id);
-				$alter_receivables_object.find('#pos_id_a>option[value='+r.pos_id+']').prop('selected', true);
-				ManageObject.object.payeeNameA.setValue(r.payee_id);
-				ManageObject.object.payeeNameA.setHtml(r.payee);
-			}
-		});
-		Common.ajax({
-			data    :{requestType:'alter_coupon', id:id},
-			callback:function(r){
-				var arr = [], str = '';
-				//$('#alter_receivables .no_c').hide();
-				$.each(r, function(index1, value1){
-					$.each(value1, function(index2, value2){
-						if(index1 == 'coupon_item_yes'){
-							if(value2 != null){
-								str += ThisObject.aActiveTemp.replace('$id', value2.id)
-												 .replace('$name', value2.code);
-								arr.push(value2.id);
-							}
-						}
-						if(index1 == 'coupon_item_not'){
-							if(value2 != null){
-								str += ThisObject.aTemp.replace('$id', value2.id)
-												 .replace('$name', value2.code);
-							}
-						}
-					});
-				});
-				if(str == ''){
-					$('#alter_receivables .no_c').show();
-				}else{
-					// 记录之前已选择的代金券
-					$('#alter_receivables').find('input[name=old_coupon_code]').val(arr);
-					//输出所有代金券
-					$('#alter_receivables .coupon_list').html(str);
-				}
-				ThisObject.unbindEvent();
-				ThisObject.bindEvent();
-			}
-		});
-	});*/
+	 $alter_receivables_object.find('#source_type_a>option').prop('selected', false);
+	 $alter_receivables_object.find('#source_type_a').val(r.source_type);
+	 $alter_receivables_object.find('#source_type_a>option[value='+r.source_type+']').prop('selected', true);
+	 $alter_receivables_object.find('#type_a>option').prop('selected', false);
+	 $alter_receivables_object.find('#type_a').val(r.type);
+	 $alter_receivables_object.find('#type_a>option[value='+r.type+']').prop('selected', true);
+	 $alter_receivables_object.find('#method_a>option').prop('selected', false);
+	 $alter_receivables_object.find('#method_a').val(r.method);
+	 $alter_receivables_object.find('#method_a>option[value='+r.method+']').prop('selected', true);
+	 $alter_receivables_object.find('#pos_id_a>option').prop('selected', false);
+	 $alter_receivables_object.find('#pos_id_a').val(r.pos_id);
+	 $alter_receivables_object.find('#pos_id_a>option[value='+r.pos_id+']').prop('selected', true);
+	 ManageObject.object.payeeNameA.setValue(r.payee_id);
+	 ManageObject.object.payeeNameA.setHtml(r.payee);
+	 }
+	 });
+	 Common.ajax({
+	 data    :{requestType:'alter_coupon', id:id},
+	 callback:function(r){
+	 var arr = [], str = '';
+	 //$('#alter_receivables .no_c').hide();
+	 $.each(r, function(index1, value1){
+	 $.each(value1, function(index2, value2){
+	 if(index1 == 'coupon_item_yes'){
+	 if(value2 != null){
+	 str += ThisObject.aActiveTemp.replace('$id', value2.id)
+	 .replace('$name', value2.code);
+	 arr.push(value2.id);
+	 }
+	 }
+	 if(index1 == 'coupon_item_not'){
+	 if(value2 != null){
+	 str += ThisObject.aTemp.replace('$id', value2.id)
+	 .replace('$name', value2.code);
+	 }
+	 }
+	 });
+	 });
+	 if(str == ''){
+	 $('#alter_receivables .no_c').show();
+	 }else{
+	 // 记录之前已选择的代金券
+	 $('#alter_receivables').find('input[name=old_coupon_code]').val(arr);
+	 //输出所有代金券
+	 $('#alter_receivables .coupon_list').html(str);
+	 }
+	 ThisObject.unbindEvent();
+	 ThisObject.bindEvent();
+	 }
+	 });
+	 });*/
 	$('.add_btn ').on('click', function(){
 		$(this).parents('.form-group').after(ThisObject.receivablesTemp);
 		Common.ajax({
@@ -263,13 +309,11 @@ $(function(){
 			})
 		}
 	})
-
-	$('.cancel').on('click',function(e){
+	$('.cancel').on('click', function(e){
 		e.stopPropagation();
 		var id = $(this).parent('.header').attr('data-id');
 		$('#cancel_modal').find('input[name=id]').val(id);
 		$('#cancel_modal').modal('show');
-
 	})
 });
 // 添加收款不为空控制

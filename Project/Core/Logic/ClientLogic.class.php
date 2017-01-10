@@ -38,7 +38,6 @@
 					$sign_result_model = D('Core/SignResult');
 					$signed_count      = $join_model->findRecord(0, [
 						'mid'         => $option['mid'],
-						'cid'         => $option['cid'],
 						'sign_status' => 1,
 						'status'      => 1
 					]);

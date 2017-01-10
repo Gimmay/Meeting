@@ -31,7 +31,7 @@
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
-<body>
+<body data-bid="<{$cur_bid}>">
 	<div id="mt_container">
 		<div class="mt_content">
 			<include file="Public/innerMenu"/>
@@ -62,6 +62,7 @@
 											<ul class="clearfix system_tem_ul">
 												<volist name="list" id='single'>
 													<li data-id="<{$single.id}>" class="<if condition='$cur_bid eq $single[id]'>active</if>">
+														<i class="delete_icon glyphicon glyphicon-remove"></i>
 														<div class="layer"></div>
 														<i class="select_icon glyphicon glyphicon-ok"></i>
 														<div class="system_ontent">
@@ -84,6 +85,27 @@
 						</section>
 					</div>
 				</if>
+			</div>
+		</div>
+	</div>
+	<!-- 删除胸卡模板 -->
+	<div class="modal fade" id="delete_badge" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 700px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">删除胸卡模板</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmptyAlter()">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="bid" id="bid">
+					<div class="modal-body">
+						是否删除选择的胸卡模板！
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>

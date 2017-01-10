@@ -36,7 +36,7 @@
 			if(IS_POST){
 				$client_id = I('post.id');
 				$recovery  = $model->recoveryClient($client_id);
-				if($recovery['status']) $this->success($recovery['message'], U('client',['mid'=>I('get.mid',0,'int')]));
+				if($recovery['status']) $this->success($recovery['message'], U('client', ['mid' => I('get.mid', 0, 'int')]));
 				else $this->error($recovery['message']);
 				exit;
 			}
@@ -66,7 +66,7 @@
 			if(IS_POST){
 				$client_id = I('post.id');
 				$recovery  = $model->recoveryEmployee($client_id);
-				if($recovery['status']) $this->success($recovery['message'], U('employee',['mid'=>I('get.mid',0,'int')]));
+				if($recovery['status']) $this->success($recovery['message'], U('employee', ['mid' => I('get.mid', 0, 'int')]));
 				else $this->error($recovery['message']);
 				exit;
 			}
@@ -96,7 +96,7 @@
 			if(IS_POST){
 				$client_id = I('post.id');
 				$recovery  = $model->recoveryClient($client_id);
-				if($recovery['status']) $this->success($recovery['message'], U('meeting',['mid'=>I('get.mid',0,'int')]));
+				if($recovery['status']) $this->success($recovery['message'], U('meeting', ['mid' => I('get.mid', 0, 'int')]));
 				else $this->error($recovery['message']);
 				exit;
 			}
@@ -131,7 +131,7 @@
 			if(IS_POST){
 				$client_id = I('post.id');
 				$recovery  = $model->recoveryRole($client_id);
-				if($recovery['status']) $this->success($recovery['message'], U('Role',['mid'=>I('get.mid',0,'int')]));
+				if($recovery['status']) $this->success($recovery['message'], U('Role', ['mid' => I('get.mid', 0, 'int')]));
 				else $this->error($recovery['message']);
 				exit;
 			}
@@ -145,7 +145,7 @@
 			$coupon_model = D('Core/Recycle');
 			/** @var \Core\Model\EmployeeModel $employee_model */
 			$employee_model = D('Core/Employee');
-			$list_total = $coupon_model->findCoupon(0, [
+			$list_total     = $coupon_model->findCoupon(0, [
 				'keyword' => I('get.keyword', ''),
 				'status'  => 2,
 			]);
@@ -167,7 +167,7 @@
 			if(IS_POST){
 				$client_id = I('post.id');
 				$recovery  = $coupon_model->recoveryRole($client_id);
-				if($recovery['status']) $this->success($recovery['message'], U('Coupon',['mid'=>I('get.mid',0,'int')]));
+				if($recovery['status']) $this->success($recovery['message'], U('Coupon', ['mid' => I('get.mid', 0, 'int')]));
 				else $this->error($recovery['message']);
 				exit;
 			}
@@ -184,8 +184,8 @@
 			/** @var \Core\Model\MeetingModel $meeting_model */
 			$meeting_model = D('Core/meeting');
 			/** @var \Core\Model\RecycleModel $coupon_item_model */
-			$coupon_item_model  = D('Core/Recycle');
-			$list_total = $coupon_item_model->findCouponItem(0, [
+			$coupon_item_model = D('Core/Recycle');
+			$list_total        = $coupon_item_model->findCouponItem(0, [
 				'keyword' => I('get.keyword', ''),
 				'status'  => 3,
 			]);
@@ -209,7 +209,7 @@
 				$coupon_item_result[$k]['creator']   = $employee_result['name'];
 			}
 			$this->assign('coupon_item', $coupon_item_result);
-			$this->assign('page_show',$page_show);
+			$this->assign('page_show', $page_show);
 			$this->display();
 		}
 
@@ -218,12 +218,114 @@
 			$message_model = D('Core/Message');
 			/** @var \Core\Model\EmployeeModel $employee_model */
 			$employee_model = D('Core/Employee');
-			$message_result = $message_model->findMessage(2, ['status' => 2]);
+			$message_result = $message_model->findMessage(2, ['status' => 2, 'keyword' => I('get.keyword', '')]);
 			foreach($message_result as $k => $v){
 				$employee_result               = $employee_model->findEmployee(1, ['id' => $message_result[$k]['creator']]);
 				$message_result[$k]['creator'] = $employee_result['name'];
 			}
 			$this->assign('message', $message_result);
+			$this->display();
+		}
+
+		public function group(){
+			C('TOKEN_ON', false);
+			/** @var \Core\Model\GroupModel $group_model */
+			$group_model = D('Core/Group');
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			$group_result   = $group_model->findRecord(2, [
+				'mid'     => I('get.mid', 0, 'int'),
+				'status'  => 2,
+				'keyword' => I('get.keyword', '')
+			]);
+			foreach($group_result as $k => $v){
+				$employee_result                   = $employee_model->findEmployee(1, ['id' => $v['creator']]);
+				$group_result[$k]['employee_name'] = $employee_result['name'];
+			}
+			$id = I('post.id', 0, 'int');
+			if(IS_POST){
+				$group_recovery = $group_model->alterRecord(['id' => $id], ['status' => 1]);
+				if($group_recovery['status']) $this->success($group_recovery['message'], U('Coupon', ['mid' => I('get.mid', 0, 'int')]));
+				else $this->error($group_recovery['message']);
+				exit;
+			}
+			$this->assign('group', $group_result);
+			$this->display();
+		}
+
+		public function groupMember(){
+			/** @var \Core\Model\GroupMemberModel $group_member_model */
+			$group_member_model = D('Core/GroupMember');
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			/** @var \Core\Model\ClientModel $client_model */
+			$client_model        = D('Core/Client');
+			$group_member_result = $group_member_model->findRecord(2, [
+				'status'  => 2,
+				'mid'     => I('get.mid', 0, 'int'),
+				'keyword' => I('get.keyword', '')
+			]);
+			foreach($group_member_result as $k => $v){
+				$employee_result                          = $employee_model->findEmployee(1, ['id' => $v['creator']]);
+				$group_member_result[$k]['employee_name'] = $employee_result['name'];
+				$client_result                            = $client_model->findClient(1, ['id' => $v['cid']]);
+				$group_member_result[$k]['client_name']   = $client_result['name'];
+			}
+			$id = I('post.id', 0, 'int');
+			if(IS_POST){
+				$group_member_recovery = $group_member_model->alterRecord(['id' => $id], ['status' => 1]);
+				if($group_member_recovery['status']) $this->success($group_member_recovery['message'], U('Coupon', ['mid' => I('get.mid', 0, 'int')]));
+				else $this->error($group_member_recovery['message']);
+				exit;
+			}
+			$this->assign('group_member', $group_member_result);
+			$this->display();
+		}
+
+		public function hotel(){
+			/** @var \Core\Model\HotelModel $hotel_model */
+			$hotel_model = D('Core/Hotel');
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			$hotel_result   = $hotel_model->findHotel(2, ['status' => 2]);
+			foreach($hotel_result as $k => $v){
+				$employee_result                   = $employee_model->findEmployee(1, [
+					'id'      => $v['creator'],
+					'keyword' => I('get.keyword', '')
+				]);
+				$hotel_result[$k]['employee_name'] = $employee_result['name'];
+			}
+			$id = I('post.id', 0, 'int');
+			if(IS_POST){
+				$hotel_recovery = $hotel_model->alterHotel(['id' => $id], ['status' => 1]);
+				if($hotel_recovery['status']) $this->success($hotel_recovery['message'], U('Coupon', ['mid' => I('get.mid', 0, 'int')]));
+				else $this->error($hotel_recovery['message']);
+				exit;
+			}
+			$this->assign('hotel', $hotel_result);
+			$this->display();
+		}
+
+		public function room(){
+			/** @var \Core\Model\HotelModel $hotel_model */
+			$hotel_model = D('Core/Hotel');
+			/** @var \Core\Model\RoomModel $room_model */
+			$room_model = D('Core/Room');
+			/** @var \Core\Model\EmployeeModel $employee_model */
+			$employee_model = D('Core/Employee');
+			$room_result    = $room_model->findRoom(2, ['status' => 3]);
+			$id             = I('post.id', 0, 'int');
+			if(IS_POST){
+				$room_recovery = $room_model->alterRoom(['id' => $id], ['status' => 1]);
+				if($room_recovery['status']) $this->success($room_recovery['message'], U('Coupon', ['mid' => I('get.mid', 0, 'int')]));
+				else $this->error($room_recovery['message']);
+				exit;
+			}
+			foreach($room_result as $k => $v){
+				$employee_result                  = $employee_model->findEmployee(1, ['id' => $v['creator']]);
+				$room_result[$k]['employee_name'] = $employee_result['name'];
+			}
+			$this->assign('room', $room_result);
 			$this->display();
 		}
 	}

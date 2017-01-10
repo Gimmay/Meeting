@@ -12,6 +12,22 @@
 			parent::_initialize();
 		}
 
+		/**
+		 * 记录系统日志
+		 *
+		 * @param array $data    记录数据<br>
+		 *                       [<br>
+		 *                       'dbSchema'=>string,<br>
+		 *                       'dbTable'=>string,<br>
+		 *                       'dbColumn'=>string,<br>
+		 *                       'extend'=>'string',<br>
+		 *                       'action'=>'string',<br>
+		 *                       'type'=>string<br>
+		 *                       ]
+		 * @param int   $type
+		 *
+		 * @return array
+		 */
 		public function create($data, $type = 0){
 			$setDatabase = function ($data){
 				$result = '';
@@ -33,6 +49,8 @@
 			$data['position']     = $setPosition($data);
 			$data['creatime']     = time();
 			$data['creator_type'] = $type;
+			C('TOKEN_ON', false);
+
 			return $log_model->createLog($data);
 		}
 	}

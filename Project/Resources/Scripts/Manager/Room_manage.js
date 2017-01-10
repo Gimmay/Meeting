@@ -31,12 +31,15 @@ var ScriptObject = {
 	clientBtnTemp       :'<span class="cspan" data-id="$cid">$name</span>',
 	roomTypeTemp        :'<option value="$id">$name($surplusNumber/$totalNumber)</option>',
 	roomTypeSelectedTemp:'<option value="$id" selected>$name($surplusNumber/$totalNumber)</option>',
-	createAddClient     :'<tr>\n\t<td class="check_item_add">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$i</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$signDate</td>\n</tr>',
+	createAddClient     :'<tr data-id="$id">\n\t<td>$i</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$signDate</td>\n</tr>',
 	createAddClient2    :'<tr>\n\t<td class="check_item_add2">\n\t\t<input type="checkbox" class="icheck" value="$id" placeholder="">\n\t</td>\n\t<td>$i</td>\n\t<td>$unit</td>\n\t<td class="name">$name</td>\n\t<td>$clientType</td>\n\t<td>$gender</td>\n\t<td>$position</td>\n\t<td>$mobile</td>\n\t<td>$signDate</td>\n</tr>',
-	createAddEmployee   :'<tr><td class="check_item_employee"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$unit</td><td>$position</td><td>$mobile</td></tr>\n',
+	createAddEmployee   :'<tr data-id="$id"><td>$num</td><td class="name">$name</td><td>$gender</td><td>$unit</td><td>$position</td><td>$mobile</td></tr>\n',
 	createAddEmployee2  :'<tr><td class="check_item_employee2"><input type="checkbox" class="icheck" value="$id" placeholder=""></td><td>$num</td><td class="name">$name</td><td>$gender</td><td>$unit</td><td>$position</td><td>$mobile</td></tr>',
+	hasSelectedA        :'<a href=\"javascript:void(0)\" data-id="$id">$name</a>',
 	status              :0,
 	pastNumber          :0,
+	clientArr           :[],
+	employeeArr         :[],
 	bindEvent           :function(){
 		$('#change_room .client_list .cspan').on('click', function(){
 			$('#change_room .client_list .cspan').removeClass('active');
@@ -61,6 +64,7 @@ function change_room(id, orid, keyword){
 			var str = '';
 			console.log(r);
 			$.each(r, function(index, value){
+				console.log(value);
 				var strBtn = '';
 				/**
 				 * -----------------------------房间交换-------------------------
@@ -71,7 +75,7 @@ function change_room(id, orid, keyword){
 				if(Number(value.capacity) === Number(value.client.length)){
 					$.each(value.client, function(index1, value1){
 						strBtn += ScriptObject.clientBtnTemp.replace('$name', value1.name)
-											  .replace('$cid', value1.jid);
+											  .replace('$cid', value1.cid);
 					});
 					str += ScriptObject.changeFulltemp.replace('$i', index+1).replace('$code', value.code)
 									   .replace('$situation', '住满').replace('$clientSpan', strBtn)
@@ -79,7 +83,7 @@ function change_room(id, orid, keyword){
 				}else if(Number(value.capacity)>Number(value.client.length) && Number(value.client.length)>0){
 					$.each(value.client, function(index1, value1){
 						strBtn += ScriptObject.clientBtnTemp.replace('$name', value1.name)
-											  .replace('$cid', value1.jid);
+											  .replace('$cid', value1.cid);
 					});
 					str += ScriptObject.changeNotFulltemp.replace('$i', index+1).replace('$code', value.code)
 									   .replace('$situation', '未住满').replace('$clientSpan', strBtn)
@@ -87,7 +91,7 @@ function change_room(id, orid, keyword){
 				}else if(value.client.length == 0){
 					$.each(value.client, function(index1, value1){
 						strBtn += ScriptObject.clientBtnTemp.replace('$name', value1.name)
-											  .replace('$cid', value1.jid);
+											  .replace('$cid', value1.cid);
 					});
 					str += ScriptObject.changeEmptytemp.replace('$i', index+1).replace('$code', value.code)
 									   .replace('$situation', '未入住').replace('$clientSpan', strBtn)
@@ -146,6 +150,11 @@ function change_room(id, orid, keyword){
 	});
 }
 $(function(){
+	//导入excel
+	$('#excel_file').on('change', function(){
+		//ManageObject.object.loading.loading();
+		getIframeData();
+	});
 	// 全选checkbox
 	$('.all_check').find('.iCheck-helper').on('click', function(){
 		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
@@ -244,9 +253,9 @@ $(function(){
 	$('#add_recipient .btn_save').on('click', function(){
 		var n1  = 0;
 		var str = [], nameStr = [];
-		$('#add_recipient .check_item_add .icheckbox_square-green.checked').each(function(){
-			var id   = $(this).find('.icheck').val();
-			var name = $(this).parents('tr').find('.name').text();
+		$('#add_recipient .selected_person a').each(function(){
+			var id   = $(this).attr('data-id');
+			var name = $(this).text();
 			str.push(id);
 			nameStr.push(name);
 			n1++;
@@ -256,7 +265,12 @@ $(function(){
 		$('#distribution_room').find('input[name=client]').val(str);
 		$('#distribution_room').find('#selected_attendee_count_by_1').text(nameStr);
 		var employeeArr = $('#distribution_room').find('input[name=employee]').val();
-		var narr        = str.concat(employeeArr);
+		var narr        = '';
+		if(employeeArr.length == 0){
+			narr = str;
+		}else{
+			narr = str.concat(employeeArr);
+		}
 		$('#distribution_room').find('input[name=person]').val(narr);
 		ThisObject.object.loading.complete();
 		$('#add_recipient').modal('hide')
@@ -281,9 +295,9 @@ $(function(){
 	$('#add_recipient_employee .btn_save').on('click', function(){
 		var n1  = 0;
 		var str = [], nameStr = [];
-		$('#add_recipient_employee .check_item_employee .icheckbox_square-green.checked').each(function(){
-			var id   = $(this).find('.icheck').val();
-			var name = $(this).parents('tr').find('.name').text();
+		$('#add_recipient_employee .selected_person_e a').each(function(){
+			var id   = $(this).attr('data-id');
+			var name = $(this).text();
 			str.push(id);
 			nameStr.push(name);
 			n1++;
@@ -293,7 +307,12 @@ $(function(){
 		$('#distribution_room').find('input[name=employee]').val(str);
 		$('#distribution_room').find('#selected_attendee_count_by_2').text(nameStr);
 		var clientArr = $('#distribution_room').find('input[name=client]').val();
-		var narr      = str.concat(clientArr);
+		var narr      = '';
+		if(clientArr.length == 0){
+			narr = str;
+		}else{
+			narr = str.concat(clientArr);
+		}
 		$('#distribution_room').find('input[name=person]').val(narr);
 		ThisObject.object.loading.complete();
 		$('#add_recipient_employee').modal('hide');
@@ -378,6 +397,38 @@ $(function(){
 			});
 		}
 	});
+	// 保存入住人
+	$('#add_recipient2_employee .btn_save').on('click', function(){
+		var can_live = $('#add_recipient2_employee').find('.can_live_p').text();
+		var room_id  = $('#add_recipient2_employee').find('input[name=room_id]').val();
+		var n1       = 0;
+		var str      = [], nameStr = [];
+		$('#add_recipient2_employee .check_item_employee2 .icheckbox_square-green.checked').each(function(){
+			var id   = $(this).find('.icheck').val();
+			var name = $(this).parents('tr').find('.name').text();
+			str.push(id);
+			nameStr.push(name);
+			n1++;
+		});
+		/*ThisObject.object.loading.loading();*/
+		if(str.length>Number(can_live)){
+			ThisObject.object.toast.toast('选择人数不能大于可入住人数！');
+			return false;
+		}else{
+			Common.ajax({
+				data    :{requestType:'choose_employee_2', id:str, rid:room_id},
+				callback:function(r){
+					if(r.status){
+						$('#add_recipient2_employee').modal('hide');
+						ThisObject.object.toast.toast('添加成功！');
+						location.reload(); //刷新
+					}else{
+						ThisObject.object.toast.toast('添加失败！');
+					}
+				}
+			});
+		}
+	});
 	/*
 	 *  右侧详情
 	 */
@@ -419,6 +470,7 @@ $(function(){
 					}
 				});
 				$('#add_recipient2').find('input[name=can_live]').val(capacity-i);
+				$('#add_recipient2_employee').find('input[name=can_live]').val(capacity-i);
 				$right_details.find('.room_num').text(i);
 				if(Number(i)>=Number(capacity)){
 					$('.right_details').find('.add_client').hide();
@@ -443,6 +495,11 @@ $(function(){
 			$('#add_recipient2').modal('show');
 			$('#add_recipient2').find('.can_live_p').text(per);
 		});
+		$('.add_employee').on('click', function(){
+			var per = $('#add_recipient2_employee').find('input[name=can_live]').val();
+			$('#add_recipient2_employee').modal('show');
+			$('#add_recipient2_employee').find('.can_live_p').text(per);
+		});
 		$('#add_recipient2').find('input[name=room_id]').val(id);
 		$('.add_employee').on('click', function(){
 			var per = $('#add_recipient2_employee').find('input[name=can_live]').val();
@@ -453,6 +510,10 @@ $(function(){
 	});
 	// 点击创建房间 获取房间类型及其消息
 	$('.create_room').on('click', function(){
+		ScriptObject.clientArr   = [];
+		ScriptObject.employeeArr = [];
+		$('#selected_attendee_count_by_1').html();
+		$('#selected_attendee_count_by_2').html();
 		Common.ajax({
 			data    :{requestType:'get_room_type'},
 			callback:function(r){
@@ -550,8 +611,11 @@ function choose(e){
 }
 function leave_btn(){
 	$('.leave_btn').on('click', function(){
-		var id = $(this).parents('tr').attr('data-id');
+		var id   = $(this).parents('tr').attr('data-id');
+		var date = new Date();
+		time     = date.format('yyyy-MM-dd HH:mm:ss ');
 		$('#choose_leave_time').find('input[name=id]').val(id);
+		$('#choose_leave_time').find('#leave_time').val(time);
 	});
 }
 function checkAssign(){
@@ -590,6 +654,7 @@ function getClientAdd(keyword){
 	Common.ajax({
 		data    :{requestType:'get_client', keyword:keyword},
 		callback:function(r){
+			console.log(r);
 			$.each(r, function(index, value){
 				var gender = '';
 				if(value.gender == 0){
@@ -604,46 +669,139 @@ function getClientAdd(keyword){
 				}else{
 					var signTime = '';
 				}
-				str += ScriptObject.createAddClient.replace('$id', value.id).replace('$i', index+1)
+				str += ScriptObject.createAddClient.replace('$id', value.cid).replace('$i', index+1)
 								   .replace('$name', value.name)
 								   .replace('$gender', gender).replace('$position', value.position)
 								   .replace('$mobile', value.mobile).replace('$unit', value.unit)
 								   .replace('$signDate', signTime).replace('$clientType', value.type);
 			});
 			$('#add_recipient').find('#attendee_body').html(str);
-			$('.check_item_add').iCheck({
-				checkboxClass:'icheckbox_square-green',
-				radioClass   :'iradio_square-green'
-			});
-			$('#add_recipient .check_item_add').find('.iCheck-helper').on('click', function(){
-				var n = 0;
-				$('#add_recipient .check_item_add').find('.icheckbox_square-green.checked').each(function(){
-					n++;
+			var htm = '';
+			if(ScriptObject.clientArr != ''){
+				$.each(ScriptObject.clientArr, function(index, value){
+					htm += ScriptObject.hasSelectedA.replace('$id', value.id).replace('$name', value.name);
 				});
-				$('#add_recipient .selected_attendee').text(n);
-			});
-			// 当前人数
-			var m = 0;
-			$('#add_recipient .check_item_add').each(function(){
-				m++;
-			});
-			$('#add_recipient').find('.current_attendee').text(m);
-			// 全选checkbox 选择入住人中全选
-			$('#add_recipient .all_check_add').find('.iCheck-helper').on('click', function(){
-				if($(this).parent('.icheckbox_square-green').hasClass('checked')){
-					$('#add_recipient .check_item_add').find('.icheckbox_square-green').addClass('checked');
-				}else{
-					$('#add_recipient .check_item_add').find('.icheckbox_square-green').removeClass('checked');
+			}
+			$('.selected_person').html(htm);
+			$('#attendee_body tr').on('click', function(){
+				var id        = $(this).attr('data-id');
+				var name      = $(this).find('.name').text();
+				var clientArr = [];
+				$('.selected_person a').each(function(){
+					var sid = $(this).attr('data-id');
+					clientArr.push(sid);
+				});
+				if(clientArr.indexOf(id) == -1){
+					ScriptObject.clientArr.push({id:id, name:name});
+					$('.selected_person').append('<a href="javascript:void(0)" data-id='+id+'>'+name+'</a>');
+					console.log(ScriptObject.clientArr);
 				}
-				// 选中的人员
-				var str = '', i = 0;
-				$('#add_recipient .check_item_add  .icheckbox_square-green.checked').each(function(){
-					var id = $(this).find('.icheck').val();
-					str += id+',';
-					i++;
+				$('.selected_person a').off('click');
+				$('.selected_person a').on('click', function(){
+					var id = $(this).attr('data-id');
+					console.log('true');
+					console.log(ScriptObject.clientArr);
+					$.each(ScriptObject.clientArr, function(index, value){
+						console.log(value);
+						console.log(value.id);
+						if(id == value.id){
+							ScriptObject.clientArr.splice(index, 1);
+							console.log(ScriptObject.clientArr);
+							return false;
+						}
+					});
+					$(this).remove();
 				});
-				$('#add_recipient').find('.selected_attendee').text(i);
 			});
+			$('.selected_person a').off('click');
+			$('.selected_person a').on('click', function(){
+				var id = $(this).attr('data-id');
+				console.log('true');
+				console.log(ScriptObject.clientArr);
+				$.each(ScriptObject.clientArr, function(index, value){
+					console.log(value);
+					console.log(value.id);
+					if(id == value.id){
+						ScriptObject.clientArr.splice(index, 1);
+						console.log(ScriptObject.clientArr);
+						return false;
+					}
+				});
+				$(this).remove();
+			});
+			/*$('.check_item_add').iCheck({
+			 checkboxClass:'icheckbox_square-green',
+			 radioClass   :'iradio_square-green'
+			 });*/
+			/*	$('#add_recipient .check_item_add').find('.iCheck-helper').on('click', function(){
+			 var n = 0, arr = [], str = '';
+			 $('#add_recipient .check_item_add').find('.icheckbox_square-green.checked').each(function(){
+			 n++;
+			 });
+			 var id   = $(this).parent('.icheckbox_square-green').find('.icheck').val();
+			 var name = $(this).parents('tr').find('.name').text();
+			 if($(this).parent('.icheckbox_square-green').hasClass('checked')){
+			 if(ScriptObject.clientArr.indexOf(id) == -1){
+			 ScriptObject.clientArr.push(id);
+			 $('.selected_person').append('<a href="javascript:void(0)" data-id='+id+'>'+name+'</a>');
+			 }
+			 }else{
+			 if(ScriptObject.clientArr.indexOf(id) == 0){
+			 ScriptObject.clientArr.push(id);
+			 $('.selected_person a').each(function(){
+			 var tid = $(this).attr('data-id');
+			 if(tid == id){
+			 $(this).remove();
+			 }
+			 });
+			 }
+			 Array.prototype.indexOf = function(val){
+			 for(var i = 0; i<this.length; i++){
+			 if(this[i] == val) return i;
+			 }
+			 return -1;
+			 };
+			 Array.prototype.remove  = function(val){
+			 var index = this.indexOf(val);
+			 if(index> -1){
+			 this.splice(index, 1);
+			 }
+			 };
+			 console.log(id);
+			 console.log(ScriptObject.clientArr);
+			 ScriptObject.clientArr.remove(id);
+			 }
+			 //alert(ScriptObject.clientArr);
+			 /!*str      = ScriptObject.hasSelectedA.replace('$id', id).replace('$name', name);*!/
+			 $('#add_recipient').find('.selected_person').append(str);
+			 $('#add_recipient .selected_attendee').text(n);
+			 });
+			 // 当前人数
+			 var m = 0;
+			 $('#add_recipient .check_item_add').each(function(){
+			 m++;
+			 });
+			 $('#add_recipient').find('.current_attendee').text(m);
+			 // 全选checkbox 选择入住人中全选
+			 $('#add_recipient .all_check_add').find('.iCheck-helper').on('click', function(){
+			 if($(this).parent('.icheckbox_square-green').hasClass('checked')){
+			 $('#add_recipient .check_item_add').find('.icheckbox_square-green').addClass('checked');
+			 }else{
+			 $('#add_recipient .check_item_add').find('.icheckbox_square-green').removeClass('checked');
+			 }
+			 // 选中的人员
+			 var str = '', i = 0, htm = '';
+			 $('#add_recipient .check_item_add  .icheckbox_square-green.checked').each(function(){
+			 var id = $(this).find('.icheck').val();
+			 str += id+',';
+			 i++;
+			 var id   = $(this).find('.icheck').val();
+			 var name = $(this).parents('tr').find('.name').text();
+			 htm += ScriptObject.hasSelectedA.replace('$id', id).replace('$name', name)
+			 });
+			 $('#add_recipient').find('.selected_person').html(htm);
+			 $('#add_recipient').find('.selected_attendee').text(i);
+			 });*/
 		}
 	});
 }
@@ -652,6 +810,7 @@ function getClientAddDetails(keyword){
 	Common.ajax({
 		data    :{requestType:'get_client', keyword:keyword},
 		callback:function(r){
+			console.log(r);
 			$.each(r, function(index, value){
 				var gender = '';
 				if(value.gender == 0){
@@ -666,7 +825,7 @@ function getClientAddDetails(keyword){
 				}else{
 					var signTime = '';
 				}
-				str += ScriptObject.createAddClient2.replace('$id', value.id).replace('$i', index+1)
+				str += ScriptObject.createAddClient2.replace('$id', value.cid).replace('$i', index+1)
 								   .replace('$name', value.name)
 								   .replace('$gender', gender).replace('$position', value.position)
 								   .replace('$mobile', value.mobile).replace('$unit', value.unit)
@@ -731,48 +890,101 @@ function getEmployeeAdd(keyword){
 				}
 				str += ScriptObject.createAddEmployee.replace('$num', index+1)
 								   .replace('$name', value.name)
-								   .replace('$id', value.id).replace('$position', value.position)
+								   .replace('$id', value.cid).replace('$position', value.position)
 								   .replace('$mobile', value.mobile).replace('$company', value.company)
 								   .replace('$gender', gender).replace('$department', value.d_name)
 								   .replace('$unit', value.unit);
 			});
 			$('#add_recipient_employee').find('#employee_body').html(str);
-			$('.check_item_employee').iCheck({
-				checkboxClass:'icheckbox_square-green',
-				radioClass   :'iradio_square-green'
-			});
-			$('#add_recipient_employee .check_item_employee').find('.iCheck-helper').on('click', function(){
-				var n = 0;
-				$('#add_recipient_employee .check_item_employee').find('.icheckbox_square-green.checked')
-																 .each(function(){
-																	 n++;
-																 });
-				$('#add_recipient_employee .selected_attendee').text(n);
-			});
-			// 当前人数
-			var m = 0;
-			$('#add_recipient_employee .check_item_employee').each(function(){
-				m++;
-			});
-			$('#add_recipient_employee').find('.current_attendee').text(m);
-			// 全选checkbox 选择入住人中全选
-			$('#add_recipient_employee .all_check_employee').find('.iCheck-helper').on('click', function(){
-				if($(this).parent('.icheckbox_square-green').hasClass('checked')){
-					$('#add_recipient_employee .check_item_employee').find('.icheckbox_square-green')
-																	 .addClass('checked');
-				}else{
-					$('#add_recipient_employee .check_item_employee').find('.icheckbox_square-green')
-																	 .removeClass('checked');
-				}
-				// 选中的人员
-				var str = '', i = 0;
-				$('#add_recipient_employee .check_item_employee  .icheckbox_square-green.checked').each(function(){
-					var id = $(this).find('.icheck').val();
-					str += id+',';
-					i++;
+			var htm = '';
+			if(ScriptObject.employeeArr != ''){
+				$.each(ScriptObject.employeeArr, function(index, value){
+					htm += ScriptObject.hasSelectedA.replace('$id', value.id).replace('$name', value.name);
 				});
-				$('#add_recipient_employee').find('.selected_attendee').text(i);
+			}
+			$('.selected_person_e').html(htm);
+			$('#employee_body tr').on('click', function(){
+				var id        = $(this).attr('data-id');
+				var name      = $(this).find('.name').text();
+				var clientArr = [];
+				$('.selected_person_e a').each(function(){
+					var sid = $(this).attr('data-id');
+					clientArr.push(sid);
+				});
+				if(clientArr.indexOf(id) == -1){
+					ScriptObject.employeeArr.push({id:id, name:name});
+					$('.selected_person_e').append('<a href="javascript:void(0)" data-id='+id+'>'+name+'</a>');
+					console.log(ScriptObject.employeeArr);
+				}
+				$('.selected_person_e a').off('click');
+				$('.selected_person_e a').on('click', function(){
+					var id = $(this).attr('data-id');
+					console.log('true');
+					console.log(ScriptObject.employeeArr);
+					$.each(ScriptObject.employeeArr, function(index, value){
+						console.log(value);
+						console.log(value.id);
+						if(id == value.id){
+							ScriptObject.employeeArr.splice(index, 1);
+							console.log(ScriptObject.employeeArr);
+							return false;
+						}
+					});
+					$(this).remove();
+				});
 			});
+			$('.selected_person_e a').off('click');
+			$('.selected_person_e a').on('click', function(){
+				var id = $(this).attr('data-id');
+				console.log('true');
+				console.log(ScriptObject.employeeArr);
+				$.each(ScriptObject.employeeArr, function(index, value){
+					console.log(value);
+					console.log(value.id);
+					if(id == value.id){
+						ScriptObject.employeeArr.splice(index, 1);
+						console.log(ScriptObject.employeeArr);
+						return false;
+					}
+				});
+				$(this).remove();
+			});
+			/*	$('.check_item_employee').iCheck({
+			 checkboxClass:'icheckbox_square-green',
+			 radioClass   :'iradio_square-green'
+			 });
+			 $('#add_recipient_employee .check_item_employee').find('.iCheck-helper').on('click', function(){
+			 var n = 0;
+			 $('#add_recipient_employee .check_item_employee').find('.icheckbox_square-green.checked')
+			 .each(function(){
+			 n++;
+			 });
+			 $('#add_recipient_employee .selected_attendee').text(n);
+			 });
+			 // 当前人数
+			 var m = 0;
+			 $('#add_recipient_employee .check_item_employee').each(function(){
+			 m++;
+			 });
+			 $('#add_recipient_employee').find('.current_attendee').text(m);
+			 // 全选checkbox 选择入住人中全选
+			 $('#add_recipient_employee .all_check_employee').find('.iCheck-helper').on('click', function(){
+			 if($(this).parent('.icheckbox_square-green').hasClass('checked')){
+			 $('#add_recipient_employee .check_item_employee').find('.icheckbox_square-green')
+			 .addClass('checked');
+			 }else{
+			 $('#add_recipient_employee .check_item_employee').find('.icheckbox_square-green')
+			 .removeClass('checked');
+			 }
+			 // 选中的人员
+			 var str = '', i = 0;
+			 $('#add_recipient_employee .check_item_employee  .icheckbox_square-green.checked').each(function(){
+			 var id = $(this).find('.icheck').val();
+			 str += id+',';
+			 i++;
+			 });
+			 $('#add_recipient_employee').find('.selected_attendee').text(i);
+			 });*/
 		}
 	});
 }
@@ -781,6 +993,7 @@ function getEmployeeAddDetails(keyword){
 	Common.ajax({
 		data    :{requestType:'get_employee', keyword:keyword},
 		callback:function(r){
+			console.log(r);
 			$.each(r, function(index, value){
 				var gender = '';
 				if(value.gender == 0){
@@ -797,7 +1010,7 @@ function getEmployeeAddDetails(keyword){
 				}
 				str += ScriptObject.createAddEmployee2.replace('$num', index+1)
 								   .replace('$name', value.name)
-								   .replace('$id', value.id).replace('$position', value.position)
+								   .replace('$id', value.cid).replace('$position', value.position)
 								   .replace('$mobile', value.mobile).replace('$company', value.company)
 								   .replace('$gender', gender).replace('$department', value.d_name)
 								   .replace('$unit', value.unit);
@@ -841,4 +1054,28 @@ function getEmployeeAddDetails(keyword){
 			});
 		}
 	});
+}
+
+// 收款导入excel
+function getIframeData(){
+	var data = new FormData($('#file_form')[0]);
+	console.log(data);
+	$.ajax({
+		url        :'',
+		type       :'POST',
+		data       :data,
+		dataType   :'JSON',
+		cache      :false,
+		processData:false,
+		contentType:false
+	}).done(function(data){
+		console.log(data);
+		if(data.status){
+			ThisObject.object.toast.toast(data.message);
+			location.reload(); // 刷新本页面
+		}else{
+			ThisObject.object.toast.toast('导入失败，请按照Excel模板格式填写。');
+		}
+	});
+	return false;
 }

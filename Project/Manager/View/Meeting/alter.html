@@ -48,7 +48,7 @@
 							<form class="form-horizontal" role="form" method="post" action="" id="form">
 								<div class="modal-body" style=" padding: 30px 30px 15px 30px;">
 									<div class="form-group">
-										<label for="meeting_name" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>会议名称：</label>
+										<label for="meeting_name" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>会议名称：</label>
 										<div class="col-sm-11">
 											<input type="text" value="<{$info.name}>" class="form-control meeting_name" name="name" id="meeting_name">
 										</div>
@@ -57,48 +57,20 @@
 										<label for="meeting_type" class="col-sm-1 control-label">类型：</label>
 										<div class="col-sm-11">
 											<select name="type" id="meeting_type" class="form-control">
-												<switch name="info['type']">
-													<case value="成交会">
-														<option value="成交会" selected>成交会</option>
-														<option value="特训营">特训营</option>
-														<option value="优雅女子">优雅女子</option>
-														<option value="招商会">招商会</option>
-														<option value="启动大会">启动大会</option>
-													</case>
-													<case value="特训营">
-														<option value="成交会">成交会</option>
-														<option value="特训营" selected>特训营</option>
-														<option value="优雅女子">优雅女子</option>
-														<option value="招商会">招商会</option>
-														<option value="启动大会">启动大会</option>
-													</case>
-													<case value="优雅女子">
-														<option value="成交会">成交会</option>
-														<option value="特训营">特训营</option>
-														<option value="优雅女子" selected>优雅女子</option>
-														<option value="招商会">招商会</option>
-														<option value="启动大会">启动大会</option>
-													</case>
-													<case value="招商会">
-														<option value="成交会">成交会</option>
-														<option value="特训营">特训营</option>
-														<option value="结束">结束</option>
-														<option value="招商会" selected>招商会</option>
-														<option value="启动大会">启动大会</option>
-													</case>
-													<case value="启动大会">
-														<option value="成交会">成交会</option>
-														<option value="特训营">特训营</option>
-														<option value="结束">结束</option>
-														<option value="招商会">招商会</option>
-														<option value="启动大会" selected>启动大会</option>
-													</case>
-												</switch>
+												<option value="成交会" <eq name="info.type" value="成交会">selected</eq>>成交会</option>
+												<option value="特训营" <eq name="info.type" value="特训营">selected</eq>>特训营</option>
+												<option value="优雅女子" <eq name="info.type" value="优雅女子">selected</eq>>优雅女子</option>
+												<option value="招商会" <eq name="info.type" value="招商会">selected</eq>>招商会</option>
+												<option value="启动大会" <eq name="info.type" value="启动大会">selected</eq>>启动大会</option>
+												<option value="大区培训" <eq name="info.type" value="大区培训">selected</eq>>大区培训</option>
+												<option value="总裁见面会" <eq name="info.type" value="总裁见面会">selected</eq>>总裁见面会</option>
+												<option value="战略规划部署会议" <eq name="info.type" value="战略规划部署会议">selected</eq>>战略规划部署会议</option>
+												<option value="其他" <eq name="info.type" value="其他">selected</eq>>其他</option>
 											</select>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="meeting_host" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>主办方：</label>
+										<label for="meeting_host" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>主办方：</label>
 										<div class="col-sm-11">
 											<input type="text" value="<{$info.host}>" class="form-control meeting_host" name="host" id="meeting_host">
 										</div>
@@ -120,31 +92,31 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="meeting_start_time" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>开始时间：</label>
+										<label for="meeting_start_time" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>开始时间：</label>
 										<div class="col-sm-11">
 											<input class="form-control" id="meeting_start_time" name="start_time" value="<{$info.start_time}>">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="meeting_end_time" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>结束时间：</label>
+										<label for="meeting_end_time" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>结束时间：</label>
 										<div class="col-sm-11">
 											<input class="form-control" id="meeting_end_time" name="end_time" value="<{$info.end_time}>">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="meeting_sign_start_time" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>签到开始时间：</label>
+										<label for="meeting_sign_start_time" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>签到开始时间：</label>
 										<div class="col-sm-11">
 											<input class="form-control" id="meeting_sign_start_time" name="sign_start_time" value="<{$info.sign_start_time}>">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="meeting_sign_end_time" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>签到结束时间：</label>
+										<label for="meeting_sign_end_time" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>签到结束时间：</label>
 										<div class="col-sm-11">
 											<input class="form-control" id="meeting_sign_end_time" name="sign_end_time" value="<{$info.sign_end_time}>">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="director_id" class="col-sm-1 control-label "><b style="vertical-align: middle;color: red;">*</b>负责人：</label>
+										<label for="director_id" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>负责人：</label>
 										<div class="col-sm-11">
 											<div id="director_id"></div>
 										</div>

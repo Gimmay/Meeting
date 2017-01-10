@@ -39,8 +39,10 @@
 			if($this->permissionList['MEETING.VIEW'] && $this->permissionList['MEETING.VIEW-BRIEF']){
 				/** @var \Core\Model\JoinModel $join_model */
 				$join_model = D('Core/Join');
-				/** @var \Core\Model\ReceivablesTypeModel $receivables_model */
+				/** @var \Core\Model\ReceivablesModel $receivables_model */
 				$receivables_model = D('Core/Receivables');
+				/** @var \Core\Model\ReceivablesOptionModel $receivables_option_model */
+				$receivables_option_model = D('Core/ReceivablesOption');
 				// 获取参会统计数据
 				$join_record     = $join_model->findRecord(2, [
 					'mid'    => $this->meetingID,
@@ -52,10 +54,22 @@
 					'type'   => '内部员工'
 				]);
 				// 获取签到统计数据
-				$sign_count = $join_model->findRecord(0, [
+				$sign_count          = $join_model->findRecord(0, [
 					'mid'         => $this->meetingID,
 					'status'      => 1,
 					'sign_status' => 1
+				]);
+				$sign_employee_count = $join_model->findRecord(0, [
+					'mid'         => $this->meetingID,
+					'status'      => 1,
+					'sign_status' => 1,
+					'type'        => '内部员工'
+				]);
+				$sign_client_count   = $join_model->findRecord(0, [
+					'mid'         => $this->meetingID,
+					'status'      => 1,
+					'sign_status' => 1,
+					'type'        => 'not employee'
 				]);
 				// 获取收款统计数据
 				$receivables_record       = $receivables_model->findRecord(2, [
@@ -66,7 +80,8 @@
 				$receivables_client_count = $price = 0;
 				foreach($receivables_record as $val){
 					$cid_id_arr[] = $val['cid'];
-					$price += $val['price'];
+					$receivables_option = $receivables_option_model->findRecord(2, ['rid'=>$val['id'], 'status'=>1]);
+					foreach($receivables_option as $v) $price += $v['price'];
 				}
 				foreach($join_record as $val){
 					if(in_array($val['cid'], $cid_id_arr)) $receivables_client_count++;
@@ -74,6 +89,8 @@
 				$this->assign('statistics', [
 					'joined'             => count($join_record),
 					'signed'             => $sign_count,
+					'employee_signed'    => $sign_employee_count,
+					'client_signed'      => $sign_client_count,
 					'receivables'        => count($receivables_record),
 					'receivables_client' => $receivables_client_count,
 					'receivables_price'  => $price,
@@ -253,6 +270,19 @@
 				$meeting             = $setMessageType($meeting);
 				$this->assign('meeting', $meeting);
 				$this->assign('config_wechat', $config_wechat);
+				/** @var \Core\Model\ColumnControlModel $column_control_model */
+				$column_control_model = D('Core/ColumnControl');
+				$column_list          = $column_control_model->findRecord(2, [
+					'mid'   => $this->meetingID,
+					'table' => 'user_client'
+				]);
+				$getColumnStatus      = function ($cl){
+					$data = [];
+					foreach($cl as $val) $data[$val['code']] = $val;
+					return $data;
+				};
+				$this->assign('column_list', $column_list);
+				$this->assign('column_status', $getColumnStatus($column_list));
 				$this->display();
 			}
 			else $this->error('您没有进行会议设置的权限');

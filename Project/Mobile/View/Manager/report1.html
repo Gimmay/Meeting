@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta id="viewport" name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>会务综合数据</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/mobile_common.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/mobile_rem.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mb_wrap">
+		<h2>会务综合数据</h2>
+		<div class="data">
+			<div class="data_item">
+				总参会顾客: <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int')])}>" class="link"><{$statistics.total}></a>人
+			</div>
+			<div class="data_item">
+				<span>会所数: <a href="<{:U('report1Unit', ['mid'=>I('get.mid', 0, 'int')])}>" class="link"><{$statistics.unit}></a>所 </span>
+			</div>
+			<div class="data_item">
+				<span>已签到顾客(陪同/终端): <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'signStatus'=>1])}>" class="link"><{:($statistics['signedZD']+$statistics['signedPT'])}>人(<{$statistics.signedZD}>/<{$statistics.signedPT}>)</a> </span>
+			</div>
+			<div class="data_item">
+				<span>未签到顾客(陪同/终端): <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'signStatus'=>0])}>" class="link"><{:($statistics['notSignedZD']+$statistics['notSignedPT'])}>人(<{$statistics.notSignedZD}>/<{$statistics.notSignedPT}>)</a></span>
+			</div>
+			<div class="data_item">
+				<span>新客: <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'isNew'=>1])}>" class="link"><{$statistics.newClient}></a>人</span> <span>老客:  <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'isNew'=>0])}>" class="link"><{$statistics.oldClient}></a>人</span>
+			</div>
+			<div class="data_item">
+				会中收款总数: <{:number_format($statistics['price'])}>元
+			</div>
+		</div>
+		<table class="table table-bordered sec_table">
+			<tr>
+				<th width="40%">项目名称</th>
+				<th width="35%">已售数量/总数量</th>
+				<th width="25%">已售金额</th>
+			</tr>
+			<volist name="coupon_list" id="single">
+				<tr>
+					<td><{$single.name}></td>
+					<td><{$single.sold_count}>/<{$single.count}></td>
+					<td><{$single.price}></td>
+				</tr>
+			</volist>
+		</table>
+	</div>
+</body>
+</html>

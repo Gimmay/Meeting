@@ -27,9 +27,9 @@
 			/** @var \Core\Model\WechatModel $wechat_model */
 			$wechat_model = D('Core/Wechat');
 			$visitor      = $wechat_model->findRecord(1, [
-				'wechat_id' => $wechat_id,
-				'wtype'     => $wtype,
-				'otype'     => 1
+				'wid'   => $wechat_id,
+				'wtype' => $wtype,
+				'otype' => 1
 			]);
 			if($visitor) return $visitor['oid'];
 			else return 0;
@@ -141,7 +141,6 @@
 							$sign_result_model = D('Core/SignResult');
 							$signed_count      = $join_model->findRecord(0, [
 								'mid'         => $meeting_id,
-								'cid'         => $cid,
 								'sign_status' => 1,
 								'status'      => 1
 							]);

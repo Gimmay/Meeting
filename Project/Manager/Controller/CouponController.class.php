@@ -35,7 +35,7 @@
 				foreach($coupon_find as $k => $v){
 					$data['id'] = $coupon_find[$k]['id'];
 				}
-				/* 获取当前条件下员工记录数 */
+				/* 获取当前条件下项目记录数 */
 				$list_total = $coupon_model->findCoupon(0, [
 					'keyword' => I('get.keyword', ''),
 					'status'  => 'not deleted',
@@ -44,7 +44,7 @@
 				/* 分页设置 */
 				$page_object = new Page($list_total, C('PAGE_RECORD_COUNT'));
 				$page_show   = $page_object->show();
-				/* 当前页的员工记录列表 */
+				/* 当前页的项目记录列表 */
 				$coupon_list = $coupon_model->findCoupon(2, [
 					'keyword' => I('get.keyword', ''),
 					'_limit'  => $page_object->firstRow.','.$page_object->listRows,

@@ -360,6 +360,24 @@
 						'__ajax__' => true
 					];
 				break;
+				case 'get_project':
+					/** @var \Core\Model\CouponModel $coupon_model */
+					$coupon_model  = D('Core/Coupon');
+					$coupon_result = $coupon_model->findCoupon(2, [
+						'status' => 1,
+						'type'   => I('post.val', 0, 'int'),
+						'mid'    => I('get.mid', 0, 'int')
+					]);
+					$data          = [];
+					foreach($coupon_result as $k => $v){
+						$data[$k]['id']    = $v['id'];
+						$data[$k]['name']  = $v['name'];
+						$data[$k]['price'] = $v['price'];
+						$data[$k]['type']  = $v['type'];
+					}
+
+					return array_merge($data, ['__ajax__' => true]);
+				break;
 				case 'ticket': //门票
 					/** @var \Core\Model\CouponModel $coupon_model */
 					$coupon_model  = D('Core/Coupon');
@@ -526,12 +544,13 @@
 							}
 							foreach($data['payMethod'] as $k1 => $v1){
 								$option[] = [
+									'mid'         => $mid,
 									'rid'         => $receivables_result['id'],
-									'price'       => $data['price'][$k],
+									'price'       => $data['price'][$k1],
 									'pay_method'  => $v1,
-									'pos_machine' => $data['pos'][$k],
-									'type'        => $data['source_type'][$k],
-									'comment'     => $data['comment'][$k],
+									'pos_machine' => $data['pos'][$k1],
+									'type'        => $data['source_type'][$k1],
+									'comment'     => $data['comment'][$k1],
 									'creatime'    => time(),    //创建时间
 									'creator'     => $creator,    //当前创建者
 								];
@@ -553,6 +572,7 @@
 							foreach($data["price$k"] as $k1 => $v1){
 								$option = [
 									'rid'         => $receivables_result['id'],
+									'mid'         => $mid,
 									'price'       => $v1,
 									'pay_method'  => $data["payMethod$k"][$k1],
 									'pos_machine' => $data["pos$k"][$k1],
@@ -683,7 +703,15 @@
 					/** @var \Core\Model\ClientModel $client_model */
 					$client_model = D('Core/Client');
 					/** @var \Core\Model\PayMethodModel $pay_method_model */
-					$pay_method_model       = D('Core/PayMethod');
+					$pay_method_model = D('Core/PayMethod');
+					/** @var \Core\Model\PosMachineModel $pos_machine_model */
+					$pos_machine_model = D('Core/PosMachine');
+					/** @var \Core\Model\ReceivablesModel $receivables_model */
+					$receivables_model = D('Core/Receivables');
+					/** @var \Core\Model\CouponModel $coupon_model */
+					$coupon_model = D('Core/Coupon');
+					/** @var \Core\Model\CouponItemModel $coupon_item_model */
+					$coupon_item_model      = D('Core/CouponItem');
 					$str_obj                = new StringPlus();
 					$core_receivables_logic = new \Core\Logic\ReceivablesLogic();
 					$id                     = I('post.id', 0, 'int');
@@ -694,8 +722,16 @@
 						$price                   = 0;
 						$pay_method_i            = 0;
 						$pay_method_arr          = $pay_method_ids = $pay_method_index = [];
+						$last_i                  = 0;
 						foreach($receivables_option_list as $key => $val){
-							$pay_method = $pay_method_model->findRecord(1, ['id' => $val['pay_method'], 'status' => 1]);
+							$pay_method  = $pay_method_model->findRecord(1, [
+								'id'     => $val['pay_method'],
+								'status' => 1
+							]);
+							$pos_machine = $pos_machine_model->findRecord(1, [
+								'id'     => $val['pos_machine'],
+								'status' => 1
+							]);
 							$price += $val['price'];
 							$receivables_option_list[$key]['source_type'] = $core_receivables_logic->getReceivablesSourceType($val['type']);
 							$receivables_option_list[$key]['pay_method']  = $pay_method['name'];
@@ -703,16 +739,24 @@
 								$pay_method_ids[$pay_method_i]        = $val['pay_method'];
 								$pay_method_index[$val['pay_method']] = $pay_method_i;
 								$pay_method_arr[$pay_method_i]        = [
-									'name'  => $pay_method['name'],
-									'price' => $val['price']
+									'name'        => $pay_method['name'],
+									'price'       => $val['price'],
+									'comment'     => $val['comment'],
+									'pos_machine' => $pos_machine['name'],
 								];
 								$pay_method_i++;
 							}
 							else{
-								$i = $pay_method_index[$val['pay_method']];
+								$last_i = $i = $pay_method_index[$val['pay_method']];
 								$pay_method_arr[$i]['price'] += $val['price'];
+								$pay_method_arr[$i]['comment'] .= "$val[comment],";
+								$pay_method_arr[$i]['pos_machine'] .= "$pos_machine[name],";
 							}
+							if(isset($pay_method_arr[$last_i]['pos_machine'])) $pay_method_arr[$last_i]['pos_machine'] = trim($pay_method_arr[$last_i]['pos_machine'], ',');
+							if(isset($pay_method_arr[$last_i]['comment'])) $pay_method_arr[$last_i]['comment'] = trim($pay_method_arr[$last_i]['comment'], ',');
 						}
+						$coupon_item_result                  = $coupon_item_model->findRecord(1, ['id' => $record['coupon_ids']]);
+						$coupon_result                       = $coupon_model->findCoupon(1, ['id' => $coupon_item_result['coupon_id']]);
 						$client                              = $client_model->findClient(1, [
 							'status' => 1,
 							'id'     => $record['cid']
@@ -724,6 +768,7 @@
 						$record['option']                    = $receivables_option_list;
 						$record['option']['pay_method_list'] = $pay_method_arr;
 						$record['receivables_type']          = $core_receivables_logic->getReceivablesType($record['type']);
+						$record['coupon_name']               = $coupon_result['name'];
 						$record['client']                    = $client['name'];
 						$record['payee']                     = $payee['name'];
 						$record['price']                     = $price;
@@ -732,6 +777,62 @@
 					}
 
 					return array_merge($record, ['__ajax__' => true]);
+				break;
+				case 'manage:get_receivables':
+					/** @var \Core\Model\ReceivablesModel $model */
+					$model = D('Core/Receivables');
+					/** @var \Core\Model\ReceivablesOptionModel $receivables_option_model */
+					$receivables_option_model = D('Core/ReceivablesOption');
+					/** @var \Core\Model\ClientModel $client_model */
+					$client_model = D('Core/Client');
+					/** @var \Core\Model\PayMethodModel $pay_method_model */
+					$pay_method_model = D('Core/PayMethod');
+					$str_obj          = new StringPlus();
+					$id               = I('post.id', 0, 'int');
+					$mid              = I('get.mid', 0, 'int');
+					$receivables_list = $model->findRecord(2, ['cid' => $id, 'mid' => $mid, 'status' => 1]);
+					$client           = $client_model->findClient(1, ['id' => $id, 'status' => 1]);
+					$result           = [
+						'price'        => 0,
+						'price_word'   => '',
+						'client'       => $client['name'],
+						'unit'         => $client['unit'],
+						'option'       => [],
+						'order_number' => sprintf("%08d", $client['id']),
+						'time'         => time()
+					];
+					$pay_method_i     = 0;
+					$pay_method_arr   = $pay_method_ids = $pay_method_index = [];
+					foreach($receivables_list as $key => $val){
+						$receivables_option_list = $receivables_option_model->findRecord(2, [
+							'rid'    => $val['id'],
+							'status' => 1
+						]);
+						foreach($receivables_option_list as $option){
+							$result['price'] += $option['price'];
+							if(!in_array($option['pay_method'], $pay_method_ids)){
+								$pay_method                              = $pay_method_model->findRecord(1, [
+									'id'     => $option['pay_method'],
+									'status' => 1
+								]);
+								$pay_method_ids[$pay_method_i]           = $option['pay_method'];
+								$pay_method_index[$option['pay_method']] = $pay_method_i;
+								$pay_method_arr[$pay_method_i]           = [
+									'name'  => $pay_method['name'],
+									'price' => $option['price']
+								];
+								$pay_method_i++;
+							}
+							else{
+								$i = $pay_method_index[$option['pay_method']];
+								$pay_method_arr[$i]['price'] += $option['price'];
+							}
+						}
+					}
+					$result['price_word'] = $str_obj->parseNumberToUpperWord($result['price']);
+					$result['option']     = $pay_method_arr;
+
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];
@@ -770,7 +871,10 @@
 					switch($table_column[$key2]['name']){
 						case 'cid': // 根据参会人员名称反查ID
 							$client_name = $val2;
-							$client      = $client_model->findClient(1, ['name' => $val2, 'status' => 'not deleted']);
+							$client      = $client_model->findClient(1, [
+								'name'   => $val2,
+								'status' => 'not deleted'
+							]);
 							if($client) $val2 = $client['id'];
 							else $val2 = null;
 						break;
@@ -1101,7 +1205,9 @@
 							$price         = '未收款';
 							$join['price'] = $price;
 						}
-						if($option['receivables'] === false) $new_list[] = $join;
+						if($option['receivables'] === false){
+							$new_list[] = $join;
+						}
 						elseif($option['receivables'] === 1){
 							if($receivables_list) $new_list[] = $join;
 						}
@@ -1229,7 +1335,6 @@
 						$data[$key]['price']            = $price;
 						$data[$key]['receivables_type'] = $core_receivables_logic->getReceivablesType($val['type']);
 					}
-
 					return $data;
 				break;
 				case 'manage:pagination':

@@ -21,7 +21,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
-	<!--<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery-1.4.4.min.js"></script>-->
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery-1.4.4.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery.jqprint-0.3.js"></script>
 </head>
 <body data-meeting-id="<{:I('get.mid')}>" data-place-id="<{:I('get.sid')}>">
@@ -38,13 +38,13 @@
 									<div class="nav_tab_li active">
 										<a href="javascript:void(0)">参会人员签到</a>
 									</div>
-									<button class="btn print_btn" onclick="jqprint()">打印</button>
+									<if condition="$client['sign_status'] eq 1">
+										<button class="btn print_btn" onclick="jqprint()">打印胸卡</button>
+									</if>
 								</div>
 							</div>
 							<div class="repertory clearfix">
-								<form action="" method="get" id="form">
-									<input type="search" id="search_input" class="form-control" placeholder="选中此处" value="<{$client.name}>" style="height: 60px; font-size: 30px">
-								</form>
+								<input type="search" id="search_input" class="form-control" placeholder="选中此处" value="<{$client.name}>" style="height: 60px; font-size: 30px">
 							</div>
 							<div class="table_wrap">
 								<if condition="$info_type eq 0">
@@ -119,6 +119,14 @@
 												</switch>
 											</td>
 										</tr>
+										<tr>
+											<td>是否收款</td>
+											<td>
+												<php>
+													if($client['price'] > 0) echo "<span class='color-green'>是 (￥$client[price])</span>"; else echo "未收款";
+												</php>
+											</td>
+										</tr>
 									</table>
 								</if>
 							</div>
@@ -137,6 +145,7 @@
 			left     : 100%;
 			top      : 0;
 		}
+
 		.badge_muban{
 			width  : 100% !important;
 			height : 100% !important;
@@ -144,7 +153,7 @@
 	</style>
 	<script>
 		function jqprint(){
-			$(".badge_box").jqprint();
+			$("#print").jqprint();
 		}
 	</script>
 </body>

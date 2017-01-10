@@ -583,7 +583,7 @@
 		 * @return string 返回接口调用地址
 		 */
 		protected function native_GetCode($corp_id, $url, $opt_str = ''){
-			return "https://open.weixin.qq.com/connect/oauth2/authorize?corpid=$corp_id&redirect_uri=$url&response_type=code&scope=snsapi_base&state=$opt_str#wechat_redirect";
+			return "https://open.weixin.qq.com/connect/oauth2/authorize?appid=$corp_id&redirect_uri=$url&response_type=code&scope=snsapi_base&state=$opt_str#wechat_redirect";
 		}
 
 		/**

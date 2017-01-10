@@ -59,7 +59,10 @@
 			if(isset($filter['isNew'])) $where['is_new'] = $filter['isNew'];
 			if(isset($filter['name'])) $where['name'] = $filter['name'];
 			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
-			if(isset($filter['type'])) $where['type'] = $filter['type'];
+			if(isset($filter['type'])){
+				if($filter['type'] == 'not employee') $where['type'] = ['neq', '内部员工'];
+				else $where['type'] = $filter['type'];
+			};
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted') $where['status'] = ['neq', 2];
@@ -70,6 +73,7 @@
 				$condition['name']        = ['like', "%$filter[keyword]%"];
 				$condition['type']        = ['like', "%$filter[keyword]%"];
 				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
+				$condition['unit']        = ['like', "%$filter[keyword]%"];
 				$condition['_logic']      = 'or';
 				$where['_complex']        = $condition;
 			}

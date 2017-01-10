@@ -285,7 +285,7 @@ $(function(){
 		if(newStr!=''){
 			$('#batch_delete_employee').modal('show')
 		}else{
-			ManageObject.object.toast.toast('请选择客户！');
+			ManageObject.object.toast.toast('请选择参会人员！');
 		}
 		$('#batch_delete_employee').find('input[name=id]').val(newStr);
 

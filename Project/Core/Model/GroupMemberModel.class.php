@@ -20,49 +20,49 @@
 
 		public function findRecord($type = 2, $filter = []){
 			$where = [];
-			if(isset($filter['id'])) $where['id'] = $filter['id'];
+			if(isset($filter['id'])) $where['main.id'] = $filter['id'];
 			if(isset($filter['name'])) $where['name'] = $filter['name'];
-			if(isset($filter['time'])) $where['time'] = $filter['time'];
 			if(isset($filter['gid'])) $where['gid'] = $filter['gid'];
+			if(isset($filter['cid'])) $where['cid'] = $filter['cid'];
+			if(isset($filter['mid'])) $where['main.mid'] = $filter['mid'];
+			if(isset($filter['time'])) $where['time'] = $filter['time'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
-				if($status == 'not deleted') $where['status'] = ['neq', 2];
-				else $where['status'] = $filter['status'];
-			}
-			if(isset($filter['keyword']) && $filter['keyword']){
-				$where['name'] = ['like', "%$filter[keyword]%"];
+				if($status == 'not deleted') $where['main.status'] = ['neq', 2];
+				else $where['main.status'] = $filter['status'];
 			}
 			switch((int)$type){
 				case 0: // count
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->count();
-						else $result = $this->count();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('workflow_group sub on main.gid = sub.id')->limit($filter['_limit'])->count();
+						else $result = $this->alias('main')->join('workflow_group sub on main.gid = sub.id')->count();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->count();
-						else $result = $this->where($where)->count();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('workflow_group sub on main.gid = sub.id')->limit($filter['_limit'])->where($where)->count();
+						else $result = $this->alias('main')->join('workflow_group sub on main.gid = sub.id')->where($where)->count();
 					}
 				break;
 				case 1: // find
+					if(!isset($filter['_order'])) $filter['_order'] = 'creatime desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->find();
-						else $result = $this->find();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('workflow_group sub on main.gid = sub.id')->field('sub.*, main.id, main.cid, main.time')->limit($filter['_limit'])->order($filter['_order'])->find();
+						else $result = $this->alias('main')->join('workflow_group sub on main.gid = sub.id')->field('sub.*, main.id, main.cid, main.time')->order($filter['_order'])->find();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->find();
-						else $result = $this->where($where)->find();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('workflow_group sub on main.gid = sub.id')->field('sub.*, main.id, main.cid, main.time')->limit($filter['_limit'])->where($where)->order($filter['_order'])->find();
+						else $result = $this->alias('main')->join('workflow_group sub on main.gid = sub.id')->field('sub.*, main.id, main.cid, main.time')->where($where)->order($filter['_order'])->find();
 					}
 				break;
 				case 2: // select
 				default:
 					if(!isset($filter['_order'])) $filter['_order'] = 'creatime desc';
 					if($where == []){
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
-						else $result = $this->order($filter['_order'])->select();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('workflow_group sub on main.gid = sub.id')->field('sub.*, main.id, main.cid, main.time')->limit($filter['_limit'])->order($filter['_order'])->select();
+						else $result = $this->alias('main')->join('workflow_group sub on main.gid = sub.id')->field('sub.*, main.id, main.cid, main.time')->order($filter['_order'])->select();
 					}
 					else{
-						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->where($where)->select();
-						else $result = $this->order($filter['_order'])->where($where)->select();
+						if(isset($filter['_limit'])) $result = $this->alias('main')->join('workflow_group sub on main.gid = sub.id')->field('sub.*, main.id, main.cid, main.time')->limit($filter['_limit'])->order($filter['_order'])->where($where)->select();
+						else $result = $this->alias('main')->join('workflow_group sub on main.gid = sub.id')->field('sub.*, main.id, main.cid, main.time')->order($filter['_order'])->where($where)->select();
 					}
 				break;
 			}
@@ -120,6 +120,22 @@
 					$result = $this->where($filter)->save($data);
 					if($result) return ['status' => true, 'message' => '修改成功'];
 					else return ['status' => false, 'message' => '未做任何修改'];
+				}catch(Exception $error){
+					$message   = $error->getMessage();
+					$exception = $this->handlerException($message);
+					if(!$exception['status']) return $exception;
+					else return ['status' => false, 'message' => $this->getError()];
+				}
+			}
+			else return ['status' => false, 'message' => $this->getError()];
+		}
+
+		public function dropRecord($filter){
+			if($this->create()){
+				try{
+					$result = $this->where($filter)->delete();
+					if($result) return ['status' => true, 'message' => '删除成功'];
+					else return ['status' => false, 'message' => '没有删除任何'];
 				}catch(Exception $error){
 					$message   = $error->getMessage();
 					$exception = $this->handlerException($message);

@@ -274,6 +274,7 @@ textarea{
 
 .link{
 	text-decoration : underline;
+	font-weight     : bold;
 }
 
 .hs_color{
@@ -959,14 +960,16 @@ textarea{
 	top : 0 !important;
 }
 
-/** 站内信入口 **/
+/*!** 站内信入口 **!
 .message_box{
-	position   : absolute;
-	bottom     : 0;
-	width      : 100%;
+!*	position   : fixed;
+	top        : 0;
+	right      : 200px;*!
+	width      : 127px;
 	padding    : 15px 20px 15px 25px;
 	background : #343F55;
 	border-top : 1px solid grey;
+	z-index: 9999;
 }
 
 .message_box > a{
@@ -974,7 +977,7 @@ textarea{
 	height  : 100%;
 	display : inline-block;
 	color   : white
-}
+}*/
 
 .message_box .num{
 	min-width     : 20px;
@@ -1074,4 +1077,16 @@ img.blank_img{
 	position   : relative;
 	margin-top : -100%;
 	width      : 100%
+}
+
+/* 步骤样式*/
+.step {
+	padding: 10px 200px;
+	overflow : hidden;
+	border-bottom: 1px solid rgba(0,0,0,.2);
+}
+
+.step > ol {
+	width: 50%;
+	margin:0 auto 35px auto;
 }

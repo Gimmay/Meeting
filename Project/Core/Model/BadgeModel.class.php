@@ -43,7 +43,6 @@
 				else $where['status'] = $filter['status'];
 			};
 			if(isset($filter['keyword']) && $filter['keyword']){
-				
 			}
 			switch((int)$type){
 				case 0: // count
@@ -81,5 +80,18 @@
 			}
 
 			return $result;
+		}
+
+		public function deleteBadge($filter){
+			try{
+				$result = $this->where($filter)->save(['status' => 2]);
+				if($result) return ['status' => true, 'message' => '删除成功'];
+				else return ['status' => false, 'message' => '删除失败'];
+			}catch(Exception $error){
+				$message   = $error->getMessage();
+				$exception = $this->handlerException($message);
+				if(!$exception['status']) return $exception;
+				else return ['status' => false, 'message' => $this->getError()];
+			}
 		}
 	}

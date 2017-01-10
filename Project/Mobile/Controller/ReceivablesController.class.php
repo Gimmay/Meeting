@@ -20,8 +20,8 @@
 		protected $meetingID  = 0;
 
 		public function _initialize(){
-						$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
-						$_SESSION['MOBILE_WECHAT_ID']   = 1090;
+//						$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
+//						$_SESSION['MOBILE_WECHAT_ID']   = 1090;
 			parent::_initialize();
 		}
 
@@ -46,7 +46,7 @@
 			};
 			$this->employeeID = isset($_SESSION['MOBILE_EMPLOYEE_ID']) ? I('session.MOBILE_EMPLOYEE_ID', 0, 'int') : $get();
 			if($this->employeeID == 0){
-				if($redirect) $this->redirect('Error/isNotRegister');
+				if($redirect) $this->redirect('Error/notRegister');
 
 				return false;
 			}

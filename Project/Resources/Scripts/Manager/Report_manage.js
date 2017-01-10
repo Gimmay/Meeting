@@ -20,7 +20,7 @@ $(function(){
 		if(str != ''){
 			$('#batch_delete_report').modal('show')
 		}else{
-			ManageObject.object.toast.toast('请选择客户！');
+			ManageObject.object.toast.toast('请选择参会人员！');
 		}
 		$('#batch_delete_report').find('input[name=id]').val(str);
 	});

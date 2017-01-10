@@ -193,7 +193,7 @@ $(function(){
 		if(newStr != ''){
 			$('#batch_review_client').modal('show')
 		}else{
-			ManageObject.object.toast.toast('请选择客户！');
+			ManageObject.object.toast.toast('请选择参会人员！');
 		}
 		$('#batch_review_client').find('input[name=cid]').val(newStr);
 	});
@@ -217,7 +217,7 @@ $(function(){
 		if(newStr != ''){
 			$('#batch_anti_review_client').modal('show')
 		}else{
-			ManageObject.object.toast.toast('请选择客户！');
+			ManageObject.object.toast.toast('请选择参会人员！');
 		}
 		$('#batch_anti_review_client').find('input[name=cid]').val(newStr);
 	});
@@ -283,7 +283,7 @@ $(function(){
 		if(newStr != ''){
 			$('#batch_sign_point').modal('show')
 		}else{
-			ManageObject.object.toast.toast('请选择客户！');
+			ManageObject.object.toast.toast('请选择参会人员！');
 		}
 		$('#batch_sign_point').find('input[name=cid]').val(newStr);
 	});
@@ -307,7 +307,7 @@ $(function(){
 		if(newStr != ''){
 			$('#batch_anti_sign_point').modal('show')
 		}else{
-			ManageObject.object.toast.toast('请选择客户！');
+			ManageObject.object.toast.toast('请选择参会人员！');
 		}
 		$('#batch_anti_sign_point').find('input[name=cid]').val(newStr);
 	});
@@ -334,7 +334,7 @@ $(function(){
 		if(str != ''){
 			$('#batch_delete_client').modal('show')
 		}else{
-			ManageObject.object.toast.toast('请选择客户！');
+			ManageObject.object.toast.toast('请选择参会人员！');
 		}
 		str_join    = str_join.substr(0, str_join.length-1);
 		var $object = $('#batch_delete_client');
@@ -378,7 +378,7 @@ $(function(){
 		if(newStr != ''){
 			$('#batch_send_message').modal('show')
 		}else{
-			ManageObject.object.toast.toast('请选择客户！');
+			ManageObject.object.toast.toast('请选择参会人员！');
 		}
 		$('#batch_send_message').find('input[name=cid]').val(newStr);
 	});
@@ -425,7 +425,7 @@ $(function(){
 		if(str != ''){
 			$('#batch_alter_sign_point').modal('show')
 		}else{
-			ManageObject.object.toast.toast('请选择客户！');
+			ManageObject.object.toast.toast('请选择参会人员！');
 		}
 		$('#alter_multi_sign_place_cid').val(str).attr('value', str);
 	});

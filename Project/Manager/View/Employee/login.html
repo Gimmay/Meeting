@@ -12,6 +12,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/md5/jQuery.md5.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/sha1/jquery.sha1.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
@@ -28,18 +29,19 @@
 				</p>
 			</div>
 			<div class="login_group">
-				<form action="" method="post">
+				<form action="" method="post" id="form">
 					<div class="input_group flex_wrap">
 						<p class="flex_5">
 							<label for="username"><span class="user_icon glyphicon glyphicon-user"></span></label>
 							<input type="text" name="username" class="username" id="username">
 						</p>
-						<p class="flex_5">
+						<p class="flex_5 password_wrap">
 							<label for="password"><span class="pass_icon glyphicon glyphicon-lock"></span></label>
 							<input type="password" name="password" class="password" id="password">
+							<span class="see glyphicon glyphicon-eye-open"></span>
 						</p>
 						<p class="flex_2 btn_wrap">
-							<button type="submit" class="login">登 录</button>
+							<button type="button" class="login">登 录</button>
 						</p>
 					</div>
 					<p class="other_link">
@@ -49,7 +51,7 @@
 				</form>
 			</div>
 			<div class="login_footer">
-				<p>&copy;Copyright   2016   深圳瑞辉医疗投资控股集团有限公司   版权所有</p>
+				<p>&copy;Copyright 2016 深圳瑞辉医疗投资控股集团有限公司 版权所有</p>
 			</div>
 		</div>
 	</div>

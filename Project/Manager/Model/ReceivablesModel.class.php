@@ -20,6 +20,57 @@
 			return $this->field('distinct type value, type html, type keyword')->select();
 		}
 
+		public function getReceivablesDetail($mid, $head = true){
+			$sql    = "SELECT *
+FROM(
+		SELECT
+			user_client.unit `unit`,
+			user_client.team,
+			user_client.column5 area,
+			user_client. NAME `client`,
+			workflow_receivables_option.price `price`,
+			concat(
+				workflow_coupon.NAME,
+				ifnull(concat('(' ,workflow_coupon_item.code, ')'), '')
+			) `project`,
+			user_employee. NAME `payee`,
+			workflow_receivables.order_number,
+			workflow_pay_method. NAME `pay_method`,
+			(SELECT NAME FROM workflow_pos_machine WHERE workflow_receivables_option.pos_machine = workflow_pos_machine.id) `pos_machine`,
+			workflow_receivables_option.`comment`,
+			FROM_UNIXTIME(workflow_receivables.time) `time`,
+			workflow_coupon_item.code
+		FROM user_client
+		JOIN workflow_receivables ON workflow_receivables.cid = user_client.id
+		JOIN workflow_receivables_option ON workflow_receivables_option.rid = workflow_receivables.id
+		JOIN workflow_pay_method ON workflow_pay_method.id = workflow_receivables_option.pay_method
+		JOIN user_employee ON user_employee.id = workflow_receivables.payee_id
+		JOIN workflow_coupon_item ON workflow_coupon_item.id IN ( workflow_receivables.coupon_ids )
+		JOIN workflow_coupon ON workflow_coupon.id = workflow_coupon_item.coupon_id
+		WHERE workflow_receivables.mid = $mid
+		and workflow_receivables.status = 1 and workflow_receivables_option.status = 1
+	) tab";
+			$result = $this->query($sql);
+			$head ? $result = array_merge([
+				[
+					'unit'         => '单位(会所)',
+					'team'         => '团队',
+					'area'         => '区域',
+					'client'       => '顾客',
+					'price'        => '金额',
+					'project'      => '项目',
+					'payee'        => '收款人',
+					'order_number' => '单据号',
+					'pay_method'   => '支付方式',
+					'pos_machine'  => 'POS机',
+					'comment'      => '备注',
+					'time'         => '收款时间'
+				]
+			], $result) : null;
+
+			return $result;
+		}
+
 		public function getColumn($just_desc = false, $demo = false){
 			$result  = $this->query("
 SELECT 'cid' `NAME`, '客户姓名' `DESC`, 'varchar(50)' `TYPE`

@@ -30,7 +30,7 @@
 											<h3 class="t1">参会人员统计</h3>
 											<div class="desc">
 												<p>报名人数：<{$statistics.joined}>人 (员工：<{$statistics.employee}>人 / 客户：<{$statistics.client}>人)</p>
-												<p>签到人数：<{$statistics.signed}>人</p>
+												<p>签到人数：<{$statistics.signed}>人 (员工：<{$statistics.employee_signed}> / 客户：<{$statistics.client_signed}>)</p>
 											</div>
 											<div class="foot">
 												<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>">查看详情</a>

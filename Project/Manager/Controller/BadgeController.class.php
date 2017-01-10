@@ -73,14 +73,31 @@
 				if(isset($_GET['cid'])){
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model = D('Core/Join');
-					$client     = $join_model->findRecord(1, [
+					/** @var \Core\Model\GroupMemberModel $group_member_model */
+					$group_member_model = D('Core/GroupMember');
+					/** @var \Core\Model\GroupModel $group_model */
+					$group_model = D('Core/Group');
+					$client             = $join_model->findRecord(1, [
 						'mid'    => $this->meetingID,
 						'cid'    => I('get.cid', 0, 'int'),
 						'status' => 'not deleted'
 					]);
-					$info       = $logic->setData('preview:init_temp', $info, [
+					$leader = $group_model->findRecord(1, ['leader'=>$client['cid'], 'mid'=>$this->meetingID, 'leader_type'=>1]);
+					$deputy_leader = $group_model->findRecord(1, ['deputy_leader'=>$client['cid'], 'mid'=>$this->meetingID, 'deputy_leader_type'=>1]);
+					$group              = $group_member_model->findRecord(1, [
+						'mid' => $this->meetingID,
+						'cid' => I('get.cid', 0, 'int')
+					]);
+					if($deputy_leader['leader']==$client['cid'] && $deputy_leader['leader_type']==1){
+						$group['code'] = $deputy_leader['code']."副组长";
+					}
+					if($leader['leader_type'] == 1&& $client['cid'] == $leader['leader']){
+						$group['code'] = $leader['code']."组长";
+					}
+					$info               = $logic->setData('preview:init_temp', $info, [
 						'client'  => $client,
-						'meeting' => $meeting
+						'meeting' => $meeting,
+						'group'   => $group
 					]);
 				}
 				$this->assign('info', $info);
@@ -113,7 +130,7 @@
 				$meeting_model = D('Core/Meeting');
 				/** @var \Core\Model\BadgeModel $model */
 				$model       = D('Core/Badge');
-				$cur_meeting = $meeting_model->findMeeting(1, ['mid' => $this->meetingID, 'status' => 'not deleted']);
+				$cur_meeting = $meeting_model->findMeeting(1, ['id' => $this->meetingID, 'status' => 'not deleted']);
 				$list        = $model->findBadge(2, ['status' => 'not deleted']);
 				$this->assign('list', $list);
 				$this->assign('cur_bid', $cur_meeting['bid']);

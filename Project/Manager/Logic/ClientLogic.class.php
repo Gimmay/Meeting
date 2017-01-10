@@ -7,7 +7,9 @@
 	 */
 	namespace Manager\Logic;
 
+	use Core\Logic\ColumnControlLogic;
 	use Core\Logic\JoinLogic;
+	use Core\Logic\LogLogic;
 	use Core\Logic\ReceivablesLogic;
 	use Core\Logic\WxCorpLogic;
 	use Quasar\StringPlus;
@@ -17,20 +19,163 @@
 			parent::_initialize();
 		}
 
-		public function setExtendColumnForAlter($info){
-			/** @var \Core\Model\EmployeeModel $employee_model */
-			/** @var \Core\Model\JoinModel $join_model */
-			$meeting_id                = I('get.mid', 0, 'int');
-			$id                        = I('get.id', 0, 'int');
-			$join_model                = D('Core/Join');
-			$join_record               = $join_model->findRecord(1, [
-				'mid'    => $meeting_id,
-				'cid'    => $id,
-				'status' => 'not deleted'
-			]);
-			$info['registration_date'] = $join_record['registration_date'];
+		public function setColumn($type, $data, $opt = []){
+			switch($type){
+				case 'manage:client_list':
+					/** @var \Core\Model\GroupMemberModel $group_member_model */
+					$group_member_model = D('Core/GroupMember');
+					foreach($data as $key => $val){
+						$group = $group_member_model->findRecord(1, [
+							'mid'    => $opt['mid'],
+							'cid'    => $val['cid'],
+							'status' => 1
+						]);
+						if($group) $data[$key]['group'] = $group['code'];
+						else $data[$key]['group'] = null;
+					}
 
-			return $info;
+					return $data;
+				break;
+				case 'alter:client_info':
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model                = D('Core/Join');
+					$join_record               = $join_model->findRecord(1, [
+						'mid'    => $opt['mid'],
+						'cid'    => $opt['cid'],
+						'status' => 'not deleted'
+					]);
+					$data['registration_date'] = $join_record['registration_date'];
+
+					return $data;
+				break;
+				case 'excel:set_data':
+					foreach($data as $key1 => $val1){
+						// 排除字段
+						foreach($opt['exceptColumn'] as $val2) unset($data[$key1][$val2]);
+						// 性别
+						switch($val1['gender']){
+							case 0:
+							default:
+								$data[$key1]['gender'] = '未指定';
+							break;
+							case 1:
+								$data[$key1]['gender'] = '男';
+							break;
+							case 2:
+								$data[$key1]['gender'] = '女';
+							break;
+						}
+						// 签到状态
+						switch($val1['sign_status']){
+							case 0:
+								$data[$key1]['sign_status'] = '未签到';
+							break;
+							case 1:
+								$data[$key1]['sign_status'] = '已签到';
+							break;
+							case 2:
+								$data[$key1]['sign_status'] = '取消签到';
+							break;
+						}
+						// 审核状态
+						switch($val1['review_status']){
+							case 0:
+								$data[$key1]['review_status'] = '未审核';
+							break;
+							case 1:
+								$data[$key1]['review_status'] = '已审核';
+							break;
+							case 2:
+								$data[$key1]['review_status'] = '取消审核';
+							break;
+						}
+						// 审核时间
+						$data[$key1]['review_time'] = $val1['review_time'] ? date('Y-m-d H:i:s', $val1['review_time']) : '';
+						// 签到时间
+						$data[$key1]['sign_time'] = $val1['sign_time'] ? date('Y-m-d H:i:s', $val1['sign_time']) : '';
+						// 签到类型
+						switch($val1['sign_type']){
+							case 0:
+							default:
+								$data[$key1]['sign_type'] = '未签到';
+							break;
+							case 1:
+								$data[$key1]['sign_type'] = 'PC后台签到';
+							break;
+							case 2:
+								$data[$key1]['sign_type'] = '微信自主签到';
+							break;
+							case 3:
+								$data[$key1]['sign_type'] = '微信后台签到';
+							break;
+						}
+						// 签到打印状态
+						switch($val1['print_status']){
+							case 0:
+							default:
+								$data[$key1]['print_status'] = '未打印';
+							break;
+							case 1:
+								$data[$key1]['print_status'] = '已打印';
+							break;
+						}
+						// 签到打印状态
+						switch($val1['is_new']){
+							case 0:
+								$data[$key1]['is_new'] = '老客';
+							break;
+							case 1:
+								$data[$key1]['is_new'] = '新客';
+							break;
+						}
+					}
+					$data = array_merge([
+						[
+							'name'               => '姓名',
+							'gender'             => '性别',
+							'mobile'             => '电话',
+							'unit'               => '单位',
+							'birthday'           => '生日',
+							'email'              => '邮箱',
+							'title'              => '职务',
+							'position'           => '职称',
+							'address'            => '地址',
+							'id_card_number'     => '身份证号',
+							'develop_consultant' => '开拓顾问',
+							'service_consultant' => '服务顾问',
+							'is_new'             => '是否新客',
+							'team'               => '团队',
+							'type'               => '类型',
+							'comment'            => '备注',
+							'column1'            => '备选字段1',
+							//					'column2'            => '备选字段2',
+							//					'column3'            => '备选字段3',
+							//					'column4'            => '备选字段4',
+							//					'column5'            => '备选字段5',
+							//					'column6'            => '备选字段6',
+							//					'column7'            => '备选字段7',
+							//					'column8'            => '备选字段8',
+							'registration_date'  => '报名时间',
+							'registration_type'  => '报名类型',
+							'review_status'      => '审核状态',
+							'review_time'        => '审核时间',
+							'sign_status'        => '签到状态',
+							'sign_time'          => '签到时间',
+							'sign_type'          => '签到类型',
+							'sign_code'          => '签到码',
+							'print_status'       => '打印状态',
+							'print_times'        => '打印时间'
+						]
+					], $data);
+
+					return $data;
+
+
+				break;
+				default:
+					return $data;
+				break;
+			}
 		}
 
 		public function alterColumnForExportExcel($list, $except_column = []){
@@ -203,6 +348,7 @@
 						$model        = D('Core/Client');
 						$exist_client = $model->findClient(1, [
 							'mobile' => $data['mobile'],
+							'name'   => $data['name'],
 							'status' => 'not deleted'
 						]);
 						$creator      = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
@@ -246,7 +392,15 @@
 									'status'            => 1,
 									'creator'           => $creator,
 									'creatime'          => time(),
-									'registration_date' => $registration_date
+									'registration_date' => $registration_date,
+									'column1'           => $data['column1'],
+									'column2'           => $data['column2'],
+									'column3'           => $data['column3'],
+									'column4'           => $data['column4'],
+									'column5'           => $data['column5'],
+									'column6'           => $data['column6'],
+									'column7'           => $data['column7'],
+									'column8'           => $data['column8']
 								]);
 								if($join_result['status']) $result = [
 									'status'  => true,
@@ -260,9 +414,18 @@
 							];
 						}
 						else{
+							$post                      = $data;
 							$data                      = [];
 							$data['cid']               = $cid;
 							$data['mid']               = $mid;
+							$data['column1']           = $post['column1'];
+							$data['column2']           = $post['column2'];
+							$data['column3']           = $post['column3'];
+							$data['column4']           = $post['column4'];
+							$data['column5']           = $post['column5'];
+							$data['column6']           = $post['column6'];
+							$data['column7']           = $post['column7'];
+							$data['column8']           = $post['column8'];
 							$data['creatime']          = time();
 							$data['registration_date'] = $registration_date;
 							$data['creator']           = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
@@ -303,8 +466,20 @@
 								break;
 							}
 						}
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'user_client&workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '创建参会人员',
+							'type'     => 'create'
+						]);
+						$result['cid'] = $cid;
 
-						return array_merge($result, ['__ajax__' => false]);
+						return array_merge($result, [
+							'__ajax__'   => false,
+							'__return__' => U('manage', ['mid' => $mid])
+						]);
 					}
 					else return [
 						'status'   => false,
@@ -317,16 +492,16 @@
 						/** @var \Core\Model\ClientModel $model */
 						$model = D('Core/Client');
 						/** @var \Core\Model\JoinModel $join_model */
-						$join_model   = D('Core/Join');
-						$str_obj      = new StringPlus();
-						$data         = I('post.');
-						$id           = I('get.id', 0, 'int');
-						$exist_client = $model->findClient(1, ['mobile' => $data['mobile']]);
-						if($exist_client) return [
-							'status'   => false,
-							'message'  => '该手机号已存在',
-							'__ajax__' => false
-						];
+						$join_model = D('Core/Join');
+						$str_obj    = new StringPlus();
+						$data       = I('post.');
+						$id         = I('get.id', 0, 'int');
+						//						$exist_client = $model->findClient(1, ['mobile' => $data['mobile']]);
+						//						if($exist_client && $exist_client['id']!=$id) return [
+						//							'status'   => false,
+						//							'message'  => '该手机号已存在',
+						//							'__ajax__' => false
+						//						];
 						$data['pinyin_code']        = $str_obj->makePinyinCode($data['name']);
 						$data['birthday']           = $data['birthday'] ? $data['birthday'] : null;
 						$result1                    = $model->alterClient(['id' => $id], $data);
@@ -336,8 +511,32 @@
 							'status' => 'not deleted'
 						]);
 						$data2['registration_date'] = $data['registration_date'];
+						$data2['column1']           = $data['column1'];
+						$data2['column2']           = $data['column2'];
+						$data2['column3']           = $data['column3'];
+						$data2['column4']           = $data['column4'];
+						$data2['column5']           = $data['column5'];
+						$data2['column6']           = $data['column6'];
+						$data2['column7']           = $data['column7'];
+						$data2['column8']           = $data['column8'];
 						C('TOKEN_ON', false);
-						$result2 = $join_model->alterRecord(['id' => $join_record['id']], $data2);
+						$result2   = $join_model->alterRecord(['id' => $join_record['id']], $data2);
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'user_client',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '修改参会人员',
+							'type'     => 'modify'
+						]);
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'user_client&workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '修改参会人员',
+							'type'     => 'modify'
+						]);
 
 						return ($result1['status'] || $result2['status']) ? [
 							'status'  => true,
@@ -363,6 +562,14 @@
 							$table_head               = $model->getSelfColumn();
 							$result['data']['dbHead'] = $table_head;
 						}
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'system_upload',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '保存参会人员EXCEL文件',
+							'type'     => 'create'
+						]);
 
 						return array_merge($result, ['__ajax__' => true]);
 					}
@@ -389,6 +596,14 @@
 						$file_path     = trim($upload_record['save_path'], '/');
 						$excel_content = $excel_logic->readClientData($file_path);
 						$result        = $this->createClientFromExcelData($excel_content['body'], $map);
+						$log_logic     = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'user_client&workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '导入参会人员EXCEL数据',
+							'type'     => 'create'
+						]);
 
 						return array_merge($result, ['__ajax__' => true]);
 					}
@@ -417,6 +632,14 @@
 						if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
 						$join_logic = new JoinLogic();
 						$result2    = $join_logic->makeQRCodeForSign([$cid], ['mid' => $mid]);
+						$log_logic  = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '审核参会人员',
+							'type'     => 'modify'
+						]);
 
 						return array_merge($result2, ['__ajax__' => true]);
 					}
@@ -438,10 +661,18 @@
 							'status' => 'not deleted'
 						]);
 						C('TOKEN_ON', false);
-						$result = $join_model->alterRecord(['id' => $join_record['id']], [
+						$result    = $join_model->alterRecord(['id' => $join_record['id']], [
 							'review_status' => 2,
 							'sign_status'   => 0,
 							'sign_time'     => null
+						]);
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '取消审核参会人员',
+							'type'     => 'modify'
 						]);
 
 						return array_merge($result, ['__ajax__' => true]);
@@ -475,6 +706,14 @@
 						if(!$result1['status']) return array_merge($result1, ['__ajax__' => false]);
 						$join_logic = new JoinLogic();
 						$result2    = $join_logic->makeQRCodeForSign($client_id_arr, ['mid' => $mid]);
+						$log_logic  = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '批量审核参会人员',
+							'type'     => 'modify'
+						]);
 
 						return array_merge($result2, ['__ajax__' => false]);
 					}
@@ -501,10 +740,18 @@
 							$join_id[]   = $join_record['id'];
 						}
 						C('TOKEN_ON', false);
-						$result = $join_model->alterRecord(['id' => ['in', $join_id]], [
+						$result    = $join_model->alterRecord(['id' => ['in', $join_id]], [
 							'review_status' => 2,
 							'sign_status'   => 0,
 							'sign_time'     => null
+						]);
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '批量取消审核参会人员',
+							'type'     => 'modify'
 						]);
 
 						return array_merge($result, ['__ajax__' => false]);
@@ -523,6 +770,14 @@
 							'cid'  => I('post.id', 0, 'int'),
 							'type' => 1,
 							'eid'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+						]);
+						$log_logic         = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '参会人员签到',
+							'type'     => 'modify'
 						]);
 
 						return array_merge($result, ['__ajax__' => true]);
@@ -554,6 +809,14 @@
 							$message_logic = new MessageLogic();
 							$message_logic->send($mid, 1, 2, [$id]);
 						}
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '参会人员取消签到',
+							'type'     => 'modify'
+						]);
 
 						return array_merge($result, ['__ajax__' => true]);
 					}
@@ -593,7 +856,6 @@
 									$sign_result_model = D('Core/SignResult');
 									$signed_count      = $join_model->findRecord(0, [
 										'mid'         => $mid,
-										'cid'         => $val,
 										'sign_status' => 1,
 										'status'      => 1
 									]);
@@ -613,7 +875,15 @@
 								$message_logic->send($mid, 1, 1, $send_list);
 								$send_list = [];
 							}
-						}
+						};
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '参会人员批量签到',
+							'type'     => 'modify'
+						]);
 						if($count<50 && $count>0) $message_logic->send($mid, 1, 1, $send_list);
 						if($count == 0) return [
 							'status'   => false,
@@ -667,6 +937,14 @@
 								$send_list = [];
 							}
 						}
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '参会人员批量取消签到',
+							'type'     => 'modify'
+						]);
 						if($count<50 && $count>0) $message_logic->send($mid, 1, 2, $send_list);
 						if($count == 0) return [
 							'status'   => false,
@@ -694,25 +972,34 @@
 					if($this->permissionList['CLIENT.DELETE']){
 						/** @var \Core\Model\JoinModel $join_model */
 						$join_model = D('Core/Join');
-						//$id_arr     = explode(',', I('post.id'));
-						$join_id_arr = explode(',', I('post.jid'));
-						//$result    = $model->deleteClient($id_arr);
+						$id_arr     = explode(',', I('post.id'));
+						//$join_id_arr = explode(',', I('post.jid'));
 						/* 监测是否已审核 */
 						$delete_id_arr = [];
-						foreach($join_id_arr as $val){
+						foreach($id_arr as $val){
 							$record = $join_model->findRecord(1, [
-								'id'     => $val,
+								'cid'    => $val,
+								'mid'    => I('get.mid', 0, 'int'),
 								'status' => 'not deleted'
 							]);
 							if($record['review_status'] == 1) continue;
-							$delete_id_arr[] = $val;
+							$delete_id_arr[] = $record['id'];
 						}
 						if(!$delete_id_arr) return [
 							'status'   => false,
 							'message'  => '客户已审核不能删除',
 							'__ajax__' => false
 						];
-						$result = $join_model->deleteRecord($delete_id_arr);
+						C('TOKEN_ON', false);
+						$result    = $join_model->deleteRecord($delete_id_arr);
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '参会人员批量取消签到',
+							'type'     => 'modify'
+						]);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
@@ -736,6 +1023,12 @@
 						]);
 						if($record['review_status']) $result = $message_logic->send($mid, 1, 4, [$record['cid']]);
 						else $result = ['status' => false, 'message' => '该客户未审核'];
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'extend' => 'PC',
+							'action' => '发送邀请',
+							'type'   => '-'
+						]);
 
 						return array_merge($result, [
 							'__ajax__' => true
@@ -766,6 +1059,12 @@
 							else $result = ['status' => false, 'message' => '该客户未审核'];
 							if($result['status']) $count++;
 						}
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'extend' => 'PC',
+							'action' => '批量发送邀请',
+							'type'   => '-'
+						]);
 						if($count == count($client_arr)) return [
 							'status'   => true,
 							'message'  => '全部发送成功',
@@ -839,6 +1138,14 @@
 							'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
 							'creatime' => time()
 						];
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_join_sign_place',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '分配签到点',
+							'type'     => 'delete&create'
+						]);
 						$result = $join_sign_place_model->createMultiRecord($data);
 						if($result['status']) return [
 							'status'   => true,
@@ -865,11 +1172,13 @@
 						$sid_str               = I('post.sign_place', '');
 						$cid_arr               = explode(',', $cid_str);
 						$sid_arr               = explode(',', $sid_str);
+						$mid                   = I('get.mid', 0, 'int');
 						C('TOKEN_ON', false);
 						$count = 0;
 						foreach($cid_arr as $c_val){
 							foreach($sid_arr as $s_val){
 								$result = $join_sign_place_model->createRecord([
+									'mid'      => $mid,
 									'cid'      => $c_val,
 									'sid'      => $s_val,
 									'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
@@ -878,6 +1187,14 @@
 								if($result['status']) $count++;
 							}
 						}
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_join_sign_place',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '批量分配签到点',
+							'type'     => 'create'
+						]);
 						if($count == count($cid_arr)*count($sid_arr)) return [
 							'status'   => true,
 							'message'  => '分配成功',
@@ -993,7 +1310,7 @@
 				break;
 				case 'gift':
 					/** @var \Core\Model\JoinModel $join_model */
-					$join_model = D('Core/join');
+					$join_model = D('Core/Join');
 					C('TOKEN_ON', false);
 					$id        = I('post.id', 0, 'int');
 					$join_list = $join_model->findRecord(1, [
@@ -1012,6 +1329,49 @@
 					return array_merge($join_result, [
 						'__ajax__' => false
 					]);
+				break;
+				case 'get_client':
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model  = D('Core/Join');
+					$mid         = I('get.mid', 0, 'int');
+					$cid         = I('post.id', 0, 'int');
+					$join_result = $join_model->findRecord(1, ['cid' => $cid, 'mid' => $mid]);
+
+					return array_merge($join_result, ['__ajax__' => true]);
+				break;
+				case 'assign_group':
+					$cid_arr  = explode(',', I('post.cid', ''));
+					$mid      = I('get.mid', 0, 'int');
+					$group_id = I('post.group', 0, 'int');
+					/** @var \Core\Model\GroupMemberModel $group_member_model */
+					$group_member_model = D('Core/GroupMember');
+					$group_member_model->dropRecord(['cid', ['in', $cid_arr], 'mid' => $mid]);
+					$data = [];
+					foreach($cid_arr as $client_id){
+						$data[] = [
+							'mid'      => $mid,
+							'gid'      => $group_id,
+							'cid'      => $client_id,
+							'time'     => 1,
+							'status'   => 1,
+							'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+							'creatime' => time()
+						];
+					}
+					$result = $group_member_model->createMultiMember($data);
+
+					return array_merge($result, ['__ajax__' => false]);
+				break;
+				case 'multi_alter_column':
+					$cid_arr = explode(',', I('post.cid', ''));
+					$mid     = I('get.mid', 0, 'int');
+					$data    = I('post.');
+					unset($data['cid']);
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model = D('Core/Join');
+					$result     = $join_model->alterRecord(['mid' => $mid, 'cid' => ['in', $cid_arr]], $data);
+
+					return array_merge($result, ['__ajax__' => false]);
 				break;
 				default:
 					return [
@@ -1056,7 +1416,7 @@
 					// 过滤数据
 					switch(strtolower($table_column[$key2]['name'])){
 						case 'type':
-							$val = in_array($val, ['终端', '内部员工', '嘉宾', '陪同']) ? $val : '终端';
+							$val = in_array($val, ['终端', '内部员工', '嘉宾', '陪同', '老总', '其他']) ? $val : '终端';
 						break;
 						case 'birthday':
 							$val = $val ? date('Y-m-d', strtotime($val)) : null;
@@ -1153,7 +1513,7 @@
 				}
 				if($mobile == '' && !$mobile) continue; // 若手机号未填则略过该条数据
 				// 判定是否存在该客户
-				$exist_client                   = $core_model->isExist($mobile);
+				//$exist_client                   = $core_model->isExist($mobile);
 				$join_data                      = [];
 				$join_data['mid']               = $mid;
 				$join_data['creator']           = $cur_employee_id;
@@ -1164,28 +1524,28 @@
 				$join_data['status']            = 1;
 				C('TOKEN_ON', false);
 				// 若存在则用新数据覆盖旧数据同时设为老客
-				if($exist_client){
-					$core_model->alterClient(['id' => $exist_client['id']], array_merge($client_data, [
-						'is_new' => 0,
-						'status' => 1
-					]));
-					$join_data['cid'] = $exist_client['id'];
+				//				if($exist_client){
+				//					$core_model->alterClient(['id' => $exist_client['id']], array_merge($client_data, [
+				//						'is_new' => 0,
+				//						'status' => 1
+				//					]));
+				//					$join_data['cid'] = $exist_client['id'];
+				//					$wechat_opt[]     = [
+				//						'id'     => $exist_client['id'],
+				//						'mobile' => $mobile
+				//					];
+				//				}
+				// 若不存在则创建
+				//else{
+				$client_result = $core_model->createClient($client_data);
+				if($client_result['status']){
+					$join_data['cid'] = $client_result['id'];
 					$wechat_opt[]     = [
-						'id'     => $exist_client['id'],
+						'id'     => $client_result['id'],
 						'mobile' => $mobile
 					];
 				}
-				// 若不存在则创建
-				else{
-					$client_result = $core_model->createClient($client_data);
-					if($client_result['status']){
-						$join_data['cid'] = $client_result['id'];
-						$wechat_opt[]     = [
-							'id'     => $client_result['id'],
-							'mobile' => $mobile
-						];
-					}
-				}
+				//}
 				if($join_data['cid']){
 					// 判断是否有参会（可能被删除的情况）
 					$exist_join_record = $join_model->isJoin($mid, $join_data['cid']);

@@ -7,6 +7,8 @@
 	 */
 	namespace Manager\Logic;
 
+	use Quasar\StringPlus;
+
 	class RequestHandlerLogic extends ManagerLogic{
 		public function _initialize(){
 			parent::_initialize();
@@ -199,6 +201,37 @@
 					$result = $model->alterRecord(['id' => $id], ['status' => $status]);
 
 					return array_merge($result, ['__ajax__' => false]);
+				break;
+				case 'get:copy_client':
+					/** @var \Core\Model\ClientModel $client_model */
+					$client_model = D('Core/Client');
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model = D('Core/Join');
+					$str_obj    = new StringPlus();
+					$cid        = I('get.id', 0, 'int');
+					$mid        = I('get.mid', 0, 'int');
+					$client     = $client_model->findClient(1, ['id' => $cid]);
+					unset($client['id']);
+					//$ram_str          = $str_obj->makeRandomString(4);
+					//$client['mobile'] = "copy-$ram_str $client[mobile]";
+					$client['mobile'] = "无";
+					C('TOKEN_ON', false);
+					$result = $client_model->createClient($client);
+					if($result['status']){
+						$join = $join_model->findRecord(1, ['cid' => $cid, 'mid' => $mid]);
+						unset($join['id']);
+						unset($join['sign_code']);
+						unset($join['sign_qrcode']);
+						unset($join['sign_time']);
+						unset($join['sign_status']);
+						unset($join['sign_type']);
+						$join['cid'] = $result['id'];
+						$join['review_status'] = 1;
+						$result2     = $join_model->createRecord($join);
+
+						return array_merge($result2, ['__ajax__' => false,'__return__'=>U('Client/alter', ['mid'=>$mid, 'id'=>$result['id'], 'manage'=>1])]);
+					}
+					else return array_merge($result, ['__ajax__' => false]);
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数'];

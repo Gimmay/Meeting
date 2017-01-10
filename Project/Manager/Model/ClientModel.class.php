@@ -23,7 +23,7 @@
 	COLUMN_TYPE `TYPE`
 FROM information_schema.`COLUMNS`
 WHERE TABLE_SCHEMA = \'gimmay_meeting\' AND TABLE_NAME = \'user_client\'
-AND COLUMN_NAME NOT IN (\'id\', \'password\', \'status\', \'creatime\', \'creator\', \'pinyin_code\', \'column2\', \'column3\', \'column4\', \'column5\', \'column6\', \'column7\', \'column8\',\'mobile_qrcode\'))
+AND COLUMN_NAME NOT IN (\'id\', \'password\', \'status\', \'creatime\', \'creator\', \'pinyin_code\', \'column6\', \'column7\', \'column8\',\'mobile_qrcode\'))
 UNION SELECT \'registration_date\', \'报名时间\', \'date\'
 UNION SELECT \'traffic_method\', \'交通方式\', \'varchar(20)\'
 ');
@@ -43,7 +43,7 @@ UNION SELECT \'traffic_method\', \'交通方式\', \'varchar(20)\'
 	COLUMN_TYPE `TYPE`
 FROM information_schema.`COLUMNS`
 WHERE TABLE_SCHEMA = \'gimmay_meeting\' AND TABLE_NAME = \'user_client\'
-AND COLUMN_NAME NOT IN (\'id\', \'password\', \'status\', \'creatime\', \'creator\', \'pinyin_code\', \'column2\', \'column3\', \'column4\', \'column5\', \'column6\', \'column7\', \'column8\', \'mobile_qrcode\'))');
+AND COLUMN_NAME NOT IN (\'id\', \'password\', \'status\', \'creatime\', \'creator\', \'pinyin_code\', \'column6\', \'column7\', \'column8\', \'mobile_qrcode\'))');
 			if($just_desc){
 				$list[0] = [];
 				foreach($result as $val) array_push($list[0], $val['desc']);
@@ -64,13 +64,14 @@ WHERE mid = $mid AND workflow_join.status = 1 AND user_client.status = 1";
 			return $this->query($sql);
 		}
 
-		public function getClientSelectUnit($mid){
+		public function getClientSelectUnit($mid, $type = null){
+			$type = $type==null?'':" and $type ";
 			$sql = "SELECT CONCAT(`name`, ' / ', unit) `html`, CONCAT(`name`, unit, ',', pinyin_code) `keyword`,
 user_client.id `value`
 FROM `workflow_join`
 LEFT JOIN `user_client` 
 ON workflow_join.cid = user_client.id
-WHERE MID = $mid AND workflow_join.status = 1 AND user_client.status = 1;";
+WHERE MID = $mid AND workflow_join.status = 1 AND user_client.status = 1 $type;";
 
 			return $this->query($sql);
 		}

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>会议恢复 - 会议系统</title>
+	<title>项目名称恢复 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
@@ -41,7 +41,7 @@
 						</div>
 						<header class="c_header">
 							<div class="function_list clearfix">
-								<div class="function_btn bg-danger batch_recover_btn_confirm" data-toggle="modal" data-target="#batch_recover_meeting" data-backdrop="static">
+								<div class="function_btn bg-danger batch_recover_btn_confirm" data-toggle="modal" data-target="#batch_recover_couponItem" data-backdrop="static">
 									<i></i>
 									<p>恢复</p>
 								</div>
@@ -51,9 +51,9 @@
 							<form action="" method="get">
 								<div class="input-group repertory_text">
 									<input name="p" type="hidden" value="1">
-									<input type="search" name="keyword" class="form-control" placeholder="会议名称/拼音简码" value="<{:I('get.keyword', '')}>">
+									<input type="search" name="keyword" class="form-control" placeholder="代金券码/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default main_search">搜索会议</button>
+										<button type="submit" class="btn btn-default main_search">搜索代金券码</button>
 									</span>
 								</div>
 								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
@@ -91,7 +91,7 @@
 											<td><{$single.creatime|date='Y-m-d',###}></td>
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>">
-													<button type="submit" class="btn btn-default btn-xs recover_btn" data-toggle="modal" data-target="#recover_meeting" data-backdrop="static">恢复</button>
+													<button type="submit" class="btn btn-default btn-xs recover_btn" data-toggle="modal" data-target="#recover_couponItem" data-backdrop="static">恢复</button>
 												</div>
 											</td>
 										</tr>
@@ -109,20 +109,20 @@
 			</div>
 		</div>
 	</div>
-	<!-- 删除会议 -->
-	<div class="modal fade" id="recover_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- 删除代金券码 -->
+	<div class="modal fade" id="recover_couponItem" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">恢复会议</h2>
+					<h2 class="modal-title">恢复代金券码</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="recover">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否恢复会议？
+						是否恢复代金券码？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -133,19 +133,19 @@
 		</div>
 	</div>
 	<!-- 批量恢复会议 -->
-	<div class="modal fade" id="batch_recover_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="batch_recover_couponItem" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量恢复会议</h2>
+					<h2 class="modal-title">批量恢复代金券码</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="multi_recover">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否恢复已选会议？
+						是否恢复已选代金券码？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>

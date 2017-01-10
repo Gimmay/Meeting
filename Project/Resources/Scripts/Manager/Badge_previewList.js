@@ -31,4 +31,15 @@ $(function(){
 	// 计算胸卡设计的宽度
 	badgeManage.bindEvent();
 	badgeManage.setUlWidth();
+	$('.delete_icon').on('click', function(e){
+		e.stopPropagation();
+		var id        = $(this).parent('li').attr('data-id');
+		var active_id = $('body').attr('data-bid');
+		$('#delete_badge').find('#bid').val(id);
+		if(active_id == id){
+			ManageObject.object.toast.toast('不能删除已选中的胸卡模板！');
+		}else{
+			$('#delete_badge').modal('show');
+		}
+	});
 });

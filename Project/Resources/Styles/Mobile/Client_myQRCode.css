@@ -1,66 +1,126 @@
-
-.my_box {
-	width: 100%;
-	padding: 0.4rem 0.2rem;
-	border-bottom: 1px solid #e1e1e1;
+.bg{
+	position : relative;
+	top      : 0;
+	left     : 0;
+	width    : 100%;
+	height   : 100%;
+	overflow : hidden;
 }
 
-.my_title {
-	width: 100%;
-	padding: 0.2rem;
-}
-.my_title .photo {
-	width: 0.8rem;
-	float: left;
-	overflow: hidden;
-	border :1px solid #999;
-	border-radius: 4px;
+.logo_q{
+	width       : 3rem;
+	height      : 3rem;
+	position    : absolute;;
+	top         : 1rem;
+	left        : 50%;
+	margin-left : -1.5rem;
 }
 
-.my_title .photo img {
-	width: 100%;
-	vertical-align: top;
+.logo_q > img{
+	width          : 100%;
+	vertical-align : top;
 }
 
-
-.qr_code img {
-	width: 100%;
-	vertical-align: top;
+.meeting_name{
+	width       : 100%;
+	position    : absolute;
+	top         : 5rem;
+	text-align  : center;
+	color       : #FFFFFF;
+	font-size   : 0.7rem;
+	font-family : '幼圆';
 }
 
+.client_name{
+	width       : 100%;
+	position    : absolute;
+	top         : 6.3rem;
+	text-align  : center;
+	color       : #FFFFFF;
+	font-size   : 0.55rem;
+	font-family : '幼圆';
+}
+
+.qrcode_img{
+	width       : 4rem;
+	height      : 4rem;
+	position    : absolute;
+	top         : 8rem;
+	left        : 50%;
+	margin-left : -2rem;
+}
+
+.qrcode_img > img{
+	width          : 100%;
+	vertical-align : middle;
+}
+
+.bg > img{
+	width : 100%;
+}
+
+.my_box{
+	width         : 100%;
+	padding       : 0.4rem 0.2rem;
+	border-bottom : 1px solid #E1E1E1;
+}
+
+.my_title{
+	width   : 100%;
+	padding : 0.2rem;
+}
+
+.my_title .photo{
+	width         : 0.8rem;
+	float         : left;
+	overflow      : hidden;
+	border        : 1px solid #999999;
+	border-radius : 4px;
+}
+
+.my_title .photo img{
+	width          : 100%;
+	vertical-align : top;
+}
+
+.qr_code img{
+	width          : 100%;
+	vertical-align : top;
+}
 
 .name{
-	margin-left: 1rem;
-	font-size: 0.30rem;
-	font-weight: bold;
-	margin-bottom: 0.1rem;
+	margin-left   : 1rem;
+	font-size     : 0.30rem;
+	font-weight   : bold;
+	margin-bottom : 0.1rem;
 }
 
-.address {
-	margin-left: 1rem;
-	font-size: 0.24rem;
+.address{
+	margin-left : 1rem;
+	font-size   : 0.24rem;
 }
 
-.qr_code {
-	width: 60%;
-	margin: 0.2rem auto;
+.qr_code{
+	width  : 60%;
+	margin : 0.2rem auto;
 }
 
-.sign_type {
-	width: 50px;
-	height: 30px;
-	line-height: 30px;
-	text-align: center;
-	border-radius :20%;
-	color : #fff;
-	position : absolute;
-	top :10px;
-	right :10px;
-}
-.sign_type.signed {
-	background: #23C6C8;
+.sign_type{
+	width         : 50px;
+	height        : 30px;
+	line-height   : 30px;
+	text-align    : center;
+	border-radius : 20%;
+	color         : #FFFFFF;
+	position      : absolute;
+	top           : 10px;
+	right         : 10px;
 }
 
-.sign_type.unsigned {
-	background:silver
+.sign_type.signed{
+	background : #23C6C8;
+}
+
+.sign_type.unsigned{
+	background : silver
 }

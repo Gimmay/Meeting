@@ -7,6 +7,8 @@
 	 */
 	namespace Manager\Logic;
 
+	use Core\Logic\LogLogic;
+
 	class AssignRoleLogic extends ManagerLogic{
 		public function _initialize(){
 			parent::_initialize();
@@ -21,6 +23,15 @@
 			$data['creatime'] = time();
 			$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 			C('TOKEN_ON', false);
+			$log_logic = new LogLogic();
+			$log_logic->create([
+				'dbTable'  => 'workflow_assign_role',
+				'dbColumn' => '*',
+				'extend'   => 'PC',
+				'action'   => '分配角色',
+				'type'     => 'create'
+			]);
+
 			return $model->createRecord($data);
 		}
 
@@ -31,6 +42,14 @@
 			$where['oid']  = (int)$oid;
 			$where['type'] = $type == 0 ? 0 : ($type == 1 ? 1 : 0);
 			C('TOKEN_ON', false);
+			$log_logic = new LogLogic();
+			$log_logic->create([
+				'dbTable'  => 'workflow_assign_role',
+				'dbColumn' => '*',
+				'extend'   => 'PC',
+				'action'   => '取消分配角色',
+				'type'     => 'delete'
+			]);
 
 			return $model->deleteRecord($where);
 		}

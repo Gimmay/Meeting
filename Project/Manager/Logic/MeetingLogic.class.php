@@ -7,6 +7,8 @@
 	 */
 	namespace Manager\Logic;
 
+	use Core\Logic\ColumnControlLogic;
+	use Core\Logic\LogLogic;
 	use Core\Logic\PermissionLogic;
 	use Core\Logic\QRCodeLogic;
 	use Core\Logic\UploadLogic;
@@ -227,6 +229,7 @@
 						$data['creator']             = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 						$data['creatime']            = time();
 						$data['brief']               = $_POST['brief'];
+						$data['kpi']                 = $data['kpi'] ? $data['kpi'] : null;
 						$data['config_message_type'] = 0; // 默认消息发送不发送
 						$result                      = $model->createMeeting($data);
 						if($result['status']){
@@ -256,6 +259,9 @@
 								'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
 								'creatime' => time()
 							]);
+							// 创建字段控制
+							$column_control_logic = new ColumnControlLogic();
+							$column_control_logic->initClientColumn($result['id']);
 						}
 
 						return array_merge($result, ['__ajax__' => false]);
@@ -290,6 +296,7 @@
 						$data           = I('post.');
 						$data['brief']  = $_POST['brief'];
 						$data['qrcode'] = $remote_url;
+						$data['kpi']    = $data['kpi'] ? $data['kpi'] : null;
 						$result         = $model->alterMeeting(['id' => $id], $data);
 
 						return array_merge($result, ['__ajax__' => false]);
@@ -624,6 +631,35 @@
 						return array_merge($result, ['__ajax__' => false]);
 					}
 					else return ['status' => false, 'message' => '您没有配置会议的权限', '__ajax__' => false];
+				break;
+				case 'client:set_column':
+					$column_control_logic = new ColumnControlLogic();
+					$post                 = I('post.');
+					$mid                  = I('get.mid', 0, 'int');
+					$data                 = [];
+					foreach($post['code'] as $key => $val){
+						$data[] = [
+							'code'     => $val,
+							'name'     => $post['name'][$key],
+							'view'     => $post['view'][$key],
+							'must'     => $post['must'][$key],
+							'creatime' => time(),
+							'table'    => 'user_client',
+							'mid'      => $mid,
+							'form'     => $post['form'][$key]
+						];
+					}
+					$log_logic = new LogLogic();
+					$log_logic->create([
+						'dbTable'  => 'workflow_column_control',
+						'dbColumn' => '*',
+						'extend'   => 'PC',
+						'action'   => '修改参会人员字段',
+						'type'     => 'delete&create'
+					]);
+					$result = $column_control_logic->saveClientColumn($mid, $data);
+
+					return array_merge($result, ['__ajax__' => false, '__return__' => '']);
 				break;
 				default:
 					return [

@@ -2,7 +2,6 @@
  Create by Quasar on 2016-7-25 14:27
  */
 $(function(){
-
 	/*
 	 *  页面左侧的导航栏
 	 *  点击二级导航打开或者关闭
@@ -69,6 +68,11 @@ $(function(){
 	});
 });
 var Common = {
+	/**
+	 *
+	 * @param options
+	 * @returns {*}
+	 */
 	ajax        :function(options){
 		var self   = this;
 		var result = null;
@@ -102,6 +106,14 @@ var Common = {
 			}
 		});
 		return result;
+	},
+	/**
+	 * 去掉空格
+	 * @param val
+	 * @constructor
+	 */
+	Trim        :function(str){
+		return str.replace(/(^\s*)|(\s*$)/g, "");
 	},
 	/*
 	 *   ==============================RegExp================================

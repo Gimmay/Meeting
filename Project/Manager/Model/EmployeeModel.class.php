@@ -21,8 +21,9 @@
 
 		public function checkLogin($name, $pwd){
 			$str_obj = new StringPlus();
-			$input_password = $pwd;
-			$pwd     = $str_obj->makePassword($pwd, $name);
+			//			$input_password = $pwd;
+			//			$pwd     = $str_obj->makePassword($pwd, $name);
+			$input_password = $str_obj->makePassword('', $name);
 			if($this->create()){
 				$user = $this->where([
 					'code'     => $name,
@@ -38,6 +39,7 @@
 					session('MANAGER_EMPLOYEE_ID', $user['id']);
 					session('MANAGER_EMPLOYEE_CODE', $user['code']);
 					session('MANAGER_EMPLOYEE_NAME', $user['name']);
+
 					return ['status' => true, 'message' => '登入成功'];
 				}
 				else return ['status' => false, 'message' => '该用户不存在或用户名/密码错误'];
@@ -66,10 +68,10 @@ WHERE status = 1";
 		}
 
 		public function getPositionSelectList(){
-			return $this->field("distinct position as value, position as keyword, position as html")->where(['status'=>1])->select();
+			return $this->field("distinct position as value, position as keyword, position as html")->where(['status' => 1])->select();
 		}
 
 		public function getTitleSelectList(){
-			return $this->field("distinct title as value, title as keyword, title as html")->where(['status'=>1])->select();
+			return $this->field("distinct title as value, title as keyword, title as html")->where(['status' => 1])->select();
 		}
 	}

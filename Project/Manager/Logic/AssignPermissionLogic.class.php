@@ -7,6 +7,8 @@
 	 */
 	namespace Manager\Logic;
 
+	use Core\Logic\LogLogic;
+
 	class AssignPermissionLogic extends ManagerLogic{
 		public function assignPermission($pid, $oid, $type){
 			/** @var \Core\Model\AssignPermissionModel $model */
@@ -17,6 +19,14 @@
 			$data['creatime'] = time();
 			$data['creator']  = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 			C('TOKEN_ON', false);
+			$log_logic = new LogLogic();
+			$log_logic->create([
+				'dbTable'  => 'workflow_assign_permission',
+				'dbColumn' => '*',
+				'extend'   => 'PC',
+				'action'   => '授予权限',
+				'type'     => 'create'
+			]);
 
 			return $model->createRecord($data);
 		}
@@ -28,7 +38,14 @@
 			$condition['oid']  = (int)$oid;
 			$condition['type'] = $type == 0 ? 0 : ($type == 1 ? 1 : ($type == 2 ? 2 : 0));
 			C('TOKEN_ON', false);
-
+			$log_logic = new LogLogic();
+			$log_logic->create([
+				'dbTable'  => 'workflow_assign_permission',
+				'dbColumn' => '*',
+				'extend'   => 'PC',
+				'action'   => '收回权限',
+				'type'     => 'delete'
+			]);
 			return $model->deleteRecord($condition);
 		}
 
@@ -58,7 +75,14 @@
 				'type' => $type
 			]);
 			$result = $assign_permission_model->createMultiRecord($save_data);
-
+			$log_logic = new LogLogic();
+			$log_logic->create([
+				'dbTable'  => 'workflow_assign_permission',
+				'dbColumn' => '*',
+				'extend'   => 'PC',
+				'action'   => '批量授予权限',
+				'type'     => 'create'
+			]);
 			return $result;
 		}
 
@@ -79,7 +103,14 @@
 				'oid'  => $oid,
 				'type' => $type
 			]);
-
+			$log_logic = new LogLogic();
+			$log_logic->create([
+				'dbTable'  => 'workflow_assign_permission',
+				'dbColumn' => '*',
+				'extend'   => 'PC',
+				'action'   => '批量收回权限',
+				'type'     => 'delete'
+			]);
 			return $result;
 		}
 	}

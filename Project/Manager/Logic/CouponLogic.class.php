@@ -7,6 +7,8 @@
 	 */
 	namespace Manager\Logic;
 
+	use Core\Logic\LogLogic;
+
 	class CouponLogic extends ManagerLogic{
 		public function _initialize(){
 			parent::_initialize();
@@ -42,6 +44,14 @@
 								'creatime'  => time(), // 创建时间
 							];
 						}
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_coupon_item&workflow_coupon',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '创建代金券',
+							'type'     => 'create'
+						]);
 						$result2 = $coupon_item_model->createMultiRecord($data); //插入到数据库
 						return array_merge($result2, ['__ajax__' => false]);
 					}
@@ -50,9 +60,17 @@
 				case 'delete';
 					if($this->permissionList['COUPON.DELETE']){
 						/** @var \Core\Model\CouponModel $model */
-						$id     = I('post.id', '');
-						$model  = D('Core/Coupon');
-						$result = $model->deleteCoupon($id);
+						$id        = I('post.id', '');
+						$model     = D('Core/Coupon');
+						$result    = $model->deleteCoupon($id);
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_coupon',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '删除代金券',
+							'type'     => 'delete'
+						]);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
@@ -66,6 +84,14 @@
 						$data['start_time'] = strtotime(I('post.start_time', ''));
 						$data['end_time']   = strtotime(I('post.end_time', ''));
 						$result             = $model->alterCoupon(['id' => I('post.id', 0, 'int')], $data);
+						$log_logic          = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_coupon',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '修改代金券',
+							'type'     => 'modify'
+						]);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
@@ -91,6 +117,14 @@
 							$info['creatime']   = time();//当前时间
 							$result_coupon_item = $coupon_item_model->createRecord($info);
 						}
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_coupon&workflow_coupon_item',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '创建代金券',
+							'type'     => 'create'
+						]);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}

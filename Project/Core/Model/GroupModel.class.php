@@ -22,7 +22,12 @@
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
 			if(isset($filter['name'])) $where['name'] = $filter['name'];
+			if(isset($filter['leader'])) $where['leader'] = $filter['leader'];
+			if(isset($filter['leader_type'])) $where['leader_type'] = $filter['leader_type'];
+			if(isset($filter['deputy_leader_type'])) $where['deputy_leader_type'] = $filter['deputy_leader_type'];
+			if(isset($filter['deputy_leader'])) $where['deputy_leader'] = $filter['deputy_leader'];
 			if(isset($filter['time'])) $where['time'] = $filter['time'];
+			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);
 				if($status == 'not deleted') $where['status'] = ['neq', 2];
@@ -83,6 +88,19 @@
 				}
 			}
 			else return ['status' => false, 'message' => $this->getError()];
+		}
+
+		public function createMultiRecord($data){
+			try{
+				$result = $this->addAll($data);
+				if($result) return ['status' => true, 'message' => '创建成功', 'id' => $result];
+				else return ['status' => false, 'message' => '没有创建'];
+			}catch(Exception $error){
+				$message   = $error->getMessage();
+				$exception = $this->handlerException($message);
+				if(!$exception['status']) return $exception;
+				else return ['status' => false, 'message' => $this->getError()];
+			}
 		}
 
 		public function deleteRecord($filter){

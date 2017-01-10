@@ -17,11 +17,11 @@ $(function(){
 					switch(new_status){
 						case 0:
 						case 2:
-							MyCenterObject.object.toast.toast('已经取消签到', 1);
+							MyCenterObject.object.toast.toast('已经取消签到', 3);
 							$('.sign_type').removeClass('signed').addClass('unsigned').text('未签到');
 							break;
 						case 1:
-							MyCenterObject.object.toast.toast('签到成功', 1);
+							MyCenterObject.object.toast.toast('签到成功', 3);
 							$('.sign_type').removeClass('unsigned').addClass('signed').text('已签到');
 							break;
 					}

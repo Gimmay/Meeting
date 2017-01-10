@@ -7,6 +7,8 @@
 	 */
 	namespace Manager\Logic;
 
+	use Core\Logic\LogLogic;
+
 	class CouponItemLogic extends ManagerLogic{
 		public function _initialize(){
 			parent::_initialize();
@@ -30,6 +32,14 @@
 							$date['creatime']   = time();//创建时间
 							$coupon_item_result = $coupon_item_model->createRecord($date); //插入到数据库
 						}
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_coupon_item',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '创建代金券',
+							'type'     => 'create'
+						]);
 
 						return array_merge($coupon_item_result, ['__ajax__' => false]);
 					}
@@ -44,6 +54,14 @@
 						$coupon_item_model  = D('Core/CouponItem');
 						$coupon_item_result = $coupon_item_model->findRecord(1, ['id' => $id]);
 						$meeting_result     = $meeting_model->findMeeting(1, ['id' => $coupon_item_result['mid']]);
+						$log_logic          = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_coupon_item',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '修改代金券',
+							'type'     => 'modify'
+						]);
 
 						return array_merge($meeting_result, ['__ajax__' => true]);
 					}
@@ -53,8 +71,16 @@
 					if($this->permissionList['COUPON.ALTER']){
 						$id = I('post.id', '');
 						/** @var \Core\Model\CouponItemModel $model */
-						$model  = D('Core/CouponItem');
-						$result = $model->deleteRecord($id);
+						$model     = D('Core/CouponItem');
+						$result    = $model->deleteRecord($id);
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_coupon_item',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '删除代金券',
+							'type'     => 'delete'
+						]);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
@@ -69,6 +95,14 @@
 						$ids = I('post.id', '');
 						$id  = explode(',', $ids);
 						foreach($id as $v) $coupon_item_result = $coupon_item_model->alterRecord(['id' => $v], ['mid' => $mid]);
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_coupon_item',
+							'dbColumn' => 'mid',
+							'extend'   => 'PC',
+							'action'   => '分配代金券',
+							'type'     => 'modify'
+						]);
 
 						return array_merge($coupon_item_result, ['__ajax__' => false]);
 					}
@@ -80,8 +114,16 @@
 						C('TOKEN_ON', false);            //令牌
 						$mid['mid'] = I('post.meeting_name_a', '');
 						/** @var \Core\Model\CouponItemModel $model */
-						$model  = D('Core/CouponItem');
-						$result = $model->alterRecord(['id' => $id], $mid);
+						$model     = D('Core/CouponItem');
+						$result    = $model->alterRecord(['id' => $id], $mid);
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_coupon_item',
+							'dbColumn' => 'mid',
+							'extend'   => 'PC',
+							'action'   => '分配代金券',
+							'type'     => 'modify'
+						]);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
@@ -98,6 +140,14 @@
 						$data['creator']   = I('session.MANAGER_EMPLOYEE_ID', 0, 'int'); //创建者
 						$data['creatime']  = time();//创建时间
 						$result            = $model->createRecord($data);
+						$log_logic         = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_coupon_item',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '创建代金券',
+							'type'     => 'create'
+						]);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
