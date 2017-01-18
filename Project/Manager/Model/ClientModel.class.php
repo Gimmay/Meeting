@@ -17,16 +17,14 @@
 		}
 
 		public function getColumn($just_desc = false){
-			$result = $this->query('(SELECT
+			$result = $this->query("(SELECT
 	COLUMN_NAME `NAME`,
-	(CASE WHEN COLUMN_NAME = \'gender\' THEN \'性别\' ELSE COLUMN_COMMENT END) `DESC`,
+	(CASE WHEN COLUMN_NAME = 'gender' THEN '性别' ELSE COLUMN_COMMENT END) `DESC`,
 	COLUMN_TYPE `TYPE`
 FROM information_schema.`COLUMNS`
-WHERE TABLE_SCHEMA = \'gimmay_meeting\' AND TABLE_NAME = \'user_client\'
-AND COLUMN_NAME NOT IN (\'id\', \'password\', \'status\', \'creatime\', \'creator\', \'pinyin_code\', \'column6\', \'column7\', \'column8\',\'mobile_qrcode\'))
-UNION SELECT \'registration_date\', \'报名时间\', \'date\'
-UNION SELECT \'traffic_method\', \'交通方式\', \'varchar(20)\'
-');
+WHERE TABLE_SCHEMA = 'gimmay_meeting' AND TABLE_NAME = 'user_client'
+AND COLUMN_NAME NOT IN ('id', 'password', 'status', 'creatime', 'creator', 'pinyin_code', 'mobile_qrcode'))
+");
 			if($just_desc){
 				$list[0] = [];
 				foreach($result as $val) array_push($list[0], $val['desc']);
@@ -37,13 +35,13 @@ UNION SELECT \'traffic_method\', \'交通方式\', \'varchar(20)\'
 		}
 
 		public function getSelfColumn($just_desc = false){
-			$result = $this->query('(SELECT
+			$result = $this->query("(SELECT
 	COLUMN_NAME `NAME`,
-	(CASE WHEN COLUMN_NAME = \'gender\' THEN \'性别\' ELSE COLUMN_COMMENT END) `DESC`,
+	(CASE WHEN COLUMN_NAME = 'gender' THEN '性别' ELSE COLUMN_COMMENT END) `DESC`,
 	COLUMN_TYPE `TYPE`
 FROM information_schema.`COLUMNS`
-WHERE TABLE_SCHEMA = \'gimmay_meeting\' AND TABLE_NAME = \'user_client\'
-AND COLUMN_NAME NOT IN (\'id\', \'password\', \'status\', \'creatime\', \'creator\', \'pinyin_code\', \'column6\', \'column7\', \'column8\', \'mobile_qrcode\'))');
+WHERE TABLE_SCHEMA = 'gimmay_meeting' AND TABLE_NAME = 'user_client'
+AND COLUMN_NAME NOT IN ('id', 'password', 'status', 'creatime', 'creator', 'pinyin_code', 'mobile_qrcode'))");
 			if($just_desc){
 				$list[0] = [];
 				foreach($result as $val) array_push($list[0], $val['desc']);
@@ -65,8 +63,8 @@ WHERE mid = $mid AND workflow_join.status = 1 AND user_client.status = 1";
 		}
 
 		public function getClientSelectUnit($mid, $type = null){
-			$type = $type==null?'':" and $type ";
-			$sql = "SELECT CONCAT(`name`, ' / ', unit) `html`, CONCAT(`name`, unit, ',', pinyin_code) `keyword`,
+			$type = $type == null ? '' : " and $type ";
+			$sql  = "SELECT CONCAT(`name`, ' / ', unit) `html`, CONCAT(`name`, unit, ',', pinyin_code) `keyword`,
 user_client.id `value`
 FROM `workflow_join`
 LEFT JOIN `user_client` 

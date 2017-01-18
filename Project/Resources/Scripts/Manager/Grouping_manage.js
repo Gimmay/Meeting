@@ -39,7 +39,7 @@ $(function(){
 			var $start_number = $('#start_number');
 			var $number       = $('#number');
 			var $lenght       = $('#length');
-			var suffix = $('#suffix').val();
+			var suffix        = $('#suffix').val();
 			var str           = '';
 			var str2          = '';
 			for(var i = 0; i<$number.val(); i++){
@@ -161,6 +161,7 @@ $(function(){
 				}
 				$alter_group_modal.find('#comment_alter').val(r.comment);  // 备注
 				$alter_group_modal.find('#gid').val(r.id);  // 组ID
+				$alter_group_modal.find('#capacity_a').val(r.capacity);  // 组ID
 			}
 		});
 	});
@@ -195,7 +196,7 @@ $(function(){
 		$('#delete_modal').find('input[name=gid]').val(gid);
 	});
 	// 批量删除
-	$('#delete_group_modal').find('.group_list_reduce a').on('click',function(){
+	$('#delete_group_modal').find('.group_list_reduce a').on('click', function(){
 		if($(this).hasClass('active')){
 			$(this).removeClass('active');
 		}else{
@@ -203,7 +204,7 @@ $(function(){
 		}
 		var arr = [];
 		$('#delete_group_modal').find('.group_list_reduce a.active').each(function(){
-			var id =$(this).attr('data-id');
+			var id = $(this).attr('data-id');
 			arr.push(id);
 		});
 		$('#delete_group_modal').find('#group_arr').val(arr);
@@ -227,8 +228,10 @@ $(function(){
 	});
 	// 选择组员确认按钮
 	$('#add_crew').find('.btn_save').on('click', function(){
-		var arr = [];
-		var gid = $(this).attr('data-id');
+		var group_member_count = $('#add_crew').find('#group_member_count').val();
+		var group_capacity     = $('#add_crew').find('#group_capacity').val();
+		var arr                = [];
+		var gid                = $(this).attr('data-id');
 		$('.check_item').find('.icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
 			arr.push(id);
@@ -237,23 +240,28 @@ $(function(){
 		console.log(str_string);
 		ThisObject.object.loading.loading();
 		if(arr != ''){
-			Common.ajax({
-				data    :{requestType:'save_client', id:str_string, gid:gid},
-				callback:function(data){
-					ThisObject.object.loading.complete();
-					console.log(data);
-					if(data.status){
-						ThisObject.object.toast.toast('添加成功！');
-						$('#add_crew').modal('hide');
-						location.reload()
+			if(group_member_count<group_capacity){
+				Common.ajax({
+					data    :{requestType:'save_client', id:str_string, gid:gid},
+					callback:function(data){
+						ThisObject.object.loading.complete();
+						console.log(data);
+						if(data.status){
+							ThisObject.object.toast.toast('添加成功！');
+							$('#add_crew').modal('hide');
+							location.reload();
+						}
+					}, error:function(){
+						ThisObject.object.toast.toast('添加失败');
 					}
-				}, error:function(){
-					ThisObject.object.toast.toast('添加失败');
-				}
-			});
+				});
+			}else{
+				ThisObject.object.loading.complete();
+				ThisObject.object.toast.toast('该组组员大于可容纳人数！');
+			}
 		}else{
 			ThisObject.object.loading.complete();
-			ThisObject.object.toast.toast('添加失败，未选择员工！！');
+			ThisObject.object.toast.toast('添加失败，未选择员工！');
 		}
 	});
 	// 删除点击的组员

@@ -33,82 +33,392 @@
 				<div class="mb_body">
 					<div class="content">
 						<ul class="info_list">
-							<li class="info_li">
-								<div class="item">
-									<span class="labe color-red "><b style="vertical-align: middle;">*</b>姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名:</span>
-									<div class="inp">
-										<input type="text" name="name">
+							<if condition="$column_status['CLIENT-NAME']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">姓名:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-NAME']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" name="name">
+										</div>
 									</div>
-								</div>
-							</li>
-							<li class="info_li">
-								<div class="item">
-									<span class="labe">性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别:</span>
-									<div>
-										<select name="gender" id="gender">
-											<option value="0">未知</option>
-											<option value="1">男</option>
-											<option value="2">女</option>
-										</select>
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-UNIT']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">单位名:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-UNIT']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" name="name">
+										</div>
 									</div>
-								</div>
-							</li>
-							<li class="info_li">
-								<div class="item">
-									<span class="labe">出生日期:</span>
-									<div>
-										<input type="date" name="birthday" value="1990-01-01">
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-TYPE']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">客户类型:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-TYPE']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<select id="type" name="type" class="form-control">
+												<option value=""></option>
+												<option value="终端">终端</option>
+												<option value="陪同">陪同</option>
+												<option value="内部员工">内部员工</option>
+												<option value="嘉宾">嘉宾</option>
+												<option value="老总">老总</option>
+												<option value="其他">其他</option>
+											</select>
+										</div>
 									</div>
-								</div>
-							</li>
-							<li class="info_li">
-								<div class="item">
-									<span class="labe color-red "><b style="vertical-align: middle;">*</b>手机号:</span>
-									<div class="inp">
-										<input type="text" name="mobile">
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-IS_NEW']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">是否新客:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-IS_NEW']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<select id="is_new" name="is_new" class="form-control">
+												<option value="9"></option>
+												<option value="1">新客</option>
+												<option value="0">老客</option>
+											</select>
+										</div>
 									</div>
-								</div>
-							</li>
-							<li class="info_li">
-								<div class="item">
-									<span class="labe color-red "><b style="vertical-align: middle;">*</b>单位名称:</span>
-									<div class="inp">
-										<input type="text" name="unit">
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-GENDER']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">性别:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-GENDER']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<select name="gender" id="gender" class="form-control">
+												<option value="0">未指定</option>
+												<option value="1">男</option>
+												<option value="2">女</option>
+											</select>
+										</div>
 									</div>
-								</div>
-							</li>
-							<li class="info_li">
-								<div class="item">
-									<span class="labe">开拓顾问:</span>
-									<div class="inp">
-										<input type="text" name="develop_consultant">
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-BIRTHDAY']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">生日:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-BIRTHDAY']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="birthday" id="birthday">
+										</div>
 									</div>
-								</div>
-							</li>
-							<li class="info_li">
-								<div class="item">
-									<span class="labe">服务顾问:</span>
-									<div class="inp">
-										<input type="text" name="service_consultant">
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-ADDRESS']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">地址:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-ADDRESS']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<div class="input-group address_map">
+												<input type="text" class="form-control" name="address" id="address">
+												<span class="input-group-addon glyphicon glyphicon-send get_map"></span>
+											</div>
+											<div id="allmap" class="hide" style="width: 100%; height: 400px;"></div>
+										</div>
 									</div>
-								</div>
-							</li>
-							<li class="info_li">
-								<div class="item">
-									<span class="labe">报名时间:</span>
-									<div class="inp">
-										<input type="datetime" name="registration_date">
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-ID_CARD_NUMBER']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">身份证号:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-ID_CARD_NUMBER']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="id_card_number" id="id_card_number">
+										</div>
 									</div>
-								</div>
-							</li>
-							<li class="info_li">
-								<div class="item">
-									<span class="labe">备注:</span>
-									<div>
-										<textarea name="comment"></textarea>
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-TITLE']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">职称:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-TITLE']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="title" id="title">
+										</div>
 									</div>
-								</div>
-							</li>
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-POSITION']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">职称:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-POSITION']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="POSITION" id="POSITION">
+										</div>
+									</div>
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-MOBILE']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">手机号:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-MOBILE']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="mobile" id="mobile">
+										</div>
+									</div>
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-EMAIL']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">电子邮箱:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-EMAIL']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="email" id="email">
+										</div>
+									</div>
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-DEVELOP_CONSULTANT']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">开拓顾问:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-DEVELOP_CONSULTANT']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="develop_consultant" id="develop_consultant">
+										</div>
+									</div>
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-TEAM']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">团队:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-TEAM']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="team" id="team">
+										</div>
+									</div>
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-SERVICE_CONSULTANT']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">服务顾问:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-SERVICE_CONSULTANT']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="service_consultant" id="service_consultant">
+										</div>
+									</div>
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-COMMENT']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe">备注:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-COMMENT']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<textarea class="form-control" name="comment" id="comment"></textarea>
+										</div>
+									</div>
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-COLUMN1']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe"><{$column_status['CLIENT-COLUMN1']['name']}>:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-COLUMN1']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="column1" id="column1">
+										</div>
+									</div>
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-COLUMN2']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe"><{$column_status['CLIENT-COLUMN2']['name']}>:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-COLUMN2']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="column2" id="column2">
+										</div>
+									</div>
+								</li>
+							</if>
+
+							<if condition="$column_status['CLIENT-COLUMN3']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe"><{$column_status['CLIENT-COLUMN3']['name']}>:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-COLUMN3']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="column3" id="column3">
+										</div>
+									</div>
+								</li>
+							</if>
+
+							<if condition="$column_status['CLIENT-COLUMN4']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe"><{$column_status['CLIENT-COLUMN4']['name']}>:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-COLUMN4']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="column4" id="column4">
+										</div>
+									</div>
+								</li>
+							</if>
+
+							<if condition="$column_status['CLIENT-COLUMN5']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe"><{$column_status['CLIENT-COLUMN5']['name']}>:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-COLUMN5']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="column5" id="column5">
+										</div>
+									</div>
+								</li>
+							</if>
+
+							<if condition="$column_status['CLIENT-COLUMN6']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe"><{$column_status['CLIENT-COLUMN6']['name']}>:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-COLUMN6']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="column6" id="column6">
+										</div>
+									</div>
+								</li>
+							</if>
+
+							<if condition="$column_status['CLIENT-COLUMN7']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe"><{$column_status['CLIENT-COLUMN7']['name']}>:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-COLUMN7']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="column7" id="column7">
+										</div>
+									</div>
+								</li>
+							</if>
+							<if condition="$column_status['CLIENT-COLUMN8']['view'] eq 1">
+								<li class="info_li">
+									<div class="item">
+										<span class="labe"><{$column_status['CLIENT-COLUMN8']['name']}>:</span>
+										<div class="inp">
+											<if condition="$column_status['CLIENT-COLUMN8']['must'] eq 1">
+												<input type="hidden" data-must="1" data-type="value">
+												<else/>
+												<input type="hidden" data-must="0">
+											</if>
+											<input type="text" class="form-control" name="column8" id="column8">
+										</div>
+									</div>
+								</li>
+							</if>
+
 							<input type="hidden" name="requestType" value="create_client">
 							<input type="hidden" name="mid" value="<{:I('get.mid', 0, 'int')}>">
 						</ul>

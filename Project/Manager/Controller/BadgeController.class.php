@@ -76,25 +76,33 @@
 					/** @var \Core\Model\GroupMemberModel $group_member_model */
 					$group_member_model = D('Core/GroupMember');
 					/** @var \Core\Model\GroupModel $group_model */
-					$group_model = D('Core/Group');
-					$client             = $join_model->findRecord(1, [
+					$group_model   = D('Core/Group');
+					$client        = $join_model->findRecord(1, [
 						'mid'    => $this->meetingID,
 						'cid'    => I('get.cid', 0, 'int'),
 						'status' => 'not deleted'
 					]);
-					$leader = $group_model->findRecord(1, ['leader'=>$client['cid'], 'mid'=>$this->meetingID, 'leader_type'=>1]);
-					$deputy_leader = $group_model->findRecord(1, ['deputy_leader'=>$client['cid'], 'mid'=>$this->meetingID, 'deputy_leader_type'=>1]);
-					$group              = $group_member_model->findRecord(1, [
+					$leader        = $group_model->findRecord(1, [
+						'leader'      => $client['cid'],
+						'mid'         => $this->meetingID,
+						'leader_type' => 1
+					]);
+					$deputy_leader = $group_model->findRecord(1, [
+						'deputy_leader'      => $client['cid'],
+						'mid'                => $this->meetingID,
+						'deputy_leader_type' => 1
+					]);
+					$group         = $group_member_model->findRecord(1, [
 						'mid' => $this->meetingID,
 						'cid' => I('get.cid', 0, 'int')
 					]);
-					if($deputy_leader['leader']==$client['cid'] && $deputy_leader['leader_type']==1){
+					if($deputy_leader['leader'] == $client['cid'] && $deputy_leader['leader_type'] == 1){
 						$group['code'] = $deputy_leader['code']."副组长";
 					}
-					if($leader['leader_type'] == 1&& $client['cid'] == $leader['leader']){
+					if($leader['leader_type'] == 1 && $client['cid'] == $leader['leader']){
 						$group['code'] = $leader['code']."组长";
 					}
-					$info               = $logic->setData('preview:init_temp', $info, [
+					$info = $logic->setData('preview:init_temp', $info, [
 						'client'  => $client,
 						'meeting' => $meeting,
 						'group'   => $group

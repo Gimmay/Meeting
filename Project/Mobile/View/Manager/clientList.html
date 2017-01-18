@@ -16,6 +16,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/iscroll/iscroll.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
@@ -23,13 +24,13 @@
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
-<body>
+<body onload="loaded()">
 	<if condition="$permission_list['WECHAT.CLIENT.VIEW'] eq 1">
 		<div id="mb_wrap">
-			<div class="top_title">
-				<a href="javascript:history.go(-1)" class="back glyphicon glyphicon-chevron-left"></a>
-			</div>
 			<div class="mb_body">
+				<div class="top_title">
+					<a href="javascript:history.go(-1)" class="back glyphicon glyphicon-chevron-left"></a>
+				</div>
 				<div class="content">
 					<div class="search">
 						<form action="" method="get">
@@ -44,23 +45,24 @@
 					<div class="client_list">
 						<volist name="client_list" id="unit_list">
 							<div class="list_item open">
-								<div class="title"><{$key}> (<{:count($unit_list)}>)<span class="icon glyphicon glyphicon-chevron-down"></span>
+								<div class="title"><{$key}> (<b class="current_number" style="color: #FB5050;"><{$unit_list['sign_count']}></b>/<{:count($unit_list['list'])}>)<span class="icon glyphicon glyphicon-chevron-down"></span>
 								</div>
 								<ul class="list_item_ul">
-									<volist name="unit_list" id="single">
-										<li class="client_item">
-											<if condition="$single.status eq 0">
-												<a href="<{:U('client', ['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>">
-													<span class="name"><{$single.name}></span>
+									<volist name="unit_list.list" id="client">
+										<li class="client_item" data-cid="<{$client.cid}>">
+											<if condition="$client.status eq 0">
+												<a href="<{:U('client', ['cid'=>$client['cid'], 'mid'=>I('get.mid',0,'int')])}>">
+													<span class="name"><{$client.name}></span>
 													<span class="status">已禁用</span>
 												</a>
 												<else/>
-												<a href="<{:U('client', ['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>">
-													<span class="name"><{$single.name}></span>
-													<if condition="$single.sign_status eq 1">
-														<span class="status signed">已签到</span>
+												<a href="javascript:void(0)">
+													<span class="name"><{$client.name}></span>
+													<span class="sign_employee"><{$client.signer}></span>
+													<if condition="$client.sign_status eq 1">
+														<span class="status signed">取消签到</span>
 														<else/>
-														<span class="status unsigned">未签到</span>
+														<span class="status unsigned">签到</span>
 													</if>
 												</a>
 											</if>
@@ -83,6 +85,9 @@
 			<a href="<{:U('clientList', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a active">
 				<i class="glyphicon glyphicon-user"></i> <span>参会人员</span> </a>
 		</if>
+		<!--<a href="<{:U('clientListByGroup', ['mid'=>I('get.mid', 0, 'int')])}>" class="ft_a">-->
+		<!--<i class="glyphicon glyphicon-compressed"></i> <span>参会组员</span>-->
+		<!--</a>-->
 		<if condition="$permission_list['WECHAT.CLIENT.CREATE'] eq 1">
 			<a href="<{:U('addClient', ['mid'=>I('get.mid', 0, 'int')])}>" class="add_client glyphicon glyphicon-plus"></a>
 		</if>
@@ -92,7 +97,14 @@
 			object:{
 				toast:$().QuasarToast()
 			}
+		};
+		var myScroll;
+		function loaded(){
+			myScroll = new IScroll('#mb_wrap', {bounceEasing:'elastic', bounceTime:1200});
 		}
+		document.addEventListener('touchmove', function(e){
+			e.preventDefault();
+		}, false);
 	</script>
 </body>
 </html>

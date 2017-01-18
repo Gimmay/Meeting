@@ -17,16 +17,17 @@ $(function(){
 	});
 	$('.status').on('touchend', function(){
 		var cid = $(this).parents('.client_item').attr('data-cid');
-		var e   = $(this);
 		if($(this).hasClass('unsigned')){
 			Common.ajax({
 				data    :{requestType:'sign', cid:cid},
 				callback:function(r){
 					console.log(r);
 					if(r.status){
+						ThisObject.object.toast.onQuasarHidden(function(){
+							location.reload();
+						});
 						ThisObject.object.toast.toast('签到成功', 1);
-						e.parents('.client_item').find('.sign_employee').text(r.data.sign_director);
-						e.addClass('signed').removeClass('unsigned').text('取消签到');
+						/*$(this).addClass('signed').removeClass('unsigned').text('取消签到');*/
 					}else{
 						ThisObject.object.toast.toast('签到失败');
 					}
@@ -38,9 +39,11 @@ $(function(){
 				callback:function(r){
 					console.log(r);
 					if(r.status){
+						ThisObject.object.toast.onQuasarHidden(function(){
+							location.reload();
+						});
 						ThisObject.object.toast.toast('取消签到成功', 1);
-						e.parents('.client_item').find('.sign_employee').text('');
-						e.addClass('unsigned').removeClass('signed').text('签到');
+						/*	$(this).addClass('unsigned').removeClass('signed').text('签到');*/
 					}else{
 						ThisObject.object.toast.toast('取消签到失败');
 					}

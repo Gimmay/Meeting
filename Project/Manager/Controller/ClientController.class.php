@@ -209,9 +209,19 @@
 		public function exportClientDataTemplate(){
 			if($this->permissionList['CLIENT.DOWNLOAD-IMPORT-EXCEL-TEMPLATE']){
 				/** @var \Manager\Model\ClientModel $client_model */
-				$client_model = D('Client');
-				$header       = $client_model->getColumn(true);
-				$excel_logic  = new ExcelLogic();
+				//$client_model = D('Client');
+				//$header       = $client_model->getColumn(true);
+				/** @var \Core\Model\ColumnControlModel $column_control_model */
+				$column_control_model = D('Core/ColumnControl');
+				$column_list          = $column_control_model->findRecord(2, [
+					'mid'  => I('get.mid', 0, 'int'),
+					'view' => 1
+				]);
+				$header[0]            = [];
+				foreach($column_list as $col){
+					$header[0][] = $col['name'];
+				}
+				$excel_logic = new ExcelLogic();
 				$excel_logic->exportCustomData($header, [
 					'fileName'    => '导入客户数据模板',
 					'title'       => '导入客户数据模板',
@@ -299,11 +309,10 @@
 				$join_record = $join_model->findRecord(1, ['mid' => $this->meetingID, 'cid' => I('get.id', 0, 'int')]);
 				/** @var \Manager\Model\EmployeeModel $employee_model */
 				$employee_model     = D('Employee');
-				$join_record               = $logic->setColumn('alter:client_info', $join_record, [
+				$join_record        = $logic->setColumn('alter:client_info', $join_record, [
 					'mid' => $this->meetingID,
 					'cid' => I('get.id', 0, 'int')
 				]);
-
 				$employee_name_list = $employee_model->getEmployeeNameSelectList();
 				$employee_list      = $employee_model->getEmployeeSelectList();
 				$this->assign('employee_name_list', $employee_name_list);
@@ -418,7 +427,7 @@
 					]);
 					$group         = $group_member_model->findRecord(1, [
 						'mid' => $this->meetingID,
-						'cid' => I('get.cid', 0, 'int')
+						'cid' => $cid
 					]);
 					if($deputy_leader['leader'] == $client['cid'] && $deputy_leader['leader_type'] == 1){
 						$group['code'] = $deputy_leader['code']."副组长";
@@ -426,7 +435,6 @@
 					if($leader['leader_type'] == 1 && $client['cid'] == $leader['leader']){
 						$group['code'] = $leader['code']."组长";
 					}
-					if(!$group['code']) $group['code'] = $client['column6'];
 					$list[] = $logic->setData('preview:init_temp', $info, [
 						'client'  => $client,
 						'meeting' => $meeting,

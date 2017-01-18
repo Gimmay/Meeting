@@ -147,23 +147,25 @@
 										<i></i>
 										<p>批量打印</p>
 									</div>
-									<div class="function_btn bg-warning batch_alter_column"  style="width: 110px;">
+									<div class="function_btn bg-warning batch_alter_column" style="width: 110px;">
 										<i></i>
 										<p>批量修改备注信息</p>
+									</div>
+									<div class="function_btn bg-warning batch_receive_gift" style="width: 110px;">
+										<i></i>
+										<p>批量领取礼品</p>
 									</div>
 								</div>
 							</header>
 							<div class="repertory clearfix">
-								<form action="" method="get">
-									<div class="input-group repertory_text" style="width: 30%">
-										<input name="p" type="hidden" value="1">
-										<input type="search" name="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/类型/拼音简码" value="<{:I('get.keyword', '')}>">
-									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default main_search">搜索</button>
-									</span>
-									</div>
-									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有&nbsp;(<{$statistics.enabled_total}> / <{$statistics.total}>人)</a>
-								</form>
+								<div class="input-group repertory_text" style="width: 30%">
+									<input name="p" type="hidden" value="1">
+									<input type="search" name="keyword" id="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/类型/拼音简码" value="<{:I('get.keyword', '')}>">
+								<span class="input-group-btn">
+									<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
+								</span>
+								</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有&nbsp;(<{$statistics.enabled_total}> / <{$statistics.total}>人)</a>
 								<form action="" method="get" class="sign_check">
 									<div class="input-group pull-left check_signed color-1b7e5a">
 										<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;签到 (<{$statistics.signed}>)
@@ -234,7 +236,7 @@
 												</if>
 											</volist>
 											<th>组别</th>
-											<th>审核状态/签到状态</th>
+											<th>审核状态 / 签到状态 / 领取奖品</th>
 											<th>操作</th>
 											<th>详情</th>
 										</tr>
@@ -306,6 +308,11 @@
 														<case value="1"><span class="color-primary">已签到</span></case>
 														<case value="2"><span class="color-primary">取消签到</span></case>
 													</switch>
+													/
+													<switch name="single.gift_status">
+														<case value="0">未领取奖品</case>
+														<case value="1"><span class="color-green">已领取奖品</span></case>
+													</switch>
 												</td>
 												<td>
 													<div class="btn-group" data-id="<{$single.cid}>" data-join-id="<{$single.id}>">
@@ -326,9 +333,9 @@
 																</if>
 															</case>
 														</switch>
-														<!--<if condition="$single['review_status'] eq 1 and $permission_list['CLIENT.SEND-INVITATION'] and $single['status'] eq 1">-->
-														<!--<button type="button" class="btn btn-default btn-xs send_message_btn">发送邀请</button>-->
-														<!--</if>-->
+														<if condition="$single['review_status'] eq 1 and $permission_list['CLIENT.SEND-INVITATION'] and $single['status'] eq 1">
+														<button type="button" class="btn btn-default btn-xs send_message_btn">发送邀请</button>
+														</if>
 														<!--<switch name="single.review_status">
 															<case value="0">
 																<if condition="$permission_list['CLIENT.REVIEW'] and $single['status'] eq 1">
@@ -355,7 +362,9 @@
 														<if condition="$permission_list['CLIENT.PRINT-BADGE'] eq 1 and $single['status'] eq 1 and $single['sign_status'] eq 1">
 															<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int'), 'cid'=>$single['cid']])}>" class="btn btn-default btn-xs print_badge">打印胸卡</a>
 														</if>
-														<!--<button type="button" class="btn btn-default btn-xs btn-gift" data-toggle="modal" data-target="#gift_modal">礼品</button>-->
+														<if condition="$single['gift_status'] neq 1">
+															<button type="button" class="btn btn-default btn-xs btn-gift" data-toggle="modal" data-target="#gift_modal">领取礼品</button>
+														</if>
 														<if condition="$permission_list['CLIENT.ALTER']">
 															<a href="<{:U('Client/alter',['id'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
 														</if>
@@ -582,7 +591,7 @@
 	</div>
 
 	<!-- 批量修改备用信息 -->
-		<div class="modal fade" id="batch_alter_column_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="batch_alter_column_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog" style="width: 600px">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -627,7 +636,6 @@
 			</div>
 		</div>
 	</div>
-
 	<if condition="$permission_list['CLIENT.DELETE'] eq 1">
 		<!-- 删除客户 -->
 		<div class="modal fade" id="delete_client" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -689,6 +697,28 @@
 					<input type="hidden" name="requestType" value="gift"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
 						是否领取礼品
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认领取</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量领取礼品 -->
+	<div class="modal fade" id="batch_receive_gift_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">礼品管理</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="batch_gift"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否批量领取礼品！（<span class="sAmount"></span>位）
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>

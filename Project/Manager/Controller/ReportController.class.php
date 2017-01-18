@@ -139,7 +139,11 @@
 						}
 					}
 				}
-				if($found) $this->assign('info', $info);
+				$sub_page = file_get_contents($info['url']);
+				if($found){
+					$this->assign('info', $info);
+					$this->assign('content', $sub_page);
+				}
 				$this->display();
 			}
 			else $this->error('您没有查看报表的权限');

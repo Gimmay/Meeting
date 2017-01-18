@@ -67,7 +67,7 @@
 											<div class="group_list">
 												<ul class="group_ul">
 													<volist name="group" id="info">
-														<li data-id="<{$info.id}>" class="<if condition='$info.id eq $_GET[gid]'>active</if>">
+														<li data-id="<{$info.id}>" data-capacity="<{$info.capacity}>" class="<if condition='$info.id eq $_GET[gid]'>active</if>">
 															<a href="<{:U('Grouping/manage',['mid'=>$_GET[mid],'gid'=>$info['id'],'date'=>I('get.date'),'keyword'=>$info['keyword']])}>"><{$info.code}></a>
 															<if condition="$permission_list['GROUP.ALTER'] eq 1">
 																<span data-toggle="modal" data-target="#alter_group_modal" class="glyphicon glyphicon-edit alter_btn"></span>
@@ -229,15 +229,15 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="start_number" class="col-sm-2 control-label">开始段：</label>
-								<div class="col-sm-10">
-									<input type="number" class="form-control start_number" name="start_number" id="start_number">
-								</div>
-							</div>
-							<div class="form-group">
 								<label for="suffix" class="col-sm-2 control-label">后缀：</label>
 								<div class="col-sm-10">
 									<input type="text" class="form-control suffix" name="suffix" id="suffix">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="start_number" class="col-sm-2 control-label">开始段：</label>
+								<div class="col-sm-10">
+									<input type="number" class="form-control start_number" name="start_number" id="start_number">
 								</div>
 							</div>
 							<div class="form-group">
@@ -263,7 +263,7 @@
 							<div class="form-group">
 								<label class="col-sm-2 control-label"></label>
 								<div class="col-sm-10">
-									<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、开始段、长度、数量等字段可自动获取券号。
+									<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、后缀、开始段、长度、数量等字段可自动获取组名。
 									</p>
 								</div>
 							</div>
@@ -303,21 +303,14 @@
 					<input type="hidden" name="requestType" value="batch_delete">
 					<div class="modal-body">
 						<div class="group_list_reduce">
-							<a href="javascript:void(0)" data-id="1">1195/3</a>
-							<a href="javascript:void(0)" data-id="2">1195/3</a>
-							<a href="javascript:void(0)" data-id="3">1195/3</a>
-							<a href="javascript:void(0)" data-id="4">1195/3</a>
-							<a href="javascript:void(0)" data-id="1">1195/3</a>
-							<a href="javascript:void(0)" data-id="2">1195/3</a>
-							<a href="javascript:void(0)" data-id="3">1195/3</a>
-							<a href="javascript:void(0)" data-id="4">1195/3</a>
-							<a href="javascript:void(0)" data-id="1">1195/3</a>
-							<a href="javascript:void(0)" data-id="2">1195/3</a>
-							<a href="javascript:void(0)" data-id="3">1195/3</a>
-							<a href="javascript:void(0)" data-id="4">1195/3</a>
+							<volist name="group" id="single">
+								<if condition="$single['member_count'] elt 0">
+									<a href="javascript:void(0)" data-id="<{$single.id}>"><{$single.code}></a>
+								</if>
+							</volist>
 						</div>
 					</div>
-					<input type="hidden" id="group_arr">
+					<input type="hidden" id="group_arr" name="gid">
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						<button type="submit" class="btn btn-primary submit">确认</button>
@@ -490,6 +483,8 @@
 				</div>
 				<div class="choose_people">
 					<div class="d1">
+						<input type="hidden" id="group_member_count" value="<{:count($member)}>">
+						<input type="hidden" id="group_capacity" value="<{$leader.capacity}>">
 						<span>当前有<b class="current_attendee">0</b>人</span>
 						<span>已选择<b class="color-red selected_attendee">0</b>人</span>
 						<a href="javascript:void(0)" class="btn_save btn btn-sm btn-info">添加</a>

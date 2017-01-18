@@ -169,8 +169,6 @@
 					], $data);
 
 					return $data;
-
-
 				break;
 				default:
 					return $data;
@@ -558,8 +556,18 @@
 						$result      = $excel_logic->importClientData($_FILES);
 						if(isset($result['data']['dbIndex'])){
 							/** @var \Manager\Model\ClientModel $model */
-							$model                    = D('Client');
-							$table_head               = $model->getSelfColumn();
+							//$model                    = D('Client');
+							//$table_head               = $model->getSelfColumn();
+							/** @var \Core\Model\ColumnControlModel $column_control_model */
+							$column_control_model = D('Core/ColumnControl');
+							$column_list          = $column_control_model->findRecord(2, [
+								'mid'  => I('get.mid', 0, 'int'),
+								'view' => 1
+							]);
+							$table_head           = [];
+							foreach($column_list as $col){
+								$table_head[] = ['name' => $col['form'], 'desc' => $col['name']];
+							}
 							$result['data']['dbHead'] = $table_head;
 						}
 						$log_logic = new LogLogic();
@@ -582,9 +590,11 @@
 				case 'save_excel_data':
 					if($this->permissionList['CLIENT.IMPORT-EXCEL']){
 						$upload_record_id = I('post.dbIndex', 0, 'int');
+						$excel_header     = I('post.excel', '');
+						$table_column     = I('post.table', '');
 						$map              = [
-							'data'   => explode(',', I('post.excel')),
-							'column' => explode(',', I('post.table'))
+							'data'   => $excel_header ? explode(',', $excel_header) : [],
+							'column' => $table_column ? explode(',', $table_column) : []
 						];
 						/** @var \Core\Model\UploadModel $upload_model */
 						$upload_model  = D('Core/Upload');
@@ -1373,6 +1383,20 @@
 
 					return array_merge($result, ['__ajax__' => false]);
 				break;
+				case 'batch_gift':
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model = D('Core/Join');
+					C('TOKEN_ON', false);
+					$cid_arr     = explode(',', I('post.id', ''));
+					$join_result = $join_model->alterRecord([
+						'cid' => ['in', $cid_arr],
+						'mid' => I('get.mid', 0, 'int')
+					], ['gift_status' => 1]);
+
+					return array_merge($join_result, [
+						'__ajax__' => false
+					]);
+				break;
 				default:
 					return [
 						'status'  => false,
@@ -1385,12 +1409,22 @@
 		public function createClientFromExcelData($excel_data, $map){
 			$str_obj = new StringPlus();
 			/** @var \Manager\Model\ClientModel $model */
-			$model = D('Client');
+			//$model = D('Client');
 			/** @var \Core\Model\ClientModel $core_model */
 			$core_model = D('Core/Client');
 			/** @var \Core\Model\JoinModel $join_model */
-			$join_model      = D('Core/Join');
-			$table_column    = $model->getColumn();
+			$join_model = D('Core/Join');
+			//$table_column = $model->getColumn();
+			/** @var \Core\Model\ColumnControlModel $column_control_model */
+			$column_control_model = D('Core/ColumnControl');
+			$column_list          = $column_control_model->findRecord(2, [
+				'mid'  => I('get.mid', 0, 'int'),
+				'view' => 1
+			]);
+			$table_column         = [];
+			foreach($column_list as $col){
+				$table_column[] = ['name' => $col['form'], 'desc' => $col['name']];
+			}
 			$count           = 0;
 			$mid             = I('get.mid', 0, 'int');
 			$cur_employee_id = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
@@ -1399,6 +1433,7 @@
 			// 遍历数据列表
 			foreach($excel_data as $key1 => $line){
 				$client_data        = []; // 参会人员创建数据
+				$join_data          = [];
 				$mobile             = '';
 				$name               = '';
 				$registration_date  = '';
@@ -1480,6 +1515,30 @@
 							elseif(!stripos($val, '否') === -1) $val = 0;
 							else $val = '';
 						break;
+						case 'column1':
+							$join_data['column1'] = $val;
+						break;
+						case 'column2':
+							$join_data['column2'] = $val;
+						break;
+						case 'column3':
+							$join_data['column3'] = $val;
+						break;
+						case 'column4':
+							$join_data['column4'] = $val;
+						break;
+						case 'column5':
+							$join_data['column5'] = $val;
+						break;
+						case 'column6':
+							$join_data['column6'] = $val;
+						break;
+						case 'column7':
+							$join_data['column7'] = $val;
+						break;
+						case 'column8':
+							$join_data['column8'] = $val;
+						break;
 					}
 					// 指定特殊列的值
 					$client_data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
@@ -1487,34 +1546,17 @@
 					$client_data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $mobile);
 					$client_data['pinyin_code'] = $str_obj->makePinyinCode($name);
 					if($column_index === null){
-						// 不存在映射规则的情况下直接字段一一对应即可
-						if(!in_array($table_column[$key2]['name'], [
-							'registration_date',
-							'traffic_method',
-							'',
-							null
-						])
-						) $client_data[$table_column[$key2]['name']] = $val;
+						$client_data[$table_column[$key2]['name']] = $val;
+						$join_data[$table_column[$key2]['name']]   = $val;
 					}
 					else{ // 存在映射规则的情况下字段一一对应后再存储映射的规则
-						if(!in_array($table_column[$key2]['name'], [
-							'registration_date',
-							'traffic_method',
-						])
-						) $client_data[$table_column[$key2]['name']] = $val;
-						if(!in_array($table_column[$column_index]['name'], [
-							'registration_date',
-							'traffic_method',
-							'',
-							null
-						])
-						) $client_data[$table_column[$column_index]['name']] = $val;
+						$client_data[$table_column[$column_index]['name']] = $val;
+						$join_data[$table_column[$column_index]['name']]   = $val;
 					}
 				}
-				if($mobile == '' && !$mobile) continue; // 若手机号未填则略过该条数据
+				// if($mobile == '' && !$mobile) continue; // 若手机号未填则略过该条数据
 				// 判定是否存在该客户
-				//$exist_client                   = $core_model->isExist($mobile);
-				$join_data                      = [];
+				$exist_client                   = $core_model->isExist($mobile, $name);
 				$join_data['mid']               = $mid;
 				$join_data['creator']           = $cur_employee_id;
 				$join_data['creatime']          = time();
@@ -1524,28 +1566,28 @@
 				$join_data['status']            = 1;
 				C('TOKEN_ON', false);
 				// 若存在则用新数据覆盖旧数据同时设为老客
-				//				if($exist_client){
-				//					$core_model->alterClient(['id' => $exist_client['id']], array_merge($client_data, [
-				//						'is_new' => 0,
-				//						'status' => 1
-				//					]));
-				//					$join_data['cid'] = $exist_client['id'];
-				//					$wechat_opt[]     = [
-				//						'id'     => $exist_client['id'],
-				//						'mobile' => $mobile
-				//					];
-				//				}
-				// 若不存在则创建
-				//else{
-				$client_result = $core_model->createClient($client_data);
-				if($client_result['status']){
-					$join_data['cid'] = $client_result['id'];
+				if($exist_client){
+					$core_model->alterClient(['id' => $exist_client['id']], array_merge($client_data, [
+						'is_new' => 0,
+						'status' => 1
+					]));
+					$join_data['cid'] = $exist_client['id'];
 					$wechat_opt[]     = [
-						'id'     => $client_result['id'],
+						'id'     => $exist_client['id'],
 						'mobile' => $mobile
 					];
 				}
-				//}
+				// 若不存在则创建
+				else{
+					$client_result = $core_model->createClient($client_data);
+					if($client_result['status']){
+						$join_data['cid'] = $client_result['id'];
+						$wechat_opt[]     = [
+							'id'     => $client_result['id'],
+							'mobile' => $mobile
+						];
+					}
+				}
 				if($join_data['cid']){
 					// 判断是否有参会（可能被删除的情况）
 					$exist_join_record = $join_model->isJoin($mid, $join_data['cid']);

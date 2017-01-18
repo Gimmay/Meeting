@@ -626,7 +626,12 @@
 						$message_wechat              = $data['message_wechat'] ? 1 : 0;
 						$message_sms                 = $data['message_sms'] ? 1 : 0;
 						$data['config_message_type'] = bindec("$message_wechat$message_sms");
-						$result                      = $model->alterMeeting(['id' => I('get.mid', 0, 'int')], $data);
+						// Warning：如果更改了参会人员的创建检测字段 这里去下面位置做更改
+						// 32B183DB71AE312536C905678B9F33FADFE63BD9
+						$create_client_name           = $data['create_client_name'] ? 1 : 0;
+						$create_client_mobile         = $data['create_client_mobile'] ? 1 : 0;
+						$data['config_create_client'] = bindec("$create_client_name$create_client_mobile");
+						$result                       = $model->alterMeeting(['id' => I('get.mid', 0, 'int')], $data);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
@@ -660,6 +665,34 @@
 					$result = $column_control_logic->saveClientColumn($mid, $data);
 
 					return array_merge($result, ['__ajax__' => false, '__return__' => '']);
+				break;
+				case 'upload_receipt_logo':
+					$core_upload_logic = new UploadLogic();
+					$result            = $core_upload_logic->upload($_FILES, '/Image/');
+					$log_logic         = new LogLogic();
+					$log_logic->create([
+						'dbTable'  => 'system_upload',
+						'dbColumn' => '*',
+						'extend'   => 'PC',
+						'action'   => '上传收据LOGO',
+						'type'     => 'create'
+					]);
+					if($result['status']){
+						$mid = I('get.mid', 0, 'int');
+						/** @var \Core\Model\MeetingModel $meeting_model */
+						$meeting_model = D('Core/Meeting');
+						$result        = $meeting_model->alterMeeting(['id' => $mid], ['receipt_logo' => $result['data']['filePath']]);
+						$log_logic     = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_meeting',
+							'dbColumn' => 'receipt_logo',
+							'extend'   => 'PC',
+							'action'   => '修改收据LOGO',
+							'type'     => 'modify'
+						]);
+					}
+
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				default:
 					return [

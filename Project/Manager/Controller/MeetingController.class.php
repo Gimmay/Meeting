@@ -79,8 +79,11 @@
 				$cid_id_arr               = [];
 				$receivables_client_count = $price = 0;
 				foreach($receivables_record as $val){
-					$cid_id_arr[] = $val['cid'];
-					$receivables_option = $receivables_option_model->findRecord(2, ['rid'=>$val['id'], 'status'=>1]);
+					$cid_id_arr[]       = $val['cid'];
+					$receivables_option = $receivables_option_model->findRecord(2, [
+						'rid'    => $val['id'],
+						'status' => 1
+					]);
 					foreach($receivables_option as $v) $price += $v['price'];
 				}
 				foreach($join_record as $val){
@@ -258,6 +261,8 @@
 					$config                           = $core_logic->getConfig($this->meetingID);
 					$meeting['config_message_sms']    = $config['message_sms'];
 					$meeting['config_message_wechat'] = $config['message_wechat'];
+					$meeting['config_create_client_name']    = $config['create_client_name'];
+					$meeting['config_create_client_mobile'] = $config['create_client_mobile'];
 
 					return $meeting;
 				};
@@ -279,6 +284,7 @@
 				$getColumnStatus      = function ($cl){
 					$data = [];
 					foreach($cl as $val) $data[$val['code']] = $val;
+
 					return $data;
 				};
 				$this->assign('column_list', $column_list);

@@ -16,9 +16,11 @@
 		}
 
 		public function client(){
+			/** @var \Core\Model\JoinModel $join_model */
+			$join_model = D('Core/Join');
 			/** @var \Core\Model\RecycleModel $model */
 			$model      = D('Core/Recycle');
-			$list_total = $model->findClient(0, [
+			$list_total = $join_model->findRecord(0, [
 				'keyword' => I('get.keyword', ''),
 				'status'  => 2,
 			]);
@@ -27,7 +29,7 @@
 			\ThinkPHP\Quasar\Page\setTheme1($page_object);
 			$page_show = $page_object->show();
 			/* 当前页的客户记录列表 */
-			$client_list = $model->findClient(2, [
+			$client_list = $join_model->findRecord(2, [
 				'keyword' => I('get.keyword', ''),
 				'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 				'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),

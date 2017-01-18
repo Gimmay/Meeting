@@ -152,6 +152,7 @@ try{
 				hasEmptyItem :true,
 				emptyItemHtml:'---Select item---',
 				listNumber   :10,
+				insertMode   :false,
 				request      :{
 					url     :'',
 					type    :'POST',
@@ -174,7 +175,7 @@ try{
 			 * @type {boolean} true: 自由输入模式 false: 只能选取列表项
 			 * @private
 			 */
-			var _insertMode      = false;
+			var _insertMode      = opts.insertMode;
 			/**
 			 * *因为 blur 时间发生在其他元素的点击事件之前
 			 * *因此该属性用于记录 blur 事件后是否有点击事件
@@ -193,8 +194,9 @@ try{
 				// init
 				$(self).html('');
 				$(self).css('position', 'relative');
+				var insert_mode = _insertMode?' insert-mode ':'';
 				// make input
-				var input_visible = "<textarea class=\'quasar-select-input "+opts.classStyle+"\' id=\'"+opts.idInput+"\' placeholder='"+opts.placeholder+"' data-ext=\'\'>"+opts.defaultHtml+"</textarea>";
+				var input_visible = "<textarea class=\'quasar-select-input "+insert_mode+opts.classStyle+"\' id=\'"+opts.idInput+"\' placeholder='"+opts.placeholder+"' data-ext=\'\'>"+opts.defaultHtml+"</textarea>";
 				var input_hidden  = "<input type=\'hidden\' name=\'"+opts.name+"\' id=\'"+opts.idHidden+"\' value='"+opts.defaultValue+"'>";
 				$(self).append(input_hidden);
 				$(self).append(input_visible);

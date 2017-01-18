@@ -17,8 +17,8 @@
 			parent::_initialize();
 		}
 
-		public function isExist($mobile){
-			return $this->where(['mobile' => $mobile])->find();
+		public function isExist($mobile, $name){
+			return $this->where(['mobile' => $mobile, 'name' => $name])->find();
 		}
 
 		public function createClient($data){

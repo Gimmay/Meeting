@@ -53,7 +53,8 @@
 			if(isset($filter['mid'])) $where['mid'] = $filter['mid'];
 			if(isset($filter['code'])) $where['code'] = $filter['code'];
 			if(isset($filter['table'])) $where['table'] = $filter['table'];
-
+			if(isset($filter['must'])) $where['must'] = $filter['must'];
+			if(isset($filter['view'])) $where['view'] = $filter['view'];
 			switch((int)$type){
 				case 0: // count
 					if($where == []){

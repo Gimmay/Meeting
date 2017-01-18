@@ -46,8 +46,8 @@
 						/** @var \Core\Model\GroupModel $group_model */
 						$group_model = D('Core/Group');
 						$mid         = I('get.mid', 0, 'int');
-						$code_arr = explode(',', I('post.group_area', ''));
-						$data = [];
+						$code_arr    = explode(',', I('post.group_area', ''));
+						$data        = [];
 						foreach($code_arr as $code){
 							$data[] = [
 								'mid'      => $mid,
@@ -310,6 +310,14 @@
 					}
 
 					return array_merge($group_member_list, ['__ajax__' => false]);
+				break;
+				case 'batch_delete':
+					/** @var \Core\Model\GroupModel $group_model */
+					$id_arr      = explode(',', I('post.gid', ''));
+					$group_model = D('Core/Group');
+					$result      = $group_model->deleteRecord(['id' => ['in', $id_arr]]);
+
+					return array_merge($result, ['__ajax__' => false]);
 				break;
 				default:
 					return ['status' => false, 'message' => '参数错误'];

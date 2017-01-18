@@ -42,4 +42,11 @@ $(function(){
 			$('#delete_badge').modal('show');
 		}
 	});
+	$('.system_tem_ul li').each(function(){
+		var id        = $(this).attr('data-id');
+		var active_id = $('body').attr('data-bid');
+		if(active_id == id){
+			$(this).addClass('selected');
+		}
+	});
 });

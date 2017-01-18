@@ -454,19 +454,24 @@ $(function(){
 			data    :{requestType:'details', id:id},
 			callback:function(r){
 				var str = '', i = 0;
+				console.log(r);
 				$.each(r, function(index, value){
-					if(value.occupancy_status == 1){
-						if(!value.leave_time){
+					switch(parseInt(value.occupancy_status)){
+						case 0:
+							str += ScriptObject.roomDetailsTemp3.replace('$n', index+1).replace('$name', value.name)
+											   .replace('$id', value.id);
+							break;
+						case 1:
 							str += ScriptObject.roomDetailsTemp.replace('$n', index+1).replace('$name', value.name)
 											   .replace('$id', value.id);
 							i++;
-						}else{
+							break;
+						case 2:
 							str += ScriptObject.roomDetailsTemp2.replace('$n', index+1).replace('$name', value.name)
 											   .replace('$id', value.id);
-						}
-					}else{
-						str += ScriptObject.roomDetailsTemp3.replace('$n', index+1).replace('$name', value.name)
-										   .replace('$id', value.id);
+							break;
+						default:
+							break;
 					}
 				});
 				$('#add_recipient2').find('input[name=can_live]').val(capacity-i);
@@ -1055,7 +1060,6 @@ function getEmployeeAddDetails(keyword){
 		}
 	});
 }
-
 // 收款导入excel
 function getIframeData(){
 	var data = new FormData($('#file_form')[0]);

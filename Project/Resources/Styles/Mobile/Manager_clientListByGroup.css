@@ -8,9 +8,8 @@
 }
 
 .client_list .list_item{
-	position      : relative;
-	font-size     : 0.20rem;
-	border-bottom : 0.01rem solid #FFFFFF;
+	position  : relative;
+	font-size : 0.20rem;
 }
 
 .client_list .list_item .title{
@@ -55,18 +54,9 @@
 }
 
 .client_list ul li.client_item > a{
-	padding : 0.15rem 0.3rem;
-	display : block;
-}
-
-.client_list ul li.client_item > a .name{
-	font-size : 0.30rem;
-}
-
-.client_list ul li.client_item > a .sign_employee{
-	font-size   : 0.24rem;
-	margin-left : 10px;
-	color : #666;
+	position : relative;
+	padding  : 0.15rem 0.3rem;
+	display  : block;
 }
 
 .client_list ul li.client_item > a .status{
@@ -106,3 +96,4 @@
 .content{
 	padding-bottom : 1rem;
 }
+

@@ -14,8 +14,8 @@ $(function(){
 			// todo sign
 		}
 	})();
-	$('#search_input').keyup(function(){
-		if(event.keyCode == 13){
+	$('#search_input').keyup(function(e){
+		if(e.keyCode == 13){
 			var keyword = $('#search_input').val();
 			keyword     = encodeURI(keyword);
 			keyword     = encodeURI(keyword);

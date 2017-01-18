@@ -148,8 +148,10 @@
 				$receivables_model = D('Core/Receivables');
 				/** @var \Manager\Model\EmployeeModel $employee_model */
 				$employee_model = D('Employee');
-				$option         = [];
-				$keyword        = I('get.keyword', '');
+				/** @var \Core\Model\MeetingModel $meeting_model */
+				$meeting_model = D('Core/Meeting');
+				$option        = [];
+				$keyword       = I('get.keyword', '');
 				if(isset($_GET['cid'])) $option['cid'] = I('get.cid', 0, 'int');
 				$receivables_total = $receivables_model->findRecord(0, array_merge([
 					'mid'     => $this->meetingID,
@@ -167,18 +169,18 @@
 					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
 					'_order'  => I('get._column', 'creatime').' '.I('get._sort', 'desc'),
 				], $option));
+				$meeting_info     = $meeting_model->findMeeting(1, ['id' => $this->meetingID]);
 				$receivables_list = $receivables_logic->setData('details:set_column', $receivables_list);
 				$payee_list       = $employee_model->getEmployeeNameSelectList();
 				$this->assign('list', $receivables_list);
 				$this->assign('page_show', $page_show);
+				$this->assign('meeting', $meeting_info);
 				$this->assign('employee_list', $payee_list);
 				$this->display();
 			}
 			else $this->error('您没有查看收款记录的权限');
 		}
 
-		
-		
 		public function manage(){
 			$receivables_logic = new ReceivablesLogic();
 			if(IS_POST){
@@ -351,17 +353,17 @@
 			if($this->permissionList['RECEIVABLES.EXPORT-EXCEL']){
 				/** @var \Manager\Model\ReceivablesModel $receivables_model */
 				$receivables_model = D('Receivables');
-//				/** @var \Core\Model\ReceivablesModel $receivables_model */
-//				$receivables_model = D('Core/Receivables');
+				//				/** @var \Core\Model\ReceivablesModel $receivables_model */
+				//				$receivables_model = D('Core/Receivables');
 				/** @var \Core\Model\MeetingModel $meeting_model */
-				$meeting_model      = D('Core/Meeting');
-				$excel_logic        = new ExcelLogic();
-//				$logic              = new ReceivablesLogic();
-//				$receivables_result = $receivables_model->findRecord(2, [
-//					'mid'    => $this->meetingID,
-//					'status' => 'not deleted'
-//				]);
-//				$receivables_result = $logic->setData('excel_data', $receivables_result);
+				$meeting_model = D('Core/Meeting');
+				$excel_logic   = new ExcelLogic();
+				//				$logic              = new ReceivablesLogic();
+				//				$receivables_result = $receivables_model->findRecord(2, [
+				//					'mid'    => $this->meetingID,
+				//					'status' => 'not deleted'
+				//				]);
+				//				$receivables_result = $logic->setData('excel_data', $receivables_result);
 				$receivables_result = $receivables_model->getReceivablesDetail($this->meetingID);
 				$meeting            = $meeting_model->findMeeting(1, ['id' => $this->meetingID]);
 				$excel_logic->exportCustomData($receivables_result, [

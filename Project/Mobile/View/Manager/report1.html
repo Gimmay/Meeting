@@ -25,19 +25,19 @@
 		<h2>会务综合数据</h2>
 		<div class="data">
 			<div class="data_item">
-				总参会顾客: <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int')])}>" class="link"><{$statistics.total}></a>人
+				总参会顾客: <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'dataType'=>'total'])}>" class="link"><{$statistics.total}></a>人
 			</div>
 			<div class="data_item">
 				<span>会所数: <a href="<{:U('report1Unit', ['mid'=>I('get.mid', 0, 'int')])}>" class="link"><{$statistics.unit}></a>所 </span>
 			</div>
 			<div class="data_item">
-				<span>已签到顾客(陪同/终端): <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'signStatus'=>1])}>" class="link"><{:($statistics['signedZD']+$statistics['signedPT'])}>人(<{$statistics.signedZD}>/<{$statistics.signedPT}>)</a> </span>
+				<span>已签到顾客(陪同/终端): <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'dataType'=>'signed'])}>" class="link"><{:($statistics['signedZD']+$statistics['signedPT'])}>人(<{$statistics.signedZD}>/<{$statistics.signedPT}>)</a> </span>
 			</div>
 			<div class="data_item">
-				<span>未签到顾客(陪同/终端): <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'signStatus'=>0])}>" class="link"><{:($statistics['notSignedZD']+$statistics['notSignedPT'])}>人(<{$statistics.notSignedZD}>/<{$statistics.notSignedPT}>)</a></span>
+				<span>未签到顾客(陪同/终端): <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'dataType'=>'unsigned'])}>" class="link"><{:($statistics['notSignedZD']+$statistics['notSignedPT'])}>人(<{$statistics.notSignedZD}>/<{$statistics.notSignedPT}>)</a></span>
 			</div>
 			<div class="data_item">
-				<span>新客: <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'isNew'=>1])}>" class="link"><{$statistics.newClient}></a>人</span> <span>老客:  <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'isNew'=>0])}>" class="link"><{$statistics.oldClient}></a>人</span>
+				<span>新客: <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'dataType'=>'new_client'])}>" class="link"><{$statistics.newClient}></a>人</span> <span>老客:  <a href="<{:U('report1Client', ['mid'=>I('get.mid', 0, 'int'), 'dataType'=>'old_client'])}>" class="link"><{$statistics.oldClient}></a>人</span>
 			</div>
 			<div class="data_item">
 				会中收款总数: <{:number_format($statistics['price'])}>元

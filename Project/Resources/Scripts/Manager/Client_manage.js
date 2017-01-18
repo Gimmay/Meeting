@@ -9,6 +9,15 @@ var ThisObject = {
 	signActiveBntTemp:'<a class="btn btn-default btn-sm active" href="javascript:void(0)" role="button" data-id="$id">$signName</a>'
 };
 $(function(){
+	var quasar_script = document.getElementById('quasar_script');
+	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
+	$('#main_search').on('click',function(){
+		var keyword = $('#keyword').val();
+		keyword     = encodeURI(keyword);
+		keyword     = encodeURI(keyword);
+		var new_url = url_object.setUrlParam('keyword', keyword);
+		location.replace(new_url);
+	});
 	/*
 	 *  右侧详情
 	 */
@@ -97,6 +106,29 @@ $(function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
 		$('#gift_modal').find('input[name=id]').val(id);
 	});
+	$('.batch_receive_gift').on('click', function(){
+		var str = '';
+		var i   = 0;
+		$('.check_item .icheckbox_square-green.checked').each(function(){
+			var id = $(this).find('.icheck').val();
+			str += id+',';
+			i++;
+		});
+		$('#batch_receive_gift_modal').find('.sAmount').text(i);
+		var s, newStr = "";
+		s             = str.charAt(str.length-1);
+		if(s == ","){
+			for(var i = 0; i<str.length-1; i++){
+				newStr += str[i];
+			}
+		}
+		if(newStr != ''){
+			$('#batch_receive_gift_modal').modal('show')
+		}else{
+			ManageObject.object.toast.toast('请选择参会人员！');
+		}
+		$('#batch_receive_gift_modal').find('input[name=id]').val(newStr);
+	});
 	var quasar_script = document.getElementById('quasar_script');
 	// 实例化Url类
 	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
@@ -118,17 +150,16 @@ $(function(){
 			}
 		});
 	})();
-
-	$('.batch_badge').on('click',function(){
-		var str = '', i = 0,para='';
+	$('.batch_badge').on('click', function(){
+		var str = '', i = 0, para = '';
 		$('.check_item .icheckbox_square-green.checked').each(function(){
 			var id = $(this).find('.icheck').val();
 			str += id+',';
 			i++;
-			para+=id+'*';
+			para += id+'*';
 		});
 		console.log(para);
-		var para = para.substring(0,para.length-1);
+		var para = para.substring(0, para.length-1);
 		console.log(para)
 		var s, newStr = "";
 		s             = str.charAt(str.length-1);
@@ -138,15 +169,13 @@ $(function(){
 			}
 		}
 		if(newStr != ''){
-			var url = url_object.setUrlParam('cid',para,ManageObject.data.badgePrintUrl);
+			var url = url_object.setUrlParam('cid', para, ManageObject.data.badgePrintUrl);
 			window.open(url);
 			//location.href = url;
 		}else{
 			ManageObject.object.toast.toast('请选择参会人员！');
 		}
-
 	});
-
 	// 批量修改备用信息
 	$('.batch_alter_column').on('click', function(){
 		var str = '';
@@ -170,7 +199,6 @@ $(function(){
 		}
 		$('#batch_alter_column_modal').find('input[name=cid]').val(newStr);
 	});
-
 	// 全选checkbox
 	$('.all_check').find('.iCheck-helper').on('click', function(){
 		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
@@ -683,7 +711,6 @@ $(function(){
 		});
 		$('#batch_alter_sign_point').find('input[name=sign_place]').val(arr);
 	});
-
 	// 分配签到点 (multi)
 	$('.batch_group_btn').on('click', function(){
 		var str = '';

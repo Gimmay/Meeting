@@ -7,6 +7,7 @@
 	 */
 	namespace Core\Logic;
 
+	use Exception;
 	use Manager\Logic\MessageLogic;
 
 	class ClientLogic extends CoreLogic{
@@ -50,16 +51,46 @@
 						'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
 						'order'     => $signed_count+1
 					]);
+					/** @var \Core\Model\ClientModel $client_model */
+					$client_model = D('Core/Client');
+					$client       = $client_model->findClient(1, ['id' => $option['cid']]);
+					$openid       = sha1("$client[name]$client[unit]");
+					try{
+						M('weixin_flag')->add([
+							'openid'      => $openid,
+							'fakeid'      => $openid,
+							'flag'        => 2,
+							'status'      => 1,
+							'othid'       => 0,
+							'cjstatu'     => 2,
+							'a_code'      => '',
+							'a_name'      => $client['name'],
+							'a_gender'    => $client['gender'],
+							'a_mobile'    => $client['mobile'],
+							'a_unit'      => $client['unit'],
+							'a_position'  => $client['position'],
+							'a_avatar'    => '',
+							'a_type'      => $client['type'],
+							'a_join_time' => '2016-01-01',
+						]);
+					}catch(Exception $error){
+					}
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model = D('Core/Employee');
+					$director       = $employee_model->findEmployee(1, ['id' => $option['eid']]);
+
+					return array_merge($result, [
+						'data' => [
+							'sign_status'      => 1,
+							'sign_time'        => $cur_time,
+							'sign_director_id' => $option['eid'],
+							'sign_director'    => $director['name'],
+							'sign_type'        => $option['type']
+						]
+					]);
 				}
 
-				return array_merge($result, [
-					'data' => [
-						'sign_status'      => 1,
-						'sign_time'        => $cur_time,
-						'sign_director_id' => $option['eid'],
-						'sign_type'        => $option['type']
-					]
-				]);
+				return $result;
 			}
 			else return [
 				'status'  => false,

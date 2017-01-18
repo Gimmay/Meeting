@@ -120,10 +120,14 @@
 				break;
 				case 'sign': //签到
 					if($permission_logic->hasPermission('WECHAT.CLIENT.SIGN', $employee_id)){
+						/** @var \Core\Model\ClientModel $client_model */
+						$client_model      = D('Core/Client');
 						$core_client_logic = new ClientLogic();
+						$cid               = I('post.cid', 0, 'int');
+						$cid               = $cid == 0 ? I('get.cid', 0, 'int') : $cid;
 						$result            = $core_client_logic->sign([
 							'mid'  => I('get.mid', 0, 'int'),
-							'cid'  => I('get.cid', 0, 'int'),
+							'cid'  => $cid,
 							'type' => 3,
 							'eid'  => $employee_id
 						]);
@@ -141,9 +145,11 @@
 						/** @var \Core\Model\JoinModel $join_model */
 						$join_model = D('Core/Join');
 						C('TOKEN_ON', false);
+						$cid         = I('post.cid', 0, 'int');
+						$cid         = $cid == 0 ? I('get.cid', 0, 'int') : $cid;
 						$join_result = $join_model->alterRecord([
 							'mid' => I('get.mid', 0, 'int'),
-							'cid' => I('get.cid', 0, 'int')
+							'cid' => $cid
 						], ['sign_status' => 2, 'sign_type' => 0]);
 
 						return array_merge($join_result, ['__ajax__' => true]);
@@ -323,28 +329,137 @@
 
 		public function findData($type, $opt = []){
 			switch($type){
+				//				case 'clientList:find_client_list':
+				//					/** @var \Core\Model\JoinModel $join_model */
+				//					$join_model    = D('Core/Join');
+				//					$option_filter = [];
+				//					if(isset($_GET['sign'])){
+				//						$sign_status = I('get.sign', 0, 'int');
+				//						if($sign_status == 1) $option_filter['sign_status'] = 1;
+				//						elseif($sign_status == 0) $option_filter['sign_status'] = 'not signed';
+				//					}
+				//					$list     = $join_model->findRecord(2, array_merge([
+				//						'mid'     => $opt['mid'],
+				//						'status'  => 'not deleted',
+				//						'keyword' => I('get.keyword', ''),
+				//					], $option_filter));
+				//					$new_list = [];
+				//					foreach($list as $val){
+				//						$group = $val['unit'];
+				//						if(isset($new_list[$group])) $new_list[$group][] = $val;
+				//						else{
+				//							$new_list[$group]   = [];
+				//							$new_list[$group][] = $val;
+				//						}
+				//					}
+				//
+				//					return $new_list;
+				//				break;
 				case 'clientList:find_client_list':
 					/** @var \Core\Model\JoinModel $join_model */
-					$join_model    = D('Core/Join');
-					$option_filter = [];
+					$join_model = D('Core/Join');
+					/** @var \Core\Model\EmployeeModel $employee_model */
+					$employee_model = D('Core/Employee');
+					$option_filter  = [];
 					if(isset($_GET['sign'])){
 						$sign_status = I('get.sign', 0, 'int');
 						if($sign_status == 1) $option_filter['sign_status'] = 1;
 						elseif($sign_status == 0) $option_filter['sign_status'] = 'not signed';
 					}
 					$list     = $join_model->findRecord(2, array_merge([
-						'mid'     => $opt['mid'],
-						'status'  => 'not deleted',
-						'keyword' => I('get.keyword', ''),
+						'mid'           => $opt['mid'],
+						'status'        => 'not deleted',
+						'keyword'       => I('get.keyword', ''),
+						'review_status' => 1
 					], $option_filter));
 					$new_list = [];
 					foreach($list as $val){
 						$group = $val['unit'];
-						if(isset($new_list[$group])) $new_list[$group][] = $val;
-						else{
-							$new_list[$group]   = [];
-							$new_list[$group][] = $val;
+						if($val['sign_director_id']){
+							$signer = $employee_model->findEmployee(1, ['id' => $val['sign_director_id']]);
+							$signer = $signer['name'];
 						}
+						else $signer = '';
+						$val['signer'] = $signer;
+						if(!isset($new_list[$group]['list'])) $new_list[$group]['list'] = [];
+						$new_list[$group]['list'][] = $val;
+					}
+					foreach($new_list as $k => $unit){
+						$sign_count = 0;
+						foreach($unit['list'] as $client){
+							if($client['sign_status'] == 1) $sign_count++;
+						}
+						$new_list[$k]['sign_count'] = $sign_count;
+					}
+
+					return $new_list;
+				break;
+				case 'clientListByGroup:get_list':
+					/** @var \Mobile\Model\ClientModel $model */
+					$model          = D('Client');
+					$have_group     = $model->getClientListByGroup($opt['mid'], $opt['keyword']);
+					$not_have_group = $model->getClientListByGroup($opt['mid'], $opt['keyword'], false);
+					$group_list     = [];
+					foreach($have_group as $val){
+						if(!isset($group_list[$val['gid']])) $group_list[$val['gid']] = ['client' => []];
+						$group_list[$val['gid']]['client'][]   = $val;
+						$group_list[$val['gid']]['group_name'] = $val['group_name'];
+					}
+					foreach($not_have_group as $val){
+						if(!isset($group_list[$val['gid']])) $group_list[$val['gid']] = ['client' => []];
+						$group_list[$val['gid']]['client'][]   = $val;
+						$group_list[$val['gid']]['group_name'] = $val['group_name'];
+					}
+
+					return $group_list;
+				break;
+				case 'report1Client:get_data':
+					/** @var \Core\Model\JoinModel $model */
+					$model = D('Core/Join');
+					switch(I('get.dataType', '')){
+						case 'total':
+							$list = $model->findRecord(2, [
+								'mid'    => $opt['mid'],
+								'status' => 1
+							]);
+						break;
+						case 'signed':
+							$list = $model->findRecord(2, [
+								'mid'         => $opt['mid'],
+								'status'      => 1,
+								'sign_status' => 1
+							]);
+						break;
+						case 'unsigned':
+							$list = $model->findRecord(2, [
+								'mid'         => $opt['mid'],
+								'status'      => 1,
+								'sign_status' => 'not signed'
+							]);
+						break;
+						case 'new_client':
+							$list = $model->findRecord(2, [
+								'mid'    => $opt['mid'],
+								'status' => 1,
+								'isNew'  => 1
+							]);
+						break;
+						case 'old_client':
+							$list = $model->findRecord(2, [
+								'mid'    => $opt['mid'],
+								'status' => 1,
+								'isNew'  => 0
+							]);
+						break;
+						default:
+							return [];
+						break;
+					}
+					$new_list = [];
+					foreach($list as $val){
+						$group = $val['unit'];
+						if(!isset($new_list[$group]['list'])) $new_list[$group]['list'] = [];
+						$new_list[$group]['list'][] = $val;
 					}
 
 					return $new_list;

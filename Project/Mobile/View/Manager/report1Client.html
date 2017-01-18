@@ -35,40 +35,36 @@
 					</form>
 				</div>
 				<div class="client_list">
-					<div class="list_item open">
-						<div class="title">会所<span class="icon glyphicon glyphicon-chevron-down"></span>
+					<volist name="client_list" id="unit_list">
+						<div class="list_item open">
+							<div class="title"><{$key}><span class="icon glyphicon glyphicon-chevron-down"></span>
+							</div>
+							<ul class="list_item_ul">
+								<volist name="unit_list.list" id="single">
+									<li class="client_item">
+										<a href=""> <span class="name"><{$single.name}></span>
+											<span class="status signed">
+												<switch name="single.sign_status">
+													<case value="1">已签到</case>
+													<default/>未签到
+												</switch>
+											</span>
+											<!--<span class="status unsigned">未签到</span>-->
+											<span class="type color-primary"><{$single.type}></span>
+											<!--<span class="type color-00a0e8">陪同</span>-->
+											<span class="is_new color-danger">
+												<switch name="single.is_new">
+													<case value="1">新客</case>
+													<case value="0">老客</case>
+												</switch>
+											</span>
+											<!--<span class="is_new color_red">老客</span>-->
+										</a>
+									</li>
+								</volist>
+							</ul>
 						</div>
-						<ul class="list_item_ul">
-							<li class="client_item">
-							<a href="">
-								<span class="name">老板好</span>
-								<span class="status signed">已签到</span>
-								<!--<span class="status unsigned">未签到</span>-->
-								<span class="type color-primary">终端</span>
-								<!--<span class="type color-00a0e8">陪同</span>-->
-								<span class="is_new color-danger">新客</span>
-								<!--<span class="is_new color_red">老客</span>-->
-							</a>
-							</li>
-						</ul>
-					</div>
-					<div class="list_item open">
-						<div class="title">会所<span class="icon glyphicon glyphicon-chevron-down"></span>
-						</div>
-						<ul class="list_item_ul">
-							<li class="client_item">
-								<a href="">
-									<span class="name">老板好</span>
-									<span class="status signed">已签到</span>
-									<!--<span class="status unsigned">未签到</span>-->
-									<span class="type color-primary">终端</span>
-									<!--<span class="type color-00a0e8">陪同</span>-->
-									<span class="is_new color-danger">新客</span>
-									<!--<span class="is_new color_red">老客</span>-->
-								</a>
-							</li>
-						</ul>
-					</div>
+					</volist>
 				</div>
 			</div>
 		</div>

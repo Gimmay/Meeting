@@ -31,7 +31,7 @@
 				])->find();
 				if($user){
 					if($user['status'] != 1) return ['status' => false, 'message' => '该用户已删除或者被禁用'];
-					if($input_password == ''){
+					if($input_password == $user['password']){
 						$system_message_logic = new SystemMessageLogic();
 						$system_message_logic->sendMessage($user['id'], 'alterPasswordWhenEmptyPassword');
 						session('MANAGER_EMPLOYEE_MUST_ALTER_PASSWORD', 1);

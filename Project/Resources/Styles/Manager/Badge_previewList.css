@@ -167,10 +167,14 @@ canvas{
 }
 
 .system_tem_list ul li:hover{
-	border-color : #00A0E8;
+	border-color : #28B778;
 }
 
 .system_tem_list ul li.active{
+	border-color : #28B778;
+}
+
+.system_tem_list ul li.selected{
 	border-color : #00A0E8;
 }
 
@@ -180,7 +184,7 @@ canvas{
 }
 
 .system_tem_list ul li.active .select_icon{
-	display : block;;
+	display : block;
 }
 
 .system_tem_list ul li .select_icon{
@@ -193,7 +197,7 @@ canvas{
 	color       : #FFFFFF;
 	left        : 1px;
 	top         : 1px;
-	background  : #00A0E8;
+	background  : #28B778;
 	z-index     : 99;
 }
 
@@ -205,17 +209,18 @@ canvas{
 	line-height : 25px;
 	text-align  : center;
 	color       : #FFFFFF;
-	right        : 1px;
+	right       : 1px;
 	top         : 1px;
-	background  : #fb5050;
+	background  : #FB5050;
 	z-index     : 99;
 }
 
 .system_tem_list ul li:hover .delete_icon{
-	display : block;;
+	display : block;
 }
 
 .system_tem_list ul li .title{
+	position    : relative;
 	height      : 40px;
 	line-height : 40px;
 	text-align  : center;
