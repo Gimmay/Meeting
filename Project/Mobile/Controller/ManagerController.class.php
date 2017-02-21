@@ -19,10 +19,10 @@
 		protected $meetingID  = 0;
 
 		public function _initialize(){
-//			session_destroy();
-//			session_unset();exit;
-//			$_SESSION['MOBILE_WECHAT_ID']   = 1090;
-//			$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
+			//			session_destroy();
+//						session_unset();exit;
+//						$_SESSION['MOBILE_WECHAT_ID']   = 1090;
+//						$_SESSION['MOBILE_EMPLOYEE_ID'] = 2;
 			parent::_initialize();
 			$meeting_logic = new MeetingLogic();
 			$meeting_logic->initializeStatus();
@@ -49,7 +49,7 @@
 			};
 			$this->employeeID = isset($_SESSION['MOBILE_EMPLOYEE_ID']) ? I('session.MOBILE_EMPLOYEE_ID', 0, 'int') : $get();
 			if($this->employeeID == 0){
-				if($redirect) $this->redirect('Error/isNotRegister');
+				if($redirect) $this->redirect('Error/notRegister');
 
 				return false;
 			}
@@ -82,7 +82,7 @@
 					$column_control_model = D('Core/ColumnControl');
 					$column_list          = $column_control_model->findRecord(2, [
 						'mid'   => $mid,
-						'table' => 'user_client'
+						'table' => ['user_client', 'workflow_join']
 					]);
 					$data                 = [];
 					foreach($column_list as $val) $data[$val['code']] = $val;
@@ -157,7 +157,6 @@
 				exit;
 			}
 			if($permission_logic->hasPermission('WECHAT.CLIENT.VIEW', $this->employeeID)){
-
 				$client_list = $logic->findData('clientList:find_client_list', ['mid' => I('get.mid', 0, 'int')]);
 				if(!isset($_GET['sign'])) $title = '所有参会人员';
 				elseif(I('get.sign', 0, 'int') === 0) $title = '未签到人员';
@@ -192,13 +191,16 @@
 				exit;
 			}
 			if($permission_logic->hasPermission('WECHAT.CLIENT.VIEW', $this->employeeID)){
-
-				$list = $logic->findData('clientListByGroup:get_list', ['mid' => I('get.mid', 0, 'int'), 'keyword'=>I('get.keyword', '')]);
+				$list = $logic->findData('clientListByGroup:get_list', [
+					'mid'     => I('get.mid', 0, 'int'),
+					'keyword' => I('get.keyword', '')
+				]);
 				$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
 				$this->assign('list', $list);
 				$this->assign('title', '参会人员');
 				$this->display();
-			}else $this->redirect('Error/notPermission', ['permission' => 'WECHAT.CLIENT.VIEW']);
+			}
+			else $this->redirect('Error/notPermission', ['permission' => 'WECHAT.CLIENT.VIEW']);
 		}
 
 		public function meetingList(){
@@ -366,10 +368,13 @@
 			$this->wechatID = $this->getWechatID();
 			$this->_getEmployeeID();
 			$this->_getMeetingParam();
-			$logic            = new ManagerLogic();
+			$logic = new ManagerLogic();
 			//$permission_logic = new PermissionLogic();
-			$client_list      = $logic->findData('report1Client:get_data', ['mid' => I('get.mid', 0, 'int'), 'dataType'=>I('get.dataType', '')]);
-			$title = '参会人员';
+			$client_list = $logic->findData('report1Client:get_data', [
+				'mid'      => I('get.mid', 0, 'int'),
+				'dataType' => I('get.dataType', '')
+			]);
+			$title       = '参会人员';
 			//$this->assign('permission_list', $permission_logic->getPermissionList($this->employeeID));
 			$this->assign('title', $title);
 			$this->assign('client_list', $client_list);

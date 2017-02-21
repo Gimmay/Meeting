@@ -98,7 +98,11 @@
 												<td><{$i}></td>
 												<td class="name"><{$list.name}></td>
 												<td class="type">
+													<!-- 收款类型对应表 -->
+													<!-- 以下位置都需要同步 -->
+													<!-- E682C6E7495F65F68BFB92D12F5385C45CA4B455 -->
 													<switch name="list.type">
+
 														<case value="1">门票</case>
 														<case value="2">代金券</case>
 														<case value="3">产品</case>
@@ -106,6 +110,8 @@
 														<case value="6">课程费</case>
 														<case value="7">产品费</case>
 														<case value="8">场餐费</case>
+														<case value="9">方案费</case>
+														<case value="10">打板款项</case>
 														<case value="4">其他</case>
 													</switch>
 												</td>
@@ -186,6 +192,8 @@
 									<option value="6">课程费</option>
 									<option value="7">产品费</option>
 									<option value="8">场餐费</option>
+									<option value="9">方案款</option>
+									<option value="10">打板款项</option>
 									<option value="4">其他</option>
 								</select>
 							</div>
@@ -256,16 +264,18 @@
 								</div>
 							</div>
 						</div>
-						<div class="form-group">
-							<label for="start_time" class="col-sm-2 control-label">开始时间：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control start_time" name="start_time" id="start_time">
+						<div class="time_need hide">
+							<div class="form-group">
+								<label for="start_time" class="col-sm-2 control-label">开始时间：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control start_time" name="start_time" id="start_time">
+								</div>
 							</div>
-						</div>
-						<div class="form-group">
-							<label for="end_time" class="col-sm-2 control-label">结束时间：</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control end_time" name="end_time" id="end_time">
+							<div class="form-group">
+								<label for="end_time" class="col-sm-2 control-label">结束时间：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control end_time" name="end_time" id="end_time">
+								</div>
 							</div>
 						</div>
 						<div class="form-group">
@@ -317,6 +327,8 @@
 									<option value="6">课程费</option>
 									<option value="7">产品费</option>
 									<option value="8">场餐费</option>
+									<option value="9">方案款</option>
+									<option value="10">打板款项</option>
 									<option value="4">其他</option>
 								</select>
 								<!--<input type="text" class="form-control price" name="type" id="type">-->

@@ -13,7 +13,7 @@
 }
 
 .table_wrap .modular .m_item{
-	width   : 25%;
+	width   : 100%;
 	float   : left;
 	padding : 20px;
 }
@@ -30,7 +30,7 @@
 }
 
 .table_wrap .modular .m_item .m_content .desc{
-	height  : 100px;
+	/*height  : 100px;*/
 	padding : 5px 20px;
 }
 
@@ -66,4 +66,15 @@
 	font-size    : 14px;
 	margin-right : 20px;
 	color        : #FFFFFF;
+}
+
+.table.table_item caption{
+	font-size     : 16px;
+	color         : #000000;
+	font-weight   : bold;
+	border-bottom : 1px solid #E1E1E1;
+}
+
+.table.table_item{
+	font-size : 14px;
 }

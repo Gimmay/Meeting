@@ -11,12 +11,34 @@ var ThisObject = {
 $(function(){
 	var quasar_script = document.getElementById('quasar_script');
 	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
-	$('#main_search').on('click',function(){
+	$('#main_search').on('click', function(){
 		var keyword = $('#keyword').val();
-		keyword     = encodeURI(keyword);
-		keyword     = encodeURI(keyword);
-		var new_url = url_object.setUrlParam('keyword', keyword);
+		var new_url = url_object.delUrlParam('p');
+		if(keyword == ''){
+			new_url = url_object.delUrlParam('keyword', new_url);
+		}else{
+			keyword = encodeURI(keyword);
+			keyword = encodeURI(keyword);
+			new_url = url_object.setUrlParam('keyword', keyword, new_url);
+		}
 		location.replace(new_url);
+	});
+	$('#keyword').on('keydown', function(e){
+		if(e.keyCode == 13){
+			var keyword = $('#keyword').val();
+			var new_url = url_object.delUrlParam('p');
+			if(keyword == ''){
+				new_url = url_object.delUrlParam('keyword', new_url);
+			}else{
+				keyword = encodeURI(keyword);
+				keyword = encodeURI(keyword);
+				new_url = url_object.setUrlParam('keyword', keyword, new_url);
+			}
+			location.replace(new_url);
+		}
+	});
+	$('ul.pagination a[href]').each(function(){
+		$(this).attr('href', encodeURI($(this).attr('href')));
 	});
 	/*
 	 *  右侧详情
@@ -136,6 +158,7 @@ $(function(){
 	$('.table_length').find('select').on('change', function(){
 		var number = $(this).find('option:selected').text();
 		var url    = url_object.setUrlParam('_page_count', number);
+		url        = url_object.delUrlParam('p', url);
 		location.replace(url);
 	});
 	// 页面显示列表数下拉框默认值处理
@@ -767,6 +790,48 @@ $(function(){
 		}
 		eachAddReceivables();
 	});
+	$('#tableExcel .can-alter').on('dblclick', function(eve){
+		var html = $(this).find('.hide-form').html();
+		var cid  = $(this).parent('tr').attr('data-cid');
+		var self = $(this);
+		console.log(self.text());
+		$.fn.IcemanAlterProup({
+			html       :html,
+			requestType:'alter_directly',
+			cid        :cid,
+			eve        :eve,
+			success    :function(r){
+				console.log(r);
+				self.find('.need-alter').text(r);
+				$().IcemanMobilePrompt({
+					"message":"修改成功！"
+				})
+			}, error   :function(){
+				$().IcemanMobilePrompt({
+					"message":"修改失败，数据未修改！"
+				})
+			}
+		});
+	});
+	// 批量新增参会人员
+	$('.batch_create_btn').on('click', function(){
+		$('#batch_create_client').modal('show');
+	});
+	// 批量提交参会人员
+	$('.btn_save_batch').on('click', function(){
+		var formData = $('#batch_create_form').serialize();
+		console.log(formData);
+		ManageObject.object.loading.loading();
+		Common.ajax({
+			data    :formData,
+			callback:function(r){
+				ManageObject.object.loading.complete();
+				if(r.status){
+					location.href = r.__return__;
+				}
+			}
+		})
+	});
 });
 function eachAddReceivables(){
 	var arr = [];
@@ -864,10 +929,10 @@ function getIframeData(){
 				data    :{requestType:'save_excel_data', excel:newStr, table:newStr2, dbIndex:dbIndex},
 				async   :false,
 				callback:function(data){
+					ManageObject.object.loading.complete();
 					ManageObject.object.toast.onQuasarHidden(function(){
 						location.reload(true);
 					});
-					ManageObject.object.loading.complete();
 					ManageObject.object.toast.toast(data.message);
 				}
 			});

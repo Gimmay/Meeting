@@ -68,7 +68,8 @@
 												<ul class="group_ul">
 													<volist name="group" id="info">
 														<li data-id="<{$info.id}>" data-capacity="<{$info.capacity}>" class="<if condition='$info.id eq $_GET[gid]'>active</if>">
-															<a href="<{:U('Grouping/manage',['mid'=>$_GET[mid],'gid'=>$info['id'],'date'=>I('get.date'),'keyword'=>$info['keyword']])}>"><{$info.code}></a>
+															<a href="<{:U('Grouping/manage',['mid'=>$_GET[mid],'gid'=>$info['id'],'date'=>I('get.date'),'keyword'=>$info['keyword']])}>">
+																<{$info.code}>&nbsp;&nbsp;&nbsp; (<span style="color: #F8AC59;"><{$info.statistics.sign_count}></span>/<span style="color: #fb5050"><{$info.statistics.assigned_count}></span>/<span style="color: #000000;"><{$info.capacity}></span>)</a>
 															<if condition="$permission_list['GROUP.ALTER'] eq 1">
 																<span data-toggle="modal" data-target="#alter_group_modal" class="glyphicon glyphicon-edit alter_btn"></span>
 															</if>
@@ -382,7 +383,7 @@
 						<div class="form-group">
 							<label for="capacity_a" class="col-sm-2 control-label">可容纳人数：</label>
 							<div class="col-sm-10">
-								<input type="number" class="form-control capacity_a" name="capacity_a" id="capacity_a">
+								<input type="number" class="form-control capacity_a" name="capacity" id="capacity_a">
 							</div>
 						</div>
 						<div class="form-group">

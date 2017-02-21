@@ -35,6 +35,10 @@
 				'status'  => false,
 				'message' => "错误的日期类型"
 			];
+			if(stripos($message, 'Out of range value for column') !== false) return [
+				'status'  => false,
+				'message' => "数据超过指定范围"
+			];
 
 			return ['status' => true];
 		}

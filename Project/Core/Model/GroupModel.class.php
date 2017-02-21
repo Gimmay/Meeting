@@ -21,7 +21,7 @@
 		public function findRecord($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
-			if(isset($filter['name'])) $where['name'] = $filter['name'];
+			if(isset($filter['code'])) $where['code'] = $filter['code'];
 			if(isset($filter['leader'])) $where['leader'] = $filter['leader'];
 			if(isset($filter['leader_type'])) $where['leader_type'] = $filter['leader_type'];
 			if(isset($filter['deputy_leader_type'])) $where['deputy_leader_type'] = $filter['deputy_leader_type'];

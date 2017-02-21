@@ -41,14 +41,14 @@
 								<div class="nav_tab clearfix">
 									<if condition="$permission_list['RECEIVABLES.CREATE']">
 										<div class="nav_tab_li">
-											<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
+											<a href="<{:U('Receivables/createUnit', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款 (会所)</a>
 										</div>
 									</if>
-									<if condition="$permission_list['RECEIVABLES.VIEW']">
-										<div class="nav_tab_li active">
-											<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
-										</div>
-									</if>
+									<!--<if condition="$permission_list['RECEIVABLES.VIEW']">-->
+										<!--<div class="nav_tab_li active">-->
+											<!--<a href="<{:U('Receivables/manageUnit', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表 (会所)</a>-->
+										<!--</div>-->
+									<!--</if>-->
 									<if condition="$permission_list['RECEIVABLES.VIEW']">
 										<div class="nav_tab_li">
 											<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款详情</a>

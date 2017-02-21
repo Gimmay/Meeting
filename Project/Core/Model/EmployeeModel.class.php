@@ -32,9 +32,12 @@
 			if(isset($filter['code'])) $where['code'] = $filter['code'];
 			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['keyword']) && $filter['keyword']){
-				$condition['code']        = ['like', "%$filter[keyword]%"];
+				$condition['code'] = ['like', "%$filter[keyword]%"];
+				if(isset($filter['did_arr'])) $condition['did'] = ['in', $filter['did_arr']];
 				$condition['mobile']      = ['like', "%$filter[keyword]%"];
 				$condition['name']        = ['like', "%$filter[keyword]%"];
+				$condition['position']    = ['like', "%$filter[keyword]%"];
+				$condition['title']       = ['like', "%$filter[keyword]%"];
 				$condition['pinyin_code'] = ['like', "%$filter[keyword]%"];
 				$condition['_logic']      = 'or';
 				$where['_complex']        = $condition;

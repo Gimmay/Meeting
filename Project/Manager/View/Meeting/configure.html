@@ -96,6 +96,11 @@
 									<div class="form-group">
 										<label class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>参会人员重复字段：</label>
 										<div class="col-sm-11 clearfix">
+											<if condition="$meeting['config_create_client_unit']">
+												单位：<input type="checkbox" class="icheckBlue1" name="create_client_unit" placeholder="" checked>
+												<else/>单位：<input type="checkbox" class="icheckBlue1" name="create_client_unit" placeholder="">
+											</if>
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 											<if condition="$meeting['config_create_client_name']">
 												名称：<input type="checkbox" class="icheckBlue1" name="create_client_name" placeholder="" checked>
 												<else/>名称：<input type="checkbox" class="icheckBlue1" name="create_client_name" placeholder="">

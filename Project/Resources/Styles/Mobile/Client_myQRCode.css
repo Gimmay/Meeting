@@ -24,10 +24,10 @@
 .meeting_name{
 	width       : 100%;
 	position    : absolute;
-	top         : 5rem;
+	top         : 4rem;
 	text-align  : center;
 	color       : #FFFFFF;
-	font-size   : 0.7rem;
+	font-size   : 0.6rem;
 	font-family : '幼圆';
 }
 

@@ -20,7 +20,7 @@
 			$permission_model = M('system_permission');
 			$record           = $permission_model->select();
 			foreach($record as $val){
-				if(!$val['pinyin_code']) $permission_model->where(['id' => $val['id']])->save(['pinyin_code' => $str_obj->makePinyinCode($val['name'])]);
+				if(!$val['pinyin_code']) $permission_model->where(['id' => $val['id']])->save(['pinyin_code' => $str_obj->getPinyin($val['name']), true, '']);
 			}
 		}
 

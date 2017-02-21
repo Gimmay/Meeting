@@ -284,20 +284,21 @@
 				case 'alter':
 					if($this->permissionList['MEETING.ALTER']){
 						/** @var \Core\Model\MeetingModel $model */
-						$model          = D('Core/Meeting');
-						$qrcode_obj     = new QRCodeLogic();
-						$id             = I('get.mid', 0, 'int');
-						$url            = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myMeeting', [
+						$model                = D('Core/Meeting');
+						$qrcode_obj           = new QRCodeLogic();
+						$id                   = I('get.mid', 0, 'int');
+						$url                  = "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]".U('Mobile/Client/myMeeting', [
 								'mid'  => $id,
 								'sign' => 1
 							]);
-						$qrcode_file    = $qrcode_obj->make($url);
-						$remote_url     = '/'.trim($qrcode_file, './');
-						$data           = I('post.');
-						$data['brief']  = $_POST['brief'];
-						$data['qrcode'] = $remote_url;
-						$data['kpi']    = $data['kpi'] ? $data['kpi'] : null;
-						$result         = $model->alterMeeting(['id' => $id], $data);
+						$qrcode_file          = $qrcode_obj->make($url);
+						$remote_url           = '/'.trim($qrcode_file, './');
+						$data                 = I('post.');
+						$data['brief']        = $_POST['brief'];
+						$data['qrcode']       = $remote_url;
+						$data['kpi']          = $data['kpi'] ? $data['kpi'] : null;
+						$data['client_quota'] = $data['client_quota'] ? $data['client_quota'] : null;
+						$result               = $model->alterMeeting(['id' => $id], $data);
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
@@ -460,10 +461,15 @@
 					$employee_model = D('Core/Employee');
 					/** @var \Core\Model\DepartmentModel $department_model */
 					$department_model = D('Core/Department');
-					$employee_result  = $employee_model->findEmployee(2, [
+					$department_list  = $department_model->findDepartment(2, ['status' => 1, 'keyword' => $keyword]);
+					$dept_list        = [];
+					foreach($department_list as $dept) $dept_list[] = $dept['id'];
+					if($dept_list) $option = ['did_arr' => $dept_list];
+					else $option = [];
+					$employee_result = $employee_model->findEmployee(2, array_merge([
 						'status'  => 'not deleted',
-						'keyword' => $keyword
-					]);
+						'keyword' => $keyword,
+					], $option));
 					foreach($employee_result as $k => $v){
 						$department_result             = $department_model->findDepartment(1, ['id' => $v['did']]);
 						$employee_result[$k]['d_name'] = $department_result['name'];
@@ -630,7 +636,8 @@
 						// 32B183DB71AE312536C905678B9F33FADFE63BD9
 						$create_client_name           = $data['create_client_name'] ? 1 : 0;
 						$create_client_mobile         = $data['create_client_mobile'] ? 1 : 0;
-						$data['config_create_client'] = bindec("$create_client_name$create_client_mobile");
+						$create_client_unit           = $data['create_client_unit'] ? 1 : 0;
+						$data['config_create_client'] = bindec("$create_client_unit$create_client_name$create_client_mobile");
 						$result                       = $model->alterMeeting(['id' => I('get.mid', 0, 'int')], $data);
 
 						return array_merge($result, ['__ajax__' => false]);
@@ -677,10 +684,12 @@
 						'action'   => '上传收据LOGO',
 						'type'     => 'create'
 					]);
+					$image_url = '';
 					if($result['status']){
 						$mid = I('get.mid', 0, 'int');
 						/** @var \Core\Model\MeetingModel $meeting_model */
 						$meeting_model = D('Core/Meeting');
+						$image_url     = $result['data']['filePath'];
 						$result        = $meeting_model->alterMeeting(['id' => $mid], ['receipt_logo' => $result['data']['filePath']]);
 						$log_logic     = new LogLogic();
 						$log_logic->create([
@@ -692,7 +701,7 @@
 						]);
 					}
 
-					return array_merge($result, ['__ajax__' => true]);
+					return array_merge($result, ['__ajax__' => true, 'imageUrl' => $image_url]);
 				break;
 				default:
 					return [

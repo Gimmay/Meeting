@@ -12,6 +12,8 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Iceman.Prompt/jQuery-MobilePrompt.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Iceman.AlterPopup/jquery-alterPopup.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/print/print.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
@@ -24,6 +26,8 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Iceman.Prompt/jquery-MobilePrompt.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Iceman.AlterPopup/jquery-alterPopup.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
@@ -65,6 +69,11 @@
 											</a>
 										</div>
 									</if>
+									<div class="function_btn bg-success batch_create_btn" style="width: 120px">
+										<a href="javascript:void(0)"> <i></i>
+											<p>批量新建参会人员</p>
+										</a>
+									</div>
 									<if condition="$permission_list['CLIENT.IMPORT-EXCEL'] eq 1">
 										<!-- 导入EXCEL -->
 										<div class="function_btn bg-28B778 import_excel_btn" style="width: 110px;">
@@ -137,12 +146,10 @@
 											<p>分配签到点</p>
 										</div>
 									</if>
-									<if condition="$permission_list['CLIENT.ASSIGN-SIGN_PLACE'] eq 1">
-										<div class="function_btn bg-info batch_group_btn">
-											<i></i>
-											<p>批量分组</p>
-										</div>
-									</if>
+									<div class="function_btn bg-info batch_group_btn">
+										<i></i>
+										<p>批量分组</p>
+									</div>
 									<div class="function_btn bg-info batch_badge">
 										<i></i>
 										<p>批量打印</p>
@@ -235,67 +242,113 @@
 													<th class="hide"><{$column.name}></th>
 												</if>
 											</volist>
-											<th>组别</th>
 											<th>审核状态 / 签到状态 / 领取奖品</th>
+											<th>创建时间</th>
 											<th>操作</th>
 											<th>详情</th>
 										</tr>
 									</thead>
 									<tbody>
 										<volist name="list" id="single" key="index">
-											<tr>
+											<tr data-cid="<{$single.cid}>">
 												<td class="check_item">
 													<input type="checkbox" class="icheck" value="<{$single.cid}>" data-join-value="<{$single.id}>" placeholder="">
 												</td>
-												<td><{$index}></td>
+												<if condition="$single['creatime'] lt time()-300">
+													<td><{$index}></td>
+													<else/><td class="new"><{$index}></td>
+												</if>
 												<volist name="column_status" id="column">
 													<if condition="$column['view'] eq 1">
-														<td>
-															<switch name="column.code">
-																<case value="CLIENT-GENDER">
-																	<switch name="single.gender">
-																		<case value="0">未指定</case>
-																		<case value="1">男</case>
-																		<case value="2">女</case>
-																	</switch>
-																</case>
-																<case value="CLIENT-IS_NEW">
-																	<switch name="single.is_new">
-																		<case value="9"></case>
-																		<case value="1">新客</case>
-																		<case value="0">老客</case>
-																	</switch>
-																</case>
-																<default/>
-																<{$single[$column['form']]}>
-															</switch>
+														<td class="can-alter">
+															<span class="need-alter">
+																<switch name="column.code">
+																	<case value="CLIENT-GENDER">
+																		<switch name="single.gender">
+																			<case value="0">未指定</case>
+																			<case value="1">男</case>
+																			<case value="2">女</case>
+																		</switch>
+																	</case>
+																	<case value="CLIENT-IS_NEW">
+																		<switch name="single.is_new">
+																			<case value="9"></case>
+																			<case value="1">新客</case>
+																			<case value="0">老客</case>
+																		</switch>
+																	</case>
+																	<default/>
+																	<{$single[$column['form']]}>
+																</switch>
+															</span>
+															<span class="hide-form" style="display: none;">
+																<switch name="column.code">
+																	<case value="CLIENT-GENDER">
+																		<select class="sub_val form-control input-sm" name="gender">
+																			<option value="0">未指定</option>
+																			<option value="1">男</option>
+																			<option value="2">女</option>
+																		</select>
+																	</case>
+																	<case value="CLIENT-IS_NEW">
+																		<select class="sub_val form-control input-sm" name="is_new">
+																			<option value="9"></option>
+																			<option value="1">新客</option>
+																			<option value="0">老客</option>
+																		</select>
+																	</case>
+																	<default/>
+																	<input class="sub_val form-control input-sm" name="<{$column.form}>" value="<{$single[$column['form']]}>">
+																</switch>
+																<input type="hidden" name="_column" value="<{$column.form}>">
+															</span>
 														</td>
 														<else/>
 														<td class="hide">
-															<switch name="column.code">
-																<case value="CLIENT-GENDER">
-																	<switch name="single.gender">
-																		<case value="0">未指定</case>
-																		<case value="1">男</case>
-																		<case value="2">女</case>
-																	</switch>
-																</case>
-																<case value="CLIENT-IS_NEW">
-																	<switch name="single.is_new">
-																		<case value="9"></case>
-																		<case value="1">新客</case>
-																		<case value="0">老客</case>
-																	</switch>
-																</case>
-																<default/>
-																<{$single[$column['form']]}>
-															</switch>
+															<span class="need-alter">
+																<switch name="column.code">
+																	<case value="CLIENT-GENDER">
+																		<switch name="single.gender">
+																			<case value="0">未指定</case>
+																			<case value="1">男</case>
+																			<case value="2">女</case>
+																		</switch>
+																	</case>
+																	<case value="CLIENT-IS_NEW">
+																		<switch name="single.is_new">
+																			<case value="9"></case>
+																			<case value="1">新客</case>
+																			<case value="0">老客</case>
+																		</switch>
+																	</case>
+																	<default/>
+																	<{$single[$column['form']]}>
+																</switch>
+															</span>
+															<span class="hide-form" style="display: none;">
+																<switch name="column.code">
+																	<case value="CLIENT-GENDER">
+																		<select class="sub_val form-control input-sm" name="gender">
+																			<option value="0">未指定</option>
+																			<option value="1">男</option>
+																			<option value="2">女</option>
+																		</select>
+																	</case>
+																	<case value="CLIENT-IS_NEW">
+																		<select class="sub_val form-control input-sm" name="is_new">
+																			<option value="9"></option>
+																			<option value="1">新客</option>
+																			<option value="0">老客</option>
+																		</select>
+																	</case>
+																	<default/>
+																	<input class="sub_val form-control input-sm" name="<{$column.form}>" value="<{$single[$column['form']]}>">
+																</switch>
+																<input type="hidden" name="_column" value="<{$column.form}>">
+															</span>
 														</td>
 													</if>
 												</volist>
-												<td>
-													<{$single.group}>
-												</td>
 												<td>
 													<switch name="single.review_status">
 														<case value="0">未审核</case>
@@ -313,6 +366,9 @@
 														<case value="0">未领取奖品</case>
 														<case value="1"><span class="color-green">已领取奖品</span></case>
 													</switch>
+												</td>
+												<td>
+													<{:date('Y-m-d H:i:s', $single['jcreatime'])}>
 												</td>
 												<td>
 													<div class="btn-group" data-id="<{$single.cid}>" data-join-id="<{$single.id}>">
@@ -334,7 +390,7 @@
 															</case>
 														</switch>
 														<if condition="$single['review_status'] eq 1 and $permission_list['CLIENT.SEND-INVITATION'] and $single['status'] eq 1">
-														<button type="button" class="btn btn-default btn-xs send_message_btn">发送邀请</button>
+															<button type="button" class="btn btn-default btn-xs send_message_btn">发送邀请</button>
 														</if>
 														<!--<switch name="single.review_status">
 															<case value="0">
@@ -604,29 +660,37 @@
 					<input type="hidden" name="requestType" value="multi_alter_column">
 					<input type="hidden" name="cid" id="">
 					<div class="modal-body">
-						<volist name="column_status" id="single">
-							<if condition="in_array($single['code'], ['CLIENT-COLUMN1', 'CLIENT-COLUMN2', 'CLIENT-COLUMN3', 'CLIENT-COLUMN4', 'CLIENT-COLUMN5', 'CLIENT-COLUMN6', 'CLIENT-COLUMN7', 'CLIENT-COLUMN8']) and $single['view'] eq 1">
-								<eq name="single.must" value="1">
-									<div class="form-group">
-										<label for="<{$single.form}>" class="col-sm-2 control-label  color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
-										<div class="col-sm-10">
-											<input data-must="1" data-type="value" type="hidden">
-											<!--suppress XmlDuplicatedId -->
-											<input class="form-control <{$single.form}>" name="<{$single.form}>" id="<{$single.form}>" type="text">
-										</div>
-									</div>
-								</eq>
-								<neq name="single.must" value="1">
-									<div class="form-group">
-										<label for="<{$single.form}>" class="col-sm-2 control-label"><{$single.name}>：</label>
-										<div class="col-sm-10">
-											<!--suppress XmlDuplicatedId -->
-											<input class="form-control <{$single.form}>" name="<{$single.form}>" id="<{$single.form}>" type="text">
-										</div>
-									</div>
-								</neq>
-							</if>
-						</volist>
+						<div class="form-group">
+							<label for="column6" class="col-sm-2 control-label color-red">房间：</label>
+							<div class="col-sm-10">
+								<input data-must="1" data-type="value" type="hidden">
+								<!--suppress XmlDuplicatedId -->
+								<input class="form-control <{$single.form}>" name="column6" id="column6" type="text">
+							</div>
+						</div>
+						<!--<volist name="column_status" id="single">-->
+						<!--<if condition="in_array($single['code'], ['CLIENT-COLUMN1', 'CLIENT-COLUMN2', 'CLIENT-COLUMN3', 'CLIENT-COLUMN4', 'CLIENT-COLUMN5', 'CLIENT-COLUMN6', 'CLIENT-COLUMN7', 'CLIENT-COLUMN8']) and $single['view'] eq 1">-->
+						<!--<eq name="single.must" value="1">-->
+						<!--<div class="form-group">-->
+						<!--<label for="<{$single.form}>" class="col-sm-2 control-label  color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>-->
+						<!--<div class="col-sm-10">-->
+						<!--<input data-must="1" data-type="value" type="hidden">-->
+						<!--&lt;!&ndash;suppress XmlDuplicatedId &ndash;&gt;-->
+						<!--<input class="form-control <{$single.form}>" name="<{$single.form}>" id="<{$single.form}>" type="text">-->
+						<!--</div>-->
+						<!--</div>-->
+						<!--</eq>-->
+						<!--<neq name="single.must" value="1">-->
+						<!--<div class="form-group">-->
+						<!--<label for="<{$single.form}>" class="col-sm-2 control-label"><{$single.name}>：</label>-->
+						<!--<div class="col-sm-10">-->
+						<!--&lt;!&ndash;suppress XmlDuplicatedId &ndash;&gt;-->
+						<!--<input class="form-control <{$single.form}>" name="<{$single.form}>" id="<{$single.form}>" type="text">-->
+						<!--</div>-->
+						<!--</div>-->
+						<!--</neq>-->
+						<!--</if>-->
+						<!--</volist>-->
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -890,6 +954,230 @@
 			</div>
 		</div>
 	</if>
+	<!-- 批量新增参会人员 -->
+	<div class="modal fade" id="batch_create_client" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title">批量新增参会人员</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="" id="batch_create_form">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="unit" class="col-sm-2 control-label ">人数：</label>
+							<div class="col-sm-10">
+								<input type="number" name="number" class="form-control" id="number">
+							</div>
+						</div>
+						<if condition="$column_status['CLIENT-UNIT']['view'] eq 1">
+							<div class="form-group">
+								<label for="unit" class="col-sm-2 control-label ">单位名称：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-UNIT']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<input type="text" class="form-control unit" name="unit" id="unit">
+								</div>
+							</div>
+						</if>
+						<if condition="$column_status['CLIENT-TEAM']['view'] eq 1">
+							<div class="form-group">
+								<label for="team" class="col-sm-2 control-label">团队：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-TEAM']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<input type="text" class="form-control team" name="team" id="team">
+								</div>
+							</div>
+						</if>
+						<if condition="$column_status['CLIENT-DEVELOP_CONSULTANT']['view'] eq 1">
+							<div class="form-group">
+								<label for="develop_consultant" class="col-sm-2 control-label">开拓顾问：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-DEVELOP_CONSULTANT']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<div id="develop_consultant"></div>
+								</div>
+							</div>
+						</if>
+						<if condition="$column_status['CLIENT-SERVICE_CONSULTANT']['view'] eq 1">
+							<div class="form-group">
+								<label for="service_consultant" class="col-sm-2 control-label">服务顾问：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-SERVICE_CONSULTANT']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<div id="service_consultant"></div>
+								</div>
+							</div>
+						</if>
+						<if condition="$column_status['CLIENT-TYPE']['view'] eq 1">
+							<div class="form-group">
+								<label for="type" class="col-sm-2 control-label">客户类型：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-TYPE']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<select id="type" name="type" class="form-control">
+										<option value=""></option>
+										<option value="终端">终端</option>
+										<option value="陪同">陪同</option>
+										<option value="会所员工">会所员工</option>
+										<option value="内部员工">内部员工</option>
+										<option value="嘉宾">嘉宾</option>
+										<option value="老总">老总</option>
+										<option value="会所">会所</option>
+										<option value="其他">其他</option>
+									</select>
+								</div>
+							</div>
+						</if>
+						<if condition="$column_status['CLIENT-IS_NEW']['view'] eq 1">
+							<div class="form-group">
+								<label for="is_new" class="col-sm-2 control-label">是否新客：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-IS_NEW']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<select id="is_new" name="is_new" class="form-control">
+										<option value="9"></option>
+										<option value="1">新客</option>
+										<option value="0">老客</option>
+									</select>
+								</div>
+							</div>
+						</if>
+						<if condition="$column_status['CLIENT-COLUMN1']['view'] eq 1">
+							<div class="form-group">
+								<label for="column1" class="col-sm-2 control-label"><{$column_status['CLIENT-COLUMN1']['name']}>：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-COLUMN1']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<input type="text" class="form-control column1" name="column1" id="column1">
+								</div>
+							</div>
+						</if>
+						<if condition="$column_status['CLIENT-COLUMN2']['view'] eq 1">
+							<div class="form-group">
+								<label for="column2" class="col-sm-2 control-label"><{$column_status['CLIENT-COLUMN2']['name']}>：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-COLUMN2']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<input type="text" class="form-control column2" name="column2" id="column2">
+								</div>
+							</div>
+						</if>
+						<if condition="$column_status['CLIENT-COLUMN3']['view'] eq 1">
+							<div class="form-group">
+								<label for="column3" class="col-sm-2 control-label"><{$column_status['CLIENT-COLUMN3']['name']}>：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-COLUMN3']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<input type="text" class="form-control column3" name="column3" id="column3">
+								</div>
+							</div>
+						</if>
+						<if condition="$column_status['CLIENT-COLUMN4']['view'] eq 1">
+							<div class="form-group">
+								<label for="column4" class="col-sm-2 control-label"><{$column_status['CLIENT-COLUMN4']['name']}>：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-COLUMN4']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<input type="text" class="form-control column4" name="column4" id="column4">
+								</div>
+							</div>
+						</if>
+						<if condition="$column_status['CLIENT-COLUMN5']['view'] eq 1">
+							<div class="form-group">
+								<label for="column5" class="col-sm-2 control-label"><{$column_status['CLIENT-COLUMN5']['name']}>：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-COLUMN5']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<input type="text" class="form-control column5" name="column5" id="column5">
+								</div>
+							</div>
+						</if>
+						<if condition="$column_status['CLIENT-COLUMN6']['view'] eq 1">
+							<div class="form-group">
+								<label for="column6" class="col-sm-2 control-label"><{$column_status['CLIENT-COLUMN6']['name']}>：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-COLUMN6']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<input type="text" class="form-control column6" name="column6" id="column6">
+								</div>
+							</div>
+						</if>
+						<if condition="$column_status['CLIENT-COLUMN7']['view'] eq 1">
+							<div class="form-group">
+								<label for="column7" class="col-sm-2 control-label"><{$column_status['CLIENT-COLUMN7']['name']}>：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-COLUMN7']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<input type="text" class="form-control column7" name="column7" id="column7">
+								</div>
+							</div>
+						</if>
+
+						<if condition="$column_status['CLIENT-COLUMN8']['view'] eq 1">
+							<div class="form-group">
+								<label for="column8" class="col-sm-2 control-label"><{$column_status['CLIENT-COLUMN8']['name']}>：</label>
+								<div class="col-sm-10">
+									<if condition="$column_status['CLIENT-COLUMN8']['must'] eq 1">
+										<input type="hidden" data-must="1" data-type="value">
+										<else/>
+										<input type="hidden" data-must="0">
+									</if>
+									<input type="text" class="form-control column8" name="column8" id="column8">
+								</div>
+							</div>
+						</if>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary btn_save_batch">确定</button>
+						<input type="hidden" name="requestType" value="multi_create">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 	<script>
 		var ManageObject = {
 			object:{
@@ -926,6 +1214,28 @@
 					data        :'<{:json_encode($employee_list)}>',
 					idInput     :'selected_payeeName',
 					idHidden    :'selected_payeeName_form',
+					placeholder :'',
+					defaultValue:'<{$employee_info[id]}>',
+					defaultHtml :'<{$employee_info[code]}>'+' - '+'<{$employee_info[name]}>',
+					hasEmptyItem:false
+				}),
+				developConsultant           :$('#develop_consultant').QuasarSelect({
+					name        :'develop_consultant',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee_list)}>',
+					idInput     :'selected_develop_consultant',
+					idHidden    :'selected_develop_consultant_form',
+					placeholder :'',
+					defaultValue:'<{$employee_info[id]}>',
+					defaultHtml :'<{$employee_info[code]}>'+' - '+'<{$employee_info[name]}>',
+					hasEmptyItem:false
+				}),
+				serviceConsultant           :$('#service_consultant').QuasarSelect({
+					name        :'service_consultant',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee_list)}>',
+					idInput     :'selected_service_consultant',
+					idHidden    :'selected_service_consultant_form',
 					placeholder :'',
 					defaultValue:'<{$employee_info[id]}>',
 					defaultHtml :'<{$employee_info[code]}>'+' - '+'<{$employee_info[name]}>',

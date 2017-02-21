@@ -129,6 +129,22 @@
 	vertical-align : top;
 }
 
+.new{
+	position : relative;
+	color : red;
+}
+
+.new:after{
+	position   : absolute;
+	content    : '';
+	width      : 20px;
+	height     : 20px;
+	top        : 0;
+	right      : 0;
+	background : url("../../Images/Common/icon-news.png") no-repeat;
+	background-size: contain;
+}
+
 
 
 

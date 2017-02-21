@@ -17,8 +17,8 @@
 			parent::_initialize();
 		}
 
-		public function isExist($mobile, $name){
-			return $this->where(['mobile' => $mobile, 'name' => $name])->find();
+		public function isExist($where){
+			return $this->where($where)->find();
 		}
 
 		public function createClient($data){
@@ -44,7 +44,7 @@
 		public function createMultiClient($data){
 			try{
 				$result = $this->addAll($data);
-				if($result) return ['status' => true, 'message' => '创建成功'];
+				if($result) return ['status' => true, 'message' => '创建成功', 'id' => $result];
 				else return ['status' => false, 'message' => '创建失败'];
 			}catch(Exception $error){
 				$message = $error->getMessage();
@@ -60,7 +60,71 @@
 			if(isset($filter['name'])) $where['name'] = $filter['name'];
 			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
 			if(isset($filter['type'])){
-				if($filter['type'] == 'not employee') $where['type'] = ['neq', '内部员工'];
+				if($filter['type'] == 'not employee') $where['type'] = [['neq', '内部员工'], ['neq', '会所'], 'and'];
+				else $where['type'] = [['eq', $filter['type']], ['neq', '会所'], 'and'];
+			}
+			else $where['type'] = ['neq', '会所'];
+			if(isset($filter['status'])){
+				$status = strtolower($filter['status']);
+				if($status == 'not deleted') $where['status'] = ['neq', 2];
+				else $where['status'] = $filter['status'];
+			};
+			if(isset($filter['keyword']) && $filter['keyword']){
+				$condition['mobile']           = ['like', "%$filter[keyword]%"];
+				$condition['name']             = ['like', "%$filter[keyword]%"];
+				$condition['type']             = ['like', "%$filter[keyword]%"];
+				$condition['pinyin_code']      = ['like', "%$filter[keyword]%"];
+				$condition['unit_pinyin_code'] = ['like', "%$filter[keyword]%"];
+				$condition['unit']             = ['like', "%$filter[keyword]%"];
+				$condition['_logic']           = 'or';
+				$where['_complex']             = $condition;
+			}
+			switch((int)$type){
+				case 0: // count
+					if($where == []){
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->count();
+						else $result = $this->count();
+					}
+					else{
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->count();
+						else $result = $this->where($where)->count();
+					}
+				break;
+				case 1: // find
+					if($where == []){
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->find();
+						else $result = $this->find();
+					}
+					else{
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->find();
+						else $result = $this->where($where)->find();
+					}
+				break;
+				case 2: // select
+				default:
+					if(!isset($filter['_order'])) $filter['_order'] = 'creatime desc';
+					if($where == []){
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->order($filter['_order'])->select();
+						else $result = $this->order($filter['_order'])->select();
+					}
+					else{
+						if(isset($filter['_limit'])) $result = $this->limit($filter['_limit'])->where($where)->order($filter['_order'])->select();
+						else $result = $this->where($where)->order($filter['_order'])->select();
+					}
+				break;
+			}
+
+			return $result;
+		}
+
+		public function findClientAll($type = 2, $filter = []){
+			$where = [];
+			if(isset($filter['id'])) $where['id'] = $filter['id'];
+			if(isset($filter['isNew'])) $where['is_new'] = $filter['isNew'];
+			if(isset($filter['name'])) $where['name'] = $filter['name'];
+			if(isset($filter['mobile'])) $where['mobile'] = $filter['mobile'];
+			if(isset($filter['type'])){
+				if($filter['type'] == 'not employee') $where['type'] = '内部员工';
 				else $where['type'] = $filter['type'];
 			};
 			if(isset($filter['status'])){
@@ -150,5 +214,17 @@
 
 		public function dropClient($id){
 			return $this->execute("call delete_client($id)");
+		}
+
+		public function lock($type = 'read'){
+			$type = strtolower($type);
+			if($type == 'write') $type = 'write';
+			else $type = 'read';
+
+			return $this->execute("lock tables user_client $type");
+		}
+
+		public function unlock(){
+			return $this->execute("unlock tables");
 		}
 	}

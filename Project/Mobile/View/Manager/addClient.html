@@ -58,7 +58,7 @@
 												<else/>
 												<input type="hidden" data-must="0">
 											</if>
-											<input type="text" name="name">
+											<input type="text" name="unit">
 										</div>
 									</div>
 								</li>
@@ -77,9 +77,11 @@
 												<option value=""></option>
 												<option value="终端">终端</option>
 												<option value="陪同">陪同</option>
+												<option value="会所员工">会所员工</option>
 												<option value="内部员工">内部员工</option>
 												<option value="嘉宾">嘉宾</option>
 												<option value="老总">老总</option>
+												<!--<option value="会所">会所</option>-->
 												<option value="其他">其他</option>
 											</select>
 										</div>
@@ -134,7 +136,7 @@
 												<else/>
 												<input type="hidden" data-must="0">
 											</if>
-											<input type="text" class="form-control" name="birthday" id="birthday">
+											<input type="date" class="form-control" name="birthday" id="birthday">
 										</div>
 									</div>
 								</li>
@@ -418,7 +420,7 @@
 									</div>
 								</li>
 							</if>
-
+							<li class="info_li"></li>
 							<input type="hidden" name="requestType" value="create_client">
 							<input type="hidden" name="mid" value="<{:I('get.mid', 0, 'int')}>">
 						</ul>

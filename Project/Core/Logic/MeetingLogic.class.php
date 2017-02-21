@@ -50,6 +50,7 @@
 			$config_create_client                    = decbin($meeting['config_create_client']);
 			$config_create_client                    = sprintf('%02d', $config_create_client);
 			$config_create_client                    = strrev($config_create_client);
+			$meeting['config_create_client_unit']   = $config_create_client[2];
 			$meeting['config_create_client_name']   = $config_create_client[1];
 			$meeting['config_create_client_mobile'] = $config_create_client[0];
 
@@ -59,6 +60,7 @@
 				'wechat'               => $meeting['config_wechat'],
 				'create_client_name'   => $meeting['config_create_client_name'],
 				'create_client_mobile' => $meeting['config_create_client_mobile'],
+				'create_client_unit' => $meeting['config_create_client_unit'],
 			];
 		}
 

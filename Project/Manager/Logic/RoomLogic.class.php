@@ -210,7 +210,7 @@
 					$assign_room_model = D('Core/AssignRoom');
 					/** @var \Core\Model\JoinModel $join_model */
 					$join_model         = D('Core/Join');
-					$assign_room_result = $assign_room_model->findRecord(2, ['rid' => I('post.id', '')]);
+					$assign_room_result = $assign_room_model->findRecord(2, ['rid' => I('post.id', 0, 'int')]);
 					$join               = [];
 					foreach($assign_room_result as $k1 => $v1){
 						$leave_time       = $assign_room_result[$k1]['leave_time'];
@@ -275,24 +275,24 @@
 				case 'room_change':
 					if($this->permissionList['ROOM.ASSIGN']){
 						C('TOKEN_ON', false);
-						$cid  = I('post.cid', '');    //当前选择换房时用户cid
-						$orid = I('post.orid', '');        //之前$ocid住的房间
-						$ocid = I('post.ocid', '');     //选择的那个用户的cid
-						$rid  = I('post.rid', '');        //之前$cid住的房间
+						$ocid = I('post.cid', '');    // 换房的客户
+						$orid = I('post.orid', '');        // 换房的房间
+						$cid  = I('post.ocid', '');     // 被换房的客户
+						$rid  = I('post.rid', '');        // 被换房的房间
 						$mid  = I('get.mid', 0, 'int');
 						/** @var \Core\Model\AssignRoomModel $assign_room_model */
 						$assign_room_model  = D('Core/AssignRoom');
 						$assign_room_result = $assign_room_model->findRecord(1, [
 							'mid'              => $mid,
 							'cid'              => $ocid,
-							'rid'              => $rid,
+							'rid'              => $orid,
 							'occupancy_status' => 1
 						]); //查出选择的用户那个房间信息.
 						$assign_room_model->alterRecord(['id' => $assign_room_result['id']], ['occupancy_status' => 0]);//把这个用户的住房状态改为已退房
 						$assign_room_model->createRecord([
 							'mid'       => $mid,
 							'cid'       => $ocid,
-							'rid'       => $orid,
+							'rid'       => $rid,
 							'come_time' => time(),
 							'creatime'  => time(),
 							'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
@@ -300,14 +300,14 @@
 						$assign_room_results = $assign_room_model->findRecord(1, [
 							'mid'              => $mid,
 							'cid'              => $cid,
-							'rid'              => $orid,
+							'rid'              => $rid,
 							'occupancy_status' => 1
 						]); //查出选择的用户那个房间信息.
 						$assign_room_model->alterRecord(['id' => $assign_room_results['id']], ['occupancy_status' => 0]);//把这个用户的住房状态改为已退房
 						$assign_room_alter = $assign_room_model->createRecord([
 							'mid'       => $mid,
 							'cid'       => $cid,
-							'rid'       => $rid,
+							'rid'       => $orid,
 							'come_time' => time(),
 							'creatime'  => time(),
 							'creator'   => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
@@ -511,6 +511,7 @@
 					if($v['check_name'] == '') continue;
 					$new_list[] = $v;
 				}
+
 				return $new_list;
 			}
 			else{

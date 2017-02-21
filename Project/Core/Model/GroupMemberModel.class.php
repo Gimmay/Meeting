@@ -24,7 +24,7 @@
 			if(isset($filter['name'])) $where['name'] = $filter['name'];
 			if(isset($filter['gid'])) $where['gid'] = $filter['gid'];
 			if(isset($filter['cid'])) $where['cid'] = $filter['cid'];
-			if(isset($filter['mid'])) $where['main.mid'] = $filter['mid'];
+			if(isset($filter['mid'])) $where['sub.mid'] = $filter['mid'];
 			if(isset($filter['time'])) $where['time'] = $filter['time'];
 			if(isset($filter['status'])){
 				$status = strtolower($filter['status']);

@@ -19,6 +19,8 @@
 			['value' => 6, 'name' => '课程费'],
 			['value' => 7, 'name' => '产品费'],
 			['value' => 8, 'name' => '场餐费'],
+			['value' => 9, 'name' => '方案费'],
+			['value' => 10, 'name' => '打板款项'],
 		];
 		const RECEIVABLES_SOURCE_TYPE = [
 			['value' => 1, 'name' => '会前收款'],

@@ -10,6 +10,7 @@
 	use Core\Logic\MeetingLogic;
 	use Core\Logic\PermissionLogic;
 	use Mobile\Logic\ClientLogic;
+	use Mobile\Logic\MobileLogic;
 
 	class ClientController extends MobileController{
 		protected $wechatID  = 0;
@@ -211,6 +212,108 @@
 			$this->assign('can_sign', (I('get.sign', 0, 'int') == 1 && $sign_start_time<=$cur_time && $sign_end_time>=$cur_time && $join_record['review_status'] && $join_record['sign_status'] != 1) ? 1 : 0);
 			$this->assign('info', $join_record);
 			$this->assign('meeting', $meeting);
+			$this->display();
+		}
+
+
+		public function report2(){
+			$default_order_column = 'unit';
+			$default_order_method = 'asc';
+			$keyword = I('get.keyword', '');
+			$area = I('get.area', '');
+			$no = I('get.no', '');
+			$order_column = I('get._orderColumn', $default_order_column);
+			$order_method = I('get._orderMethod', $default_order_method);
+			$mid = I('get.mid', 0, 'int');
+			$mobile_logic = new MobileLogic();
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			$report2 = $mobile_logic->getReport2($mid, $order_column, $order_method, $area, $no, $keyword);
+			$report2_area = $mobile_logic->getReport2Area($mid);
+			$report2_no = $mobile_logic->getReport2No($mid);
+			$report2_statistics = $mobile_logic->getReport2Statistics($mid, $area, $no, $keyword);
+			$meeting = $meeting_model->findMeeting(1, ['id'=>$mid]);
+			$this->assign('report', $report2);
+			$this->assign('area_list', $report2_area);
+			$this->assign('no_list', $report2_no);
+			$this->assign('statistics', $report2_statistics);
+			$this->assign('meeting', $meeting);
+			$this->assign('default_order_column', isset($_GET['_orderColumn'])?$_GET['_orderColumn']:$default_order_column);
+			$this->assign('default_order_method', isset($_GET['_orderMethod'])?$_GET['_orderMethod']:$default_order_method);
+			$this->display();
+		}
+
+		public function report2Client(){
+			$default_order_column = 'unit';
+			$default_order_method = 'asc';
+			$unit = I('get.unit', '');
+			$order_column = I('get._orderColumn', $default_order_column);
+			$order_method = I('get._orderMethod', $default_order_method);
+			$mid = I('get.mid', 0, 'int');
+			$mobile_logic = new MobileLogic();
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			$meeting = $meeting_model->findMeeting(1, ['id'=>$mid]);
+			$report2 = $mobile_logic->getReport2Client($mid, $order_column, $order_method, $unit);
+			$report2_statistics = $mobile_logic->getReport2ClientStatistics($mid, $unit);
+			$this->assign('report', $report2);
+			$this->assign('statistics', $report2_statistics);
+			$this->assign('meeting', $meeting);
+			$this->display();
+		}
+		
+		public function report2Group(){
+			$mergeRecord = function($list){
+				$new_list = [];
+				foreach($list as $key => $val){
+					if(!isset($new_list[$val['gid']])) $new_list[$val['gid']] = ['list'=>[]];
+					$new_list[$val['gid']]['list'][] = $val;
+					$new_list[$val['gid']]['group_name'] = $val['code'];
+				}
+				return $new_list;
+			};
+			$mobile_logic = new MobileLogic();
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			$keyword = I('get.keyword','');
+			$mid = I('get.mid', 0, 'int');
+			$list = $mobile_logic->getReport2Group($mid, $keyword);
+			$meeting = $meeting_model->findMeeting(1, ['id'=>$mid]);
+			$list = $mergeRecord($list);
+			$this->assign('list', $list);
+			$this->assign('meeting', $meeting);
+			$this->display();
+		}
+		
+		public function report2Receivables(){
+			$mid = I('get.mid', 0, 'int');
+			$order_column = I('get._orderColumn', 'price');
+			$order_method = I('get._orderMethod', 'desc');
+			$result = M()->query("select * from (select *,
+(select SUM(workflow_receivables_option.price)
+from workflow_coupon_item
+join workflow_receivables on workflow_receivables.mid = workflow_coupon_item.mid
+join workflow_receivables_option on workflow_receivables_option.rid = workflow_receivables.id
+where workflow_coupon_item.coupon_id = project_list.id and workflow_receivables.mid = $mid and workflow_receivables.status = 1 and workflow_coupon_item.id like workflow_receivables.coupon_ids) price,
+(select count(*)
+from workflow_coupon_item
+join workflow_receivables on workflow_receivables.mid = workflow_coupon_item.mid
+join workflow_receivables_option on workflow_receivables_option.rid = workflow_receivables.id
+where workflow_coupon_item.coupon_id = project_list.id and workflow_receivables.mid = $mid and workflow_receivables.status = 1 and workflow_coupon_item.id like workflow_receivables.coupon_ids) total
+from (select
+workflow_coupon.id, workflow_coupon.name
+from workflow_coupon
+where workflow_coupon.mid = $mid and workflow_coupon.status = 1 
+ -- and workflow_coupon.id in (152,153,150,151,157,154,155)
+) project_list) tt
+order by $order_column $order_method");
+			/** @var \Core\Model\MeetingModel $meeting_model */
+			$meeting_model = D('Core/Meeting');
+			$meeting = $meeting_model->findMeeting(1, ['id'=>$mid]);
+			$this->assign('meeting', $meeting);
+			$this->assign('list', $result);
+			$this->assign('default_order_column', $order_column);
+			$this->assign('default_order_method', $order_method);
 			$this->display();
 		}
 	}

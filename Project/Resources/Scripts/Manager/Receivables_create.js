@@ -52,7 +52,7 @@ var ScriptObject = {
 					str += self.optionTemp.replace('$val', value.id).replace('$name', value.name)
 							   .replace('$price', value.price);
 				});
-				var opts = '<option value="0">代金券类型</option>';
+				var opts = '<option value="0">-----代金券类型-----</option>';
 				$('.coupon .rece_new').find('.name').html(opts+str);
 				$('.coupon .rece_new .name').on('change', function(){
 					var id      = $(this).find('option:selected').val();
@@ -212,8 +212,8 @@ $(function(){
 		var setSelectList = function(temp){
 			var pay_method_source_data  = JSON.parse($('#pay_method_source_data').text());
 			var pos_machine_source_data = JSON.parse($('#pos_machine_source_data').text());
-			var html_pos_machine        = '<option value="0">POS机</option>';
-			var html_pay_method         = '<option value="0">支付方式</option>';
+			var html_pos_machine        = '<option value="0">-----POS机-----</option>';
+			var html_pay_method         = '<option value="0">-----支付方式-----</option>';
 			var i;
 			for(i = 0; i<pos_machine_source_data.length; i++){
 				html_pos_machine += '<option value="'+pos_machine_source_data[i]['id']+'">'+pos_machine_source_data[i]['name']+'</option>';
@@ -264,8 +264,8 @@ $(function(){
 		var setSelectList = function(temp){
 			var pay_method_source_data  = JSON.parse($('#pay_method_source_data').text());
 			var pos_machine_source_data = JSON.parse($('#pos_machine_source_data').text());
-			var html_pos_machine        = '<option value="0">POS机</option>';
-			var html_pay_method         = '<option value="0">支付方式</option>';
+			var html_pos_machine        = '<option value="0">-----POS机-----</option>';
+			var html_pay_method         = '<option value="0">-----支付方式-----</option>';
 			var i;
 			for(i = 0; i<pos_machine_source_data.length; i++) html_pos_machine += '<option value="'+pos_machine_source_data[i]['id']+'">'+pos_machine_source_data[i]['name']+'</option>';
 			for(i = 0; i<pay_method_source_data.length; i++) html_pay_method += '<option value="'+pay_method_source_data[i]['id']+'">'+pay_method_source_data[i]['name']+'</option>';
@@ -364,8 +364,8 @@ function set_other_list(e){
 	var setSelectList = function(temp){
 		var pay_method_source_data  = JSON.parse($('#pay_method_source_data').text());
 		var pos_machine_source_data = JSON.parse($('#pos_machine_source_data').text());
-		var html_pos_machine        = '<option value="0">POS机</option>';
-		var html_pay_method         = '<option value="0">支付方式</option>';
+		var html_pos_machine        = '<option value="0">-----POS机-----</option>';
+		var html_pay_method         = '<option value="0">-----支付方式-----</option>';
 		var i;
 		for(i = 0; i<pos_machine_source_data.length; i++) html_pos_machine += '<option value="'+pos_machine_source_data[i]['id']+'">'+pos_machine_source_data[i]['name']+'</option>';
 		for(i = 0; i<pay_method_source_data.length; i++) html_pay_method += '<option value="'+pay_method_source_data[i]['id']+'">'+pay_method_source_data[i]['name']+'</option>';
@@ -376,7 +376,7 @@ function set_other_list(e){
 	};
 	var str           = setSelectList(ScriptObject.otherInnerTemp);
 	console.log(str);
-	e.parents('.rece_wrap ').append(str);
+	e.parents('.rece_wrap').append(str);
 	(function(){
 		// 会前 会中 会后状态
 		var status = ManageObject.data.meetingStatus;

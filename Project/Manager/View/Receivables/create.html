@@ -41,19 +41,22 @@
 								<div class="nav_tab clearfix">
 									<if condition="$permission_list['RECEIVABLES.CREATE']">
 										<div class="nav_tab_li active">
-											<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
+											<a href="<{:U('Receivables/createUnit', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款 (会所)</a>
 										</div>
 									</if>
+									<!--<if condition="$permission_list['RECEIVABLES.VIEW']">-->
+										<!--<div class="nav_tab_li">-->
+											<!--<a href="<{:U('Receivables/manageUnit', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表 (会所)</a>-->
+										<!--</div>-->
+									<!--</if>-->
 									<if condition="$permission_list['RECEIVABLES.VIEW']">
 										<div class="nav_tab_li">
-											<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表</a>
+											<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款管理（会所）</a>
 										</div>
 									</if>
-									<if condition="$permission_list['RECEIVABLES.VIEW']">
-										<div class="nav_tab_li">
-											<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款详情</a>
-										</div>
-									</if>
+									<div class="nav_tab_li">
+										<a href="<{:U('Receivables/detailsProject', ['mid'=>I('get.mid', 0, 'int')])}>">收款报表(项目)</a>
+									</div>
 									<if condition="$permission_list['PAY_METHOD.VIEW']">
 										<div class="nav_tab_li">
 											<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
@@ -110,7 +113,7 @@
 														</div>
 														<div class="rece_item pay_method_item">
 															<select name="payMethod[]" class="form-control payMethod">
-																<option value="0">支付方式</option>
+																<option value="0">-----支付方式-----</option>
 																<volist name="pay" id="info">
 																	<option value="<{$info.id}>"><{$info.name}></option>
 																</volist>
@@ -121,7 +124,7 @@
 														</div>
 														<div class="rece_item pos_item">
 															<select name="pos[]" class="form-control pos">
-																<option value="0">POS机</option>
+																<option value="0">-----POS机-----</option>
 																<volist name="pos" id="info">
 																	<option value="<{$info.id}>"><{$info.name}></option>
 																</volist>
@@ -159,6 +162,8 @@
 																	<option value="6">课程费</option>
 																	<option value="7">产品费</option>
 																	<option value="8">场餐费</option>
+																	<option value="9">方案费</option>
+																	<option value="10">打板款项</option>
 																	<option value="4">其他</option>
 																</select>
 															</div>
@@ -169,7 +174,7 @@
 															</div>
 															<div class="rece_item">
 																<select name="payMethod1[]" class="form-control payMethod">
-																	<option value="0">支付方式</option>
+																	<option value="0">-----支付方式-----</option>
 																	<volist name="pay" id="info">
 																		<option value="<{$info.id}>"><{$info.name}></option>
 																	</volist>
@@ -180,7 +185,7 @@
 															</div>
 															<div class="rece_item">
 																<select name="pos1[]" class="form-control pos">
-																	<option value="0">POS机</option>
+																	<option value="0">-----POS机-----</option>
 																	<volist name="pos" id="info">
 																		<option value="<{$info.id}>"><{$info.name}></option>
 																	</volist>

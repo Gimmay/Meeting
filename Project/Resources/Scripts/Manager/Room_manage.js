@@ -130,10 +130,15 @@ function change_room(id, orid, keyword){
 			$('.c_change').on('click', function(){
 				var rid  = $(this).parents('tr').attr('data-id'); // 选择房间的ID
 				var ocid = $(this).siblings('.active').attr('data-id'); // 选择房间被选择人员的ID
+				console.log(id);
+				console.log(orid);
+				console.log(ocid);
+				console.log(rid);
 				ThisObject.object.loading.loading();
 				Common.ajax({
 					data    :{requestType:'room_change', rid:rid, ocid:ocid, cid:id, orid:orid},
 					callback:function(r){
+						console.log(r);
 						ThisObject.object.loading.complete();
 						if(r.status){
 							ThisObject.object.toast.toast('换房成功');
@@ -488,7 +493,7 @@ $(function(){
 				leave_btn();
 				$('.change_btn').on('click', function(){
 					var id   = $(this).parents('tr').attr('data-id'); // 需要换房人的ID
-					var orid = $(this).parents('.right_details').find('#orid').val(); //
+					var orid = $(this).parents('.right_details').find('#orid').val(); // 房间的ID
 					$('#change_room').find('input[name=id]').val(id);
 					$('#change_room').find('input[name=orid]').val(orid);
 					change_room(id, orid, '');

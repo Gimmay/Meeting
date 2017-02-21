@@ -121,16 +121,20 @@
 				case 'sign': //签到
 					if($permission_logic->hasPermission('WECHAT.CLIENT.SIGN', $employee_id)){
 						/** @var \Core\Model\ClientModel $client_model */
-						$client_model      = D('Core/Client');
-						$core_client_logic = new ClientLogic();
-						$cid               = I('post.cid', 0, 'int');
-						$cid               = $cid == 0 ? I('get.cid', 0, 'int') : $cid;
-						$result            = $core_client_logic->sign([
+						$client_model                 = D('Core/Client');
+						$core_client_logic            = new ClientLogic();
+						$cid                          = I('post.cid', 0, 'int');
+						$mid                          = I('get.mid', 0, 'int');
+						$cid                          = $cid == 0 ? I('get.cid', 0, 'int') : $cid;
+						$result                       = $core_client_logic->sign([
 							'mid'  => I('get.mid', 0, 'int'),
 							'cid'  => $cid,
 							'type' => 3,
 							'eid'  => $employee_id
 						]);
+						$result['data']['sign_count'] = $this->_computeSignCount($cid, $mid);
+
+						/***********************/
 
 						return array_merge($result, ['__ajax__' => true]);
 					}
@@ -145,12 +149,14 @@
 						/** @var \Core\Model\JoinModel $join_model */
 						$join_model = D('Core/Join');
 						C('TOKEN_ON', false);
-						$cid         = I('post.cid', 0, 'int');
-						$cid         = $cid == 0 ? I('get.cid', 0, 'int') : $cid;
-						$join_result = $join_model->alterRecord([
-							'mid' => I('get.mid', 0, 'int'),
+						$cid                 = I('post.cid', 0, 'int');
+						$mid                 = I('get.mid', 0, 'int');
+						$cid                 = $cid == 0 ? I('get.cid', 0, 'int') : $cid;
+						$join_result         = $join_model->alterRecord([
+							'mid' => $mid,
 							'cid' => $cid
-						], ['sign_status' => 2, 'sign_type' => 0]);
+						], ['sign_status' => 2, 'sign_type' => 0, 'sign_time' => null, 'sign_director_id' => null]);
+						$join_result['data'] = ['sign_count' => $this->_computeSignCount($cid, $mid)];
 
 						return array_merge($join_result, ['__ajax__' => true]);
 					}
@@ -165,32 +171,69 @@
 						$data = I('post.');
 						/* 1.创建参会人员 */
 						/** @var \Core\Model\ClientModel $model */
-						$model        = D('Core/Client');
-						$exist_client = $model->findClient(1, ['mobile' => $data['mobile']]);
+						$model = D('Core/Client');
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model       = D('Core/Join');
+						$mid              = I('get.mid', 0, 'int');
+						$exist_client     = $model->findClient(1, ['mobile' => $data['mobile']]);
+						$data['birthday'] = strtotime($data['birthday']) == 0 ? null : date('Y:m:d', strtotime($data['birthday']));
+						$data['creator']  = $option['employeeID'];
+						$data['creatime'] = time();
 						if($exist_client){
-							$client_id           = $exist_client['id'];
-							$str_obj             = new StringPlus();
-							$data['status']      = 1;
-							$data['is_new']      = 0;
-							$data['creatime']    = time();
-							$data['creator']     = $option['employeeID'];
-							$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
+							$client_id                = $exist_client['id'];
+							$str_obj                  = new StringPlus();
+							$data['status']           = 1;
+							$data['is_new']           = 0;
+							$data['pinyin_code']      = $str_obj->getPinyin($data['name'], true, '');
+							$data['unit_pinyin_code'] = $str_obj->getPinyin($data['unit'], true, '');
 							$model->alterClient(['id' => $client_id], $data);
 						}
 						else{
-							$str_obj             = new StringPlus();
-							$data['creatime']    = time();
-							$data['creator']     = $option['employeeID'];
-							$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-							$data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
-							$result1             = $model->createClient($data);
+							$str_obj                  = new StringPlus();
+							$data['pinyin_code']      = $str_obj->getPinyin($data['name'], true, '');
+							$data['unit_pinyin_code'] = $str_obj->getPinyin($data['unit'], true, '');
+							$data['password']         = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
+							$result1                  = $model->createClient($data);
 							if($result1['status']) $client_id = $result1['id'];
 							else return $result1;
 						}
+						// 添加会所
+						$exist_unit = $model->isExist([
+							'name' => $data['unit'],
+							'unit' => $data['unit'],
+							'type' => '会所'
+						]);
+						C('TOKEN_ON', false);
+						if($exist_unit){
+							$join_model->createRecord([
+								'cid'               => $exist_unit['id'],
+								'mid'               => $mid,
+								'creator'           => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'creatime'          => time(),
+								'registration_type' => '线下',
+								'status'            => 1
+							]);
+						}
+						else{
+							$join_unit_result = $model->createClient([
+								'name'             => $data['unit'],
+								'unit'             => $data['unit'],
+								'type'             => '会所',
+								'creator'          => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'creatime'         => time(),
+								'pinyin_code'      => $str_obj->getPinyin($data['unit'], true, ''),
+								'unit_pinyin_code' => $str_obj->getPinyin($data['unit'], true, '')
+							]);
+							if($join_unit_result['status']) $join_model->createRecord([
+								'cid'               => $join_unit_result['id'],
+								'mid'               => $mid,
+								'creator'           => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'creatime'          => time(),
+								'registration_type' => '线下',
+								'status'            => 1
+							]);
+						}
 						/* 2.创建参会记录 */
-						$mid = I('get.mid', 0, 'int');
-						/** @var \Core\Model\JoinModel $join_model */
-						$join_model  = D('Core/Join');
 						$join_record = $join_model->findRecord(1, [
 							'mid' => $mid,
 							'cid' => $client_id
@@ -199,7 +242,10 @@
 						if($join_record){
 							if($join_record['join_status'] != 1){
 								C('TOKEN_ON', false);
-								$join_result = $join_model->alterRecord(['id' => $join_record['id']], ['status' => 1]);
+								$join_result = $join_model->alterRecord(['id' => $join_record['id']], [
+									'status'        => 1,
+									'review_status' => 1
+								]);
 								if($join_result['status']) $result = [
 									'status'  => true,
 									'message' => '创建成功'
@@ -212,11 +258,12 @@
 							];
 						}
 						else{
-							$data             = [];
-							$data['cid']      = $client_id;
-							$data['mid']      = $mid;
-							$data['creatime'] = time();
-							$data['creator']  = $option['employeeID'];
+							$data                  = [];
+							$data['review_status'] = 1;
+							$data['cid']           = $client_id;
+							$data['mid']           = $mid;
+							$data['creatime']      = time();
+							$data['creator']       = $option['employeeID'];
 							C('TOKEN_ON', false);
 							$result = $join_model->createRecord($data);
 						}
@@ -308,16 +355,22 @@
 					$join_model     = D('Core/Join');
 					$mid            = I('get.mid', 0, 'int');
 					$sign_count     = $join_model->findRecord(0, [
-						'mid'         => $mid,
-						'sign_status' => 1,
-						'status'      => 1
+						'mid'           => $mid,
+						'sign_status'   => 1,
+						'status'        => 1,
+						'review_status' => 1
 					]);
 					$not_sign_count = $join_model->findRecord(0, [
-						'mid'         => $mid,
-						'sign_status' => 'not signed',
-						'status'      => 1
+						'mid'           => $mid,
+						'sign_status'   => 'not signed',
+						'status'        => 1,
+						'review_status' => 1
 					]);
-					$total          = $join_model->findRecord(0, ['mid' => $mid, 'status' => 1]);
+					$total          = $join_model->findRecord(0, [
+						'mid'           => $mid,
+						'status'        => 1,
+						'review_status' => 1
+					]);
 
 					return ['total' => $total, 'signCount' => $sign_count, 'notSignCount' => $not_sign_count];
 				break;
@@ -374,23 +427,44 @@
 					], $option_filter));
 					$new_list = [];
 					foreach($list as $val){
-						$group = $val['unit'];
+						$group_name        = M()->query("select code from workflow_group_member
+join workflow_group on workflow_group_member.gid = workflow_group.id
+where workflow_group.mid = $opt[mid]
+and cid = $val[cid]
+order by workflow_group_member.id DESC
+limit 1");
+						$group_name        = $group_name ? $group_name[0]['code'] : '';
+						$val['group_name'] = $group_name;
+						$group             = $val['unit'];
 						if($val['sign_director_id']){
 							$signer = $employee_model->findEmployee(1, ['id' => $val['sign_director_id']]);
 							$signer = $signer['name'];
 						}
 						else $signer = '';
 						$val['signer'] = $signer;
-						if(!isset($new_list[$group]['list'])) $new_list[$group]['list'] = [];
+						if(!isset($new_list[$group]['list'])){
+							$new_list[$group]['list'] = [];
+							$new_list[$group]['name'] = $group;
+						}
 						$new_list[$group]['list'][] = $val;
 					}
 					foreach($new_list as $k => $unit){
+						$arr_sort = [];
+						foreach($unit['list'] as $key1 => $val1){
+							foreach($val1 as $key2 => $val2) $arr_sort[$key2][$key1] = iconv("UTF-8", "GBK", $val2);
+						}
+						array_multisort($arr_sort['name'], SORT_ASC, $new_list[$k]['list']);
 						$sign_count = 0;
 						foreach($unit['list'] as $client){
 							if($client['sign_status'] == 1) $sign_count++;
 						}
 						$new_list[$k]['sign_count'] = $sign_count;
 					}
+					$arr_sort = [];
+					foreach($new_list as $key => $val){
+						$arr_sort[$key] = iconv("UTF-8", "GBK", $val['name']);
+					}
+					array_multisort($arr_sort, SORT_ASC, $new_list);
 
 					return $new_list;
 				break;
@@ -468,5 +542,14 @@
 					return [];
 				break;
 			}
+		}
+
+		private function _computeSignCount($cid, $mid){
+			$client             = M('user_client')->where("id = $cid")->find();
+			$unit               = addslashes($client['unit']);
+			$sql                = "select count(*) c from workflow_join join user_client on user_client.id = workflow_join.cid where mid = $mid and unit = '$unit' and workflow_join.sign_status = 1";
+			$sign_count_of_unit = M()->query($sql);
+
+			return $sign_count_of_unit[0]['c'];
 		}
 	}

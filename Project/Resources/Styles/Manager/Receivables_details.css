@@ -210,7 +210,7 @@ canvas{
 }
 
 .ticket_list{
-	margin-top : 20px;
+	margin-top : 5px;
 }
 
 .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th{
@@ -419,10 +419,73 @@ canvas{
 	opacity  : 0;
 }
 
+.table_header{
+	width         : 100%;
+	border        : 1px solid rgba(0, 0, 0, 0.12);
+	position      : relative;
+	padding       : 0 10px;
+	height        : 50px;
+	width         : 100%;
+	padding       : 0 10px;
+	background    : rgba(0, 0, 0, 0.08);
+	line-height   : 50px;
+	overflow      : hidden;
+	margin-bottom : 5px;
+}
+
+.table_header > span{
+	overflow     : hidden;
+	line-height  : 50px;
+	height       : 50px;
+	display      : block;
+	float        : left;
+	font-size    : 14px;
+	border-right : 1px solid rgba(0, 0, 0, .08);
+}
+
+.table_header span.number{
+	width : 2%;
+}
+
+.table_header span.client_name{
+	width        : 15%;
+	padding-left : 20px;
+}
+
+.table_header span.unit{
+	width        : 13%;
+	padding-left : 20px;
+}
+
+.table_header span.district{
+	width        : 8%;
+	padding-left : 20px;
+}
+
+.table_header span.unit_style{
+	width        : 8%;
+	padding-left : 20px;
+}
+
+.table_header span.project_total{
+	width        : 10%;
+	padding-left : 20px;
+}
+
+.table_header span.price{
+	width        : 14%;
+	padding-left : 20px;
+}
+
+.table_header span.time{
+	width        : 15%;
+	padding-left : 20px;
+}
+
 .rece_item{
 	width         : 100%;
 	border        : 1px solid rgba(0, 0, 0, 0.12);
-	margin-bottom : 10px;
+	margin-bottom : 5px;
 }
 
 .rece_item .header{
@@ -433,11 +496,54 @@ canvas{
 	padding     : 0 10px;
 	background  : rgba(0, 0, 0, 0.07);
 	line-height : 40px;
+	overflow    : hidden;
 }
 
 .rece_item .header span{
+	overflow     : hidden;
+	line-height  : 40px;
+	height       : 40px;
+	display      : block;
+	float        : left;
 	font-size    : 14px;
-	margin-right : 30px;
+	border-right : 1px solid rgba(0, 0, 0, .08);
+}
+
+.rece_item .header span.number{
+	width :2%;
+}
+
+.rece_item .header span.client_name{
+	width        : 15%;
+	padding-left : 20px;
+}
+
+.rece_item .header span.unit{
+	width        : 13%;
+	padding-left : 20px;
+}
+.rece_item .header span.district{
+	width        : 8%;
+	padding-left : 20px;
+}
+.rece_item .header span.unit_style{
+	width        : 8%;
+	padding-left : 20px;
+}
+
+.rece_item .header span.project_total{
+	width        : 10%;
+	padding-left : 20px;
+}
+
+.rece_item .header span.price{
+	width        : 14%;
+	padding-left : 20px;
+}
+
+.rece_item .header span.time{
+	width        : 15%;
+	padding-left : 20px;
 }
 
 .rece_item .header span.modify_btn{
@@ -460,7 +566,7 @@ canvas{
 	position      : absolute;
 	top           : 7px;
 	right         : 130px;
-	background    : rgba(0,0,0,.5);
+	background    : rgba(0, 0, 0, .5);
 	color         : #FFFFFF;
 	width         : 50px;
 	height        : 26px;
@@ -521,10 +627,13 @@ canvas{
 }
 
 .rece_item .rece_body .print{
+	margin-left : 10px;
+}
+
+/*.rece_item .rece_body .print{
 	width         : 60px;
 	height        : 26px;
 	background    : #FF6633;
-	position      : absolute;
 	bottom        : 5px;
 	right         : 5px;
 	color         : #FFFFFF;
@@ -533,7 +642,7 @@ canvas{
 	text-align    : center;
 	font-size     : 14px;
 	cursor        : pointer;
-}
+}*/
 
 .rece_item .rece_body .rece_details_item{
 	/*border : 1px solid #E1E1E1;*/
@@ -541,6 +650,11 @@ canvas{
 
 .rece_details_table{
 	margin : 0;
+}
+
+.rece_details_table .document_number{
+	text-align: center;
+	vertical-align: middle;
 }
 
 #print{
@@ -584,3 +698,17 @@ canvas{
 	font-size : 24px;
 	color     : #FF6633;
 }
+
+.summary{
+	padding       : 10px;
+	margin-bottom : 5px;
+	font-size     : 16px;
+	border        : 1px solid rgba(0, 0, 0, .12);
+	background    : rgba(0, 0, 0, .12);
+}
+
+.summary span{
+	margin-right : 20px;
+}
+
+

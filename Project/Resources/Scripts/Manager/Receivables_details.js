@@ -36,10 +36,41 @@ var ThisObject = {
 		});
 		// 删除收款记录
 		$('.delete_btn').on('click', function(e){
-			e.stopPropagation();
 			$('#delete_receivables').modal('show');
-			var id = $(this).parent('.header').attr('data-id');
-			$('#delete_receivables').find('input[name=id]').val(id);
+			var order_number = $(this).attr('data-order-number');
+			var cid = $(this).attr('data-client-id');
+			$('#delete_receivables').find('input[name=cid]').val(cid);
+			$('#delete_receivables').find('input[name=order_number]').val(order_number);
+		});
+		$('.modify_btn').on('click', function(){
+			$('#alter_modal').modal('show');
+			var main_id = $(this).attr('data-main-id');
+			var sub_id  = $(this).attr('data-sub-id');
+			$('#alter_modal').find('#main_id').val(main_id);
+			$('#alter_modal').find('#sub_id').val(sub_id);
+			Common.ajax({
+				data    :{requestType:'get_single_receivables', main_id:main_id, sub_id:sub_id},
+				callback:function(r){
+					console.log(r);
+					$('#alter_modal').find('#other_name').val(r.main.project_name);
+					/*ManageObject.object.otherName.setHtml(r.main.project_name);
+					 ManageObject.object.otherName.setValue(r.sub.pay_method);*/
+					$('#alter_modal .source_type').find('option').eq(r.sub.type-1).prop('selected', true)
+					ManageObject.object.payMethod.setHtml(r.sub.pay_method_name);
+					ManageObject.object.payMethod.setValue(r.sub.pay_method);
+					ManageObject.object.posMachine.setHtml(r.sub.pos_machine_name);
+					ManageObject.object.posMachine.setValue(r.sub.pos_machine);
+					$('#alter_modal').find('#receivables_time1').val(r.main.time);
+					$('#alter_modal').find('#comment').val(r.sub.comment);
+				}
+			})
+		});
+		$('.alter_number').on('click', function(){
+			$('#alter_number_modal').modal('show');
+			var main_id = $(this).attr('data-main-id');
+			var document_number = $(this).parents('.item_order').find('.document_number').text();
+			$('#alter_number_modal').find('input[name=main_id]').val(main_id);
+			$('#alter_number_modal').find('#document_number').val(document_number);
 		});
 		//导入excel
 		$('#excel_file').on('change', function(){
@@ -75,6 +106,7 @@ $(function(){
 	$('.table_length').find('select').on('change', function(){
 		var number = $(this).find('option:selected').text();
 		var url    = url_object.setUrlParam('_page_count', number);
+		url        = url_object.delUrlParam('p', url);
 		location.replace(url);
 	});
 	// 页面显示列表数下拉框默认值处理
@@ -92,17 +124,17 @@ $(function(){
 	$('.print').on('click', function(){
 		var id = $(this).attr('data-id');
 		Common.ajax({
-			data    :{requestType:'get_receivables', id:id},
+			data    :{requestType:'get_receivables_by_client', id:id},
 			callback:function(r){
 				console.log(r);
 				var time = new Date(parseInt(r.creatime)*1000);
 				time     = time.format('yyyy年MM月dd日');
 				$('#print').find('.time').text(time);
-				$('#print').find('.unit').text(r.unit);
+				//$('#print').find('.unit').text(r.unit);
 				$('#print').find('.client_name').text(r.client);
 				$('#print').find('.project_type').text(r.receivables_type+'('+r.coupon_name+')');
 				$('#print').find('.price_capital').text(r.price_word);
-				$('#print').find('.identifier').text(r.order_number);
+				$('#print').find('.identifier').text('No.'+r.order_number);
 				$('#print').find('.price').text(r.price);
 				$('#print').find('.payee').text(r.payee);
 				/*if(r.comment == null){
@@ -114,19 +146,31 @@ $(function(){
 				var str = '', i = 0, commentStr = '';
 				$.each(r.option.pay_method_list, function(index, value){
 					commentStr += value.comment+'';
-					console.log(value);
+					/*	console.log(value);*/
+					//console.log(value.pos_machine);
 					if(index == 0){
 						if(value.name == '刷卡'){
-							$('.type1').text(value.name+'('+value.pos_machine+')');
-							$('.price1').text(value.price);
+							if(value.pos_machine == null){
+								$('.type1').text(value.name);
+								$('.price1').text(value.price);
+							}else{
+								$('.type1').text(value.name+'('+value.pos_machine+')');
+								$('.price1').text(value.price);
+							}
 						}else{
 							$('.type1').text(value.name);
 							$('.price1').text(value.price);
 						}
 					}else{
 						if(value.name == '刷卡'){
-							str += ThisObject.trTemp.replace('$type', value.name+'('+value.pos_machine+')')
-											 .replace('$price', value.price);
+							if(value.pos_machine == null){
+								console.log(value.pos_machine);
+								str += ThisObject.trTemp.replace('$type', value.name)
+												 .replace('$price', value.price);
+							}else{
+								str += ThisObject.trTemp.replace('$type', value.name+'('+value.pos_machine+')')
+												 .replace('$price', value.price);
+							}
 						}else{
 							str += ThisObject.trTemp.replace('$type', value.name).replace('$price', value.price);
 						}
@@ -141,8 +185,10 @@ $(function(){
 				}
 				$('.sign_tr').find('.rmb').attr('rowspan', i);
 				$('.sign_tr').after(str);
-				$("#print").printArea();
-				location.reload();
+				/*	setTimeout(function(){
+				 $("#print").printArea();
+				 location.reload();
+				 },1000);*/
 			}
 		})
 	});
@@ -315,6 +361,28 @@ $(function(){
 		$('#cancel_modal').find('input[name=id]').val(id);
 		$('#cancel_modal').modal('show');
 	})
+	var cur_order_column= $('#default_order_column').val();
+	var cur_order_method= $('#default_order_method').val();
+	$('.table_header span[data-column]').on('click', function(){
+		var order_column = $(this).attr('data-column');
+		var order_method = url_object.getUrlParam('_orderMethod');
+		var new_url      = url_object.setUrlParam('_orderColumn', order_column);
+		if(cur_order_column == order_column){
+			if(order_method == 'desc') order_method = 'asc';
+			else if(order_method == 'asc') order_method = 'desc';
+			else order_method = 'desc';
+		}
+		else order_method = 'asc';
+		new_url = url_object.setUrlParam('_orderMethod', order_method, new_url);
+		location.replace(new_url);
+	}).each(function(){
+		var order_column = $(this).attr('data-column');
+		if(order_column == cur_order_column){
+			var column_word = $(this).text();
+			var method_word = cur_order_method == 'desc' ? '▼' : '▲';
+			$(this).css('background', '#EFEFEF').text(column_word+method_word);
+		}
+	});
 });
 // 添加收款不为空控制
 function checkIsEmpty(){

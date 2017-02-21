@@ -54,7 +54,8 @@
 								'code'     => $code,
 								'status'   => 1,
 								'creatime' => time(),
-								'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int')
+								'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'capacity' => I('post.capacity', 0, 'int')
 							];
 						}
 						$result = $group_model->createMultiRecord($data);
@@ -335,14 +336,15 @@
 			$group_result        = $group_model->findRecord(2, [
 				'status'  => 'not deleted',
 				'mid'     => I('get.mid', 0, 'int'),
-				'keyword' => I('get.keyword', '')
+				'keyword' => I('get.keyword', ''),
+				'_order'=>'code asc'
 			]);
 			$new_list            = [];
 			$id                  = [];
 			$group_member_result = [];
 			$group_info          = [];
 			if($group_result[0] == ''){
-				$group_result = $group_model->findRecord(2, ['mid' => I('get.mid', 0, 'int'), 'status' => 1]);
+				$group_result = $group_model->findRecord(2, ['mid' => I('get.mid', 0, 'int'), 'status' => 1, '_order'=>'code asc']);
 				foreach($group_result as $k => $v){
 					$id[] .= $v['id'];
 				}

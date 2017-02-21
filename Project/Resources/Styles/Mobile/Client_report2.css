@@ -1,0 +1,42 @@
+
+h2{
+	width         : 100%;
+	text-align    : center;
+	padding       : 0.2rem 0;
+	background    : #FF6633;
+	color         : #FFFFFF;
+	font-weight   : bold;
+	margin-bottom : 0.1rem;
+}
+
+.data{
+	border-top    : 1px solid #999999;
+	border-bottom : 1px solid #999999;
+	padding       : 0.1rem 0.2rem;
+	font-size     : 0.3rem;
+}
+
+.data .data_item{
+	padding       : 0.18rem;
+	border-bottom : 1px dotted rgba(0, 0, 0, .3);
+}
+
+.data .data_item span{
+	margin-right : 0.3rem;
+}
+
+body{
+	font-size : 0.28rem !important;
+}
+
+.sec_table tr:nth-child(odd) td{
+	background : #DFF0D8;
+}
+
+.sec_table tr:nth-child(even) td{
+	background : #FCF8E3;
+}
+
+.screen {
+	padding: 20px 10px;
+}

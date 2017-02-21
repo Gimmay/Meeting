@@ -24,21 +24,23 @@
 					$model        = D('Core/Client');
 					$exist_client = $model->findClient(1, ['mobile' => $data['mobile']]);
 					if($exist_client){
-						$client_id           = $exist_client['id'];
-						$str_obj             = new StringPlus();
-						$data['is_new']      = 0;
-						$data['status']      = 1;
-						$data['creatime']    = time();
-						$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
+						$client_id                = $exist_client['id'];
+						$str_obj                  = new StringPlus();
+						$data['is_new']           = 0;
+						$data['status']           = 1;
+						$data['creatime']         = time();
+						$data['pinyin_code']      = $str_obj->getPinyin($data['name'], true, '');
+						$data['unit_pinyin_code'] = $str_obj->getPinyin($data['unit'], true, '');
 						$model->alterClient(['id' => $client_id], $data);
 					}
 					else{
-						$str_obj             = new StringPlus();
-						$data['creatime']    = time();
-						$data['creator']     = $option['employeeID'];
-						$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-						$data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
-						$result1             = $model->createClient($data);
+						$str_obj                  = new StringPlus();
+						$data['creatime']         = time();
+						$data['creator']          = $option['employeeID'];
+						$data['pinyin_code']      = $str_obj->getPinyin($data['name'], true, '');
+						$data['unit_pinyin_code'] = $str_obj->getPinyin($data['unit'], true, '');
+						$data['password']         = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
+						$result1                  = $model->createClient($data);
 						if($result1['status']) $client_id = $result1['id'];
 						else return $result1;
 					}
@@ -93,7 +95,7 @@
 							$data['otype']      = 1;// 对象类型 这里为客户(参会人员)
 							$data['oid']        = $client_id; // 对象ID
 							$data['wtype']      = 1; // 微信ID类型 企业号
-							$data['wid']  = $val['userid']; // 微信ID
+							$data['wid']        = $val['userid']; // 微信ID
 							$data['department'] = $department; // 部门ID
 							$data['mobile']     = $val['mobile']; // 手机号码
 							$data['avatar']     = $val['avatar']; // 头像地址

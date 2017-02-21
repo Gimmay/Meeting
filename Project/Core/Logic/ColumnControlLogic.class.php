@@ -168,6 +168,16 @@
 				],
 				[
 					'mid'      => $mid,
+					'code'     => 'CLIENT-GROUP_NAME',
+					'form'     => 'group_name',
+					'name'     => '组别',
+					'view'     => 1,
+					'must'     => 0,
+					'creatime' => time(),
+					'table'    => 'workflow_join'
+				],
+				[
+					'mid'      => $mid,
 					'code'     => 'CLIENT-COMMENT',
 					'form'     => 'comment',
 					'name'     => '备注',
@@ -184,7 +194,7 @@
 					'view'     => 1,
 					'must'     => 0,
 					'creatime' => time(),
-					'table'    => 'user_client'
+					'table'    => 'workflow_join'
 				],
 				[
 					'mid'      => $mid,
@@ -194,7 +204,7 @@
 					'view'     => 1,
 					'must'     => 0,
 					'creatime' => time(),
-					'table'    => 'user_client'
+					'table'    => 'workflow_join'
 				],
 				[
 					'mid'      => $mid,
@@ -204,7 +214,7 @@
 					'view'     => 1,
 					'must'     => 0,
 					'creatime' => time(),
-					'table'    => 'user_client'
+					'table'    => 'workflow_join'
 				],
 				[
 					'mid'      => $mid,
@@ -214,7 +224,7 @@
 					'view'     => 1,
 					'must'     => 0,
 					'creatime' => time(),
-					'table'    => 'user_client'
+					'table'    => 'workflow_join'
 				],
 				[
 					'mid'      => $mid,
@@ -224,7 +234,7 @@
 					'view'     => 1,
 					'must'     => 0,
 					'creatime' => time(),
-					'table'    => 'user_client'
+					'table'    => 'workflow_join'
 				],
 				[
 					'mid'      => $mid,
@@ -234,7 +244,7 @@
 					'view'     => 1,
 					'must'     => 0,
 					'creatime' => time(),
-					'table'    => 'user_client'
+					'table'    => 'workflow_join'
 				],
 				[
 					'mid'      => $mid,
@@ -244,7 +254,7 @@
 					'view'     => 1,
 					'must'     => 0,
 					'creatime' => time(),
-					'table'    => 'user_client'
+					'table'    => 'workflow_join'
 				],
 				[
 					'mid'      => $mid,
@@ -254,7 +264,7 @@
 					'view'     => 1,
 					'must'     => 0,
 					'creatime' => time(),
-					'table'    => 'user_client'
+					'table'    => 'workflow_join'
 				]
 			]);
 

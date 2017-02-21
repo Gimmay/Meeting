@@ -49,7 +49,7 @@
 				$column_control_model = D('Core/ColumnControl');
 				$column_list          = $column_control_model->findRecord(2, [
 					'mid'   => $mid,
-					'table' => 'user_client'
+					'table' => ['user_client', 'workflow_join']
 				]);
 				$data                 = [];
 				foreach($column_list as $val) $data[$val['code']] = $val;
@@ -105,7 +105,7 @@
 			$pos_machine_model  = D('Core/PosMachine');
 			$pos_machine_result = $pos_machine_model->findRecord(2, ['status' => '1', 'mid' => $this->meetingID]);
 			$client_logic       = new ClientModel();
-			$client             = $client_logic->getClientSelectUnit($this->meetingID);
+			$client             = $client_logic->getClientSelectList($this->meetingID, true);
 			$employee_logic     = new EmployeeModel();
 			$employee           = $employee_logic->getEmployeeSelectList();
 			$client_result      = $client_model->findClient(1, ['id' => I('get.cid', 0, 'int')]);

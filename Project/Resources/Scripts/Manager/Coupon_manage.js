@@ -12,6 +12,7 @@ $(function(){
 		if(id == 2){
 			$('.mode').removeClass('hide');
 			$('.single_box').removeClass('hide');
+			$('.time_need').removeClass('hide');
 			//单个新增和批量新增
 			$('#create_way li').on('click', function(){
 				var index = $(this).index();
@@ -31,6 +32,7 @@ $(function(){
 			});
 		}else{
 			$('.c_way,.mode').addClass('hide');
+			$('.time_need').addClass('hide');
 		}
 	});
 	// 全选checkbox

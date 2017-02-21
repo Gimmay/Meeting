@@ -41,7 +41,7 @@
 						$data['status']      = $data['status'] == 1 ? 0 : (($data['status'] == 0) ? 1 : 1);
 						$data['creatime']    = time();
 						$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-						$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
+						$data['pinyin_code'] = $str_obj->getPinyin($data['name'], true, '');
 						$data['password']    = $str_obj->makePassword($data['password'], $data['code']);
 						$data['birthday']    = date('Y-m-d', strtotime($data['birthday']));
 						//					if($exist_flag && isset($exist_record)){

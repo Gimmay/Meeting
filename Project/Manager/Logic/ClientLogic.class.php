@@ -12,6 +12,8 @@
 	use Core\Logic\LogLogic;
 	use Core\Logic\ReceivablesLogic;
 	use Core\Logic\WxCorpLogic;
+	use Core\Model\GroupModel;
+	use Exception;
 	use Quasar\StringPlus;
 
 	class ClientLogic extends ManagerLogic{
@@ -30,8 +32,8 @@
 							'cid'    => $val['cid'],
 							'status' => 1
 						]);
-						if($group) $data[$key]['group'] = $group['code'];
-						else $data[$key]['group'] = null;
+						if($group) $data[$key]['group_name'] = $group['code'];
+						else $data[$key]['group_name'] = null;
 					}
 
 					return $data;
@@ -121,6 +123,9 @@
 						}
 						// 签到打印状态
 						switch($val1['is_new']){
+							case '':
+								$data[$key1]['is_new'] = '';
+							break;
 							case 0:
 								$data[$key1]['is_new'] = '老客';
 							break;
@@ -338,43 +343,149 @@
 
 		public function handlerRequest($type){
 			switch($type){
+				case 'multi_create':
+					/** @var \Core\Model\ClientModel $client_model */
+					$client_model = D('Core/Client');
+					/** @var \Core\Model\JoinModel $join_model */
+					$join_model  = D('Core/Join');
+					$str_obj     = new StringPlus();
+					$post        = I('post.');
+					$number      = I('post.number', 0, 'int');
+					$mid         = I('get.mid', 0, 'int');
+					$creator     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$data_client = $data_join = [];
+					for($i = 1; $i<=$number; $i++){
+						$name          = "($post[unit]-$i)";
+						$data_client[] = array_merge($post, [
+							'name'             => "$name",
+							'pinyin_code'      => $str_obj->getPinyin($name, true, ''),
+							'unit_pinyin_code' => $str_obj->getPinyin($post['unit'], true, ''),
+							'creatime'         => time(),
+							'creator'          => $creator
+						]);
+					}
+					$client_model->lock('write');
+					$result = $client_model->createMultiClient($data_client);
+					$client_model->unlock();
+					$new_cid = $result['id'];
+					for($i = 0; $i<$number; $i++){
+						$data_join[] = array_merge($post, [
+							'cid'      => ($new_cid+$i),
+							'mid'      => $mid,
+							'creator'  => $creator,
+							'creatime' => time()
+						]);
+					}
+					$result = $join_model->createMultiRecord($data_join);
+
+					return array_merge($result, [
+						'__ajax__'   => true,
+						'__return__' => U('', ['keyword' => urlencode($post['unit']), 'mid' => $mid])
+					]);
+				break;
+				case 'alter_directly':
+					$data = I('post.');
+					$cid  = $data['cid'];
+					$mid  = I('get.mid', 0, 'int');
+					C('TOKEN_ON', false);
+					if(in_array($data['_column'], [
+						'column1',
+						'column2',
+						'column3',
+						'column4',
+						'column5',
+						'column6',
+						'column7',
+						'column8'
+					])){
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model = D('Core/Join');
+						$result     = $join_model->alterRecord(['mid' => $mid, 'cid' => $cid], $data);
+					}
+					else{
+						/** @var \Core\Model\ClientModel $client_model */
+						$client_model = D('Core/Client');
+						$result       = $client_model->alterClient(['id' => $cid], $data);
+					}
+
+					return array_merge($result, ['__ajax__' => true]);
+				break;
 				case 'create':
 					if($this->permissionList['CLIENT.CREATE']){
-						$data = I('post.');
+						$data       = I('post.');
+						$group_name = $data['group_name'];
 						/* 1.创建参会人员 */
 						/** @var \Core\Model\ClientModel $model */
-						$model        = D('Core/Client');
-						$exist_client = $model->findClient(1, [
+						$model = D('Core/Client');
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model   = D('Core/Join');
+						$exist_client = $model->isExist([
 							'mobile' => $data['mobile'],
 							'name'   => $data['name'],
-							'status' => 'not deleted'
+							'unit'   => $data['unit']
 						]);
 						$creator      = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 						$mid          = I('get.mid', 0, 'int');
 						if($exist_client){
-							$cid                 = $exist_client['id'];
-							$str_obj             = new StringPlus();
-							$data['status']      = 1;
-							$data['is_new']      = 0;
-							$data['creatime']    = time();
-							$data['creator']     = $creator;
-							$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
+							$cid                      = $exist_client['id'];
+							$str_obj                  = new StringPlus();
+							$data['status']           = 1;
+							$data['is_new']           = 0;
+							$data['creatime']         = time();
+							$data['creator']          = $creator;
+							$data['pinyin_code']      = $str_obj->getPinyin($data['name'], true, '');
+							$data['unit_pinyin_code'] = $str_obj->getPinyin($data['unit'], true, '');
 							$model->alterClient(['id' => $cid], $data);
 						}
 						else{
-							$str_obj             = new StringPlus();
-							$data['creatime']    = time();
-							$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-							$data['birthday']    = $data['birthday'] ? $data['birthday'] : null;
-							$data['pinyin_code'] = $str_obj->makePinyinCode($data['name']);
-							$data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
-							$result1             = $model->createClient($data);
+							$str_obj                  = new StringPlus();
+							$data['creatime']         = time();
+							$data['creator']          = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+							$data['birthday']         = $data['birthday'] ? $data['birthday'] : null;
+							$data['pinyin_code']      = $str_obj->getPinyin($data['name'], true, '');
+							$data['unit_pinyin_code'] = $str_obj->getPinyin($data['unit'], true, '');
+							$data['password']         = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $data['mobile']);
+							$result1                  = $model->createClient($data);
 							if($result1['status']) $cid = $result1['id'];
 							else return $result1;
 						}
+						// 添加会所
+						$exist_unit = $model->isExist([
+							'name' => $data['unit'],
+							'unit' => $data['unit'],
+							'type' => '会所'
+						]);
+						C('TOKEN_ON', false);
+						if($exist_unit){
+							$join_model->createRecord([
+								'cid'               => $exist_unit['id'],
+								'mid'               => $mid,
+								'creator'           => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'creatime'          => time(),
+								'registration_type' => '线下',
+								'status'            => 1
+							]);
+						}
+						else{
+							$join_unit_result = $model->createClient([
+								'name'             => $data['unit'],
+								'unit'             => $data['unit'],
+								'type'             => '会所',
+								'creator'          => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'creatime'         => time(),
+								'pinyin_code'      => $str_obj->getPinyin($data['unit'], true, ''),
+								'unit_pinyin_code' => $str_obj->getPinyin($data['unit'], true, '')
+							]);
+							if($join_unit_result['status']) $join_model->createRecord([
+								'cid'               => $join_unit_result['id'],
+								'mid'               => $mid,
+								'creator'           => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'creatime'          => time(),
+								'registration_type' => '线下',
+								'status'            => 1
+							]);
+						}
 						/* 2.创建参会记录 */
-						/** @var \Core\Model\JoinModel $join_model */
-						$join_model        = D('Core/Join');
 						$join_record       = $join_model->findRecord(1, [
 							'mid'    => $mid,
 							'cid'    => $cid,
@@ -464,6 +575,28 @@
 								break;
 							}
 						}
+						/* 4.试图根据组别名称分配成员 */
+						/** @var \Core\Model\GroupModel $group_model */
+						$group_model = D('Core/Group');
+						$group       = $group_model->findRecord(1, [
+							'code'   => $group_name,
+							'status' => 1,
+							'mid'    => $mid
+						]);
+						if($group){
+							/** @var \Core\Model\GroupMemberModel $group_member_model */
+							$group_member_model = D('Core/GroupMember');
+							C('TOKEN_ON', false);
+							$group_member_model->createRecord([
+								'mid'      => $mid,
+								'gid'      => $group['id'],
+								'cid'      => $cid,
+								'time'     => 1,
+								'status'   => 1,
+								'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+								'creatime' => time()
+							]);
+						}
 						$log_logic = new LogLogic();
 						$log_logic->create([
 							'dbTable'  => 'user_client&workflow_join',
@@ -494,13 +627,19 @@
 						$str_obj    = new StringPlus();
 						$data       = I('post.');
 						$id         = I('get.id', 0, 'int');
+						if(I('get.manage', 0) == 1) $redirect_url = U('manage', [
+							'mid'     => I('get.mid', 0, 'int'),
+							'keyword' => urlencode($data['name'])
+						]);
+						else $redirect_url = I('post.redirectUrl', '');
 						//						$exist_client = $model->findClient(1, ['mobile' => $data['mobile']]);
 						//						if($exist_client && $exist_client['id']!=$id) return [
 						//							'status'   => false,
 						//							'message'  => '该手机号已存在',
 						//							'__ajax__' => false
 						//						];
-						$data['pinyin_code']        = $str_obj->makePinyinCode($data['name']);
+						$data['pinyin_code']        = $str_obj->getPinyin($data['name'], true, '');
+						$data['unit_pinyin_code']   = $str_obj->getPinyin($data['unit'], true, '');
 						$data['birthday']           = $data['birthday'] ? $data['birthday'] : null;
 						$result1                    = $model->alterClient(['id' => $id], $data);
 						$join_record                = $join_model->findRecord(1, [
@@ -537,11 +676,15 @@
 						]);
 
 						return ($result1['status'] || $result2['status']) ? [
-							'status'  => true,
-							'message' => '修改成功'
+							'status'      => true,
+							'message'     => '修改成功',
+							'redirectUrl' => $redirect_url,
+							'__ajax__'    => false
 						] : [
-							'status'  => false,
-							'message' => '未做任何修改'
+							'status'      => false,
+							'message'     => '未做任何修改',
+							'redirectUrl' => $redirect_url,
+							'__ajax__'    => false
 						];
 					}
 					else return [
@@ -561,8 +704,9 @@
 							/** @var \Core\Model\ColumnControlModel $column_control_model */
 							$column_control_model = D('Core/ColumnControl');
 							$column_list          = $column_control_model->findRecord(2, [
-								'mid'  => I('get.mid', 0, 'int'),
-								'view' => 1
+								'mid'   => I('get.mid', 0, 'int'),
+								'view'  => 1,
+								'table' => ['user_client', 'workflow_join']
 							]);
 							$table_head           = [];
 							foreach($column_list as $col){
@@ -811,9 +955,10 @@
 						]);
 						C('TOKEN_ON', false);
 						$result = $join_model->alterRecord(['id' => $join_record['id']], [
-							'sign_status' => 2,
-							'sign_time'   => null,
-							'sign_type'   => 0
+							'sign_status'      => 2,
+							'sign_time'        => null,
+							'sign_type'        => 0,
+							'sign_director_id' => null
 						]);
 						if($result['status']){
 							$message_logic = new MessageLogic();
@@ -879,6 +1024,33 @@
 										'order'     => $signed_count+1
 									]);
 									$count++;
+									// OSUDNFOUIRHGIOR(H*&WEHFWE(FW
+									/** @var \Core\Model\ClientModel $client_model */
+									$client_model = D('Core/Client');
+									$client       = $client_model->findClient(1, ['id' => $val]);
+									if(in_array($client['type'], ['内部员工'])){
+										$openid = sha1("$client[name]$client[unit]");
+										try{
+											M('weixin_flag')->add([
+												'openid'      => $openid,
+												'fakeid'      => $openid,
+												'flag'        => 2,
+												'status'      => 1,
+												'othid'       => 0,
+												'cjstatu'     => 2,
+												'a_code'      => '',
+												'a_name'      => $client['name'],
+												'a_gender'    => $client['gender'],
+												'a_mobile'    => $client['mobile'],
+												'a_unit'      => $client['unit'],
+												'a_position'  => $client['position'],
+												'a_avatar'    => '',
+												'a_type'      => $client['type'],
+												'a_join_time' => '2016-01-01',
+											]);
+										}catch(Exception $error){
+										}
+									}
 								}
 							}
 							if($count%50 == 0 && $count != 0){
@@ -987,7 +1159,7 @@
 						/* 监测是否已审核 */
 						$delete_id_arr = [];
 						foreach($id_arr as $val){
-							$record = $join_model->findRecord(1, [
+							$record = $join_model->findRecordAll(1, [
 								'cid'    => $val,
 								'mid'    => I('get.mid', 0, 'int'),
 								'status' => 'not deleted'
@@ -1007,7 +1179,50 @@
 							'dbTable'  => 'workflow_join',
 							'dbColumn' => '*',
 							'extend'   => 'PC',
-							'action'   => '参会人员批量取消签到',
+							'action'   => '参会人员批量删除',
+							'type'     => 'modify'
+						]);
+
+						return array_merge($result, ['__ajax__' => false]);
+					}
+					else return [
+						'status'   => false,
+						'message'  => '您没有删除参会人员的权限',
+						'__ajax__' => false
+					];
+				break;
+				case 'delete_unit':
+					if($this->permissionList['CLIENT.DELETE']){
+						/** @var \Core\Model\JoinModel $join_model */
+						$join_model = D('Core/Join');
+						$id_arr     = explode(',', I('post.id'));
+						/** @var \Core\Model\ReceivablesModel $receivables_model */
+						$receivables_model = D('Core/Receivables');
+						//$join_id_arr = explode(',', I('post.jid'));
+						/* 监测是否已收款 */
+						$delete_id_arr = [];
+						foreach($id_arr as $val){
+							$record = $receivables_model->findRecord(1, [
+								'cid'    => $val,
+								'mid'    => I('get.mid', 0, 'int'),
+								'status' => 'not deleted'
+							]);
+							if($record) continue;
+							else $delete_id_arr[] = $record['id'];
+						}
+						if(!$delete_id_arr) return [
+							'status'   => false,
+							'message'  => '该会所已收款不能删除',
+							'__ajax__' => false
+						];
+						C('TOKEN_ON', false);
+						$result    = $join_model->deleteRecord($delete_id_arr);
+						$log_logic = new LogLogic();
+						$log_logic->create([
+							'dbTable'  => 'workflow_join',
+							'dbColumn' => '*',
+							'extend'   => 'PC',
+							'action'   => '会所批量批量删除',
 							'type'     => 'modify'
 						]);
 
@@ -1355,7 +1570,7 @@
 					$group_id = I('post.group', 0, 'int');
 					/** @var \Core\Model\GroupMemberModel $group_member_model */
 					$group_member_model = D('Core/GroupMember');
-					$group_member_model->dropRecord(['cid', ['in', $cid_arr], 'mid' => $mid]);
+					$group_member_model->dropRecord(['cid' => ['in', $cid_arr], 'mid' => $mid]);
 					$data = [];
 					foreach($cid_arr as $client_id){
 						$data[] = [
@@ -1418,8 +1633,9 @@
 			/** @var \Core\Model\ColumnControlModel $column_control_model */
 			$column_control_model = D('Core/ColumnControl');
 			$column_list          = $column_control_model->findRecord(2, [
-				'mid'  => I('get.mid', 0, 'int'),
-				'view' => 1
+				'mid'   => I('get.mid', 0, 'int'),
+				'view'  => 1,
+				'table' => ['user_client', 'workflow_join']
 			]);
 			$table_column         = [];
 			foreach($column_list as $col){
@@ -1436,10 +1652,12 @@
 				$join_data          = [];
 				$mobile             = '';
 				$name               = '';
+				$unit               = '';
 				$registration_date  = '';
 				$service_consultant = null;
 				$develop_consultant = null;
 				$traffic_method     = '';
+				$group_name         = '';
 				// 遍历单条数据的字段
 				foreach($line as $key2 => $val){
 					$column_index = null;
@@ -1450,8 +1668,11 @@
 					}
 					// 过滤数据
 					switch(strtolower($table_column[$key2]['name'])){
+						case 'group_name':
+							$group_name = $val;
+						break;
 						case 'type':
-							$val = in_array($val, ['终端', '内部员工', '嘉宾', '陪同', '老总', '其他']) ? $val : '终端';
+							$val = in_array($val, ['终端', '内部员工', '会所员工', '嘉宾', '陪同', '老总', '其他', '会所']) ? $val : '终端';
 						break;
 						case 'birthday':
 							$val = $val ? date('Y-m-d', strtotime($val)) : null;
@@ -1461,6 +1682,9 @@
 						break;
 						case 'name':
 							$name = $val;
+						break;
+						case 'unit':
+							$unit = $val;
 						break;
 						case 'registration_date':
 							$registration_date = $val;
@@ -1541,10 +1765,11 @@
 						break;
 					}
 					// 指定特殊列的值
-					$client_data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
-					$client_data['creatime']    = time();
-					$client_data['password']    = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $mobile);
-					$client_data['pinyin_code'] = $str_obj->makePinyinCode($name);
+					$client_data['creator']          = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
+					$client_data['creatime']         = time();
+					$client_data['password']         = $str_obj->makePassword(C('DEFAULT_CLIENT_PASSWORD'), $mobile);
+					$client_data['pinyin_code']      = $str_obj->getPinyin($name, true, '');
+					$client_data['unit_pinyin_code'] = $str_obj->getPinyin($unit, true, '');
 					if($column_index === null){
 						$client_data[$table_column[$key2]['name']] = $val;
 						$join_data[$table_column[$key2]['name']]   = $val;
@@ -1555,8 +1780,48 @@
 					}
 				}
 				// if($mobile == '' && !$mobile) continue; // 若手机号未填则略过该条数据
+				if($name == '' && $mobile == '') continue; // 排除空数据
+				// 添加会所
+				$exist_unit = $core_model->isExist([
+					'name' => iconv('GBK', 'UTF-8', $unit),
+					'unit' => iconv('GBK', 'UTF-8', $unit),
+					'type' => '会所'
+				]);
+				if($exist_unit){
+					$join_model->createRecord([
+						'cid'               => $exist_unit['id'],
+						'mid'               => $mid,
+						'creator'           => $cur_employee_id,
+						'creatime'          => time(),
+						'registration_type' => '线下',
+						'status'            => 1
+					]);
+				}
+				else{
+					$join_unit_result = $core_model->createClient([
+						'name'             => $unit,
+						'unit'             => $unit,
+						'type'             => '会所',
+						'creator'          => $cur_employee_id,
+						'creatime'         => time(),
+						'pinyin_code'      => $str_obj->getPinyin($name, true, ''),
+						'unit_pinyin_code' => $str_obj->getPinyin($unit, true, ''),
+					]);
+					if($join_unit_result['status']) $join_model->createRecord([
+						'cid'               => $join_unit_result['id'],
+						'mid'               => $mid,
+						'creator'           => $cur_employee_id,
+						'creatime'          => time(),
+						'registration_type' => '线下',
+						'status'            => 1
+					]);
+				}
 				// 判定是否存在该客户
-				$exist_client                   = $core_model->isExist($mobile, $name);
+				$exist_client                   = $core_model->isExist([
+					'mobile' => iconv('GBK', 'UTF-8', $mobile),
+					'name'   => iconv('GBK', 'UTF-8', $name),
+					'unit'   => iconv('GBK', 'UTF-8', $unit)
+				]);
 				$join_data['mid']               = $mid;
 				$join_data['creator']           = $cur_employee_id;
 				$join_data['creatime']          = time();
@@ -1597,7 +1862,9 @@
 						if($alter_join_result['status']){
 							$count++;
 						}
-						else $error_str .= "$client_data[name],";
+						else{
+							$error_str .= "$name,";
+						}
 					}
 					else{
 						// 若该场会议此人未参会 则创建参会记录
@@ -1605,7 +1872,26 @@
 						if($join_result['status']){
 							$count++;
 						}
-						else $error_str .= "$client_data[name],";
+						else{
+							$error_str .= "$name,";
+						}
+					}
+					/** @var \Core\Model\GroupModel $group_model */
+					$group_model = D('Core/Group');
+					$group       = $group_model->findRecord(1, ['code' => $group_name, 'status' => 1, 'mid' => $mid]);
+					if($group){
+						/** @var \Core\Model\GroupMemberModel $group_member_model */
+						$group_member_model = D('Core/GroupMember');
+						C('TOKEN_ON', false);
+						$group_member_model->createRecord([
+							'mid'      => $mid,
+							'gid'      => $group['id'],
+							'cid'      => $join_data['cid'],
+							'time'     => 1,
+							'status'   => 1,
+							'creator'  => I('session.MANAGER_EMPLOYEE_ID', 0, 'int'),
+							'creatime' => time()
+						]);
 					}
 				}
 			}

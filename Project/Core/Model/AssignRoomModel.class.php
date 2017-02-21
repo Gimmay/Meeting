@@ -37,6 +37,7 @@
 		public function findRecord($type = 2, $filter = []){
 			$where = [];
 			if(isset($filter['id'])) $where['id'] = $filter['id'];
+			if(isset($filter['cid'])) $where['cid'] = $filter['cid'];
 			if(isset($filter['rid'])) $where['rid'] = $filter['rid'];
 			if(isset($filter['jid'])) $where['jid'] = $filter['jid'];
 			if(isset($filter['occupancy_status'])) $where['occupancy_status'] = $filter['occupancy_status'];

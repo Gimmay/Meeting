@@ -16,7 +16,7 @@
 			parent::_initialize();
 		}
 
-		public function getPosMachineSelectList(){
-			return $this->where(['status' => 1])->field('CONCAT(`name`) `html`, CONCAT(pinyin_code, \',\', `name`) `keyword`, `id` `value`')->select();
+		public function getPosMachineSelectList($mid){
+			return $this->where(['status' => 1, 'mid'=>$mid])->field('CONCAT(`name`) `html`, CONCAT(pinyin_code, \',\', `name`) `keyword`, `id` `value`')->select();
 		}
 	}

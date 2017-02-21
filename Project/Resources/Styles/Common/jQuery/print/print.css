@@ -1,23 +1,27 @@
-.w3cbbs { page-break-after:always;}
-body {
- margin: 0;
- padding: 0;
- background-color: #FAFAFA;
- font: 12pt "Tahoma";
+.w3cbbs{ page-break-after : always; }
+
+body{
+	margin           : 0;
+	padding          : 0;
+	background-color : #FAFAFA;
+	font             : 12pt "Tahoma";
 }
-* {
- box-sizing: border-box;
- -moz-box-sizing: border-box;
+
+*{
+	box-sizing      : border-box;
+	-moz-box-sizing : border-box;
 }
-.page {
- float: left;
- width: 6cm;
- height: 5cm;
- margin: 0 auto;
- border-radius: 5px;
- background: white;
- box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+
+.page{
+	float         : left;
+	overflow      : hidden;
+	width         : 227px;
+	height        : 189px;
+	margin        : 0 auto;
+	border-radius : 5px;
+	background    : #fff;
 }
-.subpage {
- height: 100%;
+
+.subpage{
+	height : 100%;
 }

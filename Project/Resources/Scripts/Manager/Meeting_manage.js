@@ -51,6 +51,12 @@ var ScriptObject = {
 	employeeListTemp2:'<tr data-id="$id"><td>$num</td><td class="name">$name</td><td>$gender</td><td>$department</td><td>$position</td><td>$mobile</td><td>$company</td><td><button type="button" class="btn btn-default btn-xs delete_employee" data-toggle="modal" data-target="#delete_management">删除</button></td></tr>',
 };
 $(function(){
+	$('#add_management').keydown(function(e){
+		console.log(e.keyCode);
+		if(e.keyCode == 13){
+			$('#add_management .main_search').trigger('click');
+		}
+	});
 	ScriptObject.bindEvent();
 	var quasar_script = document.getElementById('quasar_script');
 	// 实例化Url类
@@ -220,10 +226,14 @@ $(function(){
 	});
 	// 会议管理角色列表
 	$('.management_btn').on('click', function(){
-		var mid = $(this).parents('ul.fun_btn').attr('data-id');
+		var mid  = $(this).parents('ul.fun_btn').attr('data-id');
+		var name = $(this).parents('.meeting_li').find('.meeting_name').text();
 		$('#choose_management').find('input[name=id]').val(mid);
 		$('#role_list_modal').find('input[name=mid]').val(mid);
 		$('#add_management').find('input[name=mid]').val(mid);
+		$('#role_list_modal').find('.meeting_name').text(name);
+		$('#add_management').find('.meeting_name').text(name);
+		$('#see_management').find('.meeting_name').text(name);
 		var str = '', str2 = '';
 		ThisObject.object.loading.loading();
 		Common.ajax({
@@ -233,8 +243,8 @@ $(function(){
 				console.log(data);
 				$.each(data, function(index, value){
 					str += ScriptObject.roleListTemp.replace('$i', index+1).replace('$name', value.name)
-						.replace('$level', value.level).replace('$comment', value.comment)
-						.replace('$id', value.id)
+									   .replace('$level', value.level).replace('$comment', value.comment)
+									   .replace('$id', value.id)
 				});
 				$('#role_list').html(str);
 				// 添加人
@@ -257,10 +267,10 @@ $(function(){
 									var gender = '女';
 								}
 								str += ScriptObject.employeeListTemp.replace('$num', index+1)
-									.replace('$name', value.name)
-									.replace('$id', value.id).replace('$position', value.position)
-									.replace('$mobile', value.mobile).replace('$company', value.company)
-									.replace('$gender', gender).replace('$department', value.d_name);
+												   .replace('$name', value.name)
+												   .replace('$id', value.id).replace('$position', value.position)
+												   .replace('$mobile', value.mobile).replace('$company', value.company)
+												   .replace('$gender', gender).replace('$department', value.d_name);
 								i++;
 							});
 							$('#add_management').find('.current_attendee').text(i);
@@ -302,10 +312,10 @@ $(function(){
 						var gender = '女';
 					}
 					str += ScriptObject.employeeListTemp.replace('$num', index+1)
-						.replace('$name', value.name)
-						.replace('$id', value.id).replace('$position', value.position)
-						.replace('$mobile', value.mobile).replace('$company', value.company)
-						.replace('$gender', gender).replace('$department', value.d_name);
+									   .replace('$name', value.name)
+									   .replace('$id', value.id).replace('$position', value.position)
+									   .replace('$mobile', value.mobile).replace('$company', value.company)
+									   .replace('$gender', gender).replace('$department', value.d_name);
 					i++;
 				});
 				$('#add_management').find('.current_attendee').text(i);
@@ -385,10 +395,10 @@ function get_employee_list(mid, rid){
 						var gender = '女';
 					}
 					str += ScriptObject.employeeListTemp2.replace('$num', index+1)
-						.replace('$name', value.name)
-						.replace('$id', value.id).replace('$position', value.position)
-						.replace('$mobile', value.mobile).replace('$company', value.company)
-						.replace('$gender', gender).replace('$department', value.d_name);
+									   .replace('$name', value.name)
+									   .replace('$id', value.id).replace('$position', value.position)
+									   .replace('$mobile', value.mobile).replace('$company', value.company)
+									   .replace('$gender', gender).replace('$department', value.d_name);
 				});
 				$('#employee_body1').html(str);
 				$('.delete_employee').on('click', function(){

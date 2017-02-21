@@ -22,7 +22,7 @@
 						$model               = D('Core/Role');
 						$str_obj             = new StringPlus();
 						$data                = I('post.');
-						$data['pinyin_code'] = $str_obj->makePinyinCode(I('post.name', ''));
+						$data['pinyin_code'] = $str_obj->getPinyin(I('post.name', ''), true, '');
 						$data['creatime']    = time();
 						$data['creator']     = I('session.MANAGER_EMPLOYEE_ID', 0, 'int');
 						$result              = $model->createRole($data);

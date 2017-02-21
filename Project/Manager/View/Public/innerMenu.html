@@ -92,9 +92,27 @@
 								<a href="<{:U('Client/sign', ['mid'=>I('get.mid', 0, 'int')])}>">签到</a>
 							</li>
 						</if>
+						<li>
+							<a href="<{:U('Client/manageUnit', ['mid'=>I('get.mid', 0, 'int')])}>">会所记录</a>
+						</li>
 					</ul>
 				</li>
 			</if>
+			<!--<li class="side_item <if condition='$c_name eq Client'>active</if>">-->
+				<!--<a href="<{:U('Unit/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">-->
+					<!--<i class="icon_nav glyphicon glyphicon-tasks"></i> <span class="nav-label">单位管理</span>-->
+					<!--<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>-->
+				<!--<ul class="nav-second-level">
+					<if condition="$permission_list['CLIENT.SIGN']">
+						<li>
+							<a href="<{:U('Client/sign', ['mid'=>I('get.mid', 0, 'int')])}>">签到</a>
+						</li>
+					</if>
+					<li>
+						<a href="<{:U('Client/manageUnit', ['mid'=>I('get.mid', 0, 'int')])}>">会所记录</a>
+					</li>
+				</ul>-->
+			<!--</li>-->
 			<if condition="$permission_list['SIGN_PLACE.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq SignPlace'>active</if>">
 					<a href="<{:U('SignPlace/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
@@ -111,13 +129,28 @@
 			</if>
 			<if condition="$permission_list['RECEIVABLES.VIEW'] eq 1">
 				<li class="side_item <if condition='$c_name eq Receivables'>active</if>">
-					<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
+					<a href="javascript:void(0)" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-usd"></i> <span class="nav-label">收款管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 					<ul class="nav-second-level">
 						<if condition="$permission_list['RECEIVABLES.CREATE'] eq 1">
 							<li>
-								<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款</a>
+								<a href="<{:U('Receivables/createUnit', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款 (会所)</a>
+							</li>
+						</if>
+						<if condition="$permission_list['RECEIVABLES.CREATE'] eq 1">
+							<li>
+								<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款 (个人)</a>
+							</li>
+						</if>
+						<if condition="$permission_list['RECEIVABLES.CREATE'] eq 1">
+							<li>
+								<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款详情 (会所)</a>
+							</li>
+						</if>
+						<if condition="$permission_list['RECEIVABLES.CREATE'] eq 1">
+							<li>
+								<a href="<{:U('Receivables/detailsProject', ['mid'=>I('get.mid', 0, 'int')])}>">收款报表 (项目)</a>
 							</li>
 						</if>
 						<if condition="$permission_list['PAY_METHOD.VIEW'] eq 1">
@@ -125,11 +158,11 @@
 								<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
 							</li>
 						</if>
-						<if condition="$permission_list['RECEIVABLES_TYPE.VIEW'] eq 1">
+						<!--<if condition="$permission_list['RECEIVABLES_TYPE.VIEW'] eq 1">
 							<li>
 								<a href="<{:U('Receivables/receivablesType', ['mid'=>I('get.mid', 0, 'int')])}>">收款类型</a>
 							</li>
-						</if>
+						</if>-->
 						<if condition="$permission_list['POS_MACHINE.VIEW'] eq 1">
 							<li>
 								<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机</a>

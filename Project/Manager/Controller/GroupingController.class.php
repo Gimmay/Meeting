@@ -105,6 +105,16 @@
 				}
 				$keyword = urlencode(I('get.keyword', ''));
 				foreach($group_result as $k => $v){
+					$setStatisticsData = function($group, $mid){
+						$sql = "select 
+						(select count(*) from workflow_group_member where gid = $group[id] and mid = $mid and status = 1 and cid in (select cid from workflow_join where sign_status = 1 and mid = $mid and status = 1)) sign_count,
+	count(*) assigned_count
+from workflow_group_member
+where gid = $group[id] and mid = $mid and status = 1";
+						$result = M()->query($sql);
+						return $result[0];
+					};
+
 					$group_score_result = [];
 					for($i = 1; $i<=$time; $i++){
 						$score_temp   = 0;
@@ -130,6 +140,7 @@
 					$group_result[$k]['member_count'] = $group_member;
 					$group_result[$k]['score']        = $group_score_result;
 					$group_result[$k]['keyword']      = $keyword;
+					$group_result[$k]['statistics'] = $setStatisticsData($v, $mid);
 					foreach($group_result[$k]['score'] as $k1 => $v1){
 						$group_result[$k]['count_score'] += $v1['score'];
 					}

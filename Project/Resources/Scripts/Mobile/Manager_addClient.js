@@ -3,24 +3,24 @@
  */
 $(function(){
 	$('.submit button').on('touchend', function(){
-		var $name   = $('input[name=name]');
-		var $unit   = $('input[name=unit]');
-		var $mobile = $('input[name=mobile]');
-		if($name.val() == ''){
-			ThisObject.object.toast.toast("姓名不能为空");
-			$name.focus();
-			return false;
-		}
-		if($mobile.val() == ''){
-			ThisObject.object.toast.toast("手机不能为空");
-			$mobile.focus();
-			return false;
-		}
-		if($unit.val() == ''){
-			ThisObject.object.toast.toast("单位名称不能为空");
-			$unit.focus();
-			return false;
-		}
+//		var $name   = $('input[name=name]');
+//		var $unit   = $('input[name=unit]');
+//		var $mobile = $('input[name=mobile]');
+//		if($name.val() == ''){
+//			ThisObject.object.toast.toast("姓名不能为空");
+//			$name.focus();
+//			return false;
+//		}
+//		if($mobile.val() == ''){
+//			ThisObject.object.toast.toast("手机不能为空");
+//			$mobile.focus();
+//			return false;
+//		}
+//		if($unit.val() == ''){
+//			ThisObject.object.toast.toast("单位名称不能为空");
+//			$unit.focus();
+//			return false;
+//		}
 		var data = $('#form').serialize();
 		ThisObject.object.loading.loading();
 		Common.ajax({

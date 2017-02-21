@@ -94,6 +94,7 @@
 			if(isset($filter['keyword']) && $filter['keyword']) $where .= " and (code like '%$filter[keyword]%' or name like '%$filter[keyword]%')";
 			if(isset($filter['_limit'])) $limit = "limit $filter[_limit]";
 			if(isset($filter['_order'])) $order = "order by $filter[_order]";
+			if(isset($filter['ids'])) $where .= " and workflow_coupon_item.id in ($filter[ids])";
 			if((int)$type == 0) $field = 'count(*) count';
 			$sql = "
 select $field from workflow_coupon_item

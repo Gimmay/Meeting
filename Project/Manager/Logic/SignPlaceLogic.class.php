@@ -122,7 +122,8 @@
 						$result = $join_sign_place_model->alterRecord(['id' => $join_record['id']], [
 							'sign_status' => 2,
 							'sign_time'   => null,
-							'sign_type'   => 0
+							'sign_type'   => 0,
+							'sign_director_id' => null
 						]);
 
 						return array_merge($result, ['__ajax__' => true]);

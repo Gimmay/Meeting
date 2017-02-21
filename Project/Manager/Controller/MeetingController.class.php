@@ -100,6 +100,10 @@
 					'employee'           => $employee_record,
 					'client'             => count($join_record)-$employee_record
 				]);
+				/** @var \Core\Model\ReportModel $report_model */
+				$report_model = D('Core/Report');
+				$report2      = $report_model->report2($this->meetingID);
+				$this->assign('report2', $report2);
 				$this->display();
 			}
 			else $this->error('您没有查看会议详情的权限', U('alter', ['mid' => $this->meetingID]));
@@ -158,12 +162,7 @@
 				$message_logic = D('Message');
 				$message       = $message_logic->getMessageSelectList();
 				/** @var \Core\Model\MeetingModel $model */
-				$model      = D('Core/Meeting'); // 实例化表模型
-				$list_total = $model->findMeeting(0, [
-					'keyword' => I('get.keyword', ''),
-					'status'  => 'not deleted'
-				]); // 查处所有的会议的个数
-				$option     = [];
+				$model = D('Core/Meeting'); // 实例化表模型
 				switch(I('get.type', '')){
 					case 'ing':
 						$option['status'] = 'ing';
@@ -171,7 +170,14 @@
 					case 'fin':
 						$option['status'] = 4;
 					break;
+					default:
+						$option = [];
+					break;
 				}
+				$list_total  = $model->findMeeting(0, array_merge([
+					'keyword' => I('get.keyword', ''),
+					'status'  => 'not deleted'
+				], $option)); // 查处所有的会议的个数
 				$page_object = new Page($list_total, C('PAGE_RECORD_COUNT')); // 实例化分页类 传入总记录数和每页显示的记录数
 				\ThinkPHP\Quasar\Page\setTheme1($page_object);
 				$show         = $page_object->show();// 分页显示输出
@@ -257,12 +263,13 @@
 			if($this->permissionList['MEETING.CONFIGURE']){
 				$this->meetingID = $this->initMeetingID($this);
 				$setMessageType  = function ($meeting){
-					$core_logic                       = new \Core\Logic\MeetingLogic();
-					$config                           = $core_logic->getConfig($this->meetingID);
-					$meeting['config_message_sms']    = $config['message_sms'];
-					$meeting['config_message_wechat'] = $config['message_wechat'];
-					$meeting['config_create_client_name']    = $config['create_client_name'];
+					$core_logic                             = new \Core\Logic\MeetingLogic();
+					$config                                 = $core_logic->getConfig($this->meetingID);
+					$meeting['config_message_sms']          = $config['message_sms'];
+					$meeting['config_message_wechat']       = $config['message_wechat'];
+					$meeting['config_create_client_name']   = $config['create_client_name'];
 					$meeting['config_create_client_mobile'] = $config['create_client_mobile'];
+					$meeting['config_create_client_unit']   = $config['create_client_unit'];
 
 					return $meeting;
 				};
@@ -279,7 +286,7 @@
 				$column_control_model = D('Core/ColumnControl');
 				$column_list          = $column_control_model->findRecord(2, [
 					'mid'   => $this->meetingID,
-					'table' => 'user_client'
+					'table' => ['user_client', 'workflow_join']
 				]);
 				$getColumnStatus      = function ($cl){
 					$data = [];

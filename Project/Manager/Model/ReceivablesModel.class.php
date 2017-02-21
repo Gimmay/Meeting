@@ -26,7 +26,6 @@ FROM(
 		SELECT
 			user_client.unit `unit`,
 			user_client.team,
-			user_client.column5 area,
 			user_client. NAME `client`,
 			workflow_receivables_option.price `price`,
 			concat(
@@ -34,6 +33,7 @@ FROM(
 				ifnull(concat('(' ,workflow_coupon_item.code, ')'), '')
 			) `project`,
 			user_employee. NAME `payee`,
+			workflow_receivables.type,
 			workflow_receivables.order_number,
 			workflow_pay_method. NAME `pay_method`,
 			(SELECT NAME FROM workflow_pos_machine WHERE workflow_receivables_option.pos_machine = workflow_pos_machine.id) `pos_machine`,
@@ -55,11 +55,11 @@ FROM(
 				[
 					'unit'         => '单位(会所)',
 					'team'         => '团队',
-					'area'         => '区域',
 					'client'       => '顾客',
 					'price'        => '金额',
 					'project'      => '项目',
 					'payee'        => '收款人',
+					'type'        => '收款类型',
 					'order_number' => '单据号',
 					'pay_method'   => '支付方式',
 					'pos_machine'  => 'POS机',

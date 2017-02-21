@@ -10,6 +10,7 @@
 	use Manager\Logic\BadgeLogic;
 	use Manager\Logic\ClientLogic;
 	use Manager\Logic\ExcelLogic;
+	use Quasar\StringPlus;
 	use stdClass;
 	use Think\Page;
 
@@ -17,6 +18,81 @@
 		public function _initialize(){
 			parent::_initialize();
 			$this->meetingID = $this->initMeetingID($this);
+		}
+
+		public function manageUnit(){
+			$logic = new ClientLogic();
+			/* 处理POST提交请求 */
+			if(IS_POST){
+				$type   = strtolower(I('post.requestType', ''));
+				$result = $logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					if($result['__return__']) $url = $result['__return__'];
+					else $url = '';
+					if($result['status']) $this->success($result['message'], $url);
+					else $this->error($result['message'], '', 3);
+				}
+				exit;
+			}
+			if($this->permissionList['CLIENT.VIEW']){
+				/** @var \Core\Model\JoinModel $model */
+				$model = D('Core/Join');
+				/* 获取记录总数 */
+				$total_list = $model->findRecordAll(2, ([
+					'keyword' => I('get.keyword', ''),
+					'status'  => 'not deleted',
+					'mid'     => $this->meetingID,
+					'type'    => '会所'
+				]));
+				/* 分页设置 */
+				$page_object = new Page(count($total_list), I('get._page_count', C('PAGE_RECORD_COUNT'), 'int'));
+				\ThinkPHP\Quasar\Page\setTheme1($page_object);
+				$page_show = $page_object->show();
+				/* 当前页记录 */
+				$unit_list       = $model->findRecordAll(2, [
+					'keyword' => I('get.keyword', ''),
+					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
+					'_order'  => 'sub.unit, sub.pinyin_code',
+					'status'  => 'not deleted',
+					'mid'     => $this->meetingID,
+					'type'    => '会所'
+				]);
+				$enabled_count   = $model->findRecordAll(0, [
+					'status' => 1,
+					'mid'    => $this->meetingID,
+					'type'   => '会所'
+				]);
+				$disabled_count  = $model->findRecordAll(0, [
+					'status' => 0,
+					'mid'    => $this->meetingID,
+					'type'   => '会所'
+				]);
+				$all_count       = $model->findRecordAll(0, [
+					'status' => 'not deleted',
+					'mid'    => $this->meetingID,
+					'type'   => '会所'
+				]);
+				$temp_total_list = $model->findRecordAll(2, [
+					'status' => 1,
+					'mid'    => $this->meetingID,
+					'type'   => '会所'
+				]);
+				$this->assign('statistics', [
+					'enabled'       => $enabled_count,
+					'disabled'      => $disabled_count,
+					'total'         => $all_count,
+					'enabled_total' => count($temp_total_list),
+				]);
+				$this->assign('list', $unit_list);
+				$this->assign('page_show', $page_show);
+				$this->display();
+			}
+			else $this->error('您没有查看参会人员的权限');
 		}
 
 		public function manage(){
@@ -70,7 +146,7 @@
 				$client_list = $model->findRecord(2, array_merge([
 					'keyword' => I('get.keyword', ''),
 					'_limit'  => $page_object->firstRow.','.$page_object->listRows,
-					'_order'  => I('get._column', 'main.sign_time').' '.I('get._sort', 'desc').', sub.unit, sub.pinyin_code',
+					'_order'  => I('get._column', 'main.sign_time').' '.I('get._sort', 'desc').', main.creatime desc, sub.unit_pinyin_code, sub.pinyin_code',
 					'status'  => 1,
 					'mid'     => $this->meetingID
 				], $options));
@@ -120,7 +196,7 @@
 				]);
 				$client_list     = $client_logic->setColumn('manage:client_list', $client_list, ['mid' => $this->meetingID]);
 				/* 员工列表(for select component) */
-				$employee_list = $employee_model->getEmployeeSelectList();
+				$employee_list = $employee_model->getEmployeeNameSelectList();
 				/* 获取签到点列表(for select component) */
 				$sign_place_list = $sign_place_model->getRecordSelectList($this->meetingID);
 				$group_list      = $group_model->findRecord(2, ['mid' => $this->meetingID, 'status' => 1]);
@@ -148,7 +224,7 @@
 					$column_control_model = D('Core/ColumnControl');
 					$column_list          = $column_control_model->findRecord(2, [
 						'mid'   => $mid,
-						'table' => 'user_client'
+						'table' => ['user_client', 'workflow_join']
 					]);
 					$data                 = [];
 					foreach($column_list as $val) $data[$val['code']] = $val;
@@ -193,7 +269,7 @@
 					$column_control_model = D('Core/ColumnControl');
 					$column_list          = $column_control_model->findRecord(2, [
 						'mid'   => $mid,
-						'table' => 'user_client'
+						'table' => ['user_client', 'workflow_join']
 					]);
 					$data                 = [];
 					foreach($column_list as $val) $data[$val['code']] = $val;
@@ -214,8 +290,9 @@
 				/** @var \Core\Model\ColumnControlModel $column_control_model */
 				$column_control_model = D('Core/ColumnControl');
 				$column_list          = $column_control_model->findRecord(2, [
-					'mid'  => I('get.mid', 0, 'int'),
-					'view' => 1
+					'mid'   => I('get.mid', 0, 'int'),
+					'view'  => 1,
+					'table' => ['user_client', 'workflow_join']
 				]);
 				$header[0]            = [];
 				foreach($column_list as $col){
@@ -248,33 +325,102 @@
 				if(isset($_GET['signed'])) $options['sign_status'] = I('get.signed', 0, 'int') == 1 ? 1 : 'not signed';
 				if(isset($_GET['reviewed'])) $options['review_status'] = I('get.reviewed', 0, 'int') == 1 ? 1 : 'not reviewed';
 				if(isset($_GET['mid'])) $options['mid'] = $this->meetingID;
-				$client_list = $main_model->findRecord(2, array_merge([
-					'keyword' => I('get.keyword', ''),
-					'_order'  => I('get._column', 'main.creatime').' '.I('get._sort', 'desc'),
-					'status'  => 'not deleted'
-				], $options));
-				$client_list = $logic->setColumn('excel:set_data', $client_list, [
-					'exceptColumn' => [
-						'password',
-						'mobile_qrcode',
-						'mid',
-						'id',
-						'pinyin_code',
-						'status',
-						'creator',
-						'sign_qrcode',
-						'cid',
-						'creatime',
-						'join_status',
-						//					'column2',
-						//					'column3',
-						//					'column4',
-						//					'column5',
-						'column6',
-						'column7',
-						'column8'
+				$sql         = "SELECT
+	name,
+	case gender when 1 then '男' when 2 then '女' else '未指定' end gender,
+	mobile,
+	unit,
+	birthday,
+	email,
+	title,
+	position,
+	address,
+	id_card_number,
+	develop_consultant,
+	service_consultant,
+	case is_new when 1 then '新客' when 0 then '老客' else '' end is_new,
+	team,
+	type,
+	case workflow_join.status when 1 then '可用' when 0 then '禁用' when 2 then '删除' else '' end status,
+	registration_type,
+	case review_status when 1 then '已审核' when 0 then '未审核' else '取消审核' end review_status,
+	FROM_UNIXTIME(review_time) review_time,
+	case sign_status when 1 then '已签到' when 0 then '未签到' else '取消签到' end sign_status,
+	FROM_UNIXTIME(sign_time) sign_time,
+	case sign_type when 1 then 'PC签到' when 2 then '微信自主签到' when 3 then '微信签到' else '' end sign_type,
+	(select name from user_employee where id = sign_director_id) sign_director,
+	case gift_status when 1 then '已领取奖品' when 0 then '未领取奖品' end gift_status,
+	(select code from workflow_group join workflow_group_member on gid = workflow_group.id
+where workflow_group.mid = $options[mid] and cid = user_client.id and workflow_group_member.status = 1 order by workflow_group_member.id desc
+	limit 1) group_name,
+	column1,
+	column2,
+	column3,
+	column4,
+	column5,
+	column6,
+	column7,
+	column8
+FROM user_client
+JOIN workflow_join ON workflow_join.cid = user_client.id
+where mid = $options[mid] and workflow_join.status =1 and user_client.type <> '会所'";
+				$client_list = M()->query($sql);
+				$client_list = array_merge([
+					[
+						'姓名',
+						'性别',
+						'手机号',
+						'单位',
+						'生日',
+						'邮箱',
+						'职称',
+						'职位',
+						'地址',
+						'身份证号',
+						'开拓顾问',
+						'服务顾问',
+						'是否新客',
+						'团队',
+						'类型',
+						'状态',
+						'审核状态',
+						'审核时间',
+						'签到状态',
+						'签到时间',
+						'签到类型',
+						'签到者',
+						'领取奖品状态',
+						'分组',
+						'备用字段1',
+						'备用字段2',
+						'备用字段3',
+						'备用字段4',
+						'备用字段5',
+						'备用字段6',
+						'备用字段7',
+						'备用字段8'
 					]
-				]);
+				], $client_list);
+				//				$client_list = $main_model->findRecord(2, array_merge([
+				//					'keyword' => I('get.keyword', ''),
+				//					'_order'  => I('get._column', 'main.creatime').' '.I('get._sort', 'desc'),
+				//					'status'  => 'not deleted'
+				//				], $options));
+				//				$client_list = $logic->setColumn('excel:set_data', $client_list, [
+				//					'exceptColumn' => [
+				//						'password',
+				//						'mobile_qrcode',
+				//						'mid',
+				//						'id',
+				//						'pinyin_code',
+				//						'status',
+				//						'creator',
+				//						'sign_qrcode',
+				//						'cid',
+				//						'creatime',
+				//						'join_status'
+				//					]
+				//				]);
 				$excel_logic->exportCustomData($client_list, [
 					'fileName'    => "[$meeting[name]]参会人员客户列表",
 					'title'       => "$meeting[name]",
@@ -297,7 +443,7 @@
 				}
 				else{
 					unset($result['__ajax__']);
-					if($result['status']) $this->success($result['message'], U('manage', ['mid' => $this->meetingID]));
+					if($result['status']) $this->success($result['message'], $result['redirectUrl']);
 					else $this->error($result['message'], '', 3);
 				}
 				exit;
@@ -306,7 +452,10 @@
 				/** @var \Core\Model\JoinModel $join_model */
 				$join_model  = D('Core/Join');
 				$logic       = new ClientLogic();
-				$join_record = $join_model->findRecord(1, ['mid' => $this->meetingID, 'cid' => I('get.id', 0, 'int')]);
+				$join_record = $join_model->findRecordAll(1, [
+					'mid' => $this->meetingID,
+					'cid' => I('get.id', 0, 'int')
+				]);
 				/** @var \Manager\Model\EmployeeModel $employee_model */
 				$employee_model     = D('Employee');
 				$join_record        = $logic->setColumn('alter:client_info', $join_record, [
@@ -323,7 +472,7 @@
 					$column_control_model = D('Core/ColumnControl');
 					$column_list          = $column_control_model->findRecord(2, [
 						'mid'   => $mid,
-						'table' => 'user_client'
+						'table' => ['user_client', 'workflow_join']
 					]);
 					$data                 = [];
 					foreach($column_list as $val) $data[$val['code']] = $val;
@@ -444,5 +593,19 @@
 				$this->assign('list', $list);
 			}
 			$this->display();
+		}
+
+		public function update1(){
+			set_time_limit(0);
+			/** @var \Core\Model\ClientModel $client_model */
+			$client_model = D('Core/Client');
+			$str_obj      = new StringPlus();
+			$client_list  = $client_model->findClientAll(2);
+			C('TOKEN_ON', false);
+			foreach($client_list as $client){
+				$result = $client_model->alterClient(['id' => $client['id']], ['pinyin_code'=>$str_obj->getPinyin($client['name'], true, ''), 'unit_pinyin_code' => $str_obj->getPinyin($client['unit'], true, '')]);
+				if($result['status']) echo "$client[id] - success<br>";
+				else echo "$client[id] - failure<br>";
+			}
 		}
 	}

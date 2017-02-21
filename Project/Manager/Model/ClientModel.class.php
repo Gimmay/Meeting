@@ -51,26 +51,23 @@ AND COLUMN_NAME NOT IN ('id', 'password', 'status', 'creatime', 'creator', 'piny
 			else return $result;
 		}
 
-		public function getClientSelectList($mid){
-			$sql = "SELECT CONCAT(`name`) `html`, CONCAT( pinyin_code),
+		public function getClientSelectList($mid, $have_unit = null, $type = null){
+			$type = ($type == null ? '' : " $type ");
+			if($have_unit == null){
+				$sql = "SELECT CONCAT(`name`) `html`, CONCAT( pinyin_code, `name`) `keyword`,
 user_client.id `value`
 FROM `workflow_join`
 LEFT JOIN `user_client` 
 ON workflow_join.cid = user_client.id
-WHERE mid = $mid AND workflow_join.status = 1 AND user_client.status = 1";
-
-			return $this->query($sql);
-		}
-
-		public function getClientSelectUnit($mid, $type = null){
-			$type = $type == null ? '' : " and $type ";
-			$sql  = "SELECT CONCAT(`name`, ' / ', unit) `html`, CONCAT(`name`, unit, ',', pinyin_code) `keyword`,
+WHERE mid = $mid AND workflow_join.status = 1 AND user_client.status = 1 $type";
+			}else{
+				$sql = "SELECT CONCAT(`name`, ' / ', unit) `html`, CONCAT(`name`, unit, ',', pinyin_code) `keyword`,
 user_client.id `value`
 FROM `workflow_join`
 LEFT JOIN `user_client` 
 ON workflow_join.cid = user_client.id
 WHERE MID = $mid AND workflow_join.status = 1 AND user_client.status = 1 $type;";
-
+			}
 			return $this->query($sql);
 		}
 	}
