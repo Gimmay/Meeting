@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>房间分配 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/operate.js"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<div class="main_body">
+					<section class="content">
+						<div class="table_wrap mb_10">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="<{:U('Room/manage', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间列表</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Room/roomType', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间类型(<{$room_type_number.assigned}>/<{$room_type_number.number}>)</a>
+								</div>
+							</div>
+						</div>
+						<div class="c_header">
+							<div class="btn_group_wrap">
+								<div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="glyphicon glyphicon-plus"></i> 创建房间 <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li class="create_room" data-toggle="modal" data-target="#distribution_room">
+											<a href="javascript:void(0)">创建房间</a>
+										</li>
+										<li>
+											<a href="<{:U('Room/import',['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">批量导入房间</a>
+										</li>
+										<li role="separator" class="divider"></li>
+										<li>
+											<a href="<{:U('exportTemplate', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">下载导入模板</a>
+										</li>
+										<li>
+											<a href="<{:U('exportData', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">导出房间信息</a>
+										</li>
+									</ul>
+								</div>
+								<div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="glyphicon glyphicon-lock"></i> 基础操作 <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li class="batch_enable_btn"><a href="javascript:void(0)">批量启用</a></li>
+										<li class="batch_disable_btn"><a href="javascript:void(0)">批量禁用</a></li>
+										<li role="separator" class="divider"></li>
+										<li class="batch_delete_btn"><a href="javascript:void(0)">批量删除</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<!--<div class="count">
+							参会员工：已入住
+							<a href="" class="href"><{$statistics.assigned_employee}></a>人，未入住<span><{$statistics.not_assign_employee}></span>人。 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 参会客户：已入住
+							<a href="" class="href"><{$statistics.assigned_client}></a>人，未入住<span><{$statistics.not_assign_client}></span>人。 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 房间：已住满<a href="" class="href"><{$statistics.full_room}></a>间，未住满<a href="" class="href"><{$statistics.available_room}></a>间。
+						</div>-->
+						<div class="repertory clearfix">
+							<form action="" method="get">
+								<div class="input-group repertory_text">
+									<input type="search" name="keyword" class="form-control" placeholder="房间/拼音简码" value="">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default main_search">搜索</button>
+									</span>
+								</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('Room/manage',['mid'=>I('get.mid',0,'int'),'hid'=>I('get.hid',0,'int')])}>">查看所有</a>
+							</form>
+						</div>
+						<div class="table_wrap">
+							<div class="row mb_10">
+								<div class="col-sm-6">
+									<span class="total_client">共 <b class="color-red"><{:count($list)}></b> 个房间</span>
+								</div>
+							</div>
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<th width="4%" class="all_check">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</th>
+										<th width="3%">序号</th>
+										<th width="8%">房间号</th>
+										<th width="8%">房间类型</th>
+										<th width="8%">价格</th>
+										<th width="10%">入住情况 (入住/上限)</th>
+										<th width="8%">入住人员</th>
+										<th width="10%">备注</th>
+										<th width="5%">状态</th>
+										<th width="8%">创建时间</th>
+										<th width="5%">创建者</th>
+										<th width="15%">操作</th>
+										<th width="5%">详情</th>
+									</tr>
+								</thead>
+
+								<tbody>
+									<volist name="list" id="single">
+										<tr>
+											<td class="check_item">
+												<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
+											</td>
+											<td><{$i}></td>
+											<td class="room_code"><{$single.name}></td>
+											<td class="room_type"><{$single.type}></td>
+											<td class="price"><{$single.price}></td>
+											<td>
+												<if condition="$single['count'] eq $single['capacity'] and $single['capacity'] gt 0">
+													<b style="color: red">住满</b>
+												</if>
+												<if condition="$single['count'] gt $single['capacity'] and $single['capacity'] gt 0">
+													<b style="color: black">已超容</b>
+												</if>
+												<if condition="$single['count'] lt $single['capacity'] and $single['capacity'] gt 0">
+													<b style="color: green">未住满</b>
+												</if>
+												<if condition="$single['capacity'] eq 0">
+													<b style="color: blue">无人员限制</b>
+												</if>
+												<span>(<{$single.count}>/<{$single.capacity}>)</span>
+											</td>
+											<td class="client_type"><{$single.client}></td>
+											<td class="comment"><{$single.comment}></td>
+											<td class="comment"><{$single.status}></td>
+											<td class="come_time"><{$single.creatime}></td>
+											<td><{$single.creator}></td>
+											<td>
+												<div class="btn-group" data-id="<{$single.id}>" data-status="<{$single.status_code}>">
+													<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_modal">修改</button>
+													<button class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+													<switch name="single.status_code">
+														<case value="0">
+															<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+														</case>
+														<case value="1">
+															<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+														</case>
+													</switch>
+												</div>
+											</td>
+											<td>
+												<div class="btn-group" data-id="<{$single.id}>">
+													<button class="btn btn-default btn-xs details_btn">详情</button>
+												</div>
+											</td>
+										</tr>
+									</volist>
+								</tbody>
+
+							</table>
+						</div>
+						<div class="page_wrap">
+							<div class="pagination">
+								<{$page_show}>
+							</div>
+						</div>
+					</section>
+				</div>
+				<div class="right_details">
+					<div class="d_con">
+						<span class="close_btn glyphicon glyphicon-remove">
+						</span>
+						<div class="title">
+							<span>详情</span>
+						</div>
+						<div class="info">
+							<div class="li">
+								<span>房间号：</span> <span class="room_code"></span>
+							</div>
+							<div class="li">
+								<span>房间类型：</span> <span class="room_type"></span>
+							</div>
+							<div class="li">
+								<span>价格（元）：</span> <span class="price"></span>
+							</div>
+							<div class="li">
+								<span>可容纳人数：</span> <span class="capacity"></span>
+							</div>
+							<div class="li">
+								<span>房客人数：</span> <span class="room_num"></span>
+							</div>
+							<div class="li">
+								<span>创建时间：</span> <span class="create_time"></span>
+							</div>
+							<div class="li">
+								<span>备注：</span> <span class="comment"></span>
+							</div>
+						</div>
+						<div class="btn_fun">
+							<a href="javascript:void(0)" class="add_client">添加客户</a>
+						</div>
+						<div class="d_list">
+							<div class="list_title">入住人员列表</div>
+							<table class="table" width="100%">
+								<caption class="color-2489c5"><h3>现住房客</h3></caption>
+								<tbody id="list_c">
+								</tbody>
+							</table>
+							<table class="table" width="100%">
+								<caption class="color-2489c5"><h3>历史房客</h3></caption>
+								<tbody id="list_history">
+								</tbody>
+							</table>
+						</div>
+						<!-- 隐藏的点击详情的房间ID -->
+						<input type="hidden" id="current_room_id">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 新增房间 -->
+	<div class="modal fade" id="distribution_room" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 700px;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">新增房间</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="create">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="hotel_name" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>酒店名称：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control hotel_name" name="hotel_name" value="<{$hotel_name}>" id="hotel_name" disabled>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="room_number" class="col-sm-2 control-label">房间号：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control room_number" name="name" id="room_number">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="room_type" class="col-sm-2 control-label">房间类型：</label>
+							<div class="col-sm-10">
+								<select name="type" class="form-control" id="room_type"> </select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="price" class="col-sm-2 control-label">价格：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control price" name="price" id="price" readonly>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="capacity" class="col-sm-2 control-label">可容纳人数：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control capacity" name="capacity" id="capacity" readonly>
+							</div>
+						</div>
+						<div class="form-group mes_people">
+							<label class="col-sm-2 control-label">入住人员：</label>
+							<div class="col-sm-10">
+								<div class="list_item">
+									<span class="mr_17 hide">已选择（<strong class="m_color" id="selected_attendee_count_by_1"></strong>）</span>
+									<a class="create_add_client" data-toggle="modal" data-target="#add_recipient"><i class="glyphicon glyphicon-plus"></i>添加客户</a>
+								</div>
+							</div>
+							<input type="hidden" name="client">
+						</div>
+						<div class="form-group">
+							<label for="room_comment" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" id="room_comment"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 修改房间 -->
+	<div class="modal fade" id="alter_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width:700px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">修改房间</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="modify"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="room_code_a" class="col-sm-2 control-label">房间号：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control name" name="name" id="room_code_a">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="room_type_a" class="col-sm-2 control-label">房间类型：</label>
+							<div class="col-sm-10">
+								<!--<input type="text" class="form-control room_type" name="room_type" id="room_type">-->
+								<select name="type" class="form-control" id="room_type_a">
+									<option value="0">请选择类型</option>
+									<volist name="type" id="info">
+										<option value="<{$info.id}>"><{$info.name}></option>
+									</volist>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="price" class="col-sm-2 control-label">价格：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control price" name="price" id="price_a" readonly>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="capacity_a" class="col-sm-2 control-label">可容纳人数：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control capacity" name="capacity" id="capacity_a" readonly>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="room_comment_a" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" id="room_comment_a"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 添加人员 >> 新增房间 >> 客户 -->
+	<div class="modal fade" id="add_recipient" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 60%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title">添加客户</h2>
+				</div>
+				<div class="choose_people">
+					<div class="d1">
+						<!--<span>当前有<b class="current_attendee">0</b>人</span>-->
+						<!--<span>已选择<b class="color-red selected_attendee">0</b>人</span>-->
+						<a href="javascript:void(0)" class="btn_save btn btn-sm btn-info">添加入住</a>
+					</div>
+					<div class="search_sm">
+						<div class="col-sm-5">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="姓名" value="">
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default main_search">搜索</button>
+								</span>
+							</div>
+						</div>
+						<a type="button" class="btn btn-default search_all">查看所有</a>
+					</div>
+					<span class="color-red" style="padding: 20px 20px 10px 20px; font-size: 14px; display: block;">已选择：</span>
+					<div class="selected_person">
+					</div>
+					<div class="d2">
+						<div class="table_wrap">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<!--<td width="10%" class="all_check_add">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</td>-->
+										<td width="10%">序号</td>
+										<td width="10%">单位名称</td>
+										<td width="10%">姓名</td>
+										<td width="10%">客户类型</td>
+										<td width="10%">性别</td>
+										<td width="20%">职务</td>
+										<td width="20%">手机号</td>
+									</tr>
+								</thead>
+								<tbody id="attendee_body">
+								</tbody>
+							</table>
+						</div>
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$page_show}>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加人员2 >> 房间详情添加 -->
+	<div class="modal fade" id="add_recipient2" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 60%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title">添加客户<span>（可添加<b class="can_live_p"></b>人）</span></h2>
+					<input type="hidden" name="can_live">
+				</div>
+				<div class="choose_people">
+					<div class="d1">
+						<span>当前有<b class="current_attendee">0</b>人</span>
+						<span>已选择<b class="color-red selected_attendee">0</b>人</span>
+						<a href="javascript:void(0)" class="btn_save btn btn-sm btn-info">添加入住</a>
+					</div>
+					<div class="search_sm">
+						<div class="col-sm-5">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="姓名" value="">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default main_search">搜索</button>
+								</span>
+							</div>
+						</div>
+						<a type="reset" class="btn btn-default search_all">查看所有</a>
+					</div>
+					<div class="d2">
+						<div class="table_wrap">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="10%" class="all_check_add2">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</td>
+										<td width="10%">序号</td>
+										<td width="10%">单位名称</td>
+										<td width="10%">姓名</td>
+										<td width="10%">客户类型</td>
+										<td width="10%">性别</td>
+										<td width="10%">职务</td>
+										<td width="20%">手机号</td>
+									</tr>
+								</thead>
+								<tbody id="attendee_body_a">
+								</tbody>
+							</table>
+							<input type="hidden" name="room_id">
+						</div>
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$page_show}>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 删除房间 -->
+	<div class="modal fade" id="delete_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">删除房间</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量删除 -->
+	<div class="modal fade" id="batch_delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量删除房间</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除已选<span class="sAmount"></span>项？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认删除</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 退房 -->
+	<div class="modal fade" id="choose_leave_time" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">选择离开时间</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post">
+					<input type="hidden" name="requestType" value="check_out"> <input type="hidden" name="cid">
+					<input type="hidden" name="rid">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="leave_time" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>离开时间：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control leave_time" name="check_out_time" id="leave_time">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 换房 -->
+	<div class="modal fade" id="change_room" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 1000px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">更换房间</h2>
+				</div>
+				<div class="modal-body">
+					<div class="room_list">
+						<div class="row">
+							<div class="col-sm-8">
+								<div class="repertory clearfix">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" class="form-control" placeholder="房间/拼音简码" value="">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default ajax_search">搜索</button>
+								</span>
+									</div>
+									<a type="reset" class="btn btn-default ajax_search_all">查看所有</a>
+								</div>
+							</div>
+							<div class="col-sm-4 text-right">
+								<a type="reset" class="btn btn-sm btn-info c_change">交换</a>
+							</div>
+						</div>
+
+						<div class="room_list">
+							<table class="table table-bordered text-center">
+								<thead>
+									<tr>
+										<th width="10%">序号</th>
+										<th width="20%">房间号</th>
+										<th width="30%">入住情况</th>
+										<th width="40%">入住人</th>
+									</tr>
+								</thead>
+								<tbody id="change_client_list">
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<!-- 换房人的ID -->
+				<input type="hidden" name="id">
+				<!-- 换房房间的ID -->
+				<input type="hidden" name="orid">
+			</div>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+			object:{
+				//　酒店分配
+				meetingSelect:$('#meeting_name,#meeting_name_a').QuasarSelect({
+					name        :'meeting_name',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($meeting_list)}>',
+					idInput     :'selected_meeting_name',
+					idHidden    :'selected_meeting_name_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				leaveTime    :jeDate({
+					dateCell:"#leave_time",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					isTime  :true, // isClear:false, // 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
+				}),
+				toast        :$().QuasarToast(),
+				icheck       :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				}),
+				icheckRoom   :$('.icheck_r').iCheck({
+					checkboxClass:'icheckbox_square-blue',
+					radioClass   :'iradio_square-blue'
+				}),
+				loading      :$().QuasarLoading()
+			}
+		}
+	</script>
+</body>
+</html>

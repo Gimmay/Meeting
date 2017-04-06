@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>客户导入 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/step/css/index.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/step/static/lib/jquery-step/css/jquery.step.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/step/static/lib/jquery-step/js/jquery.step.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body data-meeting-id="<{:I('get.mid')}>" data-place-id="<{:I('get.sid')}>">
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<div class="main_body">
+					<section class="content">
+						<!--步骤条开始-->
+						<div class="step-body" id="myStep">
+							<div class="step-header">
+								<ul class="clearfix">
+									<li><p>上传名单</p></li>
+									<li><p>字段对比设置</p></li>
+									<li><p>完成导入</p></li>
+								</ul>
+							</div>
+						</div>
+						<!--步骤条结束-->
+						<div class="table_wrap">
+							<div class="panel panel-default">
+								<!-- Default panel contents -->
+								<div class="panel-heading"><h2>上传客户名单</h2></div>
+								<div class="panel-body">
+									<form class="form-horizontal" role="form" action="" id="form">
+										<div class="row form-group">
+											<div class="col-sm-12"><h3>上传文件入径：<span class="src"></span></h3></div>
+										</div>
+										<div class="row form-group">
+											<div class="col-sm-6">
+												<div class="input-group">
+													<input type="text" class="form-control" id="excel_val" placeholder="选择文件" readonly="readonly">
+													<div class="input-group-addon">
+														<span>浏览</span>
+														<input type="file" name="excel" accept=".xlsx, .xls" class="excel_file" id="excel_file">
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<button type="button" class="btn btn-info" id="submit" disabled>上传</button>
+											</div>
+										</div>
+										<input type="hidden" name="requestType" id="import_excel" value="import_excel">
+									</form>
+								</div>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+				object:{
+					toast  :$().QuasarToast(),
+					loading:$().QuasarLoading(),
+					step   :$("#myStep").step({
+						animate :true,
+						initStep:1,
+						speed   :1000
+					})
+				}
+			}
+			;
+	</script>
+</body>
+</html>

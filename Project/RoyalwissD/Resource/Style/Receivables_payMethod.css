@@ -1,0 +1,386 @@
+.badge_content{
+	padding : 30px !important;
+}
+
+.badge_content > header{
+	margin-bottom : 20px;
+}
+
+.badge_box{
+	width : 100%;
+}
+
+.cart_view{
+	overflow         : hidden;
+	position         : relative;
+	z-index          : 2;
+	line-height      : 1.6;
+	background-color : rgba(0, 0, 0, .2);
+	border           : 1px solid #E1E1E1;
+	border-radius    : 5px;
+	float            : left;
+	/*	background-image : url("../../Images/Common/bg.jpg");*/
+	background-size  : 100% 100%;
+}
+
+.ui-widget-content{
+	background : none !important;
+	color      : #FFFFFF;
+	border     : none;
+}
+
+.ui-widget-content:hover{
+	border : 1px dashed rgba(0, 160, 232, 1) !important;
+	cursor : move;
+}
+
+.cart_set{
+	background    : #ECF1F4;
+	float         : left;
+	padding       : 20px;
+	border-radius : 5px;
+}
+
+.cart_set h2{
+	font-size : 18px;
+	margin    : 10px 0;
+}
+
+.choose_type{
+	padding : 10px;
+}
+
+.template{
+	padding : 10px;
+}
+
+.form_li{
+	margin : 10px 0;
+}
+
+.form_li .title{
+	font-weight : bold;
+}
+
+.form_li .name{
+	margin-top : 10px;
+	width      : 20%;
+}
+
+.bg_up_file{
+	position    : relative;
+	text-align  : center;
+	line-height : 40px;
+	width       : 100%;
+	height      : 40px;
+	border      : 1px dashed rgba(0, 0, 0, .2);
+	background  : #FFFFFF;
+	margin      : 10px 0;
+}
+
+#updateBackground{
+	position : absolute;
+	width    : 100%;
+	height   : 100%;
+	opacity  : 0;
+}
+
+#submit_bg{
+	position : absolute;
+	opacity  : 0;
+}
+
+.size input{
+	width      : 60px;
+	height     : 30px;
+	text-align : center;
+}
+
+.size_confirm{
+	margin-left : 20px;
+	margin-top  : -2px;
+}
+
+.vote_list li{
+	float      : left;
+	padding    : 10px;
+	margin     : 5px;
+	background : #FFFFFF;
+	cursor     : pointer;
+}
+
+.vote_list li.keyword{
+	color  : #428BCA;
+	border : 1px dotted #428BCA;
+}
+
+.vote_list li.no_choose{
+	color  : rgba(0, 0, 0, .3);
+	border : none;
+}
+
+.vote_list li.no_choose i{
+	display : none;
+}
+
+.vote_list i{
+	color       : rgba(0, 0, 0, .3);
+	font-weight : bold;
+	margin-left : 5px;
+}
+
+canvas{
+	display : none;
+}
+
+/** 系统默认列表 **/
+.system_tem{
+	width : 100%;
+}
+
+.system_tem_list{
+	overflow   : hidden;
+	width      : 100%;
+	padding    : 10px;
+	background : #FFFFFF;
+	border     : 1px solid rgba(0, 0, 0, .25);
+	overflow-x : auto;
+}
+
+.system_tem_list ul{
+}
+
+.system_tem_list ul li{
+	width            : 300px;
+	height           : 400px;
+	float            : left;
+	position         : relative;
+	overflow         : hidden;
+	float            : left;
+	border           : 1px solid rgba(0, 0, 0, .12);
+	background-color : #FFFFFF;
+	margin-right     : 10px;
+}
+
+.system_tem_list ul li.active{
+	border-color : #00A0E8;
+}
+
+.system_tem_list ul li .system_ontent{
+	width  : 100%;
+	height : 100%;
+}
+
+.system_tem_list ul li.active .select_icon{
+	display : block;;
+}
+
+.system_tem_list ul li .select_icon{
+	display     : none;
+	width       : 25px;
+	height      : 25px;
+	position    : absolute;
+	line-height : 25px;
+	text-align  : center;
+	color       : #FFFFFF;
+	left        : 1px;
+	top         : 1px;
+	background  : #00A0E8;
+	z-index     : 11;
+}
+
+.layer{
+	position : absolute;
+	top      : 0;
+	left     : 0;
+	width    : 100%;
+	height   : 100%;
+	z-index  : 11;
+}
+
+#meeting_name_s .quasar-select-data-list{
+	z-index : 777;
+}
+
+.minicolors-theme-default .minicolors-input{
+	height       : auto;
+	width        : auto;
+	display      : inline-block;
+	padding-left : 26px;
+}
+
+.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th{
+	padding    : 15px;
+	word-wrap  : break-word;
+	word-break : break-all;
+}
+
+.add{
+	position   : absolute;
+	right      : 0;
+	top        : 0;
+	text-align : center;
+	padding    : 4px;
+	border     : 0;
+}
+
+.add a{
+	display       : inline-block;
+	height        : 42px;
+	line-height   : 42px;
+	padding       : 0 32px;
+	color         : #00A0E8;
+	border        : 1px solid #00A0E8;
+	border-radius : 2px;
+}
+
+.coupon_area{
+	padding-bottom : 8px;
+}
+
+.coupon_area .coupon_box{
+	border  : 1px solid rgba(0, 0, 0, .12);
+	padding : 12px 8px 0 8px;
+}
+
+.coupon_area .coupon_box .coupon_list{
+	font-size : 0;
+}
+
+.coupon_area .coupon_box .coupon_list a{
+	margin-bottom : 8px;
+	margin-left   : 8px;
+	text-shadow   : none;
+	font-size     : 14px;
+}
+
+.coupon_area .coupon_box .coupon_list a.active{
+	background   : #00A0E8;
+	border-color : #00A0E8;
+	color        : #FFFFFF;
+}
+
+.coupon_footer{
+	border     : 1px solid rgba(0, 0, 0, .12);
+	border-top : none;
+	padding    : 5px;
+	text-align : center;
+}
+
+.coupon_footer .confirm{
+	border-radius : 0;
+	padding       : 5px 13px;
+	background    : #00A0E8;
+	border-color  : #00A0E8;
+	color         : #FFFFFF;
+	text-shadow   : none;
+}
+
+.no_record{
+	text-align : center;
+	padding    : 30px !important;
+	font-size  : 16px;
+}
+
+.n_search{
+	padding    : 16px;
+	background : rgba(0, 0, 0, 0.02);
+	margin-top : 16px;
+	border     : 1px solid rgba(0, 0, 0, .12);
+}
+
+.n_search .search_li{
+	float        : left;
+	margin-right : 20px;
+}
+
+.n_search .search_li label{
+	float          : left;
+	vertical-align : middle;
+	margin-top     : 12px;
+	font-size      : 14px;
+	font-weight    : normal;
+}
+
+.n_search .search_li > div{
+	float : left;
+	width : 200px;
+}
+
+.create_style_btn{
+	text-align : right;
+	padding    : 10px 30px 0 30px;
+}
+
+.create_style_btn button{
+	border-radius : 0;
+	background    : #00A0E8;
+	text-shadow   : none;
+	color         : #FFFFFF;
+	box-shadow    : none;
+}
+
+.style_list{
+	width          : 100%;
+	padding-bottom : 20px;
+}
+
+.style_list li{
+	border-top : 1px solid #E1E1E1;
+}
+
+.style_list li:last-child{
+	border-bottom : 1px solid #E1E1E1;
+}
+
+.style_list li > div{
+	float      : left;
+	text-align : center;
+	padding    : 15px 0;
+	overflow   : hidden;
+}
+
+.style_list li > div.s_name{
+	width         : 20%;
+	padding-left  : 10px;
+	padding-right : 10px;
+}
+
+.style_list li > div.s_commont{
+	width         : 40%;
+	padding-left  : 10px;
+	padding-right : 10px;
+}
+
+.style_list li > div.s_fun{
+	width : 40%;
+}
+
+.create_li{
+	padding : 0 20px;
+}
+
+.create_li > div{
+	float      : left;
+	text-align : center;
+	overflow   : hidden;
+}
+
+.create_li > div.s_name{
+	width         : 20%;
+	padding-left  : 10px;
+	padding-right : 10px;
+}
+
+.create_li > div.s_commont{
+	width         : 40%;
+	padding-left  : 10px;
+	padding-right : 10px;
+}
+
+.create_li > div.s_fun{
+	width : 40%;
+}
+
+
+

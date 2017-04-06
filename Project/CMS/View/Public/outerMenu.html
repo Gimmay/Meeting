@@ -1,0 +1,36 @@
+<!--会议系统左侧  导航栏 公用-->
+<div class="mt_navbar">
+	<div class="sidenav">
+		<ul class="sidenav_list" id="side_menu">
+			<li class="side_item <if condition='CONTROLLER_NAME eq User'>active</if>">
+				<a href="<{:U('CMS/User/manage')}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">用户管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <if condition='CONTROLLER_NAME eq Role'>active</if>">
+				<a href="<{:U('CMS/Role/manage')}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon glyphicon-star"></i> <span class="nav-label">角色管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <if condition='CONTROLLER_NAME eq Meeting'>active</if>">
+				<a href="<{:U('CMS/Meeting/type')}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-th"></i> <span class="nav-label">会议管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <if condition='CONTROLLER_NAME eq System'>active</if>">
+				<div class="side-item-link no_link">
+					<i class="icon_nav glyphicon glyphicon-cog"></i> <span class="nav-label">全局配置</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</div>
+				<ul class="nav-second-level">
+					<li class="<if condition='$cv_name eq Client_manage'>active</if>">
+						<a href="<{:U('CMS/System/configure')}>" class="side-item-link">基础配置</a>
+					</li>
+					<li class="<if condition='$cv_name eq Client_import'>active</if>">
+						<a href="<{:U('CMS/System/apiConfigure')}>">接口配置</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>

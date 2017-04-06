@@ -93,10 +93,10 @@ class MergeModel extends Model {
     public function add($data='',$options=array(),$replace=false){
         if(empty($data)) {
             // 没有传递数据，获取当前数据对象的值
-            if(!empty($this->data)) {
-                $data           =   $this->data;
+            if(!empty($this->object)) {
+                $data           =   $this->object;
                 // 重置数据
-                $this->data     = array();
+                $this->object = array();
             }else{
                 $this->error    = L('_DATA_TYPE_INVALID_');
                 return false;
@@ -178,10 +178,10 @@ class MergeModel extends Model {
         // 根据主表的主键更新
         if(empty($data)) {
             // 没有传递数据，获取当前数据对象的值
-            if(!empty($this->data)) {
-                $data           =   $this->data;
+            if(!empty($this->object)) {
+                $data           =   $this->object;
                 // 重置数据
-                $this->data     =   array();
+                $this->object =   array();
             }else{
                 $this->error    =   L('_DATA_TYPE_INVALID_');
                 return false;
@@ -228,8 +228,8 @@ class MergeModel extends Model {
         $pk   =  $this->pk;
         if(empty($options) && empty($this->options['where'])) {
             // 如果删除条件为空 则删除当前数据对象所对应的记录
-            if(!empty($this->data) && isset($this->data[$pk]))
-                return $this->delete($this->data[$pk]);
+            if(!empty($this->object) && isset($this->object[$pk]))
+                return $this->delete($this->object[$pk]);
             else
                 return false;
         }

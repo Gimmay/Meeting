@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>会议模块 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/jquery-ui.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/switch/bootstrap-switch.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-ui.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/switch/js/bootstrap-switch.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/ZeroClipboard/ZeroClipboard.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<div class="main_body">
+					<section class="content">
+						<div class="table_wrap">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="javascript:void(0)">会议配置</a>
+								</div>
+							</div>
+						</div>
+						<form class="form-horizontal" role="form" method="post" action="" id="form">
+							<div class="modal-body">
+								<div class="form-group">
+									<label class="col-sm-1 control-label">手机版邀约外链：</label>
+									<div class="input-group">
+										<input class="form-control" value="<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Mobile/invite', ['mid'=>I('get.mid', 0, 'int')])}>" readonly placeholder="" id="mobile_invite_link">
+											<span class="input-group-btn">
+												<button class="btn btn-default" id="mobile_invite_link_copy_btn" data-clipboard-target="mobile_invite_link" type="button">复制</button>
+											</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-1 control-label">签到结果页面：</label>
+									<!--<input class="form-control" value="<iframe src='<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Mobile/invite', ['mid'=>I('get.mid', 0, 'int')])}>' frameborder='0'></iframe>" readonly placeholder="" id="mobile_invite_link">-->
+									<div class="input-group">
+										<input class="form-control" value="<{$_SERVER['REQUEST_SCHEME']}>://<{$_SERVER['HTTP_HOST']}><{:U('Open/Computer/signResult', ['mid'=>I('get.mid', 0, 'int'), 'timeInterval'=>C('SIGN_RESULT_REFRESH_TIME')])}>" readonly placeholder="" id="computer_sign_result_link">
+											<span class="input-group-btn">
+												<button class="btn btn-default" id="computer_sign_result_link_copy_btn" data-clipboard-target="computer_sign_result_link" type="button">复制</button>
+											</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>员工收款：</label>
+									<div class="col-sm-11 clearfix">
+										<div class="switch pull-left" data-on="primary" data-off="info" style="margin-right: 20px;">
+											<!--suppress XmlDuplicatedId -->
+											<input type="checkbox" id="receivables" name="receivables" value="1"/>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="config_wechat" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>公众号/企业号：</label>
+									<div class="col-sm-11">
+										<select class="form-control" name="config_wechat" id="config_wechat">
+											<option value="0">请选择</option>
+											<volist name="config_wechat" id="single">
+												<if condition="$single.type eq 0">
+													<if condition="$single['id'] eq $meeting['config_wechat']">
+														<option value="<{$single.id}>" selected>(公众号) <{$single.name}></option>
+														<else/>
+														<option value="<{$single.id}>">(公众号) <{$single.name}></option>
+													</if>
+												</if>
+												<if condition="$single.type eq 1">
+													<if condition="$single['id'] eq $meeting['config_wechat']">
+														<option value="<{$single.id}>" selected>(企业号应用) <{$single.name}></option>
+														<else/>
+														<option value="<{$single.id}>">(企业号应用) <{$single.name}></option>
+													</if>
+												</if>
+											</volist>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="updateBackground" class="col-sm-1 control-label">收据打印LOGO：</label>
+									<div class="col-sm-10">
+										<div class="logo_wp">
+											<img src="<{$meeting.receipt_logo}>">
+											<!--<div class="logo_not">
+												<span class="glyphicon glyphicon-picture"></span>
+												<p>请上传尺寸为1080px*640px的.png、.jpg、.gif图片
+													图片大小小于1M</p>
+											</div>-->
+										</div>
+										<div class="bg_up_file">
+											<input type="hidden" name="logo" value="<{$info.logo}>">
+											<input type="file" class="filePrew" name="logo_upload" id="updateBackground">
+											<span class="text"><span class="glyphicon glyphicon-upload" style="margin-right: 5px;"></span><span>上传图片</span></span>
+											<button type="button" id="submit_logo" onclick="upLoadLogo()"></button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<input type="hidden" name="requestType" value="set_configure">
+							<div class="modal-footer text_center">
+								<button type="button" class="btn btn-primary btn-save">保存</button>
+							</div>
+						</form>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+			object:{
+				icheck                      :$('.icheckGreen').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				}),
+				icheckBlue                  :$('.icheckBlue').iCheck({
+					checkboxClass:'icheckbox_square-blue',
+					radioClass   :'iradio_square-blue'
+				}),
+				icheckBlue1                 :$('.icheckBlue1').iCheck({
+					checkboxClass:'icheckbox_square-blue',
+					radioClass   :'iradio_square-blue'
+				}),
+				icheckBlue2                 :$('.icheckBlue2').iCheck({
+					checkboxClass:'icheckbox_square-blue',
+					radioClass   :'iradio_square-blue'
+				}),
+				switchWeixin                :$('#message_wechat').bootstrapSwitch(),
+				switchSms                   :$('#message_sms').bootstrapSwitch(),
+				switchReceivables           :$('#receivables').bootstrapSwitch(),
+				toast                       :$().QuasarToast(),
+				loading                     :$().QuasarLoading(),
+				copyButtonMobileInvite      :new ZeroClipboard(document.getElementById('mobile_invite_link_copy_btn')),
+				copyButtonComputerSignResult:new ZeroClipboard(document.getElementById('computer_sign_result_link_copy_btn'))
+			}
+		};
+		$(function(){
+			$("#sort_tbody").sortable();
+		});
+	</script>
+</body>
+</html>

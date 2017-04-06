@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>房间导入结果 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Iceman.Prompt/jQuery-MobilePrompt.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Iceman.AlterPopup/jquery-alterPopup.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/step/css/index.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/step/static/lib/jquery-step/css/jquery.step.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/step/static/lib/jquery-step/js/jquery.step.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body data-meeting-id="<{:I('get.mid')}>" data-place-id="<{:I('get.sid')}>">
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<div class="main_body">
+					<section class="content">
+						<!--步骤条开始-->
+						<div class="step-body" id="myStep">
+							<div class="step-header">
+								<ul class="clearfix">
+									<li><p>上传名单</p></li>
+									<li><p>字段对比设置</p></li>
+									<li><p>完成导入</p></li>
+								</ul>
+							</div>
+						</div>
+						<!--步骤条结束-->
+						<div class="table_wrap">
+							<div class="panel panel-default">
+								<!-- Default panel contents -->
+								<div class="panel-heading"><h2>导入结果</h2></div>
+								<div class="panel-body">
+									<form class="form-horizontal" role="form" action="" id="form">
+										<div class="row form-group">
+											<div class="col-sm-12"><h3>导入结果：<span class="src"></span></h3></div>
+										</div>
+										<div class="row form-group">
+											<div class="col-sm-12">
+												<p class="data-p">文件共<b class="color-red"><{$result.total_count}></b>条数据
+												</p>
+											</div>
+										</div>
+										<div class="row form-group">
+											<div class="col-sm-12">
+												<p class="data-p">导入成功<b class="color-green"><{$result.success_count}></b>条数据
+												</p>
+											</div>
+										</div>
+										<div class="row form-group">
+											<div class="col-sm-12">
+												<p class="data-p">包含
+													<gt name="result.failure_count" value="0">
+														<b class="red-color"><a href="<{$result.failure_data_file_path}>" target="_blank"><{$result.failure_count}></a></b>条失败数据
+														<a href="<{$result.failure_data_file_path}>" class="btn btn-xs btn-warning ml_10">下载失败数据</a>
+														<else/><{$result.failure_count}>条失败数据
+													</gt>
+												</p>
+											</div>
+										</div>
+										<div class="row form-group">
+											<div class="col-sm-12">
+												<a href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'hid'=>I('get.hid', 0, 'int')])}>" class="btn btn-info">返回房间列表页面</a>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+				object:{
+					toast       :$().QuasarToast(),
+					loading     :$().QuasarLoading(),
+					icheck      :$('.icheck').iCheck({
+						checkboxClass:'icheckbox_square-green',
+						radioClass   :'iradio_square-green'
+					}),
+					icheckBlue  :$('.icheckBlue').iCheck({
+						checkboxClass:'icheckbox_square-blue',
+						radioClass   :'iradio_square-blue'
+					}),
+					icheckRed   :$('.icheckRed').iCheck({
+						checkboxClass:'icheckbox_square-red',
+						radioClass   :'iradio_square-red'
+					}),
+					icheckYellow:$('.icheckYellow').iCheck({
+						checkboxClass:'icheckbox_square-yellow',
+						radioClass   :'iradio_square-yellow'
+					}),
+					step        :$("#myStep").step({
+						animate :true,
+						initStep:3,
+						speed   :1000
+					})
+				}
+			}
+			;
+	</script>
+</body>
+</html>

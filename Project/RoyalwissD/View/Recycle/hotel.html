@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>酒店恢复 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<if condition="$permission_list['RECYCLE.VIEW-MESSAGE']">
+					<div class="main_body">
+						<section class="content">
+							<div class="return">
+								<a class="btn btn-default" onclick="history.go(-1)"><span class="glyphicon glyphicon-chevron-left color-primary"></span>返回上一页</a>
+							</div>
+							<div class="c_header">
+								<div class="function_list clearfix">
+									<if condition="$permission_list['RECYCLE.RESTORE-MESSAGE']">
+										<div class="function_btn bg-danger batch_recover_btn_confirm" data-toggle="modal" data-target="#batch_recover_hotel" data-backdrop="static">
+											<i></i>
+											<p>恢复</p>
+										</div>
+									</if>
+								</div>
+							</div>
+							<div class="repertory clearfix">
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input name="p" type="hidden" value="1">
+										<input type="search" name="keyword" class="form-control" placeholder="消息/拼音简码" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default main_search">搜索酒店</button>
+									</span>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
+								</form>
+							</div>
+							<div class="table_wrap">
+								<table class="table table-bordered" style="text-align: center">
+									<thead>
+										<tr>
+											<td width="5%" class="all_check">
+												<input type="checkbox" class="icheck" placeholder="" value="">
+											</td>
+											<td width="8%">酒店</td>
+											<td width="7%">备注</td>
+											<td width="10%">负责人</td>
+											<td width="10%">创建日期</td>
+											<td width="20%">操作</td>
+										</tr>
+									</thead>
+									<tbody>
+										<volist name="hotel" id="single">
+											<tr>
+												<td class="check_item">
+													<input type="checkbox" class="icheck" value="<{$single.id}>" placeholder="">
+												</td>
+												<td><{$single.name}></td>
+												<td><{$single.comment}></td>
+												<td><{$single.employee_name}></td>
+												<td><{$single.creatime|date='Y-m-d',###}></td>
+												<td>
+													<div class="btn-group" data-id="<{$single.id}>">
+														<if condition="$permission_list['RECYCLE.RESTORE-MESSAGE']">
+															<button type="submit" class="btn btn-default btn-xs recover_btn" data-toggle="modal" data-target="#recover_hotel" data-backdrop="static">恢复</button>
+														</if>
+													</div>
+												</td>
+											</tr>
+										</volist>
+									</tbody>
+								</table>
+							</div>
+							<div class="page_wrap">
+								<ul class="pagination">
+									<{$page_show}>
+								</ul>
+							</div>
+						</section>
+					</div>
+				</if>
+			</div>
+		</div>
+	</div>
+	<!-- 删除 -->
+	<div class="modal fade" id="recover_hotel" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">恢复酒店</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="recover"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否恢复酒店？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量恢复 -->
+	<div class="modal fade" id="batch_recover_hotel" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量恢复酒店</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="multi_recover">
+					<input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否恢复已选酒店？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary batch_recover_btn">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script>
+		var MeetingObject = {
+			object:{
+				toast :$().QuasarToast(),
+				icheck:$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				})
+			}
+		}
+	</script>
+</body>
+</html>

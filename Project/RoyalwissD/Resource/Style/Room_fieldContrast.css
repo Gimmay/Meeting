@@ -1,0 +1,10 @@
+#Excel_contrast_table tr td, #Excel_contrast_table tr th{
+	font-size : 14px;
+}
+
+.filed_settings{
+	position : absolute;
+	right    : 32px;
+	top      : 2px;
+	cursor   : pointer;
+}

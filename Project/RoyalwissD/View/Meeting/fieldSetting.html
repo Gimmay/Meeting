@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>客户字段设置 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Iceman.Prompt/jQuery-MobilePrompt.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Iceman.AlterPopup/jquery-alterPopup.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/step/css/index.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/step/static/lib/jquery-step/css/jquery.step.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/step/static/lib/jquery-step/js/jquery.step.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body data-meeting-id="<{:I('get.mid')}>" data-place-id="<{:I('get.sid')}>">
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="./Project/CMS/View/Public/outerMenu.html"/>
+			<div class="mt_wrapper">
+				<include file="./Project/CMS/View/Public/outerHeader.html"/>
+				<div class="main_body">
+					<section class="content">
+						<div class="table_wrap">
+							<div class="panel panel-info">
+								<!-- Default panel contents -->
+								<div class="panel-heading"><h2>会议字段设置</h2></div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-sm-6 selected_fields">
+											<div class="panel panel-default">
+												<div class="panel-heading"><h3>已选字段预览</h3></div>
+												<div class="panel-body">
+													<form action="" class="form-horizontal" id="selected_fields_form">
+														<volist name="column_list" id="single">
+															<if condition="$single['view'] eq 1">
+																<div class="form-group">
+																	<label for="text" class="col-sm-12 mb_5"><{$single.name}>
+																		<if condition="$single['must'] eq 1">
+																			<b class="color-red">*</b>
+																		</if>
+																	</label>
+																	<div class="col-sm-10">
+																		<input class="form-control" name="<{$single.form}>" id="text" placeholder="<{$single.form}>" readonly="readonly" data-is-necessary="<{$single.must}>">
+																	</div>
+																	<div class="col-sm-2">
+																		<span class="f_edit">
+																			<i class="glyphicon glyphicon-edit"></i>
+																		</span>
+																		<span class="f_delete">
+																			<i class="glyphicon glyphicon-trash"></i>
+																		</span>
+																	</div>
+																</div>
+															</if>
+														</volist>
+													</form>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6 extend_fields">
+											<div class="panel panel-default">
+												<div class="panel-heading"><h3>字段扩展</h3></div>
+												<div class="panel-body">
+													<div class="row mb_10 ef_title">
+														<div class="col-sm-12">
+															<h3><i class="glyphicon glyphicon-user"></i>会议基本信息字段</h3>
+														</div>
+													</div>
+													<div class="row mb_10 line_b base_fields">
+														<volist name="column_list" id="single">
+															<eq name="single.is_custom" value="0">
+																<if condition="$single['view'] eq 1">
+																	<div class="col-sm-2 btn-item mb_10 active">
+																		<button type="button" class="btn btn-sm btn-info btn-block" data-name="<{$single.form}>"><{$single.name}></button>
+																		<span class="b_delete glyphicon glyphicon-remove"></span>
+																	</div>
+																	<else/>
+																	<div class="col-sm-2 btn-item mb_10">
+																		<button type="button" class="btn btn-sm btn-default btn-block" data-name="<{$single.form}>"><{$single.name}></button>
+																		<span class="b_delete glyphicon glyphicon-remove"></span>
+																	</div>
+																</if>
+															</eq>
+														</volist>
+													</div>
+													<div class="row mb_10 ef_title">
+														<div class="col-sm-12">
+															<h3><i class="glyphicon glyphicon-floppy-disk"></i>自增字段</h3>
+														</div>
+													</div>
+													<div class="row mb_10 line_b increment_fields">
+														<volist name="column_list" id="single">
+															<eq name="single.is_custom" value="1">
+																<if condition="$single['view'] eq 1">
+																	<div class="col-sm-2 btn-item mb_10 active">
+																		<button type="button" class="btn btn-sm btn-info btn-block" data-name="<{$single.form}>"><{$single.name}></button>
+																		<span class="b_delete glyphicon glyphicon-remove"></span>
+																	</div>
+																	<else/>
+																	<div class="col-sm-2 btn-item mb_10">
+																		<button type="button" class="btn btn-sm btn-default btn-block" data-name="<{$single.form}>"><{$single.name}></button>
+																		<span class="b_delete glyphicon glyphicon-remove"></span>
+																	</div>
+
+																</if>
+															</eq>
+														</volist>
+													</div>
+													<div class="row">
+														<div class="col-sm-12">
+															<button type="button" class="btn btn-success btn-block" id="add_field" data-toggle="modal" data-target="#add_field_modal">添加字段</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加字段开始字段类型选择 -->
+	<!--<div class="modal fade" id="add_field_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h2 class="modal-title" id="myModalLabel">新增客户字段</h2>
+				</div>
+				<div class="modal-body">
+					<div class="title mb_10">
+						<h4>自定义字段属性</h4>
+					</div>
+					<div class="box_border_dashed">
+						<div class="row">
+							<div class="col-sm-4">
+								<button type="button" class="btn btn-default btn-sm btn-block">单行文本</button>
+							</div>
+							&lt;!&ndash;	<div class="col-sm-4">
+									<button type="button" class="btn btn-default btn-sm btn-block">多行文本</button>
+								</div>
+								<div class="col-sm-4">
+									<button type="button" class="btn btn-default btn-sm btn-block">下拉框</button>
+								</div>&ndash;&gt;
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-save">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>-->
+	<!-- 添加字段结束 -->
+	<!-- 添加字段开始 -->
+	<div class="modal fade" id="add_field_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h2 class="modal-title" id="myModalLabel">新增客户字段</h2>
+				</div>
+				<div class="modal-body">
+					<div class="box_border_dashed">
+						<form action="" class="form-horizontal">
+							<div class="row">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<label for="field_name" class="col-sm-2 control-label">字段名称：</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" name="field_name" id="field_name">
+										</div>
+									</div>
+									<input type="hidden" name="field_type" value="varchar">
+									<input type="hidden" name="field_size" value="255">
+									<!--<div class="form-group">-->
+										<!--<label for="field_name" class="col-sm-2 control-label">字段类型：</label>-->
+										<!--<div class="col-sm-10">-->
+											<!--<select class="form-control" name="field_type" id="field_type" title="">-->
+												<!--<option value="int">整型</option>-->
+												<!--<option value="varchar">字符</option>-->
+												<!--<option value="numeric">小数</option>-->
+												<!--<option value="datetime">时间</option>-->
+											<!--</select>-->
+										<!--</div>-->
+									<!--</div>-->
+									<!--<div class="form-group">-->
+										<!--<label for="field_name" class="col-sm-2 control-label">类型长度：</label>-->
+										<!--<div class="col-sm-10">-->
+											<!--<input type="number" class="form-control" name="field_size" id="field_size" placeholder="">-->
+										<!--</div>-->
+									<!--</div>-->
+								</div>
+							</div>
+							<input type="hidden" name="requestType" value="add_field">
+							<input type="hidden" name="name" value="">
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-save">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加字段结束 -->
+	<!-- 删除扩展字段确认开始 -->
+	<div class="modal fade" id="delete_extend_field_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h2 class="modal-title">删除扩展字段</h2>
+				</div>
+				<div class="modal-body text-center">
+					<h3>是否删除该字段？</h3>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-save">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 删除扩展字段结束 -->
+	<!-- 删除已选字段开始 -->
+	<div class="modal fade" id="delete_selected_field_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h2 class="modal-title">删除已选字段</h2>
+				</div>
+				<div class="modal-body text-center">
+					<h3>是否删除该字段？</h3>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-save">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 删除扩展字段结束 -->
+	<!-- 编辑选择字段开始 -->
+	<div class="modal fade" id="edit_selected_field" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h2 class="modal-title">字段编辑</h2>
+				</div>
+				<div class="modal-body text-center">
+					<form action="" class="form-horizontal">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="field_name" class="col-sm-2 control-label">必填项：</label>
+									<div class="col-sm-10 text-left">
+										<input type="checkbox" name="is_necessary" class="icheck">
+									</div>
+								</div>
+							</div>
+						</div>
+						<input type="hidden" name="requestType" value="selected_field_edit">
+						<input type="hidden" name="name" value="">
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-save">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 编辑选择字段结束 -->
+	<script>
+		var ManageObject = {
+			object:{
+				toast  :$().QuasarToast(),
+				loading:$().QuasarLoading(),
+				icheck :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				})
+			}
+		}
+	</script>
+</body>
+</html>

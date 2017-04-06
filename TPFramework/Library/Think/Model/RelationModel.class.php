@@ -246,8 +246,8 @@ class RelationModel extends Model {
      */
     protected function opRelation($opType,$data='',$name='') {
         $result =   false;
-        if(empty($data) && !empty($this->data)){
-            $data = $this->data;
+        if(empty($data) && !empty($this->object)){
+            $data = $this->object;
         }elseif(!is_array($data)){
             // 数据无效返回
             return false;
@@ -405,8 +405,8 @@ class RelationModel extends Model {
      * @return array
      */
     public function relationGet($name) {
-        if(empty($this->data))
+        if(empty($this->object))
             return false;
-        return $this->getRelation($this->data,$name,true);
+        return $this->getRelation($this->object,$name,true);
     }
 }

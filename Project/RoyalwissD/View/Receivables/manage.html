@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>收款管理 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/jquery-ui.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Iceman.AlterPopup/jquery-alterPopup.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-ui.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery.printArea.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Iceman.AlterPopup/jquery-alterPopup.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/operate.js"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body data-meeting-id="<{:I('get.mid')}>" data-place-id="<{:I('get.sid')}>">
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<div class="main_body">
+					<section class="content">
+						<div class="table_wrap mb_10">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款管理</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">创建收款</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式管理</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机管理</a>
+								</div>
+								<div class="table_length  pull-right">
+									显示： <select>
+									<option>5</option>
+									<option>10</option>
+									<option selected>20</option>
+									<option>50</option>
+									<option>100</option>
+									<option>150</option>
+									<option>200</option>
+									<option>500</option>
+								</select> 项结果
+								</div>
+							</div>
+						</div>
+						<div class="c_header">
+							<div class="btn_group_wrap">
+								<div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="glyphicon glyphicon-plus"></i> 创建收款 <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li>
+											<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">创建收款</a>
+										</li>
+										<li>
+											<a href="<{:U('exportData', ['mid'=>I('get.mid', 0, 'int')])}>">导出收款信息</a>
+										</li>
+									</ul>
+								</div>
+								<div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="glyphicon glyphicon-check"></i> 审核<span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li class="batch_review_btn_confirm"><a href="javascript:void(0)">批量审核</a></li>
+										<li class="batch_anti_review_btn_confirm">
+											<a href="javascript:void(0)">批量取消审核</a></li>
+									</ul>
+								</div>
+								<div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="glyphicon glyphicon-cog"></i> 收款配置 <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li data-toggle="modal" data-target="#configure_modal">
+											<a href="javascript:void(0)">收款配置</a>
+										</li>
+									</ul>
+								</div>
+								<div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="glyphicon glyphicon-lock"></i> 基础操作 <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li class="batch_enable_btn"><a href="javascript:void(0)">批量启用</a></li>
+										<li class="batch_disable_btn"><a href="javascript:void(0)">批量禁用</a></li>
+										<li role="separator" class="divider"></li>
+										<li class="batch_delete_btn"><a href="javascript:void(0)">批量删除</a></li>
+									</ul>
+								</div>
+								<div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="glyphicon glyphicon-paperclip"></i> 其他操作 <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li class="batch_badge"><a href="javascript:void(0)">批量打印</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="repertory clearfix">
+							<form action="" method="get">
+								<div class="input-group repertory_text" style="width: 30%">
+									<input name="p" type="hidden" value="1">
+									<div class="input-group-addon" data-toggle="modal" data-target="#search_config_modal">
+										<b class="glyphicon glyphicon-cog"></b></div>
+									<input type="search" name="keyword" class="form-control" placeholder="单据号/项目类型/收款人/类型/拼音简码" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default main_search">搜索</button>
+									</span>
+								</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
+							</form>
+
+						</div>
+						<div class="m_screen clearfix">
+							<div class="screen_title">筛选条件：</div>
+							<form action="" method="get" class="sign_check">
+								<div class="input-group pull-left check_reviewed color-2489c5">
+									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;审核 (<{$statistics.reviewedCount}>)
+								</div>
+								<div class="input-group pull-left check_not_reviewed color-2489c5">
+									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.notReviewedCount}>)
+								</div>
+								<!--<div class="input-group pull-left check_receivables color-1b7e5a">-->
+									<!--<input type="radio" name="receivables" class="icheck">&nbsp;&nbsp;收款 (<{$statistics.receivables}>)-->
+								<!--</div>-->
+								<!--<div class="input-group pull-left check_not_receivables color-1b7e5a">-->
+									<!--<input type="radio" name="receivables" class="icheck">&nbsp;&nbsp;未收款 (<{$statistics.not_receivables}>)-->
+								<!--</div>-->
+							</form>
+						</div>
+						<div class="table_wrap">
+							<div class="row mb_10">
+								<div class="col-sm-6">
+									<span class="total_client">共 <b class="color-red"><{$statistics.totalCount}></b> 单收款项</span>
+								</div>
+								<div class="col-sm-6 text-right">
+									<span class="custom_list" data-toggle="modal" data-target="#list_menu"><i class="glyphicon glyphicon-list"></i>&nbsp;自定义列表菜单</span>
+								</div>
+							</div>
+							<div class="tab-content clearfix">
+								<div class="ticket_list">
+									<div class="table_header">
+										<span class="all_check"><input type="checkbox" class="icheck" placeholder="" value=""></span>
+										<span class="number">序号</span>
+										<span class="order_number" data-column="order_number">单据号</span>
+										<span class="client_name" data-column="client_name">客户</span>
+										<span class="unit" data-column="unit">会所</span>
+										<span class="district" data-column="payee">收款人</span>
+										<!--<span class="district" data-column="place">收款地点</span>-->
+										<span class="time" data-column="time">收款时间</span>
+										<span class="unit_style" data-column="time">审核状态</span>
+										<span class="unit_style" data-column="status">状态</span>
+										<span class="unit_style" data-column="creatime">创建时间</span>
+										<span class="unit_style" data-column="creator">创建者</span>
+										<span class="price" data-column="price">收款金额(<span style="color: red;"><{:number_format($statistics['totalPrice'])}>元</span>)</span>
+										<span class="function" data-column="time">操作</span>
+									</div>
+									<volist name="list" id="order">
+										<div class="rece_item">
+											<div class="header" data-id="<{$order.id}>">
+												<span class="check_item"><input type="checkbox" class="icheck" value="<{$order.id}>" placeholder=""></span>
+												<span class="number"><{:($key+1)}></span>
+												<span class="order_number"><{$order.order_number}></span>
+												<span class="client_name"><{$order.client_name}></span>
+												<span class="unit"><{$order.unit}></span>
+												<span class="district"><{$order.payee}></span>
+												<!--<span class="district"><{$order.place}></span>-->
+												<span class="time"><{$order.time}></span>
+												<span class="unit_style"><{$order.review_status}></span>
+												<span class="unit_style"><{$order.status}></span>
+												<span class="unit_style"><{$order.creatime}></span>
+												<span class="unit_style"><{$order.creator}></span>
+												<span class="color-danger price"><{:number_format($order['price'])}>元</span>
+												<span class="function">
+													<div class="btn-group" data-id="<{$order.id}>" data-status="<{$order.status_code}>">
+														<if condition="$order['review_status_code'] eq 1 and $order['status_code'] eq 1">
+															<button type="button" class="btn btn-primary btn-xs print">打印</button>
+														</if>
+														<if condition="$order['review_status_code'] eq 1 and $order['status_code'] eq 1">
+															<button type="button" class="btn btn-default btn-xs cancel_review_btn">取消审核</button>
+														</if>
+														<if condition="$order['review_status_code'] neq 1 and $order['status_code'] eq 1">
+															<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
+														</if>
+														<button type="button" class="btn btn-default btn-xs modify_btn">修改</button>
+														<if condition="$order['status_code'] eq 1">
+															<button class="btn btn-default btn-xs btn_copy" type="button" data-toggle="modal" data-target="#copy_receivables">复制</button>
+														</if>
+														<button type="submit" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+														<switch name="order.status_code">
+															<case value="1">
+																<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+															</case>
+															<case value="0">
+																<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+															</case>
+													</switch>
+													</div>
+												</span> <b class="plus glyphicon glyphicon-plus"></b>
+											</div>
+											<div class="rece_body hide">
+												<div class="rece_details_item">
+													<table class="table table-bordered rece_details_table">
+														<thead>
+															<tr>
+																<th>项目类型</th>
+																<th>项目名字/代金券码</th>
+																<th>支付方式</th>
+																<th>POS机</th>
+																<th>收款来源</th>
+																<th>备注</th>
+																<th>金额</th>
+																<th>操作</th>
+															</tr>
+														</thead>
+														<tbody>
+															<volist name="order.list" id="single">
+																<tr class="item_order">
+																	<notempty name="single._merge_column">
+																		<td rowspan="<{$single._merge_column}>"><{$single.project_type}></td>
+																	</notempty>
+																	<notempty name="single._merge_column">
+																		<td rowspan="<{$single._merge_column}>"><{$single.project}></td>
+																	</notempty>
+																	<td><{$single.pay_method}></td>
+																	<td><{$single.pos_machine}></td>
+																	<td><{$single.source}></td>
+																	<td><{$single.comment}></td>
+																	<td><{$single.price}></td>
+																	<td>
+																		<div class="btn-group" data-id="<{$single.did}>">
+																			<button type="button" class="btn btn-default btn-xs alter_details_btn">修改</button>
+																		</div>
+																	</td>
+																</tr>
+															</volist>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</volist>
+								</div>
+								<div class="summary">
+									<p>
+										<span>当页金额总计：<b class="color-red"><{:number_format($statistics['pagePrice'])}></b>&nbsp;元</span>
+									</p>
+								</div>
+							</div>
+						</div>
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$pagination}>
+							</ul>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--搜索配置-->
+	<div class="modal fade" id="search_config_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h2 class="modal-title">搜索设置</h2>
+				</div>
+				<div class="modal-body">
+					<form action="" class="form-horizontal">
+						<input type="hidden" name="requestType" value="set_search_configure">
+						<input type="hidden" name="search_field">
+						<div class="panel panel-info">
+							<div class="panel-heading"><h3>搜索字段选择</h3></div>
+							<div class="panel-body">
+								<div class="row mb_10 line_b text-right">
+									<div class="col-sm-8 mb_10"></div>
+									<div class="col-sm-2 mb_10 sc_check_all">
+										<button type="button" class="btn btn-xs btn-success btn-block" data-name="name">全选</button>
+									</div>
+									<div class="col-sm-2 mb_10 sc_cancel">
+										<button type="button" class="btn btn-xs btn-danger btn-block" data-name="name">取消</button>
+									</div>
+								</div>
+								<div class="row mb_10 line_b base_fields">
+									<div class="col-sm-3 btn-item mb_10 active">
+										<button type="button" class="btn btn-sm btn-info btn-block" data-name="name">姓名</button>
+									</div>
+									<div class="col-sm-3 btn-item mb_10 active">
+										<button type="button" class="btn btn-sm btn-info btn-block" data-name="name1">姓名</button>
+									</div>
+									<div class="col-sm-3 btn-item mb_10 active">
+										<button type="button" class="btn btn-sm btn-info btn-block" data-name="name2">姓名</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-save">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--自定义列表菜单-->
+	<div class="modal fade" id="list_menu" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h2 class="modal-title" id="myModalLabel">自定义列表字段</h2>
+				</div>
+				<div class="modal-body">
+					<form action="" class="form-horizontal">
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="filed_box">
+									<div class="title mb_10"><h3>客户字段控制</h3></div>
+									<div class="checkbox_list">
+										<div class="checkbox">
+											<volist name="column_list" id="single">
+												<label class="checkbox-inline field_checkbox">
+													<eq name="single.view" value="1">
+														<input type="checkbox" class="icheck_f" value="<{$single.form}>" data-code="<{$single.code}>" checked>
+														<else/>
+														<input type="checkbox" class="icheck_f" value="<{$single.form}>" data-code="<{$single.code}>">
+													</eq>
+													<{$single.name}> </label>
+											</volist>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<hr class="f-line">
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="filed_box">
+									<div class="title mb_10"><h3>已选择字段：（可拖动改变字段顺序）</h3></div>
+									<div class="btn-group" id="field_list" role="group">
+										<volist name="column_list" id="single">
+											<eq name="single.view" value="1">
+												<a type="button" class="btn btn-sm btn-default" data-form="<{$single.form}>" data-code="<{$single.code}>"> <{$single.name}>
+													<input type="hidden" name="code[]" value="<{$single.code}>">
+													<input type="hidden" name="form[]" value="<{$single.form}>">
+													<input type="hidden" name="table[]" value="<{$single.table}>">
+													<input type="hidden" name="name[]" value="<{$single.name}>">
+													<input type="hidden" class="c_view" name="view[]" value="<{$single.view}>">
+													<input type="hidden" name="must[]" value="<{$single.must}>"> </a>
+												<else/>
+												<a type="button" class="btn btn-sm btn-default hide" data-form="<{$single.form}>" data-code="<{$single.code}>"> <{$single.name}>
+													<input type="hidden" name="code[]" value="<{$single.code}>">
+													<input type="hidden" name="form[]" value="<{$single.form}>">
+													<input type="hidden" name="table[]" value="<{$single.table}>">
+													<input type="hidden" name="name[]" value="<{$single.name}>">
+													<input type="hidden" class="c_view" name="view[]" value="<{$single.view}>">
+													<input type="hidden" name="must[]" value="<{$single.must}>"> </a>
+											</eq>
+										</volist>
+									</div>
+								</div>
+							</div>
+						</div>
+						<input type="hidden" name="requestType" value="reset_and_order_column">
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-save">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--打印-->
+	<!--startprint1-->
+	<div id="print">
+		<div class="p_sec" style="height: 50%; border-bottom: 1px dashed #E1E1E1; padding: 30px 10px 120px 10px">
+			<table class="p_table" width="100%" height="100%" border="1">
+				<thead>
+					<tr>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+					</tr>
+				</thead>
+				<tr>
+					<td style="text-align: center">
+						<span class="img" style="width: 80px; height: 80px; display: block; overflow: hidden; margin: 0 auto"><img src="<{$receivables_order_logo}>" alt="" style="width: 100%; vertical-align: top;  margin-top: 6px;"></span>
+					</td>
+					<td colspan="4" style="text-align: center; font-size: 24px; font-weight: bold">收&nbsp;&nbsp;款&nbsp;&nbsp;收&nbsp;&nbsp;据</td>
+					<td style="font-size: 18px; text-align: center; color: red; font-weight: bold" class="identifier"></td>
+				</tr>
+				<tr>
+					<td colspan="6" class="text-center time">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;今收到&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="unit"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="client_name"></span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;交来：<br><span class="project_type"></span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;金额（大写）<span class="price_capital"></span>
+					</td>
+				</tr>
+				<tr class="sign_tr">
+					<td class="rmb" colspan="2">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人民币小写：
+						<span class="price" style="text-decoration: underline"></span>
+					</td>
+					<td colspan="2" class="type1" style="text-align: center"></td>
+					<td colspan="2" class="price1" style="text-align: center"></td>
+				</tr>
+				<tr style="font-size: 14px">
+					<td>&nbsp;核准：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td>&nbsp;会计：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td>&nbsp;记账：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td>&nbsp;开收据：<span class="payee">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+					<td>&nbsp;出纳：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td>&nbsp;经手人：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+		<div class="p_sec" style="height: 50%;  padding:120px 10px 30px 10px;">
+			<table class="p_table" width="100%" height="100%" border="1">
+				<thead>
+					<tr>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+					</tr>
+				</thead>
+				<tr>
+					<td style="text-align: center">
+						<span class="img" style="width: 80px; height: 80px; display: block; overflow: hidden; margin: 0 auto"><img src="<{$receivables_order_logo}>" alt="" style="width: 100%; vertical-align: top;  margin-top: 6px;"></span>
+					</td>
+					<td colspan="4" style="text-align: center; font-size: 24px; font-weight: bold">收&nbsp;&nbsp;款&nbsp;&nbsp;收&nbsp;&nbsp;据</td>
+					<td style="font-size: 18px; text-align: center; color: red; font-weight: bold" class="identifier"></td>
+				</tr>
+				<tr>
+					<td colspan="6" class="text-center time">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;今收到&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="unit"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="client_name"></span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;交来：<br><span class="project_type"></span>
+					</td>
+
+				</tr>
+				<tr>
+					<td colspan="6">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;金额（大写）<span class="price_capital"></span>
+					</td>
+				</tr>
+				<tr class="sign_tr">
+					<td class="rmb" colspan="2">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人民币小写：
+						<span class="price" style="text-decoration: underline"></span>
+					</td>
+					<td colspan="2" class="type1" style="text-align: center"></td>
+					<td colspan="2" class="price1" style="text-align: center"></td>
+				</tr>
+				<tr style="font-size: 14px">
+					<td>&nbsp;核准：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td>&nbsp;会计：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td>&nbsp;记账：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td>&nbsp;开收据：<span class="payee">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+					<td>&nbsp;出纳：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td>&nbsp;经手人：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<!--endprint1-->
+	<!-- 删除收款记录 -->
+	<div class="modal fade" id="delete_receivables" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">删除收款记录</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除此条收款记录？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 复制收款记录 -->
+	<div class="modal fade" id="copy_receivables" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">复制收款记录</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="copy"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否复制此条收款记录？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 修改收款基本信息 -->
+	<div class="modal fade" id="alter_public_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">修改收款记录</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="modify_order"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group other_wrap">
+							<label for="order_number" class="col-sm-2 control-label">单据号：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="order_number" id="order_number">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="client_name" class="col-sm-2 control-label">客户姓名：</label>
+							<div class="col-sm-10">
+								<div id="client_name"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="payee_id" class="col-sm-2 control-label">收款人：</label>
+							<div class="col-sm-10">
+								<div id="payee_id"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="place" class="col-sm-2 control-label">收款地点：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="place" id="place">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="receivables_time1" class="col-sm-2 control-label ">收款时间：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="time" id="receivables_time1">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 修改收款详情-->
+	<div class="modal fade" id="alter_receivable_details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">修改收款详情</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="modify_detail">
+					<input type="hidden" name="id" value="">
+					<div class="modal-body">
+						<div class="form-group other_wrap">
+							<label for="other_name" class="col-sm-2 control-label">项目名称：</label>
+							<div class="col-sm-10">
+								<div id="other_name"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="pay_method" class="col-sm-2 control-label">支付方式：</label>
+							<div class="col-sm-10">
+								<select name="pay_method" class="form-control" id="pay_method">
+									<option value="0">-----支付方式-----</option>
+									<volist name="pay_method_list" id="single">
+										<option value="<{$single.value}>"><{$single.html}></option>
+									</volist>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="pos_machine" class="col-sm-2 control-label ">POS机：</label>
+							<div class="col-sm-10">
+								<select name="pos_machine" class="form-control" id="pos_machine">
+									<option value="0">-----POS机-----</option>
+									<volist name="pos_machine_list" id="single">
+										<option value="<{$single.value}>"><{$single.html}></option>
+									</volist>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="source_type" class="col-sm-2 control-label">收款来源：</label>
+							<div class="col-sm-10">
+								<select name="source" class="form-control source_type" title="" id="source_type">
+									<volist name="receivables_source" id="single">
+										<option value="<{$i}>"><{$single}></option>
+									</volist>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="price_details" class="col-sm-2 control-label ">金额：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="price" id="price_details">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="comment" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" id="comment"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量审核 -->
+	<div class="modal fade" id="batch_review_client" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量审核客户</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="review"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否审核已选<span class="sAmount"></span>位客户？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认审核</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量取消审核 -->
+	<div class="modal fade" id="batch_anti_review_client" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量取消客户审核</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="cancel_review">
+					<input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否取消已选<span class="sAmount"></span>位客户审核？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认取消</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量删除 -->
+	<div class="modal fade" id="batch_delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量删除客户</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除已选<span class="sAmount"></span>位客户？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认删除</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!--收款配置-->
+	<div class="modal fade" id="configure_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h2 class="modal-title">配置</h2>
+				</div>
+				<div class="modal-body">
+					<form action="" class="form-horizontal" id="configure_form">
+						<input type="hidden" name="requestType" value="set_configure">
+						<div class="form-group">
+							<label for="updateBackground" class="col-sm-2 control-label">收据打印LOGO：</label>
+							<div class="col-sm-10">
+								<div class="logo_wp">
+									<img src="<{$receivables_order_logo}>">
+								</div>
+								<div class="bg_up_file">
+									<input type="hidden" name="logo" value="<{$receivables_order_logo}>">
+									<input type="file" class="filePrew" name="logo_upload" id="updateBackground">
+									<span class="text"><span class="glyphicon glyphicon-upload" style="margin-right: 5px;"></span><span>上传图片</span></span>
+									<button type="button" id="submit_logo" onclick="upLoadLogo()"></button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-save">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" id="default_order_column" value="<{$default_order_column}>">
+	<input type="hidden" id="default_order_method" value="<{$default_order_method}>">
+	<script>
+		var ManageObject = {
+			object:{
+				otherName       :$('#other_name').QuasarSelect({
+					name        :'project_id',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($project_list)}>',
+					idInput     :'selected_name',
+					idHidden    :'selected_name_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				clientName      :$('#client_name').QuasarSelect({
+					name        :'cid',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($client_list)}>',
+					idInput     :'selected_client_name',
+					idHidden    :'selected_client_name_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				payeeId         :$('#payee_id').QuasarSelect({
+					name        :'payee',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($user_list)}>',
+					idInput     :'selected_payee_id',
+					idHidden    :'selected_payee_id_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				toast           :$().QuasarToast(),
+				loading         :$().QuasarLoading(),
+				icheck          :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				}),
+				icheckBlue      :$('.icheckBlue').iCheck({
+					checkboxClass:'icheckbox_square-blue',
+					radioClass   :'iradio_square-blue'
+				}),
+				icheckRed       :$('.icheckRed').iCheck({
+					checkboxClass:'icheckbox_square-red',
+					radioClass   :'iradio_square-red'
+				}),
+				icheckYellow    :$('.icheckYellow').iCheck({
+					checkboxClass:'icheckbox_square-yellow',
+					radioClass   :'iradio_square-yellow'
+				}),
+				receivablesTimeA:jeDate({
+					dateCell:"#receivables_time1",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					isTime  :true, // isClear:false, // 时分秒--true
+				})
+			}
+		};
+		$(function(){
+			$("#field_list").sortable({
+				placeholder:"ui-state-highlight"
+			});
+			$("#field_list").disableSelection();
+		});
+	</script>
+</body>
+</html>

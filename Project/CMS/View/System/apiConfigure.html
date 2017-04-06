@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>接口配置 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/operate.js"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/outerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/outerHeader"/>
+				<div class="main_body" style="overflow: hidden;">
+					<section class="content">
+						<div class="table_wrap mb_10">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="<{:U('System/apiConfigure', ['mid'=>I('get.mid', 0, 'int')])}>">接口配置</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('System/configure', ['mid'=>I('get.mid', 0, 'int')])}>">基础配置</a>
+								</div>
+							</div>
+						</div>
+						<div class="c_header">
+							<div class="function_list clearfix">
+								<div class="function_btn" data-toggle="modal" data-target="#create_modal" data-backdrop="static">
+									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-plus"></i>
+										<span>新增接口配置</span> </a>
+								</div>
+								<div class="function_btn batch_delete_btn">
+									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-trash"></i>
+										<span>批量删除</span> </a>
+								</div>
+								<div class="function_btn batch_enable_btn">
+									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
+										<span>批量启用</span> </a>
+								</div>
+								<div class="function_btn batch_disable_btn">
+									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ban-circle"></i>
+										<span>批量禁用</span> </a>
+								</div>
+							</div>
+						</div>
+						<div class="repertory clearfix">
+							<form class="form-horizontal" role="form" method="get" id="form" action="">
+								<div class="input-group repertory_text">
+									<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
+											<span class="input-group-btn">
+												<button type="submit" class="btn btn-default main_search">搜索</button>
+											</span>
+								</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('System/apiConfigure')}>">查看所有</a>
+							</form>
+						</div>
+						<div class="table_wrap">
+							<div class="tab-content clearfix">
+								<table class="table table-bordered table-hover text-center">
+									<thead>
+										<tr>
+											<th width="5%" class="all_check">
+												<input type="checkbox" class="icheck" placeholder="" value="">
+											</th>
+											<th width="5%">序号</th>
+											<th width="5%">会议类型</th>
+											<th width="10%">配置名称</th>
+											<th width="10%">首易SMS参数</th>
+											<th width="10%">微信企业号</th>
+											<th width="10%">微信公众号</th>
+											<th width="5%">状态</th>
+											<th width="5%">创建者</th>
+											<th width="10%">创建时间</th>
+											<th width="25%">操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<volist name="list" id="single">
+											<tr>
+												<td class="check_item">
+													<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
+												</td>
+												<td><{$i}></td>
+												<td><{$single.meeting_type}></td>
+												<td><{$single.name}></td>
+												<td>
+													<notempty name="single.sms_mobset_corpid">
+														<table class="table_in_table">
+															<tr>
+																<td>接口地址</td>
+																<td><{$single.sms_mobset_url}></td>
+															</tr>
+															<tr>
+																<td>企业ID</td>
+																<td><{$single.sms_mobset_corpid}></td>
+															</tr>
+															<tr>
+																<td>账号</td>
+																<td><{$single.sms_mobset_user}></td>
+															</tr>
+															<tr>
+																<td>密码</td>
+																<td><{$single.sms_mobset_pass}></td>
+															</tr>
+														</table>
+													</notempty>
+												</td>
+												<td>
+													<notempty name="single.wechat_enterprise_corpid">
+														<table class="table_in_table">
+															<tr>
+																<td>CorpID</td>
+																<td><{$single.wechat_enterprise_corpid}></td>
+															</tr>
+															<tr>
+																<td>CorpSecret</td>
+																<td><{$single.wechat_enterprise_appsecret}></td>
+															</tr>
+															<tr>
+																<td>应用ID</td>
+																<td><{$single.wechat_enterprise_appid}></td>
+															</tr>
+														</table>
+													</notempty>
+												</td>
+												<td>
+													<notempty name="single.wechat_official_appid">
+														<table class="table_in_table">
+															<tr>
+																<td>AppID</td>
+																<td><{$single.wechat_official_appid}></td>
+															</tr>
+															<tr>
+																<td>AppSecret</td>
+																<td><{$single.wechat_official_appsecret}></td>
+															</tr>
+														</table>
+													</notempty>
+												</td>
+												<td><{$single.status}></td>
+												<td><{$single.creator}></td>
+												<td><{$single.creatime}></td>
+												<td>
+													<div class="btn-group" data-id="<{$single.id}>" data-status="<{$single.status_code}>">
+														<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_modal">修改</button>
+														<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+														<switch name="single.status_code">
+															<case value="0">
+																<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+															</case>
+															<case value="1">
+																<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+															</case>
+														</switch>
+													</div>
+												</td>
+											</tr>
+										</volist>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 新增接口配置 -->
+	<div class="modal fade" id="create_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">新增接口配置</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="create">
+					<div class="modal-body">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">基础</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label for="mtype" class="col-sm-3 control-label">会议类型：</label>
+									<div class="col-sm-9">
+										<select name="mtype" id="mtype" class="form-control">
+											<volist name="meeting_type_list" id="single">
+												<option value="<{$single.type}>"><{$single.name}></option>
+											</volist>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="name" class="col-sm-3 control-label">配置名称</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="name" name="name">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">首易SMS</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label for="sms_mobset_url" class="col-sm-3 control-label">首易SMS-接口地址：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="sms_mobset_url" name="sms_mobset_url">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="sms_mobset_user" class="col-sm-3 control-label">首易SMS-账号：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="sms_mobset_user" name="sms_mobset_user">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="sms_mobset_pass" class="col-sm-3 control-label">首易SMS-密码：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="sms_mobset_pass" name="sms_mobset_pass">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="sms_mobset_corpid" class="col-sm-3 control-label">首易SMS-企业ID：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="sms_mobset_corpid" name="sms_mobset_corpid">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">微信公众号</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label for="wechat_official_appid" class="col-sm-3 control-label">微信公众号-appid：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="wechat_official_appid" name="wechat_official_appid">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="wechat_official_appsecret" class="col-sm-3 control-label">微信公众号-appsecret：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="wechat_official_appsecret" name="wechat_official_appsecret">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">微信企业号</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label for="wechat_enterprise_corpid" class="col-sm-3 control-label">微信企业号-corpid：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="wechat_enterprise_corpid" name="wechat_enterprise_corpid">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="wechat_enterprise_appsecret" class="col-sm-3 control-label">微信企业号-appsercet：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="wechat_enterprise_appsecret" name="wechat_enterprise_appsecret">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="wechat_enterprise_appid" class="col-sm-3 control-label">微信企业号-应用ID：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="wechat_enterprise_appid" name="wechat_enterprise_appid">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">支付宝</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label for="alipay_name" class="col-sm-3 control-label">支付宝-店铺名：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="alipay_name" name="alipay_name">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="alipay_pid" class="col-sm-3 control-label">支付宝-商户ID：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="alipay_pid" name="alipay_pid">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="alipay_key" class="col-sm-3 control-label">支付宝-密钥：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="alipay_key" name="alipay_key">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">微信支付</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label for="wxpay_mchid" class="col-sm-3 control-label">微信支付-商户ID：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="wxpay_mchid" name="wxpay_mchid">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="wxpay_key" class="col-sm-3 control-label">微信支付-密钥：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="wxpay_key" name="wxpay_key">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="wxpay_sslcert_path" class="col-sm-3 control-label">微信支付-SSL 证书路径：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="wxpay_sslcert_path" name="wxpay_sslcert_path">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="wxpay_sslkey_path" class="col-sm-3 control-label">微信支付-SSL KEY路径：</label>
+									<div class="col-sm-9">
+										<input class="form-control" id="wxpay_sslkey_path" name="wxpay_sslkey_path">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">其他</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label for="comment" class="col-sm-3 control-label">备注：</label>
+									<div class="col-sm-9">
+										<textarea class="form-control comment" name="comment" id="comment"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 修改接口配置 -->
+	<div class="modal fade" id="alter_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">修改接口配置</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="modify"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">基础</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">会议类型：</label>
+									<div class="col-sm-9">
+										<select name="mtype" class="form-control">
+											<volist name="meeting_type_list" id="single">
+												<option value="<{$single.type}>"><{$single.name}></option>
+											</volist>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">配置名称</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="name">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">首易SMS</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">首易SMS-接口地址：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="sms_mobset_url">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">首易SMS-账号：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="sms_mobset_user">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">首易SMS-密码：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="sms_mobset_pass">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">首易SMS-企业ID：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="sms_mobset_corpid">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">微信公众号</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">微信公众号-appid：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="wechat_official_appid">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">微信公众号-appsecret：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="wechat_official_appsecret">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">微信企业号</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">微信企业号-corpid：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="wechat_enterprise_corpid">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">微信企业号-appsercet：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="wechat_enterprise_appsecret">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">微信企业号-应用ID：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="wechat_enterprise_appid">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">支付宝</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">支付宝-店铺名：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="alipay_name">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">支付宝-商户ID：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="alipay_pid">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">支付宝-密钥：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="alipay_key">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">微信支付</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">微信支付-商户ID：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="wxpay_mchid">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">微信支付-密钥：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="wxpay_key">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">微信支付-SSL 证书路径：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="wxpay_sslcert_path">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">微信支付-SSL KEY路径：</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="wxpay_sslkey_path">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">其他</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">备注：</label>
+									<div class="col-sm-9">
+										<textarea class="form-control comment" name="comment"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 删除收款记录 -->
+	<div class="modal fade" id="delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">删除记录</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量删除-->
+	<div class="modal fade" id="batch_delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量删除</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除已选<span class="sAmount"></span>项？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+			object:{
+				icheck :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				}),
+				toast  :$().QuasarToast(),
+				loading:$().QuasarLoading()
+			}
+		};
+	</script>
+</body>
+</html>

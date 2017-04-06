@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>全局配置 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/outerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/outerHeader"/>
+				<div class="main_body">
+					<section class="content">
+						<div class="table_wrap mb_10">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="<{:U('System/configure', ['mid'=>I('get.mid', 0, 'int')])}>">基础配置</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('System/apiConfigure', ['mid'=>I('get.mid', 0, 'int')])}>">接口配置</a>
+								</div>
+							</div>
+						</div>
+						<div class="c_header">
+							<div class="function_list clearfix">
+								<div class="function_btn create_configure" data-toggle="modal" data-target="#create_configure" data-backdrop="static">
+									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-plus"></i>
+										<span>新增配置</span> </a>
+								</div>
+								<div class="function_btn batch_delete_btn">
+									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-trash"></i>
+										<span>批量删除</span> </a>
+								</div>
+								<div class="function_btn batch_enable_btn">
+									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
+										<span>批量启用</span> </a>
+								</div>
+								<div class="function_btn batch_disable_btn">
+									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ban-circle"></i>
+										<span>批量禁用</span> </a>
+								</div>
+							</div>
+						</div>
+						<div class="repertory clearfix">
+							<form class="form-horizontal" role="form" method="get" id="form" action="">
+								<div class="input-group repertory_text">
+									<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
+											<span class="input-group-btn">
+												<button type="submit" class="btn btn-default main_search">搜索</button>
+											</span>
+								</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('Receivables/pos_machine', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
+							</form>
+						</div>
+						<div class="table_li" style="margin-top: 30px;">
+							<form action="" method="post">
+								<input type="hidden" name="requestType" value="save_conf"/>
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<!--<th width="5%"><input type="checkbox" name=""></th>-->
+											<th width="5%">排序</th>
+											<th width="15%">标题</th>
+											<th width="15%">名称(英文)</th>
+											<th width="20%">内容</th>
+											<th width="15%">配置说明</th>
+											<th width="5%">操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<volist name="conf_list" id="configure">
+											<tr>
+												<input type="hidden" name="id[]" value="<{$configure['id']}>">
+												<!--<td><input type="checkbox" name="conf_id[]" value="<{$configure['id']}>"></td>-->
+												<td class="tc1">
+													<input type="text" name="ord[]" onchange="changeOrder(this,<{$configure['id']}>)" value="<{$configure['orders']}>">
+												</td>
+												<td><{$configure['conf_title']}></td>
+												<td><{$configure['conf_name']}></td>
+												<td class="tc4"><{$configure['content_html']}></td>
+												<td><{$configure['description']}></td>
+												<td>
+													<a class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#edit_configure" data-id="<{$configure['id']}>">修改</a>
+													<a class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_configure" id="<{$configure['id']}>">删除</a>
+												</td>
+											</tr>
+										</volist>
+									</tbody>
+								</table>
+								<div class="btn-primary-group">
+									<button type="submit" class="btn btn-primary btn-success">提交</button>
+									<button type="button" class="btn btn-primary btn-info" onclick="window.history.go(-1)">返回</button>
+								</div>
+							</form>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<style>
+		.lg_upload{ display : inline-block; }
+
+		.uploadify-button{ border : none; border-radius : 5px; margin-top : 8px; }
+
+		table.add_tab tr td span.uploadify-btton-text{ color : #FFFFFF; margin : 0; }
+	</style>
+
+	<!-- 新增配置 模态框（Modal） 开始-->
+	<div class="modal fade" id="create_configure" tabindex="2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="add_sys_config">新增全局配置</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post">
+					<input type="hidden" name="requestType" value="add_system_config">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="title" class="col-sm-2 control-label">配置标题（中文）：</label>
+							<div class="col-sm-7">
+								<input type="text" class="form-control title" name="title" id="title" value="">
+							</div>
+						</div>
+						<div class="form-group">
+							<span>*</span> <label for="name" class="col-sm-2 control-label">配置名称（英文）：</label>
+							<div class="col-sm-7">
+								<input type="text" class="form-control name" name="name" id="name">
+							</div>
+							<!--							<div class="col-sm-3 paragraph">
+															<span class="number">至少6位，必须同时包含字母和数字</span>
+														</div>-->
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">配置类型：</label>
+							<div class="col-sm-7">
+								<input type="radio" name="conf_type" value="input"/> <span>input</span>
+								<input type="radio" name="conf_type" value="textarea"/><span>textarea</span>
+								<input type="radio" name="conf_type" value="radio"/><span>radio</span>
+								<input type="radio" name="conf_type" value="file"/><span>file</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="order" class="col-sm-2 control-label">排序：</label>
+							<div class="col-sm-7">
+								<input type="text" class="form-control order" name="order" id="order">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="description" class="col-sm-2 control-label">配置说明：</label>
+							<div class="col-sm-7">
+								<input type="text" class="form-control description" name="description" id="description">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn_save">保存</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 新增配置 模态框（Modal） 结束-->
+	<!-- 删除配置 模态框（Modal） 开始-->
+	<div class="modal fade" id="delete_configure" tabindex="2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="del_sys_config">删除全局配置</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post">
+					<input type="hidden" name="requestType" value="delete_config">
+					<input type="hidden" name="need_delete_id" id="need_delete_id" value="">
+					<div class="modal-body">
+						<p>确定删除？</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn_delete">确定</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 删除配置 模态框（Modal） 结束-->
+	<!-- 修改配置 模态框（Modal） 开始-->
+	<div class="modal fade" id="edit_configure" tabindex="2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="edit_sys_config">修改全局配置</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post">
+					<input type="hidden" name="requestType" value="edit_system_config">
+					<input type="hidden" name="edit_id" id="edit_id" value="">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="title" class="col-sm-2 control-label">配置标题（中文）：</label>
+							<div class="col-sm-7">
+								<input type="text" class="form-control title" name="title" id="edit_title" value="">
+							</div>
+						</div>
+						<div class="form-group">
+							<span>*</span> <label for="name" class="col-sm-2 control-label">配置名称（英文）：</label>
+							<div class="col-sm-7">
+								<input type="text" class="form-control name" name="edit_name" id="edit_name">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">配置类型：</label>
+							<div class="col-sm-7">
+								<input type="radio" name="edit_conf_type" value="input"/> <span>input</span>
+								<input type="radio" name="edit_conf_type" value="textarea"/><span>textarea</span>
+								<input type="radio" name="edit_conf_type" value="radio"/><span>radio</span>
+								<input type="radio" name="edit_conf_type" value="file"/><span>file</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="order" class="col-sm-2 control-label">排序：</label>
+							<div class="col-sm-7">
+								<input type="text" class="form-control order" name="edit_order" id="edit_order">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="description" class="col-sm-2 control-label">配置说明：</label>
+							<div class="col-sm-7">
+								<input type="text" class="form-control description" name="edit_description" id="edit_description">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn_save">保存</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 修改配置 模态框（Modal） 结束-->
+	<script>
+		var ConfigObject = {
+			object:{
+				toast  :$().QuasarToast(),
+				loading:$().QuasarLoading()
+			}
+		}
+	</script>
+</body>
+</html>

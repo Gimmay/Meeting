@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>修改签到点 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=18h24xIQGKWEuIMgHzjsNxMD4HTc9Q7m"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<if condition="$permission_list['SIGN_PLACE.ALTER']">
+					<div class="main_body">
+						<section class="content" style="padding: 10px;">
+							<div class="table_wrap">
+								<div class="nav_tab clearfix">
+									<div class="nav_tab_li active">
+										<a href="javascript:void(0)">修改签到点</a>
+									</div>
+								</div>
+							</div>
+							<if condition="$permission_list['SIGN_PLACE.ALTER']">
+								<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmpty()">
+									<div class="modal-body">
+										<div class="form-group">
+											<label for="mid" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>会议：</label>
+											<div class="col-sm-11">
+												<input type="text" class="form-control" name="mid" id="mid" value="<{$meeting.name}>" disabled>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="name" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>签到点名称：</label>
+											<div class="col-sm-11">
+												<input type="text" class="form-control name" name="name" id="name" value="<{$info.name}>">
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="place" class="col-sm-1 control-label">地址：</label>
+											<div class="col-sm-11">
+												<div class="input-group address_map">
+													<input type="text" class="form-control" name="place" id="place" value="<{$info.place}>">
+													<span class="input-group-addon glyphicon glyphicon-send get_map"></span>
+												</div>
+												<div id="allmap" class="hide" style="width: 100%; height: 400px;"></div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="director" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>负责人：</label>
+											<div class="col-sm-11">
+												<div id="director"></div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="sign_director" class="col-sm-1 control-label  color-red "><b style="vertical-align: middle;">*</b>签到负责人：</label>
+											<div class="col-sm-11">
+												<div id="sign_director"></div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="comment" class="col-sm-1 control-label">备注：</label>
+											<div class="col-sm-11">
+												<textarea class="form-control comment" name="comment" id="comment"><{$info.comment}></textarea>
+											</div>
+										</div>
+									</div>
+									<div class="modal-footer text_center">
+										<button type="submit" class="btn btn-primary">保存</button>
+									</div>
+								</form>
+							</if>
+						</section>
+					</div>
+				</if>
+			</div>
+		</div>
+	</div>
+	<script>
+		var AlterObject = {
+			object:{
+				directorIdSelect    :$('#director').QuasarSelect({
+					name        :'director',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee_list)}>',
+					idInput     :'selected_director',
+					idHidden    :'selected_director_form',
+					placeholder :'',
+					hasEmptyItem:false,
+					defaultValue:'<{$info.director}>',
+					defaultHtml :'<{$info.director}>'
+				}),
+				signDirectorIdSelect:$('#sign_director').QuasarSelect({
+					name        :'sign_director',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($employee_list)}>',
+					idInput     :'selected_sign_director',
+					idHidden    :'selected_sign_director_form',
+					placeholder :'',
+					hasEmptyItem:false,
+					defaultValue:'<{$info.sign_director}>',
+					defaultHtml :'<{$info.sign_director}>'
+				}),
+				toast               :$().QuasarToast(),
+				loading             :$().QuasarLoading()
+			}
+		};
+		$(function(){
+			// 百度地图API功能
+			var map = new BMap.Map("allmap");
+			map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
+			var local = new BMap.LocalSearch(map, {
+				renderOptions:{map:map}
+			});
+			$('.get_map').on('click', function(){
+				$(this).parents('.form-group').find('#allmap').removeClass('hide');
+				var value = $(this).parents('.form-group').find('#place').val();
+				local.search(value);
+			});
+		});
+	</script>
+</body>
+</html>

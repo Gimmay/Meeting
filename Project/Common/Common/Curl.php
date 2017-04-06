@@ -1,29 +1,37 @@
 <?php
-	/**
-	 * Created by PhpStorm.
-	 * User: Quasar
-	 * Date: 2016/4/20
-	 * Time: 10:52
+	/*
+	 * 更新日志
+	 *
+	 * Version 1.00 2016-04-20 10:52
+	 * 初始版本
+	 *
+	 * Version 1.01 2017-02-24 17:45
+	 * 更新注释返回值类型
 	 */
-	namespace Quasar;
+	namespace Quasar\Utility;
 
 	/**
-	 * Class Curl
-	 * *附录1：
-	 * 请求函数配置数组支持如下
-	 * key: data       val: mixed          post数据
-	 * key: return     val: boolean        是否返回数据
-	 * key: getHeader  val: boolean        是否返回header
-	 * key: getBody    val: boolean        是否返回响应体
-	 * key: userAgent  val: string|null    设定userAgent
-	 * key: setHeader  val: string|string  设定header
-	 * key: keyPath    val: string|null    SSL加密的密钥路径
-	 * key: pemPath    val: string|null    SSL加密的证书路径
-	 * key: verify     val: boolean        是否开启服务器验证
-	 * key: async      val: boolean        是否为异步请求
-	 * key: debug      val: boolean        是否报告遇到的每一个错误
+	 * Curl请求
 	 *
-	 * @package Quasar
+	 * *附录1：<br>
+	 * 请求函数配置数组支持如下<br>
+	 * key: data       val: mixed          post数据<br>
+	 * key: return     val: boolean        是否返回数据<br>
+	 * key: getHeader  val: boolean        是否返回header<br>
+	 * key: getBody    val: boolean        是否返回响应体<br>
+	 * key: userAgent  val: string|null    设定userAgent<br>
+	 * key: setHeader  val: string|string  设定header<br>
+	 * key: keyPath    val: string|null    SSL加密的密钥路径<br>
+	 * key: pemPath    val: string|null    SSL加密的证书路径<br>
+	 * key: verify     val: boolean        是否开启服务器验证<br>
+	 * key: async      val: boolean        是否为异步请求<br>
+	 * key: debug      val: boolean        是否报告遇到的每一个错误<br>
+	 * <br>
+	 * CreateTime: 2016-04-20 10:52<br>
+	 * ModifyTime: 2017-02-24 17:45<br>
+	 *
+	 * @author  Quasar (lelouchcctony@163.com)
+	 * @version 1.01
 	 */
 	class Curl{
 		/**
@@ -32,7 +40,7 @@
 		 * @param string $url    请求地址
 		 * @param array  $option 配置数组 键值参考附录1
 		 *
-		 * @return mixed
+		 * @return string
 		 */
 		public function post($url, $option = []){
 			$default = [
@@ -99,7 +107,7 @@
 		 * @param string $url    请求地址
 		 * @param array  $option 配置数组 键值参考附录1
 		 *
-		 * @return mixed
+		 * @return string
 		 */
 		public function get($url, $option = []){
 			$default = [

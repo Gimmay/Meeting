@@ -1,63 +1,188 @@
 <?php
-	/**
-	 * Created by PhpStorm.
-	 * User: Quasar
-	 * Date: 2016/5/3
-	 * Time: 14:35
+	/*
+	 * 更新日志
+	 *
+	 * Version 1.00 2016-05-03 14:35
+	 * 初始版本
+	 *
+	 * Version 1.10 2017-02-21 17:38
+	 * 更新汉字转拼音的方法
+	 *
+	 * Version 1.20 2017-02-27 11:36
+	 * 更新crypt加密以及验证的方法
 	 */
-	namespace Quasar;
+	namespace Quasar\Utility;
+
+	use Exception;
 
 	header('Content-type:text/html;charset=utf-8');
 
+	/**
+	 * 封装了字符串的一些操作集合<br>
+	 * <br>
+	 * CreateTime: 2016-05-03 14:35<br>
+	 * ModifyTime: 2017-02-27 11:36<br>
+	 *
+	 * @author  Quasar (lelouchcctony@163.com)
+	 * @version 1.20
+	 */
 	class StringPlus{
+		const CRYPT_MODE = [
+			'des'      => 1,
+			'desPlus'  => 2,
+			'md5'      => 3,
+			'blowfish' => 4,
+			'sha256'   => 5,
+			'sha512'   => 6
+		];
+
 		/**
-		 * 生成加密密码
+		 * hash算法
 		 *
-		 * @param string $pwd       明文密码
-		 * @param string $interfere 干扰串
+		 * @param string $message 进行hash计算的内容
+		 * @param string $method  hash算法
 		 *
 		 * @return string
+		 * @throws Exception
 		 */
-		public function makePassword($pwd, $interfere = ''){
-			$disturb = function ($str){
-				$tmp = $str;
-				$tmp = str_replace('13', '@h', $tmp);
-				$tmp = str_replace('31', 'v@3', $tmp);
-				$tmp = str_replace('j7', '@bg2', $tmp);
-				$tmp = str_replace('z4', 'i-', $tmp);
-				$tmp = str_replace('ip', '@p', $tmp);
-				$tmp = str_replace('h5', 'h_', $tmp);
-				$tmp = str_replace('01', 'p_', $tmp);
-				$tmp = str_replace('5h', '_5', $tmp);
-				$tmp = str_replace('0c', 'b_', $tmp);
-				$tmp = str_replace('f1', 'd_3', $tmp);
-				$tmp = str_replace('82', '-0', $tmp);
-				$tmp = str_replace('k3', 'h-', $tmp);
-				$tmp = str_replace('b0', '1-', $tmp);
-				$tmp = str_replace('9d', '@i', $tmp);
-				$tmp = str_replace('a1', '4-', $tmp);
-				$tmp = str_replace('j4', '-6z', $tmp);
-				$tmp = str_replace('m3', '-m', $tmp);
-				$tmp = str_replace('9b', '-9', $tmp);
-				$tmp = str_replace('6h', '8-', $tmp);
-				$tmp = str_replace('db', '7@', $tmp);
-				$tmp = str_replace('x8', '@x', $tmp);
-				$tmp = str_replace('e0', 'j6_', $tmp);
-				$tmp = str_replace('5c', 'c@', $tmp);
+		public function hash($message, $method){
+			if(in_array($method, hash_algos())) return hash($method, $message);
+			else throw new Exception("不支持 $method 的hash函数");
+		}
 
-				return $tmp;
-			};
-			$tmp     = md5("$pwd$interfere");
-			$str1    = substr($tmp, 5, 16);
-			$tmp     = md5(substr($tmp, 7, 13));
-			$str2    = substr($tmp, 11, 16);
-			$tmp     = md5(strrev($tmp));
-			$str3    = substr($tmp, 13, 16);
-			$tmp     = sha1($tmp);
-			$str4    = substr($tmp, 17, 16);
-			$tmp     = strtoupper("$str1$str2$str3$str4");
+		/**
+		 * 使用crypt加密信息
+		 *
+		 * @param string             $message  明文信息
+		 * @param string|array|false $salt     盐值<br>
+		 *                                     若指定blowfish、sha256和sha512加密模式，该参数应为长度为2的数组，第一个数组元素为循环次数，第二个数组元素为具体的盐值
+		 *                                     若指定des、des+和md5加密模式，该参数应该为字符串且满足对应加密模式需要格式
+		 *                                     若该参数为false，则具体的盐值会随机生成
+		 * @param int|mixed          $mode     加密模式
+		 *
+		 * @return string
+		 * @throws Exception
+		 */
+		public function crypt($message, $salt, $mode = self::CRYPT_MODE['md5']){
+			switch($mode){
+				case self::CRYPT_MODE['des']:
+					if(CRYPT_STD_DES == 1){
+						if($salt === false) $salt = $this->makeRandomString(2);
+						elseif(!preg_match('~[/.0-9A-Za-z]{2,}~', $salt)) throw new Exception('盐值必须满足[/.0-9A-Za-z]{2,}的正则规则', 400001);
+						$result = crypt($message, $salt);
 
-			return $tmp;
+						return $result;
+					}
+					else throw new Exception('系统不支持DES加密', 400011);
+				break;
+				case self::CRYPT_MODE['desPlus']:
+					if(CRYPT_EXT_DES == 1){
+						if($salt === false) $salt = $this->makeRandomString(8);
+						elseif(!preg_match('~[/.0-9A-Za-z]{8,}~', $salt)) throw new Exception('盐值必须满足[/.0-9A-Za-z]{8,}的正则规则', 400002);
+						$result = crypt($message, "_$salt");
+
+						return $result;
+					}
+					else throw new Exception('系统不支持扩展的DES加密', 400012);
+				break;
+				case self::CRYPT_MODE['md5']:
+					if(CRYPT_MD5 == 1){
+						if($salt === false) $salt = $this->makeRandomString(8);
+						$result = crypt($message, "$1$$salt$");
+
+						return $result;
+					}
+					else throw new Exception('系统不支持MD5加密', 400013);
+				break;
+				case self::CRYPT_MODE['blowfish']:
+					$makeLoopCount = function () use (&$makeLoopCount){
+						$result = rand(0, 1);
+						if($result === 0) $result .= rand(4, 9);
+						else $result .= rand(0, 9);
+						if((int)$result>12) return $makeLoopCount();
+
+						return $result;
+					};
+					if(CRYPT_BLOWFISH == 1){
+						if($salt === false) $salt = [$makeLoopCount(), $this->makeRandomString(20)];
+						else{
+							if(!preg_match('/(0[4-9])/', $salt[0]) && !((int)$salt[0]<=31 && (int)$salt[0]>=4)) throw new Exception('循环次数必须满足[04-31]的规则', 400003);
+							if(!(preg_match('~[./0-9A-Za-z]{20,}~', $salt[1]) && strlen($salt[1]) == 20)) throw new Exception('盐值必须满足[./0-9A-Za-z]{20}的正则规则', 400004);
+						}
+						$result = crypt($message, "$2y$$salt[0]$$salt[1]$");
+
+						return $result;
+					}
+					else throw new Exception('系统不支持BLOWFISH加密', 400014);
+				break;
+				case self::CRYPT_MODE['sha256']:
+					if(CRYPT_SHA256 == 1){
+						if($salt === false) $salt = [rand(1000, 1000000), $this->makeRandomString(16)];
+						elseif($salt[0]<1000 && $salt[0]>999999999) throw new Exception('循环次数必须满足[1000-999999999]的规则', 400005);
+						$result = crypt($message, "$5$".'rounds='."$salt[0]$$salt[1]$");
+
+						return $result;
+					}
+					else throw new Exception('系统不支持SHA256加密', 400015);
+				break;
+				case self::CRYPT_MODE['sha512']:
+					if(CRYPT_SHA512 == 1){
+						if($salt === false) $salt = [rand(1000, 1000000), $this->makeRandomString(16)];
+						elseif($salt[0]<1000 && $salt[0]>999999999) throw new Exception('循环次数必须满足[1000-999999999]的规则', 400005);
+						$result = crypt($message, "$6$".'rounds='."$salt[0]$$salt[1]$");
+
+						return $result;
+					}
+					else throw new Exception('系统不支持SHA512加密', 400016);
+				break;
+				default:
+					return null;
+				break;
+			}
+		}
+
+		/**
+		 * 验证crypt加密密文和明文是否匹配
+		 *
+		 * @param string $message     明文信息
+		 * @param string $cipher_text 密文
+		 *
+		 * @return bool
+		 * @throws Exception
+		 */
+		public function verifyCrypt($message, $cipher_text){
+			if(preg_match('/\$1\$([^$]{0,8})\$/', $cipher_text, $opt)) $mode = self::CRYPT_MODE['md5'];
+			elseif(preg_match('~\$2y\$(0[4-9]|[10-31])\$([./0-9A-Za-z]{20,})\$~', $cipher_text, $opt)) $mode = self::CRYPT_MODE['blowfish'];
+			elseif(preg_match('~\$5\$rounds=([0-9]{4,9})\$([\S]{0,16})\$~', $cipher_text, $opt)) $mode = self::CRYPT_MODE['sha256'];
+			elseif(preg_match('~\$6\$rounds=([0-9]{4,9})\$([\S]{0,16})\$~', $cipher_text, $opt)) $mode = self::CRYPT_MODE['sha512'];
+			elseif(preg_match('~_[/.0-9A-Za-z]{8}[\S]+~', $cipher_text, $opt)) $mode = self::CRYPT_MODE['desPlus'];
+			elseif(preg_match('~[/.0-9A-Za-z]{2,}[\S]+~', $cipher_text, $opt)) $mode = self::CRYPT_MODE['des'];
+			else $mode = null;
+			switch($mode){
+				case self::CRYPT_MODE['des']:
+					$salt    = substr($cipher_text, 0, 2);
+					$tmp_pwd = crypt($message, $salt);
+
+					return hash_equals($tmp_pwd, $cipher_text);
+				break;
+				case self::CRYPT_MODE['desPlus']:
+					$salt    = substr($cipher_text, 0, 9);
+					$tmp_pwd = crypt($message, $salt);
+
+					return hash_equals($tmp_pwd, $cipher_text);
+				break;
+				case self::CRYPT_MODE['md5']:
+				case self::CRYPT_MODE['blowfish']:
+				case self::CRYPT_MODE['sha256']:
+				case self::CRYPT_MODE['sha512']:
+					$tmp_pwd = crypt($message, $opt[0]);
+
+					return hash_equals($tmp_pwd, $cipher_text);
+				break;
+				default:
+					return false;
+				break;
+			}
 		}
 
 		/**
@@ -164,8 +289,8 @@
 		 * 创建随机字符串
 		 * 传入参数$type为W(大小写字母)、W+(大写字母)、W-(小写字母)、N(数字)、C(特殊字符)的一定规则的组合字符串
 		 *
-		 * @param int    $length
-		 * @param string $type
+		 * @param int    $length 随机字符串长度
+		 * @param string $type   字符串字符集合
 		 *
 		 * @return string
 		 */
@@ -328,10 +453,26 @@
 			return $string;
 		}
 
+		/**
+		 * 复原字符串
+		 *
+		 * @param string $string 待处理的字符串
+		 *
+		 * @return string
+		 */
 		public function restoreString($string){
 			$string = htmlspecialchars_decode($string);
 			$string = stripslashes($string);
 
 			return $string;
+		}
+
+		/**
+		 * 获取当前url地址
+		 *
+		 * @return string
+		 */
+		public function getCurrentUrl(){
+			return "$_SERVER[REQUEST_SCHEME]://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 		}
 	}

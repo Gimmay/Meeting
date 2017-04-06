@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>修改客户 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<div class="main_body">
+					<form class="form-horizontal" role="form" method="post" id="form" action="">
+						<section class="content">
+							<div class="table_wrap clearfix">
+								<div class="nav_tab clearfix">
+									<div class="nav_tab_li active">
+										<a href="javascript:void(0)">修改客户</a>
+									</div>
+								</div>
+								<input type="hidden" name="requestType" value="modify"><!-- requestType -->
+								<input type="hidden" name="redirect" value=""><!-- requestType -->
+								<div class="modal-body">
+									<volist name="column_list" id="single">
+										<eq name="single.view" value="1">
+											<div class="form-group">
+												<switch name="single.code">
+													<case value="ROYALWISSD-CLIENT-IS_NEW">
+														<if condition="$single['must'] eq 1">
+															<label class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+															<else/>
+															<label class="col-sm-1 control-label"><{$single.name}>：</label>
+														</if>
+														<div class="col-sm-11">
+															<select id="is_new" name="is_new" class="form-control <eq name='single.must' value='1'>necessary</eq>" title="">
+																<volist name="is_new_list" id="single">
+																	<if condition="$info[$single['form']] eq $single">
+																		<option value="<{$key}>" selected><{$single}></option>
+																		<else/>
+																		<option value="<{$key}>"><{$single}></option>
+																	</if>
+																</volist>
+															</select>
+														</div>
+													</case>
+													<case value="ROYALWISSD-CLIENT-GENDER">
+														<if condition="$single['must'] eq 1">
+															<label class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+															<else/>
+															<label class="col-sm-1 control-label"><{$single.name}>：</label>
+														</if>
+														<div class="col-sm-11">
+															<select id="gender" name="gender" class="form-control <eq name='single.must' value='1'>necessary</eq>" title="" value="<{$info[$single['form']]}>">
+																<volist name="gender_list" id="single">
+																	<if condition="$info[$single['form']] eq $single">
+																		<option value="<{$key}>" selected><{$single}></option>
+																		<else/>
+																		<option value="<{$key}>"><{$single}></option>
+																	</if>
+																</volist>
+															</select>
+														</div>
+													</case>
+													<case value="ROYALWISSD-CLIENT-TYPE">
+														<if condition="$single['must'] eq 1">
+															<label class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+															<else/>
+															<label class="col-sm-1 control-label"><{$single.name}>：</label>
+														</if>
+														<div class="col-sm-11">
+															<select id="type" name="type" class="form-control <eq name='single.must' value='1'>necessary</eq>" title="" value="<{$info[$single['form']]}>">
+																<volist name="type_list" id="single">
+																	<if condition="$info[$single['form']] eq $single">
+																		<option value="<{$single}>" selected><{$single}></option>
+																		<else/>
+																		<option value="<{$single}>"><{$single}></option>
+																	</if>
+																</volist>
+															</select>
+														</div>
+													</case>
+													<case value="ROYALWISSD-CLIENT-BIRTHDAY">
+														<if condition="$single['must'] eq 1">
+															<label class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+															<else/>
+															<label class="col-sm-1 control-label"><{$single.name}>：</label>
+														</if>
+														<div class="col-sm-11">
+															<input type="text" class="form-control <eq name='single.must' value='1'>necessary</eq>" name="birthday" placeholder="" id="birthday" value="<{$info[$single['form']]}>">
+														</div>
+													</case>
+													<case value="ROYALWISSD-CLIENT-ADDRESS">
+														<if condition="$single['must'] eq 1">
+															<label class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+															<else/>
+															<label class="col-sm-1 control-label"><{$single.name}>：</label>
+														</if>
+														<div class="col-sm-11">
+															<input type="text" class="form-control" name="address" id="address" value="<{$info[$single['form']]}>">
+														</div>
+													</case>
+													<case value="ROYALWISSD-CLIENT-COMMENT">
+														<if condition="$single['must'] eq 1">
+															<label class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+															<else/>
+															<label class="col-sm-1 control-label"><{$single.name}>：</label>
+														</if>
+														<div class="col-sm-11">
+															<textarea class="form-control comment" name="comment" id="comment" value="<{$info[$single['form']]}>"><{$info[$single['form']]}></textarea>
+														</div>
+													</case>
+													<default/>
+													<if condition="$single['must'] eq 1">
+														<label class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+														<else/>
+														<label class="col-sm-1 control-label"><{$single.name}>：</label>
+													</if>
+													<div class="col-sm-11">
+														<input type="text" class="form-control <eq name='single.must' value='1'>necessary</eq>" name="<{$single.form}>" placeholder="" id="<{$single.form}>" value="<{$info[$single['form']]}>">
+													</div>
+												</switch>
+											</div>
+										</eq>
+									</volist>
+								</div>
+								<div class="modal-footer text_center">
+									<button type="button" class="btn btn-primary btn-save">提交</button>
+								</div>
+							</div>
+						</section>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+			object:{
+				birthDate:jeDate({
+					dateCell:"#birthday",
+					format  :"YYYY-MM-DD",
+					isClear :false, // isClear:false, // 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
+				}),
+				toast    :$().QuasarToast(),
+				loading  :$().QuasarLoading()
+			}
+		};
+	</script>
+</body>
+</html>

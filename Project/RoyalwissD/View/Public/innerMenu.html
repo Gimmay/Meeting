@@ -1,0 +1,154 @@
+<!--会议系统左侧  导航栏 公用-->
+<div class="mt_navbar">
+	<div class="sidenav">
+		<ul class="sidenav_list" id="side_menu">
+			<li class="side_item <if condition='$cv_name eq Meeting_menuList'>active</if>">
+				<a href="<{:U('Meeting/menuList', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-th"></i> <span class="nav-label">菜单列表</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <if condition='$cv_name eq Message_manage or $c_name eq Badge or $c_name eq Project or $c_name eq Coupon or $c_name eq Hotel or $c_name eq SignPlace or $cv_name eq Receivables_payMethod or $cv_name eq Receivables_posMachine'>active</if>">
+				<div class="side-item-link no_link">
+					<i class="icon_nav glyphicon glyphicon-retweet"></i> <span class="nav-label">基础管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</div>
+				<ul class="nav-second-level">
+					<li class="<if condition='$cv_name eq Message_manage'>active</if>">
+						<a href="<{:U('Message/manage', ['mid'=>I('get.mid', 0, 'int')])}>">消息管理</a>
+					</li>
+					<li class="<if condition='$cv_name eq Badge_manage'>active</if>">
+						<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">胸卡设计</a>
+					</li>
+					<li class="<if condition='$cv_name eq Project_manage'>active</if>">
+						<a href="<{:U('Project/manage', ['mid'=>I('get.mid', 0, 'int')])}>">项目管理</a>
+					</li>
+					<li class="<if condition='$cv_name eq Coupon_manage'>active</if>">
+						<a href="<{:U('Coupon/manage', ['mid'=>I('get.mid', 0, 'int')])}>">代金券管理</a>
+					</li>
+					<li class="<if condition='$cv_name eq SignPlace_manage'>active</if>">
+						<a href="<{:U('SignPlace/manage', ['mid'=>I('get.mid', 0, 'int')])}>">签到点管理</a>
+					</li>
+					<li class="<if condition='$cv_name eq Receivables_payMethod'>active</if>">
+						<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
+					</li>
+					<li class="<if condition='$cv_name eq Receivables_posMachine'>active</if>">
+						<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机</a>
+					</li>
+				</ul>
+			</li>
+
+			<li class="side_item <if condition='$cv_name eq Meeting_index'>active</if>">
+				<a href="<{:U('Meeting/index', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-th-large"></i> <span class="nav-label">会议中心</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <if condition='$c_name eq Client'>active</if>">
+				<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">客户管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</a>
+
+				<ul class="nav-second-level">
+					<li class="<if condition='$cv_name eq Client_import'>active</if>">
+						<a href="<{:U('Client/import', ['mid'=>I('get.mid', 0, 'int')])}>">导入客户</a>
+					</li>
+					<li class="<if condition='$cv_name eq Client_sign'>active</if>">
+						<a href="<{:U('Client/sign', ['mid'=>I('get.mid', 0, 'int')])}>">签到</a>
+					</li>
+					<li class="<if condition='$cv_name eq Client_fieldSetting'>active</if>">
+						<a href="<{:U('Client/fieldSetting', ['mid'=>I('get.mid', 0, 'int')])}>">客户字段设置</a>
+					</li>
+				</ul>
+			</li>
+
+			<li class="side_item <if condition='$c_name eq Grouping'>active</if>">
+				<a href="<{:U('Grouping/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-compressed"></i> <span class="nav-label">分组管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item <if condition='$cv_name eq Receivables_manage or $cv_name eq Workflow_createClient or $cv_name eq Receivables_create or $cv_name eq Receivables_detailsProject'>active</if>">
+				<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-usd"></i> <span class="nav-label">收款管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+				<ul class="nav-second-level">
+					<li class="<if condition='$cv_name eq Receivables_create'>active</if>">
+						<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">创建收款</a>
+					</li>
+					<li class="<if condition='$cv_name eq Workflow_createClient'>active</if>">
+						<a href="<{:U('Workflow/createClient', ['mid'=>I('get.mid', 0, 'int')])}>">简易收款</a>
+					</li>
+				</ul>
+			</li>
+			<li class="side_item <if condition='$cv_name eq Hotel_manage'>active</if>">
+				<a href="<{:U('Hotel/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-list-alt"></i> <span class="nav-label">酒店管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span></a>
+			</li>
+			<li class="side_item <if condition='$c_name eq Report'>active</if>">
+				<div class="side-item-link no_link">
+					<i class="icon_nav glyphicon glyphicon-list-alt"></i> <span class="nav-label">报表管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</div>
+				<ul class="nav-second-level">
+					<li class="<if condition='$cv_name eq Recycle_client'>active</if>">
+						<a href="<{:U('Report/manage', ['mid'=>I('get.mid', 0, 'int')])}>">管理</a>
+					</li>
+					<li class="<if condition='$cv_name eq Recycle_client'>active</if>">
+						<a href="<{:U('Report/client',['mid'=>I('get.mid',0,'int')])}>">客户报表</a>
+					</li>
+					<li class="<if condition='$cv_name eq Recycle_client'>active</if>">
+						<a href="<{:U('Report/receivable',['mid'=>I('get.mid',0,'int')])}>">收款报表</a>
+					</li>
+				</ul>
+			</li>
+			<li class="side_item <if condition='$cv_name eq Meeting_configure'>active</if>">
+				<a href="<{:U('Meeting/configure', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon-cog"></i> <span class="nav-label">会议配置</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
+			<li class="side_item cls <if condition='$c_name eq Recycle'>active</if>">
+				<div class="side-item-link no_link">
+					<i class="icon_nav glyphicon glyphicon-trash"></i> <span class="nav-label">回收站管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span>
+				</div>
+				<ul class="nav-second-level">
+					<li class="<if condition='$cv_name eq Recycle_client'>active</if>">
+						<a href="<{:U('Recycle/client',['mid'=>I('get.mid',0,'int')])}>">客户列表</a>
+					</li>
+					<li class="<if condition='$cv_name eq Recycle_employee'>active</if>">
+						<a href="<{:U('Recycle/employee',['mid'=>I('get.mid',0,'int')])}>">员工列表</a>
+					</li>
+					<li class="<if condition='$cv_name eq Recycle_role'>active</if>">
+						<a href="<{:U('Recycle/role',['mid'=>I('get.mid',0,'int')])}>">角色列表</a>
+					</li>
+					<li class="<if condition='$cv_name eq Recycle_meeting'>active</if>">
+						<a href="<{:U('Recycle/meeting',['mid'=>I('get.mid',0,'int')])}>">会议列表</a>
+					</li>
+
+					<li class="<if condition='$cv_name eq Recycle_coupon'>active</if>">
+						<a href="<{:U('Recycle/coupon',['mid'=>I('get.mid',0,'int')])}>">项&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;目</a>
+					</li>
+					<li class="<if condition='$cv_name eq Recycle_couponItem'>active</if>">
+						<a href="<{:U('Recycle/couponItem',['mid'=>I('get.mid',0,'int')])}>">代金券码</a>
+					</li>
+					<li class="<if condition='$cv_name eq Recycle_message'>active</if>">
+						<a href="<{:U('Recycle/message',['mid'=>I('get.mid',0,'int')])}>">消息管理</a>
+					</li>
+					<li class="<if condition='$cv_name eq Recycle_group'>active</if>">
+						<a href="<{:U('Recycle/group',['mid'=>I('get.mid',0,'int')])}>">分组管理</a>
+					</li>
+					<li class="<if condition='$cv_name eq Recycle_groupMember'>active</if>">
+						<a href="<{:U('Recycle/groupMember',['mid'=>I('get.mid',0,'int')])}>">分组成员管理</a>
+					</li>
+					<li class="<if condition='$cv_name eq Recycle_hotel'>active</if>">
+						<a href="<{:U('Recycle/hotel',['mid'=>I('get.mid',0,'int')])}>">酒店管理</a>
+					</li>
+					<li class="<if condition='$cv_name eq Recycle_room'>active</if>">
+						<a href="<{:U('Recycle/room',['mid'=>I('get.mid',0,'int')])}>">酒店房间管理</a>
+					</li>
+				</ul>
+			</li>
+			</if>
+		</ul>
+	</div>
+</div>

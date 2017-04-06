@@ -1,0 +1,21 @@
+.switch{
+	margin : 0 20px 10px 0;
+}
+
+.checkbox_list{
+	padding : 0 10px 10px 10px;
+	border  : 1px solid rgba(0, 0, 0, .3);
+}
+
+.checkbox_list .checkbo{
+	width : 100%;
+}
+
+.checkbox_list .checkbox .checkbox-inline{
+	width : 24%;
+}
+
+.checkbox-inline + .checkbox-inline, .radio-inline + .radio-inline{
+	margin-top  : 0;
+	margin-left : 0;
+}

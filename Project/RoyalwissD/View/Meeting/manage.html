@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>会议模块 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="./Project/CMS/View/Public/outerMenu.html"/>
+			<div class="mt_wrapper">
+				<include file="./Project/CMS/View/Public/outerHeader.html"/>
+				<div class="main_body">
+					<section class="content">
+						<div class="c_header">
+							<div class="function_list clearfix">
+								<div class="function_btn" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
+									<a href="<{:U('Meeting/create')}>"> <i class="glyphicon glyphicon-edit"></i>
+										<span>创建会议</span> </a>
+								</div>
+								<div class="function_btn batch_delete_btn_confirm">
+									<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
+										<span>批量删除</span></a>
+								</div>
+								<div class="function_btn">
+									<a href="<{:U('Meeting/fieldSetting')}>"> <i class="glyphicon glyphicon-cog"></i>
+										<span>自定义字段配置</span> </a>
+								</div>
+							</div>
+						</div>
+						<div class="repertory clearfix">
+							<div class="tabs">
+								<ul class="tabsUl clearfix">
+									<li class="<notpresent name='_GET[type]'>active</notpresent>" id="filter_btn_all">
+										<a href="javascript:void(0)">全部</a>
+									</li>
+									<li class="<if condition='$_GET[type] eq ing'>active</if>" id="filter_btn_ing">
+										<a href="javascript:void(0)">进行</a>
+									</li>
+									<li class="<if condition='$_GET[type] eq fin'>active</if>" id="filter_btn_fin">
+										<a href="javascript:void(0)">结束</a>
+									</li>
+								</ul>
+							</div>
+							<form action="" method="get">
+								<div class="input-group repertory_text">
+									<input type="search" name="keyword" class="form-control" placeholder="会议名称/拼音简码" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default main_search">搜索会议</button>
+									</span>
+								</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('')}>">查看所有</a>
+							</form>
+						</div>
+						<div class="table_wrap">
+							<ul class="meeting_list">
+								<volist name="list" id="meeting">
+									<li class="meeting_li clearfix">
+										<div class="col-sm-12">
+												<span class="check_item">
+													<input type="checkbox" class="icheck" value="<{$meeting.id}>" placeholder="">
+												</span>
+											<a class="list_img" href="<{:U('Meeting/index', ['mid'=>$meeting['id']])}>">
+												<img src="<{$meeting.logo}>" alt=""> </a>
+											<div class="content-box">
+												<h3>
+													<a href="<{:U('Meeting/menuList', ['mid'=>$meeting['id']])}>" class="meeting_name"><{$meeting.name}></a>
+													<span class="status disable"><{$meeting.process_status}></span>
+												</h3>
+												<div class="desc clearfix">
+													<div>类型：<span class="type"><{$meeting.type}></span></div>
+													<div>主办方：<span class="host"><{$meeting.host}></span></div>
+													<div>策划方：<span class="plan"><{$meeting.plan}></span></div>
+												</div>
+												<div class="desc silver clearfix">
+													<div>• 开始结束时间：<span class="start_end_time"><{$meeting.start_time}> - <{$meeting.end_time}></span></div>
+													<div>• 负责人：<span class="create_time"><{$meeting.director}></span></div>
+													<div>• 创建时间：<span class="create_time"><{$meeting.creatime}></span></div>
+													<div>• 创建者：<span class="create_time"><{$meeting.creator}></span></div>
+												</div>
+												<ul class="fun_btn clearfix" data-id="<{$meeting.id}>">
+													<li class="fun_li">
+														<a href="<{:U('SignPlace/manage',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-star"></i>签到点</a>
+													</li>
+													<li class="fun_li">
+														<a href="<{:U('Client/manage',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-user"></i>客户</a>
+													</li>
+													<li class="fun_li">
+														<a class="meeting_manager_btn" data-toggle="modal" data-target="#role_list_modal"><i class="glyphicon glyphicon-th"></i>会议管理人员</a>
+													</li>
+													<li class="fun_li">
+														<a href="<{:U('Meeting/alter',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-cog"></i>修改</a>
+													</li>
+													<li class="fun_li">
+														<a class="delete_btn" data-toggle="modal" data-target="#delete_meeting"><i class="glyphicon glyphicon-trash"></i>删除</a>
+													</li>
+													<switch name="meeting.status_code">
+														<case value="0">
+															<li class="fun_li">
+																<a class="delete_btn" href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_meeting', 'id'=>$meeting['id']])}>"><i class="glyphicon glyphicon-lock"></i>启用</a>
+															</li>
+														</case>
+														<case value="1">
+															<li class="fun_li">
+																<a class="delete_btn" href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_meeting', 'id'=>$meeting['id']])}>"><i class="glyphicon glyphicon-lock"></i>禁用</a>
+															</li>
+														</case>
+													</switch>
+												</ul>
+											</div>
+										</div>
+										<p class="detail">
+											<a class="details_btn" data-id="<{$meeting.id}>">详情</a>
+										</p>
+										<p class="release1 release_btn">
+											<switch name="meeting.process_status_code">
+												<case value="1">
+													<a class="release_a" data-id="<{$meeting.id}>">发布</a>
+												</case>
+												<case value="2">
+													<a class="cancel_release_a" data-id="<{$meeting.id}>">取消发布</a>
+												</case>
+											</switch>
+										</p>
+									</li>
+								</volist>
+							</ul>
+						</div>
+						<div class="page_wrap">
+							<ul class="pagination ">
+								<{$pagination}>
+							</ul>
+						</div>
+					</section>
+				</div>
+				<div class="right_details">
+					<div class="d_con">
+						<span class="close_btn glyphicon glyphicon-remove">
+						</span>
+						<div class="title">
+							<span>详情</span>
+						</div>
+						<div class="info">
+							<div class="li">
+								<span>单位：</span> <span class="meeting_name"></span>
+							</div>
+							<div class="li">
+								<span>状态：</span> <span class="status"></span>
+							</div>
+							<div class="li">
+								<span>类型：</span> <span class="type"></span>
+							</div>
+							<div class="li">
+								<span>主办方：</span> <span class="host"></span>
+							</div>
+							<div class="li">
+								<span>策划方：</span> <span class="plan"></span>
+							</div>
+							<div class="li">
+								<span>举办地点：</span> <span class="place"></span>
+							</div>
+							<div class="li">
+								<span>会议酒店：</span> <span class="hotel"></span>
+							</div>
+							<div class="li">
+								<span>会议车辆：</span> <span class="car"></span>
+							</div>
+							<div class="li">
+								<span>开始结束时间：</span> <span class="setime"></span>
+							</div>
+							<div class="li">
+								<span>负责人：</span> <span class="director_name"></span>
+							</div>
+							<div class="li">
+								<span>创建时间：</span> <span class="create_time"></span>
+							</div>
+							<div class="li">
+								<span>备注：</span> <span class="comment"></span>
+							</div>
+							<div class="li">
+								<span>简介：</span> <span class="brief"></span>
+							</div>
+							<div class="li">
+								<span>消息类型：</span><span class="config_message_type"></span>
+							</div>
+						</div>
+						<!--	<div class="btn_fun">
+								<a data-toggle="modal" data-target="#alter_room">选择消息模板</a>
+								<a href="javascript:void(0)">胸卡设计</a> <a href="javascript:void(0)">选择酒店</a>
+								<a href="javascript:void(0)">会议管理人员</a> <a href="javascript:void(0)">签到点</a>
+							</div>-->
+						<div class="d_list">
+							<div class="list_title">二维码</div>
+							<div class="QRcode img">
+								<img src="">
+							</div>
+							<div class="list_title">logo图</div>
+							<div class="logo img">
+								<img src="">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 删除会议 -->
+	<div class="modal fade" id="delete_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="delete_role_title">删除会议</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除会议？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认删除</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量删除会议 -->
+	<div class="modal fade" id="batch_delete_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量删除会议</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除已选<span class="sAmount"></span>项？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认删除</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!--会议对应角色-->
+	<div class="modal fade" id="role_list_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 60%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">
+						<span class="meeting_name" style="font-size: 16px; color: #FB5050; margin-left: 10px;"></span>&nbsp;&nbsp;&nbsp;会务管理人员角色列表
+					</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post">
+					<input type="hidden" name="mid">
+					<div class="modal-body">
+						<table class="table table-bordered" style="text-align: center">
+							<thead>
+								<tr>
+									<td width="10%">序号</td>
+									<td width="30%">角色名</td>
+									<td width="30%">备注</td>
+									<td width="30%">操作</td>
+								</tr>
+							</thead>
+							<tbody id="role_list">
+							</tbody>
+						</table>
+						<div class="page_wrap">
+							<div class="pagination">
+								<{$page_show}>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 添加会议管理人员 -->
+	<div class="modal fade" id="add_meeting_manager" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 65%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title text-center">
+						<span class="meeting_name" style="font-size: 16px; color: #FB5050; margin-left: 10px;"></span>&nbsp;&nbsp;&nbsp;添加用户
+					</h2>
+				</div>
+				<div class="choose_people">
+					<div class="d1">
+						<span>当前有<b class="current_attendee">0</b>人</span>
+						<span>已选择<b class="color-red selected_attendee">0</b>人</span>
+						<a href="javascript:void(0)" class="btn_save btn btn-sm btn-info">添加</a>
+					</div>
+					<div class="search_sm">
+						<div class="col-sm-5">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="姓名/手机号/单位" value="">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default main_search">搜索</button>
+								</span>
+							</div>
+						</div>
+						<a type="reset" class="btn btn-default main_search">查看所有</a>
+					</div>
+					<div class="d2">
+						<div class="table_wrap" style="max-height: 600px; overflow-y: scroll">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="10%" class="all_check_e">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</td>
+										<td width="10%">序号</td>
+										<td width="40%">用户名</td>
+										<td width="40%">昵称</td>
+									</tr>
+								</thead>
+								<tbody id="user_body">
+								</tbody>
+							</table>
+						</div>
+						<input type="hidden" name="rid"> <input type="hidden" name="mid">
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$page_show}>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 查看会议管理人员 -->
+	<div class="modal fade" id="see_meeting_manager" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 65%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title text-center">
+						<span class="meeting_name" style="font-size: 16px; color: #FB5050; margin-left: 10px;"></span>&nbsp;&nbsp;&nbsp;用户列表
+					</h2>
+				</div>
+				<div class="choose_people">
+					<!--<div class="d1">
+						<span>当前有<b class="current_attendee">0</b>人</span>
+						<span>已选择<b class="color-red selected_attendee">0</b>人</span>
+						<a href="javascript:void(0)" class="btn_save btn btn-sm btn-info">添加</a>
+					</div>-->
+					<!--<div class="search_sm">
+						<div class="col-sm-5">
+							<div class="input-group repertory_text">
+								<input type="search" name="keyword" class="form-control" placeholder="姓名/手机号/单位" value="">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default main_search">搜索</button>
+								</span>
+							</div>
+						</div>
+						<a type="reset" class="btn btn-default main_search">查看所有</a>
+					</div>-->
+					<div class="d2">
+						<div class="table_wrap" style="max-height: 600px; overflow-y: auto">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="10%">序号</td>
+										<td width="40%">用户名</td>
+										<td width="30%">昵称</td>
+										<td width="20%">操作</td>
+									</tr>
+								</thead>
+								<tbody id="user_body1">
+								</tbody>
+							</table>
+							<div class="no_choice">
+								未添加用户
+							</div>
+						</div>
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$page_show}>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ThisObject = {
+			object:{
+				signMessageSelect       :$('#sign_mes').QuasarSelect({
+					name        :'sign_mes',
+					classStyle  :'form-control',
+					idInput     :'selected_sign_mes',
+					idHidden    :'selected_sign_mes_form',
+					data        :'<{:json_encode($message)}>',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				antiSignMessageSelect   :$('#unti_sign_mes').QuasarSelect({
+					name        :'anti_sign_mes',
+					classStyle  :'form-control',
+					idInput     :'selected_unti_sign_mes',
+					idHidden    :'selected_unti_sign_mes_form',
+					data        :'<{:json_encode($message)}>',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				receivablesMessageSelect:$('#receivables_mes').QuasarSelect({
+					name        :'receivables_mes',
+					classStyle  :'form-control',
+					idInput     :'selected_receivables_mes',
+					idHidden    :'selected_receivables_mes_form',
+					data        :'<{:json_encode($message)}>',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				toast                   :$().QuasarToast(),
+				loading                 :$().QuasarLoading(),
+				icheck                  :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				})
+			},
+			url   :{
+				thisPage:"<{:U('')}>"
+			}
+		}
+	</script>
+</body>
+</html>

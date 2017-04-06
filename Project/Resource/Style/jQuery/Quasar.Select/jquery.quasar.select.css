@@ -1,0 +1,74 @@
+/*
+	Create by Quasar on 2016/5/10 18:01
+*/
+
+ul.quasar-select-data-list{
+	overflow                   : auto;
+	list-style                 : none;
+	margin                     : 0;
+	padding                    : 0;
+	box-shadow                 : rgba(90, 90, 90, 0.1) 0 3px 3px 3px;
+	position                   : absolute;
+	width                      : 100%;
+	z-index                    : 10;
+	-moz-user-select           : none;
+	-webkit-user-select        : none;
+	-ms-user-select            : none;
+	user-select                : none;
+	display                    : none;
+	border-bottom-left-radius  : 7px;
+	border-bottom-right-radius : 7px;
+}
+
+ul.quasar-select-data-list > li.quasar-select-data-item{
+	height             : 30px;
+	line-height        : 30px;
+	background         : white;
+	text-align         : left;
+	overflow           : hidden;
+	color              : #757575;
+	padding-left       : 10px;
+	transition         : all 0.5s ease;
+	-moz-transition    : all 0.5s ease;
+	-webkit-transition : all 0.5s ease;
+	-o-transition      : all 0.5s ease;
+	font-size          : 14px;
+	font-weight        : normal;
+	cursor             : default;
+}
+
+ul.quasar-select-data-list > li.quasar-select-data-item.hover{
+	background  : rgba(25, 25, 25, 0.75);
+	color       : white;
+	font-size   : 15px;
+	font-weight : bold;
+}
+
+ul.quasar-select-data-list > li.quasar-select-data-item.selected{
+	background  : rgba(15, 15, 15, 0.85);
+	color       : white;
+	font-size   : 16px;
+	font-weight : bolder;
+}
+
+textarea.quasar-select-input{
+	overflow           : hidden;
+	word-break         : keep-all;
+	white-space        : nowrap;
+	word-wrap          : normal;
+	background         : #EEEEEE;
+	transition         : all 0.5s ease;
+	-moz-transition    : all 0.5s ease;
+	-webkit-transition : all 0.5s ease;
+	-o-transition      : all 0.5s ease;
+	resize             : none;
+	height             : 34px;
+}
+
+textarea.quasar-select-input.insert-mode{
+	background : white;
+}
+
+div.quasar-select-input > span.quasar-select-input-placeholder{
+	color : grey;
+}

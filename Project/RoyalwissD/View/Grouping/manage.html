@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>分组管理 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/calculator/calculator.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-position.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/operate.js"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<div class="main_body" style="overflow: hidden;">
+					<section class="content">
+						<div class="table_wrap mb_10">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="javascript:void(0)">分组管理</a>
+								</div>
+							</div>
+						</div>
+						<div class="c_header">
+							<div class="btn_group_wrap">
+								<div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="glyphicon glyphicon-plus"></i> 新建组 <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li data-toggle="modal" data-target="#add_group_modal">
+											<a href="javascript:void(0)">新建组</a></li>
+									</ul>
+								</div>
+								<div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="glyphicon glyphicon-lock"></i> 基础操作 <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li class="batch_enable_btn"><a href="javascript:void(0)">批量启用</a></li>
+										<li class="batch_disable_btn"><a href="javascript:void(0)">批量禁用</a></li>
+										<li role="separator" class="divider"></li>
+										<li class="batch_delete_btn"><a href="javascript:void(0)">批量删除</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="repertory clearfix">
+							<div class="input-group repertory_text" style="width: 30%">
+								<input name="p" type="hidden" value="1">
+								<div class="input-group-addon" data-toggle="modal" data-target="#search_config_modal">
+									<b class="glyphicon glyphicon-cog"></b></div>
+								<input type="search" name="keyword" id="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/类型/拼音简码" value="<{:I('get.keyword', '')}>">
+								<span class="input-group-btn">
+									<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
+								</span>
+							</div>
+							<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
+
+						</div>
+						<div class="table_wrap">
+							<div class="row mb_10">
+								<div class="col-sm-6">
+									<span class="total_client">共 <b class="color-red"><{:count($list)}></b>组</span>
+								</div>
+								<!--<div class="col-sm-6 text-right">
+									<span class="custom_list" data-toggle="modal" data-target="#list_menu"><i class="glyphicon glyphicon-list"></i>&nbsp;自定义列表菜单</span>
+								</div>-->
+							</div>
+							<table class="table table-bordered table-hover text-center" id="tableExcel">
+								<thead>
+									<tr>
+										<th width="5%" class="all_check">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</th>
+										<th width="5%">序号</th>
+										<th width="15%">组名</th>
+										<th width="15%">组员数 / 容纳人数上限</th>
+										<th width="5%">状态</th>
+										<th width="10%">创建时间</th>
+										<th width="5%">创建者</th>
+										<th width="10%">备注</th>
+										<th width="30">操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<volist name="list" id="single">
+										<tr>
+											<td class="check_item">
+												<input type="checkbox" class="icheck" value="<{$single.id}>" placeholder="">
+											</td>
+											<td><{$i}></td>
+											<td><{$single.name}></td>
+											<td><{$single.assigned}> / <{$single.capacity}></td>
+											<td><{$single.status}></td>
+											<td><{$single.creatime}></td>
+											<td><{$single.creator}></td>
+											<td><{$single.comment}></td>
+											<td>
+												<div class="btn-group" data-id="<{$single.id}>" data-status="<{$single.status_code}>">
+													<button type="button" class="btn btn-default btn-xs manage_btn" data-toggle="modal" data-target="#member_modal">组员管理</button>
+													<button type="button" class="btn btn-default btn-xs modify_btn">修改</button>
+													<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+													<switch name="single.status_code">
+														<case value="1">
+															<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+														</case>
+														<case value="0">
+															<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+														</case>
+													</switch>
+												</div>
+											</td>
+										</tr>
+									</volist>
+								</tbody>
+							</table>
+						</div>
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$pagination}>
+							</ul>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 组员管理 -->
+	<div class="modal fade" id="member_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">组员管理</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="add_group"> <input type="hidden" name="id" value="">
+					<div class="row mt_10 text-right">
+						<div class="col-sm-12">
+							<div class="col-sm-8"></div>
+							<div class="col-sm-2 mb_10 btn_create">
+								<button type="button" class="btn btn-xs btn-success btn-block" data-name="name">添加组员</button>
+							</div>
+							<div class="col-sm-2 mb_10 btn_empty">
+								<button type="button" class="btn btn-xs btn-danger btn-block" data-name="name">清空</button>
+							</div>
+						</div>
+					</div>
+					<div class="row mt_10">
+						<div class="col-sm-12" id="group_list">
+							<div class="col-sm-2 btn-item mb_10">
+								<button type="button" class="btn btn-sm btn-default btn-block" data-name="name">姓名</button>
+								<span class="b_delete glyphicon glyphicon-remove"></span>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 新建组 -->
+	<div class="modal fade" id="add_group_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 700px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">新建组</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="create">
+					<div class="modal-body">
+						<div class="form-group mode">
+							<label class="col-sm-2 control-label">方式：</label>
+							<div class="col-sm-10" style="margin:0">
+								<ul class="nav nav-pills" id="create_way">
+									<li role="presentation" class="single active"><a href="#">单个新增</a></li>
+									<li role="presentation" class="mutil "><a href="#">批量新增</a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="single_box">
+							<div class="form-group">
+								<label for="code" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>组名：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="name" id="code">
+								</div>
+							</div>
+						</div>
+						<div class="mutil_box c_way hide">
+							<div class="form-group">
+								<label class="col-sm-2 control-label"></label>
+								<div class="col-sm-10">
+									<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、后缀、开始段、长度、数量等字段可自动获取组名。
+									</p>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="prefix" class="col-sm-2 control-label">前缀：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control prefix" name="prefix" id="prefix">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="suffix" class="col-sm-2 control-label">后缀：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control suffix" name="suffix" id="suffix">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="start_number" class="col-sm-2 control-label">开始段：</label>
+								<div class="col-sm-10">
+									<input type="number" class="form-control start_number" name="start_number" id="start_number">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="length" class="col-sm-2 control-label">长度：</label>
+								<div class="col-sm-10">
+									<input type="number" class="form-control length" name="length" id="length">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="number" class="col-sm-2 control-label">数量：</label>
+								<div class="col-sm-10">
+									<input type="number" class="form-control number" name="number" id="number">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">组名：</label>
+								<div class="col-sm-10">
+									<button type="button" class="btn btn-default auto_get_number">自动获取</button>
+									<ul class="list_coupon_number clearfix">
+									</ul>
+								</div>
+							</div>
+
+							<input type="hidden" name="group_name" value="">
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-10">
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;可容纳人数为0表示不限制。
+								</p>
+							</div>
+
+						</div>
+						<div class="form-group">
+							<label for="capacity" class="col-sm-2 control-label">可容纳人数：</label>
+							<div class="col-sm-10">
+								<input type="number" class="form-control capacity" name="capacity" id="capacity" value="0">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="comment" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" id="comment"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量删除 -->
+	<div class="modal fade" id="batch_delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量删除组</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除已选<span class="sAmount"></span>组？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认删除</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 修改组 -->
+	<div class="modal fade" id="alter_group_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">修改组</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkIsEmptyAlter()">
+					<input type="hidden" name="requestType" value="modify"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="code_alter" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>组名：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="name" id="code_alter">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="capacity_alter" class="col-sm-2 control-label">可容纳人数：</label>
+							<div class="col-sm-10">
+								<input type="number" class="form-control capacity_a" name="capacity" id="capacity_alter">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="comment_alter" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" id="comment_alter"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 删除组 -->
+	<div class="modal fade" id="delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">删除组</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id">
+					<div class="modal-body">
+						是否删除该组？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 清空组员 -->
+	<div class="modal fade" id="empty_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center">清空组员</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<div class="modal-body">
+						是否清空该组组员？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 组添加组员 -->
+	<div class="modal fade" id="add_member" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 65%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title text-center">添加组员</h2>
+				</div>
+				<div class="choose_people">
+					<div class="row mt_10">
+						<div class="col-sm-9">
+							<div class="search_sm">
+								<div class="col-sm-5">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" class="form-control" placeholder="姓名/手机号/单位" value="">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default ajax_search">搜索</button>
+								</span>
+									</div>
+								</div>
+								<a type="reset" class="btn btn-default ajax_search_all">查看所有</a>
+							</div>
+						</div>
+						<div class="col-sm-3 text-right">
+							<button type="button" class="btn btn-sm btn-info batch_add_btn">批量添加</button>
+						</div>
+					</div>
+					<div class="d2">
+						<div class="table_wrap" style="max-height: 600px; overflow-y: auto">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<td width="5%" class="all_check_i">
+											<input type="checkbox" class="icheck_i" placeholder="" value="">
+										</td>
+										<td width="5%">序号</td>
+										<td width="20%">单位名称</td>
+										<td width="10%">姓名</td>
+										<td width="10%">顾客类型</td>
+										<td width="10%">性别</td>
+										<td width="10%">职务</td>
+										<td width="10%">手机号</td>
+										<td width="10%">操作</td>
+									</tr>
+								</thead>
+								<tbody id="client_body">
+								</tbody>
+							</table>
+						</div>
+						<input type="hidden" name="gid"> <input type="hidden" name="selected_member">
+						<div class="page_wrap">
+							<ul class="pagination">
+								<{$pagination}>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+			object:{
+				toast  :$().QuasarToast(),
+				loading:$().QuasarLoading(),
+				icheck :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				})
+			}
+		};
+	</script>
+</body>
+</html>

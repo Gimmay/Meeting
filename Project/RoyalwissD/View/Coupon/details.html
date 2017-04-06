@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>券详情 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<if condition="$permission_list['COUPON.VIEW'] eq 1">
+					<div class="main_body">
+						<section class="content">
+							<div class="c_header">
+								<div class="function_list clearfix">
+									<if condition="$permission_list['COUPON.CREATE'] eq 1">
+										<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_coupon">
+											<i></i>
+											<p>添加项目</p>
+										</div>
+									</if>
+									<if condition="$permission_list['COUPON.DELETE'] eq 1">
+										<div class="function_btn bg-danger batch_delete_btn_confirm">
+											<i></i>
+											<p>批量删除</p>
+										</div>
+									</if>
+								</div>
+							</div>
+							<div class="repertory clearfix">
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" class="form-control" placeholder="项目/拼音简码" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default main_search">搜索项目</button>
+									</span>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('details',['id'=>$list['id'], 'mid'=>I('get.mid',0,'int')])}>">查看所有</a>
+								</form>
+								<form action="" method="get" class="checkbox_filter">
+									<div class="input-group pull-left unused_filter">
+										<input type="radio" name="iCheck" class="icheck">&nbsp;&nbsp;未使用 (<{$count_status0}>)
+									</div>
+									<div class="input-group pull-left used_filter">
+										<input type="radio" name="iCheck" class="icheck">&nbsp;&nbsp;已使用 (<{$count_status1}>)
+									</div>
+									<div class="input-group pull-left refund_filter">
+										<input type="radio" name="iCheck" class="icheck">&nbsp;&nbsp;退费(<{$count_status2}>)
+									</div>
+								</form>
+							</div>
+							<div class="table_wrap">
+								<table class="table table-bordered" style="text-align: center">
+									<thead>
+										<tr>
+											<td width="5%" class="all_check">
+												<input type="checkbox" class="icheck" placeholder="" value="">
+											</td>
+											<td width="5%">项目名称</td>
+											<td width="10%">客户姓名</td>
+											<td width="10%">项目码</td>
+											<td width="15%">开始时间</td>
+											<td width="15%">结束时间</td>
+											<td width="10%">状态</td>
+											<td width="20%">操作</td>
+										</tr>
+									</thead>
+									<volist name="info" id="info">
+										<tbody>
+											<tr>
+												<td class="check_item">
+													<input type="checkbox" class="icheck" placeholder="" value="<{$info.id}>">
+												</td>
+												<td class="name"><{$info.couponName}></td>
+												<td><{$info.cid}></td>
+												<td class="coupon_code"><{$info.code}></td>
+												<td class="start_time"><{$coupon.start_time|date='Y-m-d',###}></td>
+												<td class="end_time"><{$coupon.end_time|date='Y-m-d',###}></td>
+												<td>
+													<switch name="info.status">
+														<case value="0">未使用</case>
+														<case value="1"><span style="color: red">已使用</span></case>
+														<case value="2">退费</case>
+														<case value="3">删除</case>
+													</switch>
+												</td>
+												<td>
+													<div class="btn-group" data-id="<{$info.id}>">
+														<if condition="$permission_list['COUPON.ALTER']">
+															<!--<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_coupon">修改</button>-->
+														</if>
+														<if condition="$permission_list['COUPON.DELETE']">
+															<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_coupon">删除</button>
+														</if>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</volist>
+								</table>
+							</div>
+							<div class="page_wrap">
+								<div class="pagination">
+									<{$page_show}>
+								</div>
+							</div>
+						</section>
+					</div>
+				</if>
+			</div>
+		</div>
+	</div>
+	<!-- 新增券 -->
+	<div class="modal fade" id="create_coupon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 60%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="create_role_title">添加券</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkCreate()">
+					<input type="hidden" name="requestType" value="create">
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>方式：</label>
+							<div class="col-sm-10" style="margin:0">
+								<ul class="nav nav-pills" id="create_way">
+									<li role="presentation" class="active"><a href="#">单个添加</a></li>
+									<li role="presentation"><a href="#">批量添加</a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="coupon_name" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>券名称：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control name" name="name" id="coupon_name" value="<{$coupon.name}>" disabled>
+							</div>
+						</div>
+						<!-- 单个新增 -->
+						<div class="single_box c_way">
+							<div class="form-group">
+								<label class="col-sm-2 control-label"><b style="vertical-align: middle; color: red;">*</b>券号：</label>
+								<div class="col-sm-10">
+									<input type="text" name="coupon_area" class="coupon_area form-control">
+								</div>
+							</div>
+						</div>
+						<!-- 批量新增 -->
+						<div class="mutil_box hide c_way">
+							<div class="form-group">
+								<label for="prefix" class="col-sm-2 control-label">前缀：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control prefix" name="prefix" id="prefix">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="start_number" class="col-sm-2 control-label">开始段：</label>
+								<div class="col-sm-10">
+									<input type="number" class="form-control start_number" name="start_number" id="start_number">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="length" class="col-sm-2 control-label">长度：</label>
+								<div class="col-sm-10">
+									<input type="number" class="form-control length" name="length" id="length">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="number" class="col-sm-2 control-label">数量：</label>
+								<div class="col-sm-10">
+									<input type="number" class="form-control number" name="number" id="number">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label"><b style="vertical-align: middle; color: red;">*</b>券号：</label>
+								<div class="col-sm-10">
+									<button type="button" class="btn btn-default auto_get_number">自动获取</button>
+									<ul class="list_coupon_number clearfix">
+									</ul>
+									<input type="hidden" name="coupon_area" value="">
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="start_time" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>开始时间：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control start_time" name="start_time" id="start_time" value="<{$coupon.start_time|date='Y-m-d',###}>" disabled>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="end_time" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>结束时间：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control end_time" name="end_time" id="end_time" value="<{$coupon.end_time|date='Y-m-d',###}>" disabled>
+							</div>
+						</div>
+						<!--<div class="form-group">
+							<label for="create_role_comment" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" id="create_role_comment"></textarea>
+							</div>
+						</div>-->
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-10">
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;灰色输入框默认不可编写，券模板自动带出。
+								</p>
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、开始段、长度、数量等字段可自动获取券号。
+								</p>
+							</div>
+						</div>
+						<input type="hidden" name="hide_coupon_area" id="hide_coupon_area" value="">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!--&lt;!&ndash; 修改券 &ndash;&gt;
+	<div class="modal fade" id="modify_coupon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="modify_role_title">修改券</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return checkAlter()">
+					<input type="hidden" name="requestType" value="alter"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="coupon_name_a" class="col-sm-2 control-label  color-red "><b style="vertical-align: middle;">*</b>券名称：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control name" name="name" id="coupon_name_a" disabled>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="coupon_code" class="col-sm-2 control-label  color-red "><b style="vertical-align: middle;">*</b>券码：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control coupon_code" name="coupon_code" id="coupon_code" disabled>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-10">
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;灰色输入框默认不可编写，券模板自动带出。</p>
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、开始段、长度、数量等字段可自动获取券号。</p>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">保存</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	&lt;!&ndash; 批量修改券 &ndash;&gt;
+	<div class="modal fade" id="batch_modify_coupon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">修改券</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post">
+					<input type="hidden" name="requestType" value="multi_alter"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="meeting_b" class="col-sm-2 control-label  color-red "><b style="vertical-align: middle;">*</b>会议：</label>
+							<div class="col-sm-10">
+								<div id="meeting_b"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-10">
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;灰色输入框默认不可编写，券模板自动带出。</p>
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;在输入前缀、开始段、长度、数量等字段可自动获取券号。</p>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">保存</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>-->
+	<!-- 删除券 -->
+	<div class="modal fade" id="delete_coupon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title">删除券</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除券？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量删除 券-->
+	<div class="modal fade" id="batch_delete_coupon" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量删除券</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除已选券？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary batch_delete_btn">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script>
+		var DetailsObject = {
+			object:{
+				meetingSelectCreate:$('#meeting').QuasarSelect({
+					name        :'meeting_name',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($meeting_list)}>',
+					idInput     :'selected_meeting',
+					idHidden    :'selected_meeting_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				meetingSelectAlter :$('#meeting_a,#meeting_b').QuasarSelect({
+					name        :'meeting_name_a',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($meeting_list)}>',
+					idInput     :'selected_meeting_a',
+					idHidden    :'selected_meeting_a_form',
+					placeholder :'',
+					hasEmptyItem:false
+				}),
+				icheck             :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				}),
+				toast              :$().QuasarToast(),
+				loading            :$().QuasarLoading()
+			}
+		}
+	</script>
+</body>
+</html>

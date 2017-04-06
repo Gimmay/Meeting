@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>参会人员 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
+
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery.printArea.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body data-meeting-id="<{:I('get.mid')}>" data-place-id="<{:I('get.sid')}>">
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<if condition="$permission_list['RECEIVABLES.VIEW'] eq 1">
+					<div class="main_body">
+						<section class="content">
+							<div class="table_wrap">
+								<div class="nav_tab clearfix">
+									<if condition="$permission_list['RECEIVABLES.CREATE']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/createUnit', ['mid'=>I('get.mid', 0, 'int')])}>">添加收款 (会所)</a>
+										</div>
+									</if>
+									<!--<if condition="$permission_list['RECEIVABLES.VIEW']">-->
+										<!--<div class="nav_tab_li active">-->
+											<!--<a href="<{:U('Receivables/manageUnit', ['mid'=>I('get.mid', 0, 'int')])}>">收款列表 (会所)</a>-->
+										<!--</div>-->
+									<!--</if>-->
+									<if condition="$permission_list['RECEIVABLES.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/details', ['mid'=>I('get.mid', 0, 'int')])}>">收款详情</a>
+										</div>
+									</if>
+									<if condition="$permission_list['PAY_METHOD.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
+										</div>
+									</if>
+									<if condition="$permission_list['POS_MACHINE.VIEW']">
+										<div class="nav_tab_li">
+											<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机</a>
+										</div>
+									</if>
+									<div class="table_length  pull-right">
+										显示： <select>
+										<option>5</option>
+										<option>10</option>
+										<option selected>20</option>
+										<option>50</option>
+										<option>100</option>
+										<option>150</option>
+										<option>200</option>
+										<option>500</option>
+									</select> 项结果
+									</div>
+								</div>
+							</div>
+							<div class="repertory clearfix">
+								<form action="" method="get">
+									<div class="input-group repertory_text" style="width: 30%">
+										<input name="p" type="hidden" value="1">
+										<input type="search" name="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/类型/拼音简码" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default main_search">搜索</button>
+									</span>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有&nbsp;(<{$statistics.total}>人)</a>
+								</form>
+								<form action="" method="get" class="sign_check">
+									<div class="input-group pull-left check_receivables color-2489c5">
+										<input type="radio" name="receivables" class="icheckBlue">&nbsp;&nbsp;收款 (<{$statistics.receivables}>)
+									</div>
+									<div class="input-group pull-left check_not_receivables color-2489c5">
+										<input type="radio" name="receivables" class="icheckBlue">&nbsp;&nbsp;未收款 (<{$statistics.not_receivables}>)
+									</div>
+								</form>
+							</div>
+							<div class="table_wrap">
+								<table class="table table-bordered table-hover" id="tableExcel" style="text-align: center">
+									<thead>
+										<tr>
+											<td width="4%" class="all_check">
+												<input type="checkbox" class="icheck" placeholder="" value="">
+											</td>
+											<td width="4%">序号</td>
+											<td width="6%">姓名</td>
+											<td width="6%">性别</td>
+											<td width="10%">手机号</td>
+											<td width="10%">单位名称</td>
+											<td width="5%">团队</td>
+											<td width="10%">类型</td>
+											<td width="10%">收款 (单位：元)</td>
+											<td width="30%">操作</td>
+										</tr>
+									</thead>
+									<tbody>
+										<volist name="list" id="single">
+											<tr>
+												<td class="check_item">
+													<input type="checkbox" class="icheck" value="<{$single.cid}>" data-join-value="<{$single.id}>" placeholder="">
+												</td>
+												<td><{$i}></td>
+												<td class="name"><{$single.name}></td>
+												<td>
+												<span class="color-info">
+													<switch name="single.gender">
+														<case value="0">未指定</case>
+														<case value="1">男</case>
+														<case value="2">女</case>
+													</switch>
+												</span>
+												</td>
+												<td><{$single.mobile}></td>
+												<td><{$single.unit}></td>
+												<td><{$single.team}></td>
+												<td><{$single.type}></td>
+												<td><{$single.price}></td>
+												<td>
+													<div class="btn-group" data-id="<{$single.cid}>" data-join-id="<{$single.id}>">
+														<a href="<{:U('Receivables/createUnit',['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs btn_receivables">收款</a>
+														<a href="<{:U('Receivables/details',['cid'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs btn_receivables">收款详情</a>
+														<!--<a href="javascript:void(0)" class="btn btn-default btn-xs btn_print">打印</a>-->
+													</div>
+												</td>
+											</tr>
+										</volist>
+									</tbody>
+								</table>
+							</div>
+							<div class="page_wrap">
+								<ul class="pagination">
+									<{$page_show}>
+								</ul>
+							</div>
+						</section>
+					</div>
+				</if>
+			</div>
+		</div>
+	</div>
+	<div id="print">
+		<div class="p_sec" style="height: 50%; border-bottom: 1px dashed #E1E1E1; padding: 30px 10px 120px 10px">
+			<table class="p_table" width="100%" height="100%" border="1">
+				<thead>
+					<tr>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+					</tr>
+				</thead>
+				<tr>
+					<td style="text-align: center">
+						<span class="img" style="width: 60px; height: 60px; display: block; overflow: hidden; margin: 0 auto"><img src="<{$Think.COMMON_IMAGE_PATH}>/rls_logo.png" alt="" style="width: 100%; vertical-align: top;  margin-top: 6px;"></span>
+					</td>
+					<td colspan="4" style="text-align: center; font-size: 24px; font-weight: bold">收&nbsp;&nbsp;款&nbsp;&nbsp;收&nbsp;&nbsp;据</td>
+					<td style="font-size: 18px; text-align: center; color: red; font-weight: bold" class="identifier"></td>
+				</tr>
+				<tr>
+					<td colspan="6" class="text-center time">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;今收到&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="unit"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="client_name"></span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;交来：<span class="project_type">款</span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;金额（大写）<span class="price_capital"></span>
+					</td>
+				</tr>
+				<tr class="sign_tr">
+					<td class="rmb" colspan="2">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人民币小写：
+						<span class="price" style="text-decoration: underline"></span>
+					</td>
+					<td colspan="2" class="type1" style="text-align: center"></td>
+					<td colspan="2" class="price1" style="text-align: center"></td>
+				</tr>
+				<tr style="font-size: 14px">
+					<td>&nbsp;核准：</td>
+					<td>&nbsp;会计：</td>
+					<td>&nbsp;记账：</td>
+					<td>&nbsp;开收据：</td>
+					<td>&nbsp;出纳：</td>
+					<td>&nbsp;经手人：</td>
+				</tr>
+			</table>
+		</div>
+		<div class="p_sec" style="height: 50%;  padding:120px 10px 30px 10px;">
+			<table class="p_table" width="100%" height="100%" border="1">
+				<thead>
+					<tr>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+						<td width="16.666"></td>
+					</tr>
+				</thead>
+				<tr>
+					<td style="text-align: center">
+						<span class="img" style="width: 60px; height: 60px; display: block; overflow: hidden; margin: 0 auto"><img src="<{$Think.COMMON_IMAGE_PATH}>/rls_logo.png" alt="" style="width: 100%; vertical-align: top;  margin-top: 6px;"></span>
+					</td>
+					<td colspan="4" style="text-align: center; font-size: 24px; font-weight: bold">收&nbsp;&nbsp;款&nbsp;&nbsp;收&nbsp;&nbsp;据</td>
+					<td style="font-size: 18px; text-align: center; color: red; font-weight: bold" class="identifier"></td>
+				</tr>
+				<tr>
+					<td colspan="6" class="text-center time">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;今收到&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="unit"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="client_name"></span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;交来：<span class="project_type">款</span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;金额（大写）<span class="price_capital"></span>
+					</td>
+				</tr>
+				<tr class="sign_tr">
+					<td class="rmb" colspan="2">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人民币小写：
+						<span class="price" style="text-decoration: underline"></span>
+					</td>
+					<td colspan="2" class="type1" style="text-align: center"></td>
+					<td colspan="2" class="price1" style="text-align: center"></td>
+				</tr>
+				<tr style="font-size: 14px">
+					<td>&nbsp;核准：</td>
+					<td>&nbsp;会计：</td>
+					<td>&nbsp;记账：</td>
+					<td>&nbsp;开收据：</td>
+					<td>&nbsp;出纳：</td>
+					<td>&nbsp;经手人：</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+			object:{
+				toast       :$().QuasarToast(),
+				loading     :$().QuasarLoading(),
+				icheck      :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				}),
+				icheckBlue  :$('.icheckBlue').iCheck({
+					checkboxClass:'icheckbox_square-blue',
+					radioClass   :'iradio_square-blue'
+				}),
+				icheckRed   :$('.icheckRed').iCheck({
+					checkboxClass:'icheckbox_square-red',
+					radioClass   :'iradio_square-red'
+				}),
+				icheckYellow:$('.icheckYellow').iCheck({
+					checkboxClass:'icheckbox_square-yellow',
+					radioClass   :'iradio_square-yellow'
+				})
+			}
+		}
+	</script>
+</body>
+</html>

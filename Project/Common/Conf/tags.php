@@ -1,4 +1,4 @@
 <?php
 	return [
-		'view_filter'           => ['Behavior\TokenBuildBehavior'],
+		'view_filter'           => ['Behavior\TokenBuildBehavior']
 	];

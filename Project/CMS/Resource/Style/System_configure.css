@@ -1,0 +1,55 @@
+.main_body .table_li .table-bordered thead th{
+	background-color: #ebebeb;
+}
+.main_body .table_li .table-bordered th{
+	font-size: 14px;
+	text-align: center;
+}
+.main_body .table_li .table-bordered td{
+	text-align: center;
+	vertical-align:middle;
+	white-space: nowrap;
+}
+.table-bordered .tc1 input{
+    width:25px;
+	height:25px;
+}
+.table-bordered .tc4 {
+	max-width:100px;
+	overflow:hidden;/* 内容超出宽度时隐藏超出部分的内容 */
+}
+.table-bordered .tc4 .lg_input{
+	min-width:50px;
+	min-height:25px;
+}
+.table-bordered .tc4 .lg_area{
+	width:50px;
+	height:50px;
+}
+.table-bordered .tc4 .lg_upload{
+	margin-left: 108px;
+	margin-top: 5px;
+}
+.table-bordered .tc4 #thumb{
+   width:248px;
+}
+.create_configure{
+	cursor:pointer;
+	padding:inherit;
+}
+.create_configure_table{
+	font-size: 14px;
+}
+.btn-primary-group {
+	margin:0 auto;
+	width:300px;
+	padding-right: 10px;
+	height:100px;
+}
+.btn-primary-group .btn-primary{
+	margin-right:30px;
+}
+.create_configure{
+	width:58px;
+	height:58px;
+}

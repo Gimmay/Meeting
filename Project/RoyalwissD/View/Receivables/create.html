@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>添加收款 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<div class="main_body" style="overflow: hidden;">
+					<section class="content">
+						<div class="table_wrap">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">创建收款</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款管理</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式管理</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机管理</a>
+								</div>
+							</div>
+							<form class="form-horizontal" role="form" method="post" id="form_rece">
+								<input type="hidden" name="requestType" value="create">
+								<div class="tab-content clearfix">
+									<div class="module">
+										<div class="pane"><h2><span class="glyphicon glyphicon-user"></span>参会人员信息</h2>
+										</div>
+										<div class="mo_content clearfix info">
+											<div class="row mb_10">
+												<div class="col-sm-2">
+													<div class="input-group">
+														<label for="client_name" class="input-group-addon">姓名</label>
+														<div id="client_name"></div>
+													</div>
+												</div>
+												<div class="col-sm-2">
+													<div class="input-group">
+														<label for="client_name" class="input-group-addon">收款人</label>
+														<div id="payee_id"></div>
+													</div>
+												</div>
+												<div class="col-sm-2">
+													<div class="input-group">
+														<label for="receivables_time" class="input-group-addon">收款时间</label>
+														<input type="text" class="form-control" id="receivables_time" name="time" value="<{:date('Y-m-d H:i:s')}>">
+													</div>
+												</div>
+												<div class="col-sm-2">
+													<div class="input-group">
+														<label for="place" class="input-group-addon">收款地点</label>
+														<input type="text" class="form-control" name="place" id="place">
+													</div>
+												</div>
+												<div class="col-sm-2">
+													<div class="input-group">
+														<label for="order_number" class="input-group-addon">收据号</label>
+														<input type="text" class="form-control" name="orderNumber" id="order_number" value="<{$order_number}>">
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<p>若客户未找到，可选择<span class="new_create" data-toggle="modal" data-target="#create_client">新增</span>
+													</p>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="module">
+										<div class="pane"><h2><span class="glyphicon glyphicon-usd"></span>收款</h2>
+										</div>
+										<div class="mo_content mo_rece">
+											<!--<div class="section_rece coupon">
+												<div class="title">代金券收款</div>
+												<div class="rece_li rece_new clearfix">
+													<input type="hidden" name="type[]" value="2">
+													<div class="rece_item">
+														<select name="name[]" class="form-control name"></select>
+													</div>
+													<div class="rece_item">
+														<div class="input-group select_code_wrap" data-toggle="modal" data-target="#coupon_modal">
+															<input type="text" class="form-control" name="select_coupon_name" id="select_coupon_name" placeholder="代金券码">
+															<span class="input-group-addon glyphicon glyphicon-th-large select_code"></span>
+														</div>
+														<input type="hidden" class="select_code" name="select_code[]">
+													</div>
+													<div class="rece_item pay_method_item">
+														<select name="payMethod[]" class="form-control payMethod">
+															<option value="0">-&#45;&#45;&#45;&#45;支付方式-&#45;&#45;&#45;&#45;</option>
+															<volist name="pay" id="info">
+																<option value="<{$info.id}>"><{$info.name}></option>
+															</volist>
+														</select>
+													</div>
+													<div class="rece_item price_item">
+														<input type="text" class="form-control price" name="price[]" placeholder="金额" value="0">
+													</div>
+													<div class="rece_item pos_item">
+														<select name="pos[]" class="form-control pos">
+															<option value="0">-&#45;&#45;&#45;&#45;POS机-&#45;&#45;&#45;&#45;</option>
+															<volist name="pos" id="info">
+																<option value="<{$info.id}>"><{$info.name}></option>
+															</volist>
+														</select>
+													</div>
+													<div class="rece_item source_type_item">
+														<select name="source_type[]" class="form-control source_type">
+															<option value="1">会前收款</option>
+															<option value="2">会中收款</option>
+															<option value="3">会后收款</option>
+														</select>
+													</div>
+													<div class="rece_item comemnt_item">
+														<input type="text" class="form-control comment" name="comment[]" placeholder="备注">
+													</div>
+													<div class="rece_item fun_item">
+														<span class="add glyphicon glyphicon-plus"></span>
+													</div>
+												</div>
+												<input type="hidden" name="select_all_coupon" class="select_all_coupon">
+											</div>-->
+											<div class="section_rece other">
+												<div class="title">项目收款</div>
+												<div class="rece_wrap">
+													<div class="rece_li clearfix">
+														<div class="rece_item project_style">
+															<div id="name_rece"></div>
+														</div>
+														<div class="rece_item pay_style">
+															<select name="payMethod1[]" class="form-control payMethod">
+																<option value="0">-----支付方式-----</option>
+																<volist name="pay_method_list" id="single">
+																	<option value="<{$single.value}>"><{$single.html}></option>
+																</volist>
+															</select>
+														</div>
+														<div class="rece_item price_style">
+															<input type="text" class="form-control price" name="price1[]" placeholder="金额" value="0">
+														</div>
+														<div class="rece_item">
+															<select name="posMachine1[]" class="form-control pos">
+																<option value="0">-----POS机-----</option>
+																<volist name="pos_machine_list" id="single">
+																	<option value="<{$single.value}>"><{$single.html}></option>
+																</volist>
+															</select>
+														</div>
+														<div class="rece_item">
+															<select name="source1[]" class="form-control source_type">
+																<volist name="receivables_source" id="single">
+																	<option value="<{$i}>"><{$single}></option>
+																</volist>
+															</select>
+														</div>
+														<div class="rece_item">
+															<input type="text" class="form-control comment" name="comment1[]" placeholder="备注">
+														</div>
+														<div class="rece_item">
+															<span class="add glyphicon glyphicon-plus"></span>
+														</div>
+													</div>
+													<span class="add_item glyphicon glyphicon-plus"></span>
+													<input type="hidden" class="num" value="1">
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="col-sm-12">
+													<p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;支付方式为刷卡时请选择POS机型号。
+													</p>
+												</div>
+											</div>
+										</div>
+										<div class="foot">
+											总金额：<b class="color-red"></b>
+											<input class="submit" type="button" value="确认收款"/>
+										</div>
+										<input type="hidden" name="totalAmount" id="total_amount">
+										<input type="hidden" name="redirectUrl" id="redirectUrl">
+									</div>
+								</div>
+							</form>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="coupon_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">代金券列表</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return ScriptObject.checkIsEmpty()">
+					<input type="hidden" name="requestType" value="create">
+					<div class="modal-body">
+						<div class="coupon_list">
+						</div>
+						<!--<div class="has_selected">
+						&lt;!&ndash;	<a href="javascript:void(0)">代金券1</a>&ndash;&gt;
+						</div>-->
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary coupon_save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="create_client" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">创建客户</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="" id="create_form">
+					<input type="hidden" name="requestType" value="create_client">
+					<div class="modal-body">
+						<volist name="column_list" id="single">
+							<eq name="single.view" value="1">
+								<div class="form-group">
+									<switch name="single.code">
+										<case value="ROYALWISSD-CLIENT-IS_NEW">
+											<if condition="$single['must'] eq 1">
+												<label class="col-sm-3 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+												<else/>
+												<label class="col-sm-3 control-label"><{$single.name}>：</label>
+											</if>
+											<div class="col-sm-9">
+												<select id="is_new" name="is_new" class="form-control <eq name='single.must' value='1'>necessary</eq>" title="">
+													<volist name="is_new_list" id="single">
+														<option value="<{$key}>"><{$single}></option>
+													</volist>
+												</select>
+											</div>
+										</case>
+										<case value="ROYALWISSD-CLIENT-GENDER">
+											<if condition="$single['must'] eq 1">
+												<label class="col-sm-3 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+												<else/>
+												<label class="col-sm-3 control-label"><{$single.name}>：</label>
+											</if>
+											<div class="col-sm-9">
+												<select id="gender" name="gender" class="form-control <eq name='single.must' value='1'>necessary</eq>" title="">
+													<volist name="gender_list" id="single">
+														<option value="<{$key}>"><{$single}></option>
+													</volist>
+												</select>
+											</div>
+										</case>
+										<case value="ROYALWISSD-CLIENT-TYPE">
+											<if condition="$single['must'] eq 1">
+												<label class="col-sm-3 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+												<else/>
+												<label class="col-sm-3 control-label"><{$single.name}>：</label>
+											</if>
+											<div class="col-sm-9">
+												<select id="type" name="type" class="form-control <eq name='single.must' value='1'>necessary</eq>" title="">
+													<volist name="type_list" id="single">
+														<option value="<{$single}>"><{$single}></option>
+													</volist>
+												</select>
+											</div>
+										</case>
+										<case value="ROYALWISSD-CLIENT-BIRTHDAY">
+											<if condition="$single['must'] eq 1">
+												<label class="col-sm-3 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+												<else/>
+												<label class="col-sm-3 control-label"><{$single.name}>：</label>
+											</if>
+											<div class="col-sm-9">
+												<input type="text" class="form-control <eq name='single.must' value='1'>necessary</eq>" name="birthday" placeholder="" id="birthday">
+											</div>
+										</case>
+										<case value="ROYALWISSD-CLIENT-ADDRESS">
+											<if condition="$single['must'] eq 1">
+												<label class="col-sm-3 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+												<else/>
+												<label class="col-sm-3 control-label"><{$single.name}>：</label>
+											</if>
+											<div class="col-sm-9">
+												<div class="input-group address_map">
+													<input type="text" class="form-control" name="address" id="address">
+													<span class="input-group-addon glyphicon glyphicon-send get_map"></span>
+												</div>
+											</div>
+										</case>
+										<case value="ROYALWISSD-CLIENT-COMMENT">
+											<if condition="$single['must'] eq 1">
+												<label class="col-sm-3 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+												<else/>
+												<label class="col-sm-3 control-label"><{$single.name}>：</label>
+											</if>
+											<div class="col-sm-9">
+												<textarea class="form-control comment" name="comment" id="comment"></textarea>
+											</div>
+										</case>
+										<default/>
+										<if condition="$single['must'] eq 1">
+											<label class="col-sm-3 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+											<else/>
+											<label class="col-sm-3 control-label"><{$single.name}>：</label>
+										</if>
+										<div class="col-sm-9">
+											<input type="text" class="form-control <eq name='single.must' value='1'>necessary</eq>" name="<{$single.form}>" placeholder="" id="<{$single.form}>">
+										</div>
+									</switch>
+								</div>
+							</eq>
+						</volist>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+			object:{
+				clientName     :$('#client_name').QuasarSelect({
+					name        :'client',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($client_list, JSON_UNESCAPED_UNICODE)}>',
+					idInput     :'selected_client_name',
+					idHidden    :'selected_client_name_form',
+					placeholder :'',
+					defaultValue:'<{$current_client_id}>',
+					defaultHtml :'<{$current_client_name}>',
+					hasEmptyItem:false
+				}),
+				name           :$('#name_rece').QuasarSelect({
+					name        :'name[]',
+					classStyle  :'form-control',
+					idInput     :'selected_name',
+					idHidden    :'selected_name_form',
+					data        :'<{:json_encode($project_list, JSON_UNESCAPED_UNICODE)}>',
+					placeholder :'',
+					defaultValue:'',
+					defaultHtml :'',
+					hasEmptyItem:false,
+					onSelect    :function(){
+						var data = $(this).find('textarea').attr('data-ext');
+						data     = data.split(',');
+						$(this).parents('.rece_li').find('.price').val(data[1]);
+						ScriptObject.totalAmount()
+					}
+				}),
+				payeeName      :$('#payee_id').QuasarSelect({
+					name        :'payeeID',
+					classStyle  :'form-control',
+					data        :'<{:json_encode($user_list, JSON_UNESCAPED_UNICODE)}>',
+					idInput     :'selected_payee_id',
+					idHidden    :'selected_payee_id_form',
+					placeholder :'',
+					defaultValue:'<{$current_user_id}>',
+					defaultHtml :'<{$current_user_name}>',
+					hasEmptyItem:false
+				}),
+				receivablesTime:jeDate({
+					dateCell:"#receivables_time",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					//isClear:false,
+					isTime  :true,// 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
+				}),
+				toast          :$().QuasarToast(),
+				loading        :$().QuasarLoading(),
+			},
+			data  :{
+				meetingStatus:parseInt('<{$meeting_status}>')
+			}
+		};
+	</script>
+	<div class="hidden" id="pay_method_source_data"><{:json_encode($pay_method_list)}></div>
+	<div class="hidden" id="pos_machine_source_data"><{:json_encode($pos_machine_list)}></div>
+	<div class="hidden" id="project_source_data"><{:json_encode($project_list)}></div>
+</body>
+</html>

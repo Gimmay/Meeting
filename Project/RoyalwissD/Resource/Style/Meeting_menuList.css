@@ -1,0 +1,70 @@
+.portlet{
+	width   : 100%;
+	padding : 10px 0;
+}
+
+.portlet .portlet_title{
+	padding       : 10px;
+	border-bottom : 1px solid #E1E1E1;
+}
+
+.portlet .portlet_title i{
+	font-size   : 16px;
+	color       : #00A0E8;
+	font-weight : bold;
+}
+
+.portlet .portlet_title span{
+	font-size   : 16px;
+	margin-left : 8px;
+	color       : #00A0E8;
+	font-weight : bold;
+}
+
+.portlet .portlet_body{
+	padding : 15px 20px;
+}
+
+.portlet .portlet_body .pb_item{
+	width         : 100%;
+	padding       : 20px 0;
+	border-bottom : 1px dashed rgba(0, 0, 0, .5);
+}
+
+.portlet .portlet_body .pb_item .caption i{
+	font-size : 13px;
+	color     : #00A0E8;
+}
+
+.portlet .portlet_body .pb_item .caption span{
+	font-size   : 13px;
+	margin-left : 3px;
+	color       : #00A0E8;
+}
+
+.func_btn{
+	width      : 120px;
+	height     : 100px;
+	float      : left;
+	text-align : center;
+}
+
+.func_btn img{
+	width          : 48px;
+	height         : 48px;
+	margin-top     : 20px;
+	vertical-align : middle;
+}
+
+.func_btn p{
+	margin-top : 15px;
+	color      : rgba(0, 0, 0, .7);
+	font-size  : 14px;
+}
+
+.func_btn:hover p{
+	text-decoration : underline;
+}
+
+
+

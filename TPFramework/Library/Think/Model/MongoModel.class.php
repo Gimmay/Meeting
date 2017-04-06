@@ -150,10 +150,10 @@ class MongoModel extends Model{
     public function add($data='',$options=array(),$replace=false) {
         if(empty($data)) {
             // 没有传递数据，获取当前数据对象的值
-            if(!empty($this->data)) {
-                $data           =   $this->data;
+            if(!empty($this->object)) {
+                $data           =   $this->object;
                 // 重置数据
-                $this->data     = array();
+                $this->object = array();
             }else{
                 $this->error    = L('_DATA_TYPE_INVALID_');
                 return false;
@@ -242,9 +242,9 @@ class MongoModel extends Model{
         }else{
             $this->checkMongoId($result);
         }
-        $this->data = $result;
-        $this->_after_find($this->data,$options);
-        return $this->data;
+        $this->object = $result;
+        $this->_after_find($this->object,$options);
+        return $this->object;
      }
 
     /**

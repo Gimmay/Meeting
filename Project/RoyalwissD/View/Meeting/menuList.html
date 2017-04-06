@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>会议中心 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<div class="main_body">
+					<section class="content">
+						<div class="table_wrap">
+							<div class="row">
+								<div class="col-sm-12">
+									<div class="portlet">
+										<div class="portlet_title">
+											<i class="glyphicon glyphicon-th-large "></i> <span>菜单列表</span>
+										</div>
+										<div class="portlet_body">
+											<div class="pb_item">
+												<div class="caption">
+													<i class="glyphicon glyphicon-tag"></i> <span>基础管理</span>
+												</div>
+												<div class="row">
+													<a href="javascript:void(0)" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/carton.png" alt="">
+														<p>项目管理</p>
+													</a>
+													<a href="<{:U('exportTemplate', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/magic-wand.png" alt="">
+														<p>下载导入模板</p>
+													</a>
+													<a href="<{:U('Client/import', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/hat-and-magic-wand.png" alt="">
+														<p>导入客户</p>
+													</a><a href="javascript:void(0)" class="func_btn">
+													<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/info.png" alt="">
+													<p>消息管理</p>
+												</a> <a href="javascript:void(0)" class="func_btn">
+													<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/pin.png" alt="">
+													<p>签到点管理</p>
+												</a> <a href="javascript:void(0)" class="func_btn">
+													<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/id.png" alt="">
+													<p>胸卡管理</p>
+												</a>
+													<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/printer.png" alt="">
+														<p>支付方式管理</p>
+													</a>
+													<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/safe.png" alt="">
+														<p>pos机管理</p>
+													</a>
+												</div>
+											</div>
+											<div class="pb_item">
+												<div class="caption">
+													<i class="glyphicon glyphicon-tag"></i> <span>系统设置</span>
+												</div>
+												<div class="row">
+													<a href="<{:U('Client/fieldSetting', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/academic-hat.png" alt="">
+														<p>客户字段设置</p>
+													</a>
+													<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/preferences.png" alt="">
+														<p>客户列表字段显示</p>
+													</a>
+													<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/tools.png" alt="">
+														<p>客户重复记录设置</p>
+													</a>
+												</div>
+											</div>
+											<div class="pb_item">
+												<div class="caption">
+													<i class="glyphicon glyphicon-tag"></i> <span>业务流程</span>
+												</div>
+												<div class="row">
+													<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/bookmark.png" alt="">
+														<p>简易收款流程</p>
+													</a>
+													<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/medal-gold.png" alt="">
+														<p>审核签到</p>
+													</a>
+													<a href="<{:U('Client/sign', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/search.png" alt="">
+														<p>扫码签到</p>
+													</a>
+													<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/gift.png" alt="">
+														<p>领取礼品</p>
+													</a>
+													<a href="<{:U('Grouping/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/books.png" alt="">
+														<p>分组</p>
+													</a>
+													<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/tick.png" alt="">
+														<p>收款管理</p>
+													</a>
+													<a href="<{:U('Hotel/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/home.png" alt="">
+														<p>酒店房间管理</p>
+													</a>
+													<a href="<{:U('Report/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/notepad.png" alt="">
+														<p>报表管理</p>
+													</a>
+													<a href="<{:U('Report/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/trash.png" alt="">
+														<p>回收站管理</p>
+													</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

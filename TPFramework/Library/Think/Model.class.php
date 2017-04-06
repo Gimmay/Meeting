@@ -47,7 +47,7 @@ class Model {
     // 字段信息
     protected $fields           =   array();
     // 数据信息
-    protected $data             =   array();
+    protected $object =   array();
     // 查询表达式参数
     protected $options          =   array();
     protected $_validate        =   array();  // 自动验证定义
@@ -176,7 +176,7 @@ class Model {
      */
     public function __set($name,$value) {
         // 设置数据对象属性
-        $this->data[$name]  =   $value;
+        $this->object[$name] =   $value;
     }
 
     /**
@@ -186,7 +186,7 @@ class Model {
      * @return mixed
      */
     public function __get($name) {
-        return isset($this->data[$name])?$this->data[$name]:null;
+        return isset($this->object[$name])? $this->object[$name]:null;
     }
 
     /**
@@ -196,7 +196,7 @@ class Model {
      * @return boolean
      */
     public function __isset($name) {
-        return isset($this->data[$name]);
+        return isset($this->object[$name]);
     }
 
     /**
@@ -206,7 +206,7 @@ class Model {
      * @return void
      */
     public function __unset($name) {
-        unset($this->data[$name]);
+        unset($this->object[$name]);
     }
 
     /**
@@ -300,10 +300,10 @@ class Model {
     public function add($data='',$options=array(),$replace=false) {
         if(empty($data)) {
             // 没有传递数据，获取当前数据对象的值
-            if(!empty($this->data)) {
-                $data           =   $this->data;
+            if(!empty($this->object)) {
+                $data           =   $this->object;
                 // 重置数据
-                $this->data     = array();
+                $this->object = array();
             }else{
                 $this->error    = L('_DATA_TYPE_INVALID_');
                 return false;
@@ -396,10 +396,10 @@ class Model {
     public function save($data='',$options=array()) {
         if(empty($data)) {
             // 没有传递数据，获取当前数据对象的值
-            if(!empty($this->data)) {
-                $data           =   $this->data;
+            if(!empty($this->object)) {
+                $data           =   $this->object;
                 // 重置数据
-                $this->data     =   array();
+                $this->object =   array();
             }else{
                 $this->error    =   L('_DATA_TYPE_INVALID_');
                 return false;
@@ -470,8 +470,8 @@ class Model {
         $pk   =  $this->getPk();
         if(empty($options) && empty($this->options['where'])) {
             // 如果删除条件为空 则删除当前数据对象所对应的记录
-            if(!empty($this->data) && isset($this->data[$pk]))
-                return $this->delete($this->data[$pk]);
+            if(!empty($this->object) && isset($this->object[$pk]))
+                return $this->delete($this->object[$pk]);
             else
                 return false;
         }
@@ -752,7 +752,7 @@ class Model {
             $key    =   is_string($cache['key'])?$cache['key']:md5(serialize($options));
             $data   =   S($key,'',$cache);
             if(false !== $data){
-                $this->data     =   $data;
+                $this->object =   $data;
                 return $data;
             }
         }
@@ -773,11 +773,11 @@ class Model {
         if(!empty($this->options['result'])) {
             return $this->returnResult($data,$this->options['result']);
         }
-        $this->data     =   $data;
+        $this->object =   $data;
         if(isset($cache)){
             S($key,$data,$cache);
         }
-        return $this->data;
+        return $this->object;
     }
     // 查询成功的回调方法
     protected function _after_find(&$result,$options) {}
@@ -1061,7 +1061,7 @@ class Model {
         // 创建完成对数据进行自动处理
         $this->autoOperation($data,$type);
         // 赋值当前数据对象
-        $this->data =   $data;
+        $this->object =   $data;
         // 返回创建的数据以供其他调用
         return $data;
      }
@@ -1602,8 +1602,8 @@ class Model {
      * @return Model
      */
     public function data($data=''){
-        if('' === $data && !empty($this->data)) {
-            return $this->data;
+        if('' === $data && !empty($this->object)) {
+            return $this->object;
         }
         if(is_object($data)){
             $data   =   get_object_vars($data);
@@ -1612,7 +1612,7 @@ class Model {
         }elseif(!is_array($data)){
             E(L('_DATA_TYPE_INVALID_'));
         }
-        $this->data = $data;
+        $this->object = $data;
         return $this;
     }
 

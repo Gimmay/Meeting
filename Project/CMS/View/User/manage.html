@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>用户管理 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/base64.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/outerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/outerHeader"/>
+				<div class="main_body">
+					<section class="content">
+						<div class="c_header">
+							<div class="function_list clearfix">
+								<div class="function_btn" data-toggle="modal" data-target="#create_user">
+									<a href="<{:U('User/create')}>"> <i class="glyphicon glyphicon-plus"></i>
+										<span>新增用户</span> </a>
+								</div>
+								<div class="function_btn batch_delete_btn_confirm">
+									<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
+										<span>批量删除</span></a>
+								</div>
+							</div>
+						</div>
+						<div class="repertory clearfix">
+							<form action="" method="get">
+								<div class="input-group repertory_text">
+									<input type="search" name="keyword" class="form-control" placeholder="用户名/昵称/拼音简码" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default main_search">搜索用户</button>
+									</span>
+								</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('')}>">查看所有</a>
+							</form>
+						</div>
+						<div class="table_wrap">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<th width="5%" class="all_check">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</th>
+										<th width="5%">序号</th>
+										<th width="10%">用户名</th>
+										<th width="20%">分配的角色</th>
+										<th width="5%">状态</th>
+										<th width="5%">创建者</th>
+										<th width="10%">创建日期</th>
+										<th width="35%">操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<volist name="list" id="single">
+										<tr>
+											<td class="check_item">
+												<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
+											</td>
+											<td><{$i}></td>
+											<td data-id="<{$single.id}>"><{$single.name}></td>
+											<td><{$single.role}></td>
+											<td><{$single.status}></td>
+											<td><{$single.creator}></td>
+											<td><{$single.creatime}></td>
+											<td>
+												<div class="btn-group" data-id="<{$single.id}>">
+
+													<button type="button" class="btn btn-default btn-xs btn_distribution_role" data-toggle="modal" data-target="#distribution_role">分配角色</button>
+													<!--<if condition="($max_role_level elt $single['roleLevel']) and ($permission_list['EMPLOYEE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-PERMISSION'] eq 1)">
+														<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
+													</if>-->
+													<a href="<{:U('User/modify',['id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
+													<button type="button" class="btn btn-default btn-xs btn_alter_password" data-toggle="modal" data-target="#alter_password">修改密码</button>
+													<button type="button" class="btn btn-default btn-xs btn_reset_password" data-toggle="modal" data-target="#reset_password">重置密码</button>
+													<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_user">删除</button>
+													<switch name="single.status_code">
+														<case value="0">
+															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_user', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
+														</case>
+														<case value="1">
+															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_user', 'id'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
+														</case>
+													</switch>
+												</div>
+											</td>
+										</tr>
+									</volist>
+								</tbody>
+							</table>
+						</div>
+						<div class="page_wrap">
+							<div class="pagination">
+								<{$pagination}>
+							</div>
+						</div>
+					</section>
+				</div>
+				</if>
+			</div>
+		</div>
+	</div>
+	<!-- 删除用户 -->
+	<div class="modal fade" id="delete_user" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="delete_role_title">删除用户</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除用户？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">确认删除</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量删除 -->
+	<div class="modal fade" id="batch_delete_user" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量删除用户</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除已选<span class="sAmount"></span>项？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary batch_delete_btn">确认删除</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 分配角色 -->
+	<div class="modal fade" id="distribution_role" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 60%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="distribution_role_title">分配角色</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post">
+					<div class="modal-body role_body">
+						<div class="btn_rect">
+							<div><h3>已选择角色</h3></div>
+							<section class="select_role_area select_area btn_green">
+							</section>
+						</div>
+						<div class="btn_rect but_wrap">
+							<div>
+								<div class="form-group">
+									<div class="input-group">
+										<input class="form-control role_search_input" type="text" placeholder="角色名">
+										<div class="input-group-addon role_search_btn">搜索</div>
+									</div>
+								</div>
+							</div>
+							<section class="all_role_area all_area">
+							</section>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<a href="javascript:history.go(0)" class="btn btn-default">关闭</a>
+					</div>
+					<input type="hidden" name="hide_user_id">
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 用户授权 -->
+	<div class="modal fade" id="authorize_role" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 80%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="authorize_role_title">用户授权</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post">
+					<div class="modal-body role_body">
+						<div class="btn_rect">
+							<div><h3>已授予的权限</h3></div>
+							<section class="select_area btn_green" id="authorize_select">
+							</section>
+						</div>
+						<div class="btn_rect but_wrap">
+							<div>
+								<div class="form-group">
+									<div class="input-group" id="authorize_search">
+										<input class="form-control" type="text" placeholder="权限名">
+										<div class="input-group-addon">搜索</div>
+									</div>
+								</div>
+							</div>
+							<section class="all_area" id="authorize_all">
+							</section>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					</div>
+					<input type="hidden" name="hide_user_id">
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 修改密码 -->
+	<div class="modal fade" id="alter_password" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="modify_role_title">用户密码修改</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post">
+					<input type="hidden" name="requestType" value="modify_password"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="old_password" class="col-sm-2 control-label">原密码：</label>
+							<div class="col-sm-7">
+								<input type="password" class="form-control old_password" name="old_password" id="old_password">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="new_password" class="col-sm-2 control-label">新密码：</label>
+							<div class="col-sm-7">
+								<input type="password" class="form-control new_password" name="new_password" id="new_password">
+							</div>
+							<div class="col-sm-3 paragraph">
+								<span class="number">至少6位，必须同时包含字母和数字</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="new_password_2" class="col-sm-2 control-label">确认密码：</label>
+							<div class="col-sm-7">
+								<input type="password" class="form-control new_password_2" name="new_password_2" id="new_password_2">
+							</div>
+							<div class="col-sm-3 paragraph">
+								<span class="number">至少6位，必须同时包含字母和数字</span>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary password_btn">保存</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 重置密码 -->
+	<div class="modal fade" id="reset_password" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">重置密码</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post">
+					<input type="hidden" name="requestType" value="reset_password"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="reset_password_user_name">用户：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="reset_password_user_name" disabled>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="password_reset" class="col-sm-2 control-label">密码：</label>
+							<div class="col-sm-10">
+								默认密码为
+								<if condition="C('DEFAULT_EMPLOYEE_PASSWORD') eq ''">空
+									<else/>
+									<b><{:C('DEFAULT_EMPLOYEE_PASSWORD')}></b></if>
+								<input type="hidden" name="password" id="password_reset" value="<{:C('DEFAULT_EMPLOYEE_PASSWORD')}>">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary password_reset_btn">保存</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" id="selected_user_id">
+	<script>
+		var ManageObject = {
+			object:{
+				toast  :$().QuasarToast(),
+				icheck :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				}),
+				loading:$().QuasarLoading()
+			}
+		};
+	</script>
+</body>
+</html>

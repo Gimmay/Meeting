@@ -1,0 +1,136 @@
+/**
+ * Created by qyqy on 2016-10-8.
+ */
+
+$(function(){
+	// 新增项目保存
+	$('#create_project .btn-save').on('click', function(){
+		var $project_name = $('#project_name');
+		if($project_name.val() == ''){
+			ManageObject.object.toast.toast("项目名称不能为空!");
+			$project_name.focus();
+		}else{
+			var data = $('#create_project form').serialize();
+			ManageObject.object.loading.loading();
+			Common.ajax({
+				data    :data,
+				callback:function(res){
+					ManageObject.object.loading.complete();
+					if(res.status){
+						ManageObject.object.toast.toast('创建成功！', '1');
+						ManageObject.object.toast.onQuasarHidden(function(){
+							location.reload();
+						});
+					}else{
+						ManageObject.object.toast.toast('创建失败！', '2');
+					}
+				}
+			});
+		}
+	});
+	// 选择项目是否有库存限制
+	$('#is_stock_limit').on('change', function(){
+		if($(this).prop('checked')){
+			$(this).parents('.input-group').find('#stock').prop({'readonly':false, 'placeholder':'有库存限制'});
+		}else{
+			$(this).parents('.input-group').find('#stock').prop({'readonly':true, 'placeholder':'无库存限制'}).val('');
+		}
+	});
+	// 修改项目
+	$('.alter_btn').on('click', function(){
+		var id         = $(this).parent('.btn-group').attr('data-id');
+		var name       = $(this).parents('tr').find('.name').text();
+		var type       = $(this).parents('tr').find('.type').text();
+		var price      = $(this).parents('tr').find('.price').text();
+		var comment    = $(this).parents('tr').find('.comment').text();
+		$('#alter_project').find('input[name=id]').val(id);
+		$('#alter_project').find('input[name=name]').val(name);
+		$('#alter_project').find('input[name=price]').val(price);
+		$('#alter_project').find('textarea[name=comment]').val(comment);
+		// 修改项目保存
+		$('#alter_project .btn-save').on('click', function(){
+			var data = $('#alter_project form').serialize();
+			ManageObject.object.loading.loading();
+			Common.ajax({
+				data    :data,
+				callback:function(res){
+					ManageObject.object.loading.complete();
+					if(res.status){
+						ManageObject.object.toast.toast('修改成功！', '1');
+						ManageObject.object.toast.onQuasarHidden(function(){
+							location.reload();
+						});
+					}else{
+						ManageObject.object.toast.toast('修改失败！', '2');
+					}
+				}
+			});
+		});
+	});
+	// 库存限制
+	$('.alter_stock_btn').on('click', function(){
+		var id           = $(this).parent().attr('data-id');
+		var stock_limit  = $(this).parent().attr('data-stock-limit');
+		var stock_number = $(this).parent().attr('data-stock');
+		if(stock_limit == 1){
+			$('#alter_stock_limit').find('#stock_alter').prop({'readonly':false, 'placeholder':'有库存限制'});
+			$('#alter_stock_limit .active_form').removeClass('hidden');
+			$('#alter_stock_limit').find('#is_stock_limit_alter').prop('checked', true);
+		}else if(stock_limit == 0){
+			$('#alter_stock_limit').find('#stock_alter').prop({'readonly':true, 'placeholder':'无库存限制'}).val('');
+			$('#alter_stock_limit .active_form').addClass('hidden');
+		}
+		$('#alter_stock_limit').find('input[name=id]').val(id);
+		$('#alter_stock_limit .btn-save').on('click', function(){
+			var data           = $('#alter_stock_limit form').serialize();
+			var current_number = $('#alter_stock_limit #stock_alter').val();
+			ManageObject.object.loading.loading();
+			if($('#alter_stock_limit .export').find('.iradio_square-green').hasClass('checked')){
+				if(Number(current_number)>Number(stock_number)){
+					ManageObject.object.loading.complete();
+					ManageObject.object.toast.toast('库存数量不足！', '2');
+				}else{
+					Common.ajax({
+						data    :data,
+						callback:function(res){
+							ManageObject.object.loading.complete();
+							if(res.status){
+								ManageObject.object.toast.toast('修改成功！', '1');
+								ManageObject.object.toast.onQuasarHidden(function(){
+									location.reload();
+								});
+							}else{
+								ManageObject.object.toast.toast('修改失败！', '2');
+							}
+						}
+					});
+				}
+			}else{
+				Common.ajax({
+					data    :data,
+					callback:function(res){
+						ManageObject.object.loading.complete();
+						if(res.status){
+							ManageObject.object.toast.toast('修改成功！', '1');
+							ManageObject.object.toast.onQuasarHidden(function(){
+								location.reload();
+							});
+						}else{
+							ManageObject.object.toast.toast('修改失败！', '2');
+						}
+					}
+				});
+			}
+		});
+	});
+	// 修改库存限制方式
+	$('#is_stock_limit_alter').on('change', function(){
+		if($(this).prop('checked')){
+			$(this).parents('.input-group').find('#stock_alter').prop({'readonly':false, 'placeholder':'有库存限制'});
+			$('#alter_stock_limit .active_form').removeClass('hidden');
+		}else{
+			$(this).parents('.input-group').find('#stock_alter').prop({'readonly':true, 'placeholder':'无库存限制'}).val('');
+			$('#alter_stock_limit .active_form').addClass('hidden');
+		}
+	});
+});

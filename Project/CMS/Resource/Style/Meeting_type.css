@@ -1,0 +1,128 @@
+
+.launchpad{
+	width          : 1000px;
+	height         : 100%;
+	padding-bottom : 80px;
+	padding-top    : 100px;
+	margin         : 0 auto;
+}
+
+.launchpad .icon_item{
+	width              : 33.33333%;
+	height             : 200px;
+	display            : none;
+	float              : left;
+	cursor             : pointer;
+	transition         : transform 1.5s;
+	-moz-transition    : -moz-transform 1.5s; /* Firefox 4 */
+	-webkit-transition : -webkit-transform 1.5s; /* Safari and Chrome */
+	-o-transition      : -o-transform 1.5s; /* Opera */
+}
+
+.launchpad .icon_item .item_img{
+	display       : block;
+	width         : 200px;
+	height        : 100px;
+	overflow      : hidden;
+	margin        : 0 auto;
+	border-radius : 10px;
+	border        : 1px solid silver;
+}
+
+.launchpad .icon_item:hover{
+	transform         : scale(1.2, 1.2);
+	-ms-transform     : scale(1.2, 1.2); /* IE 9 */
+	-webkit-transform : scale(1.2, 1.2); /* Safari 和 Chrome */
+	-o-transform      : scale(1.2, 1.2); /* Opera */
+	-moz-transform    : scale(1.2, 1.2); /* Firefox */
+}
+
+.launchpad .icon_item .item_img img{
+	width          : 100%;
+	vertical-align : top;
+}
+
+.launchpad .icon_item .item_title{
+	display     : block;
+	text-align  : center;
+	margin-top  : 30px;
+	font-size   : 16px;
+	font-family : '幼圆';
+	color       : #000000;
+	font-weight : bold;
+}
+
+.footer_nav{
+	position   : fixed;
+	width      : 80px;
+	height     : 400px;
+	background : url("../Image/footer_nav_bg.png");
+	right      : 30px;
+	top        : 50%;
+	margin-top : -200px;
+	text-align : center;
+	font-size  : 0;
+}
+
+.footer_nav span{
+	display            : inline-block;
+	cursor             : pointer;
+	font-size          : 16px;
+	font-weight        : bold;
+	font-family        : '幼圆';
+	margin             : 10px 0;
+	width              : 60px;
+	height             : 60px;
+	background         : #FFE7AC;
+	color              : #222222;
+	border-radius      : 15px;
+	line-height        : 60px;
+	text-align         : center;
+	transition         : transform 2s;
+	-moz-transition    : -moz-transform 2s; /* Firefox 4 */
+	-webkit-transition : -webkit-transform 2s; /* Safari and Chrome */
+	-o-transition      : -o-transform 2s; /* Opera */
+}
+
+.footer_nav span.active, .footer_nav span:hover{
+	transform         : scale(1.2, 1.2);
+	-ms-transform     : scale(1.2, 1.2); /* IE 9 */
+	-webkit-transform : scale(1.2, 1.2); /* Safari 和 Chrome */
+	-o-transform      : scale(1.2, 1.2); /* Opera */
+	-moz-transform    : scale(1.2, 1.2); /* Firefox */
+	border            : 1px solid #FB5050;
+	color             : #00A0E8;
+}
+
+
+@media screen and (min-width : 400px) and (max-width : 1499px){
+	.launchpad{
+		width       : 800px;
+		padding-top : 60px;
+	}
+
+	.launchpad .icon_item{
+		height : 150px;
+	}
+
+	.launchpad .icon_item .item_img{
+		width  : 180px;
+		height : 80px;
+	}
+
+	.launchpad .icon_item .item_title{
+		margin-top : 20px;
+	}
+
+	.footer_nav{
+		width : 70px;
+	}
+
+	.footer_nav span{
+		width       : 50px;
+		height      : 50px;
+		line-height : 50px;
+		font-size   : 14px;
+	}
+}
+

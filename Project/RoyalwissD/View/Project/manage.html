@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>项目模块 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/operate.js"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/innerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/innerHeader"/>
+				<div class="main_body">
+					<section class="content">
+						<div class="table_wrap mb_10">
+							<div class="nav_tab clearfix">
+								<div class="nav_tab_li active">
+									<a href="<{:U('Project/manage', ['mid'=>I('get.mid', 0, 'int')])}>">项目管理</a>
+								</div>
+								<div class="nav_tab_li">
+									<a href="<{:U('Project/type', ['mid'=>I('get.mid', 0, 'int')])}>">项目类型</a>
+								</div>
+							</div>
+						</div>
+						<div class="c_header">
+							<div class="function_list clearfix">
+								<div class="function_btn" data-toggle="modal" data-target="#create_project">
+									<a href="javascript:void(0)"><i class="glyphicon glyphicon-plus"></i>
+										<span>新增项目</span></a>
+								</div>
+								<div class="function_btn batch_delete_btn">
+									<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
+										<span>批量删除</span></a>
+								</div>
+								<div class="function_btn batch_enable_btn">
+									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
+										<span>批量启用</span></a>
+								</div>
+								<div class="function_btn batch_disable_btn">
+									<a href="javascript:void(0)"><i class="glyphicon glyphicon-ban-circle"></i>
+										<span>批量禁用</span></a>
+								</div>
+							</div>
+						</div>
+						<div class="repertory clearfix">
+							<form action="" method="get">
+								<div class="input-group repertory_text">
+									<input type="search" name="keyword" class="form-control" placeholder="项目/拼音简码" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default main_search">搜索</button>
+									</span>
+								</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
+							</form>
+						</div>
+						<div class="table_wrap">
+							<table class="table table-bordered" style="text-align: center">
+								<thead>
+									<tr>
+										<th width="5%" class="all_check">
+											<input type="checkbox" class="icheck" placeholder="" value="">
+										</th>
+										<th width="5%">序号</th>
+										<th width="10%">名称</th>
+										<th width="10%">类型</th>
+										<th width="10%">库存/总量</th>
+										<th width="10%">价格</th>
+										<th width="5%">状态</th>
+										<th width="5%">创建者</th>
+										<th width="10%">创建时间</th>
+										<th width="30%">操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<volist name="list" id="single">
+										<tr>
+											<td class="check_item">
+												<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
+											</td>
+											<td><{$i}></td>
+											<td class="name"><{$single.name}></td>
+											<td class="type"><{$single.type}></td>
+											<td>
+												<eq name="single.is_stock_limit" value="1">
+													<{$single.stock}>/<{$single.total}>
+													<else/>
+													(无库存限制)
+												</eq>
+											</td>
+											<td class="price"><{$single.price}></td>
+											<td class="status"><{$single.status}></td>
+											<td class="creator"><{$single.creator}></td>
+											<td class="creatime"><{$single.creatime}></td>
+											<td>
+												<div class="btn-group" data-id="<{$single.id}>" data-stock-limit="<{$single.is_stock_limit}>" data-status="<{$single.status_code}>" data-stock="<{$single.stock}>">
+													<if condition="$single['is_stock_limit'] eq 1 and $single['status'] eq 1">
+														<a href="<{:U('detail',['id'=>$single['id'], 'mid'=>I('get.mid', 0, 'int')])}>" type="button" class="btn btn-default btn-xs seeList">出入库记录</a>
+													</if>
+													<if condition="$single['status'] eq 1">
+														<button type="button" class="btn btn-default btn-xs alter_stock_btn" data-toggle="modal" data-target="#alter_stock_limit">更新库存</button>
+													</if>
+													<button type="button" class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_project">修改</button>
+													<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+													<switch name="single.status_code">
+														<case value="0">
+															<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+														</case>
+														<case value="1">
+															<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+														</case>
+													</switch>
+												</div>
+											</td>
+										</tr>
+									</volist>
+								</tbody>
+							</table>
+						</div>
+						<div class="page_wrap">
+							<div class="pagination">
+								<{$page_show}>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 新增项目 -->
+	<div class="modal fade" id="create_project" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title" id="create_role_title">新增项目</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkCreate()">
+					<input type="hidden" name="requestType" value="create">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="project_type" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>类型：</label>
+							<div class="col-sm-10">
+								<select name="type" id="project_type" class="form-control">
+									<volist name="project_type_list" id="single">
+										<option value="<{$single.id}>"><{$single.name}></option>
+									</volist>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="project_name" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>名称：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control name" name="name" id="project_name">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="stock" class="col-sm-2 control-label">库存：</label>
+							<div class="col-sm-10">
+								<div class="input-group">
+									<input type="text" class="form-control" name="stock" id="stock" placeholder="无库存限制" readonly>
+									  <span class="input-group-addon">
+										<input type="checkbox" name="is_stock_limit" id="is_stock_limit" placeholder="" title="是否开启库存限制">
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">价格（元）：</label>
+							<div class="col-sm-10">
+								<input class="form-control price" name="price" placeholder="" id="project_price_create" type="number">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="create_role_comment" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" id="create_role_comment"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 修改项目 -->
+	<div class="modal fade" id="alter_project" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">修改项目</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return checkAlter()">
+					<input type="hidden" name="requestType" value="modify"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="col-sm-2 control-label  color-red "><b style="vertical-align: middle;">*</b>名称：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control name" name="name" placeholder="">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="project_type_a" class="col-sm-2 control-label  color-red "><b style="vertical-align: middle;">*</b>项目类型：</label>
+							<div class="col-sm-10">
+								<select name="type" id="project_type_a" class="form-control">
+									<volist name="project_type_list" id="single">
+										<option value="<{$single.id}>"><{$single.name}></option>
+									</volist>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">价格（元）：</label>
+							<div class="col-sm-10">
+								<input class="form-control price" name="price" placeholder="" id="project_price_modify" type="number">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" placeholder=""></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">保存</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 库存更新-->
+	<div class="modal fade" id="alter_stock_limit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">更新库存</h2>
+				</div>
+				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return checkAlter()">
+					<input type="hidden" name="requestType" value="modify_stock"> <input type="hidden" name="id">
+					<div class="modal-body">
+						<div class="form-group hidden active_form" id="import_export">
+							<div class="col-sm-12">
+								<div class="col-sm-2"></div>
+								<div class="col-sm-2">
+									<div class="input-group export">
+										<input type="radio" name="type" class="icheck" placeholder="" value="0"> 出库
+									</div>
+								</div>
+								<div class="col-sm-2">
+									<div class="input-group import">
+										<input type="radio" name="type" class="icheck" placeholder="" value="1" checked> 入库
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="stock_alter" class="col-sm-2 control-label">数量：</label>
+							<div class="col-sm-10">
+								<div class="input-group">
+									<input type="number" class="form-control" name="number" id="stock_alter" placeholder="无库存限制" readonly>
+									  <span class="input-group-addon">
+										<input type="checkbox" name="is_stock_limit" id="is_stock_limit_alter" placeholder="" title="是否开启库存限制">
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group hidden active_form">
+							<label class="col-sm-2 control-label">说明：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" placeholder=""></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">保存</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 删除项目 -->
+	<div class="modal fade" id="delete_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h2 class="modal-title">删除项目</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除项目？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 批量删除项目-->
+	<div class="modal fade" id="batch_delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量删除项目</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除已选<span class="sAmount"></span>项项目？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script>
+		var ManageObject = {
+			object:{
+				icheck :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				}),
+				toast  :$().QuasarToast(),
+				loading:$().QuasarLoading()
+			}
+		}
+	</script>
+</body>
+</html>
