@@ -66,9 +66,7 @@
 				CMSModel::CONTROL_COLUMN_PARAMETER['status']              => ['!=', 2],
 				$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID
 			]));
-			$page_object = new Page(count($list), $this->getPageRecordCount());
-			PageLogic::setTheme1($page_object);
-			$list = array_slice($list, $page_object->firstRow, $page_object->listRows); // 分页
+			// 设定额外数据并筛选数据
 			$list = $client_logic->setData('manage:set_data', [
 				'list'     => $list,
 				'urlParam' => I('get.')
@@ -79,9 +77,13 @@
 				'total'    => $total,
 				'urlParam' => I('get.')
 			]);
-			$pagination = $page_object->show();
 			$this->assign('statistics', $statistics);
+			$page_object = new Page(count($list), $this->getPageRecordCount());
+			PageLogic::setTheme1($page_object);
+			// 分页
+			$list = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$this->assign('list', $list);
+			$pagination = $page_object->show();
 			$this->assign('pagination', $pagination);
 			// 获取分组数据
 			/** @var \RoyalwissD\Model\GroupingModel $group_model */
