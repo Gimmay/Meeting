@@ -6,7 +6,7 @@ var ThisObject = {
 		/**
 		 *  字段扩展选择
 		 */
-		$('.btn-item button').on('click', function(){
+		$('.not-selected button').on('click', function(){
 			fieldsExtendSelect($(this));
 		});
 		/**
@@ -29,13 +29,28 @@ var ThisObject = {
 		 var _self = $(this);
 		 deleteSelectedField(_self);
 		 });*/
+		/**
+		 *  去除已选字段
+		 */
+		$('.has-selected button').on('click', function(){
+			console.log('123');
+			var name = $(this).attr('data-name');
+			$('.form-group').each(function(){
+				var i_name = $(this).find('input').attr('name');
+				if(name == i_name){
+					var $this_delete = $(this).find('.f_delete');
+					deleteSelectedField($this_delete);
+				}
+			});
+		})
 	},
 	unbindEvent:function(){
-		$('.btn-item button').off('click');
+		$('.not-selected button').off('click');
 		$('#selected_fields_form').find('.f_delete').off('click');
 		$('#selected_fields_form').find('.f_edit').off('click');
-		$('.btn-item .b_delete').off('click');
+		/*$('.btn-item .b_delete').off('click');*/
 		$('#delete_selected_field_modal .btn-save').off('click');
+		$('.has-selected button').off('click');
 	}
 };
 $(function(){
@@ -54,7 +69,7 @@ $(function(){
 				if(e.status){
 					$('.increment_fields')
 					.append('<div class="col-sm-2 btn-item mb_10">\n\t<button type="button" class="btn btn-sm btn-default btn-block">'+text+'</button>\n\t<span class="b_delete glyphicon glyphicon-remove"></span>\n</div>');
-					$('#add_field_modal').modal('hide');
+					location.reload();
 					ThisObject.unbindEvent();
 					ThisObject.bindEvent();
 				}
@@ -64,14 +79,7 @@ $(function(){
 	/**
 	 * 根据浏览器窗口分辨率判断字段显示列数
 	 */
-	if(1900>window.innerWidth && window.innerWidth>1500){
-		$('.base_fields').find('.btn-item').each(function(){
-			$(this).addClass('col-sm-3').removeClass('col-sm-2 col-sm-4');
-		});
-		$('.increment_fields').find('.btn-item').each(function(){
-			$(this).addClass('col-sm-3').removeClass('col-sm-2 col-sm-4');
-		});
-	}else if(1499>window.innerWidth){
+	if(1599>window.innerWidth){
 		$('.base_fields').find('.btn-item').each(function(){
 			$(this).addClass('col-sm-4').removeClass('col-sm-2 col-sm-3');
 		});
@@ -98,10 +106,14 @@ function fieldsExtendSelect(e){
 					e.addClass('btn-info').removeClass('btn-default');
 					// 将选择的扩展字段添加到字段预览框。
 					$('.selected_fields').find('#selected_fields_form')
-										 .append("<div class=\"form-group\">\n\t<label for=\"text\" class=\"col-sm-12 mb_5\">"+text+"</label>\n\t<div class=\"col-sm-10\">\n\t\t<input type=\"text\" class=\"form-control\" name="+name+" id=\"text\" readonly=\"readonly\">\n\t</div>\n\t<div class=\"col-sm-2\">\n\t\t<span class=\"f_edit\">\n\t\t\t<i class=\"glyphicon glyphicon-edit\"></i>\n\t\t</span>\n\t\t<span class=\"f_delete\">\n\t\t\t<i class=\"glyphicon glyphicon-trash\"></i>\n\t\t</span>\n\t</div>\n</div>");
+										 .append("<div class=\"form-group\">\n\t<label for=\"text\" class=\"col-sm-12 mb_5\">"+text+"</label>\n\t<div class=\"col-sm-10\">\n\t\t<input type=\"email\" class=\"form-control\" id=\"text\" readonly=\"readonly\">\n\t</div>\n\t<div class=\"col-sm-2\">\n\t\t<span class=\"f_edit\">\n\t\t\t<i class=\"glyphicon glyphicon-edit\"></i>\n\t\t</span>\n\t\t<span class=\"f_delete\">\n\t\t\t<i class=\"glyphicon glyphicon-trash\"></i>\n\t\t</span>\n\t</div>\n</div>");
+					e.parent().removeClass('not-selected').addClass('has-selected');
 					ThisObject.unbindEvent();
 					ThisObject.bindEvent();
-					ManageObject.object.toast.toast('操作成功！');
+					ManageObject.object.toast.toast('操作成功！', 1);
+					ManageObject.object.toast.onQuasarHidden(function(){
+						location.reload();
+					});
 				}
 			}
 		});
@@ -131,8 +143,10 @@ function deleteSelectedField(e){
 						}
 					});
 					e.parents('.form-group').remove();
-					$('#delete_selected_field_modal').modal('hide');
-					ManageObject.object.toast.toast('操作成功！');
+					ManageObject.object.toast.toast('操作成功！', 1);
+					ManageObject.object.toast.onQuasarHidden(function(){
+						location.reload();
+					});
 				}
 			}
 		});
@@ -155,8 +169,6 @@ function deleteSelectedField(e){
  * @param e
  */
 function editSelectedField(e){
-	ThisObject.unbindEvent();
-	ThisObject.bindEvent();
 	var name      = e.parents('.form-group').find('input').attr('name');
 	var necessary = e.parents('.form-group').find('input').attr('data-is-necessary');
 	if(necessary == '1'){
@@ -179,14 +191,10 @@ function editSelectedField(e){
 				console.log($('#edit_selected_field').find('input[name=is_necessary]').val());
 				if(res.status){
 					$('#edit_selected_field').modal('hide');
-					ManageObject.object.toast.toast('编辑成功！');
-					if(necessary == '1'){
-						e.parents('.form-group').find('.color-red').remove();
-						e.parents('.form-group').find('input').attr('data-is-necessary', '0');
-					}else if(necessary == '0'){
-						e.parents('.form-group').find('input').attr('data-is-necessary', '1');
-						e.parents('.form-group').find('label').append('<b class="color-red">*</b>');
-					}
+					ManageObject.object.toast.toast('编辑成功！', 1);
+					ManageObject.object.toast.onQuasarHidden(function(){
+						location.reload();
+					});
 				}else{
 					ManageObject.object.toast.toast('编辑失败！');
 				}

@@ -9,6 +9,7 @@
 
 	use CMS\Logic\MeetingLogic as CMSMeetingLogic;
 	use CMS\Logic\Session;
+	use CMS\Logic\UploadLogic;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
 	use General\Model\MeetingModel;
@@ -91,8 +92,9 @@
 					};
 					$meeting_logic              = new CMSMeetingLogic();
 					$data                       = I('post.');
-					$result                     = $meeting_logic->handlerRequest('create', ['data'         => $data,
-																							'originalPost' => $_POST
+					$result                     = $meeting_logic->handlerRequest('create', [
+						'data'         => $data,
+						'originalPost' => $_POST
 					]);
 					if($result['status']){
 						// 创建会议配置信息
@@ -108,18 +110,68 @@
 							'message_mode'         => $meeting_configure_model::MESSAGE_MODE
 						]));
 						if(!$result2['status']) array_merge($result2, [
-							'__ajax__'   => false,
-							'__return__' => U('manage')
+							'__ajax__' => true,
+							'nextPage' => U('manage')
 						]);
 						// 初始化客户控制字段记录
 						$result3 = $initControlledColumnRecord($result['id']);
 						if(!$result3['status']) array_merge($result3, [
-							'__ajax__'   => false,
-							'__return__' => U('manage')
+							'__ajax__' => true,
+							'nextPage' => U('manage')
 						]);
 					}
 
-					return array_merge($result, ['__ajax__' => false, '__return__' => U('manage')]);
+					return array_merge($result, ['__ajax__' => true, 'nextPage' => U('manage')]);
+				break;
+				case 'modify':
+					$meeting_id    = I('get.mid', 0, 'int');
+					$meeting_logic = new CMSMeetingLogic();
+					$data          = I('post.');
+					$result        = $meeting_logic->handlerRequest('modify', [
+						'data'         => $data,
+						'originalPost' => $_POST,
+						'meetingID'    => $meeting_id
+					]);
+					if($result['status']){
+						// 创建会议配置信息
+						/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
+						$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
+						C('TOKEN_ON', false);
+						$result2 = $meeting_configure_model->modify(['mid' => $meeting_id], $data);
+						if(!$result2['status']) array_merge($result2, [
+							'__ajax__' => true,
+							'nextPage' => U('manage')
+						]);
+					}
+
+					return array_merge($result, ['__ajax__' => true, 'nextPage' => U('manage')]);
+				break;
+				case 'delete': // 删除项目
+					$id_str        = I('post.id', '');
+					$meeting_logic = new CMSMeetingLogic();
+					$result        = $meeting_logic->handlerRequest('delete', [
+						'id' => $id_str,
+					]);
+
+					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'enable': // 启用项目
+					$id_str        = I('post.id', '');
+					$meeting_logic = new CMSMeetingLogic();
+					$result        = $meeting_logic->handlerRequest('enable', [
+						'id' => $id_str,
+					]);
+
+					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'disable': // 禁用项目
+					$id_str        = I('post.id', '');
+					$meeting_logic = new CMSMeetingLogic();
+					$result        = $meeting_logic->handlerRequest('disable', [
+						'id' => $id_str,
+					]);
+
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'get_role': // 分配会务人员获取角色列表
 					$meeting_logic = new CMSMeetingLogic();
@@ -243,6 +295,13 @@
 					}
 
 					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'upload_logo':
+					$meeting_id   = I('get.mid', 0, 'int');
+					$upload_logic = new UploadLogic($meeting_id);
+					$result       = $upload_logic->upload($_FILES, '/Logo/');
+
+					return array_merge($result, ['__ajax__' => true,]);
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数'];

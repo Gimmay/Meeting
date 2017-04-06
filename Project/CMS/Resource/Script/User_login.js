@@ -29,4 +29,24 @@ $(function(){
 	}).on('touchend mouseup', function(){
 		$('#password').attr('type', 'password');
 	});
+	$('#forget_password').on('click', function(){
+		var username = $('#username').val();
+		var _self    = $(this);
+		if(username == ''){
+			ManageObject.object.toast.toast('请输入用户名！');
+		}else{
+			Common.ajax({
+				data    :{requestType:'get_password_hint', username:username},
+				callback:function(r){
+					if(r.status){
+						_self.attr('data-content', r.data);
+						$("[data-toggle='popover']").popover('show')
+					}else{
+						_self.attr('data-content', r.message);
+						$("[data-toggle='popover']").popover('show')
+					}
+				}
+			});
+		}
+	});
 });

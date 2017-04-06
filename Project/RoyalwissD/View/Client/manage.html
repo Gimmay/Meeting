@@ -149,31 +149,19 @@
 									<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;签到 (<{$statistics.signed}>)
 								</div>
 								<div class="input-group pull-left check_not_signed color-1b7e5a">
-									<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;未签到 (<{$statistics.not_signed}>)
+									<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;未签到 (<{$statistics.notSigned}>)
 								</div>
 								<div class="input-group pull-left check_reviewed color-2489c5">
 									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;审核 (<{$statistics.reviewed}>)
 								</div>
 								<div class="input-group pull-left check_not_reviewed color-2489c5">
-									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.not_reviewed}>)
+									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.notReviewed}>)
 								</div>
-								<!--<div class="input-group pull-left check_receivables color-00a0e8">
-									<input type="radio" name="receivables" class="icheckRed">&nbsp;&nbsp;收款 (<{$statistics.receivables}>)
-								</div>
-								<div class="input-group pull-left check_not_receivables color-00a0e8">
-									<input type="radio" name="receivables" class="icheckRed">&nbsp;&nbsp;未收款 (<{$statistics.not_receivables}>)
-								</div>-->
-								<div class="input-group pull-left employee color_red">
-									<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;员工 (<{$statistics.employee}>)
-								</div>
-								<div class="input-group pull-left client color_red">
-									<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;客户 (<{$statistics.client}>)
-								</div>
-								<!--<div class="input-group pull-left new_client color_red">-->
-								<!--<input type="radio" name="client_type" class="icheckRed">&nbsp;&nbsp;新客 (<{$statistics.new}>)-->
+								<!--<div class="input-group pull-left employee color_red">-->
+									<!--<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;员工 (<{$statistics.employee}>)-->
 								<!--</div>-->
-								<!--<div class="input-group pull-left old_client color_red">-->
-								<!--<input type="radio" name="client_type" class="icheckRed">&nbsp;&nbsp;老客 (<{$statistics.not_new}>)-->
+								<!--<div class="input-group pull-left client color_red">-->
+									<!--<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;客户 (<{$statistics.client}>)-->
 								<!--</div>-->
 								<div class="input-group pull-left usable color_yellow">
 									<input type="radio" name="status" class="icheckYellow">&nbsp;&nbsp;可用 (<{$statistics.enabled}>)
@@ -186,7 +174,8 @@
 						<div class="table_wrap">
 							<div class="row mb_10">
 								<div class="col-sm-6">
-									<span class="total_client">共 <b class="color-red"><{$statistics.total}></b> 位客户</span>
+									<span class="current_number">当前列表人数 <b class="color-red"><{$statistics.list}></b> 位</span>，
+									<span class="total_client">总人数 <b class="color-red"><{$statistics.total}></b> 位</span>
 								</div>
 								<div class="col-sm-6 text-right">
 									<span class="custom_list" data-toggle="modal" data-target="#list_menu"><i class="glyphicon glyphicon-list"></i>&nbsp;自定义列表菜单</span>
@@ -286,7 +275,7 @@
 													<!--</if>-->
 													<!--<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int'), 'cid'=>$single['cid']])}>" class="btn btn-default btn-xs print_badge">打印胸卡</a>-->
 
-													<a href="<{:U('Client/alter',['id'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
+													<a href="<{:U('Client/modify',['id'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
 													<if condition="$single['status_code'] eq 1">
 														<button class="btn btn-default btn-xs btn_copy" type="button">复制</button>
 													</if>
@@ -613,7 +602,7 @@
 					<h2 class="modal-title">批量发送消息</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="multi_send_message">
+					<input type="hidden" name="requestType" value="send_message">
 					<input type="hidden" name="id" value="">
 					<div class="modal-body">
 						选择<span class="sAmount"></span>位客户发送消息？
@@ -812,7 +801,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="" class="col-sm-1 control-label"></label>
+							<label class="col-sm-1 control-label"></label>
 							<div class="col-sm-11">
 								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;客户重复记录时的操作只针对新建和导入客户。
 								</p>

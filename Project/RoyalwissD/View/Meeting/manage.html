@@ -6,8 +6,6 @@
 	<title>会议模块 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
-
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
@@ -17,15 +15,13 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
-
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/operate.js"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
@@ -42,7 +38,7 @@
 									<a href="<{:U('Meeting/create')}>"> <i class="glyphicon glyphicon-edit"></i>
 										<span>创建会议</span> </a>
 								</div>
-								<div class="function_btn batch_delete_btn_confirm">
+								<div class="function_btn batch_delete_btn">
 									<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
 										<span>批量删除</span></a>
 								</div>
@@ -97,10 +93,14 @@
 													<div>策划方：<span class="plan"><{$meeting.plan}></span></div>
 												</div>
 												<div class="desc silver clearfix">
-													<div>• 开始结束时间：<span class="start_end_time"><{$meeting.start_time}> - <{$meeting.end_time}></span></div>
-													<div>• 负责人：<span class="create_time"><{$meeting.director}></span></div>
-													<div>• 创建时间：<span class="create_time"><{$meeting.creatime}></span></div>
-													<div>• 创建者：<span class="create_time"><{$meeting.creator}></span></div>
+													<div>• 开始结束时间：<span class="start_end_time"><{$meeting.start_time}> - <{$meeting.end_time}></span>
+													</div>
+													<div>• 负责人：<span class="create_time"><{$meeting.director}></span>
+													</div>
+													<div>• 创建时间：<span class="create_time"><{$meeting.creatime}></span>
+													</div>
+													<div>• 创建者：<span class="create_time"><{$meeting.creator}></span>
+													</div>
 												</div>
 												<ul class="fun_btn clearfix" data-id="<{$meeting.id}>">
 													<li class="fun_li">
@@ -113,23 +113,20 @@
 														<a class="meeting_manager_btn" data-toggle="modal" data-target="#role_list_modal"><i class="glyphicon glyphicon-th"></i>会议管理人员</a>
 													</li>
 													<li class="fun_li">
-														<a href="<{:U('Meeting/alter',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-cog"></i>修改</a>
+														<a href="<{:U('Meeting/modify',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-cog"></i>修改</a>
 													</li>
-													<li class="fun_li">
-														<a class="delete_btn" data-toggle="modal" data-target="#delete_meeting"><i class="glyphicon glyphicon-trash"></i>删除</a>
+													<li class="fun_li" data-id="<{$meeting.id}>">
+														<a class="delete_btn" data-toggle="modal" data-target="#delete_modal"><i class="glyphicon glyphicon-trash"></i>删除</a>
 													</li>
-													<switch name="meeting.status_code">
-														<case value="0">
-															<li class="fun_li">
-																<a class="delete_btn" href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_meeting', 'id'=>$meeting['id']])}>"><i class="glyphicon glyphicon-lock"></i>启用</a>
-															</li>
-														</case>
-														<case value="1">
-															<li class="fun_li">
-																<a class="delete_btn" href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_meeting', 'id'=>$meeting['id']])}>"><i class="glyphicon glyphicon-lock"></i>禁用</a>
-															</li>
-														</case>
-													</switch>
+													<li class="fun_li" data-id="<{$meeting.id}>" data-status="<{$meeting.status_code}>">
+														<switch name="meeting.status_code">
+															<case value="1">
+																<a class="delete_btn btn-apply"><i class="glyphicon glyphicon-lock"></i>禁用</a>
+															</case>
+															<case value="0">
+																<a class="delete_btn btn-apply"><i class="glyphicon glyphicon-lock"></i>启用</a>
+															</case>
+														</switch>
 												</ul>
 											</div>
 										</div>
@@ -229,13 +226,13 @@
 		</div>
 	</div>
 	<!-- 删除会议 -->
-	<div class="modal fade" id="delete_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="delete_role_title">删除会议</h2>
+					<h2 class="modal-title">删除会议</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
@@ -244,14 +241,14 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认删除</button>
+						<button type="button" class="btn btn-primary btn-save">确认删除</button>
 					</div>
 				</form>
 			</div>
 		</div>
 	</div>
 	<!-- 批量删除会议 -->
-	<div class="modal fade" id="batch_delete_meeting" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="batch_delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -266,7 +263,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认删除</button>
+						<button type="button" class="btn btn-primary btn-save">确认删除</button>
 					</div>
 				</form>
 			</div>
@@ -423,7 +420,7 @@
 		</div>
 	</div>
 	<script>
-		var ThisObject = {
+		var ManageObject = {
 			object:{
 				signMessageSelect       :$('#sign_mes').QuasarSelect({
 					name        :'sign_mes',

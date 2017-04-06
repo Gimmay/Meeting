@@ -15,4 +15,5 @@
 		}
 
 		protected $autoCheckFields = false;
+		const DATABASE_NAME = 'meeting_royalwiss_deal';
 	}

@@ -4,7 +4,6 @@ $(function(){
 		var arr = src.split('\\');
 		arr     = arr[arr.length-1];
 		$('#excel_val').val(arr);
-		$('.src').text(src);
 		$('#submit').removeAttr('disabled'); // 移除不可按属性
 	});
 	$('#submit').on('click', function(){

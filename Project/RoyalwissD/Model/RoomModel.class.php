@@ -336,8 +336,8 @@ FROM meeting_royalwiss_deal.room_customer rc
 JOIN meeting_royalwiss_deal.client c ON c.id = rc.cid AND c.status <> 2
 JOIN meeting_royalwiss_deal.room r ON r.id = rc.rid AND r.status <> 2
 JOIN meeting_royalwiss_deal.attendee a ON a.cid = c.id AND a.status <> 2
-WHERE AND a.mid = r.mid r.mid = $meeting_id AND rc.status = 1 $condition
-			";
+WHERE a.mid = r.mid AND r.mid = $meeting_id AND rc.status = 1 $condition
+";
 
 			return $this->query($sql);
 		}

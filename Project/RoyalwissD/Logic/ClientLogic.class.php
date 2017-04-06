@@ -613,7 +613,7 @@
 								if(isset($client_repeat_mode['clientMobile']) && $client_repeat_mode['clientMobile'] == 1){
 									if($val['mobile'] === $temp_client_data['mobile']) $repeat_flag['mobile'] = 1;
 								}
-								if($repeat_flag['name'] == $client_repeat_mode['clientName'] && $repeat_flag['unit'] == $client_repeat_mode['clientUnit'] && $repeat_flag['mobile'] == $client_repeat_mode['clientMobile']){ // 必须满足重复数据的判定规则
+								if(($repeat_flag['name'] == $client_repeat_mode['clientName'] && $repeat_flag['name'] == 1) && ($repeat_flag['unit'] == $client_repeat_mode['clientUnit'] && $repeat_flag['unit'] == 1) && ($repeat_flag['mobile'] == $client_repeat_mode['clientMobile'] && $repeat_flag['mobile'] == 1)){ // 必须满足重复数据的判定规则
 									$is_repeat              = true;
 									$temp_client_data['id'] = $val['id']; // Warning：根据插入主键ID数据并根据此字段做覆盖操作！
 									break;
@@ -935,57 +935,85 @@
 					return $result;
 				break;
 				case 'manage:statistics':
-					return ['total' => count($data)];
-				break;
-				case 'manage:set_data':
-					foreach($data as $index => $client){
-						foreach($client as $key => $val){
-							switch($key){
-								case 'register_type':
-									$data[$index][$key] = AttendeeModel::REGISTER_TYPE[$val];
-								break;
-								case 'review_status':
-									$data[$index]['review_status_code'] = $data[$index][$key];
-									$data[$index][$key]                 = AttendeeModel::REVIEW_STATUS[$val];
-								break;
-								case 'sign_status':
-									$data[$index]['sign_status_code'] = $data[$index][$key];
-									$data[$index][$key]               = AttendeeModel::SIGN_STATUS[$val];
-								break;
-								case 'sign_type':
-									$data[$index][$key] = AttendeeModel::SIGN_TYPE[$val];
-								break;
-								case 'print_status':
-									$data[$index]['print_status_code'] = $data[$index][$key];
-									$data[$index][$key]                = AttendeeModel::PRINT_STATUS[$val];
-								break;
-								case 'gift_status':
-									$data[$index]['gift_status_code'] = $data[$index][$key];
-									$data[$index][$key]               = AttendeeModel::GIFT_STATUS[$val];
-								break;
-								case 'status':
-									$data[$index]['status_code'] = $data[$index][$key];
-									$data[$index][$key]          = GeneralModel::STATUS[$val];
-								break;
-								case 'gender':
-									$data[$index]['gender_code'] = $data[$index][$key];
-									$data[$index][$key]          = ClientModel::GENDER[$val];
-								break;
-								case 'is_new':
-									$data[$index]['is_new_code'] = $data[$index][$key];
-									$data[$index][$key]          = ClientModel::IS_NEW[$val];
-								break;
-								//								case 'type':
-								//									$data[$index]['type_code'] = $data[$index][$key];
-								//									$data[$index][$key]          = ClientModel::TYPE[$val];
-								//								break;
-							}
-						}
-						if(strtotime($client['creatime'])>(time()-self::NEW_DATA_TIME)) $data[$index]['new_data'] = true;
-						else $data[$index]['new_data'] = false;
+					$statistics = [
+						'total'       => count($data['total']),
+						'list'        => count($data['list']),
+						'signed'      => 0,
+						'notSigned'   => 0,
+						'reviewed'    => 0,
+						'notReviewed' => 0,
+						'enabled'     => 0,
+						'disabled'    => 0
+					];
+					foreach($data['total'] as $value){
+						if($value['review_status'] == 1) $statistics['reviewed']++;
+						else $statistics['notReviewed']++;
+						if($value['sign_status'] == 1) $statistics['signed']++;
+						else $statistics['notSigned']++;
+						if($value['status'] == 1) $statistics['enabled']++;
+						if($value['status'] == 0) $statistics['disabled']++;
 					}
 
-					return $data;
+					return $statistics;
+				break;
+				case 'manage:set_data':
+					$list = [];
+					$get  = $data['urlParam'];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
+					// 若指定了状态码的情况
+					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER['status']])) $status = $get[ClientModel::CONTROL_COLUMN_PARAMETER['status']];
+					// 若指定了固定的ClientID
+					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['clientID']])) $client_id = $get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['clientID']];
+					// 若指定了签到状态码的情况
+					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['signStatus']])) $sign_status = $get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['signStatus']];
+					// 若指定了审核状态码的情况
+					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']])) $review_status = $get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
+					foreach($data['list'] as $index => $client){
+						// 1、筛选数据
+						if(isset($keyword)){
+							//todo 获取筛选配置
+							$found = 0;
+							if($found == 0 && strpos($client['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($client['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($client['unit'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($client['unit_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($client['mobile'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
+						if(isset($client_id) && $client_id != $client['cid']) continue;
+						if(isset($status) && $status != $client['status']) continue;
+						if(isset($sign_status)){
+							if($sign_status == 0 && in_array($client['sign_status'], [1])) continue;
+							if($sign_status == 1 && in_array($client['sign_status'], [0, 2])) continue;
+						}
+						if(isset($review_status)){
+							if($review_status == 0 && in_array($client['review_status'], [1])) continue;
+							if($review_status == 1 && in_array($client['review_status'], [0, 2])) continue;
+						}
+						// 2、映射替换
+						$client['register_type']      = AttendeeModel::REGISTER_TYPE[$client['register_type']];
+						$client['review_status_code'] = $client['review_status'];
+						$client['review_status']      = AttendeeModel::REVIEW_STATUS[$client['review_status']];
+						$client['sign_status_code']   = $client['sign_status'];
+						$client['sign_status']        = AttendeeModel::SIGN_STATUS[$client['sign_status']];
+						$client['sign_type']          = AttendeeModel::SIGN_TYPE[$client['sign_type']];
+						$client['print_status_code']  = $client['print_status'];
+						$client['print_status']       = AttendeeModel::PRINT_STATUS[$client['print_status']];
+						$client['gift_status_code']   = $client['gift_status'];
+						$client['gift_status']        = AttendeeModel::GIFT_STATUS[$client['gift_status']];
+						$client['status_code']        = $client['status'];
+						$client['status']             = GeneralModel::STATUS[$client['status']];
+						$client['gender_code']        = $client['gender'];
+						$client['gender']             = ClientModel::GENDER[$client['gender']];
+						$client['is_new_code']        = $client['is_new'];
+						$client['is_new']             = ClientModel::IS_NEW[$client['is_new']];
+						if(strtotime($client['creatime'])>(time()-self::NEW_DATA_TIME)) $client['new_data'] = true;
+						else $client['new_data'] = false;
+						$list[] = $client;
+					}
+
+					return $list;
 				break;
 				case 'downloadData':
 					$column_list = $data['columnValue'];
@@ -1349,10 +1377,10 @@
 					] : [$column_name => $val];
 				break;
 				case 'name':
-					$column_value = preg_replace("'", '', $column_value);
-					$column_value = preg_replace('"', '', $column_value);
-					$column_value = preg_replace('/', '', $column_value);
-					$column_value = preg_replace('\\', '', $column_value);
+					$column_value = str_replace("'", '', $column_value);
+					$column_value = str_replace('"', '', $column_value);
+					$column_value = str_replace('/', '', $column_value);
+					$column_value = str_replace('\\', '', $column_value);
 					$str_obj      = new StringPlus();
 					$val          = $str_obj->getPinyin($column_value, true, '');
 
@@ -1362,10 +1390,10 @@
 					] : ['name' => $column_value, 'name_pinyin' => $val];
 				break;
 				case 'unit':
-					$column_value = preg_replace("'", '', $column_value);
-					$column_value = preg_replace('"', '', $column_value);
-					$column_value = preg_replace('/', '', $column_value);
-					$column_value = preg_replace('\\', '', $column_value);
+					$column_value = str_replace("'", '', $column_value);
+					$column_value = str_replace('"', '', $column_value);
+					$column_value = str_replace('/', '', $column_value);
+					$column_value = str_replace('\\', '', $column_value);
 					$str_obj      = new StringPlus();
 					$val          = $str_obj->getPinyin($column_value, true, '');
 

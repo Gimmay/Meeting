@@ -335,9 +335,28 @@ $(function(){
 			nameStr.push(name);
 			n1++;
 		});
-		if(str.length>Number(can_live)){
-			ManageObject.object.toast.toast('选择人数不能大于可入住人数！');
-			return false;
+		if(can_live != 0){
+			if(str.length>Number(can_live)){
+				ManageObject.object.toast.toast('选择人数不能大于可入住人数！');
+				return false;
+			}else{
+				ManageObject.object.loading.loading();
+				Common.ajax({
+					data    :{requestType:'check_in', cid:str, rid:rid},
+					callback:function(r){
+						ManageObject.object.loading.complete();
+						if(r.status){
+							ManageObject.object.toast.toast(r.message, '1');
+							ManageObject.object.toast.onQuasarHidden(function(){
+								$('#add_recipient2').modal('hide');
+								location.reload(); //刷新
+							});
+						}else{
+							ManageObject.object.toast.toast(r.message, '2');
+						}
+					}
+				});
+			}
 		}else{
 			ManageObject.object.loading.loading();
 			Common.ajax({
@@ -400,13 +419,20 @@ $(function(){
 							break;
 					}
 				});
-				$('#add_recipient2').find('input[name=can_live]').val(r.capacity-i);
-				$right_details.find('.room_num').text(i);
-				if(Number(i)>=Number(r.capacity)){
-					$('.right_details').find('.add_client').hide();
+				if(Number(r.capacity) != 0){
+					$('#add_recipient2').find('input[name=can_live]').val(r.capacity-i);
+					if(Number(i)>=Number(r.capacity)){
+						$('.right_details').find('.add_client').hide();
+					}else{
+						$('.right_details').find('.add_client').show();
+					}
 				}else{
+					$right_details.find('.capacity').text('无人员限制'); //无人员限制
+					$('#add_recipient2').find('input[name=can_live]').val(0);
+					$('#add_recipient2').find('.modal-title span').hide();
 					$('.right_details').find('.add_client').show();
 				}
+				$right_details.find('.room_num').text(i);
 				$('#list_c').html(str);
 				$('#list_history').html(strHistory);
 				// 退房按钮

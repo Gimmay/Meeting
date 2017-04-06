@@ -23,8 +23,8 @@
 			'meetingID'    => 'mid',
 			'clientID'     => 'cid',
 			'type'         => 'type',
-			'reviewStatus' => 'review_status',
-			'signStatus'   => 'sign_status',
+			'reviewStatus' => 'reviewed',
+			'signStatus'   => 'signed',
 			'limit'        => 'limit'
 		];
 		/** 性别 */

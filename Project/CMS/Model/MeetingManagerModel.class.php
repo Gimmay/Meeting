@@ -65,7 +65,7 @@ SELECT * FROM (
 		u1.nickname_pinyin,
 		u1.creator creator_code
 	FROM meeting_common.meeting_manager mm
-	JOIN meeting_common.`user` u1 ON u1.id = mm.uid AND u1.status = 1
+	JOIN meeting_common.user u1 ON u1.id = mm.uid AND u1.status = 1
 	LEFT JOIN meeting_common.user u2 ON u2.id = mm.creator AND u2.status <> 2
 ) tab
 $where

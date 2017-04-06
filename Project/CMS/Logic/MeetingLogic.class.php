@@ -36,14 +36,18 @@
 					// 创建会议记录
 					unset($data['brief']);
 					$result = $meeting_model->create(array_merge($data, [
-						'name_pinyin' => $str_obj->getPinyin($data['name'], true, ''),
-						'type'        => $meeting_type,
-						'creator'     => Session::getCurrentUser(),
-						'creatime'    => Time::getCurrentTime(),
-						'brief'       => $opt['originalPost']['brief']
+						'name_pinyin'     => $str_obj->getPinyin($data['name'], true, ''),
+						'type'            => $meeting_type,
+						'creator'         => Session::getCurrentUser(),
+						'creatime'        => Time::getCurrentTime(),
+						'brief'           => $opt['originalPost']['brief'],
+						'start_time'      => Time::isNull($data['start_time']),
+						'end_time'        => Time::isNull($data['end_time']),
+						'sign_start_time' => Time::isNull($data['sign_start_time']),
+						'sign_end_time'   => Time::isNull($data['sign_end_time'])
 					]));
 
-					return array_merge($result, ['__ajax__' => false, '__return__' => U('manage')]);
+					return array_merge($result, ['__ajax__' => false]);
 				break;
 				case 'get_role': // 分配会务人员时获取角色列表
 					/** @var \CMS\Model\RoleModel $role_model */
@@ -142,6 +146,48 @@
 						return array_merge($result, ['__ajax__' => true]);
 					}
 					else return ['status' => true, 'message' => '该会议不存在'];
+				break;
+				case 'modify':
+					$str_obj = new StringPlus();
+					$data    = $opt['data'];
+					/** @var \General\Model\MeetingModel $meeting_model */
+					$meeting_model = D('General/Meeting');
+					// 创建会议记录
+					unset($data['brief']);
+					$result = $meeting_model->modify(['id' => $opt['meetingID']], array_merge($data, [
+						'name_pinyin'     => $str_obj->getPinyin($data['name'], true, ''),
+						'brief'           => $opt['originalPost']['brief'],
+						'start_time'      => Time::isNull($data['start_time']),
+						'end_time'        => Time::isNull($data['end_time']),
+						'sign_start_time' => Time::isNull($data['sign_start_time']),
+						'sign_end_time'   => Time::isNull($data['sign_end_time'])
+					]));
+
+					return array_merge($result, ['__ajax__' => false]);
+				break;
+				case 'delete': // 删除项目
+					$id_arr = explode(',', $opt['id']);
+					/** @var \General\Model\MeetingModel $meeting_model */
+					$meeting_model = D('General/Meeting');
+					$result      = $meeting_model->drop(['id' => ['in', $id_arr]]);
+
+					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'enable': // 启用项目
+					$id_arr = explode(',', $opt['id']);
+					/** @var \General\Model\MeetingModel $meeting_model */
+					$meeting_model = D('General/Meeting');
+					$result      = $meeting_model->enable(['id' => ['in', $id_arr]]);
+
+					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'disable': // 禁用项目
+					$id_arr = explode(',', $opt['id']);
+					/** @var \General\Model\MeetingModel $meeting_model */
+					$meeting_model = D('General/Meeting');
+					$result      = $meeting_model->disable(['id' => ['in', $id_arr]]);
+
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];

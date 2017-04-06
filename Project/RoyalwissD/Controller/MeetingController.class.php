@@ -24,8 +24,8 @@
 		public function manage(){
 			$meeting_logic = new MeetingLogic();
 			if(IS_POST){
-				$type          = strtolower(I('post.requestType', ''));
-				$result        = $meeting_logic->handlerRequest($type, ['curUserHighestRoleLevel' => $this->userHighestRoleLevel]);
+				$type   = strtolower(I('post.requestType', ''));
+				$result = $meeting_logic->handlerRequest($type, ['curUserHighestRoleLevel' => $this->userHighestRoleLevel]);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);
 					echo json_encode($result);
@@ -40,7 +40,7 @@
 			}
 			/** @var \RoyalwissD\Model\MeetingModel $meeting_model */
 			$meeting_model         = D('RoyalwissD/Meeting');
-			$cms_meeting_logic         = new CMSMeetingLogic();
+			$cms_meeting_logic     = new CMSMeetingLogic();
 			$general_meeting_logic = new GeneralMeetingLogic();
 			$model_control_column  = $this->getModelControl();
 			// 处理会议列表URL参数\\\\\\\\\\\\\
@@ -60,9 +60,9 @@
 			]));
 			$page_object = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
-			$list          = array_slice($list, $page_object->firstRow, $page_object->listRows);
-			$list          = $meeting_logic->setData('manage', $list);
-			$pagination    = $page_object->show();
+			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
+			$list       = $meeting_logic->setData('manage', $list);
+			$pagination = $page_object->show();
 			$this->assign('list', $list);
 			$this->assign('pagination', $pagination);
 			$this->display();
@@ -146,5 +146,42 @@
 				$this->display();
 			}
 			else $this->error('找不到记录');
+		}
+
+		public function modify(){
+			$meeting_logic = new MeetingLogic();
+			if(IS_POST){
+				$type   = strtolower(I('post.requestType', ''));
+				$result = $meeting_logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					$url = $result['__return__'] ? $result['__return__'] : '';
+					if($result['status']) $this->success($result['message'], $url);
+					else $this->error($result['message'], $url, 3);
+				}
+				exit;
+			}
+			// 获取控制字段
+			/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
+			$meeting_column_control_model = D('General/MeetingColumnControl');
+			$meeting_logic                = new GeneralMeetingLogic();
+			$column_list                  = $meeting_column_control_model->getMeetingControlledColumn($meeting_logic->getTypeByModule(MODULE_NAME));
+			$this->assign('column_list', $column_list);
+			// 获取会议数据
+			$meeting_id = I('get.mid', 0, 'int');
+			/** @var \RoyalwissD\Model\MeetingModel $meeting_model */
+			$meeting_model = D('RoyalwissD/Meeting');
+			$meeting       = $meeting_model->getList([
+				MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => ['=', $meeting_id],
+				MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['user']      => Session::getCurrentUser(),
+			]);
+			$meeting       = $meeting[0];
+
+			$this->assign('meeting', $meeting);
+			$this->display();
 		}
 	}

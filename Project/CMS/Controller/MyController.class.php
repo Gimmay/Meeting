@@ -6,8 +6,10 @@
 	 * Time: 9:49
 	 */
 	namespace CMS\Controller;
-	use CMS\Logic\UserLogic;
+
+	use CMS\Logic\MyLogic;
 	use CMS\Logic\Session;
+
 	class MyController extends CMS{
 		public function _initialize(){
 			parent::_initialize();
@@ -23,10 +25,10 @@
 		 *  修改密码
 		 */
 		public function modifyPassword(){
-			$logic = new UserLogic();
+			$my_logic = new MyLogic();
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
-				$result = $logic->handlerRequest($type);
+				$result = $my_logic->handlerRequest($type);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);
 					echo json_encode($result);
@@ -39,32 +41,29 @@
 				}
 				exit;
 			}
-			//查询用户名称及修改密码时间
-			$user_id =  Session::getCurrentUser();
+			// 获取用户名
 			/** @var \General\Model\UserModel $user_model */
 			$user_model = D('General/User');
-			$user_model->fetch(['id' => $user_id]);
-			$user_info = $user_model->getObject();
-			$edit_time = $user_info['password_edit_time'];
-			if($edit_time == ''){
-				$edit_time = '您尚未修改过密码！';
-			}else{
-				$edit_time = date('Y-m-d H:i:s',$edit_time);
-			}
-			$end_time = $user_info['password_end_time']; //没有共用配置表  就直接存进数据库了
-			$expire = intval(($end_time - $user_info['password_edit_time'])/(3600*24));
-			//获取修改密码日志信息
-			/** @var \General\Model\SystemLogModel $system_log_model */
-			$system_log_model = D('General/SystemLog');
-			$filter = [
-                 'system_log.object_id' => $user_id,
-				 'system_log.action'    => ['like','%PASSWORD%'],
-			];
-			$log_list = $system_log_model->findRecord($filter);
-			$this->assign('username',$user_info['name']);
-			$this->assign('edit_time',$edit_time); //密码修改时间
-			$this->assign('expire',$expire);
-			$this->assign('log_list',$log_list);
+			if(!$user_model->fetch(['id' => Session::getCurrentUser()])) $this->error('找不到用户');
+			$user = $user_model->getObject();
+			$this->assign('user_name', $user['name']);
+			$this->assign('password_hint', $user['password_hint']);
+			// 获取操作日志
+			/** @var \CMS\Model\SystemLogModel $system_log_model */
+			$system_log_model = D('CMS/SystemLog');
+			$log_list         = $system_log_model->getList([
+				$system_log_model::CONTROL_COLUMN_PARAMETER_SELF['operator'] => ['=', Session::getCurrentUser()],
+				$system_log_model::CONTROL_COLUMN_PARAMETER_SELF['object']   => ['=', Session::getCurrentUser()],
+				$system_log_model::CONTROL_COLUMN_PARAMETER_SELF['action']   => [
+					'in',
+					"('MODIFY_PASSWORD', 'MODIFY_PASSWORD_BY_SELF', 'RESET_PASSWORD')"
+				],
+				$system_log_model::CONTROL_COLUMN_PARAMETER['order']         => ' creatime desc '
+			]);
+			$log_list         = $my_logic->setData('modify_password_log_list', $log_list);
+			$last_modify_time         = $my_logic->setData('last_modify_password_time', $log_list);
+			$this->assign('last_modify_time', $last_modify_time);
+			$this->assign('log_list', $log_list);
 			$this->display();
 		}
 
@@ -72,10 +71,10 @@
 		 *  个人信息
 		 */
 		public function information(){
-			$logic = new UserLogic();
+			$my_logic = new MyLogic();
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
-				$result = $logic->handlerRequest($type);
+				$result = $my_logic->handlerRequest($type);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);
 					echo json_encode($result);
@@ -88,7 +87,7 @@
 				}
 				exit;
 			}
-			$user_id =  Session::getCurrentUser();
+			$user_id = Session::getCurrentUser();
 			/** @var \General\Model\UserModel $user_model */
 			$user_model = D('General/User');
 			$user_model->fetch(['id' => $user_id]);

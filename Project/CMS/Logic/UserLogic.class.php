@@ -12,6 +12,7 @@
 	use General\Logic\Time;
 	use General\Logic\UserLogic as GeneralUserLogic;
 	use General\Model\GeneralModel;
+	use Quasar\Utility\IP;
 	use Quasar\Utility\StringPlus;
 
 	class UserLogic extends CMSLogic{
@@ -21,44 +22,6 @@
 
 		public function handlerRequest($type, $opt = []){
 			switch($type){
-				case 'change_password':
-					$old_password = base64_decode(I('post.old_password', ''));
-					$new_password = base64_decode(I('post.new_password', ''));
-					$remark       = I('post.remark', '');
-					$user_id      = Session::getCurrentUser();
-					$user_logic   = new GeneralUserLogic();
-					/** @var \General\Model\UserModel $user_model */
-					$user_model = D('General/User');
-					if($user_model->fetch(['id' => $user_id])){
-						$user_information = $user_model->getObject();
-						if($user_logic->verifyPassword($old_password, $user_information['name'], $user_information['password'])){
-							$result = $user_model->modifyPassword(['id' => $user_id], $new_password);
-							if($result['status'] == true){
-								//写操作日志
-								$data = [
-									'id'          => 'default',
-									'operator_id' => $user_id,
-									'object_id'   => $user_id,
-									'creator'     => $user_id,
-									'action'      => 'EDIT_PASSWORD',
-									'creatime'    => Time::getCurrentTime(),
-									'remark'      => $remark,
-								];
-								/** @var \General\Model\SystemLogModel $system_log_model */
-								$system_log_model = D('General/SystemLog');
-								$system_log_model->create($data);
-							}
-
-							return array_merge(['__ajax__' => false], $result);
-						}
-						else{
-							return ['status' => false, 'message' => '原密码错误'];
-						}
-					}
-					else{
-						return ['status' => false, 'message' => '找不到该用户'];
-					}
-				break;
 				case 'modify':
 					/** @var \General\Model\UserModel $user_model */
 					$user_model = D('General/User');
@@ -68,8 +31,7 @@
 					$data       = [
 						'nickname'        => $post['nickname'],
 						'nickname_pinyin' => $str_obj->getPinyin($post['nickname'], true, ''),
-						'comment'         => $post['comment'],
-						C('TOKEN_NAME')   => $post[C('TOKEN_NAME')]
+						'comment'         => $post['comment']
 					];
 					$res        = $user_model->modifyInformation(['id' => $id], $data);
 
@@ -81,7 +43,8 @@
 					$str_obj    = new StringPlus();
 					$user_logic = new GeneralUserLogic();
 					$data       = I('post.');
-					$result     = $user_model->create(array_merge($data, [
+					// todo 手机号去重判断
+					$result = $user_model->create(array_merge($data, [
 						'password'        => $user_logic->makePassword($data['password'], $data['name']),
 						'parent_id'       => Session::getCurrentUser(),
 						'creatime'        => Time::getCurrentTime(),
@@ -102,6 +65,24 @@
 				break;
 				case 'login':
 					return $this->checkLogin($opt['username'], base64_decode($opt['password']));
+				break;
+				case 'get_password_hint':
+					/** @var \General\Model\UserModel $user_model */
+					$user_model = D('General/User');
+					$user_name  = I('post.username', '');
+					if(!$user_model->fetch(['name' => $user_name, 'status' => 1])) return [
+						'status'   => false,
+						'message'  => '找不到用户',
+						'__ajax__' => true
+					];
+					$user = $user_model->getObject();
+
+					return [
+						'status'   => true,
+						'message'  => '获取成功',
+						'data'     => $user['password_hint'],
+						'__ajax__' => true
+					];
 				break;
 				case 'get_unassigned_role':
 					/** @var \General\Model\UserModel $user_model */
@@ -150,6 +131,21 @@
 						$user_information = $user_model->getObject();
 						if($user_logic->verifyPassword($old_password, $user_information['name'], $user_information['password'])){
 							$result = $user_model->modifyPassword(['id' => $user_id], $new_password);
+							if($result['status'] == true){
+								$ip_obj = new IP();
+								// 保存日志
+								$data = [
+									'operator' => Session::getCurrentUser(),
+									'object'   => $user_id,
+									'action'   => 'MODIFY_PASSWORD',
+									'creator'  => Session::getCurrentUser(),
+									'creatime' => Time::getCurrentTime(),
+									'ip'       => $ip_obj->getClientIP()
+								];
+								/** @var \General\Model\SystemLogModel $system_log_model */
+								$system_log_model = D('General/SystemLog');
+								$system_log_model->create($data);
+							}
 
 							return array_merge(['__ajax__' => false], $result);
 						}
@@ -167,6 +163,21 @@
 					$user_model = D('General/User');
 					if($user_model->fetch(['id' => $user_id])){
 						$result = $user_model->modifyPassword(['id' => $user_id], '', true);
+						if($result['status'] == true){
+							$ip_obj = new IP();
+							// 保存日志
+							$data = [
+								'operator' => Session::getCurrentUser(),
+								'object'   => $user_id,
+								'action'   => 'RESET_PASSWORD',
+								'creator'  => Session::getCurrentUser(),
+								'creatime' => Time::getCurrentTime(),
+								'ip'       => $ip_obj->getClientIP()
+							];
+							/** @var \General\Model\SystemLogModel $system_log_model */
+							$system_log_model = D('General/SystemLog');
+							$system_log_model->create($data);
+						}
 
 						return array_merge(['__ajax__' => false], $result);
 					}
@@ -220,17 +231,36 @@
 		public function setData($type, $data){
 			switch($type){
 				case 'manage':
-					foreach($data as $key => $user){
-						$role_name_list = explode(UserModel::ROLE_NAME_SEPARATOR, $user['role_name']);
+					$list = [];
+					$get  = $data['urlParam'];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
+					// 若指定了角色ID的情况
+					if(isset($get[UserModel::CONTROL_COLUMN_PARAMETER_SELF['roleID']])) $role_id = $get[UserModel::CONTROL_COLUMN_PARAMETER_SELF['roleID']];
+					// 若指定了固定的ClientID
+					foreach($data['list'] as $key => $user){
+						// 1、筛选数据
+						if(isset($keyword)){
+							// todo 获取筛选配置
+							$found = 0;
+							if($found == 0 && strpos($user['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($user['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
 						$role_id_list   = explode(',', $user['role_id']);
+						if(isset($role_id)){
+							if(!in_array($role_id, $role_id_list)) continue;
+						}
+						$role_name_list = explode(UserModel::ROLE_NAME_SEPARATOR, $user['role_name']);
 						$role_name      = '';
 						foreach($role_name_list as $k => $role) $role_name .= "<a href='javascript:void(0)' data-role-id='$role_id_list[$key]'>$role</a>, ";
-						$data[$key]['role'] = trim($role_name, ', ');
-						$data[$key]['status_code'] = $user['status'];
-						$data[$key]['status'] = GeneralModel::STATUS[$user['status']];
+						$user['role']        = trim($role_name, ', ');
+						$user['status_code'] = $user['status'];
+						$user['status']      = GeneralModel::STATUS[$user['status']];
+						$list[]              = $user;
 					}
 
-					return $data;
+					return $list;
 				break;
 				default:
 					return $data;

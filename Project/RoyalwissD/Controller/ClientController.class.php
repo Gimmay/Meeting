@@ -13,6 +13,7 @@
 	use CMS\Model\CMSModel;
 	use RoyalwissD\Logic\ClientLogic;
 	use RoyalwissD\Logic\MeetingConfigureLogic;
+	use RoyalwissD\Model\ClientColumnControlModel;
 	use RoyalwissD\Model\ClientModel;
 	use Think\Page;
 
@@ -59,23 +60,25 @@
 			$column_list       = $client_logic->setData('fieldSetting', $column_list);
 			$this->assign('column_list', $column_list);
 			$this->assign('column_list_write', $column_list_write);
-			// 获取URL参数
-			$option = [];
-			if(isset($_GET['cid'])) $option[$client_model::CONTROL_COLUMN_PARAMETER_SELF['clientID']] = [
-				'=',
-				I('get.cid', 0, 'int')
-			];
 			// 获取列表数据
 			$model_control_column = $this->getModelControl();
-			$list                 = $client_model->getList(array_merge($model_control_column, $option, [
+			$total                = $list = $client_model->getList(array_merge($model_control_column, [
 				CMSModel::CONTROL_COLUMN_PARAMETER['status']              => ['!=', 2],
 				$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID
 			]));
-			$statistics           = $client_logic->setData('manage:statistics', $list); // 获取统计数据
-			$page_object          = new Page(count($list), $this->getPageRecordCount());
+			$page_object = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
-			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows); // 分页
-			$list       = $client_logic->setData('manage:set_data', $list);
+			$list = array_slice($list, $page_object->firstRow, $page_object->listRows); // 分页
+			$list = $client_logic->setData('manage:set_data', [
+				'list'     => $list,
+				'urlParam' => I('get.')
+			]);
+			// 获取统计数据
+			$statistics = $client_logic->setData('manage:statistics', [
+				'list'     => $list,
+				'total'    => $total,
+				'urlParam' => I('get.')
+			]);
 			$pagination = $page_object->show();
 			$this->assign('statistics', $statistics);
 			$this->assign('list', $list);
@@ -121,9 +124,6 @@
 			$this->assign('is_new_list', ClientModel::IS_NEW);
 			$this->assign('type_list', ClientModel::TYPE);
 			$this->display();
-		}
-
-		public function modify(){
 		}
 
 		public function fieldSetting(){
@@ -227,7 +227,7 @@
 			}
 		}
 
-		public function alter(){
+		public function modify(){
 			if(IS_POST){
 				$meeting_logic = new ClientLogic();
 				$type          = strtolower(I('post.requestType', ''));
@@ -276,12 +276,15 @@
 			$meeting      = $meeting_model->getObject();
 			$meeting_name = $meeting['name'];
 			$excel_logic  = new ExcelLogic();
-			$client_logic = new ClientLogic();
-			$column_list  = $client_logic->getControlledColumn(true);
+			/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control */
+			$client_column_control = D('RoyalwissD/ClientColumnControl');
+			$column_list = $client_column_control->getClientControlledColumn($this->meetingID, $client_column_control::ACTION_WRITE);
 			$column_head  = [
 				0 => []
 			];
-			foreach($column_list as $column) $column_head[0][] = $column['column_comment'];
+			foreach($column_list as $column){
+				if($column['view']==1) $column_head[0][] = $column['name'];
+			}
 			$excel_logic->writeCustomData($column_head, [
 				'fileName'     => "[$meeting_name]-客户数据导入模板",
 				'creator'      => 'Quasar',

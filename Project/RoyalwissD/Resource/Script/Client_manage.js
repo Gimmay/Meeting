@@ -769,6 +769,24 @@ $(function(){
 			ManageObject.object.toast.toast('请选择客户！');
 		}
 		$('#batch_send_message').find('input[name=id]').val(newStr);
+		$('#batch_send_message .btn-save').on('click', function(){
+			var data = $('#batch_send_message form').serialize();
+			ManageObject.object.loading.loading();
+			Common.ajax({
+				data    :data,
+				callback:function(r){
+					ManageObject.object.loading.complete();
+					if(r.status){
+						ManageObject.object.toast.toast(r.message, 1);
+						ManageObject.object.toast.onQuasarHidden(function(){
+							location.reload();
+						});
+					}else{
+						ManageObject.object.toast.toast(r.message, 2);
+					}
+				}
+			})
+		});
 	});
 	// 分配签到点 (single)
 	$('.alter_sign_point_btn').on('click', function(){

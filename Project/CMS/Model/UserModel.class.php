@@ -22,7 +22,6 @@
 			$keyword = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
 			$order   = $control[self::CONTROL_COLUMN_PARAMETER['order']];
 			$status  = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$role_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['roleID']];
 			$where   = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
@@ -37,7 +36,6 @@
 				)";
 			}
 			if(isset($status) && isset($status[0]) && isset($status[1])) $where .= " and status $status[0] $status[1] ";
-			if(isset($role_id)) $where .= " and role_id = $role_id ";
 			$sql = "
 SELECT * FROM (
 	SELECT
@@ -55,16 +53,16 @@ SELECT * FROM (
 		u1.creator creator_code,
 		u2.name creator,
 		(SELECT group_concat(r1.name ORDER BY r1.name_pinyin SEPARATOR '".self::ROLE_NAME_SEPARATOR."')
-		FROM role r1
-		JOIN user_assign_role uar1 ON r1.id = uar1.rid
+		FROM meeting_common.role r1
+		JOIN meeting_common.user_assign_role uar1 ON r1.id = uar1.rid
 		WHERE u1.id = uar1.uid AND r1.status <> 2) role_name,
 		(SELECT group_concat(r1.id ORDER BY r1.name_pinyin)
-		FROM role r1
-		JOIN user_assign_role uar1 ON r1.id = uar1.rid
+		FROM meeting_common.role r1
+		JOIN meeting_common.user_assign_role uar1 ON r1.id = uar1.rid
 		WHERE u1.id = uar1.uid AND r1.status <> 2) role_id
-	FROM `user` u1
-	LEFT JOIN `user` u2 ON u2.id = u1.creator AND u2.status <> 2
-	LEFT JOIN `user` u3 ON u3.id = u1.parent_id AND u3.status <> 2
+	FROM meeting_common.user u1
+	LEFT JOIN meeting_common.user u2 ON u2.id = u1.creator AND u2.status <> 2
+	LEFT JOIN meeting_common.user u3 ON u3.id = u1.parent_id AND u3.status <> 2
 ) tab
 $where
 $order

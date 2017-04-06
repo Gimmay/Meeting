@@ -54,16 +54,16 @@ SELECT * FROM (
 		u1.name creator,
 		(SELECT
 		GROUP_CONCAT(u2.name ORDER BY u2.name_pinyin SEPARATOR '".self::USER_NAME_SEPARATOR."')
-		FROM `user` u2
-		JOIN user_assign_role uar1 ON uar1.uid = u2.id
+		FROM meeting_common.user u2
+		JOIN meeting_common.user_assign_role uar1 ON uar1.uid = u2.id
 		WHERE r1.id = uar1.rid AND u2.status <> 2) user_name,
 		(SELECT
 		GROUP_CONCAT(u2.id ORDER BY u2.name_pinyin)
-		FROM `user` u2
-		JOIN user_assign_role uar1 ON uar1.uid = u2.id
+		FROM meeting_common.user u2
+		JOIN meeting_common.user_assign_role uar1 ON uar1.uid = u2.id
 		WHERE r1.id = uar1.rid AND u2.status <> 2) user_id
-	FROM role r1
-	LEFT JOIN user u1 ON u1.id = r1.creator AND u1.status <> 2
+	FROM meeting_common.role r1
+	LEFT JOIN meeting_common.user u1 ON u1.id = r1.creator AND u1.status <> 2
 ) tab
 $where
 $order

@@ -75,12 +75,21 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'modify':
-					$id         = I('post.id', 0, 'int');
+					$id         = I('get.id', 0, 'int');
 					$meeting_id = I('get.mid', 0, 'int');
 					$post       = I('post.');
 					/** @var \RoyalwissD\Model\MessageModel $message_model */
 					$message_model = D('RoyalwissD/Message');
-					$result        = $message_model->modify(['id' => $id, 'mid' => $meeting_id], $post);
+					$str_obj       = new StringPlus();
+					$result        = $message_model->modify(['id' => $id, 'mid' => $meeting_id], array_merge($post, [
+						'name_pinyin' => $str_obj->getPinyin($post['name'], true, ''),
+						'context'     => $_POST['context']
+					]));
+
+					return array_merge($result, [
+						'__ajax__' => true,
+						'nextPage' => U('manage', ['mid' => $meeting_id])
+					]);
 				break;
 				case 'delete':
 					$id_str     = I('post.id', '');

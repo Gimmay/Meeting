@@ -17,6 +17,7 @@
 		}
 
 		public function handlerRequest($type, $opt = []){
+			// todo 完善
 			switch($type){
 				case 'get_role_ajax':
 					if(UserLogic::isPermitted('GENERAL-ROLE.VIEW')){
@@ -30,38 +31,37 @@
 						return ['status' => false, 'message' => '您没有查看角色信息的权限', '__ajax__' => true];
 					}
 				break;
-				case 'modify_role':
+				case 'modify':
 					if(UserLogic::isPermitted('GENERAL-ROLE.MODIFY')){
 						/** @var \General\Model\RoleModel $role_model */
 						$role_model          = D('General/Role');
-						$filter              = ['id' => I('post.id', 0, 'int')];
+						$role_id             = I('post.id', 0, 'int');
 						$data                = I('post.');
 						$str_obj             = new StringPlus();
 						$data['name_pinyin'] = $str_obj->getPinyin($data['name'], true, '');
-						$result              = $role_model->modifyRole($filter, $data); //传值到model里面操作
+						$result              = $role_model->modifyInformation(['id' => $role_id], $data); //传值到model里面操作
 						return array_merge($result, ['__ajax__' => false]);
 					}
 					else{
 						return ['status' => false, 'message' => '您没有修改角色的权限', '__ajax__' => false];
 					}
 				break;
-				case 'create': //新增角色
-					if(UserLogic::isPermitted('GENERAL-ROLE.CREATE')){ // 创建系统角色
-						$id = Session::getCurrentUser(); //当前用户id
+				case 'create':
+					// 新增角色
+					if(UserLogic::isPermitted('GENERAL-ROLE.CREATE')){
 						/** @var \General\Model\RoleModel $role_model */
-						$role_model          = D('General/Role');
-						$str_obj             = new StringPlus();
-						$data                = I('post.');
-						$data['name_pinyin'] = $str_obj->getPinyin(I('post.name', ''), true, '');
-						$data['creatime']    = date('Y-m-d H:i:s', time());
-						$data['creator']     = $id;
-						$result              = $role_model->createRole($data);
+						$role_model = D('General/Role');
+						$str_obj    = new StringPlus();
+						$data       = I('post.');
+						$result     = $role_model->create(array_merge($data, [
+							'name_pinyin' => $str_obj->getPinyin(I('post.name', ''), true, ''),
+							'creatime'    => date('Y-m-d H:i:s', time()),
+							'creator'     => Session::getCurrentUser()
+						]));
 
 						return array_merge($result, ['__ajax__' => false]);
 					}
-					else{
-						return ['status' => false, 'message' => '您没有创建角色的权限', '__ajax__' => false];
-					}
+					else return ['status' => false, 'message' => '您没有创建角色的权限', '__ajax__' => false];
 				break;
 				case 'get_assigned_permission':
 					$role_id = I('post.id', 0, 'int');

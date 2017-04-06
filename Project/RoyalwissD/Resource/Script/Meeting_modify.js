@@ -4,7 +4,7 @@
 
 $(function(){
 	$('#updateBackground').on('change', function(){
-		$('input[name=requestType]').val('upload_logo');
+		$('input[name=requestType]').val('upload_image');
 		$('#submit_logo').trigger('click');
 	});
 	// 全选checkbox
@@ -66,7 +66,6 @@ function upLoadLogo(){
 		processData:false,
 		contentType:false
 	}).done(function(data){
-		console.log(data);
 		if(data.status){
 			ManageObject.object.toast.toast(data.message);
 			$('input[name=logo]').val(data.data.filePath);

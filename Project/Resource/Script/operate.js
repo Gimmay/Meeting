@@ -109,7 +109,7 @@ $(function(){
 	 * 删除操作
 	 */
 	$('.delete_btn').on('click', function(){
-		var id = $(this).parent('.btn-group').attr('data-id');
+		var id = $(this).parent().attr('data-id');
 		$('#delete_modal').find('input[name=id]').val(id);
 		$('#delete_modal .btn-save').on('click', function(){
 			var data = $('#delete_modal form').serialize();

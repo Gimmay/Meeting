@@ -160,9 +160,9 @@
 		 * @return array
 		 */
 		protected function getModelControl(){
-			$keyword_param = I('get.'.self::URL_CONTROL_PARAMETER['keyword'], '');
+//			$keyword_param = I('get.'.self::URL_CONTROL_PARAMETER['keyword'], '');
 			$result        = [];
-			if(isset($_GET[self::URL_CONTROL_PARAMETER['keyword']]) && $keyword_param != '') $result[CMSModel::CONTROL_COLUMN_PARAMETER['keyword']] = $keyword_param;
+//			if(isset($_GET[self::URL_CONTROL_PARAMETER['keyword']]) && $keyword_param != '') $result[CMSModel::CONTROL_COLUMN_PARAMETER['keyword']] = $keyword_param;
 			$result[CMSModel::CONTROL_COLUMN_PARAMETER['order']] = I('get.'.self::URL_CONTROL_PARAMETER['orderColumn'], self::DEFAULT_ORDER_COLUMN).' '.I('get.'.self::URL_CONTROL_PARAMETER['orderMethod'], self::DEFAULT_ORDER_METHOD);
 
 			return $result;

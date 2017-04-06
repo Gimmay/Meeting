@@ -18,7 +18,8 @@ $(function(){
 		$('.mes_num').text(mes_num);
 		relationMes(text);
 	});
-	$('#textarea_edit').on('keyup,change', function(){
+	// 计算文字数量
+	$('#textarea_edit').on('keyup', function(){
 		var $textarea_obj   = $('#textarea_edit');
 		var textarea_length = $textarea_obj.val().length;
 		$('.words_num').text(textarea_length);

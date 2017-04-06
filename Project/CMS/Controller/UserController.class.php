@@ -63,15 +63,13 @@
 				/** @var \CMS\Model\UserModel $user_model */
 				$user_model           = D('CMS/User');
 				$model_control_column = $this->getModelControl();
-				$option               = [];
-				if(($role_id = I('get.rid', 0, 'int')) != 0) $option[UserModel::CONTROL_COLUMN_PARAMETER_SELF['roleID']] = $role_id;
-				$list        = $user_model->getList(array_merge($model_control_column, $option, [
+				$list        = $user_model->getList(array_merge($model_control_column, [
 					CMSModel::CONTROL_COLUMN_PARAMETER['status'] => ['<>', 2]
 				]));
 				$page_object = new Page(count($list), $this->getPageRecordCount()); // 实例化分页类 传入总记录数和每页显示的记录数
 				PageLogic::setTheme1($page_object);
 				$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
-				$list       = $user_logic->setData('manage', $list);
+				$list       = $user_logic->setData('manage', ['list'=>$list, 'urlParam'=>I('get.')]);
 				$pagination = $page_object->show();// 分页显示输出
 				$this->assign('list', $list);
 				$this->assign('pagination', $pagination);

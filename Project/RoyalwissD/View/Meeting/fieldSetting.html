@@ -87,12 +87,12 @@
 														<volist name="column_list" id="single">
 															<eq name="single.is_custom" value="0">
 																<if condition="$single['view'] eq 1">
-																	<div class="col-sm-2 btn-item mb_10 active">
+																	<div class="col-sm-2 btn-item has-selected mb_10 active">
 																		<button type="button" class="btn btn-sm btn-info btn-block" data-name="<{$single.form}>"><{$single.name}></button>
 																		<span class="b_delete glyphicon glyphicon-remove"></span>
 																	</div>
 																	<else/>
-																	<div class="col-sm-2 btn-item mb_10">
+																	<div class="col-sm-2 btn-item not-selected mb_10">
 																		<button type="button" class="btn btn-sm btn-default btn-block" data-name="<{$single.form}>"><{$single.name}></button>
 																		<span class="b_delete glyphicon glyphicon-remove"></span>
 																	</div>
@@ -109,12 +109,12 @@
 														<volist name="column_list" id="single">
 															<eq name="single.is_custom" value="1">
 																<if condition="$single['view'] eq 1">
-																	<div class="col-sm-2 btn-item mb_10 active">
+																	<div class="col-sm-2 btn-item has-selected mb_10 active">
 																		<button type="button" class="btn btn-sm btn-info btn-block" data-name="<{$single.form}>"><{$single.name}></button>
 																		<span class="b_delete glyphicon glyphicon-remove"></span>
 																	</div>
 																	<else/>
-																	<div class="col-sm-2 btn-item mb_10">
+																	<div class="col-sm-2 btn-item not-selected mb_10">
 																		<button type="button" class="btn btn-sm btn-default btn-block" data-name="<{$single.form}>"><{$single.name}></button>
 																		<span class="b_delete glyphicon glyphicon-remove"></span>
 																	</div>

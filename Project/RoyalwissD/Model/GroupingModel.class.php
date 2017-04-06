@@ -61,7 +61,7 @@
 				)";
 			}
 			if(isset($status) && isset($status[0]) && isset($status[1])) $where .= " and status $status[0] $status[1] ";
-			if(isset($meeting_id)) $where .= " and mid $status[0] $status[1] ";
+			if(isset($meeting_id)) $where .= " and mid = $meeting_id";
 			$sql = "
 SELECT * FROM (
 	SELECT

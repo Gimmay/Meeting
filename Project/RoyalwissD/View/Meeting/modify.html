@@ -38,7 +38,7 @@
 						<div class="table_wrap">
 							<div class="nav_tab clearfix">
 								<div class="nav_tab_li active">
-									<a href="javascript:void(0)">新建会议</a>
+									<a href="javascript:void(0)">修改会议</a>
 								</div>
 							</div>
 						</div>
@@ -46,28 +46,31 @@
 							<div class="modal-body">
 								<volist name="column_list" id="single">
 									<div class="form-group <eq name='single.view' value='0'>hide</eq>">
-										<switch name="single.form">
-											<case value="place">
+										<switch name="single.code">
+											<case value="ROYALWISSD-MEETING-PLACE">
 												<if condition="$single['must'] eq 1">
 													<label for="place" class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
 													<else/>
 													<label for="place" class="col-sm-1 control-label"><{$single.name}>：</label>
 												</if>
 												<div class="col-sm-11">
-													<input type="text" class="form-control <eq name='single.must' value='1'>necessary</eq>" name="place" id="place">
+													<div class="input-group address_map">
+														<input type="text" class="form-control <eq name='single.must' value='1'>necessary</eq>" name="place" id="place" value="<{$meeting.place}>">
+														<span class="input-group-addon glyphicon glyphicon-send get_map"></span>
+													</div>
 												</div>
 											</case>
-											<case value="brief">
+											<case value="ROYALWISSD-MEETING-BRIEF">
 												<if condition="$single['must'] eq 1">
 													<label for="brief" class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
 													<else/>
 													<label for="brief" class="col-sm-1 control-label"><{$single.name}>：</label>
 												</if>
 												<div class="col-sm-11">
-													<textarea class="form-control brief xheditor <eq name='single.must' value='1'>necessary</eq>" runat="server" name="brief" id="brief" style="min-height: 200px"></textarea>
+													<textarea class="form-control brief xheditor <eq name='single.must' value='1'>necessary</eq>" runat="server" name="brief" id="brief" style="min-height: 200px" value="<{$meeting.brief}>"><{$meeting.brief}></textarea>
 												</div>
 											</case>
-											<case value="logo">
+											<case value="ROYALWISSD-MEETING-LOGO">
 												<if condition="$single['must'] eq 1">
 													<label for="updateBackground" class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b>LOGO图片地址：</label>
 													<else/>
@@ -75,28 +78,28 @@
 												</if>
 												<div class="col-sm-10">
 													<div class="logo_wp">
-														<img src="">
-														<div class="logo_not">
+														<img src="<{$meeting.logo}>">
+														<div class="logo_not <notempty name='meeting.logo'>hide</notempty>">
 															<span class="glyphicon glyphicon-picture"></span>
 															<p>请上传尺寸为1080px*640px的.png、.jpg、.gif图片 图片大小小于1M</p>
 														</div>
 													</div>
 													<div class="bg_up_file">
-														<input type="hidden" name="logo" value="">
+														<input type="hidden" name="logo" value="<{$meeting.logo}>">
 														<input type="file" class="filePrew <eq name='single.must' value='1'>necessary</eq>" name="logo_upload" id="updateBackground">
 														<span class="text"><span class="glyphicon glyphicon-upload" style="margin-right: 5px;"></span><span>上传图片</span></span>
 														<button type="button" id="submit_logo" onclick="upLoadLogo()"></button>
 													</div>
 												</div>
 											</case>
-											<case value="comment">
+											<case value="ROYALWISSD-MEETING-COMMENT">
 												<if condition="$single['must'] eq 1">
 													<label for="comment" class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
 													<else/>
 													<label for="comment" class="col-sm-1 control-label"><{$single.name}>：</label>
 												</if>
 												<div class="col-sm-11">
-													<textarea class="form-control <eq name='single.must' value='1'>necessary</eq>" name="comment" id="comment"></textarea>
+													<textarea class="form-control <eq name='single.must' value='1'>necessary</eq>" name="comment" id="comment" value="<{$meeting.comment}>"><{$meeting.comment}></textarea>
 												</div>
 											</case>
 											<default/>
@@ -106,13 +109,13 @@
 												<label class="col-sm-1 control-label"><{$single.name}>：</label>
 											</if>
 											<div class="col-sm-11">
-												<input type="text" class="form-control <eq name='single.must' value='1'>necessary</eq>" name="<{$single.form}>" placeholder="" id="<{$single.form}>">
+												<input type="text" class="form-control <eq name='single.must' value='1'>necessary</eq>" name="<{$single.form}>" placeholder="" id="<{$single.form}>" value="<{$meeting[$single['form']]}>">
 											</div>
 										</switch>
 									</div>
 								</volist>
 							</div>
-							<input type="hidden" name="requestType" value="create">
+							<input type="hidden" name="requestType" value="modify">
 							<div class="modal-footer text_center">
 								<button type="button" class="btn btn-primary btn-save">保存</button>
 							</div>
