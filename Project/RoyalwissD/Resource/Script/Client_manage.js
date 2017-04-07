@@ -952,6 +952,24 @@ $(function(){
 			}
 		})
 	});
+	// 同步微信数据
+	$('#synchronous_wx_modal .btn-save').on('click',function(){
+		ManageObject.object.loading.loading();
+		Common.ajax({
+			data:{requestType:'synchronize_wechat_information'},
+			callback:function(r){
+				ManageObject.object.loading.complete();
+				if(r.status){
+					ManageObject.object.toast.toast(r.message,1);
+					ManageObject.object.toast.onQuasarHidden(function(){
+						location.reload();
+					});
+				}else{
+					ManageObject.object.toast.toast(r.message,2);
+				}
+			}
+		});
+	});
 	// 初始化筛选条件选中样式
 	(function(){
 		// 人员状态列表（签到\审核\收款）

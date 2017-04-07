@@ -145,7 +145,7 @@
 							$result = $client_model->modify(['id' => $client_id], array_merge($post, [
 								'name_pinyin' => $str_obj->getPinyin($post['name'], true, ''),
 								'unit_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
-								'birthday'    => Time::isNull($post['birthday']),
+								'birthday'    => Time::isTimeFormat($post['birthday']),
 								'password'    => $general_client_logic->makePassword($client_model->getDefaultPassword(), $post['mobile']),
 								'comment'     => "(财务创建) $post[comment]"
 							]));
@@ -161,7 +161,7 @@
 							'creatime'    => Time::getCurrentTime(),
 							'name_pinyin' => $str_obj->getPinyin($post['name'], true, ''),
 							'unit_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
-							'birthday'    => Time::isNull($post['birthday']),
+							'birthday'    => Time::isTimeFormat($post['birthday']),
 							'password'    => $general_client_logic->makePassword($client_model->getDefaultPassword(), $post['mobile']),
 							'comment'     => "(财务创建) $post[comment]"
 						]));

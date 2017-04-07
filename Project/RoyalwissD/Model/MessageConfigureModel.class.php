@@ -50,4 +50,37 @@
 				return !$exception['status'] ? $exception : ['status' => false, 'message' => $this->getError()];
 			}
 		}
+
+		public function getWechatOfficialConfigure($meeting_id){
+
+		}
+
+		public function getWechatEnterpriseConfigure($meeting_id){}
+
+		public function getSMSMobsetConfigure($meeting_id){
+			// todo
+			if(!$this->fetch(['mid' => $meeting_id])) return [
+				'status'   => false,
+				'message'  => '找不到会议配置信息'
+			];
+			$meeting_configure = $this->getObject();
+			/** @var \General\Model\ApiConfigureModel $api_configure_model */
+			$api_configure_model = D('General/ApiConfigure');
+			if($meeting_configure['wechat_enterprise_configure']){
+				if(!$api_configure_model->fetch([
+					'id'     => $meeting_configure['wechat_enterprise_configure'],
+					'status' => ['neq', 2]
+				])
+				) return [
+					'status'   => false,
+					'message'  => '找不到微信企业号接口配置信息',
+					'__ajax__' => true
+				];
+				$api_configure = $api_configure_model->getObject();
+				print_r($api_configure);
+				exit;
+			}
+		}
+
+		public function getEmailConfigure($meeting_id){}
 	}

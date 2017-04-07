@@ -67,6 +67,26 @@
 			$this->display();
 		}
 
+		public function modifyPassword2(){
+			$my_logic = new MyLogic();
+			if(IS_POST){
+				$type   = strtolower(I('post.requestType', ''));
+				$result = $my_logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					$url = $result['__return__'] ? $result['__return__'] : '';
+					if($result['status']) $this->success($result['message'], $url);
+					else $this->error($result['message'], $url, 3);
+				}
+				exit;
+			}
+			$this->display();
+		}
+
 		/**
 		 *  个人信息
 		 */

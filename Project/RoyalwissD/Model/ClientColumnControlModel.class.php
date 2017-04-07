@@ -48,8 +48,8 @@
 		/**
 		 * 获取控制字段的信息
 		 *
-		 * @param int $meeting_id 会议类型
-		 * @param int $action     操作 0：列表/读 1：创建/写
+		 * @param int  $meeting_id 会议类型
+		 * @param int  $action     操作 0：列表/读 1：创建/写
 		 *
 		 * @return array
 		 */
@@ -57,6 +57,6 @@
 			if($action == 1 || $action) $action = self::ACTION_WRITE;
 			else $action = self::ACTION_READ;
 
-			return $this->where("mid = $meeting_id and action = $action")->select();
+			return $this->where("mid = $meeting_id and action = $action $viewed")->select();
 		}
 	}

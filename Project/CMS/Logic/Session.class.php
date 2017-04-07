@@ -22,7 +22,8 @@
 		const MEETING_TYPE = 'CMS_MEETING_TYPE';
 		/** 当前会议ID */
 		const MEETING_ID = 'CMS_MEETING_ID';
-
+		/** 必须修改密码（密码为空时） */
+		const MUST_MODIFY_PASSWORD = 'CMS_MODIFY_PASSWORD';
 
 		/**
 		 * 获取当前登入用户的ID

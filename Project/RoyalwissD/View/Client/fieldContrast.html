@@ -48,7 +48,7 @@
 						<!--步骤条结束-->
 						<div class="table_wrap">
 							<div class="panel panel-default">
-								<a href="<{:U('Client/fieldSetting', ['mid'=>I('get.mid', 0, 'int')])}>" target="_blank" type="button" class="btn btn-success filed_settings">字段设置</a>
+								<a href="<{:U('Client/import', ['mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-info filed_settings">返回上一步</a>
 								<div class="panel-heading"><h2>字段对比</h2></div>
 								<div class="panel-body">
 									<form class="form-horizontal" role="form" action="" id="form">
@@ -77,12 +77,14 @@
 																	<select name="map[]" class="form-control select_h" title="">
 																		<option value="_none">---不保存---</option>
 																		<volist name="column_list" id="single" key="index">
-																			<if condition="$column eq $single['name']">
-																				<option value="<{:($index-1)}>" selected><{$single.name}></option>
-																				<php>$is_found = true;</php>
-																				<else/>
-																				<option value="<{:($index-1)}>"><{$single.name}></option>
-																			</if>
+																			<eq name="single.view" value="1">
+																				<if condition="$column eq $single['name']">
+																					<option value="<{:($index-1)}>" selected><{$single.name}></option>
+																					<php>$is_found = true;</php>
+																					<else/>
+																					<option value="<{:($index-1)}>"><{$single.name}></option>
+																				</if>
+																			</eq>
 																		</volist>
 																	</select>
 																</td>
@@ -101,7 +103,6 @@
 										</div>
 										<div class="row form-group">
 											<div class="col-sm-12 text-center">
-												<a href="<{:U('Client/import', ['mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-default">返回上一步</a>
 												<button type="button" class="btn btn-primary btn-save">导入</button>
 											</div>
 										</div>

@@ -37,16 +37,11 @@
 						<div class="table_wrap mb_10">
 							<div class="nav_tab clearfix">
 								<div class="nav_tab_li active">
-									<a href="<{:U('Message/manage', ['mid'=>I('get.mid', 0, 'int')])}>">消息管理</a>
-								</div>
-								<div class="nav_tab_li">
 									<a href="<{:U('Message/sendHistory', ['mid'=>I('get.mid', 0, 'int')])}>">发送记录</a>
 								</div>
-								<present name="sms_balance">
-									<div class="pull-right" style="font-size: 14px; line-height: 50px; padding-right: 20px;">
-										您当前的短信余额：<b style="color: #FB5050; font-weight: bolder; font-size: 16px;"><{$sms_balance}></b>条
-									</div>
-								</present>
+								<div class="nav_tab_li">
+									<a href="<{:U('Message/manage', ['mid'=>I('get.mid', 0, 'int')])}>">消息管理</a>
+								</div>
 							</div>
 						</div>
 						<div class="c_header">

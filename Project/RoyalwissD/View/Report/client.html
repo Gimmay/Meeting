@@ -39,17 +39,109 @@
 							</div>
 						</div>
 						<div class="table_wrap">
-							<div class="zzzz mb_10" style="padding: 40px 0; border: 1px solid #E1E1E1;">
-								<div class="row">
-									<div class="col-sm-12">
-										<div class="col-sm-3"></div>
-										<div class="col-sm-3"></div>
-										<div class="col-sm-3"></div>
-										<div class="col-sm-3"></div>
-									</div>
+							<div class="panel panel-default">
+								<div class="panel-heading">筛选条件</div>
+								<div class="panel-body">
+									<form class="form-horizontal" id="control_form" action="">
+										<input type="hidden" name="requestType" value="search">
+										<div class="row">
+											<div class="col-sm-12 mb_10">
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">关键字</span>
+														<input type="text" class="form-control" placeholder="关键字..." aria-describedby="basic-addon1">
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">性别</span>
+														<select name="gender" class="form-control" title="">
+															<option value="">---无限制---</option>
+															<volist name="gender_list" id="single">
+																<option value="<{$key}>"><{$single}></option>
+															</volist>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">是否新客</span>
+														<select name="" class="form-control" title="">
+															<option value="">---无限制---</option>
+															<volist name="is_new_list" id="single">
+																<option value="<{$key}>"><{$single}></option>
+															</volist>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon" title="">团队</span>
+														<select name="" class="form-control">
+															<option value="">---无限制---</option>
+															<volist name="team_list" id="single">
+																<option value="<{$single.value}>"><{$single.html}></option>
+															</volist>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-12 mb_10">
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">客户类型</span>
+														<select name="" class="form-control" title="">
+															<option value="">---无限制---</option>
+															<volist name="type_list" id="single">
+																<option value="<{$key}>"><{$single}></option>
+															</volist>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">是否签到</span>
+														<select name="" class="form-control" title="">
+															<option value="">---无限制---</option>
+															<volist name="sign_list" id="single">
+																<option value="<{$key}>"><{$single}></option>
+															</volist>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">区域</span>
+														<select name="" class="form-control"></select>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">是否新店</span>
+														<select name="" class="form-control" title="">
+															<option value="">---无限制---</option>
+															<volist name="unit_is_new_list" id="single">
+																<option value="<{$key}>"><{$single}></option>
+															</volist>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-12">
+												<div class="col-sm-12">
+													<button type="button" class="btn btn-sm btn-success btn-block btn-save">搜索</button>
+												</div>
+											</div>
+										</div>
+									</form>
 								</div>
 							</div>
+							<div class="panel panel-default">
+								<div class="panel-heading">统计数据</div>
+								<div class="panel-body">
 
+								</div>
+							</div>
 							<table class="table table-bordered table-hover text-center">
 								<thead>
 									<tr>
@@ -108,71 +200,6 @@
 						</div>
 					</section>
 				</div>
-				<div class="right_details">
-					<div class="d_con">
-						<span class="close_btn glyphicon glyphicon-remove">
-						</span>
-						<div class="title">
-							<span>详情</span>
-						</div>
-						<div class="info">
-							<div class="li">
-								<span>单位：</span> <span class="meeting_name"></span>
-							</div>
-							<div class="li">
-								<span>状态：</span> <span class="status"></span>
-							</div>
-							<div class="li">
-								<span>类型：</span> <span class="type"></span>
-							</div>
-							<div class="li">
-								<span>主办方：</span> <span class="host"></span>
-							</div>
-							<div class="li">
-								<span>策划方：</span> <span class="plan"></span>
-							</div>
-							<div class="li">
-								<span>举办地点：</span> <span class="place"></span>
-							</div>
-							<div class="li">
-								<span>会议酒店：</span> <span class="hotel"></span>
-							</div>
-							<div class="li">
-								<span>会议车辆：</span> <span class="car"></span>
-							</div>
-							<div class="li">
-								<span>开始结束时间：</span> <span class="setime"></span>
-							</div>
-							<div class="li">
-								<span>负责人：</span> <span class="director_name"></span>
-							</div>
-							<div class="li">
-								<span>创建时间：</span> <span class="create_time"></span>
-							</div>
-							<div class="li">
-								<span>备注：</span> <span class="comment"></span>
-							</div>
-							<div class="li">
-								<span>简介：</span> <span class="brief"></span>
-							</div>
-						</div>
-						<!--	<div class="btn_fun">
-								<a data-toggle="modal" data-target="#alter_room">选择消息模板</a>
-								<a href="javascript:void(0)">胸卡设计</a> <a href="javascript:void(0)">选择酒店</a>
-								<a href="javascript:void(0)">会议管理人员</a> <a href="javascript:void(0)">签到点</a>
-							</div>-->
-						<div class="d_list">
-							<div class="list_title">二维码</div>
-							<div class="QRcode img">
-								<img src="">
-							</div>
-							<div class="list_title">logo图</div>
-							<div class="logo img">
-								<img src="">
-							</div>
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -223,36 +250,9 @@
 	<script>
 		var ManageObject = {
 			object:{
-				signMessageSelect       :$('#sign_mes').QuasarSelect({
-					name        :'sign_mes',
-					classStyle  :'form-control',
-					idInput     :'selected_sign_mes',
-					idHidden    :'selected_sign_mes_form',
-					data        :'<{:json_encode($message)}>',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				antiSignMessageSelect   :$('#unti_sign_mes').QuasarSelect({
-					name        :'anti_sign_mes',
-					classStyle  :'form-control',
-					idInput     :'selected_unti_sign_mes',
-					idHidden    :'selected_unti_sign_mes_form',
-					data        :'<{:json_encode($message)}>',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				receivablesMessageSelect:$('#receivables_mes').QuasarSelect({
-					name        :'receivables_mes',
-					classStyle  :'form-control',
-					idInput     :'selected_receivables_mes',
-					idHidden    :'selected_receivables_mes_form',
-					data        :'<{:json_encode($message)}>',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				toast                   :$().QuasarToast(),
-				loading                 :$().QuasarLoading(),
-				icheck                  :$('.icheck').iCheck({
+				toast  :$().QuasarToast(),
+				loading:$().QuasarLoading(),
+				icheck :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				})

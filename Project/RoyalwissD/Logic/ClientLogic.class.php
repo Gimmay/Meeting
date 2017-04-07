@@ -145,12 +145,16 @@
 					unset($attendee['id']);
 					$result2 = $attendee_model->create($attendee);
 					if(!$result2['status']) return array_merge($result2, ['__ajax__' => true]);
+					// 审核该客户
+					$client_logic = new ClientLogic();
+					$result3      = $client_logic->review($result['id'], $meeting_id);
+					if(!$result3['status']) return array_merge($result3, ['__ajax__' => true]);
 
 					return [
 						'status'   => true,
 						'message'  => '复制成功',
 						'__ajax__' => true,
-						'nextPage' => U('RoyalwissD/Client/alter', [
+						'nextPage' => U('RoyalwissD/Client/modify', [
 							'id'   => $result['id'],
 							'mid'  => $meeting_id,
 							'copy' => true
@@ -191,7 +195,7 @@
 					$result = $client_model->modify(['id' => $client_id], array_merge($post, [
 						'name_pinyin' => $str_obj->getPinyin($post['name'], true, ''),
 						'unit_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
-						'birthday'    => Time::isNull($post['birthday']),
+						'birthday'    => Time::isTimeFormat($post['birthday']),
 						'password'    => $general_client_logic->makePassword($client_model->getDefaultPassword(), $post['mobile'])
 					]));
 					// 创建参会信息
@@ -247,7 +251,7 @@
 							$result = $client_model->modify(['id' => $client_id], array_merge($post, [
 								'name_pinyin' => $str_obj->getPinyin($post['name'], true, ''),
 								'unit_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
-								'birthday'    => Time::isNull($post['birthday']),
+								'birthday'    => Time::isTimeFormat($post['birthday']),
 								'password'    => $general_client_logic->makePassword($client_model->getDefaultPassword(), $post['mobile'])
 							]));
 							if($result['status']) $result['message'] = '该客户已存在并覆盖旧数据';
@@ -262,7 +266,7 @@
 							'creatime'    => Time::getCurrentTime(),
 							'name_pinyin' => $str_obj->getPinyin($post['name'], true, ''),
 							'unit_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
-							'birthday'    => Time::isNull($post['birthday']),
+							'birthday'    => Time::isTimeFormat($post['birthday']),
 							'password'    => $general_client_logic->makePassword($client_model->getDefaultPassword(), $post['mobile'])
 						]));
 						$client_id = $result['id'];
@@ -579,7 +583,7 @@
 								'_batch_save_id'   => $batch_id,
 								'_batch_column_id' => $index,
 								'creator'          => Session::getCurrentUser(),
-								'creatime'         => Time::getCurrentTime()
+								'creatime'         => Time::getCurrentTime(),
 							];
 							$temp_attendee_data = [
 								'mid'              => $meeting_id,
@@ -613,7 +617,7 @@
 								if(isset($client_repeat_mode['clientMobile']) && $client_repeat_mode['clientMobile'] == 1){
 									if($val['mobile'] === $temp_client_data['mobile']) $repeat_flag['mobile'] = 1;
 								}
-								if(($repeat_flag['name'] == $client_repeat_mode['clientName'] && $repeat_flag['name'] == 1) && ($repeat_flag['unit'] == $client_repeat_mode['clientUnit'] && $repeat_flag['unit'] == 1) && ($repeat_flag['mobile'] == $client_repeat_mode['clientMobile'] && $repeat_flag['mobile'] == 1)){ // 必须满足重复数据的判定规则
+								if(($repeat_flag['name'] == $client_repeat_mode['clientName']) && ($repeat_flag['unit'] == $client_repeat_mode['clientUnit']) && ($repeat_flag['mobile'] == $client_repeat_mode['clientMobile']) && !($client_repeat_mode['clientName'] == 0 && $client_repeat_mode['clientMobile'] == 0 && $client_repeat_mode['clientUnit'] == 0)){ // 必须满足重复数据的判定规则并且设定了判定字段
 									$is_repeat              = true;
 									$temp_client_data['id'] = $val['id']; // Warning：根据插入主键ID数据并根据此字段做覆盖操作！
 									break;
@@ -644,10 +648,10 @@
 						// 构建参会记录的数据
 						/** @var array $saved_client_list 获取刚才插入的客户数据 */
 						$saved_client_list = $client_model->where("_batch_save_id = '$batch_id'")->field('id, _batch_column_id, _batch_save_id')->select();
-						foreach($saved_client_list as $saved_client){
-							foreach($attendee_data as $key => $attendee){
+						foreach($attendee_data as $key => $attendee){
+							foreach($saved_client_list as $saved_client){
 								if($saved_client['_batch_column_id'] == $attendee['_batch_column_id'] && $saved_client['_batch_save_id'] == $batch_id){
-									$attendee_data[$key] = array_merge($attendee_data[$key], ['cid' => $saved_client['id']]);
+									$attendee_data[$key]['cid'] = $saved_client['id'];
 									break;
 								}
 							}
@@ -671,6 +675,34 @@
 					$meeting_id    = I('get.mid', 0, 'int');
 					$client_id_str = I('post.id', '');
 					$client_id     = explode(',', $client_id_str);
+					/** @var \RoyalwissD\Model\ClientModel $client_model */
+					$client_model = D('RoyalwissD/Client');
+					if(count($client_id)>0){
+						$client_list = $client_model->getList([
+							$client_model::CONTROL_COLUMN_PARAMETER_SELF['clientID']  => [
+								'in',
+								'('.implode(',', $client_id).')'
+							],
+							$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $meeting_id
+						]);
+						foreach($client_list as $client){
+							if($client['sign_status'] == 1) return [
+								'status'   => false,
+								'message'  => '删除失败：存在已签到的客户',
+								'__ajax__' => true
+							];
+							if($client['review_status'] == 1) return [
+								'status'   => false,
+								'message'  => '删除失败：存在已审核的客户',
+								'__ajax__' => true
+							];
+						}
+					}
+					else return [
+						'status'   => false,
+						'message'  => '未选择任何客户',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\AttendeeModel $attendee_model */
 					$attendee_model = D('RoyalwissD/Attendee');
 					$result         = $attendee_model->drop(['cid' => ['in', $client_id], 'mid' => $meeting_id]);
@@ -790,7 +822,35 @@
 					$meeting_id     = I('get.mid', 0, 'int');
 					$client_id_str  = I('post.id', '');
 					$client_id      = explode(',', $client_id_str);
-					$result         = $attendee_model->disable(['cid' => ['in', $client_id], 'mid' => $meeting_id]);
+					/** @var \RoyalwissD\Model\ClientModel $client_model */
+					$client_model = D('RoyalwissD/Client');
+					if(count($client_id)>0){
+						$client_list = $client_model->getList([
+							$client_model::CONTROL_COLUMN_PARAMETER_SELF['clientID']  => [
+								'in',
+								'('.implode(',', $client_id).')'
+							],
+							$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $meeting_id
+						]);
+						foreach($client_list as $client){
+							if($client['sign_status'] == 1) return [
+								'status'   => false,
+								'message'  => '禁用失败：存在已签到的客户',
+								'__ajax__' => true
+							];
+							if($client['review_status'] == 1) return [
+								'status'   => false,
+								'message'  => '禁用失败：存在已审核的客户',
+								'__ajax__' => true
+							];
+						}
+					}
+					else return [
+						'status'   => false,
+						'message'  => '未选择任何客户',
+						'__ajax__' => true
+					];
+					$result = $attendee_model->disable(['cid' => ['in', $client_id], 'mid' => $meeting_id]);
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
@@ -913,6 +973,49 @@
 					$result        = $message_logic->sendMessageByAction($meeting_id, $client_id, 1);
 
 					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'synchronize_wechat_information':
+					$meeting_id = I('get.mid', 0, 'int');
+					/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
+					$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
+					if(!$meeting_configure_model->fetch(['mid' => $meeting_id])) return [
+						'status'   => false,
+						'message'  => '找不到会议信息',
+						'__ajax__' => true
+					];
+					$meeting_configure = $meeting_configure_model->getObject();
+					/** @var \General\Model\ApiConfigureModel $api_configure_model */
+					$api_configure_model = D('General/ApiConfigure');
+					// 1、若设定了微信企业号的接口
+					if($meeting_configure['wechat_enterprise_configure']){
+						if(!$api_configure_model->fetch([
+							'id'     => $meeting_configure['wechat_enterprise_configure'],
+							'status' => ['neq', 2]
+						])
+						) return [
+							'status'   => false,
+							'message'  => '找不到微信企业号接口配置信息',
+							'__ajax__' => true
+						];
+						$api_configure = $api_configure_model->getObject();
+						print_r($api_configure);
+						exit;
+					}
+					// 2、若设定了微信公众号的接口.
+					if($meeting_configure['wechat_official_configure']){
+						if(!$api_configure_model->fetch([
+							'id'     => $meeting_configure['wechat_official_configure'],
+							'status' => ['neq', 2]
+						])
+						) return [
+							'status'   => false,
+							'message'  => '找不到微信公众号接口配置信息',
+							'__ajax__' => true
+						];
+						$api_configure = $api_configure_model->getObject();
+						print_r($api_configure);
+						exit;
+					}
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];
@@ -1403,7 +1506,7 @@
 					] : ['unit' => $column_value, 'unit_pinyin' => $val];
 				break;
 				case 'birthday':
-					$val = Time::isNull($column_value);
+					$val = Time::isTimeFormat($column_value);
 
 					return $return_full_result ? [
 						'save' => [$column_name => $val],

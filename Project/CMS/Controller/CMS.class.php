@@ -20,9 +20,16 @@
 		/** 登入后访问的页面控制器名以及操作名 */
 		const FIRST_PAGE = 'CMS/Meeting/type';
 		/** 不登入能够直接访问的页面列表(全小写) */
-		const CAN_ACCESS_PAGE_LIST = [
+		const CAN_ACCESS_WITHOUT_LOGIN_PAGE_LIST = [
 			'cms/user/login',
 			'user/login',
+		];
+		/** 需要修改密码时能直接访问的页面列表(全小写) */
+		const CAN_GOTO_WHEN_MODIFY_PASSWORD_LIST = [
+			'cms/my/modifypassword2',
+			'my/modifypassword2',
+			'cms/my/logout',
+			'my/logout'
 		];
 		/** 默认的每页记录数 */
 		const PAGE_RECORD_COUNT = 20;
@@ -62,24 +69,38 @@
 		 * 包含重定向
 		 */
 		private function _checkLogin(){
-			$canAccessDirectly = function (){
+			$needModifyPassword   = function (){
+				return isset($_SESSION[Session::MUST_MODIFY_PASSWORD]) && session(Session::MUST_MODIFY_PASSWORD) ? true : false;
+			};
+			$canAccessDirectlyWithoutLogin    = function (){
 				$cur_cv = strtolower(CONTROLLER_NAME.'/'.ACTION_NAME);
 
-				return in_array($cur_cv, self::CAN_ACCESS_PAGE_LIST) ? true : false;
+				return in_array($cur_cv, self::CAN_ACCESS_WITHOUT_LOGIN_PAGE_LIST) ? true : false;
 			};
-			$isLogin           = function (){
+			$canAccessDirectlyWhenModifyPassword    = function (){
+				$cur_cv = strtolower(CONTROLLER_NAME.'/'.ACTION_NAME);
+
+				return in_array($cur_cv, self::CAN_GOTO_WHEN_MODIFY_PASSWORD_LIST) ? true : false;
+			};
+
+			$isLogin              = function (){
 				return isset($_SESSION[Session::LOGIN_USER_ID]) && session(Session::LOGIN_USER_ID) ? true : false;
 			};
-			$is_login          = $isLogin();
-			if(!$canAccessDirectly()){
-				if(!$is_login){
+			$is_login             = $isLogin();
+			$need_modify_password = $needModifyPassword();
+			if($is_login){
+				if($need_modify_password){
+					if(!$canAccessDirectlyWhenModifyPassword()) $this->redirect('My/modifyPassword2');
+				}
+				else{
+					if($canAccessDirectlyWithoutLogin()) $this->redirect(self::FIRST_PAGE);
+				}
+			}
+			else{
+				if(!$canAccessDirectlyWithoutLogin()){
 					$this->redirect(self::LOGIN_PAGE);
 					exit;
 				}
-			}
-			elseif($is_login){
-				$this->redirect(self::FIRST_PAGE);
-				exit;
 			}
 		}
 
@@ -98,7 +119,7 @@
 				define('CV', $cv);
 				define('PAGE_SUFFIX', C('PAGE_SUFFIX'));
 			};
-			define('PUBLIC_PATH','/'.'./Public');
+			define('PUBLIC_PATH', '/'.'./Public');
 			define('COMMON_SCRIPT_PATH', '/'.APP_PATH.'Resource/Script');
 			define('COMMON_STYLE_PATH', '/'.APP_PATH.'Resource/Style');
 			define('COMMON_IMAGE_PATH', '/'.APP_PATH.'Resource/Image');
@@ -160,9 +181,9 @@
 		 * @return array
 		 */
 		protected function getModelControl(){
-//			$keyword_param = I('get.'.self::URL_CONTROL_PARAMETER['keyword'], '');
-			$result        = [];
-//			if(isset($_GET[self::URL_CONTROL_PARAMETER['keyword']]) && $keyword_param != '') $result[CMSModel::CONTROL_COLUMN_PARAMETER['keyword']] = $keyword_param;
+			//			$keyword_param = I('get.'.self::URL_CONTROL_PARAMETER['keyword'], '');
+			$result = [];
+			//			if(isset($_GET[self::URL_CONTROL_PARAMETER['keyword']]) && $keyword_param != '') $result[CMSModel::CONTROL_COLUMN_PARAMETER['keyword']] = $keyword_param;
 			$result[CMSModel::CONTROL_COLUMN_PARAMETER['order']] = I('get.'.self::URL_CONTROL_PARAMETER['orderColumn'], self::DEFAULT_ORDER_COLUMN).' '.I('get.'.self::URL_CONTROL_PARAMETER['orderMethod'], self::DEFAULT_ORDER_METHOD);
 
 			return $result;

@@ -35,7 +35,7 @@
 								'mobile'
 							];
 
-							return in_array($column_name, $list);
+							return in_array($column_name, $list)?1:0;
 						};
 						$setViewedColumn    = function ($column_name){
 							$list = [
@@ -48,7 +48,7 @@
 								'creatime'
 							];
 
-							return in_array($column_name, $list);
+							return in_array($column_name, $list)?1:0;
 						};
 						/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 						$client_column_control_model = D('RoyalwissD/ClientColumnControl');
@@ -66,7 +66,7 @@
 								'table'    => $value['table_name'],
 								'name'     => $value['column_comment'],
 								'must'     => $setNecessaryColumn($value['column_name']),
-								'view'     => 1,
+								'view'     => $setViewedColumn($value['column_name']),
 								'creatime' => Time::getCurrentTime(),
 								'creator'  => Session::getCurrentUser()
 							];
@@ -119,6 +119,7 @@
 							'__ajax__' => true,
 							'nextPage' => U('manage')
 						]);
+						//
 					}
 
 					return array_merge($result, ['__ajax__' => true, 'nextPage' => U('manage')]);

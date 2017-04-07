@@ -43,7 +43,7 @@
 						'creator'     => Session::getCurrentUser(),
 						'name_pinyin' => $str_obj->getPinyin($post['name'], true, '')
 					]));
-					if(!($client_id_str == null || $result['status'])){
+					if(!($client_id_str == null || !$result['status'])){
 						$result2 = $room_model->checkIn($meeting_id, $result['id'], $client_id_arr);
 						if(!$result2['status']) return array_merge($result2, ['__ajax__' => true]);
 					}
@@ -134,33 +134,9 @@
 					return array_merge($record, ['__ajax__' => true]);
 				break;
 				case 'get_client':
-					/** @var \RoyalwissD\Model\ClientModel $client_model */
-					$client_model = D('RoyalwissD/Client');
-					/** @var \RoyalwissD\Model\RoomModel $room_model */
-					$room_model = D('RoyalwissD/Room');
 					$keyword    = I('post.keyword', '');
 					$meeting_id = I('get.mid', 0, 'int');
-					// $group_id    = I('post.id', 0, 'int');
-					$customer_list = $room_model->getCustomer($meeting_id);
-					$option        = [];
-					if($customer_list){
-						$customer_id_str = '';
-						foreach($customer_list as $customer) $customer_id_str .= "$customer[id],";
-						$customer_id_str                                                  = trim($customer_id_str, ',');
-						$customer_id_str                                                  = "($customer_id_str)";
-						$option[$client_model::CONTROL_COLUMN_PARAMETER_SELF['clientID']] = [
-							'not in',
-							$customer_id_str
-						];
-					}
-					if(!($keyword == '')) $option[CMSModel::CONTROL_COLUMN_PARAMETER['keyword']] = $keyword;
-					$list = $client_model->getList(array_merge($option, [
-						CMSModel::CONTROL_COLUMN_PARAMETER['status']                 => ['=', 1],
-						$client_model::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus'] => ['=', 1],
-						$client_model::CONTROL_COLUMN_PARAMETER_SELF['signStatus']   => ['=', 1],
-						$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $meeting_id,
-						//						$client_model::CONTROL_COLUMN_PARAMETER_SELF['limit']        => [0, 20] // 分段读取
-					]));
+					$list       = $this->_getNotCheckInClientList($meeting_id, $keyword);
 
 					return array_merge($list, ['__ajax__' => true]);
 				break;
@@ -490,6 +466,26 @@
 
 					return $data;
 				break;
+				case 'manage:statistics':
+					$meeting_id = $data['meetingID'];
+					$statistics = [
+						'roomOfFully'        => 0,
+						'roomOfNotFully'     => 0,
+						'clientOfCheckIn'    => 0,
+						'clientOfNotCheckIn' => count($this->_getNotCheckInClientList($meeting_id)),
+					];
+					foreach($data['total'] as $room){
+						if($room['client_code'] == '') $check_in_client = [];
+						else $check_in_client = explode(',', $room['client_code']);
+						if($room['client_code'] != '' || $room['client_code']){
+							$statistics['clientOfCheckIn'] += count($check_in_client);
+							if(count($check_in_client)>=$room['capacity'] && $room['capacity']>0) $statistics['roomOfFully']++;
+						}
+					}
+					$statistics['roomOfNotFully'] = count($data['total'])-$statistics['roomOfFully'];
+
+					return $statistics;
+				break;
 				default:
 					return $data;
 				break;
@@ -520,5 +516,33 @@
 					return [$column_name => $column_value];
 				break;
 			}
+		}
+
+		private function _getNotCheckInClientList($meeting_id, $keyword = ''){
+			/** @var \RoyalwissD\Model\ClientModel $client_model */
+			$client_model = D('RoyalwissD/Client');
+			/** @var \RoyalwissD\Model\RoomModel $room_model */
+			$room_model    = D('RoyalwissD/Room');
+			$customer_list = $room_model->getCustomer($meeting_id);
+			$option        = [];
+			if($customer_list){
+				$customer_id_str = '';
+				foreach($customer_list as $customer) $customer_id_str .= "$customer[id],";
+				$customer_id_str                                                  = trim($customer_id_str, ',');
+				$customer_id_str                                                  = "($customer_id_str)";
+				$option[$client_model::CONTROL_COLUMN_PARAMETER_SELF['clientID']] = [
+					'not in',
+					$customer_id_str
+				];
+			}
+			if(!($keyword == '')) $option[CMSModel::CONTROL_COLUMN_PARAMETER['keyword']] = $keyword;
+			$list = $client_model->getList(array_merge($option, [
+				CMSModel::CONTROL_COLUMN_PARAMETER['status']                 => ['=', 1],
+				$client_model::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus'] => ['=', 1],
+				$client_model::CONTROL_COLUMN_PARAMETER_SELF['signStatus']   => ['=', 1],
+				$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $meeting_id,
+			]));
+
+			return $list;
 		}
 	}

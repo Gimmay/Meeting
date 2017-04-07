@@ -53,6 +53,7 @@
 									<option>150</option>
 									<option>200</option>
 									<option>500</option>
+									<option>10000</option>
 								</select> 项结果
 								</div>
 							</div>
@@ -99,6 +100,9 @@
 										</li>
 										<li data-toggle="modal" data-target="#configure_modal">
 											<a href="javascript:void(0)">客户重复记录设置</a>
+										</li>
+										<li data-toggle="modal" data-target="#synchronous_wx_modal">
+											<a href="javascript:void(0)">同步微信数据</a>
 										</li>
 									</ul>
 								</div>
@@ -158,10 +162,10 @@
 									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.notReviewed}>)
 								</div>
 								<!--<div class="input-group pull-left employee color_red">-->
-									<!--<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;员工 (<{$statistics.employee}>)-->
+								<!--<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;员工 (<{$statistics.employee}>)-->
 								<!--</div>-->
 								<!--<div class="input-group pull-left client color_red">-->
-									<!--<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;客户 (<{$statistics.client}>)-->
+								<!--<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;客户 (<{$statistics.client}>)-->
 								<!--</div>-->
 								<div class="input-group pull-left usable color_yellow">
 									<input type="radio" name="status" class="icheckYellow">&nbsp;&nbsp;可用 (<{$statistics.enabled}>)
@@ -452,6 +456,28 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						<button type="button" class="btn btn-primary btn-save">确认删除</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 同步微信数据 -->
+	<div class="modal fade" id="synchronous_wx_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">同步微信数据</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否同步微信数据？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认</button>
 					</div>
 				</form>
 			</div>

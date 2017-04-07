@@ -52,7 +52,7 @@
 			/** @var \RoyalwissD\Model\RoomModel $room_model */
 			$room_model           = D('RoyalwissD/Room');
 			$model_control_column = $this->getModelControl();
-			$list                 = $room_model->getList(array_merge($model_control_column, [
+			$total                = $list = $room_model->getList(array_merge($model_control_column, [
 				CMSModel::CONTROL_COLUMN_PARAMETER['status']            => ['<>', 2],
 				$room_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID,
 				$room_model::CONTROL_COLUMN_PARAMETER_SELF['hotelID']   => $this->hotelID
@@ -62,6 +62,8 @@
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$pagination = $page_object->show();
 			$list       = $room_logic->setData('manage', $list);
+			$statistics = $room_logic->setData('manage:statistics', ['list' => $list, 'total' => $total, 'meetingID'=>$this->meetingID]);
+			$this->assign('statistics', $statistics);
 			// 获取房间类型的可用数和总数
 			/** @var \RoyalwissD\Model\RoomTypeModel $room_type_model */
 			$room_type_model  = D('RoyalwissD/RoomType');

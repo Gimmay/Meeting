@@ -38,23 +38,23 @@
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/carton.png" alt="">
 														<p>项目管理</p>
 													</a>
-													<a href="<{:U('exportTemplate', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+													<a href="<{:U('Client/exportTemplate', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/magic-wand.png" alt="">
 														<p>下载导入模板</p>
 													</a>
 													<a href="<{:U('Client/import', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/hat-and-magic-wand.png" alt="">
 														<p>导入客户</p>
-													</a><a href="javascript:void(0)" class="func_btn">
+													</a><a href="<{:U('Message/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 													<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/info.png" alt="">
 													<p>消息管理</p>
-												</a> <a href="javascript:void(0)" class="func_btn">
+												</a> <!--<a href="javascript:void(0)" class="func_btn">
 													<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/pin.png" alt="">
 													<p>签到点管理</p>
-												</a> <a href="javascript:void(0)" class="func_btn">
+												</a> --><!--<a href="javascript:void(0)" class="func_btn">
 													<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/id.png" alt="">
 													<p>胸卡管理</p>
-												</a>
+												</a>-->
 													<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/printer.png" alt="">
 														<p>支付方式管理</p>
@@ -89,10 +89,10 @@
 													<i class="glyphicon glyphicon-tag"></i> <span>业务流程</span>
 												</div>
 												<div class="row">
-													<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+													<!--<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/bookmark.png" alt="">
 														<p>简易收款流程</p>
-													</a>
+													</a>-->
 													<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/medal-gold.png" alt="">
 														<p>审核签到</p>

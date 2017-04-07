@@ -2,47 +2,28 @@
 	/**
 	 * Created by PhpStorm.
 	 * User: 0967
-	 * Date: 2017-3-11
-	 * Time: 17:08
+	 * Date: 2017-4-7
+	 * Time: 16:18
 	 */
 	namespace RoyalwissD\Model;
 
-	use Exception;
-
-	class ClientModel extends RoyalwissDModel{
+	class ReportModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		// todo 统计签到、收款等报表时 注意场外/场内的客户区别
-		protected $tableName        = 'client';
-		protected $autoCheckFields  = true;
-		protected $connection       = 'DB_CONFIG_ROYALWISS_DEAL';
-		private   $_defaultPassword = '';
+		protected $connection = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = [
 			'meetingID'    => 'mid',
 			'clientID'     => 'cid',
 			'type'         => 'type',
 			'reviewStatus' => 'reviewed',
 			'signStatus'   => 'signed',
-			'limit'        => 'limit'
+			'area'         => 'area',
+			'isNew'        => 'is_new'
 		];
-		/** 性别 */
-		const GENDER = [
-			0 => '未指定',
-			1 => '男',
-			2 => '女'
-		];
-		/** 是否新客 */
-		const IS_NEW = [
-			9 => '',
-			0 => '否',
-			1 => '是'
-		];
-		/** 客户类型 */
-		const TYPE = ['其他', '终端', '老板娘', '嘉宾', '员工', '陪同'];
 
-		public function getList($control = []){
+		public function getClientList($control = []){
 			$getCustomColumn = function (){
 				/** @var \RoyalwissD\Model\AttendeeModel $attendee_model */
 				$attendee_model     = D('RoyalwissD/Attendee');
@@ -61,9 +42,7 @@
 			$review_status   = $control[self::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
 			$sign_status     = $control[self::CONTROL_COLUMN_PARAMETER_SELF['signStatus']];
 			$type            = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
-			$limit           = $control[self::CONTROL_COLUMN_PARAMETER_SELF['limit']];
 			$where           = ' WHERE 0 = 0 ';
-			$split           = '';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -83,7 +62,6 @@
 			if(isset($type) && isset($type[0]) && isset($type[1])) $where .= " and type $type[0] $type[1] ";
 			if(isset($review_status) && isset($review_status[0]) && isset($review_status[1])) $where .= " and review_status $review_status[0] $review_status[1] ";
 			if(isset($sign_status) && isset($sign_status[0]) && isset($sign_status[1])) $where .= " and sign_status $sign_status[0] $sign_status[1] ";
-			if(isset($limit) && isset($limit[0]) && isset($limit[1])) $split = " limit $limit[0], $limit[1] ";
 			$custom_column = $getCustomColumn();
 			$sql           = "
 SELECT * FROM (
@@ -147,123 +125,28 @@ SELECT * FROM (
 		) hotel_room_name,
 		a1.cid,
 		a1.id,
-		a1.mid
+		a1.mid,
+		u4.area,
+		u4.address unit_address,
+		u4.is_new unit_is_new,
+		u4.id uid
 	FROM meeting_royalwiss_deal.attendee a1
 	JOIN meeting_royalwiss_deal.client c1 ON c1.id = a1.cid
 	LEFT JOIN meeting_common.user u1 ON u1.id = a1.creator AND u1.status <> 2
 	LEFT JOIN meeting_common.user u2 ON u2.id = a1.sign_director AND u2.status <> 2
 	LEFT JOIN meeting_common.user u3 ON u3.id = a1.review_director AND u3.status <> 2
+	LEFT JOIN meeting_royalwiss_deal.unit u4 ON u4.name = c1.unit AND u4.status <> 2
 ) tab
 $where
 $order
-$split
 ";
 
 			return $this->query($sql);
 		}
 
-		/**
-		 * 创建客户
-		 *
-		 * @param array $data 客户信息
-		 *
-		 * @return array
-		 */
-		public function create($data){
-			try{
-				$result = $this->add($data);
-
-				return $result ? ['status' => true, 'message' => '创建客户成功', 'id' => $result] : [
-					'status'  => false,
-					'message' => '创建客户失败'
-				];
-			}catch(Exception $error){
-				$message   = $error->getMessage();
-				$exception = $this->handlerException($message);
-
-				return !$exception['status'] ? $exception : ['status' => false, 'message' => $this->getError()];
-			}
+		public function getUnitArea($meeting_id){
 		}
 
-		/**
-		 * 获取默认密码
-		 *
-		 * @return string
-		 */
-		public function getDefaultPassword(){
-			return $this->_defaultPassword;
-		}
-
-		/**
-		 * 获取字段列表
-		 *
-		 * @return array
-		 */
-		public function getColumnList(){
-			$list = $this->query("
-SELECT
-	c.TABLE_SCHEMA,
-	c.TABLE_NAME,
-	c.COLUMN_NAME,
-	c.DATA_TYPE,
-	c.CHARACTER_MAXIMUM_LENGTH,
-	c.COLUMN_TYPE,
-	c.COLUMN_COMMENT,
-	'fixed' TYPE
-FROM information_schema.TABLES t
-JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'client'
-");
-
-			return $list;
-		}
-
-		/**
-		 * 获取Select插件的数据列表（审核的客户）
-		 *
-		 * @param int  $meeting_id   会议ID
-		 * @param bool $include_unit 是否包含会所信息
-		 *
-		 * @return array
-		 */
-		public function getSelectedList($meeting_id, $include_unit = false){
-			$name = $include_unit ? "concat('[',c.unit,'] ',c.name)" : 'c.name';
-			$sql  = "
-SELECT
-	c.id value,
-	IF(a.sign_status = 1, $name, concat('* ', $name)) html,
-	concat(c.name,',',c.name_pinyin,',',c.unit,',',c.unit_pinyin,',',c.mobile) keyword
-FROM meeting_royalwiss_deal.client c
-JOIN meeting_royalwiss_deal.attendee a ON c.id = a.cid
-AND a.mid = $meeting_id
-WHERE a.status = 1 AND a.review_status = 1
-ORDER BY a.sign_time DESC, a.review_time DESC, a.id DESC";
-
-			return $this->query($sql);
-		}
-
-		/**
-		 * 获取团队Select插件的数据列表（审核的客户）
-		 *
-		 * @param int $meeting_id 会议ID
-		 *
-		 * @return array
-		 */
-		public function getTeamSelectedList($meeting_id){
-			$sql    = "
-SELECT
-	DISTINCT c.team value,
-	c.team html,
-	concat(c.team) keyword
-FROM meeting_royalwiss_deal.client c
-JOIN meeting_royalwiss_deal.attendee a ON c.id = a.cid
-AND a.mid = $meeting_id
-WHERE a.status = 1 AND a.review_status = 1
-ORDER BY c.team
-";
-			$result = $this->query($sql);
-
-			return $result;
+		public function getClientTeam($meeting_id){
 		}
 	}

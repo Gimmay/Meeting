@@ -208,12 +208,11 @@
 					'__ajax__' => false,
 				];
 				if($password == ''){
-					// todo 密码不能为空
+					session(Session::MUST_MODIFY_PASSWORD, 1);
 				}
 				session(Session::LOGIN_USER_ID, $user['id']);
 				session(Session::LOGIN_USER_NAME, $user['name']);
 				session(Session::LOGIN_USER_NICKNAME, $user['nickname']);
-
 				return [
 					'status'       => true,
 					'message'      => '登入成功',
@@ -247,7 +246,7 @@
 							if($found == 0 && strpos($user['name_pinyin'], $keyword) !== false) $found = 1;
 							if($found == 0) continue;
 						}
-						$role_id_list   = explode(',', $user['role_id']);
+						$role_id_list = explode(',', $user['role_id']);
 						if(isset($role_id)){
 							if(!in_array($role_id, $role_id_list)) continue;
 						}

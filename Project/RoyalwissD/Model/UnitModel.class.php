@@ -18,20 +18,19 @@
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = ['area' => 'area', 'meetingID' => 'mid'];
-		/** 是否新客 */
+		/** 是否新店 */
 		const IS_NEW = [
-			9 => '',
 			0 => '否',
 			1 => '是'
 		];
 
 		public function getList($control = []){
-			$keyword = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order   = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status  = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$area    = $control[self::CONTROL_COLUMN_PARAMETER_SELF['area']];
-			$meeting_id    = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$where   = ' WHERE 0 = 0 ';
+			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$area       = $control[self::CONTROL_COLUMN_PARAMETER_SELF['area']];
+			$meeting_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$where      = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){

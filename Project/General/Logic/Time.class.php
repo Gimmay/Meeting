@@ -18,13 +18,16 @@
 		}
 
 		/**
-		 * 判断时间字符串是否为空
+		 * 判断是否是时间格式
 		 *
 		 * @param string $str 字符串
 		 *
 		 * @return null|string 是则返回空 否则返回原字符串
 		 */
-		public static function isNull($str){
-			return $str == '' ? null : $str;
+		public static function isTimeFormat($str){
+			$result = strtotime($str) === false ? null : $str;
+			$result = ($result == '' ? null : $str);
+
+			return $result;
 		}
 	}

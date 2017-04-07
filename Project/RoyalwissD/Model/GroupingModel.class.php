@@ -84,6 +84,7 @@ SELECT * FROM (
 			AND g.id = gm.gid
 			AND gm.STATUS = 1
 			AND a.mid = g.mid
+			AND gm.process_status = 1
 		) assigned
 	FROM meeting_royalwiss_deal.grouping g
 	LEFT JOIN meeting_common.user u1 ON u1.id = g.creator AND u1.status <> 2
@@ -112,7 +113,7 @@ FROM meeting_royalwiss_deal.grouping g
 JOIN meeting_royalwiss_deal.grouping_member gm ON gm.gid = g.id AND gm.status <> 2
 JOIN meeting_royalwiss_deal.client c ON c.id = gm.cid AND c.status <> 2
 JOIN meeting_royalwiss_deal.attendee a ON a.cid = c.id AND a.status <> 2 AND a.mid = g.mid
-WHERE g.status <> 2 AND g.mid = $meeting_id $group_filter
+WHERE g.status <> 2 AND gm.process_status = 1 AND g.mid = $meeting_id $group_filter
 ";
 			$result = $this->query($sql);
 
@@ -138,9 +139,13 @@ FROM (
 		(
 			SELECT count(gm.cid)
 			FROM meeting_royalwiss_deal.grouping_member gm
-			WHERE gm.mid = $meeting_id
+			JOIN meeting_royalwiss_deal.client c ON gm.cid = c.id AND c.status <> 2
+			JOIN meeting_royalwiss_deal.attendee a ON a.cid = c.id AND a.status <> 2
+			WHERE gm.mid = g.mid
 			AND g.id = gm.gid
 			AND gm.STATUS = 1
+			AND gm.process_status = 1
+			AND a.mid = g.mid
 		) assigned
 	FROM meeting_royalwiss_deal.grouping g
 ) tab
@@ -164,7 +169,7 @@ WHERE status = 1 AND mid = $meeting_id AND ((assigned < capacity AND capacity > 
 			if(is_null($client_id) || $client_id == '' || !$client_id) return [
 				'status'  => false,
 				'message' => '没有选择任何客户'
-			];	
+			];
 			elseif(is_numeric($client_id)) $client_id = [$client_id];
 			elseif(is_string($client_id)) $client_id = explode(',', $client_id);
 			elseif(is_array($client_id)) ;
@@ -183,7 +188,13 @@ WHERE status = 1 AND mid = $meeting_id AND ((assigned < capacity AND capacity > 
 			/** @var \RoyalwissD\Model\GroupMemberModel $group_member_model */
 			$group_member_model = D('RoyalwissD/GroupMember');
 			// 删除这些成员在其他的分组的记录
-			$group_member_model->where(['mid' => $meeting_id, 'cid' => ['in', $client_id]])->delete();
+			$group_member_model->modify([
+				'mid' => $meeting_id,
+				'cid' => ['in', $client_id]
+			], [
+				'quit_time'      => Time::getCurrentTime(),
+				'process_status' => 0
+			]);
 			// 保存组员记录
 			$group_member_data = [];
 			foreach($client_id as $val) $group_member_data[] = [
@@ -217,14 +228,20 @@ WHERE status = 1 AND mid = $meeting_id AND ((assigned < capacity AND capacity > 
 		public function removeMember($meeting_id, $group_id, $client_id, $remove_all = false){
 			/** @var \RoyalwissD\Model\GroupMemberModel $group_member_model */
 			$group_member_model = D('RoyalwissD/GroupMember');
-			$result             = $remove_all ? $group_member_model->where([
+			$result             = $remove_all ? $group_member_model->modify([
 				'gid' => $group_id,
 				'mid' => $meeting_id
-			])->delete() : $group_member_model->where([
+			], [
+				'quit_time'      => Time::getCurrentTime(),
+				'process_status' => 0
+			]) : $group_member_model->modify([
 				'gid' => $group_id,
 				'mid' => $meeting_id,
 				'cid' => $client_id
-			])->delete();
+			], [
+				'quit_time'      => Time::getCurrentTime(),
+				'process_status' => 0
+			]);
 
 			return $result['status'] ? [
 				'status'  => true,

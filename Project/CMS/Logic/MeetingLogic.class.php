@@ -41,13 +41,24 @@
 						'creator'         => Session::getCurrentUser(),
 						'creatime'        => Time::getCurrentTime(),
 						'brief'           => $opt['originalPost']['brief'],
-						'start_time'      => Time::isNull($data['start_time']),
-						'end_time'        => Time::isNull($data['end_time']),
-						'sign_start_time' => Time::isNull($data['sign_start_time']),
-						'sign_end_time'   => Time::isNull($data['sign_end_time'])
+						'start_time'      => Time::isTimeFormat($data['start_time']),
+						'end_time'        => Time::isTimeFormat($data['end_time']),
+						'sign_start_time' => Time::isTimeFormat($data['sign_start_time']),
+						'sign_end_time'   => Time::isTimeFormat($data['sign_end_time'])
 					]));
+					if($result['status']){
+						/** @var \General\Model\MeetingManagerModel $meeting_manager_model */
+						$meeting_manager_model = D('General/MeetingManager');
+						$result2               = $meeting_manager_model->create([
+							'mid'      => $result['id'],
+							'uid'      => Session::getCurrentUser(),
+							'creatime' => Time::getCurrentTime(),
+							'creator'  => Session::getCurrentUser()
+						]);
+						if(!$result2['status']) return ['status' => false, 'message' => '初始化会务人员失败'];
+					}
 
-					return array_merge($result, ['__ajax__' => false]);
+					return $result;
 				break;
 				case 'get_role': // 分配会务人员时获取角色列表
 					/** @var \CMS\Model\RoleModel $role_model */
@@ -157,10 +168,10 @@
 					$result = $meeting_model->modify(['id' => $opt['meetingID']], array_merge($data, [
 						'name_pinyin'     => $str_obj->getPinyin($data['name'], true, ''),
 						'brief'           => $opt['originalPost']['brief'],
-						'start_time'      => Time::isNull($data['start_time']),
-						'end_time'        => Time::isNull($data['end_time']),
-						'sign_start_time' => Time::isNull($data['sign_start_time']),
-						'sign_end_time'   => Time::isNull($data['sign_end_time'])
+						'start_time'      => Time::isTimeFormat($data['start_time']),
+						'end_time'        => Time::isTimeFormat($data['end_time']),
+						'sign_start_time' => Time::isTimeFormat($data['sign_start_time']),
+						'sign_end_time'   => Time::isTimeFormat($data['sign_end_time'])
 					]));
 
 					return array_merge($result, ['__ajax__' => false]);
@@ -169,7 +180,7 @@
 					$id_arr = explode(',', $opt['id']);
 					/** @var \General\Model\MeetingModel $meeting_model */
 					$meeting_model = D('General/Meeting');
-					$result      = $meeting_model->drop(['id' => ['in', $id_arr]]);
+					$result        = $meeting_model->drop(['id' => ['in', $id_arr]]);
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
@@ -177,7 +188,7 @@
 					$id_arr = explode(',', $opt['id']);
 					/** @var \General\Model\MeetingModel $meeting_model */
 					$meeting_model = D('General/Meeting');
-					$result      = $meeting_model->enable(['id' => ['in', $id_arr]]);
+					$result        = $meeting_model->enable(['id' => ['in', $id_arr]]);
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
@@ -185,7 +196,7 @@
 					$id_arr = explode(',', $opt['id']);
 					/** @var \General\Model\MeetingModel $meeting_model */
 					$meeting_model = D('General/Meeting');
-					$result      = $meeting_model->disable(['id' => ['in', $id_arr]]);
+					$result        = $meeting_model->disable(['id' => ['in', $id_arr]]);
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
