@@ -25,7 +25,7 @@
 		 * @return null|string 是则返回空 否则返回原字符串
 		 */
 		public static function isTimeFormat($str){
-			$result = strtotime($str) === false ? null : $str;
+			$result = (strtotime($str) === false ? null : $str);
 			$result = ($result == '' ? null : $str);
 
 			return $result;

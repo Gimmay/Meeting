@@ -19,6 +19,53 @@
 	class MeetingController extends RoyalwissD{
 		public function _initialize(){
 			parent::_initialize();
+			$this->_updateMeetingStatus();
+		}
+
+		/**
+		 * 自动更新会议状态
+		 */
+		private function _updateMeetingStatus(){
+			/** @var \RoyalwissD\Model\MeetingModel $meeting_model */
+			$meeting_model         = D('RoyalwissD/Meeting');
+			$general_meeting_logic = new GeneralMeetingLogic();
+			$meeting_list          = $meeting_model->getList([
+				CMSModel::CONTROL_COLUMN_PARAMETER['status']        => ['<>', 2],
+				MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['user'] => Session::getCurrentUser(),
+				MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['type'] => $general_meeting_logic->getTypeByModule(MODULE_NAME)
+			]);
+			$current_time          = time();
+			$update_data           = [
+				1 => [],
+				2 => [],
+				3 => [],
+				4 => []
+			];
+			foreach($meeting_list as $meeting){
+				$start_time = strtotime($meeting['start_time']);
+				$end_time   = strtotime($meeting['end_time']);
+				if($start_time>$current_time && $meeting['process_status'] != 2) $update_data[1][] = $meeting['id'];
+				elseif($end_time<$current_time) $update_data[4][] = $meeting['id'];
+				elseif($start_time<=$current_time && $end_time>=$current_time) $update_data[3][] = $meeting['id'];
+			}
+			if(count($update_data[1])>0) $meeting_model->where([
+				'id' => [
+					'in',
+					$update_data[1]
+				]
+			])->save(['process_status' => 1]);
+			if(count($update_data[3])>0) $meeting_model->where([
+				'id' => [
+					'in',
+					$update_data[3]
+				]
+			])->save(['process_status' => 3]);
+			if(count($update_data[4])>0) $meeting_model->where([
+				'id' => [
+					'in',
+					$update_data[4]
+				]
+			])->save(['process_status' => 4]);
 		}
 
 		public function manage(){
@@ -44,7 +91,7 @@
 			$general_meeting_logic = new GeneralMeetingLogic();
 			$model_control_column  = $this->getModelControl();
 			// 处理会议列表URL参数\\\\\\\\\\\\\
-			$type_status = I('get.type', '');
+			$type_status = I('get.process', '');
 			if($type_status) $type_status = $cms_meeting_logic->getStatusByParam($type_status);
 			$process_status = $type_status ? [
 				MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['processStatus'] => [
@@ -58,11 +105,11 @@
 				MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['user'] => Session::getCurrentUser(),
 				MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['type'] => $general_meeting_logic->getTypeByModule(MODULE_NAME)
 			]));
-			
+			$list       = $meeting_logic->setData('manage', ['list'=>$list, 'urlParam'=>I('get.')]);
 			$page_object = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
-			$list       = $meeting_logic->setData('manage', $list);
+
 			$pagination = $page_object->show();
 			$this->assign('list', $list);
 			$this->assign('pagination', $pagination);
@@ -181,7 +228,6 @@
 				MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['user']      => Session::getCurrentUser(),
 			]);
 			$meeting       = $meeting[0];
-
 			$this->assign('meeting', $meeting);
 			$this->display();
 		}

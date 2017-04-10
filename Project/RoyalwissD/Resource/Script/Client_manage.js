@@ -13,7 +13,7 @@ $(function(){
 	//排序
 	var cur_order_column = $('#default_order_column').val();
 	var cur_order_method = $('#default_order_method').val();
-	$('#tableExcel th[data-column]').on('click', function(){
+	$('#tableExcel').find('th[data-column]').on('click', function(){
 		var order_column = $(this).attr('data-column');
 		var order_method = url_object.getUrlParam('orderMethod');
 		var new_url      = url_object.setUrlParam('orderColumn', order_column);
@@ -35,11 +35,12 @@ $(function(){
 	});
 	var quasar_script = document.getElementById('quasar_script');
 	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
+	var $search_config_modal = $('#search_config_modal');
 	/**
 	 * 搜索功能
 	 */
 	// 搜索配置
-	$('#search_config_modal .btn-item .btn').on('click', function(){
+	$search_config_modal.find('.btn-item .btn').on('click', function(){
 		if($(this).parent().hasClass('active')){
 			$(this).parent().removeClass('active');
 			$(this).removeClass('btn-info').addClass('btn-default');
@@ -48,51 +49,51 @@ $(function(){
 			$(this).addClass('btn-info').removeClass('btn-default');
 		}
 		var str = [];
-		$('#search_config_modal .btn-item').each(function(){
+		$search_config_modal.find('.btn-item').each(function(){
 			if($(this).hasClass('active')){
 				var name = $(this).find('.btn').attr('data-name');
 				str.push(name);
 			}
 		});
-		$('#search_config_modal input[name=search_field]').val(str);
+		$search_config_modal.find('input[name=search_field]').val(str);
 	});
 	// 全选搜索字段
 	$('.sc_check_all').on('click', function(){
-		$('#search_config_modal .btn-item').each(function(){
+		$search_config_modal.find('.btn-item').each(function(){
 			if(!$(this).hasClass('active')){
 				$(this).addClass('active');
 				$(this).find('.btn').addClass('btn-info').removeClass('btn-default');
 			}
 		});
 		var str = [];
-		$('#search_config_modal .btn-item').each(function(){
+		$search_config_modal.find('.btn-item').each(function(){
 			if($(this).hasClass('active')){
 				var name = $(this).find('.btn').attr('data-name');
 				str.push(name);
 			}
 		});
-		$('#search_config_modal input[name=search_field]').val(str);
+		$search_config_modal.find('input[name=search_field]').val(str);
 	});
 	// 取消
 	$('.sc_cancel').on('click', function(){
-		$('#search_config_modal .btn-item').each(function(){
+		$search_config_modal.find('.btn-item').each(function(){
 			if($(this).hasClass('active')){
 				$(this).removeClass('active');
 				$(this).find('.btn').addClass('btn-default').removeClass('btn-info');
 			}
 		});
 		var str = [];
-		$('#search_config_modal .btn-item').each(function(){
+		$search_config_modal.find('.btn-item').each(function(){
 			if($(this).hasClass('active')){
 				var name = $(this).find('.btn').attr('data-name');
 				str.push(name);
 			}
 		});
-		$('#search_config_modal input[name=search_field]').val(str);
+		$search_config_modal.find('input[name=search_field]').val(str);
 	});
 	// 搜索配置提交
-	$('#search_config_modal .btn-save').on('click', function(){
-		var data = $('#search_config_modal form').serialize();
+	$search_config_modal.find('.btn-save').on('click', function(){
+		var data = $('#search_config_modal').find('form').serialize();
 		ManageObject.object.loading.loading();
 		Common.ajax({
 			data    :data,
@@ -126,7 +127,7 @@ $(function(){
 					$.each(r[1], function(index2, value2){
 						if(index1 == index2){
 							str += ThisObject.detailsLiTemp.replace('#key#', value1)
-											 .replace('#name#', value2)
+								.replace('#name#', value2)
 						}
 					})
 				});
@@ -134,21 +135,18 @@ $(function(){
 			}
 		});
 		$('.add_client').on('click', function(){
-			var per = $('#add_recipient2').find('input[name=can_live]').val();
-			$('#add_recipient2').modal('show');
-			$('#add_recipient2').find('.can_live_p').text(per);
+			var $add_recipient2 = $('#add_recipient2');
+			var per = $add_recipient2.find('input[name=can_live]').val();
+			$add_recipient2.modal('show');
+			$add_recipient2.find('.can_live_p').text(per);
 		});
 		$('.add_employee').on('click', function(){
-			var per = $('#add_recipient2_employee').find('input[name=can_live]').val();
-			$('#add_recipient2_employee').modal('show');
-			$('#add_recipient2_employee').find('.can_live_p').text(per);
+			var $add_recipient2_employee = $('#add_recipient2_employee');
+			var per = $add_recipient2_employee.find('input[name=can_live]').val();
+			$add_recipient2_employee.modal('show');
+			$add_recipient2_employee.find('.can_live_p').text(per);
 		});
 		$('#add_recipient2').find('input[name=room_id]').val(id);
-		$('.add_employee').on('click', function(){
-			var per = $('#add_recipient2_employee').find('input[name=can_live]').val();
-			$('#add_recipient2_employee').modal('show');
-			$('#add_recipient2_employee').find('.can_live_p').text(per);
-		});
 		$('#add_recipient2_employee').find('input[name=room_id]').val(id);
 	});
 	/**
@@ -738,12 +736,17 @@ $(function(){
 			callback:function(r){
 				ManageObject.object.loading.complete();
 				if(r.status){
-					ManageObject.object.toast.toast(r.message, 1);
+					var message = r.message+'<br>';
+					for(var key in r.data){
+						//noinspection JSUnfilteredForInLoop
+						message += r.data[key].type+'发送'+r.data[key].count+'条<br>';
+					}
+					ManageObject.object.toast.toast(message, 3);
 					ManageObject.object.toast.onQuasarHidden(function(){
 						location.reload(true);
 					});
 				}
-				ManageObject.object.toast.toast(r.message, 2);
+				else ManageObject.object.toast.toast(r.message, 2);
 			}
 		});
 	});
@@ -777,13 +780,17 @@ $(function(){
 				callback:function(r){
 					ManageObject.object.loading.complete();
 					if(r.status){
-						ManageObject.object.toast.toast(r.message, 1);
+						var message = r.message+'<br>';
+						for(var key in r.data){
+							//noinspection JSUnfilteredForInLoop
+							message += r.data[key].type+'发送'+r.data[key].count+'条<br>';
+						}
+						ManageObject.object.toast.toast(message, 3);
 						ManageObject.object.toast.onQuasarHidden(function(){
-							location.reload();
+							location.reload(true);
 						});
-					}else{
-						ManageObject.object.toast.toast(r.message, 2);
 					}
+					else ManageObject.object.toast.toast(r.message, 2);
 				}
 			})
 		});
@@ -953,19 +960,19 @@ $(function(){
 		})
 	});
 	// 同步微信数据
-	$('#synchronous_wx_modal .btn-save').on('click',function(){
+	$('#synchronous_wx_modal .btn-save').on('click', function(){
 		ManageObject.object.loading.loading();
 		Common.ajax({
-			data:{requestType:'synchronize_wechat_information'},
+			data    :{requestType:'synchronize_wechat_information'},
 			callback:function(r){
 				ManageObject.object.loading.complete();
 				if(r.status){
-					ManageObject.object.toast.toast(r.message,1);
+					ManageObject.object.toast.toast(r.message, 1);
 					ManageObject.object.toast.onQuasarHidden(function(){
 						location.reload();
 					});
 				}else{
-					ManageObject.object.toast.toast(r.message,2);
+					ManageObject.object.toast.toast(r.message, 2);
 				}
 			}
 		});

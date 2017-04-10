@@ -135,4 +135,135 @@ AND t.TABLE_NAME = 'meeting_configure' AND COLUMN_NAME NOT LIKE '".self::CUSTOM_
 
 			return $list;
 		}
+
+
+		/**
+		 * 获取微信公众号的接口配置信息
+		 *
+		 * @param int $meeting_id 会议ID
+		 *
+		 * @return array
+		 */
+		public function getWechatOfficialConfigure($meeting_id){
+			if(!$this->fetch(['mid' => $meeting_id])) return [
+				'status'  => false,
+				'message' => '找不到会议配置信息'
+			];
+			$meeting_configure = $this->getObject();
+			/** @var \General\Model\ApiConfigureModel $api_configure_model */
+			$api_configure_model = D('General/ApiConfigure');
+			if($meeting_configure['wechat_official_configure']){
+				if(!$api_configure_model->fetch([
+					'id'     => $meeting_configure['wechat_official_configure'],
+					'status' => ['neq', 2]
+				])
+				) return [
+					'status'  => false,
+					'message' => '找不到微信公众号接口配置信息'
+				];
+				$api_configure = $api_configure_model->getObject();
+
+				return [
+					'status'  => true,
+					'message' => '获取配置成功',
+					'data'    => [
+						'appID'     => $api_configure['wechat_official_appid'],
+						'appSecret' => $api_configure['wechat_official_appsecret'],
+					]
+				];
+			}
+			else return [
+				'status'  => false,
+				'message' => '没有配置微信公众号接口'
+			];
+		}
+
+		/**
+		 * 获取微信企业号的接口配置信息
+		 *
+		 * @param int $meeting_id 会议ID
+		 *
+		 * @return array
+		 */
+		public function getWechatEnterpriseConfigure($meeting_id){
+			if(!$this->fetch(['mid' => $meeting_id])) return [
+				'status'  => false,
+				'message' => '找不到会议配置信息'
+			];
+			$meeting_configure = $this->getObject();
+			/** @var \General\Model\ApiConfigureModel $api_configure_model */
+			$api_configure_model = D('General/ApiConfigure');
+			if($meeting_configure['wechat_enterprise_configure']){
+				if(!$api_configure_model->fetch([
+					'id'     => $meeting_configure['wechat_enterprise_configure'],
+					'status' => ['neq', 2]
+				])
+				) return [
+					'status'  => false,
+					'message' => '找不到微信企业号接口配置信息'
+				];
+				$api_configure = $api_configure_model->getObject();
+
+				return [
+					'status'  => true,
+					'message' => '获取配置成功',
+					'data'    => [
+						'corpID'     => $api_configure['wechat_enterprise_corpid'],
+						'corpSecret' => $api_configure['wechat_enterprise_corpsecret'],
+						'appID'      => $api_configure['wechat_enterprise_appid']
+					]
+				];
+			}
+			else return [
+				'status'  => false,
+				'message' => '没有配置微信企业号接口'
+			];
+		}
+
+		/**
+		 * 获取首易SMS的接口配置信息
+		 *
+		 * @param int $meeting_id 会议ID
+		 *
+		 * @return array
+		 */
+		public function getSMSMobsetConfigure($meeting_id){
+			if(!$this->fetch(['mid' => $meeting_id])) return [
+				'status'  => false,
+				'message' => '找不到会议配置信息'
+			];
+			$meeting_configure = $this->getObject();
+			/** @var \General\Model\ApiConfigureModel $api_configure_model */
+			$api_configure_model = D('General/ApiConfigure');
+			if($meeting_configure['sms_mobset_configure']){
+				if(!$api_configure_model->fetch([
+					'id'     => $meeting_configure['sms_mobset_configure'],
+					'status' => ['neq', 2]
+				])
+				) return [
+					'status'  => false,
+					'message' => '找不到首页SMS接口配置信息'
+				];
+				$api_configure = $api_configure_model->getObject();
+
+				return [
+					'status'  => true,
+					'message' => '获取配置成功',
+					'data'    => [
+						'url'    => $api_configure['sms_mobset_url'],
+						'corpID' => $api_configure['sms_mobset_corpid'],
+						'user'   => $api_configure['sms_mobset_user'],
+						'pass'   => $api_configure['sms_mobset_pass']
+					]
+				];
+			}
+			else return [
+				'status'  => false,
+				'message' => '没有配置首易SMS接口'
+			];
+		}
+
+		public function getEmailConfigure($meeting_id){
+			// todo
+		}
 	}

@@ -53,11 +53,11 @@
 														</if>
 														<div class="col-sm-11">
 															<select id="is_new" name="is_new" class="form-control <eq name='single.must' value='1'>necessary</eq>" title="">
-																<volist name="is_new_list" id="single">
-																	<if condition="$info[$single['form']] eq $single">
-																		<option value="<{$key}>" selected><{$single}></option>
+																<volist name="is_new_list" id="list_item">
+																	<if condition="$info[$single['form']] eq $key">
+																		<option value="<{$key}>" selected><{$list_item}></option>
 																		<else/>
-																		<option value="<{$key}>"><{$single}></option>
+																		<option value="<{$key}>"><{$list_item}></option>
 																	</if>
 																</volist>
 															</select>
@@ -71,11 +71,11 @@
 														</if>
 														<div class="col-sm-11">
 															<select id="gender" name="gender" class="form-control <eq name='single.must' value='1'>necessary</eq>" title="" value="<{$info[$single['form']]}>">
-																<volist name="gender_list" id="single">
-																	<if condition="$info[$single['form']] eq $single">
-																		<option value="<{$key}>" selected><{$single}></option>
+																<volist name="gender_list" id="list_item">
+																	<if condition="$info[$single['form']] eq $key">
+																		<option value="<{$key}>" selected><{$list_item}></option>
 																		<else/>
-																		<option value="<{$key}>"><{$single}></option>
+																		<option value="<{$key}>"><{$list_item}></option>
 																	</if>
 																</volist>
 															</select>
@@ -89,11 +89,11 @@
 														</if>
 														<div class="col-sm-11">
 															<select id="type" name="type" class="form-control <eq name='single.must' value='1'>necessary</eq>" title="" value="<{$info[$single['form']]}>">
-																<volist name="type_list" id="single">
-																	<if condition="$info[$single['form']] eq $single">
-																		<option value="<{$single}>" selected><{$single}></option>
+																<volist name="type_list" id="list_item">
+																	<if condition="$info[$single['form']] eq $key">
+																		<option value="<{$key}>" selected><{$list_item}></option>
 																		<else/>
-																		<option value="<{$single}>"><{$single}></option>
+																		<option value="<{$key}>"><{$list_item}></option>
 																	</if>
 																</volist>
 															</select>
@@ -117,6 +117,24 @@
 														</if>
 														<div class="col-sm-11">
 															<input type="text" class="form-control" name="address" id="address" value="<{$info[$single['form']]}>">
+														</div>
+													</case>
+													<case value="ROYALWISSD-UNIT-UNIT_IS_NEW">
+														<if condition="$single['must'] eq 1">
+															<label class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+															<else/>
+															<label class="col-sm-1 control-label"><{$single.name}>：</label>
+														</if>
+														<div class="col-sm-11">
+															<select name="unit_is_new" title="" class="form-control">
+																<volist name="unit_is_new_list" id="list_item">
+																	<if condition="$info[$single['form']] eq $key">
+																		<option value="<{$key}>" selected><{$list_item}></option>
+																		<else/>
+																		<option value="<{$key}>"><{$list_item}></option>
+																	</if>
+																</volist>
+															</select>
 														</div>
 													</case>
 													<case value="ROYALWISSD-CLIENT-COMMENT">

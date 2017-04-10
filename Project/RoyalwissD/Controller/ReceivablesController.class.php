@@ -99,8 +99,8 @@
 		public function manage(){
 			$receivables_logic = new ReceivablesLogic();
 			if(IS_POST){
-				$type              = strtolower(I('post.requestType', ''));
-				$result            = $receivables_logic->handlerRequest($type);
+				$type   = strtolower(I('post.requestType', ''));
+				$result = $receivables_logic->handlerRequest($type);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);
 					echo json_encode($result);
@@ -115,30 +115,17 @@
 			}
 			/** @var \RoyalwissD\Model\ReceivablesOrderModel $receivables_order_model */
 			$receivables_order_model = D('RoyalwissD/ReceivablesOrder');
-			// 获取URL参数
-			$option = [];
-			if(isset($_GET['cid'])) $option[$receivables_order_model::CONTROL_COLUMN_PARAMETER_SELF['clientID']] = [
-				'=',
-				I('get.cid', 0, 'int')
-			];
-			if(isset($_GET['reviewed'])){
-				if($_GET['reviewed'] == 1) $option[$receivables_order_model::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']] = [
-					'=',
-					1
-				];
-				else $option[$receivables_order_model::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']] = [
-					'!=',
-					1
-				];
-			}
 			// 获取列表数据
 			$model_control_column = $this->getModelControl();
-			$list                 = $receivables_order_model->getList(array_merge($model_control_column, $option, [
+			$total_list           = $list = $receivables_order_model->getList(array_merge($model_control_column, [
 				CMSModel::CONTROL_COLUMN_PARAMETER['status']                         => ['!=', 2],
 				$receivables_order_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID
 			]));
-			$total_list           = $list = $receivables_logic->setData('manage', $list);
-			$page_object          = new Page(count($list), $this->getPageRecordCount());
+			$list                 = $receivables_logic->setData('manage', [
+				'list'     => $list,
+				'urlParam' => I('get.')
+			]);
+			$page_object = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$statistics = $receivables_logic->setData('manage:statistics', [

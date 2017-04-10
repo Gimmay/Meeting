@@ -57,6 +57,6 @@
 			if($action == 1 || $action) $action = self::ACTION_WRITE;
 			else $action = self::ACTION_READ;
 
-			return $this->where("mid = $meeting_id and action = $action $viewed")->select();
+			return $this->where("mid = $meeting_id and action = $action")->select();
 		}
 	}

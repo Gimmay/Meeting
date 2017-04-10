@@ -151,9 +151,6 @@
 						$this->assign('current_meeting_name', $meeting_record['name']);
 						$this->assign('current_meeting_type', MeetingLogic::TYPE[$meeting_record['type']]);
 					}
-					else{
-						// todo 报错 找不到会议
-					}
 				}
 			};
 			/** @var \General\Model\UserModel $user_model */

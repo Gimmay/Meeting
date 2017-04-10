@@ -15,10 +15,10 @@
 	use General\Logic\ClientLogic as GeneralClientLogic;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
+	use Quasar\ExternalInterface\Wechat\EnterpriseAccountLibrary;
 	use Quasar\Utility\StringPlus;
 	use RoyalwissD\Model\AttendeeModel;
 	use RoyalwissD\Model\ClientModel;
-	use RoyalwissD\Model\HotelModel;
 
 	class ClientLogic extends RoyalwissDLogic{
 		/** 新纪录的识别时间 */
@@ -45,6 +45,23 @@
 					$unit_pinyin          = $str_obj->getPinyin($unit, true, '');
 					$batch_id             = $str_obj->makeRandomString(64);
 					$client_data          = $attendee_data = [];
+					// 构建会所数据
+
+					// todo 获取覆盖还是跳过的设定
+
+
+					/** @var \RoyalwissD\Model\UnitModel $unit_model */
+					$unit_model = D('RoyalwissD/Unit');
+					$option     = [];
+					if(isset($_POST['unit_area'])) $option['area'] = $post['unit_area'];
+					if(isset($_POST['unit_is_new'])) $option['is_new'] = $post['unit_is_new'];
+					$result1 = $unit_model->create(array_merge($option, [
+						'name'        => $unit,
+						'name_pinyin' => $unit_pinyin,
+						'creatime'    => Time::getCurrentTime(),
+						'creator'     => Session::getCurrentUser()
+					]));
+					if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
 					// 构建客户数据
 					for($i = 1; $i<=$number; $i++){
 						$mobile        = $str_obj->makeRandomString(13);
@@ -192,6 +209,21 @@
 							'__ajax__' => true
 						];
 					}
+					// 保存会所数据
+					// todo 获取覆盖还是跳过的设定
+					/** @var \RoyalwissD\Model\UnitModel $unit_model */
+					$unit_model = D('RoyalwissD/Unit');
+					$option     = [];
+					if(isset($_POST['unit_area'])) $option['area'] = $post['unit_area'];
+					if(isset($_POST['unit_is_new'])) $option['is_new'] = $post['unit_is_new'];
+					$result1 = $unit_model->create(array_merge($option, [
+						'name'        => $post['unit'],
+						'name_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
+						'creatime'    => Time::getCurrentTime(),
+						'creator'     => Session::getCurrentUser()
+					]));
+					if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
+					// 保存客户数据
 					$result = $client_model->modify(['id' => $client_id], array_merge($post, [
 						'name_pinyin' => $str_obj->getPinyin($post['name'], true, ''),
 						'unit_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
@@ -272,6 +304,22 @@
 						$client_id = $result['id'];
 					}
 					if(!$result['status']) return array_merge($result, ['__ajax__' => true]);
+					else{
+						// 构建会所数据
+						// todo 获取覆盖还是跳过的设定
+						/** @var \RoyalwissD\Model\UnitModel $unit_model */
+						$unit_model = D('RoyalwissD/Unit');
+						$option     = [];
+						if(isset($_POST['unit_area'])) $option['area'] = $post['unit_area'];
+						if(isset($_POST['unit_is_new'])) $option['is_new'] = $post['unit_is_new'];
+						$result1 = $unit_model->create(array_merge($option, [
+							'name'        => $post['unit'],
+							'name_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
+							'creatime'    => Time::getCurrentTime(),
+							'creator'     => Session::getCurrentUser()
+						]));
+						if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
+					}
 					// 创建参会信息
 					$attendee_data = array_merge($post, [
 						'register_type'    => 1,
@@ -578,6 +626,7 @@
 						/** @var \RoyalwissD\Model\AttendeeModel $attendee_model */
 						$attendee_model = D('RoyalwissD/Attendee');
 						$client_logic   = new ClientLogic();
+						$unit_data      = [];
 						foreach($excel_data as $index => $client){
 							$temp_client_data   = [
 								'_batch_save_id'   => $batch_id,
@@ -629,6 +678,32 @@
 								$repeat_data[]          = $temp_client_data;
 								$attendee_data[]        = $temp_attendee_data;
 								$original_repeat_data[] = $client;
+								// 会所数据
+								$temp_unit_data = [];
+								if(isset($client['unit_area'])) $temp_unit_data['area'] = $client['unit_area'];
+								if(isset($temp_client_data['unit_is_new'])){
+									switch($temp_client_data['unit_is_new']){
+										case '是':
+										case '新店':
+											$temp_client_data['unit_is_new'] = 1;
+										break;
+										case '否':
+										case '不是':
+										case '老店':
+										default:
+											$temp_client_data['unit_is_new'] = 0;
+										break;
+									}
+									$temp_unit_data['is_new'] = $temp_client_data['unit_is_new'];
+								}
+								if(isset($client['unit'])){
+									$temp_unit_data['name']        = $client['unit'];
+									$temp_unit_data['name_pinyin'] = $str_obj->getPinyin($client['unit'], true, '');
+								}
+								$unit_data[] = array_merge($temp_unit_data, [
+									'creator'  => Session::getCurrentUser(),
+									'creatime' => Time::getCurrentTime()
+								]);
 							}
 							// 重复了并设定了跳过
 							elseif($is_repeat && $client_repeat_action == $meeting_configure_model::CLIENT_REPEAT_ACTION_SKIP){
@@ -639,7 +714,44 @@
 							elseif(!$is_repeat){
 								$client_data[]   = $temp_client_data;
 								$attendee_data[] = $temp_attendee_data;
+								// 会所数据
+								$temp_unit_data = [];
+								if(isset($temp_client_data['unit_area'])) $temp_unit_data['area'] = $temp_client_data['unit_area'];
+								if(isset($temp_client_data['unit_is_new'])){
+									switch($temp_client_data['unit_is_new']){
+										case '是':
+										case '新店':
+											$temp_client_data['unit_is_new'] = 1;
+										break;
+										case '否':
+										case '不是':
+										case '老店':
+										default:
+											$temp_client_data['unit_is_new'] = 0;
+										break;
+									}
+									$temp_unit_data['is_new'] = $temp_client_data['unit_is_new'];
+								}
+								if(isset($temp_client_data['unit'])){
+									$temp_unit_data['name']        = $temp_client_data['unit'];
+									$temp_unit_data['name_pinyin'] = $str_obj->getPinyin($temp_client_data['unit'], true, '');
+								}
+								$unit_data[] = array_merge($temp_unit_data, [
+									'creator'  => Session::getCurrentUser(),
+									'creatime' => Time::getCurrentTime()
+								]);
 							}
+						}
+						// 保存会所数据
+						if($unit_data){
+							/** @var \RoyalwissD\Model\UnitModel $unit_model */
+							$unit_model = D('RoyalwissD/Unit');
+							$result1    = $unit_model->addAll($unit_data, [], true);
+							if(!$result1) return [
+								'status'   => false,
+								'message'  => '保存会所数据失败',
+								'__ajax__' => true
+							];
 						}
 						// 开始保存客户数据
 						if(!$client_data && $repeat_data) return $makeResult(false, '数据全部重复并跳过创建步骤', $excel_data, [], $read_result['data']['head'], $original_repeat_data);
@@ -770,6 +882,7 @@
 						/** @var \RoyalwissD\Model\ClientModel $client_model */
 						$client_model = D('RoyalwissD/Client');
 						$kv           = $this->_convertColumnValue($column_name, $column_value, true);
+						$str_obj      = new StringPlus();
 						if($kv == null) return ['status' => false, 'message' => '字段名称错误', '__ajax__' => true];
 						$return_value = $kv['data']['content'];
 						// 去重判断-获取客户信息
@@ -809,6 +922,45 @@
 								'message'  => '修改后的客户资料和其他客户信息重复了',
 								'__ajax__' => true
 							];
+						}
+						// 特殊处理会所字段
+						if(isset($kv['save']['unit_is_new'])){
+							/** @var \RoyalwissD\Model\UnitModel $unit_model */
+							$unit_model = D('RoyalwissD/Unit');
+							if($unit_model->fetch(['name' => $client['unit']])){
+								$unit_data = $unit_model->getObject();
+								$unit_data['is_new'] = $kv['save']['unit_is_new'];
+								$result1 = $unit_model->create($unit_data);
+								if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
+							}
+						}
+						if(isset($kv['save']['unit_area'])){
+							/** @var \RoyalwissD\Model\UnitModel $unit_model */
+							$unit_model = D('RoyalwissD/Unit');
+							if($unit_model->fetch(['name' => $client['unit']])){
+								$unit_data = $unit_model->getObject();
+								$unit_data['area'] = $kv['save']['unit_area'];
+								$result1 = $unit_model->create($unit_data);
+								if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
+							}
+
+						}
+						if(isset($kv['save']['unit'])){
+							/** @var \RoyalwissD\Model\UnitModel $unit_model */
+							$unit_model = D('RoyalwissD/Unit');
+							if($unit_model->fetch(['name' => $client['unit']])){
+								$unit_data                = $unit_model->getObject();
+								$unit_data['name']        = $kv['save']['unit'];
+								$unit_data['name_pinyin'] = $str_obj->getPinyin($kv['save']['unit'], true, '');
+							}
+							else $unit_data = [
+								'name'        => $kv['save']['unit'],
+								'name_pinyin' => $str_obj->getPinyin($kv['save']['unit'], true, ''),
+								'creatime'    => Time::getCurrentTime(),
+								'creator'     => Session::getCurrentUser()
+							];
+							$result1 = $unit_model->create($unit_data);
+							if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
 						}
 						$result = $client_model->modify(['id' => $client_id], $kv['save']);
 					}
@@ -978,44 +1130,100 @@
 					$meeting_id = I('get.mid', 0, 'int');
 					/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
 					$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
-					if(!$meeting_configure_model->fetch(['mid' => $meeting_id])) return [
-						'status'   => false,
-						'message'  => '找不到会议信息',
-						'__ajax__' => true
-					];
-					$meeting_configure = $meeting_configure_model->getObject();
-					/** @var \General\Model\ApiConfigureModel $api_configure_model */
-					$api_configure_model = D('General/ApiConfigure');
 					// 1、若设定了微信企业号的接口
-					if($meeting_configure['wechat_enterprise_configure']){
-						if(!$api_configure_model->fetch([
-							'id'     => $meeting_configure['wechat_enterprise_configure'],
-							'status' => ['neq', 2]
-						])
-						) return [
-							'status'   => false,
-							'message'  => '找不到微信企业号接口配置信息',
-							'__ajax__' => true
-						];
-						$api_configure = $api_configure_model->getObject();
-						print_r($api_configure);
-						exit;
+					$wechat_enterprise_configure = $meeting_configure_model->getWechatEnterpriseConfigure($meeting_id);
+					if($wechat_enterprise_configure['status']){
+						// 获取企业号用户
+						$wechat_enterprise_configure = $wechat_enterprise_configure['data'];
+						$wechat_enterprise_obj       = new EnterpriseAccountLibrary($wechat_enterprise_configure['corpID'], $wechat_enterprise_configure['corpSecret']);
+						$user_list                   = $wechat_enterprise_obj->getUserList(1);
+						if($user_list['errcode'] == 0){
+							$user_list = $user_list['userlist'];
+							// 获取系统该会议下的客户
+							/** @var \RoyalwissD\Model\ClientModel $client_model */
+							$client_model = D('RoyalwissD/Client');
+							$client_list  = $client_model->getList([
+								$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $meeting_id,
+								$client_model::CONTROL_COLUMN_PARAMETER['status']         => ['!=', 2]
+							]);
+							$count        = 0;
+							$replace_char = '#%ID%#';
+							$sql_main     = "
+UPDATE meeting_royalwiss_deal.client
+SET
+	wechat_type = 2,
+	wechat_userid = CASE id u$replace_char END,
+	wechat_nickname = CASE id n$replace_char END,
+	wechat_department = CASE id d$replace_char END,
+	wechat_avatar = CASE id a$replace_char END,
+	wechat_is_follow = CASE id f$replace_char END,
+	wechat_position = CASE id p$replace_char END,
+	wechat_mobile = CASE id m$replace_char END,
+	wechat_gender = CASE id g$replace_char END,
+	wechat_id = CASE id i$replace_char END,
+	wechat_email = CASE id e$replace_char END
+";
+							$sql_where    = "WHERE id IN ($replace_char) ";
+							foreach($user_list as $wechat_user){
+								foreach($client_list as $client){
+									if($client['mobile'] == $wechat_user['mobile']){
+										$count++;
+										$sql_where = str_replace($replace_char, "$client[cid],$replace_char", $sql_where);
+										$sql_main  = str_replace("u$replace_char", " WHEN $client[cid] THEN '$wechat_user[userid]'u$replace_char", $sql_main);
+										$sql_main  = str_replace("n$replace_char", " WHEN $client[cid] THEN '$wechat_user[name]'n$replace_char", $sql_main);
+										$sql_main  = str_replace("d$replace_char", " WHEN $client[cid] THEN '".implode(',', $wechat_user['department'])."'d$replace_char", $sql_main);
+										$sql_main  = str_replace("a$replace_char", " WHEN $client[cid] THEN '$wechat_user[avatar]'a$replace_char", $sql_main);
+										$sql_main  = str_replace("f$replace_char", " WHEN $client[cid] THEN '$wechat_user[status]'f$replace_char", $sql_main);
+										$sql_main  = str_replace("p$replace_char", " WHEN $client[cid] THEN '$wechat_user[position]'p$replace_char", $sql_main);
+										$sql_main  = str_replace("m$replace_char", " WHEN $client[cid] THEN '$wechat_user[mobile]'m$replace_char", $sql_main);
+										$sql_main  = str_replace("g$replace_char", " WHEN $client[cid] THEN '$wechat_user[gender]'g$replace_char", $sql_main);
+										$sql_main  = str_replace("i$replace_char", " WHEN $client[cid] THEN '$wechat_user[weixinid]'i$replace_char", $sql_main);
+										$sql_main  = str_replace("e$replace_char", " WHEN $client[cid] THEN '$wechat_user[email]'e$replace_char", $sql_main);
+									}
+								}
+							}
+							if($count>0){
+								$sql    = "$sql_main $sql_where";
+								$sql    = str_replace(",$replace_char", '', $sql);
+								$sql    = str_replace("u$replace_char", '', $sql);
+								$sql    = str_replace("n$replace_char", '', $sql);
+								$sql    = str_replace("d$replace_char", '', $sql);
+								$sql    = str_replace("a$replace_char", '', $sql);
+								$sql    = str_replace("f$replace_char", '', $sql);
+								$sql    = str_replace("p$replace_char", '', $sql);
+								$sql    = str_replace("m$replace_char", '', $sql);
+								$sql    = str_replace("g$replace_char", '', $sql);
+								$sql    = str_replace("i$replace_char", '', $sql);
+								$sql    = str_replace("e$replace_char", '', $sql);
+								$result = $client_model->execute($sql);
+								if($result) return [
+									'status'   => true,
+									'message'  => "同步数据成功：共同步[$count]条客户数据",
+									'__ajax__' => true
+								];
+								else return [
+									'status'   => false,
+									'message'  => "同步失败：客户微信数据已经是最新的",
+									'__ajax__' => true
+								];
+							}
+							else{
+								return [
+									'status'   => false,
+									'message'  => "未匹配到任何客户数据",
+									'__ajax__' => true
+								];
+							}
+						}
+						else{
+							return [
+								'status'   => false,
+								'message'  => "获取微信数据失败",
+								'__ajax__' => true
+							];
+						}
 					}
-					// 2、若设定了微信公众号的接口.
-					if($meeting_configure['wechat_official_configure']){
-						if(!$api_configure_model->fetch([
-							'id'     => $meeting_configure['wechat_official_configure'],
-							'status' => ['neq', 2]
-						])
-						) return [
-							'status'   => false,
-							'message'  => '找不到微信公众号接口配置信息',
-							'__ajax__' => true
-						];
-						$api_configure = $api_configure_model->getObject();
-						print_r($api_configure);
-						exit;
-					}
+					else return array_merge($wechat_enterprise_configure, ['__ajax__' => true]);
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];
@@ -1212,6 +1420,8 @@
 					'wechat_is_follow',
 					'wechat_department',
 					'wechat_appid',
+					'wechat_position',
+					'wechat_id',
 					'_batch_save_id',
 					'_batch_column_id'
 				])

@@ -686,6 +686,22 @@
 									</case>
 									<case value="ROYALWISSD-CLIENT-BIRTHDAY">
 									</case>
+									<case value="ROYALWISSD-UNIT-UNIT_IS_NEW">
+										<div class="form-group">
+											<if condition="$single['must'] eq 1">
+												<label class="col-sm-2 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+												<else/>
+												<label class="col-sm-2 control-label"><{$single.name}>：</label>
+											</if>
+											<div class="col-sm-10">
+												<select name="unit_is_new" title="" class="form-control">
+													<volist name="unit_is_new_list" id="single">
+														<option value="<{$key}>"><{$single}></option>
+													</volist>
+												</select>
+											</div>
+										</div>
+									</case>
 									<case value="ROYALWISSD-CLIENT-COMMENT">
 										<div class="form-group">
 											<if condition="$single['must'] eq 1">

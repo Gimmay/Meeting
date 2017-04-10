@@ -66,10 +66,11 @@
 				$list        = $user_model->getList(array_merge($model_control_column, [
 					CMSModel::CONTROL_COLUMN_PARAMETER['status'] => ['<>', 2]
 				]));
+
+				$list       = $user_logic->setData('manage', ['list'=>$list, 'urlParam'=>I('get.')]);
 				$page_object = new Page(count($list), $this->getPageRecordCount()); // 实例化分页类 传入总记录数和每页显示的记录数
 				PageLogic::setTheme1($page_object);
 				$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
-				$list       = $user_logic->setData('manage', ['list'=>$list, 'urlParam'=>I('get.')]);
 				$pagination = $page_object->show();// 分页显示输出
 				$this->assign('list', $list);
 				$this->assign('pagination', $pagination);

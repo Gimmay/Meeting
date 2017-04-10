@@ -80,7 +80,7 @@ $order
 		 */
 		public function create($data){
 			try{
-				$result = $this->add($data);
+				$result = $this->add($data, [], true);
 
 				return $result ? ['status' => true, 'message' => '创建会所成功', 'id' => $result] : [
 					'status'  => false,

@@ -19,7 +19,8 @@
 			'user'          => '_user',
 			'processStatus' => 'process_status',
 			'type'          => 'type',
-			'meetingID'     => 'id'
+			'meetingID'     => 'id',
+			'process'       => 'process'
 		];
 
 		public function getList($control = []){

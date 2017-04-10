@@ -136,6 +136,36 @@ LIMIT 1");
 SELECT
 	c.TABLE_SCHEMA,
 	c.TABLE_NAME,
+	'unit_is_new' COLUMN_NAME,
+	c.DATA_TYPE,
+	c.CHARACTER_MAXIMUM_LENGTH,
+	c.COLUMN_TYPE,
+	c.COLUMN_COMMENT,
+	'custom' TYPE
+FROM information_schema.TABLES t
+JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
+WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
+AND t.TABLE_NAME = 'unit'
+AND c.COLUMN_NAME = 'is_new'
+UNION
+SELECT
+	c.TABLE_SCHEMA,
+	c.TABLE_NAME,
+	'unit_area' COLUMN_NAME,
+	c.DATA_TYPE,
+	c.CHARACTER_MAXIMUM_LENGTH,
+	c.COLUMN_TYPE,
+	c.COLUMN_COMMENT,
+	'custom' TYPE
+FROM information_schema.TABLES t
+JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
+WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
+AND t.TABLE_NAME = 'unit'
+AND c.COLUMN_NAME = 'area'
+UNION
+SELECT
+	c.TABLE_SCHEMA,
+	c.TABLE_NAME,
 	c.COLUMN_NAME,
 	c.DATA_TYPE,
 	c.CHARACTER_MAXIMUM_LENGTH,

@@ -34,132 +34,114 @@
 						<div class="table_wrap mb_10">
 							<div class="nav_tab clearfix">
 								<div class="nav_tab_li active">
-									<a href="javascript:void(0)">报表管理</a>
-								</div>
-								<div class="table_length  pull-right">
-									显示： <select>
-									<option>5</option>
-									<option>10</option>
-									<option selected>20</option>
-									<option>50</option>
-									<option>100</option>
-									<option>150</option>
-									<option>200</option>
-									<option>500</option>
-								</select> 项结果
+									<a href="javascript:void(0)">收款报表</a>
 								</div>
 							</div>
-						</div>
-						<div class="c_header">
-							<div class="btn_group_wrap">
-								<div class="btn-group">
-									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										<i class="glyphicon glyphicon-plus"></i> 新建客户 <span class="caret"></span>
-									</button>
-									<ul class="dropdown-menu">
-										<li><a href="<{:U('Client/create',['mid'=>I('get.mid')])}>">新建客户</a></li>
-										<li class="batch_create_btn"><a href="javascript:void(0)">批量新建客户</a></li>
-										<li><a href="<{:U('Client/import',['mid'=>I('get.mid')])}>">批量导入客户</a></li>
-										<li role="separator" class="divider"></li>
-										<li>
-											<a href="<{:U('exportTemplate', ['mid'=>I('get.mid', 0, 'int')])}>">下载导入模板</a>
-										</li>
-										<li>
-											<a href="<{:U('exportData', ['mid'=>I('get.mid', 0, 'int')])}>">导出客户信息</a>
-										</li>
-									</ul>
-								</div>
-								<div class="btn-group">
-									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										<i class="glyphicon glyphicon-check"></i> 审核/签到 <span class="caret"></span>
-									</button>
-									<ul class="dropdown-menu">
-										<li class="batch_review_btn_confirm"><a href="javascript:void(0)">批量审核</a></li>
-										<li class="batch_anti_review_btn_confirm">
-											<a href="javascript:void(0)">批量取消审核</a></li>
-										<li role="separator" class="divider"></li>
-										<li class="batch_sign_point"><a href="javascript:void(0)">批量签到</a></li>
-										<li class="batch_anti_sign_point"><a href="javascript:void(0)">批量取消签到</a></li>
-									</ul>
-								</div>
-								<div class="btn-group">
-									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										<i class="glyphicon glyphicon-cog"></i> 客户配置 <span class="caret"></span>
-									</button>
-									<ul class="dropdown-menu">
-										<li class="">
-											<a href="<{:U('Client/fieldSetting', ['mid'=>I('get.mid', 0, 'int')])}>">客户字段配置</a>
-										</li>
-										<li data-toggle="modal" data-target="#configure_modal">
-											<a href="javascript:void(0)">客户重复记录设置</a>
-										</li>
-									</ul>
-								</div>
-								<div class="btn-group">
-									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										<i class="glyphicon glyphicon-lock"></i> 基础操作 <span class="caret"></span>
-									</button>
-									<ul class="dropdown-menu">
-										<li class="batch_enable_btn"><a href="javascript:void(0)">批量启用</a></li>
-										<li class="batch_disable_btn"><a href="javascript:void(0)">批量禁用</a></li>
-										<li role="separator" class="divider"></li>
-										<li class="batch_delete_btn"><a href="javascript:void(0)">批量删除</a></li>
-									</ul>
-								</div>
-								<div class="btn-group">
-									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										<i class="glyphicon glyphicon-paperclip"></i> 其他操作 <span class="caret"></span>
-									</button>
-									<ul class="dropdown-menu">
-										<li class="batch_group_btn"><a href="javascript:void(0)">批量分组</a></li>
-										<li class="batch_send_message_btn_confirm"><a href="javascript:void(0)">发送邀请</a>
-										</li>
-										<li class="assign_sign_place"><a href="javascript:void(0)">分配签到点</a></li>
-										<li class="batch_badge"><a href="javascript:void(0)">批量打印</a></li>
-										<li class="batch_receive_gift"><a href="javascript:void(0)">领取礼品</a></li>
-										<li class="batch_refund_gift"><a href="javascript:void(0)">退还礼品</a></li>
-									</ul>
-								</div>
-							</div>
-						</div>
-						<!--	<div class="c_header">
-								<div class="function_list clearfix">
-									<div class="function_btn bg-warning" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
-										<a href="<{:U('Report/create', ['mid'=>I('get.mid', 0, 'int')])}>"> <i></i>
-											<p>创建报表</p>
-										</a>
-									</div>
-									<div class="function_btn bg-danger batch_delete_btn_confirm">
-										<i></i>
-										<p>批量删除</p>
-									</div>
-								</div>
-							</div>-->
-						<div class="repertory clearfix">
-							<!--<div class="tabs">
-								<ul class="tabsUl clearfix">
-									<li class="<notpresent name='_GET[type]'>active</notpresent>" id="filter_btn_all">
-										<a href="javascript:void(0)">全部</a>
-									</li>
-									<li class="<if condition='$_GET[type] eq ing'>active</if>" id="filter_btn_ing">
-										<a href="javascript:void(0)">进行</a>
-									</li>
-									<li class="<if condition='$_GET[type] eq fin'>active</if>" id="filter_btn_fin">
-										<a href="javascript:void(0)">结束</a>
-									</li>
-								</ul>
-							</div>-->
-							<form action="" method="get">
-								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="报表名称/拼音简码" value="<{:I('get.keyword', '')}>">
-									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default main_search">搜索报表</button>
-									</span>
-								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
-							</form>
 						</div>
 						<div class="table_wrap">
+							<div class="panel panel-default">
+								<div class="panel-heading">筛选条件</div>
+								<div class="panel-body">
+									<form class="form-horizontal" id="control_form" action="">
+										<input type="hidden" name="requestType" value="search">
+										<div class="row">
+											<div class="col-sm-12 mb_10">
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">关键字</span>
+														<input type="text" class="form-control" placeholder="关键字..." aria-describedby="basic-addon1">
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">性别</span>
+														<select name="gender" class="form-control" title="">
+															<option value="">---无限制---</option>
+															<volist name="gender_list" id="single">
+																<option value="<{$key}>"><{$single}></option>
+															</volist>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">是否新客</span>
+														<select name="" class="form-control" title="">
+															<option value="">---无限制---</option>
+															<volist name="is_new_list" id="single">
+																<option value="<{$key}>"><{$single}></option>
+															</volist>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon" title="">团队</span>
+														<select name="" class="form-control">
+															<option value="">---无限制---</option>
+															<volist name="team_list" id="single">
+																<option value="<{$single.value}>"><{$single.html}></option>
+															</volist>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-12 mb_10">
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">客户类型</span>
+														<select name="" class="form-control" title="">
+															<option value="">---无限制---</option>
+															<volist name="type_list" id="single">
+																<option value="<{$key}>"><{$single}></option>
+															</volist>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">是否签到</span>
+														<select name="" class="form-control" title="">
+															<option value="">---无限制---</option>
+															<volist name="sign_list" id="single">
+																<option value="<{$key}>"><{$single}></option>
+															</volist>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">区域</span>
+														<select name="" class="form-control"></select>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="input-group">
+														<span class="input-group-addon">是否新店</span>
+														<select name="" class="form-control" title="">
+															<option value="">---无限制---</option>
+															<volist name="unit_is_new_list" id="single">
+																<option value="<{$key}>"><{$single}></option>
+															</volist>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-12">
+												<div class="col-sm-12">
+													<button type="button" class="btn btn-sm btn-success btn-block btn-save">搜索</button>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+							<div class="panel panel-default">
+								<div class="panel-heading">统计数据</div>
+								<div class="panel-body">
+
+								</div>
+							</div>
 							<table class="table table-bordered table-hover text-center">
 								<thead>
 									<tr>
@@ -218,71 +200,6 @@
 						</div>
 					</section>
 				</div>
-				<div class="right_details">
-					<div class="d_con">
-						<span class="close_btn glyphicon glyphicon-remove">
-						</span>
-						<div class="title">
-							<span>详情</span>
-						</div>
-						<div class="info">
-							<div class="li">
-								<span>单位：</span> <span class="meeting_name"></span>
-							</div>
-							<div class="li">
-								<span>状态：</span> <span class="status"></span>
-							</div>
-							<div class="li">
-								<span>类型：</span> <span class="type"></span>
-							</div>
-							<div class="li">
-								<span>主办方：</span> <span class="host"></span>
-							</div>
-							<div class="li">
-								<span>策划方：</span> <span class="plan"></span>
-							</div>
-							<div class="li">
-								<span>举办地点：</span> <span class="place"></span>
-							</div>
-							<div class="li">
-								<span>会议酒店：</span> <span class="hotel"></span>
-							</div>
-							<div class="li">
-								<span>会议车辆：</span> <span class="car"></span>
-							</div>
-							<div class="li">
-								<span>开始结束时间：</span> <span class="setime"></span>
-							</div>
-							<div class="li">
-								<span>负责人：</span> <span class="director_name"></span>
-							</div>
-							<div class="li">
-								<span>创建时间：</span> <span class="create_time"></span>
-							</div>
-							<div class="li">
-								<span>备注：</span> <span class="comment"></span>
-							</div>
-							<div class="li">
-								<span>简介：</span> <span class="brief"></span>
-							</div>
-						</div>
-						<!--	<div class="btn_fun">
-								<a data-toggle="modal" data-target="#alter_room">选择消息模板</a>
-								<a href="javascript:void(0)">胸卡设计</a> <a href="javascript:void(0)">选择酒店</a>
-								<a href="javascript:void(0)">会议管理人员</a> <a href="javascript:void(0)">签到点</a>
-							</div>-->
-						<div class="d_list">
-							<div class="list_title">二维码</div>
-							<div class="QRcode img">
-								<img src="">
-							</div>
-							<div class="list_title">logo图</div>
-							<div class="logo img">
-								<img src="">
-							</div>
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -333,36 +250,9 @@
 	<script>
 		var ManageObject = {
 			object:{
-				signMessageSelect       :$('#sign_mes').QuasarSelect({
-					name        :'sign_mes',
-					classStyle  :'form-control',
-					idInput     :'selected_sign_mes',
-					idHidden    :'selected_sign_mes_form',
-					data        :'<{:json_encode($message)}>',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				antiSignMessageSelect   :$('#unti_sign_mes').QuasarSelect({
-					name        :'anti_sign_mes',
-					classStyle  :'form-control',
-					idInput     :'selected_unti_sign_mes',
-					idHidden    :'selected_unti_sign_mes_form',
-					data        :'<{:json_encode($message)}>',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				receivablesMessageSelect:$('#receivables_mes').QuasarSelect({
-					name        :'receivables_mes',
-					classStyle  :'form-control',
-					idInput     :'selected_receivables_mes',
-					idHidden    :'selected_receivables_mes_form',
-					data        :'<{:json_encode($message)}>',
-					placeholder :'',
-					hasEmptyItem:false
-				}),
-				toast                   :$().QuasarToast(),
-				loading                 :$().QuasarLoading(),
-				icheck                  :$('.icheck').iCheck({
+				toast  :$().QuasarToast(),
+				loading:$().QuasarLoading(),
+				icheck :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
 				})

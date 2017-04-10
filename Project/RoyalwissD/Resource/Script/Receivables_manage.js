@@ -582,7 +582,7 @@ $(function(){
 				console.log(r);
 				$('#print').find('.time').text(r.time);
 				$('#print').find('.unit').text(r.unit);
-				$('#print').find('.client').text(r.client);
+				$('#print').find('.client_name').text(r.client);
 				var pro = '', i = 1;
 				$.each(r.project, function(index, value){
 					var n = Number(index);

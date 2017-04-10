@@ -213,6 +213,7 @@
 				session(Session::LOGIN_USER_ID, $user['id']);
 				session(Session::LOGIN_USER_NAME, $user['name']);
 				session(Session::LOGIN_USER_NICKNAME, $user['nickname']);
+
 				return [
 					'status'       => true,
 					'message'      => '登入成功',

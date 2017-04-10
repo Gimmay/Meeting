@@ -149,7 +149,7 @@ var temp = {
 				var str = '';
 				$.each(data, function(index, value){
 					str += temp.authorizeRoleTemp.replace('$id', value.id).replace('$name', value.name)
-						.replace('$type', value.type);
+							   .replace('$type', value.type);
 				});
 				$('#authorize_all').html(str);
 			}
@@ -221,10 +221,10 @@ $(function(){
 					$.each(data, function(index, value){
 						if(value.type == '0'){
 							str += temp.authorizeRoleTemp.replace('$id', value.id).replace('$name', value.name)
-								.replace('$type', value.type).replace('$role_id', value.rid);
+									   .replace('$type', value.type).replace('$role_id', value.rid);
 						}else if(value.type == '1'){
 							str += temp.authorizeEmployeeTemp.replace('$id', value.id).replace('$name', value.name)
-								.replace('$type', value.type);
+									   .replace('$type', value.type);
 						}
 					});
 					$('input#selected_user_id').val(data_id);
@@ -260,55 +260,35 @@ $(function(){
 			return false;
 		}
 	});
-	// 单个员工删除
-	$('.delete_btn').on('click', function(){
-		var id = $(this).parent('.btn-group').attr('data-id');
-		$('#delete_user').find('input[name=id]').val(id);
-	});
-	// 批量删除员工
-	$('.batch_delete_btn_confirm').on('click', function(){
-		var str = '';
-		var i   = 0;
-		$('.check_item .icheckbox_square-green.checked').each(function(){
-			var id = $(this).find('.icheck').val();
-			str += id+',';
-			i++;
-		});
-		$('#batch_delete_user').find('.sAmount').text(i);
-		var s, newStr = "";
-		s             = str.charAt(str.length-1);
-		if(s == ","){
-			for(var i = 0; i<str.length-1; i++){
-				newStr += str[i];
-			}
-		}
-		if(newStr != ''){
-			$('#batch_delete_user').modal('show')
-		}else{
-			ManageObject.object.toast.toast('请选择客户！');
-		}
-		$('#batch_delete_user').find('input[name=id]').val(newStr);
-	});
-	// 全选checkbox
-	$('.all_check').find('.iCheck-helper').on('click', function(){
-		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
-			$('.check_item').find('.icheckbox_square-green').addClass('checked');
-		}else{
-			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
-		}
-	});
 	// 员工密码修改
 	$(".btn_alter_password").on("click", function(){
 		var id = $(this).parent('.btn-group').attr("data-id");
 		$("#alter_password").find("input[name=id]").val(id);
+		$('#alter_password .btn-save').on('click', function(){
+			ManageObject.object.loading.loading();
+			var data = $('#alter_password form').serialize();
+			Common.ajax({
+				data    :data,
+				callback:function(r){
+					ManageObject.object.loading.complete();
+					if(r.status){
+						ManageObject.object.toast.toast(r.message, 1);
+						ManageObject.object.toast.onQuasarHidden(function(){
+							location.reload();
+						});
+					}else{
+						ManageObject.object.toast.toast(r.message, 2);
+					}
+				}
+			});
+		})
 	});
 	$(".password_btn").on("click", function(){
 		//alert(111);return false;
 		var old_password   = $("#old_password").val();
 		var new_password   = $("#new_password").val();
 		var new_password_2 = $("#new_password_2").val();
-		var reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/;
-
+		var reg            = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/;
 		// 新密码功能判断条件
 		if(!reg.test(new_password)){
 			ManageObject.object.toast.toast("新密码至少6位，必须同时包含字母和数字！");
@@ -326,12 +306,29 @@ $(function(){
 		document.getElementById('new_password_2').value = $("#new_password_2").val().base64Encode();
 		return true;
 	});
-	
 	// 员工密码重置
 	$('.btn_reset_password').on('click', function(){
 		var id   = $(this).parent('.btn-group').attr('data-id');
 		var name = $(this).parent().parent().parent().find('td[data-id='+id+']').text();
 		$('#reset_password').find('input[name=id]').val(id);
 		$('#reset_password_user_name').val(name).attr('value', name);
+		$('#alter_password .btn-save').on('click', function(){
+			ManageObject.object.loading.loading();
+			var data = $('#alter_password form').serialize();
+			Common.ajax({
+				data    :data,
+				callback:function(r){
+					ManageObject.object.loading.complete();
+					if(r.status){
+						ManageObject.object.toast.toast(r.message, 1);
+						ManageObject.object.toast.onQuasarHidden(function(){
+							location.reload();
+						});
+					}else{
+						ManageObject.object.toast.toast(r.message, 2);
+					}
+				}
+			});
+		})
 	})
 });

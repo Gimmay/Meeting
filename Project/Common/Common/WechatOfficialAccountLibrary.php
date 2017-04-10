@@ -52,7 +52,7 @@
 			78 => '朋友圈广告',
 		];
 		/** 消息发送的状态 */
-		const SEND_STATUS    = [
+		const SEND_STATUS = [
 			0 => '发送失败',
 			1 => '发送成功',
 			2 => '未知状态'
@@ -1102,7 +1102,7 @@
 			'filePrefixOfAccessToken' => 'access_token_', // AccessToken前缀
 			'filePrefixOfJSAPITicket' => 'jsapi_ticket_', // JSAPITicket前缀
 			'fileSuffix'              => '.json', // 缓存后缀
-			'cacheFolder'             => './.Wechat-Official-Account-Cache', // 文件夹
+			'cacheFolder'             => './Project/Runtime/Wechat-Official-Cache', // 文件夹
 			'type'                    => ''// at,jt
 		];
 

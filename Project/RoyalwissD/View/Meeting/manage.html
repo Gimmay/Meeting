@@ -42,6 +42,14 @@
 									<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
 										<span>批量删除</span></a>
 								</div>
+								<div class="function_btn batch_enable_btn">
+									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
+										<span>批量启用</span></a>
+								</div>
+								<div class="function_btn batch_disable_btn">
+									<a href="javascript:void(0)"><i class="glyphicon glyphicon-ban-circle"></i>
+										<span>批量禁用</span></a>
+								</div>
 								<div class="function_btn">
 									<a href="<{:U('Meeting/fieldSetting')}>"> <i class="glyphicon glyphicon-cog"></i>
 										<span>自定义字段配置</span> </a>
@@ -51,13 +59,13 @@
 						<div class="repertory clearfix">
 							<div class="tabs">
 								<ul class="tabsUl clearfix">
-									<li class="<notpresent name='_GET[type]'>active</notpresent>" id="filter_btn_all">
+									<li class="<notpresent name='_GET[process]'>active</notpresent>" id="filter_btn_all">
 										<a href="javascript:void(0)">全部</a>
 									</li>
-									<li class="<if condition='$_GET[type] eq ing'>active</if>" id="filter_btn_ing">
+									<li class="<if condition='$_GET[process] eq ing'>active</if>" id="filter_btn_ing">
 										<a href="javascript:void(0)">进行</a>
 									</li>
-									<li class="<if condition='$_GET[type] eq fin'>active</if>" id="filter_btn_fin">
+									<li class="<if condition='$_GET[process] eq fin'>active</if>" id="filter_btn_fin">
 										<a href="javascript:void(0)">结束</a>
 									</li>
 								</ul>
@@ -80,7 +88,7 @@
 												<span class="check_item">
 													<input type="checkbox" class="icheck" value="<{$meeting.id}>" placeholder="">
 												</span>
-											<a class="list_img" href="<{:U('Meeting/index', ['mid'=>$meeting['id']])}>">
+											<a class="list_img" href="<{:U('Meeting/menuList', ['mid'=>$meeting['id']])}>">
 												<img src="<{$meeting.logo}>" alt=""> </a>
 											<div class="content-box">
 												<h3>
@@ -103,9 +111,9 @@
 													</div>
 												</div>
 												<ul class="fun_btn clearfix" data-id="<{$meeting.id}>">
-													<li class="fun_li">
+													<!--<li class="fun_li">
 														<a href="<{:U('SignPlace/manage',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-star"></i>签到点</a>
-													</li>
+													</li>-->
 													<li class="fun_li">
 														<a href="<{:U('Client/manage',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-user"></i>客户</a>
 													</li>

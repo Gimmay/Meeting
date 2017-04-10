@@ -6,7 +6,6 @@
 	<title>用户管理 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
@@ -14,9 +13,8 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
@@ -24,6 +22,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/base64.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/operate.js"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
@@ -40,7 +39,7 @@
 									<a href="<{:U('User/create')}>"> <i class="glyphicon glyphicon-plus"></i>
 										<span>新增用户</span> </a>
 								</div>
-								<div class="function_btn batch_delete_btn_confirm">
+								<div class="function_btn batch_delete_btn">
 									<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
 										<span>批量删除</span></a>
 								</div>
@@ -95,7 +94,7 @@
 													<a href="<{:U('User/modify',['id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
 													<button type="button" class="btn btn-default btn-xs btn_alter_password" data-toggle="modal" data-target="#alter_password">修改密码</button>
 													<button type="button" class="btn btn-default btn-xs btn_reset_password" data-toggle="modal" data-target="#reset_password">重置密码</button>
-													<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_user">删除</button>
+													<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
 													<switch name="single.status_code">
 														<case value="0">
 															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_user', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
@@ -123,13 +122,13 @@
 		</div>
 	</div>
 	<!-- 删除用户 -->
-	<div class="modal fade" id="delete_user" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="delete_role_title">删除用户</h2>
+					<h2 class="modal-title">删除用户</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
@@ -138,14 +137,14 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认删除</button>
+						<button type="button" class="btn btn-primary btn-save">确认删除</button>
 					</div>
 				</form>
 			</div>
 		</div>
 	</div>
 	<!-- 批量删除 -->
-	<div class="modal fade" id="batch_delete_user" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="batch_delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -160,7 +159,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary batch_delete_btn">确认删除</button>
+						<button type="button" class="btn btn-primary btn-save">确认删除</button>
 					</div>
 				</form>
 			</div>
@@ -247,7 +246,7 @@
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="modify_role_title">用户密码修改</h2>
+					<h2 class="modal-title">用户密码修改</h2>
 				</div>
 				<form class="form-horizontal" role="form" action="" method="post">
 					<input type="hidden" name="requestType" value="modify_password"> <input type="hidden" name="id">
@@ -279,7 +278,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary password_btn">保存</button>
+						<button type="button" class="btn btn-primary btn-save">保存</button>
 					</div>
 				</form>
 			</div>
@@ -316,7 +315,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary password_reset_btn">保存</button>
+						<button type="button" class="btn btn-primary btn-save">保存</button>
 					</div>
 				</form>
 			</div>

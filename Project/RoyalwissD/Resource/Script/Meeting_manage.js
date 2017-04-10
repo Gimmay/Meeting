@@ -250,19 +250,19 @@ $(function(){
 	// 点击过滤标签-全部
 	$('#filter_btn_all').on('click', function(){
 		var new_url = ManageObject.url.thisPage;
-		new_url     = url_object.delUrlParam('type', new_url);
+		new_url     = url_object.delUrlParam('process', new_url);
 		location.replace(new_url);
 	});
 	// 点击过滤标签-进行中
 	$('#filter_btn_ing').on('click', function(){
 		var new_url = ManageObject.url.thisPage;
-		new_url     = url_object.setUrlParam('type', 'ing', new_url);
+		new_url     = url_object.setUrlParam('process', 'ing', new_url);
 		location.replace(new_url);
 	});
 	// 点击过滤标签-已结束
 	$('#filter_btn_fin').on('click', function(){
 		var new_url = ManageObject.url.thisPage;
-		new_url     = url_object.setUrlParam('type', 'fin', new_url);
+		new_url     = url_object.setUrlParam('process', 'fin', new_url);
 		location.replace(new_url);
 	});
 });

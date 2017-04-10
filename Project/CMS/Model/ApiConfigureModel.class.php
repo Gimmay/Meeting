@@ -45,7 +45,7 @@ SELECT * FROM (
 		ac.wechat_official_appid,
 		ac.wechat_official_appsecret,
 		ac.wechat_enterprise_corpid,
-		ac.wechat_enterprise_appsecret,
+		ac.wechat_enterprise_corpsecret,
 		ac.wechat_enterprise_appid,
 		ac.alipay_name,
 		ac.alipay_pid,

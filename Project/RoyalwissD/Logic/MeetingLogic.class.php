@@ -7,9 +7,11 @@
 	 */
 	namespace RoyalwissD\Logic;
 
+	use CMS\Controller\CMS;
 	use CMS\Logic\MeetingLogic as CMSMeetingLogic;
 	use CMS\Logic\Session;
 	use CMS\Logic\UploadLogic;
+	use CMS\Model\CMSModel;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
 	use General\Model\MeetingModel;
@@ -35,7 +37,7 @@
 								'mobile'
 							];
 
-							return in_array($column_name, $list)?1:0;
+							return in_array($column_name, $list) ? 1 : 0;
 						};
 						$setViewedColumn    = function ($column_name){
 							$list = [
@@ -48,7 +50,7 @@
 								'creatime'
 							];
 
-							return in_array($column_name, $list)?1:0;
+							return in_array($column_name, $list) ? 1 : 0;
 						};
 						/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 						$client_column_control_model = D('RoyalwissD/ClientColumnControl');
@@ -313,14 +315,30 @@
 		public function setData($type, $data){
 			switch($type){
 				case 'manage':
-					foreach($data as $key => $meeting){
-						$data[$key]['status_code']         = $data[$key]['status'];
-						$data[$key]['status']              = GeneralModel::STATUS[$data[$key]['status_code']];
-						$data[$key]['process_status_code'] = $data[$key]['process_status'];
-						$data[$key]['process_status']      = MeetingModel::PROCESS_STATUS[$data[$key]['process_status_code']];
+					$list = [];
+					$get  = $data['urlParam'];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
+					// 若指定了状态码的情况
+					if(isset($get[CMSModel::CONTROL_COLUMN_PARAMETER['status']])) $status = $get[CMSModel::CONTROL_COLUMN_PARAMETER['status']];
+					foreach($data['list'] as $key => $meeting){
+						// 1、筛选数据
+						if(isset($keyword)){
+							//todo 获取筛选配置
+							$found = 0;
+							if($found == 0 && strpos($meeting['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($meeting['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
+						if(isset($status) && $status != $meeting['status']) continue;
+						$meeting['status_code']         = $meeting['status'];
+						$meeting['status']              = GeneralModel::STATUS[$meeting['status_code']];
+						$meeting['process_status_code'] = $meeting['process_status'];
+						$meeting['process_status']      = MeetingModel::PROCESS_STATUS[$meeting['process_status_code']];
+						$list[]                         = $meeting;
 					}
 
-					return $data;
+					return $list;
 				break;
 				case 'fieldSetting':
 					$result = [];

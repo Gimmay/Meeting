@@ -23,10 +23,22 @@
 		/** 接口调用成果结果值 */
 		const STATUS_SUCCESS = 0;
 		/** 消息发送的状态 */
-		const SEND_STATUS    = [
+		const SEND_STATUS = [
 			0 => '发送失败',
 			1 => '发送成功',
 			2 => '未知状态'
+		];
+		/** 消息类型 */
+		const MESSAGE_TYPE = [
+			'news'         => 'news', // (临时)图文
+			'mpNews'       => 'mpnews', // 存储在微信后台的图文信息
+			'mpNewsManual' => 'mpnewsmanual', // 手动编写的图文信息
+			'text'         => 'text', // 文本
+			'voice'        => 'voice', // 语音
+			'music'        => 'music', // 音乐
+			'image'        => 'image', // 图片
+			'video'        => 'video', // 视频
+			'file'         => 'file', // 文件
 		];
 
 		/**
@@ -178,7 +190,7 @@
 		/**
 		 * 发送消息
 		 *
-		 * @param string       $type         消息类型，枚举为['text','image','voice','file','mpnews','news','video','mpnews_r']
+		 * @param string       $type         消息类型，详见本类MESSAGE_TYPE常量
 		 * @param array|string $data         传递的数据，具体参照对应的消息类型所需的数据
 		 * @param int          $agent_id     应用ID
 		 * @param array        $receiver     接收者信息
@@ -549,24 +561,24 @@
 				if(is_string($receiver['tag'])) $post_data = array_merge($post_data, ['totag' => $receiver['tag']]);
 			}
 			switch(strtolower($type)){
-				case 'text':
+				case self::MESSAGE_TYPE['text']:
 					$post_data = array_merge($post_data, [
 						'msgtype' => 'text',
 						'text'    => ['content' => $data],
 						'safe'    => $safe
 					]);
 				break;
-				case 'image':
-				case 'voice':
-				case 'file':
-				case 'mpnews':
+				case self::MESSAGE_TYPE['image']:
+				case self::MESSAGE_TYPE['voice']:
+				case self::MESSAGE_TYPE['file']:
+				case self::MESSAGE_TYPE['mpNews']:
 					$post_data = array_merge($post_data, [
 						'msgtype' => $type,
 						$type     => ['media_id' => $data['media_id']],
 						'safe'    => $safe
 					]);
 				break;
-				case 'video':
+				case self::MESSAGE_TYPE['video']:
 					$post_data = array_merge($post_data, [
 						'msgtype' => 'video',
 						'voice'   => [
@@ -577,7 +589,7 @@
 						'safe'    => $safe
 					]);
 				break;
-				case 'news':
+				case self::MESSAGE_TYPE['news']:
 					$article_list = [];
 					for($i = 0; $i<count($data); $i++){
 						array_push($article_list, [
@@ -592,7 +604,7 @@
 						'news'    => ['articles' => $article_list]
 					]);
 				break;
-				case 'mpnews_r':
+				case self::MESSAGE_TYPE['mpNewsManual']:
 					$article_list = [];
 					for($i = 0; $i<count($data); $i++){
 						array_push($article_list, [
@@ -836,7 +848,8 @@
 			'filePrefixOfAccessToken' => 'access_token_', // AccessToken前缀
 			'filePrefixOfJSAPITicket' => 'jsapi_ticket_', // JSAPITicket前缀
 			'fileSuffix'              => '.json', // 缓存后缀
-			'cacheFolder'             => './.Wechat-Enterprise-Account-Cache', // 文件夹
+//			'cacheFolder'             => './.Wechat-Enterprise-Account-Cache', // 文件夹
+			'cacheFolder'             => './Project/Runtime/Wechat-Enterprise-Cache', // 文件夹
 			'type'                    => ''// at,jt
 		];
 
@@ -849,6 +862,7 @@
 		 * @param string      $ext        文件名扩展串
 		 */
 		public function __construct($corp_id, $type, $cache_path = null, $ext = ''){
+
 			if($cache_path != null) $this->_config['cacheFolder'] = $cache_path;
 			switch(strtolower($type)){
 				case 'at':

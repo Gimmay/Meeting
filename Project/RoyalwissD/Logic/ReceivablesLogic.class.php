@@ -7,6 +7,7 @@
 	 */
 	namespace RoyalwissD\Logic;
 
+	use CMS\Controller\CMS;
 	use CMS\Logic\QRCodeLogic;
 	use CMS\Logic\Session;
 	use CMS\Logic\UploadLogic;
@@ -168,6 +169,21 @@
 						$client_id = $result['id'];
 					}
 					if(!$result['status']) return array_merge($result, ['__ajax__' => true]);
+					else{
+						// 构建会所数据
+						/** @var \RoyalwissD\Model\UnitModel $unit_model */
+						$unit_model = D('RoyalwissD/Unit');
+						$option     = [];
+						if(isset($_POST['unit_area'])) $option['area'] = $post['unit_area'];
+						if(isset($_POST['unit_is_new'])) $option['is_new'] = $post['unit_is_new'];
+						$result1 = $unit_model->create(array_merge($option, [
+							'name'        => $post['unit'],
+							'name_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
+							'creatime'    => Time::getCurrentTime(),
+							'creator'     => Session::getCurrentUser()
+						]));
+						if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
+					}
 					// 创建参会信息
 					// todo 写入二维码页面
 					$sign_qrcode   = U('', [
@@ -599,7 +615,37 @@
 						'orderID' => [], // 已存在的单据号ID数组
 						'index'   => [] // 映射表
 					];
+					$get           = $data['urlParam'];
+					$data          = $data['list'];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
+					// 若指定了客户ID的情况
+					if(isset($get[ReceivablesOrderModel::CONTROL_COLUMN_PARAMETER_SELF['clientID']])) $client_id = $get[ReceivablesOrderModel::CONTROL_COLUMN_PARAMETER_SELF['clientID']];
+					// 若指定了收据详情ID的情况
+					if(isset($get[ReceivablesOrderModel::CONTROL_COLUMN_PARAMETER_SELF['detailID']])) $detail_id = $get[ReceivablesOrderModel::CONTROL_COLUMN_PARAMETER_SELF['detailID']];
+					// 若指定了收据订单ID的情况
+					if(isset($get[ReceivablesOrderModel::CONTROL_COLUMN_PARAMETER_SELF['orderID']])) $url_order_id = $get[ReceivablesOrderModel::CONTROL_COLUMN_PARAMETER_SELF['orderID']];
+					// 若指定了收据审核状态的情况
+					if(isset($get[ReceivablesOrderModel::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']])) $review_status = $get[ReceivablesOrderModel::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
 					for($i = 0, $key = 0; $i<count($data); $i++){
+						// 1、筛选数据
+						if(isset($keyword)){
+							// todo 获取筛选配置
+							$found = 0;
+							if($found == 0 && strpos($data[$i]['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($data[$i]['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($data[$i]['unit'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($data[$i]['unit_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($data[$i]['project'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($data[$i]['project_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($data[$i]['project_type'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($data[$i]['project_type_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
+						if(isset($client_id) && $client_id != $data[$i]['cid']) continue;
+						if(isset($detail_id) && $detail_id != $data[$i]['did']) continue;
+						if(isset($url_order_id) && $url_order_id != $data[$i]['oid']) continue;
+						if(isset($review_status) && $review_status != $data[$i]['review_status']) continue;
 						$order_id   = $data[$i]['id'];
 						$project_id = $data[$i]['project_code'];
 						if(!in_array($data[$i]['id'], $order_reflect['orderID'])){
@@ -652,7 +698,7 @@
 					return $result;
 				break;
 				case 'manage:statistics':
-					$result = [
+					$result       = [
 						'totalPrice'       => 0,
 						'pagePrice'        => 0,
 						'pageCount'        => count($data['list']),
@@ -660,14 +706,19 @@
 						'reviewedCount'    => 0,
 						'notReviewedCount' => 0,
 					];
+					$handler_list = [];
 					foreach($data['totalList'] as $val){
-						if($val['review_status_code'] == 1) $result['totalPrice'] += $val['price'];
+						if($val['review_status'] == 1) $result['totalPrice'] += $val['price'];
+						if(!in_array($val['id'], $handler_list)){
+							if($val['review_status'] == 1) $result['reviewedCount']++;
+							else $result['notReviewedCount']++;
+							$handler_list[] = $val['id'];
+						}
 					}
 					foreach($data['list'] as $val){
 						if($val['review_status_code'] == 1) $result['pagePrice'] += $val['price'];
-						if($val['review_status_code'] == 1) $result['reviewedCount']++;
-						else $result['notReviewedCount']++;
 					}
+					$result['totalCount'] = count($handler_list);
 
 					return $result;
 				break;

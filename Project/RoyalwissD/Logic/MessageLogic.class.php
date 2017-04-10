@@ -176,13 +176,10 @@
 		public function getSMSBalance($meeting_id){
 			/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
 			$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
-			if(!$meeting_configure_model->fetch(['mid' => $meeting_id])) return 0;
-			$meeting_configure = $meeting_configure_model->getObject();
-			/** @var \General\Model\ApiConfigureModel $api_configure_model */
-			$api_configure_model = D('General/ApiConfigure');
-			if(!$api_configure_model->fetch(['id' => $meeting_configure['sms_mobset_configure']])) return 0;
-			$sms_mobset_configure = $api_configure_model->getObject();
-			$sms_mobset_obj       = new SMSMobset($sms_mobset_configure['sms_mobset_url'], $sms_mobset_configure['sms_mobset_corpid'], $sms_mobset_configure['sms_mobset_user'], $sms_mobset_configure['sms_mobset_pass']);
+			$sms_mobset_configure    = $meeting_configure_model->getSMSMobsetConfigure($meeting_id);
+			if(!$sms_mobset_configure['status']) return 0;
+			else $sms_mobset_configure = $sms_mobset_configure['data'];
+			$sms_mobset_obj = new SMSMobset($sms_mobset_configure['url'], $sms_mobset_configure['corpID'], $sms_mobset_configure['user'], $sms_mobset_configure['pass']);
 
 			return $sms_mobset_obj->getBalance();
 		}
@@ -197,13 +194,10 @@
 		public function getSMSStatus($meeting_id){
 			/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
 			$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
-			if(!$meeting_configure_model->fetch(['mid' => $meeting_id])) return 0;
-			$meeting_configure = $meeting_configure_model->getObject();
-			/** @var \General\Model\ApiConfigureModel $api_configure_model */
-			$api_configure_model = D('General/ApiConfigure');
-			if(!$api_configure_model->fetch(['id' => $meeting_configure['sms_mobset_configure']])) return 0;
-			$sms_mobset_configure = $api_configure_model->getObject();
-			$sms_mobset_obj       = new SMSMobset($sms_mobset_configure['sms_mobset_url'], $sms_mobset_configure['sms_mobset_corpid'], $sms_mobset_configure['sms_mobset_user'], $sms_mobset_configure['sms_mobset_pass']);
+			$sms_mobset_configure    = $meeting_configure_model->getSMSMobsetConfigure($meeting_id);
+			if(!$sms_mobset_configure['status']) return $sms_mobset_configure;
+			else $sms_mobset_configure = $sms_mobset_configure['data'];
+			$sms_mobset_obj = new SMSMobset($sms_mobset_configure['url'], $sms_mobset_configure['corpID'], $sms_mobset_configure['user'], $sms_mobset_configure['pass']);
 
 			return $sms_mobset_obj->getStatus();
 		}
@@ -218,13 +212,10 @@
 		public function getSMSSign($meeting_id){
 			/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
 			$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
-			if(!$meeting_configure_model->fetch(['mid' => $meeting_id])) return 0;
-			$meeting_configure = $meeting_configure_model->getObject();
-			/** @var \General\Model\ApiConfigureModel $api_configure_model */
-			$api_configure_model = D('General/ApiConfigure');
-			if(!$api_configure_model->fetch(['id' => $meeting_configure['sms_mobset_configure']])) return 0;
-			$sms_mobset_configure = $api_configure_model->getObject();
-			$sms_mobset_obj       = new SMSMobset($sms_mobset_configure['sms_mobset_url'], $sms_mobset_configure['sms_mobset_corpid'], $sms_mobset_configure['sms_mobset_user'], $sms_mobset_configure['sms_mobset_pass']);
+			$sms_mobset_configure    = $meeting_configure_model->getSMSMobsetConfigure($meeting_id);
+			if(!$sms_mobset_configure['status']) return null;
+			else $sms_mobset_configure = $sms_mobset_configure['data'];
+			$sms_mobset_obj = new SMSMobset($sms_mobset_configure['url'], $sms_mobset_configure['corpID'], $sms_mobset_configure['user'], $sms_mobset_configure['pass']);
 
 			return $sms_mobset_obj->getSign();
 		}
@@ -301,6 +292,7 @@
 			else $sms_flag = 0;
 			// ---如果开启微信企业号发送的话
 			$wechat_enterprise_obj = new stdClass();
+			$appid                 = 0;
 			if($message_mode['wechatEnterprise'] == 1){
 				if(!$api_configure_model->fetch(['id' => $meeting_configure['wechat_enterprise_configure']])) return [
 					'status'  => false,
@@ -308,7 +300,7 @@
 				];
 				$wechat_enterprise_configure = $api_configure_model->getObject();
 				$appid                       = $wechat_enterprise_configure['wechat_enterprise_appid'];
-				$wechat_enterprise_obj       = new EnterpriseAccountLibrary($wechat_enterprise_configure['wechat_enterprise_corpid'], $wechat_enterprise_configure['wechat_enterprise_appsecret']);
+				$wechat_enterprise_obj       = new EnterpriseAccountLibrary($wechat_enterprise_configure['wechat_enterprise_corpid'], $wechat_enterprise_configure['wechat_enterprise_corpsecret']);
 				$wechat_enterprise_flag      = 1;
 			}
 			else $wechat_enterprise_flag = 0;
@@ -353,6 +345,7 @@
 						if($result['status']){
 							$message_send_history_model->create([
 								'mid'         => $meeting_id,
+								'cid'         => $client['cid'],
 								'message_id'  => $message['id'],
 								'context'     => $client['send_message'],
 								'sms_id'      => $result['data'][0]['SmsID'],
@@ -366,6 +359,7 @@
 						}
 						else $message_send_history_model->create([
 							'mid'         => $meeting_id,
+							'cid'         => $client['cid'],
 							'message_id'  => $message['id'],
 							'context'     => $client['send_message'],
 							'type'        => 1,
@@ -380,8 +374,42 @@
 			// 5、如果开启微信企业号推送的话
 			if($wechat_enterprise_flag == 1){
 				$message = $message_model->getMessage($meeting_id, 2, $action);
-				if($message !== null){
-					$client_list = $this->_analysisMessage($meeting_id, $client_list, $message);
+				if($message['context'] !== null){
+					$send_result['wechatEnterprise'] = [
+						'type'  => MessageModel::TYPE[2],
+						'count' => 0
+					];
+					/** @var \RoyalwissD\Model\MessageSendHistoryModel $message_send_history_model */
+					$message_send_history_model = D('RoyalwissD/MessageSendHistory');
+					$client_list                = $this->_analysisMessage($meeting_id, $client_list, $message['context']);
+					foreach($client_list as $client){
+						$result = $wechat_enterprise_obj->sendMessage($wechat_enterprise_obj::MESSAGE_TYPE['text'], $client['send_message'], $appid, ['user' => [$client['wechat_userid']]]);
+						if($result['status']){
+							$message_send_history_model->create([
+								'mid'         => $meeting_id,
+								'cid'         => $client['cid'],
+								'message_id'  => $message['id'],
+								'context'     => $client['send_message'],
+								'type'        => 2,
+								'action'      => $action,
+								'send_status' => 1,
+								'creator'     => Session::getCurrentUser(),
+								'creatime'    => Time::getCurrentTime()
+							]);
+							$send_result['wechatEnterprise']['count']++;
+						}
+						else $message_send_history_model->create([
+							'mid'         => $meeting_id,
+							'cid'         => $client['cid'],
+							'message_id'  => $message['id'],
+							'context'     => $client['send_message'],
+							'type'        => 2,
+							'action'      => $action,
+							'send_status' => 0,
+							'creator'     => Session::getCurrentUser(),
+							'creatime'    => Time::getCurrentTime()
+						]);
+					}
 				}
 			}
 			// 6、如果开启微信公众号推送的话

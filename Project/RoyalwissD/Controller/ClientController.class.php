@@ -15,6 +15,7 @@
 	use RoyalwissD\Logic\MeetingConfigureLogic;
 	use RoyalwissD\Model\ClientColumnControlModel;
 	use RoyalwissD\Model\ClientModel;
+	use RoyalwissD\Model\UnitModel;
 	use Think\Page;
 
 	class ClientController extends RoyalwissD{
@@ -90,6 +91,7 @@
 			$group_model = D('RoyalwissD/Grouping');
 			$group_list  = $group_model->getSelectedList($this->meetingID);
 			$this->assign('group_list', $group_list);
+			$this->assign('unit_is_new_list', UnitModel::IS_NEW);
 			$this->assign('gender_list', ClientModel::GENDER);
 			$this->assign('is_new_list', ClientModel::IS_NEW);
 			$this->assign('type_list', ClientModel::TYPE);
@@ -125,6 +127,7 @@
 			$this->assign('gender_list', ClientModel::GENDER);
 			$this->assign('is_new_list', ClientModel::IS_NEW);
 			$this->assign('type_list', ClientModel::TYPE);
+			$this->assign('unit_is_new_list', UnitModel::IS_NEW);
 			$this->display();
 		}
 
@@ -264,6 +267,7 @@
 			$this->assign('gender_list', ClientModel::GENDER);
 			$this->assign('is_new_list', ClientModel::IS_NEW);
 			$this->assign('type_list', ClientModel::TYPE);
+			$this->assign('unit_is_new_list', UnitModel::IS_NEW);
 			$this->assign('info', $client);
 			$this->display();
 		}

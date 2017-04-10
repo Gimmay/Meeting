@@ -48,7 +48,9 @@
 				$attendee_model     = D('RoyalwissD/Attendee');
 				$custom_column_list = $attendee_model->getColumnList(true);
 				$list               = [];
-				foreach($custom_column_list as $column) $list[] = $column['column_name'];
+				foreach($custom_column_list as $column){
+					if(preg_match('/'.AttendeeModel::CUSTOM_COLUMN.'(\d)+/', $column['column_name'])) $list[] = $column['column_name'];
+				}
 				$str = count($list)>0 ? implode(',', $list).',' : ',';
 
 				return $str;
@@ -133,7 +135,7 @@ SELECT * FROM (
 			SELECT g.NAME
 			FROM meeting_royalwiss_deal.grouping g
 			JOIN meeting_royalwiss_deal.grouping_member gm ON gm.gid = g.id
-			WHERE g.mid = a1.mid AND gm.cid = a1.cid AND g.status <> 2 AND gm.status = 1
+			WHERE g.mid = a1.mid AND gm.cid = a1.cid AND g.status <> 2 AND gm.status = 1 AND gm.process_status = 1
 			ORDER BY gm.id desc
 			LIMIT 1
 		) group_name,
@@ -145,11 +147,36 @@ SELECT * FROM (
 			JOIN meeting_royalwiss_deal.room_customer rc ON rc.rid = r.id AND rc.status <> 2 AND rc.process_status = 1
 			WHERE h.mid = a1.mid AND r.mid = a1.mid AND h.status <> 2 AND rc.cid = a1.cid
 		) hotel_room_name,
+		/* 微信字段 */
+		c1.wechat_type,
+		c1.wechat_openid,
+		c1.wechat_userid,
+		c1.wechat_nickname,
+		c1.wechat_mobile,
+		c1.wechat_email,
+		c1.wechat_gender,
+		c1.wechat_lang,
+		c1.wechat_country,
+		c1.wechat_province,
+		c1.wechat_city,
+		c1.wechat_avatar,
+		c1.wechat_is_follow,
+		c1.wechat_department,
+		c1.wechat_appid,
+		c1.wechat_id,
+		c1.wechat_position,
+		/* 微信字段 */
+		/* 会所字段 */
+		u0.id uid,
+		u0.is_new unit_is_new,
+		u0.area unit_area,
+		/* 会所字段 */
 		a1.cid,
 		a1.id,
 		a1.mid
 	FROM meeting_royalwiss_deal.attendee a1
 	JOIN meeting_royalwiss_deal.client c1 ON c1.id = a1.cid
+	LEFT JOIN meeting_royalwiss_deal.unit u0 ON u0.name = c1.unit
 	LEFT JOIN meeting_common.user u1 ON u1.id = a1.creator AND u1.status <> 2
 	LEFT JOIN meeting_common.user u2 ON u2.id = a1.sign_director AND u2.status <> 2
 	LEFT JOIN meeting_common.user u3 ON u3.id = a1.review_director AND u3.status <> 2

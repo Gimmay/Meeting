@@ -111,7 +111,7 @@ SELECT * FROM (
 			SELECT g.NAME
 			FROM meeting_royalwiss_deal.grouping g
 			JOIN meeting_royalwiss_deal.grouping_member gm ON gm.gid = g.id
-			WHERE g.mid = a1.mid AND gm.cid = a1.cid AND g.status <> 2 AND gm.status = 1
+			WHERE g.mid = a1.mid AND gm.cid = a1.cid AND g.status <> 2 AND gm.status = 1 AND gm.process_status = 1   
 			ORDER BY gm.id desc
 			LIMIT 1
 		) group_name,
