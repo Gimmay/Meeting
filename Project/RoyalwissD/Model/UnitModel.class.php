@@ -8,13 +8,16 @@
 	namespace RoyalwissD\Model;
 
 	use Exception;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class UnitModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'unit';
+		protected $tableName = 'unit';
+		const TABLE_NAME = 'unit';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = ['area' => 'area', 'meetingID' => 'mid'];
@@ -25,12 +28,18 @@
 		];
 
 		public function getList($control = []){
-			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$area       = $control[self::CONTROL_COLUMN_PARAMETER_SELF['area']];
-			$meeting_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$where      = ' WHERE 0 = 0 ';
+			$table_unit      = $this->tableName;
+			$table_user      = UserModel::TABLE_NAME;
+			$table_client    = ClientModel::TABLE_NAME;
+			$table_attendee  = AttendeeModel::TABLE_NAME;
+			$common_database = GeneralModel::DATABASE_NAME;
+			$this_database   = self::DATABASE_NAME;
+			$keyword         = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order           = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status          = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$area            = $control[self::CONTROL_COLUMN_PARAMETER_SELF['area']];
+			$meeting_id      = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$where           = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -43,8 +52,8 @@
 			}
 			if(isset($status) && isset($status[0]) && isset($status[1])) $where .= " and status $status[0] $status[1] ";
 			if(isset($meeting_id)) $where .= " AND name IN (
-	SELECT c1.unit FROM meeting_royalwiss_deal.client c1
-	JOIN meeting_royalwiss_deal.attendee a1 ON a1.cid = c1.id
+	SELECT c1.unit FROM $this_database.$table_client c1
+	JOIN $this_database.$table_attendee a1 ON a1.cid = c1.id
 	WHERE c1.status = 1 AND a1.status = 1 AND a1.mid = $meeting_id AND a1.review_status = 1
 ) ";
 			if(isset($area) && isset($area[0]) && isset($area[1])) $where .= " and area $area[0] $area[1] ";
@@ -61,8 +70,8 @@ SELECT * FROM (
 		u1.status,
 		u1.creator creator_code,
 		u2.name creator
-	FROM meeting_royalwiss_deal.unit u1
-	LEFT JOIN meeting_common.user u2 ON u2.id = u1.creator AND u1.status <> 2
+	FROM $this_database.$table_unit u1
+	LEFT JOIN $common_database.$table_user u2 ON u2.id = u1.creator AND u1.status <> 2
 ) tab
 $where
 $order

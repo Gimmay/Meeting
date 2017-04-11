@@ -15,7 +15,6 @@
 		}
 
 		const DATABASE_NAME = 'meeting_common';
-		// todo sql语句全部使用动态库名和表名
 		const STATUS = [
 			0 => '禁用',
 			1 => '可用',

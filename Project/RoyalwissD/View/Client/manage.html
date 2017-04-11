@@ -73,7 +73,7 @@
 											<a href="<{:U('exportTemplate', ['mid'=>I('get.mid', 0, 'int')])}>">下载导入模板</a>
 										</li>
 										<li>
-											<a href="<{:U('exportData', ['mid'=>I('get.mid', 0, 'int')])}>">导出客户信息</a>
+											<a href="<{:U('exportData', array_merge(I('get.'), ['mid'=>I('get.mid', 0, 'int')]))}>">导出客户信息</a>
 										</li>
 									</ul>
 								</div>

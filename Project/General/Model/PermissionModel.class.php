@@ -8,7 +8,8 @@
 	namespace General\Model;
 
 	class PermissionModel extends GeneralModel{
-		protected $tableName       = 'permission';
+		protected $tableName = 'permission';
+		const TABLE_NAME = 'permission';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_COMMON';
 

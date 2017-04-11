@@ -24,18 +24,14 @@
 			switch($type){
 				case 'modify':
 					/** @var \General\Model\UserModel $user_model */
-					$user_model = D('General/User');
-					$str_obj    = new StringPlus();
-					$post       = I('post.');
-					$id         = I('get.id', 0, 'int');
-					$data       = [
-						'nickname'        => $post['nickname'],
-						'nickname_pinyin' => $str_obj->getPinyin($post['nickname'], true, ''),
-						'comment'         => $post['comment']
-					];
-					$res        = $user_model->modifyInformation(['id' => $id], $data);
+					$user_model              = D('General/User');
+					$str_obj                 = new StringPlus();
+					$id                      = I('get.id', 0, 'int');
+					$post                    = I('post.');
+					$post['nickname_pinyin'] = $str_obj->getPinyin($post['nickname'], true, '');
+					$result                  = $user_model->modifyInformation(['id' => $id], $post);
 
-					return $res;
+					return array_merge($result, ['__ajax__' => true, 'nextPage' => U('manage')]);
 				break;
 				case 'create':
 					/** @var \General\Model\UserModel $user_model */
@@ -53,15 +49,34 @@
 						'nickname_pinyin' => $str_obj->getPinyin($data['nickname'], true, '')
 					]));
 
-					return array_merge($result, ['__ajax__' => false, '__return__' => U('manage')]);
+					return array_merge($result, ['__ajax__' => true, 'nextPage' => U('manage')]);
 				break;
 				case 'delete':
-					/** @var \General\Model\UserModel $model */
-					$model  = D('General/User');
-					$id     = I('post.id', 0, 'int');
-					$result = $model->drop(['id' => $id]);
+					/** @var \General\Model\UserModel $user_model */
+					$user_model = D('General/User');
+					$id_str     = I('post.id', '');
+					$id         = explode(',', $id_str);
+					$result     = $user_model->drop(['id' => ['in', $id]]);
 
-					return array_merge($result, ['__ajax__' => false]);
+					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'enable':
+					/** @var \General\Model\UserModel $user_model */
+					$user_model = D('General/User');
+					$id_str     = I('post.id', '');
+					$id         = explode(',', $id_str);
+					$result     = $user_model->enable(['id' => ['in', $id]]);
+
+					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'disable':
+					/** @var \General\Model\UserModel $user_model */
+					$user_model = D('General/User');
+					$id_str     = I('post.id', '');
+					$id         = explode(',', $id_str);
+					$result     = $user_model->disable(['id' => ['in', $id]]);
+
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'login':
 					return $this->checkLogin($opt['username'], base64_decode($opt['password']));
@@ -147,14 +162,14 @@
 								$system_log_model->create($data);
 							}
 
-							return array_merge(['__ajax__' => false], $result);
+							return array_merge(['__ajax__' => true], $result);
 						}
 						else{
-							return ['status' => false, 'message' => '密码错误'];
+							return ['status' => false, 'message' => '密码错误', '__ajax__' => true];
 						}
 					}
 					else{
-						return ['status' => false, 'message' => '找不到该用户'];
+						return ['status' => false, 'message' => '找不到该用户', '__ajax__' => true];
 					}
 				break;
 				case 'reset_password':
@@ -179,9 +194,9 @@
 							$system_log_model->create($data);
 						}
 
-						return array_merge(['__ajax__' => false], $result);
+						return array_merge(['__ajax__' => true], $result);
 					}
-					else return ['status' => false, 'message' => '找不到该用户'];
+					else return ['status' => false, 'message' => '找不到该用户', '__ajax__' => true];
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true, '__redirect__' => ''];

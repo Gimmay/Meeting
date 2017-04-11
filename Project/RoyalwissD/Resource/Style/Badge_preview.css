@@ -241,3 +241,17 @@ canvas{
 	box-shadow  : none;
 }
 
+
+
+#print{
+	position : fixed;
+	width    : 100%;
+	height   : 100%;
+	left     : 100%;
+	top      : 0;
+}
+
+.badge_muban{
+	width  : 100% !important;
+	height : 100% !important;
+}

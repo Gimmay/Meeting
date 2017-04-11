@@ -170,19 +170,21 @@
 					}
 					if(!$result['status']) return array_merge($result, ['__ajax__' => true]);
 					else{
-						// 构建会所数据
-						/** @var \RoyalwissD\Model\UnitModel $unit_model */
-						$unit_model = D('RoyalwissD/Unit');
-						$option     = [];
-						if(isset($_POST['unit_area'])) $option['area'] = $post['unit_area'];
-						if(isset($_POST['unit_is_new'])) $option['is_new'] = $post['unit_is_new'];
-						$result1 = $unit_model->create(array_merge($option, [
-							'name'        => $post['unit'],
-							'name_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
-							'creatime'    => Time::getCurrentTime(),
-							'creator'     => Session::getCurrentUser()
-						]));
-						if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
+						if($client_repeat_action == $meeting_configure_model::CLIENT_REPEAT_ACTION_OVERRIDE){
+							// 构建会所数据
+							/** @var \RoyalwissD\Model\UnitModel $unit_model */
+							$unit_model = D('RoyalwissD/Unit');
+							$option     = [];
+							if(isset($_POST['unit_area'])) $option['area'] = $post['unit_area'];
+							if(isset($_POST['unit_is_new'])) $option['is_new'] = $post['unit_is_new'];
+							$result1 = $unit_model->create(array_merge($option, [
+								'name'        => $post['unit'],
+								'name_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
+								'creatime'    => Time::getCurrentTime(),
+								'creator'     => Session::getCurrentUser()
+							]));
+							if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
+						}
 					}
 					// 创建参会信息
 					// todo 写入二维码页面
@@ -308,10 +310,26 @@
 				break;
 				case 'delete':
 					$receivables_order_id_str = I('post.id', '');
+					$meeting_id               = I('get.mid', 0, 'int');
 					$receivables_order_id     = explode(',', $receivables_order_id_str);
 					/** @var \RoyalwissD\Model\ReceivablesOrderModel $receivables_order_model */
 					$receivables_order_model = D('RoyalwissD/ReceivablesOrder');
-					$result                  = $receivables_order_model->drop(['id' => ['in', $receivables_order_id]]);
+					/** @var \RoyalwissD\Model\ReceivablesProjectModel $receivables_project_model */
+					$receivables_project_model = D('RoyalwissD/ReceivablesProject');
+					/** @var \RoyalwissD\Model\ProjectModel $project_model */
+					$project_model = D('RoyalwissD/Project');
+					$project_list  = $receivables_project_model->where([
+						'mid' => $meeting_id,
+						'oid' => ['in', $receivables_order_id]
+					])->select();
+					$project_data  = [];
+					foreach($project_list as $project_record){
+						$project_data['id'][]     = $project_record['project_id'];
+						$project_data['number'][] = 1;
+					}
+					$result0 = $project_model->refund($project_data);
+					if(!$result0['status']) return array_merge($result0, ['__ajax__' => true]);
+					$result = $receivables_order_model->drop(['id' => ['in', $receivables_order_id]]);
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
@@ -378,7 +396,6 @@
 					return array_merge($receivables_detail[0], ['__ajax__' => true]);
 				break;
 				case 'modify_detail':
-					// TODO 检测库存
 					$post                  = I('post.');
 					$receivables_detail_id = I('post.id', 0, 'int');
 					/** @var \RoyalwissD\Model\ReceivablesProjectModel $receivables_project_model */
@@ -391,7 +408,26 @@
 						'__ajax__' => true
 					];
 					$detail_record = $receivables_detail_model->getObject();
-					$result        = $receivables_project_model->modify(['id' => $detail_record['pid']], ['project_id' => $post['project_id']]);
+					/** @var \RoyalwissD\Model\ProjectModel $project_model */
+					$project_model = D('RoyalwissD/Project');
+					// 归还旧项目
+					if(!$receivables_project_model->fetch(['id' => $detail_record['pid']])) return [
+						'status'   => false,
+						'message'  => '获取收款数据出错',
+						'__ajax__' => true
+					];
+					$receivables_project = $receivables_project_model->getObject();
+					$project_data        = [
+						'id'     => [$receivables_project['project_id']],
+						'number' => [1]
+					];
+					$result0             = $project_model->refund($project_data);
+					if(!$result0) return array_merge($result0, ['__ajax__' => true]);
+					// 扣减新项目
+					$result0 = $project_model->sell($post['project_id']);
+					if(!$result0) return array_merge($result0, ['__ajax__' => true]);
+					// 修改信息
+					$result = $receivables_project_model->modify(['id' => $detail_record['pid']], ['project_id' => $post['project_id']]);
 					unset($post['id']);
 					$result2 = $receivables_detail_model->modify(['id' => $receivables_detail_id], $post);
 					if(!$result['status'] && !$result2['status']) return [

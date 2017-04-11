@@ -46,10 +46,6 @@
 					$batch_id             = $str_obj->makeRandomString(64);
 					$client_data          = $attendee_data = [];
 					// 构建会所数据
-
-					// todo 获取覆盖还是跳过的设定
-
-
 					/** @var \RoyalwissD\Model\UnitModel $unit_model */
 					$unit_model = D('RoyalwissD/Unit');
 					$option     = [];
@@ -196,6 +192,7 @@
 						$meeting_configure_logic = new MeetingConfigureLogic();
 						$meeting_configure       = $meeting_configure_model->getObject();
 						$client_repeat_mode      = $meeting_configure_logic->decodeClientRepeatMode($meeting_configure['client_repeat_mode']);
+						$client_repeat_action    = $meeting_configure['client_repeat_action'];
 					}
 					$condition = [];
 					if(isset($client_repeat_mode['clientName']) && $client_repeat_mode['clientName'] == 1) $condition['name'] = $post['name'];
@@ -209,20 +206,21 @@
 							'__ajax__' => true
 						];
 					}
-					// 保存会所数据
-					// todo 获取覆盖还是跳过的设定
-					/** @var \RoyalwissD\Model\UnitModel $unit_model */
-					$unit_model = D('RoyalwissD/Unit');
-					$option     = [];
-					if(isset($_POST['unit_area'])) $option['area'] = $post['unit_area'];
-					if(isset($_POST['unit_is_new'])) $option['is_new'] = $post['unit_is_new'];
-					$result1 = $unit_model->create(array_merge($option, [
-						'name'        => $post['unit'],
-						'name_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
-						'creatime'    => Time::getCurrentTime(),
-						'creator'     => Session::getCurrentUser()
-					]));
-					if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
+					if(isset($client_repeat_action) && $client_repeat_action == $meeting_configure_model::CLIENT_REPEAT_ACTION_OVERRIDE){
+						// 保存会所数据
+						/** @var \RoyalwissD\Model\UnitModel $unit_model */
+						$unit_model = D('RoyalwissD/Unit');
+						$option     = [];
+						if(isset($_POST['unit_area'])) $option['area'] = $post['unit_area'];
+						if(isset($_POST['unit_is_new'])) $option['is_new'] = $post['unit_is_new'];
+						$result1 = $unit_model->create(array_merge($option, [
+							'name'        => $post['unit'],
+							'name_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
+							'creatime'    => Time::getCurrentTime(),
+							'creator'     => Session::getCurrentUser()
+						]));
+						if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
+					}
 					// 保存客户数据
 					$result = $client_model->modify(['id' => $client_id], array_merge($post, [
 						'name_pinyin' => $str_obj->getPinyin($post['name'], true, ''),
@@ -305,20 +303,21 @@
 					}
 					if(!$result['status']) return array_merge($result, ['__ajax__' => true]);
 					else{
-						// 构建会所数据
-						// todo 获取覆盖还是跳过的设定
-						/** @var \RoyalwissD\Model\UnitModel $unit_model */
-						$unit_model = D('RoyalwissD/Unit');
-						$option     = [];
-						if(isset($_POST['unit_area'])) $option['area'] = $post['unit_area'];
-						if(isset($_POST['unit_is_new'])) $option['is_new'] = $post['unit_is_new'];
-						$result1 = $unit_model->create(array_merge($option, [
-							'name'        => $post['unit'],
-							'name_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
-							'creatime'    => Time::getCurrentTime(),
-							'creator'     => Session::getCurrentUser()
-						]));
-						if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
+						if($client_repeat_action == $meeting_configure_model::CLIENT_REPEAT_ACTION_OVERRIDE){
+							// 构建会所数据
+							/** @var \RoyalwissD\Model\UnitModel $unit_model */
+							$unit_model = D('RoyalwissD/Unit');
+							$option     = [];
+							if(isset($_POST['unit_area'])) $option['area'] = $post['unit_area'];
+							if(isset($_POST['unit_is_new'])) $option['is_new'] = $post['unit_is_new'];
+							$result1 = $unit_model->create(array_merge($option, [
+								'name'        => $post['unit'],
+								'name_pinyin' => $str_obj->getPinyin($post['unit'], true, ''),
+								'creatime'    => Time::getCurrentTime(),
+								'creator'     => Session::getCurrentUser()
+							]));
+							if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
+						}
 					}
 					// 创建参会信息
 					$attendee_data = array_merge($post, [
@@ -928,9 +927,9 @@
 							/** @var \RoyalwissD\Model\UnitModel $unit_model */
 							$unit_model = D('RoyalwissD/Unit');
 							if($unit_model->fetch(['name' => $client['unit']])){
-								$unit_data = $unit_model->getObject();
+								$unit_data           = $unit_model->getObject();
 								$unit_data['is_new'] = $kv['save']['unit_is_new'];
-								$result1 = $unit_model->create($unit_data);
+								$result1             = $unit_model->create($unit_data);
 								if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
 							}
 						}
@@ -938,12 +937,11 @@
 							/** @var \RoyalwissD\Model\UnitModel $unit_model */
 							$unit_model = D('RoyalwissD/Unit');
 							if($unit_model->fetch(['name' => $client['unit']])){
-								$unit_data = $unit_model->getObject();
+								$unit_data         = $unit_model->getObject();
 								$unit_data['area'] = $kv['save']['unit_area'];
-								$result1 = $unit_model->create($unit_data);
+								$result1           = $unit_model->create($unit_data);
 								if(!$result1['status']) return array_merge($result1, ['__ajax__' => true]);
 							}
-
 						}
 						if(isset($kv['save']['unit'])){
 							/** @var \RoyalwissD\Model\UnitModel $unit_model */
@@ -1330,8 +1328,39 @@ SET
 					$column_list = $data['columnValue'];
 					$column_name = $data['columnName'];
 					$result      = [];
+					$get = $data['urlParam'];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
+					// 若指定了状态码的情况
+					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER['status']])) $status = $get[ClientModel::CONTROL_COLUMN_PARAMETER['status']];
+					// 若指定了固定的ClientID
+					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['clientID']])) $client_id = $get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['clientID']];
+					// 若指定了签到状态码的情况
+					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['signStatus']])) $sign_status = $get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['signStatus']];
+					// 若指定了审核状态码的情况
+					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']])) $review_status = $get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
 					foreach($data['dataList'] as $index => $client){
 						$temp_head = $temp_body = [];
+						// 1、筛选数据
+						if(isset($keyword)){
+							$found = 0;
+							if($found == 0 && strpos($client['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($client['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($client['unit'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($client['unit_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($client['mobile'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
+						if(isset($client_id) && $client_id != $client['cid']) continue;
+						if(isset($status) && $status != $client['status']) continue;
+						if(isset($sign_status)){
+							if($sign_status == 0 && in_array($client['sign_status'], [1])) continue;
+							if($sign_status == 1 && in_array($client['sign_status'], [0, 2])) continue;
+						}
+						if(isset($review_status)){
+							if($review_status == 0 && in_array($client['review_status'], [1])) continue;
+							if($review_status == 1 && in_array($client['review_status'], [0, 2])) continue;
+						}
 						foreach($client as $key => $val){
 							if(!in_array($key, $column_list)) continue;
 							$i               = array_search($key, $column_list);
@@ -1364,13 +1393,10 @@ SET
 								case 'is_new':
 									$val = ClientModel::IS_NEW[$val];
 								break;
-								//								case 'type':
-								//									$val = ClientModel::TYPE[$val];
-								//								break;
 							}
 							$temp_body[$key] = $val;
 						}
-						if($index == 0) $result[] = $temp_head;
+						if(count($result) == 0) $result[] = $temp_head;
 						$result[] = $temp_body;
 					}
 

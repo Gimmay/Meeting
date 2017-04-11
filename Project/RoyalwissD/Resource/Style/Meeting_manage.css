@@ -97,23 +97,23 @@
 	margin-left   : 10px;
 }
 
-.content-box h3 .status.new{
+.content-box h3 .status1{
 	background : #ED5565;
 }
 
-.content-box h3 .status.release{
+.content-box h3 .status2{
 	background : #F8AC59;
 }
 
-.content-box h3 .status.conduct{
+.content-box h3 .status3{
 	background : #00A0E8;
 }
 
-.content-box h3 .status.end{
+.content-box h3 .status4{
 	background : rgba(0, 0, 0, .5);
 }
 
-.content-box h3 .status.disable{
+.content-box h3 .status5{
 	background : #28B778;
 }
 

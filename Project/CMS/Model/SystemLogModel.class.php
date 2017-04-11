@@ -7,12 +7,16 @@
 	 */
 	namespace CMS\Model;
 
+	use General\Model\GeneralModel;
+	use General\Model\MeetingModel;
+
 	class SystemLogModel extends CMSModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'system_log';
+		protected $tableName = 'system_log';
+		const TABLE_NAME = 'system_log';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_COMMON';
 		const CONTROL_COLUMN_PARAMETER_SELF = [
@@ -23,6 +27,10 @@
 		];
 
 		public function getList($control = []){
+			$table_system_log = $this->tableName;
+			$table_user       = UserModel::TABLE_NAME;
+			$table_meeting    = MeetingModel::TABLE_NAME;
+			$common_database  = GeneralModel::DATABASE_NAME;
 			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
 			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
 			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
@@ -61,10 +69,10 @@ SELECT * FROM (
 		sl.creator creator_code,
 		m.name meeting_name,
 		u1.name creator
-	FROM meeting_common.system_log sl
-	LEFT JOIN meeting_common.user u1 ON u1.id = sl.creator AND u1.status <> 2
-	LEFT JOIN meeting_common.meeting m ON m.id = sl.mid AND m.status <> 2
-	JOIN meeting_common.user u2 ON u2.id = sl.operator AND u2.status <> 2
+	FROM $common_database.$table_system_log sl
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = sl.creator AND u1.status <> 2
+	LEFT JOIN $common_database.$table_meeting m ON m.id = sl.mid AND m.status <> 2
+	JOIN $common_database.$table_user u2 ON u2.id = sl.operator AND u2.status <> 2
 ) tab
 $where
 $order";

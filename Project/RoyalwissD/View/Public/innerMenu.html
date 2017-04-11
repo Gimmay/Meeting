@@ -16,18 +16,18 @@
 					<li class="<if condition='$cv_name eq Message_manage'>active</if>">
 						<a href="<{:U('Message/manage', ['mid'=>I('get.mid', 0, 'int')])}>">消息管理</a>
 					</li>
-					<!--<li class="<if condition='$cv_name eq Badge_manage'>active</if>">
+					<li class="<if condition='$cv_name eq Badge_manage'>active</if>">
 						<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">胸卡设计</a>
-					</li>-->
+					</li>
 					<li class="<if condition='$cv_name eq Project_manage'>active</if>">
 						<a href="<{:U('Project/manage', ['mid'=>I('get.mid', 0, 'int')])}>">项目管理</a>
 					</li>
 					<!--<li class="<if condition='$cv_name eq Coupon_manage'>active</if>">
 						<a href="<{:U('Coupon/manage', ['mid'=>I('get.mid', 0, 'int')])}>">代金券管理</a>
 					</li>-->
-					<!--<li class="<if condition='$cv_name eq SignPlace_manage'>active</if>">
+					<li class="<if condition='$cv_name eq SignPlace_manage'>active</if>">
 						<a href="<{:U('SignPlace/manage', ['mid'=>I('get.mid', 0, 'int')])}>">签到点管理</a>
-					</li>-->
+					</li>
 					<li class="<if condition='$cv_name eq Receivables_payMethod'>active</if>">
 						<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
 					</li>
@@ -36,11 +36,11 @@
 					</li>
 				</ul>
 			</li>
-			<!--<li class="side_item <if condition='$cv_name eq Meeting_index'>active</if>">
+			<li class="side_item <if condition='$cv_name eq Meeting_index'>active</if>">
 				<a href="<{:U('Meeting/index', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon-th-large"></i> <span class="nav-label">会议中心</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
-			</li>-->
+			</li>
 			<li class="side_item <if condition='$c_name eq Client'>active</if>">
 				<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">客户管理</span>

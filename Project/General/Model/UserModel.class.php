@@ -17,8 +17,9 @@
 			parent::_initialize();
 		}
 
-		protected $connection       = 'DB_CONFIG_COMMON';
-		protected $tableName        = 'user';
+		protected $connection = 'DB_CONFIG_COMMON';
+		protected $tableName  = 'user';
+		const TABLE_NAME = 'user';
 		protected $autoCheckFields  = true;
 		private   $_defaultPassword = '';
 
@@ -31,22 +32,28 @@
 		 * @return array
 		 */
 		public function getPermission($user_id = 0, $assigned = true){
-			$sql = $assigned ? "
-SELECT DISTINCT permission.id i, permission.*, LEFT(code, LOCATE('.', code)-1) module_code FROM USER
-JOIN user_assign_role ON user_assign_role.uid = USER.id
-JOIN role ON user_assign_role.rid = role.id AND role.STATUS = 1
-JOIN role_assign_permission ON role_assign_permission.rid = role.id
-JOIN permission ON role_assign_permission.pid = permission.id
-WHERE USER.id = $user_id AND permission.code like 'GENERAL-%'" : "
-SELECT DISTINCT permission.id i, permission.*, LEFT(code, LOCATE('.', code)-1) module_code FROM permission
+			$this_database                = self::DATABASE_NAME;
+			$table_role                   = RoleModel::TABLE_NAME;
+			$table_user                   = UserModel::TABLE_NAME;
+			$table_permission             = PermissionModel::TABLE_NAME;
+			$table_role_assign_permission = RoleAssignPermissionModel::TABLE_NAME;
+			$table_user_assign_role       = UserAssignRoleModel::TABLE_NAME;
+			$sql                          = $assigned ? "
+SELECT DISTINCT p.id i, p.*, LEFT(code, LOCATE('.', code)-1) module_code FROM $this_database.$table_user u
+JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id
+JOIN $this_database.$table_role r ON uar.rid = r.id AND r.STATUS = 1
+JOIN $this_database.$table_role_assign_permission rap ON rap.rid = r.id
+JOIN $this_database.$table_permission p ON rap.pid = p.id
+WHERE u.id = $user_id AND p.code like 'GENERAL-%'" : "
+SELECT DISTINCT p.id i, p.*, LEFT(code, LOCATE('.', code)-1) module_code FROM $this_database.$table_permission p
 WHERE id NOT IN (
-	SELECT permission.id
-	FROM USER
-	JOIN user_assign_role ON user_assign_role.uid = USER.id
-	JOIN role ON user_assign_role.rid = role.id AND role.STATUS = 1
-	JOIN role_assign_permission ON role_assign_permission.rid = role.id
-	JOIN permission ON role_assign_permission.pid = permission.id
-	WHERE USER.id = $user_id AND permission.code like 'GENERAL-%'
+	SELECT p.id
+	FROM $this_database.$table_user u
+	JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id
+	JOIN $this_database.$table_role r ON uar.rid = r.id AND r.STATUS = 1
+	JOIN $this_database.$table_role_assign_permission rap ON rap.rid = r.id
+	JOIN $this_database.$table_permission p ON rap.pid = p.id
+	WHERE u.id = $user_id AND p.code like 'GENERAL-%'
 )";
 
 			return $this->query($sql);
@@ -61,18 +68,22 @@ WHERE id NOT IN (
 		 * @return array
 		 */
 		public function getRole($user_id, $assigned = true){
-			$sql = $assigned ? "
-SELECT role.* FROM USER
-JOIN user_assign_role ON user_assign_role.uid = USER .id
-JOIN role ON user_assign_role.rid = role.id
-AND role.STATUS = 1
-WHERE USER.id = $user_id" : "
-SELECT * FROM role
+			$this_database          = self::DATABASE_NAME;
+			$table_role             = RoleModel::TABLE_NAME;
+			$table_user             = UserModel::TABLE_NAME;
+			$table_user_assign_role = UserAssignRoleModel::TABLE_NAME;
+			$sql                    = $assigned ? "
+SELECT r.* FROM $this_database.$table_user u
+JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id
+JOIN $this_database.$table_role r ON uar.rid = r.id
+AND r.STATUS = 1
+WHERE u.id = $user_id" : "
+SELECT * FROM $this_database.$table_role r
 WHERE id NOT IN (
-	SELECT role.id FROM USER
-	JOIN user_assign_role ON user_assign_role.uid = USER .id
-	JOIN role ON user_assign_role.rid = role.id AND role.STATUS = 1
-	WHERE USER .id = $user_id
+	SELECT r.id FROM $this_database.$table_user u
+	JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id
+	JOIN $this_database.$table_role r ON uar.rid = r.id AND r.STATUS = 1
+	WHERE u.id = $user_id
 )";
 
 			return $this->query($sql);
@@ -296,11 +307,15 @@ WHERE id NOT IN (
 		 * @return string
 		 */
 		public function getUserHighestLevel($user_id){
-			$sql    = "SELECT min(role.level) level FROM USER
-JOIN user_assign_role ON user_assign_role.uid = user.id
-JOIN role ON user_assign_role.rid = role.id
-AND role.status = 1
-WHERE USER.id = $user_id";
+			$this_database          = self::DATABASE_NAME;
+			$table_role             = RoleModel::TABLE_NAME;
+			$table_user             = UserModel::TABLE_NAME;
+			$table_user_assign_role = UserAssignRoleModel::TABLE_NAME;
+			$sql    = "SELECT min(r.level) level FROM $this_database.$table_user u
+JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id
+JOIN $this_database.$table_role r ON uar.rid = r.id
+AND r.status = 1
+WHERE u.id = $user_id";
 			$result = $this->query($sql);
 
 			return (isset($result[0]['level']) && $result[0]['level']) ? $result[0]['level'] : RoleModel::LOWEST_LEVEL;

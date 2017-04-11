@@ -7,12 +7,22 @@
 	 */
 	namespace RoyalwissD\Model;
 
+	use General\Model\GeneralModel;
+	use General\Model\MeetingManagerModel;
+	use General\Model\MeetingTypeModel;
+	use General\Model\PermissionModel;
+	use General\Model\RoleAssignPermissionModel;
+	use General\Model\RoleModel;
+	use General\Model\UserAssignRoleModel;
+	use General\Model\UserModel;
+
 	class MeetingModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'meeting';
+		protected $tableName = 'meeting';
+		const TABLE_NAME = 'meeting';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_COMMON';
 		const CONTROL_COLUMN_PARAMETER_SELF = [
@@ -24,7 +34,18 @@
 		];
 
 		public function getList($control = []){
-			$getCustomColumn = function (){
+			$table_meeting                = $this->tableName;
+			$table_meeting_type           = MeetingTypeModel::TABLE_NAME;
+			$table_meeting_configure      = MeetingConfigureModel::TABLE_NAME;
+			$table_meeting_manager        = MeetingManagerModel::TABLE_NAME;
+			$table_user                   = UserModel::TABLE_NAME;
+			$table_role                   = RoleModel::TABLE_NAME;
+			$table_permission             = PermissionModel::TABLE_NAME;
+			$table_user_assign_role       = UserAssignRoleModel::TABLE_NAME;
+			$table_role_assign_permission = RoleAssignPermissionModel::TABLE_NAME;
+			$common_database              = GeneralModel::DATABASE_NAME;
+			$this_database                = self::DATABASE_NAME;
+			$getCustomColumn              = function (){
 				/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
 				$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
 				$custom_column_list      = $meeting_configure_model->getColumnList(true);
@@ -34,14 +55,14 @@
 
 				return $str;
 			};
-			$keyword         = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order           = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status          = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$user            = $control[self::CONTROL_COLUMN_PARAMETER_SELF['user']];
-			$type            = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
-			$id              = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$process_status  = $control[self::CONTROL_COLUMN_PARAMETER_SELF['processStatus']];
-			$where           = ' where 0 = 0 ';
+			$keyword                      = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order                        = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status                       = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$user                         = $control[self::CONTROL_COLUMN_PARAMETER_SELF['user']];
+			$type                         = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
+			$id                           = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$process_status               = $control[self::CONTROL_COLUMN_PARAMETER_SELF['processStatus']];
+			$where                        = ' where 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -84,22 +105,22 @@ SELECT * FROM (
 		$custom_column
 		u1.name creator,
 		mt.name type
-	FROM meeting_common.meeting m
-	JOIN meeting_common.meeting_type mt ON mt.type = m.type AND mt.status = 1
-	JOIN meeting_royalwiss_deal.meeting_configure mc ON mc.mid = m.id
-	LEFT JOIN meeting_common.user u1 ON u1.id = m.creator AND u1.status <> 2
+	FROM $common_database.$table_meeting m
+	JOIN $common_database.$table_meeting_type mt ON mt.type = m.type AND mt.status = 1
+	JOIN $this_database.$table_meeting_configure mc ON mc.mid = m.id
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = m.creator AND u1.status <> 2
 	WHERE (m.id IN (
-		SELECT mid FROM meeting_manager
+		SELECT mid FROM $common_database.$table_meeting_manager
 		WHERE meeting_manager.uid = $user
 	)
 	OR ifnull(
 		(
 			SELECT permission.id
-			FROM USER
-			JOIN user_assign_role ON user_assign_role.uid = USER.id
-			JOIN role ON user_assign_role.rid = role.id AND role.STATUS = 1
-			JOIN role_assign_permission ON role_assign_permission.rid = role.id
-			JOIN permission ON role_assign_permission.pid = permission.id
+			FROM $common_database.$table_user
+			JOIN $common_database.$table_user_assign_role ON user_assign_role.uid = USER.id
+			JOIN $common_database.$table_role ON user_assign_role.rid = role.id AND role.STATUS = 1
+			JOIN $common_database.$table_role_assign_permission ON role_assign_permission.rid = role.id
+			JOIN $common_database.$table_permission ON role_assign_permission.pid = permission.id
 			WHERE USER.id = $user AND permission.CODE = 'GENERAL-MEETING.VIEW_ALL'
 			LIMIT 1
 		), NULL

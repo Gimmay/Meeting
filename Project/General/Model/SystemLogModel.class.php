@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'system_log';
+		protected $tableName = 'system_log';
+		const TABLE_NAME = 'system_log';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_COMMON';
 		const ACTION = [

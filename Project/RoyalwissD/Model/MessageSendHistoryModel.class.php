@@ -8,13 +8,16 @@
 	namespace RoyalwissD\Model;
 
 	use Exception;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class MessageSendHistoryModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'message_send_history';
+		protected $tableName = 'message_send_history';
+		const TABLE_NAME = 'message_send_history';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = [
@@ -48,14 +51,19 @@
 		}
 
 		public function getList($control){
-			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$meeting_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$action     = $control[self::CONTROL_COLUMN_PARAMETER_SELF['action']];
-			$message_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['messageID']];
-			$type       = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
-			$where      = ' WHERE 0 = 0 ';
+			$table_message_send_history = $this->tableName;
+			$table_user                 = UserModel::TABLE_NAME;
+			$table_message              = MessageModel::TABLE_NAME;
+			$common_database            = GeneralModel::DATABASE_NAME;
+			$this_database              = self::DATABASE_NAME;
+			$keyword                    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order                      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status                     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$meeting_id                 = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$action                     = $control[self::CONTROL_COLUMN_PARAMETER_SELF['action']];
+			$message_id                 = $control[self::CONTROL_COLUMN_PARAMETER_SELF['messageID']];
+			$type                       = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
+			$where                      = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -85,9 +93,9 @@ SELECT * FROM (
 		msh.status,
 		msh.creator creator_code,
 		u1.name creator
-	FROM meeting_royalwiss_deal.message_send_history msh
-	LEFT JOIN meeting_common.user u1 ON u1.id = msh.creator AND u1.status <> 2
-	JOIN meeting_royalwiss_deal.message m ON m.id = msh.message_id AND m.status <> 2
+	FROM $this_database.$table_message_send_history msh
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = msh.creator AND u1.status <> 2
+	JOIN $this_database.$table_message m ON m.id = msh.message_id AND m.status <> 2
 ) tab
 $where
 $order";

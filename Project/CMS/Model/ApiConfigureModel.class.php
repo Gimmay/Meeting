@@ -7,18 +7,24 @@
 	 */
 	namespace CMS\Model;
 
+	use General\Model\UserModel;
+
 	class ApiConfigureModel extends CMSModel{
-		protected $tableName       = 'api_configure';
+		protected $tableName = 'api_configure';
+		const TABLE_NAME = 'api_configure';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_COMMON';
 		const CONTROL_COLUMN_PARAMETER_SELF = ['meetingType' => 'mtype'];
 
 		public function getList($control = []){
-			$keyword      = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order        = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status       = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$meeting_type = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingType']];
-			$where        = ' WHERE 0 = 0 ';
+			$table_api_configure  = $this->tableName;
+			$table_user           = UserModel::TABLE_NAME;
+			$common_database = self::DATABASE_NAME;
+			$keyword              = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order                = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status               = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$meeting_type         = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingType']];
+			$where                = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -58,8 +64,8 @@ SELECT * FROM (
 		ac.comment,
 		ac.creatime,
 		u1.name creator
-	FROM meeting_common.api_configure ac
-	LEFT JOIN meeting_common.user u1 ON u1.id = ac.creator AND u1.status <> 2
+	FROM $common_database.$table_api_configure ac
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = ac.creator AND u1.status <> 2
 ) tab
 $where
 $order

@@ -43,6 +43,14 @@
 									<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
 										<span>批量删除</span></a>
 								</div>
+								<div class="function_btn batch_enable_btn">
+									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
+										<span>批量启用</span></a>
+								</div>
+								<div class="function_btn batch_disable_btn">
+									<a href="javascript:void(0)"><i class="glyphicon glyphicon-ban-circle"></i>
+										<span>批量禁用</span></a>
+								</div>
 							</div>
 						</div>
 						<div class="repertory clearfix">
@@ -85,22 +93,23 @@
 											<td><{$single.creator}></td>
 											<td><{$single.creatime}></td>
 											<td>
-												<div class="btn-group" data-id="<{$single.id}>">
-
-													<button type="button" class="btn btn-default btn-xs btn_distribution_role" data-toggle="modal" data-target="#distribution_role">分配角色</button>
-													<!--<if condition="($max_role_level elt $single['roleLevel']) and ($permission_list['EMPLOYEE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-PERMISSION'] eq 1)">
-														<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
-													</if>-->
+												<div class="btn-group" data-id="<{$single.id}>"  data-status="<{$single.status_code}>">
+													<if condition="$single['status_code'] eq 1">
+														<button type="button" class="btn btn-default btn-xs btn_distribution_role" data-toggle="modal" data-target="#distribution_role">分配角色</button>
+														<!--<if condition="($max_role_level elt $single['roleLevel']) and ($permission_list['EMPLOYEE.ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.ANTI-ASSIGN-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-ASSIGNED-PERMISSION'] eq 1) and ($permission_list['EMPLOYEE.VIEW-UNASSIGNED-PERMISSION'] eq 1)">
+															<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
+														</if>-->
+														<button type="button" class="btn btn-default btn-xs btn_alter_password" data-toggle="modal" data-target="#alter_password">修改密码</button>
+														<button type="button" class="btn btn-default btn-xs btn_reset_password" data-toggle="modal" data-target="#reset_password">重置密码</button>
+													</if>
 													<a href="<{:U('User/modify',['id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
-													<button type="button" class="btn btn-default btn-xs btn_alter_password" data-toggle="modal" data-target="#alter_password">修改密码</button>
-													<button type="button" class="btn btn-default btn-xs btn_reset_password" data-toggle="modal" data-target="#reset_password">重置密码</button>
 													<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
 													<switch name="single.status_code">
 														<case value="0">
-															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_user', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
+															<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
 														</case>
 														<case value="1">
-															<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_user', 'id'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
+															<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
 														</case>
 													</switch>
 												</div>

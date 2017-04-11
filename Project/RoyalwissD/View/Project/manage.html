@@ -13,6 +13,7 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
@@ -113,10 +114,10 @@
 											<td class="creatime"><{$single.creatime}></td>
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>" data-stock-limit="<{$single.is_stock_limit}>" data-status="<{$single.status_code}>" data-stock="<{$single.stock}>">
-													<if condition="$single['is_stock_limit'] eq 1 and $single['status'] eq 1">
+													<if condition="$single['is_stock_limit'] eq 1 and $single['status_code'] eq 1">
 														<a href="<{:U('detail',['id'=>$single['id'], 'mid'=>I('get.mid', 0, 'int')])}>" type="button" class="btn btn-default btn-xs seeList">出入库记录</a>
 													</if>
-													<if condition="$single['status'] eq 1">
+													<if condition="$single['status_code'] eq 1">
 														<button type="button" class="btn btn-default btn-xs alter_stock_btn" data-toggle="modal" data-target="#alter_stock_limit">更新库存</button>
 													</if>
 													<button type="button" class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_project">修改</button>

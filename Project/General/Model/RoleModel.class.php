@@ -17,7 +17,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'role';
+		protected $tableName = 'role';
+		const TABLE_NAME = 'role';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_COMMON';
 		/** 角色的最高等级 */
@@ -60,18 +61,22 @@
 		 * @return array
 		 */
 		public function getUser($role_id, $assigned = true){
-			$sql = $assigned ? "
-SELECT user.* FROM role
-JOIN user_assign_role ON user_assign_role.rid = role.id
-JOIN user ON user_assign_role.uid = user.id AND user.status = 1
-WHERE user.id = $role_id
+			$table_role             = $this->tableName;
+			$table_user_assign_role = UserAssignRoleModel::TABLE_NAME;
+			$table_user             = UserModel::TABLE_NAME;
+			$common_database        = GeneralModel::DATABASE_NAME;
+			$sql                    = $assigned ? "
+SELECT u.* FROM $common_database.$table_role r
+JOIN $common_database.$table_user_assign_role uar ON uar.rid = r.id
+JOIN $common_database.$table_user u ON uar.uid = u.id AND u.status = 1
+WHERE u.id = $role_id
 " : "
-SELECT * FROM USER
+SELECT * FROM $common_database.$table_user
 WHERE id NOT IN (
-	SELECT user.id FROM role
-	JOIN user_assign_role ON user_assign_role.rid = role.id
-	JOIN user ON user_assign_role.uid = user.id AND user.status = 1
-	WHERE user.id = $role_id
+	SELECT u.id FROM $common_database.$table_role r
+	JOIN $common_database.$table_user_assign_role uar ON uar.rid = r.id
+	JOIN $common_database.$table_user u ON uar.uid = u.id AND u.status = 1
+	WHERE u.id = $role_id
 )";
 
 			return $this->query($sql);
@@ -86,18 +91,22 @@ WHERE id NOT IN (
 		 * @return array
 		 */
 		public function getPermission($role_id, $assigned = true){
-			$sql = $assigned ? "
-SELECT permission.*, LEFT(code, LOCATE('.', code)-1) module_code FROM role
-JOIN role_assign_permission on role_assign_permission.rid = role.id
-JOIN permission on permission.id = role_assign_permission.pid
-WHERE role.id = $role_id AND permission.code like 'GENERAL-%'
+			$table_role                   = $this->tableName;
+			$table_role_assign_permission = RoleAssignPermissionModel::TABLE_NAME;
+			$table_permission             = PermissionModel::TABLE_NAME;
+			$common_database              = GeneralModel::DATABASE_NAME;
+			$sql                          = $assigned ? "
+SELECT p.*, LEFT(code, LOCATE('.', code)-1) module_code FROM $common_database.$table_role r
+JOIN $common_database.$table_role_assign_permission rap on rap.rid = r.id
+JOIN $common_database.$table_permission p on p.id = rap.pid
+WHERE r.id = $role_id AND p.code like 'GENERAL-%'
 " : "
-SELECT *, LEFT(code, LOCATE('.', code)-1) module_code FROM permission
+SELECT *, LEFT(code, LOCATE('.', code)-1) module_code FROM $common_database.$table_permission
 WHERE id NOT IN (
-	SELECT permission.id FROM role
-	JOIN role_assign_permission ON role_assign_permission.rid = role.id
-	JOIN permission ON permission.id = role_assign_permission.pid
-	WHERE role.id = $role_id AND permission.code like 'GENERAL-%'
+	SELECT p.id FROM $common_database.role r
+	JOIN $common_database.$table_role_assign_permission rap ON rap.rid = r.id
+	JOIN $common_database.$table_permission p ON p.id = rap.pid
+	WHERE r.id = $role_id AND p.code like 'GENERAL-%'
 )";
 
 			return $this->query($sql);

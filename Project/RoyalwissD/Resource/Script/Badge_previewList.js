@@ -49,4 +49,42 @@ $(function(){
 			$(this).addClass('selected');
 		}
 	});
+	// 保存模板选择
+	$('#choose_system_badge').on('click', function(){
+		var data = $('#list_form').serialize();
+		ManageObject.object.loading.loading();
+		Common.ajax({
+			data    :data,
+			callback:function(r){
+				ManageObject.object.loading.complete();
+				if(r.status){
+					ManageObject.object.toast.toast(r.message, 1);
+					ManageObject.object.toast.onQuasarHidden(function(){
+						location.href = r.nextPage;
+					});
+				}else{
+					ManageObject.object.toast.toast(r.message, 2);
+				}
+			}
+		});
+	});
+	// 删除模板保存
+	$('#delete_badge .btn-save').on('click', function(){
+		var data = $('#delete_badge form').serialize();
+		ManageObject.object.loading.loading();
+		Common.ajax({
+			data    :data,
+			callback:function(r){
+				ManageObject.object.loading.complete();
+				if(r.status){
+					ManageObject.object.toast.toast(r.message, 1);
+					ManageObject.object.toast.onQuasarHidden(function(){
+						location.reload();
+					});
+				}else{
+					ManageObject.object.toast.toast(r.message, 2);
+				}
+			}
+		});
+	});
 });

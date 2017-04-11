@@ -33,8 +33,8 @@ $(function(){
 			$(this).css('background', '#EFEFEF').text(column_word+method_word);
 		}
 	});
-	var quasar_script = document.getElementById('quasar_script');
-	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
+	var quasar_script        = document.getElementById('quasar_script');
+	var url_object           = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
 	var $search_config_modal = $('#search_config_modal');
 	/**
 	 * 搜索功能
@@ -127,7 +127,7 @@ $(function(){
 					$.each(r[1], function(index2, value2){
 						if(index1 == index2){
 							str += ThisObject.detailsLiTemp.replace('#key#', value1)
-								.replace('#name#', value2)
+											 .replace('#name#', value2)
 						}
 					})
 				});
@@ -136,13 +136,13 @@ $(function(){
 		});
 		$('.add_client').on('click', function(){
 			var $add_recipient2 = $('#add_recipient2');
-			var per = $add_recipient2.find('input[name=can_live]').val();
+			var per             = $add_recipient2.find('input[name=can_live]').val();
 			$add_recipient2.modal('show');
 			$add_recipient2.find('.can_live_p').text(per);
 		});
 		$('.add_employee').on('click', function(){
 			var $add_recipient2_employee = $('#add_recipient2_employee');
-			var per = $add_recipient2_employee.find('input[name=can_live]').val();
+			var per                      = $add_recipient2_employee.find('input[name=can_live]').val();
 			$add_recipient2_employee.modal('show');
 			$add_recipient2_employee.find('.can_live_p').text(per);
 		});
@@ -951,7 +951,8 @@ $(function(){
 				if(r.status){
 					ManageObject.object.toast.toast(r.message, '1');
 					ManageObject.object.toast.onQuasarHidden(function(){
-						location.href = r.nextPage
+						//location.href = r.nextPage
+						location.reload();
 					})
 				}else{
 					ManageObject.object.toast.toast(r.message, '2');

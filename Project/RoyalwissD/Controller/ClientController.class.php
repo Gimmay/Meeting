@@ -284,12 +284,12 @@
 			$excel_logic  = new ExcelLogic();
 			/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control */
 			$client_column_control = D('RoyalwissD/ClientColumnControl');
-			$column_list = $client_column_control->getClientControlledColumn($this->meetingID, $client_column_control::ACTION_WRITE);
-			$column_head  = [
+			$column_list           = $client_column_control->getClientControlledColumn($this->meetingID, $client_column_control::ACTION_WRITE);
+			$column_head           = [
 				0 => []
 			];
 			foreach($column_list as $column){
-				if($column['view']==1) $column_head[0][] = $column['name'];
+				if($column['view'] == 1) $column_head[0][] = $column['name'];
 			}
 			$excel_logic->writeCustomData($column_head, [
 				'fileName'     => "[$meeting_name]-客户数据导入模板",
@@ -321,16 +321,9 @@
 			$excel_logic                 = new ExcelLogic();
 			$column_list                 = $client_column_control_model->getClientControlledColumn($this->meetingID, $client_column_control_model::ACTION_READ);
 			$column_head                 = $column_name_list = [];
-			// 获取URL参数
-			// todo 同步管理页面的url参数
-			$option = [];
-			if(isset($_GET['cid'])) $option[$client_model::CONTROL_COLUMN_PARAMETER_SELF['clientID']] = [
-				'=',
-				I('get.cid', 0, 'int')
-			];
 			// 获取列表数据
 			$model_control_column = $this->getModelControl();
-			$list                 = $client_model->getList(array_merge($model_control_column, $option, [
+			$list                 = $client_model->getList(array_merge($model_control_column, [
 				CMSModel::CONTROL_COLUMN_PARAMETER['status']              => ['!=', 2],
 				$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID
 			]));
@@ -342,7 +335,8 @@
 			$list = $client_logic->setData('downloadData', [
 				'dataList'    => $list,
 				'columnValue' => $column_name_list,
-				'columnName'  => $column_head
+				'columnName'  => $column_head,
+				'urlParam'    => I('get.')
 			]);
 			$excel_logic->writeCustomData($list, [
 				'fileName'     => "[$meeting_name]-客户数据导入模板",

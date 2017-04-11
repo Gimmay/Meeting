@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'room_customer';
+		protected $tableName = 'room_customer';
+		const TABLE_NAME = 'room_customer';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = [

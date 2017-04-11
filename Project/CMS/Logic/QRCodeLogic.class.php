@@ -50,7 +50,7 @@
 			$conf     = array_merge($defaults, $config);
 			vendor('phpqrcode.phpqrcode');
 			/** @noinspection PhpUndefinedClassInspection */
-			$qrcode_obj = new \QRcode();
+			$qrcode_obj = new QRcode();
 			$file_path  = $conf['filePath'] ? $conf['filePath'] : $this->_cacheFilePath;
 			if(!is_dir(dirname($file_path))) mkdir(dirname($file_path), 0777, true);
 			$qrcode_obj->png($value, $file_path, $conf['level'], $conf['size'], $conf['margin']);

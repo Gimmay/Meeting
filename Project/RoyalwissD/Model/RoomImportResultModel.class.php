@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'room_import_result';
+		protected $tableName = 'room_import_result';
+		const TABLE_NAME = 'room_import_result';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 

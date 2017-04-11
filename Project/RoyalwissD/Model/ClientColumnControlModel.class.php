@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'client_column_control';
+		protected $tableName = 'client_column_control';
+		const TABLE_NAME = 'client_column_control';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		/** 操作-列表/读 */
@@ -48,8 +49,8 @@
 		/**
 		 * 获取控制字段的信息
 		 *
-		 * @param int  $meeting_id 会议类型
-		 * @param int  $action     操作 0：列表/读 1：创建/写
+		 * @param int $meeting_id 会议类型
+		 * @param int $action     操作 0：列表/读 1：创建/写
 		 *
 		 * @return array
 		 */

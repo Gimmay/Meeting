@@ -5,10 +5,10 @@ var ScriptObject = {
 	assignRoleTemp   :'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\'>$name</a>',
 	authorizeRoleTemp:'<a class=\"btn btn-default btn-sm\" href="javascript:void(0)" role="button" data-id=\'$id\' data-module="$module-code" data-name="$module-name">$name</a>',
 	pannelTemp       :'<div class="pannel_n" id="$id" data-module="$module">\n\t<div>\n\t\t<div class="title">$name <button type="button" class="btn btn-sm check_all">全选</button></div>\n\t\t<section>\n\t\t\t\n\t\t</section>\n\t</div>\n</div>',
-	module            :{
+	module           :{
 		moduleCode:'',
 		moduleName:'',
-		list     :[]
+		list      :[]
 	},
 	bindEvent        :function(){
 		var self = this;
@@ -18,7 +18,7 @@ var ScriptObject = {
 		$('#authorize_all a').on('click', function(){
 			var id          = $(this).attr('data-id');
 			var code        = $(this).attr('data-module');
-			var module  = $(this).attr('data-name');
+			var module      = $(this).attr('data-name');
 			var role_id     = $('input[name=hide_role_id]').val();
 			var name        = $(this).text();
 			var select_temp = '';
@@ -67,7 +67,7 @@ var ScriptObject = {
 			var id          = $(this).attr('data-id');
 			var type        = $(this).attr('data-type');
 			var code        = $(this).attr('data-module');
-			var module  = $(this).attr('data-name');
+			var module      = $(this).attr('data-name');
 			var role_id     = $('input[name=hide_role_id]').val();
 			var name        = $(this).text();
 			var b_name      = name.substring(name.lastIndexOf(")")+1);
@@ -154,7 +154,7 @@ var ScriptObject = {
 									self.bindEvent();
 									ScriptObject.module.moduleCode = '';
 									ScriptObject.module.moduleName = '';
-									ScriptObject.module.list      = [];
+									ScriptObject.module.list       = [];
 								}, 1000);
 							}else{
 								var str = '';
@@ -167,12 +167,12 @@ var ScriptObject = {
 											   .replace('$module-code', self.module.moduleCode);
 								});
 								$('#authorize_all div[data-module='+code+']').find('section')
-																			.prepend(str);
+																			 .prepend(str);
 								self.unbindEvent();
 								self.bindEvent();
 								ScriptObject.module.moduleCode = '';
 								ScriptObject.module.moduleName = '';
-								ScriptObject.module.list      = [];
+								ScriptObject.module.list       = [];
 							}
 						}
 					}
@@ -224,7 +224,7 @@ var ScriptObject = {
 									self.bindEvent();
 									ScriptObject.module.moduleCode = '';
 									ScriptObject.module.moduleName = '';
-									ScriptObject.module.list      = [];
+									ScriptObject.module.list       = [];
 								}, 1000);
 							}else{
 								var str = '';
@@ -237,12 +237,12 @@ var ScriptObject = {
 											   .replace('$module-code', self.module.moduleCode);
 								});
 								$('#authorize_select div[data-module='+code+']').find('section')
-																			   .prepend(str);
+																				.prepend(str);
 								self.unbindEvent();
 								self.bindEvent();
 								ScriptObject.module.moduleCode = '';
 								ScriptObject.module.moduleName = '';
-								ScriptObject.module.list      = [];
+								ScriptObject.module.list       = [];
 							}
 						}
 					}
@@ -408,13 +408,38 @@ $(function(){
 		$('#authorize_role').find('.role_name').text(name);
 		ScriptObject.initGetAuthorize(data_id);
 	});
-	// 角色修改
+	// 新增角色
+	$('#create_role .btn-save').on('click', function(){
+		var $create_role_name = $('#create_role_name');
+		if($create_role_name.val() != ''){
+			ManageObject.object.loading.loading();
+			var data = $('#create_role form').serialize();
+			Common.ajax({
+				data    :data,
+				callback:function(r){
+					ManageObject.object.loading.complete();
+					if(r.status){
+						ManageObject.object.toast.toast(r.message, 1);
+						ManageObject.object.toast.onQuasarHidden(function(){
+							location.reload();
+						});
+					}else{
+						ManageObject.object.toast.toast(r.message, 2);
+					}
+				}
+			})
+		}else{
+			ManageObject.object.toast.toast('名称不能为空！');
+			$create_role_name.focus();
+		}
+	});
+	// 角色修改  --获取信息
 	$('.modify_btn').on('click', function(){
 		var id = $(this).parent('.btn-group').attr('data-id');
 		$('#modify_role').find('input[name=id]').val(id);
 		ManageObject.object.loading.loading();
-	Common.ajax({
-			data:{requestType:'get_role_ajax', id:id}, async:false, callback:function(data){
+		Common.ajax({
+			data:{requestType:'get_detail', id:id}, async:false, callback:function(data){
 				ManageObject.object.loading.complete();
 				if(data){
 					$('#modify_role_name').val(data.name);
@@ -443,41 +468,29 @@ $(function(){
 			}
 		});
 	});
-	// 单个角色删除
-	$('.delete_btn').on('click', function(){
-		var id = $(this).parent('.btn-group').attr('data-id');
-		$('#delete_role ').find('input[name=id]').val(id);
-	});
-	// 批量删除角色
-	$('.batch_delete_btn_confirm').on('click', function(){
-		var str = '';
-		var i   = 0;
-		$('.check_item  .icheckbox_square-green.checked').each(function(){
-			var id = $(this).find('.icheck').val();
-			str += id+',';
-			i++;
-		});
-		$('#batch_delete_employee').find('.sAmount').text(i);
-		var s, newStr = "";
-		s             = str.charAt(str.length-1);
-		if(s == ","){
-			for(i = 0; i<str.length-1; i++){
-				newStr += str[i];
-			}
-		}
-		if(newStr != ''){
-			$('#batch_delete_employee').modal('show')
+	// 角色修改 -- 保存信息
+	$('#create_role .btn-save').on('click', function(){
+		var $modify_role_name = $('#modify_role_name');
+		if($modify_role_name.val() != ''){
+			ManageObject.object.loading.loading();
+			var data = $('#modify_role form').serialize();
+			Common.ajax({
+				data    :data,
+				callback:function(r){
+					ManageObject.object.loading.complete();
+					if(r.status){
+						ManageObject.object.toast.toast(r.message, 1);
+						ManageObject.object.toast.onQuasarHidden(function(){
+							location.reload();
+						});
+					}else{
+						ManageObject.object.toast.toast(r.message, 2);
+					}
+				}
+			})
 		}else{
-			ManageObject.object.toast.toast('请选择客户！');
-		}
-		$('#batch_delete_employee').find('input[name=id]').val(newStr);
-	});
-	// 全选checkbox
-	$('.all_check').find('.iCheck-helper').on('click', function(){
-		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
-			$('.check_item').find('.icheckbox_square-green').addClass('checked');
-		}else{
-			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
+			ManageObject.object.toast.toast('名称不能为空！');
+			$modify_role_name.focus();
 		}
 	});
 });

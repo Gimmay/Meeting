@@ -8,6 +8,8 @@
 	namespace RoyalwissD\Model;
 
 	use Exception;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class ClientModel extends RoyalwissDModel{
 		public function _initialize(){
@@ -15,7 +17,8 @@
 		}
 
 		// todo 统计签到、收款等报表时 注意场外/场内的客户区别
-		protected $tableName        = 'client';
+		protected $tableName = 'client';
+		const TABLE_NAME = 'client';
 		protected $autoCheckFields  = true;
 		protected $connection       = 'DB_CONFIG_ROYALWISS_DEAL';
 		private   $_defaultPassword = '';
@@ -43,7 +46,18 @@
 		const TYPE = ['其他', '终端', '老板娘', '嘉宾', '员工', '陪同'];
 
 		public function getList($control = []){
-			$getCustomColumn = function (){
+			$table_client         = $this->tableName;
+			$table_attendee       = AttendeeModel::TABLE_NAME;
+			$table_user           = UserModel::TABLE_NAME;
+			$table_unit           = UnitModel::TABLE_NAME;
+			$table_hotel          = HotelModel::TABLE_NAME;
+			$table_room           = RoomModel::TABLE_NAME;
+			$table_room_customer    = RoomCustomerModel::TABLE_NAME;
+			$table_grouping       = GroupingModel::TABLE_NAME;
+			$table_group_member   = GroupMemberModel::TABLE_NAME;
+			$common_database = GeneralModel::DATABASE_NAME;
+			$this_database   = self::DATABASE_NAME;
+			$getCustomColumn      = function (){
 				/** @var \RoyalwissD\Model\AttendeeModel $attendee_model */
 				$attendee_model     = D('RoyalwissD/Attendee');
 				$custom_column_list = $attendee_model->getColumnList(true);
@@ -55,17 +69,17 @@
 
 				return $str;
 			};
-			$keyword         = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order           = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status          = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$meeting_id      = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$client_id       = $control[self::CONTROL_COLUMN_PARAMETER_SELF['clientID']];
-			$review_status   = $control[self::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
-			$sign_status     = $control[self::CONTROL_COLUMN_PARAMETER_SELF['signStatus']];
-			$type            = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
-			$limit           = $control[self::CONTROL_COLUMN_PARAMETER_SELF['limit']];
-			$where           = ' WHERE 0 = 0 ';
-			$split           = '';
+			$keyword              = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order                = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status               = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$meeting_id           = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$client_id            = $control[self::CONTROL_COLUMN_PARAMETER_SELF['clientID']];
+			$review_status        = $control[self::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
+			$sign_status          = $control[self::CONTROL_COLUMN_PARAMETER_SELF['signStatus']];
+			$type                 = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
+			$limit                = $control[self::CONTROL_COLUMN_PARAMETER_SELF['limit']];
+			$where                = ' WHERE 0 = 0 ';
+			$split                = '';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -133,8 +147,8 @@ SELECT * FROM (
 		a1.creatime,
 		(
 			SELECT g.NAME
-			FROM meeting_royalwiss_deal.grouping g
-			JOIN meeting_royalwiss_deal.grouping_member gm ON gm.gid = g.id
+			FROM $this_database.$table_grouping g
+			JOIN $this_database.$table_group_member gm ON gm.gid = g.id
 			WHERE g.mid = a1.mid AND gm.cid = a1.cid AND g.status <> 2 AND gm.status = 1 AND gm.process_status = 1
 			ORDER BY gm.id desc
 			LIMIT 1
@@ -142,9 +156,9 @@ SELECT * FROM (
 		(
 			SELECT
 				GROUP_CONCAT(CONCAT('[',h.name,']',r.name) SEPARATOR ', ')
-			FROM meeting_royalwiss_deal.hotel h
-			JOIN meeting_royalwiss_deal.room r ON r.hid = h.id and r.status <> 2
-			JOIN meeting_royalwiss_deal.room_customer rc ON rc.rid = r.id AND rc.status <> 2 AND rc.process_status = 1
+			FROM $this_database.$table_hotel h
+			JOIN $this_database.$table_room r ON r.hid = h.id and r.status <> 2
+			JOIN $this_database.$table_room_customer rc ON rc.rid = r.id AND rc.status <> 2 AND rc.process_status = 1
 			WHERE h.mid = a1.mid AND r.mid = a1.mid AND h.status <> 2 AND rc.cid = a1.cid
 		) hotel_room_name,
 		/* 微信字段 */
@@ -174,12 +188,12 @@ SELECT * FROM (
 		a1.cid,
 		a1.id,
 		a1.mid
-	FROM meeting_royalwiss_deal.attendee a1
-	JOIN meeting_royalwiss_deal.client c1 ON c1.id = a1.cid
-	LEFT JOIN meeting_royalwiss_deal.unit u0 ON u0.name = c1.unit
-	LEFT JOIN meeting_common.user u1 ON u1.id = a1.creator AND u1.status <> 2
-	LEFT JOIN meeting_common.user u2 ON u2.id = a1.sign_director AND u2.status <> 2
-	LEFT JOIN meeting_common.user u3 ON u3.id = a1.review_director AND u3.status <> 2
+	FROM $this_database.$table_attendee a1
+	JOIN $this_database.$table_client c1 ON c1.id = a1.cid
+	LEFT JOIN $this_database.$table_unit u0 ON u0.name = c1.unit
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = a1.creator AND u1.status <> 2
+	LEFT JOIN $common_database.$table_user u2 ON u2.id = a1.sign_director AND u2.status <> 2
+	LEFT JOIN $common_database.$table_user u3 ON u3.id = a1.review_director AND u3.status <> 2
 ) tab
 $where
 $order
@@ -227,6 +241,8 @@ $split
 		 * @return array
 		 */
 		public function getColumnList(){
+			$table_client       = $this->tableName;
+			$this_database = self::DATABASE_NAME;
 			$list = $this->query("
 SELECT
 	c.TABLE_SCHEMA,
@@ -239,8 +255,8 @@ SELECT
 	'fixed' TYPE
 FROM information_schema.TABLES t
 JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'client'
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_client'
 ");
 
 			return $list;
@@ -255,14 +271,17 @@ AND t.TABLE_NAME = 'client'
 		 * @return array
 		 */
 		public function getSelectedList($meeting_id, $include_unit = false){
-			$name = $include_unit ? "concat('[',c.unit,'] ',c.name)" : 'c.name';
-			$sql  = "
+			$table_client       = $this->tableName;
+			$table_attendee     = AttendeeModel::TABLE_NAME;
+			$this_database = self::DATABASE_NAME;
+			$name               = $include_unit ? "concat('[',c.unit,'] ',c.name)" : 'c.name';
+			$sql                = "
 SELECT
 	c.id value,
 	IF(a.sign_status = 1, $name, concat('* ', $name)) html,
 	concat(c.name,',',c.name_pinyin,',',c.unit,',',c.unit_pinyin,',',c.mobile) keyword
-FROM meeting_royalwiss_deal.client c
-JOIN meeting_royalwiss_deal.attendee a ON c.id = a.cid
+FROM $this_database.$table_client c
+JOIN $this_database.$table_attendee a ON c.id = a.cid
 AND a.mid = $meeting_id
 WHERE a.status = 1 AND a.review_status = 1
 ORDER BY a.sign_time DESC, a.review_time DESC, a.id DESC";
@@ -278,18 +297,21 @@ ORDER BY a.sign_time DESC, a.review_time DESC, a.id DESC";
 		 * @return array
 		 */
 		public function getTeamSelectedList($meeting_id){
-			$sql    = "
+			$table_client       = $this->tableName;
+			$table_attendee     = AttendeeModel::TABLE_NAME;
+			$this_database = self::DATABASE_NAME;
+			$sql                = "
 SELECT
 	DISTINCT c.team value,
 	c.team html,
 	concat(c.team) keyword
-FROM meeting_royalwiss_deal.client c
-JOIN meeting_royalwiss_deal.attendee a ON c.id = a.cid
+FROM $this_database.$table_client c
+JOIN $this_database.$table_attendee a ON c.id = a.cid
 AND a.mid = $meeting_id
 WHERE a.status = 1 AND a.review_status = 1
 ORDER BY c.team
 ";
-			$result = $this->query($sql);
+			$result             = $this->query($sql);
 
 			return $result;
 		}

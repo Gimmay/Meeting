@@ -6,8 +6,6 @@
 	<title>角色模块 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
-
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
@@ -15,15 +13,15 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/operate.js"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
 </head>
 <body>
@@ -40,9 +38,17 @@
 									<a href="javascript:void(0)"><i class="glyphicon glyphicon-plus"></i>
 										<span>新增角色</span></a>
 								</div>
-								<div class="function_btn batch_delete_btn_confirm">
+								<div class="function_btn batch_delete_btn">
 									<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
 										<span>批量删除</span></a>
+								</div>
+								<div class="function_btn batch_enable_btn">
+									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
+										<span>批量启用</span></a>
+								</div>
+								<div class="function_btn batch_disable_btn">
+									<a href="javascript:void(0)"><i class="glyphicon glyphicon-ban-circle"></i>
+										<span>批量禁用</span></a>
 								</div>
 							</div>
 						</div>
@@ -96,16 +102,18 @@
 												<td><{$single.creator}></td>
 												<td><{$single.creatime}></td>
 												<td>
-													<div class="btn-group" data-id="<{$single.id}>">
-														<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
+													<div class="btn-group" data-id="<{$single.id}>"  data-status="<{$single.status_code}>">
+														<if condition="$single['status_code'] eq 1">
+															<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
+														</if>
 														<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_role">修改</button>
-														<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_role">删除</button>
+														<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
 														<switch name="single.status_code">
 															<case value="0">
-																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:enable_role', 'id'=>$single['id']])}>" class="btn btn-success btn-xs">启用</a>
+																<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
 															</case>
 															<case value="1">
-																<a href="<{:U('RequestHandler/getHandler', ['requestType'=>'get:disable_role', 'id'=>$single['id']])}>" class="btn btn-danger btn-xs">禁用</a>
+																<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
 															</case>
 														</switch>
 													</div>
@@ -126,6 +134,7 @@
 			</div>
 		</div>
 	</div>
+	<!--新增角色-->
 	<div class="modal fade" id="create_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -134,7 +143,7 @@
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<h2 class="modal-title">新增角色</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return ScriptObject.checkIsEmpty()">
+				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="create">
 					<div class="modal-body">
 						<div class="form-group">
@@ -183,7 +192,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">新增</button>
+						<button type="button" class="btn btn-primary btn-save">新增</button>
 					</div>
 				</form>
 			</div>
@@ -195,10 +204,10 @@
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="modify_role_title">修改角色</h2>
+					<h2 class="modal-title">修改角色</h2>
 				</div>
-				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return ScriptObject.checkIsEmpty2()">
-					<input type="hidden" name="requestType" value="modify_role"> <input type="hidden" name="id">
+				<form class="form-horizontal" role="form" action="" method="post">
+					<input type="hidden" name="requestType" value="modify"> <input type="hidden" name="id">
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="modify_role_name" class="col-sm-2 control-label  color-red  "><b style="vertical-align: middle;">*</b>名称：</label>
@@ -246,19 +255,19 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">保存</button>
+						<button type="button" class="btn btn-primary btn-save">保存</button>
 					</div>
 				</form>
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="delete_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="delete_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="delete_role_title">删除角色</h2>
+					<h2 class="modal-title">删除角色</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
@@ -267,7 +276,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary">确认删除</button>
+						<button type="button" class="btn btn-primary btn-save">确认删除</button>
 					</div>
 				</form>
 			</div>
@@ -320,7 +329,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="batch_delete_employee" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="batch_delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -335,7 +344,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="submit" class="btn btn-primary batch_delete_btn">确认删除</button>
+						<button type="button" class="btn btn-primary btn-save">确认删除</button>
 					</div>
 				</form>
 			</div>

@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'receivables_project';
+		protected $tableName = 'receivables_project';
+		const TABLE_NAME = 'receivables_project';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		/** 项目类型 */

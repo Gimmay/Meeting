@@ -14,8 +14,9 @@
 			parent::_initialize();
 		}
 
-		protected $connection      = 'DB_CONFIG_COMMON';
-		protected $tableName       = 'upload_log';
+		protected $connection = 'DB_CONFIG_COMMON';
+		protected $tableName  = 'upload_log';
+		const TABLE_NAME = 'upload_log';
 		protected $autoCheckFields = true;
 
 		/**

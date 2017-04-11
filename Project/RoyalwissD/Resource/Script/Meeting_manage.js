@@ -48,7 +48,7 @@ var ScriptObject = {
 	},
 	roleListTemp :'<tr>\n\t<td>$i</td>\n\t<td>$name</td>\n\t<td>$comment</td>\n\t<td>\n\t\t<div class="btn-group" data-id="$id">\n\t\t\t<button type="button" class="btn btn-default btn-xs choose_user" data-toggle="modal" data-target="#add_meeting_manager">添加</button>\n\t\t\t<button type="button" class="btn btn-default btn-xs get_meeting_manager" data-toggle="modal" data-target="#see_meeting_manager">查看人员</button>\n\t\t</div>\n\t</td>\n</tr>',
 	userListTemp :'<tr>\n\t<td class="check_item_e"><input type="checkbox" class="icheck" value="$id" placeholder=""></td>\n\t<td>$num</td>\n\t<td class="name">$name</td>\n\t<td class="nickname">$nickname</td>\n</tr>',
-	userListTemp2:'<tr data-id="$id">\n\t<td>$num</td>\n\t<td class="name">$name</td>\n\t<td class="nickname">$nickname</td>\n\t<td>\n\t\t<button type="button" class="btn btn-default btn-xs delete_user" data-toggle="modal" data-target="#delete_meeting_manager">删除</button>\n\t</td>\n</tr>',
+	userListTemp2:'<tr data-id="$id" data-uid="$uid">\n\t<td>$num</td>\n\t<td class="name">$name</td>\n\t<td class="nickname">$nickname</td>\n\t<td>\n\t\t<button type="button" class="btn btn-default btn-xs delete_user" data-toggle="modal" data-target="#delete_meeting_manager">删除</button>\n\t</td>\n</tr>',
 };
 $(function(){
 	$('#add_meeting_manager').keydown(function(e){
@@ -171,7 +171,7 @@ $(function(){
 							all_check_e();
 						}
 					});
-				})
+				});
 				// 查看角色已添加员工
 				$('.get_meeting_manager').on('click', function(){
 					var rid = $(this).parent('.btn-group').attr('data-id');
@@ -276,14 +276,16 @@ function get_user_list(mid, rid){
 				$.each(data, function(index, value){
 					str += ScriptObject.userListTemp2.replace('$num', index+1)
 									   .replace('$name', value.name)
-									   .replace('$id', value.id).replace('$nickname', value.nickname)
+									   .replace('$id', value.id).replace('$uid', value.uid)
+									   .replace('$nickname', value.nickname)
 				});
 				$('#user_body1').html(str);
 				$('.delete_user').on('click', function(){
 					var id = $(this).parents('tr').attr('data-id');
+					var uid = $(this).parents('tr').attr('data-uid');
 					ManageObject.object.loading.loading();
 					Common.ajax({
-						data    :{requestType:'delete_meeting_manager', uid:id, mid:mid, rid:rid},
+						data    :{requestType:'delete_meeting_manager', id:id, uid:uid, mid:mid, rid:rid},
 						callback:function(data){
 							ManageObject.object.loading.complete();
 							console.log(data);

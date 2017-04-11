@@ -10,7 +10,7 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
-	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/miniColors/jquery.minicolors.css">
+	<!--<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/miniColors/jquery.minicolors.css">-->
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
@@ -31,17 +31,15 @@
 				<include file="Public/innerHeader"/>
 				<div class="main_body">
 					<section class="content badge_content">
-						<div>
-							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">自定义胸卡模板</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Badge/previewList', ['mid'=>I('get.mid', 0, 'int')])}>">系统胸卡模板列表</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int')])}>">已选择胸卡</a>
-								</div>
+						<div class="nav_tab mb_10 clearfix">
+							<div class="nav_tab_li active">
+								<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">自定义胸卡模板</a>
+							</div>
+							<div class="nav_tab_li">
+								<a href="<{:U('Badge/previewList', ['mid'=>I('get.mid', 0, 'int')])}>">系统胸卡模板列表</a>
+							</div>
+							<div class="nav_tab_li">
+								<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int')])}>">已选择胸卡</a>
 							</div>
 						</div>
 						<!--自定义胸卡模板-->
@@ -118,10 +116,10 @@
 											</li>-->
 										</ul>
 									</div>
-									<div class="form-group">
+									<!--<div class="form-group">
 										<label>字体颜色</label> <br>
 										<input type="text" id="position-bottom-left" class="demo choose-color form-control" data-position="bottom left" value="#000">
-									</div>
+									</div>-->
 									<div class="form_li text-center">
 										<button type="button" id="keep_badge_temp" class="btn btn-primary">保存设置</button>
 									</div>
@@ -147,10 +145,6 @@
 				}),
 				loading           :$().QuasarLoading(),
 				toast             :$().QuasarToast(),
-				icheck            :$('.icheck').iCheck({
-					checkboxClass:'icheckbox_square-blue',
-					radioClass   :'iradio_square-blue'
-				})
 			}
 		};
 		$(function(){

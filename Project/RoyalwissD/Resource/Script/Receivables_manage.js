@@ -543,7 +543,6 @@ $(function(){
 		Common.ajax({
 			data    :{requestType:'get_detail', id:id},
 			callback:function(r){
-				console.log(r);
 				ManageObject.object.otherName.setHtml('['+r.project_type+'] '+r.project); //客户
 				ManageObject.object.otherName.setValue(r.project_code);
 				ManageObject.object.otherName.setExtend(r.project_type_code);
@@ -579,7 +578,6 @@ $(function(){
 		Common.ajax({
 			data    :{requestType:'get_print_data', id:id},
 			callback:function(r){
-				console.log(r);
 				$('#print').find('.time').text(r.time);
 				$('#print').find('.unit').text(r.unit);
 				$('#print').find('.client_name').text(r.client);
@@ -634,17 +632,14 @@ $(function(){
 				data    :{requestType:'ticket', code:1},
 				callback:function(data){
 					ManageObject.object.loading.complete();
-					console.log(data);
 					$('.list_form').removeClass('hide');
 					$('.list_form .ticket_h').removeClass('hide');
 					$('.list_form .coupon_h').addClass('hide');
 					$('#add_receivables .modal-footer').removeClass('hide');
 					$.each(data, function(index, value){
-						console.log(value);
 						str += ThisObject.option.replace('$id', value.id).replace('$name', value.name)
 										 .replace('$price', value.price);
 					});
-					console.log(str);
 					$('#ticket_type').html(str).prepend('<option value="0" selected>请选择门票类型</option>');
 					$('#ticket_type').on('change', function(){
 						var price = $(this).find('option:selected').attr('data-price');
@@ -658,13 +653,11 @@ $(function(){
 				data    :{requestType:'coupon', code:2},
 				callback:function(data){
 					ManageObject.object.loading.complete();
-					console.log(data);
 					$('.list_form').removeClass('hide');
 					$('.list_form .ticket_h').addClass('hide');
 					$('.list_form .coupon_h').removeClass('hide');
 					$('#add_receivables .modal-footer').removeClass('hide');
 					$.each(data, function(index, value){
-						console.log(value);
 					});
 				}
 			})
@@ -783,7 +776,6 @@ function checkIsEmptyAlter(){
 // 收款导入excel
 function getIframeData(){
 	var data = new FormData($('#file_form')[0]);
-	console.log(data);
 	$.ajax({
 		url        :'',
 		type       :'POST',
@@ -793,7 +785,6 @@ function getIframeData(){
 		processData:false,
 		contentType:false
 	}).done(function(data){
-		console.log(data);
 		if(data.status){
 			ManageObject.object.toast.toast(data.message);
 			location.reload(); // 刷新本页面
@@ -828,7 +819,6 @@ function upLoadLogo(){
 		processData:false,
 		contentType:false
 	}).done(function(data){
-		console.log(data);
 		if(data.status){
 			ManageObject.object.toast.toast(data.message, '1');
 			$('input[name=logo]').val(data.data.filePath);

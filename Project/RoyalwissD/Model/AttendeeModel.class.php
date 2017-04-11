@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'attendee';
+		protected $tableName = 'attendee';
+		const TABLE_NAME = 'attendee';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		/** 自定义字段的名称 */
@@ -90,14 +91,16 @@
 		 * @return array
 		 */
 		public function addColumn($add_column_data){
-			$last_column_index = $this->getLastCustomColumnIndex();
-			$type              = " $add_column_data[type]($add_column_data[typeSize]) ";
-			$comment           = " $add_column_data[comment]";
-			$last_column       = $last_column_index == 0 ? 'status' : self::CUSTOM_COLUMN.$last_column_index;
-			$column            = self::CUSTOM_COLUMN.(++$last_column_index);
-			$sql               = "ALTER TABLE `attendee`
+			$table_attendee     = $this->tableName;
+			$this_database = self::DATABASE_NAME;
+			$last_column_index  = $this->getLastCustomColumnIndex();
+			$type               = " $add_column_data[type]($add_column_data[typeSize]) ";
+			$comment            = " $add_column_data[comment]";
+			$last_column        = $last_column_index == 0 ? 'status' : self::CUSTOM_COLUMN.$last_column_index;
+			$column             = self::CUSTOM_COLUMN.(++$last_column_index);
+			$sql                = "ALTER TABLE $this_database.$table_attendee
 ADD COLUMN `$column` $type NULL COMMENT '$comment' AFTER `$last_column`";
-			$result            = $this->execute($sql);
+			$result             = $this->execute($sql);
 			if($result === false) return ['status' => false, 'message' => '创建失败'];
 			else return ['status' => true, 'message' => '创建成功'];
 		}
@@ -108,11 +111,13 @@ ADD COLUMN `$column` $type NULL COMMENT '$comment' AFTER `$last_column`";
 		 * @return int
 		 */
 		public function getLastCustomColumnIndex(){
-			$list = $this->query("SELECT c.*
+			$table_attendee     = $this->tableName;
+			$this_database = self::DATABASE_NAME;
+			$list               = $this->query("SELECT c.*
 FROM information_schema.`TABLES` t
 JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'attendee'
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_attendee'
 AND c.COLUMN_NAME LIKE '".self::CUSTOM_COLUMN."%'
 ORDER BY c.COLUMN_NAME DESC
 LIMIT 1");
@@ -132,7 +137,12 @@ LIMIT 1");
 		 * @return array
 		 */
 		public function getColumnList($just_custom_column = false){
-			$sql_custom = "
+			$table_attendee     = $this->tableName;
+			$table_unit         = UnitModel::TABLE_NAME;
+			$table_grouping     = GroupingModel::TABLE_NAME;
+			$table_room         = RoomModel::TABLE_NAME;
+			$this_database = self::DATABASE_NAME;
+			$sql_custom         = "
 SELECT
 	c.TABLE_SCHEMA,
 	c.TABLE_NAME,
@@ -144,8 +154,8 @@ SELECT
 	'custom' TYPE
 FROM information_schema.TABLES t
 JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'unit'
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_unit'
 AND c.COLUMN_NAME = 'is_new'
 UNION
 SELECT
@@ -159,8 +169,8 @@ SELECT
 	'custom' TYPE
 FROM information_schema.TABLES t
 JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'unit'
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_unit'
 AND c.COLUMN_NAME = 'area'
 UNION
 SELECT
@@ -174,9 +184,9 @@ SELECT
 	'custom' TYPE
 FROM information_schema.`TABLES` t
 JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'attendee' AND COLUMN_NAME LIKE '".self::CUSTOM_COLUMN.'%\'';
-			$sql_fixed  = "
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_attendee' AND COLUMN_NAME LIKE '".self::CUSTOM_COLUMN.'%\'';
+			$sql_fixed          = "
 SELECT
 	c.TABLE_SCHEMA,
 	c.TABLE_NAME,
@@ -188,8 +198,8 @@ SELECT
 	'fixed' TYPE
 FROM information_schema.TABLES t
 JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'grouping'
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_grouping'
 AND c.COLUMN_NAME = 'name'
 UNION
 SELECT
@@ -203,8 +213,8 @@ SELECT
 	'fixed' TYPE
 FROM information_schema.TABLES t
 JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'room'
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_room'
 AND c.COLUMN_NAME = 'name'
 UNION
 SELECT
@@ -218,10 +228,10 @@ SELECT
 	'fixed' TYPE
 FROM information_schema.`TABLES` t
 JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'attendee'  AND COLUMN_NAME NOT LIKE '".self::CUSTOM_COLUMN.'%\'';
-			$sql        = $just_custom_column ? $sql_custom : "$sql_fixed UNION $sql_custom";
-			$list       = $this->query($sql);
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_attendee'  AND COLUMN_NAME NOT LIKE '".self::CUSTOM_COLUMN.'%\'';
+			$sql                = $just_custom_column ? $sql_custom : "$sql_fixed UNION $sql_custom";
+			$list               = $this->query($sql);
 
 			return $list;
 		}

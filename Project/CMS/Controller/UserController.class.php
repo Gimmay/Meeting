@@ -63,11 +63,10 @@
 				/** @var \CMS\Model\UserModel $user_model */
 				$user_model           = D('CMS/User');
 				$model_control_column = $this->getModelControl();
-				$list        = $user_model->getList(array_merge($model_control_column, [
+				$list                 = $user_model->getList(array_merge($model_control_column, [
 					CMSModel::CONTROL_COLUMN_PARAMETER['status'] => ['<>', 2]
 				]));
-
-				$list       = $user_logic->setData('manage', ['list'=>$list, 'urlParam'=>I('get.')]);
+				$list        = $user_logic->setData('manage', ['list' => $list, 'urlParam' => I('get.')]);
 				$page_object = new Page(count($list), $this->getPageRecordCount()); // 实例化分页类 传入总记录数和每页显示的记录数
 				PageLogic::setTheme1($page_object);
 				$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
@@ -134,7 +133,8 @@
 				/** @var \General\Model\UserModel $user_model */
 				$user_model = D('General/User');
 				$user_model->fetch(['id' => $user_id]);
-				$this->assign('user', $user_model->getObject());
+				$user = $user_model->getObject();
+				$this->assign('user', $user);
 				$this->display();
 			}
 			else{

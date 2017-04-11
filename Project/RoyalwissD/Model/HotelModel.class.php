@@ -8,13 +8,16 @@
 	namespace RoyalwissD\Model;
 
 	use Exception;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class HotelModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'hotel';
+		protected $tableName = 'hotel';
+		const TABLE_NAME = 'hotel';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = [
@@ -45,11 +48,15 @@
 		}
 
 		public function getList($control = []){
-			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$meeting_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$where      = ' WHERE 0 = 0 ';
+			$table_hotel     = $this->tableName;
+			$table_user      = UserModel::TABLE_NAME;
+			$common_database = GeneralModel::DATABASE_NAME;
+			$this_database = self::DATABASE_NAME;
+			$keyword       = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order         = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status        = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$meeting_id    = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$where         = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -79,8 +86,8 @@ SELECT * FROM (
 		h.creator creator_code,
 		h.creatime,
 		u1.name creator
-	FROM meeting_royalwiss_deal.hotel h
-	LEFT JOIN meeting_common.user u1 ON u1.id = h.creator AND u1.status <> 2
+	FROM $this_database.$table_hotel h
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = h.creator AND u1.status <> 2
 ) tab
 $where
 $order";
@@ -101,7 +108,7 @@ $order";
 				'status' => 1,
 				'mid'    => $meeting_id
 			])->field('id value, name html, concat(name,\',\',name_pinyin) keyword')->select();
-			
+
 			return $result;
 		}
 	}

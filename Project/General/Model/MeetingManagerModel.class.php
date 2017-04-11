@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'meeting_manager';
+		protected $tableName = 'meeting_manager';
+		const TABLE_NAME = 'meeting_manager';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_COMMON';
 
@@ -40,6 +41,4 @@
 				return !$exception['status'] ? $exception : ['status' => false, 'message' => $this->getError()];
 			}
 		}
-		
-		
 	}

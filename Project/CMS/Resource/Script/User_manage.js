@@ -312,9 +312,9 @@ $(function(){
 		var name = $(this).parent().parent().parent().find('td[data-id='+id+']').text();
 		$('#reset_password').find('input[name=id]').val(id);
 		$('#reset_password_user_name').val(name).attr('value', name);
-		$('#alter_password .btn-save').on('click', function(){
+		$('#reset_password .btn-save').on('click', function(){
 			ManageObject.object.loading.loading();
-			var data = $('#alter_password form').serialize();
+			var data = $('#reset_password form').serialize();
 			Common.ajax({
 				data    :data,
 				callback:function(r){

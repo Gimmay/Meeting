@@ -10,6 +10,8 @@
 	use CMS\Logic\Session;
 	use Exception;
 	use General\Logic\Time;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class RoomModel extends RoyalwissDModel{
 		public function _initialize(){
@@ -17,7 +19,8 @@
 		}
 
 		const CLIENT_NAME_SEPARATOR = '&$@#,#@$&';
-		protected $tableName       = 'room';
+		protected $tableName = 'room';
+		const TABLE_NAME = 'room';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = [
@@ -59,14 +62,23 @@
 		}
 
 		public function getList($control = []){
-			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$meeting_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$hotel_id   = $control[self::CONTROL_COLUMN_PARAMETER_SELF['hotelID']];
-			$room_id    = $control[self::CONTROL_COLUMN_PARAMETER_SELF['roomID']];
-			$type       = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
-			$where      = ' WHERE 0 = 0 ';
+			$table_client        = ClientModel::TABLE_NAME;
+			$table_attendee      = AttendeeModel::TABLE_NAME;
+			$table_user          = UserModel::TABLE_NAME;
+			$table_hotel         = HotelModel::TABLE_NAME;
+			$table_room          = self::TABLE_NAME;
+			$table_room_type     = RoomTypeModel::TABLE_NAME;
+			$table_room_customer = RoomCustomerModel::TABLE_NAME;
+			$common_database     = GeneralModel::DATABASE_NAME;
+			$this_database       = self::DATABASE_NAME;
+			$keyword             = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order               = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status              = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$meeting_id          = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$hotel_id            = $control[self::CONTROL_COLUMN_PARAMETER_SELF['hotelID']];
+			$room_id             = $control[self::CONTROL_COLUMN_PARAMETER_SELF['roomID']];
+			$type                = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
+			$where               = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -96,15 +108,15 @@ SELECT * FROM (
 		r.creatime,
 		(
 SELECT group_concat(c.name ORDER BY c.name_pinyin SEPARATOR '".self::CLIENT_NAME_SEPARATOR."')
-FROM meeting_royalwiss_deal.room_customer rc
-JOIN meeting_royalwiss_deal.client c ON c.id = rc.cid AND c.status <> 2
-JOIN meeting_royalwiss_deal.attendee a ON a.cid = c.id AND a.status <> 2
+FROM $this_database.$table_room_customer rc
+JOIN $this_database.$table_client c ON c.id = rc.cid AND c.status <> 2
+JOIN $this_database.$table_attendee a ON a.cid = c.id AND a.status <> 2
 WHERE rc.mid = r.mid AND rc.rid = r.id AND rc.status <> 2 AND rc.process_status = 1 AND a.mid = r.mid) client,
 		(
 SELECT group_concat(c.id ORDER BY c.name_pinyin)
-FROM meeting_royalwiss_deal.room_customer rc
-JOIN meeting_royalwiss_deal.client c ON c.id = rc.cid AND c.status <> 2
-JOIN meeting_royalwiss_deal.attendee a ON a.cid = c.id AND a.status <> 2
+FROM $this_database.$table_room_customer rc
+JOIN $this_database.$table_client c ON c.id = rc.cid AND c.status <> 2
+JOIN $this_database.$table_attendee a ON a.cid = c.id AND a.status <> 2
 WHERE rc.mid = r.mid AND rc.rid = r.id AND rc.status <> 2 AND rc.process_status = 1 AND a.mid = r.mid) client_code,
 		rt.id type_code,
 		rt.name type,
@@ -112,13 +124,14 @@ WHERE rc.mid = r.mid AND rc.rid = r.id AND rc.status <> 2 AND rc.process_status 
 		rt.price,
 		h.name hotel_name,
 		u1.name creator
-	FROM meeting_royalwiss_deal.room r
-	JOIN meeting_royalwiss_deal.room_type rt ON r.type = rt.id AND rt.status <> 2
-	JOIN meeting_royalwiss_deal.hotel h ON r.hid = h.id AND h.status <> 2
-	LEFT JOIN meeting_common.user u1 ON u1.id = r.creator AND u1.status <> 2
+	FROM $this_database.$table_room r
+	JOIN $this_database.$table_room_type rt ON r.type = rt.id AND rt.status <> 2
+	JOIN $this_database.$table_hotel h ON r.hid = h.id AND h.status <> 2
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = r.creator AND u1.status <> 2
 ) tab
 $where
 $order";
+
 			$result = $this->query($sql);
 
 			return $result;
@@ -133,13 +146,18 @@ $order";
 		 * @return array
 		 */
 		public function getCustomer($meeting_id, $room_id = null){
+			$table_client        = ClientModel::TABLE_NAME;
+			$table_attendee      = AttendeeModel::TABLE_NAME;
+			$table_room          = self::TABLE_NAME;
+			$table_room_customer = RoomCustomerModel::TABLE_NAME;
+			$this_database       = self::DATABASE_NAME;
 			if(!($room_id == null)) $group_filter = " AND r.id = $room_id";
 			$sql    = "
 SELECT c.*
-FROM meeting_royalwiss_deal.room r
-JOIN meeting_royalwiss_deal.room_customer rc ON rc.rid = r.id AND rc.status <> 2
-JOIN meeting_royalwiss_deal.client c ON c.id = rc.cid AND c.status <> 2
-JOIN meeting_royalwiss_deal.attendee a ON a.cid = c.id AND a.status <> 2
+FROM $this_database.$table_room r
+JOIN $this_database.$table_room_customer rc ON rc.rid = r.id AND rc.status <> 2
+JOIN $this_database.$table_client c ON c.id = rc.cid AND c.status <> 2
+JOIN $this_database.$table_attendee a ON a.cid = c.id AND a.status <> 2
 WHERE r.status <> 2 AND rc.process_status = 1 AND a.mid = r.mid AND r.mid = $meeting_id $group_filter
 ";
 			$result = $this->query($sql);
@@ -322,7 +340,12 @@ WHERE r.status <> 2 AND rc.process_status = 1 AND a.mid = r.mid AND r.mid = $mee
 		 * @return array
 		 */
 		public function getCheckInHistory($meeting_id, $room_id = null, $client_id = null){
-			$condition = '';
+			$table_client        = ClientModel::TABLE_NAME;
+			$table_attendee      = AttendeeModel::TABLE_NAME;
+			$table_room          = self::TABLE_NAME;
+			$table_room_customer = RoomCustomerModel::TABLE_NAME;
+			$this_database       = self::DATABASE_NAME;
+			$condition           = '';
 			if($room_id) $condition .= " AND rid = $room_id";
 			if($client_id) $condition .= " AND cid = $client_id";
 			$sql = "
@@ -332,10 +355,10 @@ SELECT
 	c.id cid,
 	c.name client,
 	rc.process_status
-FROM meeting_royalwiss_deal.room_customer rc
-JOIN meeting_royalwiss_deal.client c ON c.id = rc.cid AND c.status <> 2
-JOIN meeting_royalwiss_deal.room r ON r.id = rc.rid AND r.status <> 2
-JOIN meeting_royalwiss_deal.attendee a ON a.cid = c.id AND a.status <> 2
+FROM $this_database.$table_room_customer rc
+JOIN $this_database.$table_client c ON c.id = rc.cid AND c.status <> 2
+JOIN $this_database.$table_room r ON r.id = rc.rid AND r.status <> 2
+JOIN $this_database.$table_attendee a ON a.cid = c.id AND a.status <> 2
 WHERE a.mid = r.mid AND r.mid = $meeting_id AND rc.status = 1 $condition
 ";
 
@@ -348,8 +371,11 @@ WHERE a.mid = r.mid AND r.mid = $meeting_id AND rc.status = 1 $condition
 		 * @return array
 		 */
 		public function getColumnList(){
-			$room_type_name = self::IMPORT_ROOM_TYPE_NAME;
-			$sql            = "
+			$table_room      = self::TABLE_NAME;
+			$table_room_type = RoomTypeModel::TABLE_NAME;
+			$this_database   = self::DATABASE_NAME;
+			$room_type_name  = self::IMPORT_ROOM_TYPE_NAME;
+			$sql             = "
 SELECT
 	c.TABLE_SCHEMA,
 	c.TABLE_NAME,
@@ -360,8 +386,8 @@ SELECT
 	c.COLUMN_COMMENT
 FROM information_schema.TABLES t
 JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'room_type'
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_room_type'
 AND c.COLUMN_NAME IN ('name')
 UNION
 SELECT
@@ -374,11 +400,11 @@ SELECT
 	c.COLUMN_COMMENT
 FROM information_schema.TABLES t
 JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'room'
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_room'
 AND c.COLUMN_NAME IN ('name', 'comment')
 ";
-			$list           = $this->query($sql);
+			$list            = $this->query($sql);
 
 			return $list;
 		}
@@ -392,7 +418,16 @@ AND c.COLUMN_NAME IN ('name', 'comment')
 		 * @return array
 		 */
 		public function getSelectedList($meeting_id, $hotel_id){
-			$sql    = "
+			$table_client        = ClientModel::TABLE_NAME;
+			$table_attendee      = AttendeeModel::TABLE_NAME;
+			$table_user          = UserModel::TABLE_NAME;
+			$table_hotel         = HotelModel::TABLE_NAME;
+			$table_room          = self::TABLE_NAME;
+			$table_room_type     = RoomTypeModel::TABLE_NAME;
+			$table_room_customer = RoomCustomerModel::TABLE_NAME;
+			$common_database     = GeneralModel::DATABASE_NAME;
+			$this_database       = self::DATABASE_NAME;
+			$sql                 = "
 SELECT
 	id value,
 	name html,
@@ -410,9 +445,9 @@ FROM (
 		r.creatime,
 		(
 		SELECT count(c.id)
-		FROM meeting_royalwiss_deal.room_customer rc
-		JOIN meeting_royalwiss_deal.client c ON c.id = rc.cid AND c.status <> 2
-		JOIN meeting_royalwiss_deal.attendee a ON a.cid = c.id AND a.status <> 2
+		FROM $this_database.$table_room_customer rc
+		JOIN $this_database.$table_client c ON c.id = rc.cid AND c.status <> 2
+		JOIN $this_database.$table_attendee a ON a.cid = c.id AND a.status <> 2
 		WHERE rc.mid = r.mid AND rc.rid = r.id AND rc.status <> 2 AND rc.process_status = 1 AND a.mid = r.mid) assigned,
 		rt.id type_code,
 		rt.name type,
@@ -421,14 +456,14 @@ FROM (
 		rt.price,
 		h.name hotel_name,
 		u1.name creator
-	FROM meeting_royalwiss_deal.room r
-	JOIN meeting_royalwiss_deal.room_type rt ON r.type = rt.id AND rt.status <> 2
-	JOIN meeting_royalwiss_deal.hotel h ON r.hid = h.id AND h.status <> 2
-	LEFT JOIN meeting_common.user u1 ON u1.id = r.creator AND u1.status <> 2
+	FROM $this_database.$table_room r
+	JOIN $this_database.$table_room_type rt ON r.type = rt.id AND rt.status <> 2
+	JOIN $this_database.$table_hotel h ON r.hid = h.id AND h.status <> 2
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = r.creator AND u1.status <> 2
 ) tab
 WHERE mid = $meeting_id AND hid = $hotel_id AND status = 1 AND (assigned < capacity OR capacity = 0)
 ";
-			$result = $this->query($sql);
+			$result              = $this->query($sql);
 
 			return $result;
 		}

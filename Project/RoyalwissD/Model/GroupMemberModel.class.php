@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'grouping_member';
+		protected $tableName = 'grouping_member';
+		const TABLE_NAME = 'grouping_member';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 

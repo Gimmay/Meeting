@@ -12,7 +12,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'meeting_type';
+		protected $tableName = 'meeting_type';
+		const TABLE_NAME = 'meeting_type';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_COMMON';
 	}

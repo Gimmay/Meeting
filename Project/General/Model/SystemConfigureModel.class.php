@@ -16,7 +16,7 @@
 		}
 
 		protected $connection       = 'DB_CONFIG_COMMON';
-		protected $tableName        = 'system_configure';
+		protected $tableName        = 'system_configure'; const TABLE_NAME = 'system_configure';
 		protected $autoCheckFields  = true;
 		
 	}

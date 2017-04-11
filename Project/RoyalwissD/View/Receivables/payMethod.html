@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>支付方式 - 会议系统</title>
+	<title>支付方式管理 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
@@ -144,6 +144,8 @@
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="create">
+					<!-- 避免回车提交 -->
+					<input style="display:none" mce_style="display:none">
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="payMethod_name" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>名称：</label>

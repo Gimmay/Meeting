@@ -10,13 +10,16 @@
 	use CMS\Logic\Session;
 	use Exception;
 	use General\Logic\Time;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class MessageModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'message';
+		protected $tableName = 'message';
+		const TABLE_NAME = 'message';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = [
@@ -55,12 +58,17 @@
 		}
 
 		public function getList($control = []){
-			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$meeting_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$type       = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
-			$where      = ' WHERE 0 = 0 ';
+			$table_message             = $this->tableName;
+			$table_user                = UserModel::TABLE_NAME;
+			$table_message_correlation = MessageCorrelationModel::TABLE_NAME;
+			$common_database           = GeneralModel::DATABASE_NAME;
+			$this_database             = self::DATABASE_NAME;
+			$keyword                   = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order                     = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status                    = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$meeting_id                = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$type                      = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
+			$where                     = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -87,10 +95,10 @@ SELECT * FROM (
 		m.comment,
 		m.creator creator_code,
 		m.creatime,
-		(SELECT group_concat(mc.action) FROM meeting_royalwiss_deal.message_correlation mc WHERE mc.message_id = m.id AND mc.status = 1 limit 1) action,
+		(SELECT group_concat(mc.action) FROM $this_database.$table_message_correlation mc WHERE mc.message_id = m.id AND mc.status = 1 limit 1) action,
 		u1.name creator
-	FROM meeting_royalwiss_deal.message m
-	LEFT JOIN meeting_common.user u1 ON u1.id = m.creator AND u1.status <> 2
+	FROM $this_database.$table_message m
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = m.creator AND u1.status <> 2
 ) tab
 $where
 $order";
@@ -109,6 +117,9 @@ $order";
 		 * @return array
 		 */
 		public function useTo($meeting_id, $message_id, $action){
+			$table_message             = $this->tableName;
+			$table_message_correlation = MessageCorrelationModel::TABLE_NAME;
+			$this_database             = self::DATABASE_NAME;
 			if(is_null($action) || $action == '' || !$action) $action = [];
 			elseif(is_numeric($action)) $action = [$action];
 			elseif(is_string($action)) $action = explode(',', $action);
@@ -120,11 +131,11 @@ $order";
 				if(!$this->fetch(['id' => $message_id])) return ['status' => false, 'message' => '找不到消息信息'];
 				$current_message = $this->getObject();
 				$sql             = "
-UPDATE meeting_royalwiss_deal.message_correlation mc SET mc.status = 0
+UPDATE $this_database.$table_message_correlation mc SET mc.status = 0
 WHERE mc.status = 1 AND mc.mid = $meeting_id
 AND mc.action in ($action_str)
 AND mc.message_id in (
-	SELECT m.id FROM meeting_royalwiss_deal.message m
+	SELECT m.id FROM $this_database.$table_message m
 	WHERE m.status = 1 AND m.mid = $meeting_id AND m.type = $current_message[type]
 )
 ";
@@ -132,7 +143,7 @@ AND mc.message_id in (
 			}
 			// 取消该消息模板所有使用的动作
 			$sql = "
-UPDATE meeting_royalwiss_deal.message_correlation mc SET mc.status = 0
+UPDATE $this_database.$table_message_correlation mc SET mc.status = 0
 WHERE mc.status = 1 AND mc.mid = $meeting_id
 AND mc.message_id = $message_id
 ";
@@ -167,13 +178,16 @@ AND mc.message_id = $message_id
 		 * @return null|string
 		 */
 		public function getMessage($meeting_id, $type, $action){
-			$sql    = "
-SELECT m.context, m.id FROM meeting_royalwiss_deal.message_correlation mc
-JOIN meeting_royalwiss_deal.message m ON m.id = mc.message_id AND m.status = 1
+			$table_message             = $this->tableName;
+			$table_message_correlation = MessageCorrelationModel::TABLE_NAME;
+			$this_database             = self::DATABASE_NAME;
+			$sql                       = "
+SELECT m.context, m.id FROM $this_database.$table_message_correlation mc
+JOIN $this_database.$table_message m ON m.id = mc.message_id AND m.status = 1
 WHERE m.mid = $meeting_id AND mc.mid = $meeting_id AND mc.status = 1 AND m.type = $type AND mc.action = $action
 LIMIT 1
 			";
-			$result = $this->query($sql);
+			$result                    = $this->query($sql);
 			if(isset($result[0])) return [
 				'id'      => $result[0]['id'],
 				'context' => $result[0]['context']

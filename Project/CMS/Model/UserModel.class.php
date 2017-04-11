@@ -7,22 +7,29 @@
 	 */
 	namespace CMS\Model;
 
+	use General\Model\UserAssignRoleModel;
+
 	class UserModel extends CMSModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
 		const ROLE_NAME_SEPARATOR = '&$@#,#@$&';
-		protected $tableName       = 'user';
+		protected $tableName = 'user';
+		const TABLE_NAME = 'user';
 		protected $autoCheckFields = true;
 		protected $connection      = "DB_CONFIG_COMMON";
 		const CONTROL_COLUMN_PARAMETER_SELF = ['roleID' => 'rid'];
 
 		public function getList($control = []){
-			$keyword = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order   = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status  = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$where   = ' WHERE 0 = 0 ';
+			$table_user             = $this->tableName;
+			$table_role             = RoleModel::TABLE_NAME;
+			$table_user_assign_role = UserAssignRoleModel::TABLE_NAME;
+			$this_database          = self::DATABASE_NAME;
+			$keyword                = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order                  = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status                 = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$where                  = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -53,16 +60,16 @@ SELECT * FROM (
 		u1.creator creator_code,
 		u2.name creator,
 		(SELECT group_concat(r1.name ORDER BY r1.name_pinyin SEPARATOR '".self::ROLE_NAME_SEPARATOR."')
-		FROM meeting_common.role r1
-		JOIN meeting_common.user_assign_role uar1 ON r1.id = uar1.rid
+		FROM $this_database.$table_role r1
+		JOIN $this_database.$table_user_assign_role uar1 ON r1.id = uar1.rid
 		WHERE u1.id = uar1.uid AND r1.status <> 2) role_name,
 		(SELECT group_concat(r1.id ORDER BY r1.name_pinyin)
-		FROM meeting_common.role r1
-		JOIN meeting_common.user_assign_role uar1 ON r1.id = uar1.rid
+		FROM $this_database.$table_role r1
+		JOIN $this_database.$table_user_assign_role uar1 ON r1.id = uar1.rid
 		WHERE u1.id = uar1.uid AND r1.status <> 2) role_id
-	FROM meeting_common.user u1
-	LEFT JOIN meeting_common.user u2 ON u2.id = u1.creator AND u2.status <> 2
-	LEFT JOIN meeting_common.user u3 ON u3.id = u1.parent_id AND u3.status <> 2
+	FROM $this_database.$table_user u1
+	LEFT JOIN $this_database.$table_user u2 ON u2.id = u1.creator AND u2.status <> 2
+	LEFT JOIN $this_database.$table_user u3 ON u3.id = u1.parent_id AND u3.status <> 2
 ) tab
 $where
 $order

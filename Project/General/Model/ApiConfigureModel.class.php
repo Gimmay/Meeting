@@ -10,7 +10,8 @@
 	use Exception;
 
 	class ApiConfigureModel extends GeneralModel{
-		protected $tableName       = 'api_configure';
+		protected $tableName = 'api_configure';
+		const TABLE_NAME = 'api_configure';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_COMMON';
 

@@ -8,13 +8,16 @@
 	namespace RoyalwissD\Model;
 
 	use Exception;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class ReceivablesOrderModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'receivables_order';
+		protected $tableName = 'receivables_order';
+		const TABLE_NAME = 'receivables_order';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = [
@@ -55,6 +58,18 @@
 		}
 
 		public function getList($control = []){
+			$table_receivables_order   = $this->tableName;
+			$table_receivables_detail  = ReceivablesDetailModel::TABLE_NAME;
+			$table_receivables_project = ReceivablesProjectModel::TABLE_NAME;
+			$table_user                = UserModel::TABLE_NAME;
+			$table_client              = ClientModel::TABLE_NAME;
+			$table_attendee            = AttendeeModel::TABLE_NAME;
+			$table_project             = ProjectModel::TABLE_NAME;
+			$table_project_type        = ProjectTypeModel::TABLE_NAME;
+			$table_pay_method          = ReceivablesPayMethodModel::TABLE_NAME;
+			$table_pos_machine         = ReceivablesPosMachineModel::TABLE_NAME;
+			$common_database           = GeneralModel::DATABASE_NAME;
+			$this_database = self::DATABASE_NAME;
 			$keyword       = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
 			$order         = $control[self::CONTROL_COLUMN_PARAMETER['order']];
 			$status        = $control[self::CONTROL_COLUMN_PARAMETER['status']];
@@ -128,17 +143,17 @@ SELECT * FROM (
 		pom.name_pinyin pos_machine_pinyin,
 		rd.source,
 		rd.comment
-	FROM meeting_royalwiss_deal.receivables_order ro
-	JOIN meeting_royalwiss_deal.receivables_project rp ON ro.id = rp.oid AND rp.status <> 2
-	JOIN meeting_royalwiss_deal.receivables_detail rd ON rp.id = rd.pid AND rd.status <> 2
-	LEFT JOIN meeting_common.user u1 ON u1.id = ro.payee AND u1.status <> 2
-	LEFT JOIN meeting_common.user u2 ON u2.id = ro.creator AND u2.status <> 2
-	JOIN meeting_royalwiss_deal.client c ON c.id = ro.cid AND c.status <> 2
-	JOIN meeting_royalwiss_deal.attendee a ON a.cid = c.id AND a.status <> 2 AND a.mid = ro.mid
-	LEFT JOIN meeting_royalwiss_deal.project p ON p.id = rp.project_id AND p.status <> 2
-	LEFT JOIN meeting_royalwiss_deal.project_type pt ON pt.id = p.type AND pt.status <> 2
-	LEFT JOIN meeting_royalwiss_deal.receivables_pay_method pam ON pam.id = rd.pay_method AND pam.status <> 2
-	LEFT JOIN meeting_royalwiss_deal.receivables_pos_machine pom ON pom.id = rd.pos_machine AND pom.status <> 2
+	FROM $this_database.$table_receivables_order ro
+	JOIN $this_database.$table_receivables_project rp ON ro.id = rp.oid AND rp.status <> 2
+	JOIN $this_database.$table_receivables_detail rd ON rp.id = rd.pid AND rd.status <> 2
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = ro.payee AND u1.status <> 2
+	LEFT JOIN $common_database.$table_user u2 ON u2.id = ro.creator AND u2.status <> 2
+	JOIN $this_database.$table_client c ON c.id = ro.cid AND c.status <> 2
+	JOIN $this_database.$table_attendee a ON a.cid = c.id AND a.status <> 2 AND a.mid = ro.mid
+	LEFT JOIN $this_database.$table_project p ON p.id = rp.project_id AND p.status <> 2
+	LEFT JOIN $this_database.$table_project_type pt ON pt.id = p.type AND pt.status <> 2
+	LEFT JOIN $this_database.$table_pay_method pam ON pam.id = rd.pay_method AND pam.status <> 2
+	LEFT JOIN $this_database.$table_pos_machine pom ON pom.id = rd.pos_machine AND pom.status <> 2
 	ORDER BY ro.id DESC, rp.id 
 ) tab
 $where

@@ -73,11 +73,11 @@
 					$data       = [
 						'nickname'        => $post['nickname'],
 						'nickname_pinyin' => $str_obj->getPinyin($post['nickname'], true, ''),
-						'comment'         => $post['comment'],
+						'comment'         => $post['comment']
 					];
-					$res        = $user_model->modifyInformation(['id' => Session::getCurrentUser()], $data);
+					$result     = $user_model->modifyInformation(['id' => Session::getCurrentUser()], $data);
 
-					return $res;
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数'];

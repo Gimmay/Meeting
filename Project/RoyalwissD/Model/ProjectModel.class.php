@@ -8,13 +8,16 @@
 	namespace RoyalwissD\Model;
 
 	use Exception;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class ProjectModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'project';
+		protected $tableName = 'project';
+		const TABLE_NAME = 'project';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = [
@@ -52,11 +55,16 @@
 		 * @return mixed
 		 */
 		public function getList($control = []){
-			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$meeting_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$where      = ' WHERE 0 = 0 ';
+			$table_project      = $this->tableName;
+			$table_user         = UserModel::TABLE_NAME;
+			$table_project_type = ProjectTypeModel::TABLE_NAME;
+			$common_database    = GeneralModel::DATABASE_NAME;
+			$this_database      = self::DATABASE_NAME;
+			$keyword            = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order              = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status             = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$meeting_id         = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$where              = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -87,9 +95,9 @@ SELECT * FROM (
 		p1.creatime,
 		pt1.name type,
 		u1.name creator
-	FROM meeting_royalwiss_deal.project p1
-	JOIN meeting_royalwiss_deal.project_type pt1 ON p1.type = pt1.id
-	LEFT JOIN meeting_common.user u1 ON u1.id = p1.creator AND u1.status <> 2
+	FROM $this_database.$table_project p1
+	JOIN $this_database.$table_project_type pt1 ON p1.type = pt1.id
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = p1.creator AND u1.status <> 2
 ) tab
 $where
 $order";
@@ -154,7 +162,7 @@ $order";
 			if($this->fetch(['id' => $project_id, 'status' => 1])){
 				$project = $this->getObject();
 				$stock   = $project['stock']-$number;
-				if($stock<0) return ['status' => false, 'message' => '售出失败：库存不足'];
+				if($stock<0 && $project['is_stock_limit'] == 1) return ['status' => false, 'message' => '售出失败：库存不足'];
 				$result = $this->where(['id' => $project_id])->save(['stock' => $stock,]);
 
 				return $result ? ['status' => true, 'message' => '售出成功'] : ['status' => false, 'message' => '售出失败'];
@@ -171,12 +179,15 @@ $order";
 		 * @return array
 		 */
 		public function getSelectedList($meeting_id, $project_type_id = null){
-			$condition = '';
+			$table_project      = $this->tableName;
+			$table_project_type = ProjectTypeModel::TABLE_NAME;
+			$this_database      = self::DATABASE_NAME;
+			$condition          = '';
 			if($project_type_id) $condition = " and p.type = $project_type_id ";
 			$sql    = "
 SELECT p.id value, concat('[',pt.name,'] ',p.name) html, concat(p.name,',',pt.name,',',p.name_pinyin,',',pt.name_pinyin) keyword, concat(pt.id,',',p.price) ext
-FROM meeting_royalwiss_deal.project p
-JOIN meeting_royalwiss_deal.project_type pt on pt.id = p.type
+FROM $this_database.$table_project p
+JOIN $this_database.$table_project_type pt on pt.id = p.type
 WHERE p.status = 1
 	AND IF(p.is_stock_limit=1, p.stock>0, TRUE)
 	AND pt.status = 1

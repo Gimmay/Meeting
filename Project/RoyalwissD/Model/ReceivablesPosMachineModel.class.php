@@ -8,13 +8,16 @@
 	namespace RoyalwissD\Model;
 
 	use Exception;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class ReceivablesPosMachineModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'receivables_pos_machine';
+		protected $tableName = 'receivables_pos_machine';
+		const TABLE_NAME = 'receivables_pos_machine';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = ['meetingID' => 'mid'];
@@ -43,11 +46,15 @@
 		}
 
 		public function getList($control = []){
-			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$meeting_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$where      = ' WHERE 0 = 0 ';
+			$table_user        = UserModel::TABLE_NAME;
+			$table_pos_machine = self::TABLE_NAME;
+			$common_database   = GeneralModel::DATABASE_NAME;
+			$this_database     = self::DATABASE_NAME;
+			$keyword           = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order             = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status            = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$meeting_id        = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$where             = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -72,8 +79,8 @@ SELECT * FROM (
 		rpm.creatime,
 		rpm.creator creator_code,
 		u1.name creator
-	FROM meeting_royalwiss_deal.receivables_pos_machine rpm
-	LEFT JOIN meeting_common.user u1 ON u1.id = rpm.creator AND u1.status <> 2
+	FROM $this_database.$table_pos_machine rpm
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = rpm.creator AND u1.status <> 2
 ) tab
 $where
 $order";
@@ -86,10 +93,13 @@ $order";
 		 * 获取Select插件的数据列表
 		 *
 		 * @param int $meeting_id 会议ID
-		 *                        
+		 *
 		 * @return array
 		 */
 		public function getSelectedList($meeting_id){
-			return $this->where(['status'=>1, 'mid'=>$meeting_id])->field('id value, name html, concat(name,\',\',name_pinyin) keyword')->select();
+			return $this->where([
+				'status' => 1,
+				'mid'    => $meeting_id
+			])->field('id value, name html, concat(name,\',\',name_pinyin) keyword')->select();
 		}
 	}

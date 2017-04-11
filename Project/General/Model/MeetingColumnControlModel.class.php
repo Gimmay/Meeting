@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'meeting_column_control';
+		protected $tableName = 'meeting_column_control';
+		const TABLE_NAME = 'meeting_column_control';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_COMMON';
 

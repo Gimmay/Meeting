@@ -8,13 +8,16 @@
 	namespace RoyalwissD\Model;
 
 	use Exception;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class RoomTypeModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'room_type';
+		protected $tableName = 'room_type';
+		const TABLE_NAME = 'room_type';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = [
@@ -46,6 +49,11 @@
 		}
 
 		public function getList($control = []){
+			$table_room_type = $this->tableName;
+			$table_user      = UserModel::TABLE_NAME;
+			$table_room      = RoomModel::TABLE_NAME;
+			$common_database = GeneralModel::DATABASE_NAME;
+			$this_database   = self::DATABASE_NAME;
 			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
 			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
 			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
@@ -80,10 +88,10 @@ SELECT * FROM (
 		rt.comment,
 		rt.creator creator_code,
 		rt.creatime,
-		(SELECT count(r1.id) FROM meeting_royalwiss_deal.room r1 WHERE r1.type = rt.id AND rt.hid = r1.hid AND rt.mid = r1.mid AND r1.status <> 2) assigned,
+		(SELECT count(r1.id) FROM $this_database.$table_room r1 WHERE r1.type = rt.id AND rt.hid = r1.hid AND rt.mid = r1.mid AND r1.status <> 2) assigned,
 		u1.name creator
-	FROM meeting_royalwiss_deal.room_type rt
-	LEFT JOIN meeting_common.user u1 ON u1.id = rt.creator AND u1.status <> 2
+	FROM $this_database.$table_room_type rt
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = rt.creator AND u1.status <> 2
 ) tab
 $where
 $order";

@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'project_inventory';
+		protected $tableName = 'project_inventory';
+		const TABLE_NAME = 'project_inventory';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const TYPE_IN  = 1;

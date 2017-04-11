@@ -27,7 +27,6 @@
 		 * @return mixed
 		 */
 		public function handlerRequest($type, $opt = []){
-			// todo 分组历史记录表？
 			switch($type){
 				case 'batch_create':
 					$post           = I('post.');

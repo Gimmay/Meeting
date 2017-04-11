@@ -10,13 +10,16 @@
 	use CMS\Logic\Session;
 	use Exception;
 	use General\Logic\Time;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class GroupingModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'grouping';
+		protected $tableName = 'grouping';
+		const TABLE_NAME = 'grouping';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = ['meetingID' => 'mid'];
@@ -45,11 +48,18 @@
 		}
 
 		public function getList($control = []){
-			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$meeting_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$where      = ' WHERE 0 = 0 ';
+			$table_attendee     = AttendeeModel::TABLE_NAME;
+			$table_user         = UserModel::TABLE_NAME;
+			$table_grouping     = GroupingModel::TABLE_NAME;
+			$table_group_member = GroupMemberModel::TABLE_NAME;
+			$table_client       = ClientModel::TABLE_NAME;
+			$common_database    = GeneralModel::DATABASE_NAME;
+			$this_database      = self::DATABASE_NAME;
+			$keyword            = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order              = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status             = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$meeting_id         = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$where              = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -77,17 +87,17 @@ SELECT * FROM (
 		g.creatime,
 		(
 			SELECT count(gm.cid)
-			FROM meeting_royalwiss_deal.grouping_member gm
-			JOIN meeting_royalwiss_deal.client c ON gm.cid = c.id AND c.status <> 2
-			JOIN meeting_royalwiss_deal.attendee a ON a.cid = c.id AND a.status <> 2
+			FROM $this_database.$table_group_member gm
+			JOIN $this_database.$table_client c ON gm.cid = c.id AND c.status <> 2
+			JOIN $this_database.$table_attendee a ON a.cid = c.id AND a.status <> 2
 			WHERE gm.mid = g.mid
 			AND g.id = gm.gid
 			AND gm.STATUS = 1
 			AND a.mid = g.mid
 			AND gm.process_status = 1
 		) assigned
-	FROM meeting_royalwiss_deal.grouping g
-	LEFT JOIN meeting_common.user u1 ON u1.id = g.creator AND u1.status <> 2
+	FROM $this_database.$table_grouping g
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = g.creator AND u1.status <> 2
 ) tab
 $where
 $order
@@ -105,14 +115,19 @@ $order
 		 * @return array
 		 */
 		public function getMember($meeting_id, $group_id = null){
+			$table_attendee     = AttendeeModel::TABLE_NAME;
+			$table_grouping     = GroupingModel::TABLE_NAME;
+			$table_group_member = GroupMemberModel::TABLE_NAME;
+			$table_client       = ClientModel::TABLE_NAME;
+			$this_database      = self::DATABASE_NAME;
 			if(!($group_id == null)) $group_filter = " AND g.id = $group_id";
 			$sql    = "
 SELECT
 	c.*
-FROM meeting_royalwiss_deal.grouping g
-JOIN meeting_royalwiss_deal.grouping_member gm ON gm.gid = g.id AND gm.status <> 2
-JOIN meeting_royalwiss_deal.client c ON c.id = gm.cid AND c.status <> 2
-JOIN meeting_royalwiss_deal.attendee a ON a.cid = c.id AND a.status <> 2 AND a.mid = g.mid
+FROM $this_database.$table_grouping g
+JOIN $this_database.$table_group_member gm ON gm.gid = g.id AND gm.status <> 2
+JOIN $this_database.$table_client c ON c.id = gm.cid AND c.status <> 2
+JOIN $this_database.$table_attendee a ON a.cid = c.id AND a.status <> 2 AND a.mid = g.mid
 WHERE g.status <> 2 AND gm.process_status = 1 AND g.mid = $meeting_id $group_filter
 ";
 			$result = $this->query($sql);
@@ -128,7 +143,12 @@ WHERE g.status <> 2 AND gm.process_status = 1 AND g.mid = $meeting_id $group_fil
 		 * @return array
 		 */
 		public function getSelectedList($meeting_id){
-			$sql    = "
+			$table_attendee     = AttendeeModel::TABLE_NAME;
+			$table_grouping     = GroupingModel::TABLE_NAME;
+			$table_group_member = GroupMemberModel::TABLE_NAME;
+			$table_client       = ClientModel::TABLE_NAME;
+			$this_database      = self::DATABASE_NAME;
+			$sql                = "
 SELECT
 	id value,
 	concat(name, ' [', assigned, '/',capacity, ']') html,
@@ -138,20 +158,20 @@ FROM (
 		g.*,
 		(
 			SELECT count(gm.cid)
-			FROM meeting_royalwiss_deal.grouping_member gm
-			JOIN meeting_royalwiss_deal.client c ON gm.cid = c.id AND c.status <> 2
-			JOIN meeting_royalwiss_deal.attendee a ON a.cid = c.id AND a.status <> 2
+			FROM $this_database.$table_group_member gm
+			JOIN $this_database.$table_client c ON gm.cid = c.id AND c.status <> 2
+			JOIN $this_database.$table_attendee a ON a.cid = c.id AND a.status <> 2
 			WHERE gm.mid = g.mid
 			AND g.id = gm.gid
 			AND gm.STATUS = 1
 			AND gm.process_status = 1
 			AND a.mid = g.mid
 		) assigned
-	FROM meeting_royalwiss_deal.grouping g
+	FROM $this_database.$table_grouping g
 ) tab
 WHERE status = 1 AND mid = $meeting_id AND ((assigned < capacity AND capacity > 0) OR capacity = 0)
 ";
-			$result = $this->query($sql);
+			$result             = $this->query($sql);
 
 			return $result;
 		}
@@ -198,11 +218,12 @@ WHERE status = 1 AND mid = $meeting_id AND ((assigned < capacity AND capacity > 
 			// 保存组员记录
 			$group_member_data = [];
 			foreach($client_id as $val) $group_member_data[] = [
-				'mid'      => $meeting_id,
-				'gid'      => $group_id,
-				'cid'      => $val,
-				'creatime' => Time::getCurrentTime(),
-				'creator'  => Session::getCurrentUser()
+				'mid'       => $meeting_id,
+				'gid'       => $group_id,
+				'cid'       => $val,
+				'join_time' => Time::getCurrentTime(),
+				'creatime'  => Time::getCurrentTime(),
+				'creator'   => Session::getCurrentUser()
 			];
 			$result = $group_member_model->addAll($group_member_data);
 

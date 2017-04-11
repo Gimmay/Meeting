@@ -17,34 +17,32 @@
 		}
 
 		public function handlerRequest($type, $opt = []){
-			// todo 完善
 			switch($type){
-				case 'get_role_ajax':
+				case 'get_detail':
 					if(UserLogic::isPermitted('GENERAL-ROLE.VIEW')){
-						/** @var \General\Model\RoleModel $model */
-						$model       = D('General/Role');
-						$role_record = $model->findRole(1, ['id' => I('post.id', 0, 'int')]);
+						$id = I('post.id', 0, 'int');
+						/** @var \General\Model\RoleModel $role_model */
+						$role_model = D('General/Role');
+						if(!$role_model->fetch(['id' => $id])) return ['__ajax__' => true];
+						$role = $role_model->getObject();
 
-						return (array_merge($role_record, ['__ajax__' => true]));
+						return array_merge($role, ['__ajax__' => true]);
 					}
-					else{
-						return ['status' => false, 'message' => '您没有查看角色信息的权限', '__ajax__' => true];
-					}
+					else return ['status' => false, 'message' => '您没有查看角色信息的权限', '__ajax__' => true];
 				break;
 				case 'modify':
 					if(UserLogic::isPermitted('GENERAL-ROLE.MODIFY')){
 						/** @var \General\Model\RoleModel $role_model */
 						$role_model          = D('General/Role');
+						$str_obj             = new StringPlus();
 						$role_id             = I('post.id', 0, 'int');
 						$data                = I('post.');
-						$str_obj             = new StringPlus();
 						$data['name_pinyin'] = $str_obj->getPinyin($data['name'], true, '');
-						$result              = $role_model->modifyInformation(['id' => $role_id], $data); //传值到model里面操作
-						return array_merge($result, ['__ajax__' => false]);
+						$result              = $role_model->modifyInformation(['id' => $role_id], $data);
+
+						return array_merge($result, ['__ajax__' => true]);
 					}
-					else{
-						return ['status' => false, 'message' => '您没有修改角色的权限', '__ajax__' => false];
-					}
+					else return ['status' => false, 'message' => '您没有修改角色的权限', '__ajax__' => true];
 				break;
 				case 'create':
 					// 新增角色
@@ -59,9 +57,36 @@
 							'creator'     => Session::getCurrentUser()
 						]));
 
-						return array_merge($result, ['__ajax__' => false]);
+						return array_merge($result, ['__ajax__' => true]);
 					}
-					else return ['status' => false, 'message' => '您没有创建角色的权限', '__ajax__' => false];
+					else return ['status' => false, 'message' => '您没有创建角色的权限', '__ajax__' => true];
+				break;
+				case 'delete':
+					/** @var \General\Model\RoleModel $role_model */
+					$role_model  = D('General/Role');
+					$id_str = I('post.id', '');
+					$id     = explode(',', $id_str);
+					$result = $role_model->drop(['id' => ['in', $id]]);
+
+					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'enable':
+					/** @var \General\Model\RoleModel $role_model */
+					$role_model  = D('General/Role');
+					$id_str = I('post.id', '');
+					$id     = explode(',', $id_str);
+					$result = $role_model->enable(['id' => ['in', $id]]);
+
+					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'disable':
+					/** @var \General\Model\RoleModel $role_model */
+					$role_model  = D('General/Role');
+					$id_str = I('post.id', '');
+					$id     = explode(',', $id_str);
+					$result = $role_model->disable(['id' => ['in', $id]]);
+
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'get_assigned_permission':
 					$role_id = I('post.id', 0, 'int');

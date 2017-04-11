@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'meeting';
+		protected $tableName = 'meeting';
+		const TABLE_NAME = 'meeting';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_COMMON';
 		/** 流程状态 */
@@ -54,6 +55,8 @@
 		 * @return array
 		 */
 		public function getColumnList(){
+			$table_meeting   = $this->tableName;
+			$common_database = self::DATABASE_NAME;
 			$list = $this->query("
 SELECT
 	c.TABLE_SCHEMA,
@@ -66,8 +69,8 @@ SELECT
 	'fixed' TYPE
 FROM information_schema.`TABLES` t
 JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_common'
-AND t.TABLE_NAME = 'meeting'
+WHERE t.TABLE_SCHEMA = '$common_database'
+AND t.TABLE_NAME = '$table_meeting'
 ");
 
 			return $list;

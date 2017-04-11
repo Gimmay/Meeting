@@ -52,34 +52,38 @@
 										</div>
 										<div class="mo_content clearfix info">
 											<div class="row mb_10">
-												<div class="col-sm-2">
-													<div class="input-group">
-														<label for="client_name" class="input-group-addon">姓名</label>
-														<div id="client_name"></div>
+												<div class="col-sm-12 mb_10">
+													<div class="col-sm-6">
+														<div class="input-group">
+															<label for="client_name" class="input-group-addon">姓名</label>
+															<div id="client_name"></div>
+														</div>
+													</div>
+													<div class="col-sm-6">
+														<div class="input-group">
+															<label for="order_number" class="input-group-addon">收据号</label>
+															<input type="text" class="form-control" name="orderNumber" id="order_number" value="<{$order_number}>">
+														</div>
 													</div>
 												</div>
-												<div class="col-sm-2">
-													<div class="input-group">
-														<label for="client_name" class="input-group-addon">收款人</label>
-														<div id="payee_id"></div>
+												<div class="col-sm-12">
+													<div class="col-sm-4">
+														<div class="input-group">
+															<label for="client_name" class="input-group-addon">收款人</label>
+															<div id="payee_id"></div>
+														</div>
 													</div>
-												</div>
-												<div class="col-sm-2">
-													<div class="input-group">
-														<label for="receivables_time" class="input-group-addon">收款时间</label>
-														<input type="text" class="form-control" id="receivables_time" name="time" value="<{:date('Y-m-d H:i:s')}>">
+													<div class="col-sm-4">
+														<div class="input-group">
+															<label for="receivables_time" class="input-group-addon">收款时间</label>
+															<input type="text" class="form-control" id="receivables_time" name="time" value="<{:date('Y-m-d H:i:s')}>">
+														</div>
 													</div>
-												</div>
-												<div class="col-sm-2">
-													<div class="input-group">
-														<label for="place" class="input-group-addon">收款地点</label>
-														<input type="text" class="form-control" name="place" id="place">
-													</div>
-												</div>
-												<div class="col-sm-2">
-													<div class="input-group">
-														<label for="order_number" class="input-group-addon">收据号</label>
-														<input type="text" class="form-control" name="orderNumber" id="order_number" value="<{$order_number}>">
+													<div class="col-sm-4">
+														<div class="input-group">
+															<label for="place" class="input-group-addon">收款地点</label>
+															<input type="text" class="form-control" name="place" id="place">
+														</div>
 													</div>
 												</div>
 											</div>

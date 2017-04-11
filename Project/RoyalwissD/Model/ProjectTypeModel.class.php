@@ -8,13 +8,16 @@
 	namespace RoyalwissD\Model;
 
 	use Exception;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class ProjectTypeModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'project_type';
+		protected $tableName = 'project_type';
+		const TABLE_NAME = 'project_type';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = [
@@ -45,6 +48,10 @@
 		}
 
 		public function getList($control = []){
+			$table_project_type = $this->tableName;
+			$table_user         = UserModel::TABLE_NAME;
+			$common_database    = GeneralModel::DATABASE_NAME;
+			$this_database      = self::DATABASE_NAME;
 			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
 			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
 			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
@@ -74,8 +81,8 @@ SELECT * FROM (
 		pt.creator creator_code,
 		pt.creatime,
 		u1.name creator
-	FROM meeting_royalwiss_deal.project_type pt
-	LEFT JOIN meeting_common.user u1 ON u1.id = pt.creator AND u1.status <> 2
+	FROM $this_database.$table_project_type pt
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = pt.creator AND u1.status <> 2
 ) tab
 $where
 $order";

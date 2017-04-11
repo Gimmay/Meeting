@@ -8,13 +8,16 @@
 	namespace RoyalwissD\Model;
 
 	use Exception;
+	use General\Model\GeneralModel;
+	use General\Model\UserModel;
 
 	class ReceivablesPayMethodModel extends RoyalwissDModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'receivables_pay_method';
+		protected $tableName = 'receivables_pay_method';
+		const TABLE_NAME = 'receivables_pay_method';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		const CONTROL_COLUMN_PARAMETER_SELF = [
@@ -45,6 +48,10 @@
 		}
 
 		public function getList($control = []){
+			$table_user       = UserModel::TABLE_NAME;
+			$table_pay_method = self::TABLE_NAME;
+			$common_database  = GeneralModel::DATABASE_NAME;
+			$this_database    = self::DATABASE_NAME;
 			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
 			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
 			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
@@ -74,8 +81,8 @@ SELECT * FROM (
 		rpm.creatime,
 		rpm.creator creator_code,
 		u1.name creator
-	FROM meeting_royalwiss_deal.receivables_pay_method rpm
-	LEFT JOIN meeting_common.user u1 ON u1.id = rpm.creator AND u1.status <> 2
+	FROM $this_database.$table_pay_method rpm
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = rpm.creator AND u1.status <> 2
 ) tab
 $where
 $order";
@@ -92,6 +99,9 @@ $order";
 		 * @return array
 		 */
 		public function getSelectedList($meeting_id){
-			return $this->where(['status'=>1, 'mid'=>$meeting_id])->field('id value, name html, concat(name,\',\',name_pinyin) keyword')->select();
+			return $this->where([
+				'status' => 1,
+				'mid'    => $meeting_id
+			])->field('id value, name html, concat(name,\',\',name_pinyin) keyword')->select();
 		}
 	}

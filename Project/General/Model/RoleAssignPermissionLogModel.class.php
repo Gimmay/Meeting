@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'role_assign_permission_log';
+		protected $tableName = 'role_assign_permission_log';
+		const TABLE_NAME = 'role_assign_permission_log';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_COMMON';
 

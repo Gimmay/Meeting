@@ -13,8 +13,7 @@
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery-1.4.4.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery.jqprint-0.3.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery.printArea.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
@@ -29,50 +28,32 @@
 				<include file="Public/innerHeader"/>
 				<div class="main_body">
 					<section class="content badge_content">
-						<div>
-							<div class="nav_tab clearfix">
-								<div class="nav_tab_li">
-									<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">自定义胸卡模板</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Badge/previewList', ['mid'=>I('get.mid', 0, 'int')])}>">系统胸卡模板列表</a>
-								</div>
-								<div class="nav_tab_li active">
-									<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int')])}>">已选择胸卡</a>
-								</div>
+						<div class="nav_tab clearfix mb_10">
+							<div class="nav_tab_li">
+								<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">自定义胸卡模板</a>
+							</div>
+							<div class="nav_tab_li">
+								<a href="<{:U('Badge/previewList', ['mid'=>I('get.mid', 0, 'int')])}>">系统胸卡模板列表</a>
+							</div>
+							<div class="nav_tab_li active">
+								<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int')])}>">已选择胸卡</a>
 							</div>
 						</div>
 						<!--系统模板	-->
 						<div class="badge_boxw system_tem tab_c">
 							<div class="preview_badge">
+								<!--打印-->
+								<!--startprint1-->
 								<div class="badge_box"><{$info.data}></div>
+								<!--endprint1-->
 								<p class="title"><{$info.name}></p>
 							</div>
 						</div>
-						<button class="btn btn-default" type="button" id="btn_print" onclick="jqprint()">打印</button>
+						<button class="btn btn-default" type="button" id="btn_print">打印</button>
 					</section>
 				</div>
 			</div>
 		</div>
 	</div>
-	<style>
-		#print{
-			position : fixed;
-			width    : 100%;
-			height   : 100%;
-			left     : 100%;
-			top      : 0;
-		}
-
-		.badge_muban{
-			width  : 100% !important;
-			height : 100% !important;
-		}
-	</style>
-	<script>
-		function jqprint(){
-			$(".badge_box").jqprint();
-		}
-	</script>
 </body>
 </html>

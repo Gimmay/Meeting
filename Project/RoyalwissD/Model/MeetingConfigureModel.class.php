@@ -14,7 +14,8 @@
 			parent::_initialize();
 		}
 
-		protected $tableName       = 'meeting_configure';
+		protected $tableName = 'meeting_configure';
+		const TABLE_NAME = 'meeting_configure';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
 		/** 自定义字段的名称 */
@@ -60,14 +61,16 @@
 		 * @return array
 		 */
 		public function addColumn($add_column_data){
-			$last_column_index = $this->getLastCustomColumnIndex();
-			$type              = " $add_column_data[type]($add_column_data[typeSize]) ";
-			$comment           = " $add_column_data[comment]";
-			$last_column       = $last_column_index == 0 ? 'mid' : self::CUSTOM_COLUMN.$last_column_index;
-			$column            = self::CUSTOM_COLUMN.(++$last_column_index);
-			$sql               = "ALTER TABLE `meeting_configure`
+			$this_database           = self::DATABASE_NAME;
+			$table_meeting_configure = $this->tableName;
+			$last_column_index       = $this->getLastCustomColumnIndex();
+			$type                    = " $add_column_data[type]($add_column_data[typeSize]) ";
+			$comment                 = " $add_column_data[comment]";
+			$last_column             = $last_column_index == 0 ? 'mid' : self::CUSTOM_COLUMN.$last_column_index;
+			$column                  = self::CUSTOM_COLUMN.(++$last_column_index);
+			$sql                     = "ALTER TABLE $this_database.$table_meeting_configure
 ADD COLUMN `$column` $type NULL COMMENT '$comment' AFTER `$last_column`";
-			$result            = $this->execute($sql);
+			$result                  = $this->execute($sql);
 			if($result === false) return ['status' => false, 'message' => '创建失败'];
 			else return ['status' => true, 'message' => '创建成功'];
 		}
@@ -78,11 +81,13 @@ ADD COLUMN `$column` $type NULL COMMENT '$comment' AFTER `$last_column`";
 		 * @return int
 		 */
 		public function getLastCustomColumnIndex(){
+			$table_meeting_configure = $this->tableName;
+			$this_database           = self::DATABASE_NAME;
 			$list = $this->query("SELECT c.*
 FROM information_schema.`TABLES` t
 JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'meeting_configure'
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_meeting_configure'
 AND c.COLUMN_NAME LIKE '".self::CUSTOM_COLUMN."%'
 ORDER BY c.COLUMN_NAME DESC
 LIMIT 1");
@@ -102,7 +107,9 @@ LIMIT 1");
 		 * @return array
 		 */
 		public function getColumnList($just_custom_column = false){
-			$sql_custom = "
+			$table_meeting_configure = $this->tableName;
+			$this_database           = self::DATABASE_NAME;
+			$sql_custom              = "
 SELECT
 	c.TABLE_SCHEMA,
 	c.TABLE_NAME,
@@ -114,9 +121,9 @@ SELECT
 	'custom' TYPE
 FROM information_schema.`TABLES` t
 JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'meeting_configure' AND COLUMN_NAME LIKE '".self::CUSTOM_COLUMN.'%\'';
-			$sql_fixed  = "
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_meeting_configure' AND COLUMN_NAME LIKE '".self::CUSTOM_COLUMN.'%\'';
+			$sql_fixed               = "
 SELECT
 	c.TABLE_SCHEMA,
 	c.TABLE_NAME,
@@ -128,14 +135,13 @@ SELECT
 	'fixed' TYPE
 FROM information_schema.`TABLES` t
 JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = 'meeting_royalwiss_deal'
-AND t.TABLE_NAME = 'meeting_configure' AND COLUMN_NAME NOT LIKE '".self::CUSTOM_COLUMN.'%\'';
-			$sql        = $just_custom_column ? $sql_custom : "$sql_custom UNION $sql_fixed";
-			$list       = $this->query($sql);
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_meeting_configure' AND COLUMN_NAME NOT LIKE '".self::CUSTOM_COLUMN.'%\'';
+			$sql                     = $just_custom_column ? $sql_custom : "$sql_custom UNION $sql_fixed";
+			$list                    = $this->query($sql);
 
 			return $list;
 		}
-
 
 		/**
 		 * 获取微信公众号的接口配置信息
