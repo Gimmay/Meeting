@@ -109,11 +109,14 @@ $order";
 		 * @return array
 		 */
 		public function getNumber($meeting_id, $hotel_id){
+			$table_room_type = $this->tableName;
+			$table_room      = RoomModel::TABLE_NAME;
+			$this_database   = self::DATABASE_NAME;
 			$sql    = "
 SELECT
-	sum((SELECT count(r1.id) FROM meeting_royalwiss_deal.room r1 WHERE r1.type = rt.id AND rt.hid = r1.hid AND rt.mid = r1.mid AND r1.status <> 2)) assigned,
+	sum((SELECT count(r1.id) FROM $this_database.$table_room r1 WHERE r1.type = rt.id AND rt.hid = r1.hid AND rt.mid = r1.mid AND r1.status <> 2)) assigned,
 	sum(rt.number) number
-FROM meeting_royalwiss_deal.room_type rt
+FROM $this_database.$table_room_type rt
 WHERE rt.mid = $meeting_id AND rt.hid = $hotel_id AND rt.status = 1
 ";
 			$result = $this->query($sql);
@@ -131,6 +134,9 @@ WHERE rt.mid = $meeting_id AND rt.hid = $hotel_id AND rt.status = 1
 		 * @return array
 		 */
 		public function getSelectedList($meeting_id, $hotel_id, $include_type = null){
+			$table_room_type = $this->tableName;
+			$table_room      = RoomModel::TABLE_NAME;
+			$this_database   = self::DATABASE_NAME;
 			if(is_null($include_type)) $condition = '';
 			elseif(is_numeric($include_type)) $condition = " OR id = $include_type";
 			elseif(is_string($include_type)){
@@ -150,9 +156,9 @@ SELECT
 	concat(name, ',', name_pinyin) keyword
 FROM (
 	SELECT
-		(SELECT count(r1.id) FROM meeting_royalwiss_deal.room r1 WHERE r1.type = rt.id AND rt.hid = r1.hid AND rt.mid = r1.mid AND r1.status <> 2) assigned,
+		(SELECT count(r1.id) FROM $this_database.$table_room r1 WHERE r1.type = rt.id AND rt.hid = r1.hid AND rt.mid = r1.mid AND r1.status <> 2) assigned,
 		rt.*
-	FROM meeting_royalwiss_deal.room_type rt
+	FROM $this_database.$table_room_type rt
 ) tab
 WHERE mid = $meeting_id
 AND hid = $hotel_id

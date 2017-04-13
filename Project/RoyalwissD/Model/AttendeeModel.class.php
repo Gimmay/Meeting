@@ -138,41 +138,10 @@ LIMIT 1");
 		 */
 		public function getColumnList($just_custom_column = false){
 			$table_attendee     = $this->tableName;
-			$table_unit         = UnitModel::TABLE_NAME;
 			$table_grouping     = GroupingModel::TABLE_NAME;
 			$table_room         = RoomModel::TABLE_NAME;
 			$this_database = self::DATABASE_NAME;
 			$sql_custom         = "
-SELECT
-	c.TABLE_SCHEMA,
-	c.TABLE_NAME,
-	'unit_is_new' COLUMN_NAME,
-	c.DATA_TYPE,
-	c.CHARACTER_MAXIMUM_LENGTH,
-	c.COLUMN_TYPE,
-	c.COLUMN_COMMENT,
-	'custom' TYPE
-FROM information_schema.TABLES t
-JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = '$this_database'
-AND t.TABLE_NAME = '$table_unit'
-AND c.COLUMN_NAME = 'is_new'
-UNION
-SELECT
-	c.TABLE_SCHEMA,
-	c.TABLE_NAME,
-	'unit_area' COLUMN_NAME,
-	c.DATA_TYPE,
-	c.CHARACTER_MAXIMUM_LENGTH,
-	c.COLUMN_TYPE,
-	c.COLUMN_COMMENT,
-	'custom' TYPE
-FROM information_schema.TABLES t
-JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = '$this_database'
-AND t.TABLE_NAME = '$table_unit'
-AND c.COLUMN_NAME = 'area'
-UNION
 SELECT
 	c.TABLE_SCHEMA,
 	c.TABLE_NAME,

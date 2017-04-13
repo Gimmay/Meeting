@@ -58,9 +58,14 @@
 			// 获取客户模块列表字段
 			$column_list       = $client_column_control_model->getClientControlledColumn($this->meetingID, $client_column_control_model::ACTION_READ);
 			$column_list_write = $client_column_control_model->getClientControlledColumn($this->meetingID, $client_column_control_model::ACTION_WRITE);
-			$column_list       = $client_logic->setData('fieldSetting', $column_list);
+			$column_list       = $client_logic->setData('column_setting:read', $column_list);
 			$this->assign('column_list', $column_list);
 			$this->assign('column_list_write', $column_list_write);
+			// 获取搜索字段
+			$column_list_search = $client_column_control_model->getClientSearchColumn($this->meetingID);
+			$search_column_name       = $client_logic->setData('column_setting:search', $column_list_search);
+			$this->assign('column_list_search', $column_list_search);
+			$this->assign('search_column_name', $search_column_name);
 			// 获取列表数据
 			$model_control_column = $this->getModelControl();
 			$total                = $list = $client_model->getList(array_merge($model_control_column, [
@@ -151,7 +156,8 @@
 			/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 			$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 			$column_list                 = $client_column_control_model->getClientControlledColumn($this->meetingID, $client_column_control_model::ACTION_WRITE);
-			$column_list                 = $client_logic->setData('fieldSetting', $column_list);
+
+			$column_list                 = $client_logic->setData('column_setting', $column_list);
 			$this->assign('column_list', $column_list);
 			$this->display();
 		}

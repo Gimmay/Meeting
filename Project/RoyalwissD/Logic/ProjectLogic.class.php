@@ -47,7 +47,6 @@
 						// 2、创建库存入库明细
 						/** @var \RoyalwissD\Model\ProjectInventoryModel $project_inventory_model */
 						$project_inventory_model = D('RoyalwissD/ProjectInventory');
-						C('TOKEN_ON', false);
 						$project_inventory_model->create([
 							'creator'    => Session::getCurrentUser(),
 							'creatime'   => Time::getCurrentTime(),

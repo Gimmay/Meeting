@@ -102,4 +102,37 @@ $order
 				return !$exception['status'] ? $exception : ['status' => false, 'message' => $this->getError()];
 			}
 		}
+
+		/**
+		 * 获取区域Select插件的数据列表（审核的客户所在的会所）
+		 *
+		 * @param int $meeting_id 会议ID
+		 *
+		 * @return array
+		 */
+		public function getUnitSelectedArea($meeting_id){
+			$table_unit     = $this->tableName;
+			$table_attendee = AttendeeModel::TABLE_NAME;
+			$table_client   = ClientModel::TABLE_NAME;
+			$this_database  = self::DATABASE_NAME;
+			$sql            = "
+SELECT
+	DISTINCT u.area value,
+	u.area html,
+	concat(u.area) keyword
+FROM $this_database.$table_unit u
+WHERE u.name in (
+	SELECT
+		c.unit
+	FROM $this_database.$table_client c
+	JOIN $this_database.$table_attendee a ON c.id = a.cid
+	AND a.mid = $meeting_id
+	WHERE a.status = 1 AND a.review_status = 1
+)
+GROUP BY u.area
+";
+			$result         = $this->query($sql);
+
+			return $result;
+		}
 	}

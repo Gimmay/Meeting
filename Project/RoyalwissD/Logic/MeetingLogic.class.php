@@ -17,6 +17,7 @@
 	use General\Model\MeetingModel;
 	use RoyalwissD\Model\MeetingConfigureModel;
 	use General\Logic\MeetingLogic as GeneralMeetingLogic;
+	use RoyalwissD\Model\ReportColumnControlModel;
 
 	class MeetingLogic extends RoyalwissDLogic{
 		public function handlerRequest($type, $opt = []){
@@ -52,15 +53,29 @@
 
 							return in_array($column_name, $list) ? 1 : 0;
 						};
+						$setSearchColumn    = function ($column_name){
+							$list = [
+								'name',
+								'name_pinyin',
+								'unit',
+								'unit_pinyin',
+								'mobile'
+							];
+
+							return in_array($column_name, $list) ? 1 : 0;
+						};
 						/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 						$client_column_control_model = D('RoyalwissD/ClientColumnControl');
+						/** @var \RoyalwissD\Model\ReportColumnControlModel $report_column_control_model */
+						$report_column_control_model = D('RoyalwissD/ReportColumnControl');
 						$client_logic                = new ClientLogic();
 						$module                      = 'RoyalwissD';
 						$client_column_list_write    = $client_logic->getControlledColumn(true);
 						$client_column_list_read     = $client_logic->getControlledColumn(false);
-						$data1                       = $data2 = [];
+						$client_search_column_list   = $client_logic->getSearchColumn();
+						$data_write                  = $data_read = $data_report_read = $data_search = $data_report_search = [];
 						foreach($client_column_list_write as $value){
-							$data1[] = [
+							$data_write[] = [
 								'action'   => $client_column_control_model::ACTION_WRITE,
 								'mid'      => $meeting_id,
 								'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
@@ -74,7 +89,7 @@
 							];
 						}
 						foreach($client_column_list_read as $value){
-							$data2[] = [
+							$data_read[]        = [
 								'action'   => $client_column_control_model::ACTION_READ,
 								'mid'      => $meeting_id,
 								'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
@@ -86,10 +101,56 @@
 								'creatime' => Time::getCurrentTime(),
 								'creator'  => Session::getCurrentUser()
 							];
+							$data_report_read[] = [
+								'type'     => $report_column_control_model::TYPE_CLIENT,
+								'action'   => $report_column_control_model::ACTION_READ,
+								'mid'      => $meeting_id,
+								'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
+								'form'     => $value['column_name'],
+								'table'    => $value['table_name'],
+								'name'     => $value['column_comment'],
+								'must'     => 0,
+								'view'     => $setViewedColumn($value['column_name']),
+								'creatime' => Time::getCurrentTime(),
+								'creator'  => Session::getCurrentUser()
+							];
 						}
-						$result1 = $client_column_control_model->addAll($data1);
-						$result2 = $client_column_control_model->addAll($data2);
-						if($result1 && $result2) return ['status' => true, 'message' => '初始化字段控制数据成功'];
+						foreach($client_search_column_list as $value){
+							$data_search[]        = [
+								'action'   => $client_column_control_model::ACTION_SEARCH,
+								'mid'      => $meeting_id,
+								'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
+								'form'     => $value['column_name'],
+								'table'    => $value['table_name'],
+								'name'     => $value['column_comment'],
+								'search'   => $setSearchColumn($value['column_name']),
+								'view'     => $setViewedColumn($value['column_name']),
+								'creatime' => Time::getCurrentTime(),
+								'creator'  => Session::getCurrentUser()
+							];
+							$data_report_search[] = [
+								'type'     => $report_column_control_model::TYPE_CLIENT,
+								'action'   => $report_column_control_model::ACTION_SEARCH,
+								'mid'      => $meeting_id,
+								'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
+								'form'     => $value['column_name'],
+								'table'    => $value['table_name'],
+								'name'     => $value['column_comment'],
+								'search'   => $setSearchColumn($value['column_name']),
+								'view'     => $setViewedColumn($value['column_name']),
+								'creatime' => Time::getCurrentTime(),
+								'creator'  => Session::getCurrentUser()
+							];
+						}
+						$result1 = $client_column_control_model->addAll($data_read);
+						$result2 = $client_column_control_model->addAll($data_write);
+						$result3 = $client_column_control_model->addAll($data_search);
+						$result4 = $report_column_control_model->addAll($data_report_read);
+						$result5 = $report_column_control_model->addAll($data_report_search);
+						if($result1 && $result2 && $result3 && $result4 && $result5) return [
+							'status'  => true,
+							'message' => '初始化字段控制数据成功'
+						];
 						else return ['status' => false, 'message' => '初始化字段控制数据失败'];
 					};
 					$meeting_logic              = new CMSMeetingLogic();
@@ -340,7 +401,7 @@
 
 					return $list;
 				break;
-				case 'fieldSetting':
+				case 'field_setting':
 					$result = [];
 					foreach($data as $val){
 						if($this->isCustomColumn($val['form'])) $result[] = array_merge($val, ['is_custom' => 1]);

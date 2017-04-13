@@ -219,7 +219,7 @@ $(function(){
 		location.replace(new_url);
 	});
 	/**
-	 * 空格搜索
+	 * 回车搜索
 	 */
 	$('#keyword').on('keydown', function(e){
 		if(e.keyCode == 13){

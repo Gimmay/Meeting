@@ -162,7 +162,7 @@
 			$meeting_column_control_model = D('General/MeetingColumnControl');
 			$general_meeting_logic        = new GeneralMeetingLogic();
 			$column_list                  = $meeting_column_control_model->getMeetingControlledColumn($general_meeting_logic->getTypeByModule(MODULE_NAME));
-			$column_list                  = $meeting_logic->setData('fieldSetting', $column_list);
+			$column_list                  = $meeting_logic->setData('field_setting', $column_list);
 			$this->assign('column_list', $column_list);
 			$this->display();
 		}

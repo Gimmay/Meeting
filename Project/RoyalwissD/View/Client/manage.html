@@ -139,7 +139,7 @@
 								<input name="p" type="hidden" value="1">
 								<div class="input-group-addon" data-toggle="modal" data-target="#search_config_modal">
 									<b class="glyphicon glyphicon-cog"></b></div>
-								<input type="search" name="keyword" id="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/类型/拼音简码" value="<{:I('get.keyword', '')}>">
+								<input type="search" name="keyword" id="keyword" class="form-control" title="<{$search_column_name}>" placeholder="<{$search_column_name}>" value="<{:I('get.keyword', '')}>">
 								<span class="input-group-btn">
 									<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
 								</span>
@@ -870,7 +870,7 @@
 				<div class="modal-body">
 					<form action="" class="form-horizontal">
 						<input type="hidden" name="requestType" value="set_search_configure">
-						<input type="hidden" name="search_field">
+						<input type="hidden" name="column">
 						<div class="panel panel-info">
 							<div class="panel-heading"><h3>搜索字段选择</h3></div>
 							<div class="panel-body">
@@ -884,15 +884,17 @@
 									</div>
 								</div>
 								<div class="row mb_10 line_b base_fields">
-									<div class="col-sm-3 btn-item mb_10 active">
-										<button type="button" class="btn btn-sm btn-info btn-block" data-name="name">姓名</button>
-									</div>
-									<div class="col-sm-3 btn-item mb_10 active">
-										<button type="button" class="btn btn-sm btn-info btn-block" data-name="name1">姓名</button>
-									</div>
-									<div class="col-sm-3 btn-item mb_10 active">
-										<button type="button" class="btn btn-sm btn-info btn-block" data-name="name2">姓名</button>
-									</div>
+									<volist name="column_list_search" id="value">
+										<if condition="$value['search'] eq 1">
+											<div class="col-sm-3 btn-item mb_10 active">
+												<button type="button" class="btn btn-sm btn-info btn-block" data-name="<{$value.form}>"><{$value.name}></button>
+											</div>
+											<else/>
+											<div class="col-sm-3 btn-item mb_10">
+												<button type="button" class="btn btn-sm btn-default btn-block" data-name="<{$value.form}>"><{$value.name}></button>
+											</div>
+										</if>
+									</volist>
 								</div>
 							</div>
 						</div>

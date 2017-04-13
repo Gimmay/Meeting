@@ -1,0 +1,241 @@
+/* CSS Reset */
+
+*{
+	-webkit-box-sizing : border-box;
+	-moz-box-sizing    : border-box;
+	box-sizing         : border-box;
+}
+
+/* 清除内外边距 */
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, /* structural elements 结构元素 */
+dl, dt, dd, ul, ol, li, /* list elements 列表元素 */
+pre, /* text formatting elements 文本格式元素 */
+fieldset, button, input, textarea, /* form elements 表单元素 */
+th, td, label, input[type=checkbox]{ /* table elements 表格元素 */
+	margin  : 0;
+	padding : 0;
+}
+
+/* 设置默认字体 */
+body,
+button, input, select, textarea{ /* for ie */
+	font        : 12px/1.2 Tahoma, Helvetica, Arial, "\5b8b\4f53", sans-serif, '微软雅黑'; /* 用 ascii 字符表示，使得在任何编码下都无问题 */
+	font-family : "Helvitica Neue", Helvetica, Arial, "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+}
+
+h1{ font-size : 18px; /* 18px / 12px = 1.5 */ }
+
+h2{ font-size : 16px; }
+
+h3{ font-size : 14px; }
+
+h4, h5, h6{ font-size : 100%; }
+
+address, cite, dfn, em, var{ font-style : normal; }
+
+/* 将斜体扶正 */
+code, kbd, pre, samp, tt{ font-family : "Courier New", Courier, monospace; }
+
+/* 统一等宽字体 */
+small{ font-size : 12px; }
+
+/* 小于 12px 的中文很难阅读，让 small 正常化 */
+
+/* 重置列表元素 */
+ul, ol{ list-style : none; }
+
+/* 重置文本格式元素 */
+a{ text-decoration : none; color : #1A1A1A }
+
+a:hover, a.active, a:focus, a:visited{
+	cursor          : pointer;
+	text-decoration : none;
+	outline         : none;
+}
+
+abbr[title], acronym[title]{ /* 注：1.ie6 不支持 abbr; 2.这里用了属性选择符，ie6 下无效果 */
+	border-bottom : 1px dotted;
+	cursor        : help;
+}
+
+/* 重置表单元素 */
+legend{ color : #000000; }
+
+/* for ie6 */
+fieldset, img{ border : none; }
+
+/* img 搭车：让链接里的 img 无边框 */
+/* 注：optgroup 无法扶正 */
+button, input, select, textarea{
+	font-size : 100%; /* 使得表单元素在 ie 下能继承字体大小 */
+}
+
+/* 重置表格元素 */
+table{
+	border-collapse : collapse;
+	border-spacing  : 0;
+}
+
+/* 重置 hr */
+hr{
+	height : 1px;
+}
+
+/* html5 */
+article, aside, details, figcaption, figure, footer, header, nav, section, summary{ display : block; }
+
+audio, canvas, video{ display : inline-block; *display : inline; *zoom : 1; }
+
+audio:not([controls]){ display : none; height : 0; }
+
+nav ul, nav ol{ list-style : none none; }
+
+/*!* 让非ie浏览器默认也显示垂直滚动条，防止因滚动条引起的闪烁 *!
+html { overflow-y: scroll; }*/
+
+html, body{
+	width    : 100%;
+	height   : 100%;
+	position : relative;
+}
+
+/* 清除浮动 */
+.clearfix:before, .clearfix:after{ content : ""; display : table; }
+
+.clearfix:after{ clear : both; overflow : hidden; }
+
+.clearfix{ zoom : 1; }
+
+/**  插件内置样式    **/
+
+.hide{
+	display : none;
+}
+
+.show{
+	display : block;
+}
+
+.iceman-multi-showbox{
+	position : relative;
+	width    : 100%;
+}
+
+.iceman-multi-showbox .icon-direction{
+	position    : absolute;
+	right       : 0;
+	top         : 0;
+	text-align  : center;
+	font-size   : 18px;
+	line-height : 32px;
+	width       : 25px;
+	height      : 100%;
+}
+
+.iceman-multi-showbox .icon-direction > i{
+	position     : absolute;
+	top          : 50%;
+	left         : 50%;
+	margin-left  : -6px;
+	margin-top   : -4px;
+	width        : 0;
+	height       : 0;
+	border-left  : 6px solid transparent;
+	border-right : 6px solid transparent;
+	border-top   : 8px solid #777777;
+}
+
+.default-input{
+	width              : 100%;
+	height             : 34px;
+	border             : 1px solid #AAAAAA;
+	padding-left       : 4px;
+	padding-right      : 25px;
+	-webkit-box-shadow : 0 1px 1px rgba(0, 0, 0, .15);
+	-moz-box-shadow    : 0 1px 1px rgba(0, 0, 0, .15);
+	-o-box-shadow      : 0 1px 1px rgba(0, 0, 0, .15);
+	box-shadow         : 0 1px 1px rgba(0, 0, 0, .15);
+}
+
+.iceman-multi-dropdown{
+	width                   : 100%;
+	-webkit-border-radius   : 0 0 4px 4px;
+	-moz-border-radius      : 0 0 4px 4px;
+	border-radius           : 0 0 4px 4px;
+	-moz-background-clip    : padding;
+	-webkit-background-clip : padding-box;
+	background-clip         : padding-box;
+	background              : #FFFFFF;
+	border                  : 1px solid #AAAAAA;
+	border-top              : 0;
+	position                : absolute;
+	top                     : 34px;
+	left                    : 0;
+	-webkit-box-shadow      : 0 4px 5px rgba(0, 0, 0, .15);
+	-moz-box-shadow         : 0 4px 5px rgba(0, 0, 0, .15);
+	-o-box-shadow           : 0 4px 5px rgba(0, 0, 0, .15);
+	box-shadow              : 0 4px 5px rgba(0, 0, 0, .15);
+	z-index                 : 999;
+}
+
+.iceman-multi-dropdown-header{
+	width      : 100%;
+	height     : 26px;
+	background : #F1F1F1;
+}
+
+.iceman-multi-dropdown-a{
+	position      : relative;
+	display       : block;
+	padding-left  : 50px;
+	width         : 100%;
+	height        : 100%;
+	border-bottom : 1px dashed rgba(0, 0, 0, .2);
+}
+
+.iceman-multi-dropdown-body > ul > li.iceman-multi-dropdown-list:hover{
+	background : #94E0F7;
+}
+
+.iceman-multi-dropdown-body > ul > li.iceman-multi-dropdown-list.selected{
+	background : #FFE48D;
+}
+
+/** 最后一列下边线去除 **/
+.iceman-multi-dropdown-body > ul > li.iceman-multi-dropdown-list:last-child .iceman-multi-dropdown-a{
+	border-bottom : none;
+}
+
+.iceman-multi-dropdown-check{
+	position     : absolute;
+	top          : 0;
+	left         : 0;
+	float        : left;
+	display      : block;
+	width        : 50px;
+	height       : 100%;
+	text-align   : center;
+	line-height  : 26px;
+	border-right : 1px dashed rgba(0, 0, 0, .2);
+}
+
+.iceman-multi-dropdown-check input{
+	vertical-align : middle;
+}
+
+.iceman-multi-dropdown-desc{
+	display       : block;
+	float         : left;
+	height        : 100%;
+	line-height   : 26px;
+	padding-left  : 12px;
+	overflow      : hidden;
+	text-overflow : ellipsis;
+	white-space   : nowrap;
+}
+
+.iceman-multi-dropdown-body{
+	max-height : 200px;
+	overflow-y : auto;
+}
+

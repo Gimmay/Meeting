@@ -4,7 +4,32 @@
 
 $(function(){
 	/**
-	 *  批量删除项目
+	 *  单个项目恢复
+	 */
+	$('.recover_btn').on('click', function(){
+		var id = $(this).parent().attr('data-id');
+		$('#recover_modal').find('input[name=id]').val(id);
+		$('#recover_modal .btn-save').on('click', function(){
+			var data = $('#recover_modal form').serialize();
+			ManageObject.object.loading.loading();
+			Common.ajax({
+				data    :data,
+				callback:function(res){
+					ManageObject.object.loading.complete();
+					if(res.status){
+						ManageObject.object.toast.toast(res.message, '1');
+						ManageObject.object.toast.onQuasarHidden(function(){
+							location.reload();
+						});
+					}else{
+						ManageObject.object.toast.toast(res.message, '2');
+					}
+				}
+			});
+		});
+	});
+	/**
+	 *  批量恢复项目
 	 */
 	$('.batch_recover_btn').on('click', function(){
 		var str = [], i = 0;

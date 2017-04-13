@@ -5,11 +5,7 @@
 $(function(){
 	// 新增项目保存
 	$('#create_project .btn-save').on('click', function(){
-		var $project_name = $('#project_name');
-		if($project_name.val() == ''){
-			ManageObject.object.toast.toast("项目名称不能为空!");
-			$project_name.focus();
-		}else{
+		if(checkIsEmpty()){
 			var data = $('#create_project form').serialize();
 			ManageObject.object.loading.loading();
 			Common.ajax({
@@ -17,12 +13,12 @@ $(function(){
 				callback:function(res){
 					ManageObject.object.loading.complete();
 					if(res.status){
-						ManageObject.object.toast.toast('创建成功！', '1');
+						ManageObject.object.toast.toast(res.message, '1');
 						ManageObject.object.toast.onQuasarHidden(function(){
 							location.reload();
 						});
 					}else{
-						ManageObject.object.toast.toast('创建失败！', '2');
+						ManageObject.object.toast.toast(res.message, '2');
 					}
 				}
 			});
@@ -38,11 +34,11 @@ $(function(){
 	});
 	// 修改项目
 	$('.alter_btn').on('click', function(){
-		var id         = $(this).parent('.btn-group').attr('data-id');
-		var name       = $(this).parents('tr').find('.name').text();
-		var type       = $(this).parents('tr').find('.type').text();
-		var price      = $(this).parents('tr').find('.price').text();
-		var comment    = $(this).parents('tr').find('.comment').text();
+		var id      = $(this).parent('.btn-group').attr('data-id');
+		var name    = $(this).parents('tr').find('.name').text();
+		var type    = $(this).parents('tr').find('.type').text();
+		var price   = $(this).parents('tr').find('.price').text();
+		var comment = $(this).parents('tr').find('.comment').text();
 		$('#alter_project').find('input[name=id]').val(id);
 		$('#alter_project').find('input[name=name]').val(name);
 		$('#alter_project').find('input[name=price]').val(price);
@@ -56,12 +52,12 @@ $(function(){
 				callback:function(res){
 					ManageObject.object.loading.complete();
 					if(res.status){
-						ManageObject.object.toast.toast('修改成功！', '1');
+						ManageObject.object.toast.toast(res.message, '1');
 						ManageObject.object.toast.onQuasarHidden(function(){
 							location.reload();
 						});
 					}else{
-						ManageObject.object.toast.toast('修改失败！', '2');
+						ManageObject.object.toast.toast(res.message, '2');
 					}
 				}
 			});
@@ -134,3 +130,33 @@ $(function(){
 		}
 	});
 });
+function checkIsEmpty(){
+	var $project_name         = $('#project_name');
+	var $project_price_create = $('#project_price_create');
+	if($project_name.val() == ''){
+		ManageObject.object.toast.toast("项目名称不能为空!");
+		$project_name.focus();
+		return false;
+	}
+	if($project_price_create.val() == ''){
+		ManageObject.object.toast.toast("项目价格不能为空!");
+		$project_price_create.focus();
+		return false;
+	}
+	return true;
+}
+function checkIsEmptyAlter(){
+	var $project_name_modify  = $('#project_name_modify');
+	var $project_price_modify = $('#project_price_modify');
+	if($project_name_alter.val() == ''){
+		ManageObject.object.toast.toast("项目名称不能为空!");
+		$project_name_alter.focus();
+		return false;
+	}
+	if($project_price_modify.val() == ''){
+		ManageObject.object.toast.toast("项目价格不能为空!");
+		$project_price_modify.focus();
+		return false;
+	}
+	return true;
+}

@@ -25,9 +25,9 @@
 					<!--<li class="<if condition='$cv_name eq Coupon_manage'>active</if>">
 						<a href="<{:U('Coupon/manage', ['mid'=>I('get.mid', 0, 'int')])}>">代金券管理</a>
 					</li>-->
-					<li class="<if condition='$cv_name eq SignPlace_manage'>active</if>">
+					<!--<li class="<if condition='$cv_name eq SignPlace_manage'>active</if>">
 						<a href="<{:U('SignPlace/manage', ['mid'=>I('get.mid', 0, 'int')])}>">签到点管理</a>
-					</li>
+					</li>-->
 					<li class="<if condition='$cv_name eq Receivables_payMethod'>active</if>">
 						<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式</a>
 					</li>
@@ -36,16 +36,15 @@
 					</li>
 				</ul>
 			</li>
-			<li class="side_item <if condition='$cv_name eq Meeting_index'>active</if>">
+			<!--<li class="side_item <if condition='$cv_name eq Meeting_index'>active</if>">
 				<a href="<{:U('Meeting/index', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon-th-large"></i> <span class="nav-label">会议中心</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
-			</li>
+			</li>-->
 			<li class="side_item <if condition='$c_name eq Client'>active</if>">
 				<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">客户管理</span>
-					<span class="arrow glyphicon glyphicon-chevron-left"></span>
-				</a>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 
 				<ul class="nav-second-level">
 					<li class="<if condition='$cv_name eq Client_import'>active</if>">
@@ -90,9 +89,6 @@
 				</div>
 				<ul class="nav-second-level">
 					<li class="<if condition='$cv_name eq Recycle_client'>active</if>">
-						<a href="<{:U('Report/manage', ['mid'=>I('get.mid', 0, 'int')])}>">管理</a>
-					</li>
-					<li class="<if condition='$cv_name eq Recycle_client'>active</if>">
 						<a href="<{:U('Report/client',['mid'=>I('get.mid',0,'int')])}>">客户报表</a>
 					</li>
 					<li class="<if condition='$cv_name eq Recycle_client'>active</if>">
@@ -114,21 +110,8 @@
 					<li class="<if condition='$cv_name eq Recycle_client'>active</if>">
 						<a href="<{:U('Recycle/client',['mid'=>I('get.mid',0,'int')])}>">客户列表</a>
 					</li>
-					<li class="<if condition='$cv_name eq Recycle_employee'>active</if>">
-						<a href="<{:U('Recycle/employee',['mid'=>I('get.mid',0,'int')])}>">员工列表</a>
-					</li>
-					<li class="<if condition='$cv_name eq Recycle_role'>active</if>">
-						<a href="<{:U('Recycle/role',['mid'=>I('get.mid',0,'int')])}>">角色列表</a>
-					</li>
-					<li class="<if condition='$cv_name eq Recycle_meeting'>active</if>">
-						<a href="<{:U('Recycle/meeting',['mid'=>I('get.mid',0,'int')])}>">会议列表</a>
-					</li>
-
-					<li class="<if condition='$cv_name eq Recycle_coupon'>active</if>">
-						<a href="<{:U('Recycle/coupon',['mid'=>I('get.mid',0,'int')])}>">项&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;目</a>
-					</li>
-					<li class="<if condition='$cv_name eq Recycle_couponItem'>active</if>">
-						<a href="<{:U('Recycle/couponItem',['mid'=>I('get.mid',0,'int')])}>">代金券码</a>
+					<li class="<if condition='$cv_name eq Recycle_project'>active</if>">
+						<a href="<{:U('Recycle/project',['mid'=>I('get.mid',0,'int')])}>">项&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;目</a>
 					</li>
 					<li class="<if condition='$cv_name eq Recycle_message'>active</if>">
 						<a href="<{:U('Recycle/message',['mid'=>I('get.mid',0,'int')])}>">消息管理</a>

@@ -469,7 +469,7 @@ $(function(){
 		});
 	});
 	// 角色修改 -- 保存信息
-	$('#create_role .btn-save').on('click', function(){
+	$('#modify_role .btn-save').on('click', function(){
 		var $modify_role_name = $('#modify_role_name');
 		if($modify_role_name.val() != ''){
 			ManageObject.object.loading.loading();

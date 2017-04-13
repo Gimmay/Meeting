@@ -46,18 +46,18 @@
 		const TYPE = ['其他', '终端', '老板娘', '嘉宾', '员工', '陪同'];
 
 		public function getList($control = []){
-			$table_client         = $this->tableName;
-			$table_attendee       = AttendeeModel::TABLE_NAME;
-			$table_user           = UserModel::TABLE_NAME;
-			$table_unit           = UnitModel::TABLE_NAME;
-			$table_hotel          = HotelModel::TABLE_NAME;
-			$table_room           = RoomModel::TABLE_NAME;
-			$table_room_customer    = RoomCustomerModel::TABLE_NAME;
-			$table_grouping       = GroupingModel::TABLE_NAME;
-			$table_group_member   = GroupMemberModel::TABLE_NAME;
-			$common_database = GeneralModel::DATABASE_NAME;
-			$this_database   = self::DATABASE_NAME;
-			$getCustomColumn      = function (){
+			$table_client        = $this->tableName;
+			$table_attendee      = AttendeeModel::TABLE_NAME;
+			$table_user          = UserModel::TABLE_NAME;
+			$table_unit          = UnitModel::TABLE_NAME;
+			$table_hotel         = HotelModel::TABLE_NAME;
+			$table_room          = RoomModel::TABLE_NAME;
+			$table_room_customer = RoomCustomerModel::TABLE_NAME;
+			$table_grouping      = GroupingModel::TABLE_NAME;
+			$table_group_member  = GroupMemberModel::TABLE_NAME;
+			$common_database     = GeneralModel::DATABASE_NAME;
+			$this_database       = self::DATABASE_NAME;
+			$getCustomColumn     = function (){
 				/** @var \RoyalwissD\Model\AttendeeModel $attendee_model */
 				$attendee_model     = D('RoyalwissD/Attendee');
 				$custom_column_list = $attendee_model->getColumnList(true);
@@ -69,17 +69,17 @@
 
 				return $str;
 			};
-			$keyword              = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order                = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status               = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$meeting_id           = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$client_id            = $control[self::CONTROL_COLUMN_PARAMETER_SELF['clientID']];
-			$review_status        = $control[self::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
-			$sign_status          = $control[self::CONTROL_COLUMN_PARAMETER_SELF['signStatus']];
-			$type                 = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
-			$limit                = $control[self::CONTROL_COLUMN_PARAMETER_SELF['limit']];
-			$where                = ' WHERE 0 = 0 ';
-			$split                = '';
+			$keyword             = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order               = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status              = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$meeting_id          = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$client_id           = $control[self::CONTROL_COLUMN_PARAMETER_SELF['clientID']];
+			$review_status       = $control[self::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
+			$sign_status         = $control[self::CONTROL_COLUMN_PARAMETER_SELF['signStatus']];
+			$type                = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
+			$limit               = $control[self::CONTROL_COLUMN_PARAMETER_SELF['limit']];
+			$where               = ' WHERE 0 = 0 ';
+			$split               = '';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -241,9 +241,40 @@ $split
 		 * @return array
 		 */
 		public function getColumnList(){
-			$table_client       = $this->tableName;
+			$table_client  = $this->tableName;
+			$table_unit    = UnitModel::TABLE_NAME;
 			$this_database = self::DATABASE_NAME;
-			$list = $this->query("
+			$list          = $this->query("
+SELECT
+	c.TABLE_SCHEMA,
+	c.TABLE_NAME,
+	'unit_is_new' COLUMN_NAME,
+	c.DATA_TYPE,
+	c.CHARACTER_MAXIMUM_LENGTH,
+	c.COLUMN_TYPE,
+	c.COLUMN_COMMENT,
+	'fixed' TYPE
+FROM information_schema.TABLES t
+JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_unit'
+AND c.COLUMN_NAME = 'is_new'
+UNION
+SELECT
+	c.TABLE_SCHEMA,
+	c.TABLE_NAME,
+	'unit_area' COLUMN_NAME,
+	c.DATA_TYPE,
+	c.CHARACTER_MAXIMUM_LENGTH,
+	c.COLUMN_TYPE,
+	c.COLUMN_COMMENT,
+	'fixed' TYPE
+FROM information_schema.TABLES t
+JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_unit'
+AND c.COLUMN_NAME = 'area'
+UNION
 SELECT
 	c.TABLE_SCHEMA,
 	c.TABLE_NAME,
@@ -271,11 +302,11 @@ AND t.TABLE_NAME = '$table_client'
 		 * @return array
 		 */
 		public function getSelectedList($meeting_id, $include_unit = false){
-			$table_client       = $this->tableName;
-			$table_attendee     = AttendeeModel::TABLE_NAME;
-			$this_database = self::DATABASE_NAME;
-			$name               = $include_unit ? "concat('[',c.unit,'] ',c.name)" : 'c.name';
-			$sql                = "
+			$table_client   = $this->tableName;
+			$table_attendee = AttendeeModel::TABLE_NAME;
+			$this_database  = self::DATABASE_NAME;
+			$name           = $include_unit ? "concat('[',c.unit,'] ',c.name)" : 'c.name';
+			$sql            = "
 SELECT
 	c.id value,
 	IF(a.sign_status = 1, $name, concat('* ', $name)) html,
@@ -297,10 +328,10 @@ ORDER BY a.sign_time DESC, a.review_time DESC, a.id DESC";
 		 * @return array
 		 */
 		public function getTeamSelectedList($meeting_id){
-			$table_client       = $this->tableName;
-			$table_attendee     = AttendeeModel::TABLE_NAME;
-			$this_database = self::DATABASE_NAME;
-			$sql                = "
+			$table_client   = $this->tableName;
+			$table_attendee = AttendeeModel::TABLE_NAME;
+			$this_database  = self::DATABASE_NAME;
+			$sql            = "
 SELECT
 	DISTINCT c.team value,
 	c.team html,
@@ -311,7 +342,7 @@ AND a.mid = $meeting_id
 WHERE a.status = 1 AND a.review_status = 1
 ORDER BY c.team
 ";
-			$result             = $this->query($sql);
+			$result         = $this->query($sql);
 
 			return $result;
 		}

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>收款报表 - 会议系统</title>
+	<title>会所报表 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
@@ -34,7 +34,7 @@
 						<div class="table_wrap mb_10">
 							<div class="nav_tab clearfix">
 								<div class="nav_tab_li active">
-									<a href="javascript:void(0)">收款报表</a>
+									<a href="javascript:void(0)">会所报表</a>
 								</div>
 							</div>
 						</div>
@@ -55,17 +55,30 @@
 												</div>
 												<div class="col-sm-3">
 													<div class="input-group">
-														<span class="input-group-addon">区域</span>
-														<select name="" class="form-control"></select>
+														<span class="input-group-addon">区域　　</span>
+														<select name="unitArea" class="form-control" title="" value="<{$_GET['area']}>">
+															<option value="">---无限制---</option>
+															<volist name="area_list" id="single">
+																<if condition="isset($_GET['area']) and $_GET['area'] eq $single['value']">
+																	<option value="<{$single.value}>" selected><{$single.html}></option>
+																	<else/>
+																	<option value="<{$single.value}>"><{$single.html}></option>
+																</if>
+															</volist>
+														</select>
 													</div>
 												</div>
 												<div class="col-sm-3">
 													<div class="input-group">
 														<span class="input-group-addon">是否签到</span>
-														<select name="" class="form-control" title="">
+														<select name="isSigned" class="form-control" title="" value="<{$_GET['isSigned']}>">
 															<option value="">---无限制---</option>
 															<volist name="sign_list" id="single">
-																<option value="<{$key}>"><{$single}></option>
+																<if condition="isset($_GET['isSigned']) and $_GET['isSigned'] eq $key">
+																	<option value="<{$key}>" selected><{$single}></option>
+																	<else/>
+																	<option value="<{$key}>"><{$single}></option>
+																</if>
 															</volist>
 														</select>
 													</div>
@@ -73,10 +86,14 @@
 												<div class="col-sm-3">
 													<div class="input-group">
 														<span class="input-group-addon">是否新店</span>
-														<select name="" class="form-control" title="">
+														<select name="unitIsNew" class="form-control" title="" value="<{$_GET['unitIsNew']}>">
 															<option value="">---无限制---</option>
 															<volist name="unit_is_new_list" id="single">
-																<option value="<{$key}>"><{$single}></option>
+																<if condition="isset($_GET['unitIsNew']) and $_GET['unitIsNew'] eq $key">
+																	<option value="<{$key}>" selected><{$single}></option>
+																	<else/>
+																	<option value="<{$key}>"><{$single}></option>
+																</if>
 															</volist>
 														</select>
 													</div>

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>组员恢复 - 会议系统</title>
+	<title>项目恢复 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
@@ -36,7 +36,7 @@
 						<div class="table_wrap mb_10">
 							<div class="nav_tab clearfix">
 								<div class="nav_tab_li active">
-									<a href="<{:U('Project/manage', ['mid'=>I('get.mid', 0, 'int')])}>">组员回收站</a>
+									<a href="<{:U('Project/manage', ['mid'=>I('get.mid', 0, 'int')])}>">项目回收站</a>
 								</div>
 							</div>
 						</div>
@@ -67,10 +67,12 @@
 										<td width="5%" class="all_check">
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</td>
-										<td width="10%">组名</td>
-										<td width="10%">成员</td>
-										<td width="10%">负责人</td>
-										<td width="10%">创建日期</td>
+										<td width="10%">名称</td>
+										<td width="10%">类型</td>
+										<td width="10%">库存/总量</td>
+										<td width="10%">价格</td>
+										<td width="15%">创建者</td>
+										<td width="15%">创建时间</td>
 										<td width="15%">操作</td>
 									</tr>
 								</thead>
@@ -115,19 +117,19 @@
 			</div>
 		</div>
 	</div>
-	<!-- 恢复组员 -->
+	<!-- 恢复项目 -->
 	<div class="modal fade" id="recover_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">恢复组员</h2>
+					<h2 class="modal-title">恢复项目</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="recover"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否恢复组员？
+						是否恢复项目？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -137,19 +139,19 @@
 			</div>
 		</div>
 	</div>
-	<!-- 批量恢复组员 -->
+	<!-- 批量恢复项目 -->
 	<div class="modal fade" id="batch_recover_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量恢复组员</h2>
+					<h2 class="modal-title">批量恢复项目</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="recover"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否恢复已选组员？
+						是否恢复已选项目？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>

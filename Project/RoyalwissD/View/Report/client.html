@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>报表模块 - 会议系统</title>
+	<title>客户报表 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
@@ -12,7 +12,7 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
@@ -48,17 +48,21 @@
 											<div class="col-sm-12 mb_10">
 												<div class="col-sm-3">
 													<div class="input-group">
-														<span class="input-group-addon">关键字</span>
-														<input type="text" class="form-control" placeholder="关键字..." aria-describedby="basic-addon1">
+														<input style="display:none" mce_style="display:none">
+														<span class="input-group-addon">关键字　</span>
+														<input name="keyword" class="form-control keyword" placeholder="<{$search_column_name}>" title="<{$search_column_name}>" value="<{$_GET['keyword']}>">
 													</div>
 												</div>
 												<div class="col-sm-3">
 													<div class="input-group">
-														<span class="input-group-addon">性别</span>
-														<select name="gender" class="form-control" title="">
+														<span class="input-group-addon">性别　　</span>
+														<select name="gender" class="form-control" title="" value="<{$_GET['gender']}>">
 															<option value="">---无限制---</option>
 															<volist name="gender_list" id="single">
-																<option value="<{$key}>"><{$single}></option>
+																<if condition="isset($_GET['gender']) and $_GET['gender'] eq $key">
+																	<option value="<{$key}>" selected><{$single}></option>
+																	<else/><option value="<{$key}>"><{$single}></option>
+																</if>
 															</volist>
 														</select>
 													</div>
@@ -66,21 +70,28 @@
 												<div class="col-sm-3">
 													<div class="input-group">
 														<span class="input-group-addon">是否新客</span>
-														<select name="" class="form-control" title="">
+														<select name="isNew" class="form-control" title="" value="<{$_GET['isNew']}>">
 															<option value="">---无限制---</option>
 															<volist name="is_new_list" id="single">
-																<option value="<{$key}>"><{$single}></option>
+																<if condition="isset($_GET['isNew']) and $_GET['isNew'] eq $key">
+																	<option value="<{$key}>" selected><{$single}></option>
+																	<else/><option value="<{$key}>"><{$single}></option>
+																</if>
 															</volist>
 														</select>
 													</div>
 												</div>
 												<div class="col-sm-3">
 													<div class="input-group">
-														<span class="input-group-addon" title="">团队</span>
-														<select name="" class="form-control">
+														<span class="input-group-addon" title="">团队　　</span>
+														<select name="team" class="form-control" title="" value="<{$_GET['team']}>">
 															<option value="">---无限制---</option>
 															<volist name="team_list" id="single">
-																<option value="<{$single.value}>"><{$single.html}></option>
+																<if condition="isset($_GET['team']) and $_GET['team'] eq $single['value']">
+																	<option value="<{$single.value}>" selected><{$single.html}></option>
+																	<else/>
+																	<option value="<{$single.value}>"><{$single.html}></option>
+																</if>
 															</volist>
 														</select>
 													</div>
@@ -90,10 +101,13 @@
 												<div class="col-sm-3">
 													<div class="input-group">
 														<span class="input-group-addon">客户类型</span>
-														<select name="" class="form-control" title="">
+														<select name="type" class="form-control" title="" value="<{$_GET['type']}>">
 															<option value="">---无限制---</option>
 															<volist name="type_list" id="single">
-																<option value="<{$key}>"><{$single}></option>
+																<if condition="isset($_GET['type']) and $_GET['type'] eq $key">
+																	<option value="<{$key}>" selected><{$single}></option>
+																	<else/><option value="<{$key}>"><{$single}></option>
+																</if>
 															</volist>
 														</select>
 													</div>
@@ -101,27 +115,43 @@
 												<div class="col-sm-3">
 													<div class="input-group">
 														<span class="input-group-addon">是否签到</span>
-														<select name="" class="form-control" title="">
+														<select name="isSigned" class="form-control" title="" value="<{$_GET['isSigned']}>">
 															<option value="">---无限制---</option>
 															<volist name="sign_list" id="single">
-																<option value="<{$key}>"><{$single}></option>
+																<if condition="isset($_GET['isSigned']) and $_GET['isSigned'] eq $key">
+																	<option value="<{$key}>" selected><{$single}></option>
+																	<else/><option value="<{$key}>"><{$single}></option>
+																</if>
 															</volist>
 														</select>
 													</div>
 												</div>
 												<div class="col-sm-3">
 													<div class="input-group">
-														<span class="input-group-addon">区域</span>
-														<select name="" class="form-control"></select>
+														<span class="input-group-addon">区域　　</span>
+														<select name="unitArea" class="form-control" title="" value="<{$_GET['area']}>">
+															<option value="">---无限制---</option>
+															<volist name="area_list" id="single">
+																<if condition="isset($_GET['area']) and $_GET['area'] eq $single['value']">
+																	<option value="<{$single.value}>" selected><{$single.html}></option>
+																	<else/>
+																	<option value="<{$single.value}>"><{$single.html}></option>
+																</if>
+															</volist>
+														</select>
 													</div>
 												</div>
 												<div class="col-sm-3">
 													<div class="input-group">
 														<span class="input-group-addon">是否新店</span>
-														<select name="" class="form-control" title="">
+														<select name="unitIsNew" class="form-control" title="" value="<{$_GET['unitIsNew']}>">
 															<option value="">---无限制---</option>
 															<volist name="unit_is_new_list" id="single">
-																<option value="<{$key}>"><{$single}></option>
+																<if condition="isset($_GET['unitIsNew']) and $_GET['unitIsNew'] eq $key">
+																	<option value="<{$key}>" selected><{$single}></option>
+																	<else/>
+																	<option value="<{$key}>"><{$single}></option>
+																</if>
 															</volist>
 														</select>
 													</div>
@@ -139,55 +169,114 @@
 							<div class="panel panel-default">
 								<div class="panel-heading">统计数据</div>
 								<div class="panel-body">
+									<style scoped>
+										tr th{
+											text-align : left;
+										}
+									</style>
+									<table class="table table-bordered">
+										<tr>
+											<th></th>
+											<th>报名人数</th>
+											<th>签到人数</th>
+										</tr>
+										<tr></tr>
+										<tr>
+											<td>客户汇总</td>
+											<td><{$statistics.total.total}></td>
+											<td><{$statistics.total.signed}></td>
+										</tr>
 
+										<tr>
+											<td colspan="3" style="text-align: center"><b>新老客统计</b></td>
+										</tr>
+										<tr>
+											<td>新客</td>
+											<td><{$statistics.isNew.1.total}></td>
+											<td><{$statistics.isNew.1.signed}></td>
+										</tr>
+										<tr>
+											<td>老客</td>
+											<td><{$statistics.isNew.0.total}></td>
+											<td><{$statistics.isNew.0.signed}></td>
+										</tr>
+										<tr>
+											<td colspan="3" style="text-align: center"><b>新老店统计</b></td>
+										</tr>
+										<tr>
+											<td>新店</td>
+											<td><{$statistics.unitIsNew.1.total}></td>
+											<td><{$statistics.unitIsNew.1.signed}></td>
+										</tr>
+										<tr>
+											<td>老店</td>
+											<td><{$statistics.unitIsNew.0.total}></td>
+											<td><{$statistics.unitIsNew.0.signed}></td>
+										</tr>
+										<tr>
+											<td colspan="3" style="text-align: center"><b>区域统计</b></td>
+										</tr>
+										<volist name="statistics.area" id="single">
+											<tr>
+												<td><{$key}></td>
+												<td><{$single.total}></td>
+												<td><{$single.signed}></td>
+											</tr>
+										</volist>
+									</table>
 								</div>
 							</div>
 							<table class="table table-bordered table-hover text-center">
 								<thead>
 									<tr>
-										<th width="4%" class="all_check">
-											<input type="checkbox" class="icheck" placeholder="" value="">
-										</th>
 										<th>序号</th>
-										<th>名称</th>
-										<th>可见的角色</th>
-										<th>可见的员工</th>
-										<th>状态</th>
-										<th>创建时间</th>
-										<th>操作</th>
+										<volist name="column_list" id="column">
+											<if condition="$column['view'] eq 1">
+												<th data-column="<{$column.form}>"><{$column.name}></th>
+												<else/>
+												<th data-column="<{$column.form}>" class="hide"><{$column.name}></th>
+											</if>
+										</volist>
 									</tr>
 								</thead>
 								<tbody>
-									<volist name="list" id="single">
+									<volist name="list" id="single" key="index">
 										<tr>
-											<td class="check_item">
-												<input type="checkbox" class="icheck" value="<{$single.id}>" placeholder="">
-											</td>
-											<td><{$i}></td>
-											<td><{$single.name}></td>
-											<td><{$single.role}></td>
-											<td><{$single.employee}></td>
-											<td>
-												<switch name="single.status">
-													<case value="0">禁用</case>
-													<case value="1">可用</case>
-												</switch>
-											</td>
-											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
-											<td>
-												<div class="btn-group" data-id="<{$single.id}>">
-													<if condition="$single['status'] eq 1">
-														<!--<a href="<{:U('detail', ['mid'=>$single['mid'], 'id'=>$single['id']])}>" target="_blank" class="btn btn-default btn-xs btn-default">查看</a>-->
-														<a href="<{$single.url}>" target="_blank" class="btn btn-default btn-xs btn-default">查看</a>
-													</if>
-													<if condition="$permission_list['REPORT.ALTER']">
-														<a href="<{:U('alter', ['mid'=>$single['mid'], 'id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
-													</if>
-													<if condition="$permission_list['REPORT_DELETE']">
-														<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_report">删除</button>
-													</if>
-												</div>
-											</td>
+											<td><{$index}></td>
+											<volist name="column_list" id="column">
+												<td class="<eq name='column.view' value='0'>hide</eq>">
+													<span class="need-alter"><{$single[$column['form']]}></span>
+													<span class="hide-form" style="display: none;">
+														<switch name="column.code">
+															<case value="ROYALWISSD-CLIENT-IS_NEW">
+																<select title="" class="form-control" name="<{$column.form}>">
+																	<foreach name="is_new_list" key="key" item="value">
+																		<option value="<{$key}>"><{$value}></option>
+																	</foreach>
+																</select>
+															</case>
+															<case value="ROYALWISSD-CLIENT-GENDER">
+																<select title="" class="form-control" name="<{$column.form}>">
+																	<foreach name="gender_list" key="key" item="value">
+																		<option value="<{$key}>"><{$value}></option>
+																	</foreach>
+																</select>
+															</case>
+															<case value="ROYALWISSD-CLIENT-TYPE">
+																<select title="" class="form-control" name="<{$column.form}>">
+																	<foreach name="type_list" key="key" item="value">
+																		<option value="<{$value}>"><{$value}></option>
+																	</foreach>
+																</select>
+															</case>
+															<default/>
+															<input class="sub_val form-control input-sm" name="<{$column.form}>" value="<{$single[$column['form']]}>">
+														</switch>
+														<input type="hidden" name="_column" value="<{$column.form}>">
+														<input type="hidden" name="_table" value="<{$column.table}>">
+													</span>
+												</td>
+											</volist>
 										</tr>
 									</volist>
 								</tbody>
@@ -195,7 +284,7 @@
 						</div>
 						<div class="page_wrap">
 							<ul class="pagination">
-								<{$page}>
+								<{$pagination}>
 							</ul>
 						</div>
 					</section>

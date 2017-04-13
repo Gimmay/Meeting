@@ -17,7 +17,7 @@ function checkIsEmpty(){
 	return true;
 }
 $(function(){
-	$('#btn-save').on('click', function(){
+	$('.btn-save').on('click', function(){
 		if(checkIsEmpty()){
 			ManageObject.object.loading.loading();
 			var data = $('#form').serialize();

@@ -55,7 +55,7 @@ $(function(){
 				str.push(name);
 			}
 		});
-		$search_config_modal.find('input[name=search_field]').val(str);
+		$search_config_modal.find('input[name=column]').val(str);
 	});
 	// 全选搜索字段
 	$('.sc_check_all').on('click', function(){
@@ -72,7 +72,7 @@ $(function(){
 				str.push(name);
 			}
 		});
-		$search_config_modal.find('input[name=search_field]').val(str);
+		$search_config_modal.find('input[name=column]').val(str);
 	});
 	// 取消
 	$('.sc_cancel').on('click', function(){
@@ -89,7 +89,7 @@ $(function(){
 				str.push(name);
 			}
 		});
-		$search_config_modal.find('input[name=search_field]').val(str);
+		$search_config_modal.find('input[name=column]').val(str);
 	});
 	// 搜索配置提交
 	$search_config_modal.find('.btn-save').on('click', function(){

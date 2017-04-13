@@ -19,6 +19,7 @@
 	use Quasar\Utility\StringPlus;
 	use RoyalwissD\Model\AttendeeModel;
 	use RoyalwissD\Model\ClientModel;
+	use RoyalwissD\Model\UnitModel;
 
 	class ClientLogic extends RoyalwissDLogic{
 		/** 新纪录的识别时间 */
@@ -1146,8 +1147,10 @@
 							]);
 							$count        = 0;
 							$replace_char = '#%ID%#';
+							$this_database = $client_model::DATABASE_NAME;
+							$this_table = $client_model::TABLE_NAME;
 							$sql_main     = "
-UPDATE meeting_royalwiss_deal.client
+UPDATE $this_database.$this_table
 SET
 	wechat_type = 2,
 	wechat_userid = CASE id u$replace_char END,
@@ -1223,6 +1226,39 @@ SET
 					}
 					else return array_merge($wechat_enterprise_configure, ['__ajax__' => true]);
 				break;
+				case 'set_search_configure':
+					$column_str = I('post.column', '');
+					$column     = explode(',', $column_str);
+					$meeting_id = I('get.mid', 0, 'int');
+					/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
+					$client_column_control_model = D('RoyalwissD/ClientColumnControl');
+					$client_column_control_model->where([
+						'mid'    => $meeting_id,
+						'action' => $client_column_control_model::ACTION_SEARCH
+					])->save(['search' => 0]);
+					if($column_str != ''){
+						$result = $client_column_control_model->where([
+							'mid'    => $meeting_id,
+							'action' => $client_column_control_model::ACTION_SEARCH,
+							'form'   => ['in', $column]
+						])->save(['search' => 1]);
+
+						return $result ? [
+							'status'   => true,
+							'message'  => '设定成功',
+							'__ajax__' => true
+						] : [
+							'status'   => false,
+							'message'  => '设定失败',
+							'__ajax__' => true
+						];
+					}
+					else return [
+						'status'   => true,
+						'message'  => '设定成功',
+						'__ajax__' => true
+					];
+				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];
 				break;
@@ -1231,7 +1267,16 @@ SET
 
 		public function setData($type, $data){
 			switch($type){
-				case 'fieldSetting':
+				case 'column_setting':
+					$result = [];
+					foreach($data as $val){
+						$val['is_custom'] = ($this->isCustomColumn($val['form'])) ? 1 : 0;
+						$result[] = $val;
+					}
+
+					return $result;
+				break;
+				case 'column_setting:read':
 					$result = [];
 					foreach($data as $val){
 						$val['is_custom'] = ($this->isCustomColumn($val['form'])) ? 1 : 0;
@@ -1242,6 +1287,14 @@ SET
 					}
 
 					return $result;
+				break;
+				case 'column_setting:search':
+					$result = '';
+					foreach($data as $val){
+						if($val['search'] == 1) $result .= "$val[name] / ";
+					}
+
+					return trim($result, ' / ');
 				break;
 				case 'manage:statistics':
 					$statistics = [
@@ -1281,13 +1334,14 @@ SET
 					foreach($data['list'] as $index => $client){
 						// 1、筛选数据
 						if(isset($keyword)){
-							//todo 获取筛选配置
-							$found = 0;
-							if($found == 0 && strpos($client['name'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($client['name_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($client['unit'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($client['unit_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($client['mobile'], $keyword) !== false) $found = 1;
+							/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
+							$client_column_control_model = D('RoyalwissD/ClientColumnControl');
+							$search_list                 = $client_column_control_model->getClientSearchColumn($get['mid'], true);
+							$found                       = 0;
+							foreach($search_list as $value){
+								if($found == 0 && strpos($client[$value['form']], $keyword) !== false) $found = 1;
+							}
+							if(count($search_list) == 0) $found = 1;
 							if($found == 0) continue;
 						}
 						if(isset($client_id) && $client_id != $client['cid']) continue;
@@ -1317,6 +1371,8 @@ SET
 						$client['gender']             = ClientModel::GENDER[$client['gender']];
 						$client['is_new_code']        = $client['is_new'];
 						$client['is_new']             = ClientModel::IS_NEW[$client['is_new']];
+						$client['unit_is_new_code']   = $client['unit_is_new'];
+						$client['unit_is_new']        = UnitModel::IS_NEW[$client['unit_is_new']];
 						if(strtotime($client['creatime'])>(time()-self::NEW_DATA_TIME)) $client['new_data'] = true;
 						else $client['new_data'] = false;
 						$list[] = $client;
@@ -1328,7 +1384,7 @@ SET
 					$column_list = $data['columnValue'];
 					$column_name = $data['columnName'];
 					$result      = [];
-					$get = $data['urlParam'];
+					$get         = $data['urlParam'];
 					// 若指定了关键字
 					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
 					// 若指定了状态码的情况
@@ -1466,6 +1522,63 @@ SET
 				'mid'
 			];
 			foreach($attendee_model->getColumnList($just_include_custom_column) as $val){
+				// 排除不必要的字段
+				if(!in_array($val['column_name'], $attendee_except_column_list)) $result[] = $val;
+			}
+
+			return $result;
+		}
+
+		/**
+		 * 获取搜索字段
+		 *
+		 * @return array
+		 */
+		public function getSearchColumn(){
+			/** @var \RoyalwissD\Model\AttendeeModel $attendee_model */
+			$attendee_model = D('RoyalwissD/Attendee');
+			/** @var \RoyalwissD\Model\ClientModel $client_model */
+			$client_model = D('RoyalwissD/Client');
+			$result       = [];
+			foreach($client_model->getColumnList() as $val){
+				// 排除不必要的字段
+				if(!in_array($val['column_name'], [
+					'unit_is_new',
+					'is_new',
+					'gender',
+					'creator',
+					'id',
+					'password',
+					'status',
+					'creatime',
+					'wechat_type',
+					'wechat_openid',
+					'wechat_userid',
+					'wechat_nickname',
+					'wechat_mobile',
+					'wechat_email',
+					'wechat_gender',
+					'wechat_lang',
+					'wechat_country',
+					'wechat_province',
+					'wechat_city',
+					'wechat_avatar',
+					'wechat_is_follow',
+					'wechat_department',
+					'wechat_appid',
+					'wechat_position',
+					'wechat_id',
+					'_batch_save_id',
+					'_batch_column_id'
+				])
+				) $result[] = $val;
+			}
+			$attendee_except_column_list = [
+				'id',
+				'cid',
+				'mid'
+			];
+			foreach($attendee_model->getColumnList(true) as $val){
 				// 排除不必要的字段
 				if(!in_array($val['column_name'], $attendee_except_column_list)) $result[] = $val;
 			}
