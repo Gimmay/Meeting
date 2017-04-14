@@ -23,6 +23,11 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'modify':
+					if(!in_array('GENERAL-USER.MODIFY', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有修改用户的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\UserModel $user_model */
 					$user_model              = D('General/User');
 					$str_obj                 = new StringPlus();
@@ -34,6 +39,11 @@
 					return array_merge($result, ['__ajax__' => true, 'nextPage' => U('manage')]);
 				break;
 				case 'create':
+					if(!in_array('GENERAL-USER.CREATE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有创建用户的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\UserModel $user_model */
 					$user_model = D('General/User');
 					$str_obj    = new StringPlus();
@@ -52,6 +62,11 @@
 					return array_merge($result, ['__ajax__' => true, 'nextPage' => U('manage')]);
 				break;
 				case 'delete':
+					if(!in_array('GENERAL-USER.DELETE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有删除用户的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\UserModel $user_model */
 					$user_model = D('General/User');
 					$id_str     = I('post.id', '');
@@ -61,6 +76,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable':
+					if(!in_array('GENERAL-USER.ENABLE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有启用用户的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\UserModel $user_model */
 					$user_model = D('General/User');
 					$id_str     = I('post.id', '');
@@ -70,6 +90,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'disable':
+					if(!in_array('GENERAL-USER.DISABLE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有禁用用户的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\UserModel $user_model */
 					$user_model = D('General/User');
 					$id_str     = I('post.id', '');
@@ -116,6 +141,11 @@
 					return array_merge(['__ajax__' => true], $role_list);
 				break;
 				case 'assign_role':
+					if(!in_array('GENERAL-USER.ASSIGN_ROLE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有分配角色的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\UserModel $user_model */
 					$user_model = D('General/User');
 					$user_id    = I('post.id', 0, 'int');
@@ -126,6 +156,11 @@
 					return array_merge(['__ajax__' => true], $result);
 				break;
 				case 'anti_assign_role':
+					if(!in_array('GENERAL-USER.ASSIGN_ROLE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有分配角色的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\UserModel $user_model */
 					$user_model = D('General/User');
 					$user_id    = I('post.id', 0, 'int');
@@ -136,6 +171,11 @@
 					return array_merge(['__ajax__' => true], $result);
 				break;
 				case 'modify_password':
+					if(!in_array('GENERAL-USER.MODIFY_PASSWORD', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有修改密码的权限',
+						'__ajax__' => true
+					];
 					$old_password = base64_decode(I('post.old_password', ''));
 					$new_password = base64_decode(I('post.new_password', ''));
 					$user_id      = I('post.id', 0, 'int');
@@ -173,6 +213,11 @@
 					}
 				break;
 				case 'reset_password':
+					if(!in_array('GENERAL-USER.RESET_PASSWORD', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有重置密码的权限',
+						'__ajax__' => true
+					];
 					$user_id = I('post.id', 0, 'int');
 					/** @var \General\Model\UserModel $user_model */
 					$user_model = D('General/User');

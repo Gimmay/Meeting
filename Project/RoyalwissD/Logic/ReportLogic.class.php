@@ -8,6 +8,8 @@
 	namespace RoyalwissD\Logic;
 
 	use CMS\Controller\CMS;
+	use CMS\Logic\Session;
+	use General\Logic\Time;
 	use General\Model\GeneralModel;
 	use RoyalwissD\Model\AttendeeModel;
 	use RoyalwissD\Model\ClientModel;
@@ -24,6 +26,53 @@
 		 */
 		public function handlerRequest($type, $opt = []){
 			switch($type){
+				case 'reset_and_order_column':
+					/** @var \RoyalwissD\Model\ReportColumnControlModel $report_column_control_model */
+					$report_column_control_model = D('RoyalwissD/ReportColumnControl');
+					$meeting_id                  = I('get.mid', 0, 'int');
+					$post                        = I('post.');
+					// 锁表
+					$report_column_control_model->lock('read');
+					$report_column_control_model->lock('write');
+					// 删除旧数据
+					$report_column_control_model->where([
+						'mid'    => $meeting_id,
+						'action' => $report_column_control_model::ACTION_READ,
+						'type'   => $report_column_control_model::TYPE_CLIENT
+					])->delete();
+					// 写入数据
+					$data = [];
+					foreach($post['code'] as $key => $val){
+						$data[] = [
+							'code'     => $post['code'][$key],
+							'name'     => $post['name'][$key],
+							'form'     => $post['form'][$key],
+							'view'     => $post['view'][$key],
+							'must'     => $post['must'][$key],
+							'table'    => $post['table'][$key],
+							'mid'      => $meeting_id,
+							'action'   => $report_column_control_model::ACTION_READ,
+							'creator'  => Session::getCurrentUser(),
+							'creatime' => Time::getCurrentTime(),
+						];
+					}
+					$result = $report_column_control_model->addAll($data, [
+						'mid'    => $meeting_id,
+						'action' => $report_column_control_model::ACTION_READ
+					], true);
+					// 解锁
+					$report_column_control_model->unlock();
+
+					return $result ? [
+						'status'   => true,
+						'message'  => '设置成功',
+						'__ajax__' => true
+					] : [
+						'status'   => false,
+						'message'  => '设置失败',
+						'__ajax__' => true
+					];
+				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];
 				break;
@@ -49,9 +98,8 @@
 					return trim($result, ' / ');
 				break;
 				case 'client:set_data':
-					$list         = [];
-					$get          = $data['urlParam'];
-					$client_logic = new ClientLogic();
+					$list = [];
+					$get  = $data['urlParam'];
 					// 若指定了关键字
 					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
 					// 若指定了签到状态码的情况
@@ -122,9 +170,7 @@
 						$client['is_new']             = ClientModel::IS_NEW[$client['is_new']];
 						$client['unit_is_new_code']   = $client['unit_is_new'];
 						$client['unit_is_new']        = UnitModel::IS_NEW[$client['unit_is_new']];
-						if(strtotime($client['creatime'])>(time()-$client_logic::NEW_DATA_TIME)) $client['new_data'] = true;
-						else $client['new_data'] = false;
-						$list[] = $client;
+						$list[]                       = $client;
 					}
 
 					return $list;
@@ -136,6 +182,10 @@
 					];
 					//
 					$statistics = [
+						'team'      => [
+						],
+						'type'      => [
+						],
 						'unitIsNew' => [
 							0 => $report_template,
 							1 => $report_template
@@ -149,6 +199,8 @@
 					];
 					foreach($data as $client){
 						if(!isset($statistics['area'][$client['unit_area']])) $statistics['area'][$client['unit_area']] = $report_template;
+						if(!isset($statistics['team'][$client['team']])) $statistics['team'][$client['team']] = $report_template;
+						if(!isset($statistics['type'][$client['type']])) $statistics['type'][$client['type']] = $report_template;
 						// 新老客判定
 						if($client['is_new_code'] == 1){
 							$statistics['isNew'][1]['total']++;
@@ -170,9 +222,90 @@
 						// 区域判定
 						$statistics['area'][$client['unit_area']]['total']++;
 						if($client['sign_status_code'] == 1) $statistics['area'][$client['unit_area']]['signed']++;
+						// 团队判定
+						$statistics['team'][$client['team']]['total']++;
+						if($client['sign_status_code'] == 1) $statistics['team'][$client['team']]['signed']++;
+						// 客户性质判定
+						$statistics['type'][$client['type']]['total']++;
+						if($client['sign_status_code'] == 1) $statistics['type'][$client['type']]['signed']++;
 						// 总判定
 						$statistics['total']['total']++;
 						if($client['sign_status_code'] == 1) $statistics['total']['signed']++;
+					}
+
+					return $statistics;
+				break;
+				case 'unit:set_data':
+					$list = [];
+					$get  = $data['urlParam'];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
+					// 若指定了签到状态码的情况
+					if(isset($get['isSigned'])) $is_signed = $get['isSigned'];
+					// 若指定了新老店的情况
+					if(isset($get['isNew'])) $is_new = $get['isNew'];
+					// 若指定了区域的情况
+					if(isset($get['area'])) $area = $get['area'];
+					foreach($data['list'] as $index => $unit){
+						// 1、筛选数据
+						if(isset($keyword)){
+							$found = 0;
+							if($found == 0 && strpos($unit['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($unit['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
+						if(isset($is_signed)){
+							if($is_signed != $unit['is_signed']) continue;
+						}
+						if(isset($is_new)){
+							if($is_new != $unit['is_new']) continue;
+						}
+						if(isset($area)){
+							if($area != $unit['unit_area']) continue;
+						}
+						// 2、映射替换
+						$unit['is_signed_code'] = $unit['is_signed'];
+						$unit['is_signed']      = UnitModel::IS_SIGNED[$unit['is_signed']];
+						$unit['status_code']    = $unit['status'];
+						$unit['status']         = GeneralModel::STATUS[$unit['status']];
+						$unit['is_new_code']    = $unit['is_new'];
+						$unit['is_new']         = UnitModel::IS_NEW[$unit['is_new']];
+						$list[]                 = $unit;
+					}
+
+					return $list;
+				break;
+				case 'unit:statistics':
+					$report_template = [
+						'total'  => 0,
+						'signed' => 0
+					];
+					//
+					$statistics = [
+						'isNew' => [
+							0 => $report_template,
+							1 => $report_template
+						],
+						'area'  => [],
+						'total' => $report_template,
+					];
+					foreach($data as $unit){
+						if(!isset($statistics['area'][$unit['area']])) $statistics['area'][$unit['area']] = $report_template;
+						// 新老店判定
+						if($unit['is_new_code'] == 1){
+							$statistics['isNew'][1]['total']++;
+							if($unit['is_signed_code'] == 1) $statistics['isNew'][1]['signed']++;
+						}
+						if($unit['is_new_code'] == 0){
+							$statistics['isNew'][0]['total']++;
+							if($unit['is_signed_code'] == 1) $statistics['isNew'][0]['signed']++;
+						}
+						// 区域判定
+						$statistics['area'][$unit['area']]['total']++;
+						if($unit['is_signed_code'] == 1) $statistics['area'][$unit['area']]['signed']++;
+						// 总判定
+						$statistics['total']['total']++;
+						if($unit['is_signed_code'] == 1) $statistics['total']['signed']++;
 					}
 
 					return $statistics;

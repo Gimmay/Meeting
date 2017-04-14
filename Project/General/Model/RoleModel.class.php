@@ -99,14 +99,14 @@ WHERE id NOT IN (
 SELECT p.*, LEFT(code, LOCATE('.', code)-1) module_code FROM $common_database.$table_role r
 JOIN $common_database.$table_role_assign_permission rap on rap.rid = r.id
 JOIN $common_database.$table_permission p on p.id = rap.pid
-WHERE r.id = $role_id AND p.code like 'GENERAL-%'
+WHERE r.id = $role_id
 " : "
 SELECT *, LEFT(code, LOCATE('.', code)-1) module_code FROM $common_database.$table_permission
 WHERE id NOT IN (
 	SELECT p.id FROM $common_database.role r
 	JOIN $common_database.$table_role_assign_permission rap ON rap.rid = r.id
 	JOIN $common_database.$table_permission p ON p.id = rap.pid
-	WHERE r.id = $role_id AND p.code like 'GENERAL-%'
+	WHERE r.id = $role_id
 )";
 
 			return $this->query($sql);

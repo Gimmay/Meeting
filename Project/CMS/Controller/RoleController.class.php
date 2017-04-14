@@ -34,27 +34,23 @@
 				}
 				exit;
 			}
-			if(UserLogic::isPermitted('GENERAL-ROLE.VIEW')){
-				/** @var \CMS\Model\RoleModel $role_model */
-				$role_model           = D('CMS/Role');
-				$model_control_column = $this->getModelControl();
-				$list                 = $role_model->getList(array_merge($model_control_column, [
-					'status' => [
-						'<>',
-						2
-					]
-				]));
-				$page_object          = new Page(count($list), $this->getPageRecordCount()); // 实例化分页类 传入总记录数和每页显示的记录数
-				PageLogic::setTheme1($page_object);
-				$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
-				$list       = $role_logic->setData('manage', $list);
-				$pagination = $page_object->show();// 分页显示输出
-				$this->assign('list', $list);
-				$this->assign('pagination', $pagination);
-				$this->display();
-			}
-			else{
-				$this->error('您没有查看角色的权限');
-			}
+			if(!UserLogic::isPermitted('GENERAL-ROLE.VIEW')) $this->error('您没有查看角色的权限');
+			/** @var \CMS\Model\RoleModel $role_model */
+			$role_model           = D('CMS/Role');
+			$model_control_column = $this->getModelControl();
+			$list                 = $role_model->getList(array_merge($model_control_column, [
+				'status' => [
+					'<>',
+					2
+				]
+			]));
+			$page_object          = new Page(count($list), $this->getPageRecordCount()); // 实例化分页类 传入总记录数和每页显示的记录数
+			PageLogic::setTheme1($page_object);
+			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
+			$list       = $role_logic->setData('manage', $list);
+			$pagination = $page_object->show();// 分页显示输出
+			$this->assign('list', $list);
+			$this->assign('pagination', $pagination);
+			$this->display();
 		}
 	}

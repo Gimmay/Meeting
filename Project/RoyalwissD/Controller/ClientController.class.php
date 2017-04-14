@@ -136,7 +136,7 @@
 			$this->display();
 		}
 
-		public function fieldSetting(){
+		public function columnSetting(){
 			$client_logic = new ClientLogic();
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
@@ -182,7 +182,7 @@
 			$this->display();
 		}
 
-		public function fieldContrast(){
+		public function importColumnContrast(){
 			$client_logic = new ClientLogic();
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));

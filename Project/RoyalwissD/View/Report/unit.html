@@ -49,8 +49,9 @@
 												<input style="display:none" mce_style="display:none">
 												<div class="col-sm-3">
 													<div class="input-group">
+														<input style="display:none" mce_style="display:none">
 														<span class="input-group-addon">关键字</span>
-														<input name="keyword" type="text" class="form-control keyword" placeholder="关键字..." aria-describedby="basic-addon1">
+														<input name="keyword" class="form-control keyword" placeholder="<{$search_column_name}>" title="<{$search_column_name}>" value="<{$_GET['keyword']}>">
 													</div>
 												</div>
 												<div class="col-sm-3">
@@ -101,7 +102,12 @@
 											</div>
 											<div class="col-sm-12">
 												<div class="col-sm-12">
-													<button type="button" class="btn btn-sm btn-success btn-block btn-save">搜索</button>
+													<div class="col-sm-6">
+														<button type="button" class="btn btn-sm btn-success btn-block btn-save">搜索</button>
+													</div>
+													<div class="col-sm-6">
+														<a href="<{:U('', ['mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-sm btn-block btn-default">重置</a>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -111,55 +117,77 @@
 							<div class="panel panel-default">
 								<div class="panel-heading">统计数据</div>
 								<div class="panel-body">
+									<style scoped>
+										tr th{
+											text-align : left;
+										}
+									</style>
+									<table class="table table-bordered">
+										<tr>
+											<th></th>
+											<th>报名数</th>
+											<th>签到数</th>
+											<th>未到数</th>
+										</tr>
+										<tr></tr>
+										<tr>
+											<td>汇总</td>
+											<td><{$statistics.total.total}></td>
+											<td><{$statistics.total.signed}></td>
+											<td><{:($statistics['total']['total'] - $statistics['total']['signed'])}></td>
+										</tr>
 
+										<tr>
+											<td colspan="4" style="text-align: center"><b>新老店统计</b></td>
+										</tr>
+										<tr>
+											<td>新店</td>
+											<td><{$statistics.isNew.1.total}></td>
+											<td><{$statistics.isNew.1.signed}></td>
+											<td><{:($statistics['isNew']['1']['total'] - $statistics['isNew']['1']['signed'])}></td>
+										</tr>
+										<tr>
+											<td>老店</td>
+											<td><{$statistics.isNew.0.total}></td>
+											<td><{$statistics.isNew.0.signed}></td>
+											<td><{:($statistics['isNew']['0']['total'] - $statistics['isNew']['0']['signed'])}></td>
+										</tr>
+										<tr>
+											<td colspan="4" style="text-align: center"><b>区域统计</b></td>
+										</tr>
+										<volist name="statistics.area" id="single">
+											<tr>
+												<td><{$key}></td>
+												<td><{$single.total}></td>
+												<td><{$single.signed}></td>
+												<td><{:($single['total'] - $single['signed'])}></td>
+											</tr>
+										</volist>
+									</table>
 								</div>
 							</div>
-							<table class="table table-bordered table-hover text-center">
+							<table class="table table-bordered table-hover text-center" id="tableExcel">
 								<thead>
 									<tr>
-										<th width="4%" class="all_check">
-											<input type="checkbox" class="icheck" placeholder="" value="">
-										</th>
 										<th>序号</th>
-										<th>名称</th>
-										<th>可见的角色</th>
-										<th>可见的员工</th>
-										<th>状态</th>
-										<th>创建时间</th>
-										<th>操作</th>
+										<th data-column="name">会所名称</th>
+										<th data-column="total_client">报名人数</th>
+										<th data-column="signed_client">签到人数</th>
+										<th data-column="is_signed">是否签到</th>
+										<th data-column="area">区域</th>
+										<th data-column="is_new">是否新店</th>
 									</tr>
 								</thead>
 								<tbody>
 									<volist name="list" id="single">
 										<tr>
-											<td class="check_item">
-												<input type="checkbox" class="icheck" value="<{$single.id}>" placeholder="">
-											</td>
 											<td><{$i}></td>
 											<td><{$single.name}></td>
-											<td><{$single.role}></td>
-											<td><{$single.employee}></td>
-											<td>
-												<switch name="single.status">
-													<case value="0">禁用</case>
-													<case value="1">可用</case>
-												</switch>
-											</td>
-											<td><{:date('Y-m-d H:i:s', $single['creatime'])}></td>
-											<td>
-												<div class="btn-group" data-id="<{$single.id}>">
-													<if condition="$single['status'] eq 1">
-														<!--<a href="<{:U('detail', ['mid'=>$single['mid'], 'id'=>$single['id']])}>" target="_blank" class="btn btn-default btn-xs btn-default">查看</a>-->
-														<a href="<{$single.url}>" target="_blank" class="btn btn-default btn-xs btn-default">查看</a>
-													</if>
-													<if condition="$permission_list['REPORT.ALTER']">
-														<a href="<{:U('alter', ['mid'=>$single['mid'], 'id'=>$single['id']])}>" type="button" class="btn btn-default btn-xs modify_btn">修改</a>
-													</if>
-													<if condition="$permission_list['REPORT_DELETE']">
-														<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_report">删除</button>
-													</if>
-												</div>
-											</td>
+											<td><{$single.total_client}></td>
+											<td><{$single.signed_client}></td>
+											<td><{$single.is_signed}></td>
+											<td><{$single.area}></td>
+											<td><{$single.is_new}></td>
 										</tr>
 									</volist>
 								</tbody>
@@ -167,7 +195,7 @@
 						</div>
 						<div class="page_wrap">
 							<ul class="pagination">
-								<{$page}>
+								<{$pagination}>
 							</ul>
 						</div>
 					</section>
@@ -219,6 +247,8 @@
 			</div>
 		</div>
 	</div>
+	<input type="hidden" id="default_order_column" value="<{$default_order_column}>">
+	<input type="hidden" id="default_order_method" value="<{$default_order_method}>">
 	<script>
 		var ManageObject = {
 			object:{

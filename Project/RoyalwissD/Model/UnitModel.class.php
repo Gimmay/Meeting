@@ -26,6 +26,11 @@
 			0 => '否',
 			1 => '是'
 		];
+		/** 是否签到 */
+		const IS_SIGNED = [
+			0 => '未到',
+			1 => '已到'
+		];
 
 		public function getList($control = []){
 			$table_unit      = $this->tableName;

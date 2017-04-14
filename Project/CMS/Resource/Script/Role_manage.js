@@ -24,7 +24,7 @@ var ScriptObject = {
 			var select_temp = '';
 			ManageObject.object.loading.loading(true);
 			Common.ajax({
-				data:{requestType:'assign_permission', pid:id, id:role_id}, callback:function(data){
+				data:{requestType:'grant_permission', pid:id, id:role_id}, callback:function(data){
 					ManageObject.object.loading.complete();
 					console.log(data);
 					var htm = '';
@@ -74,7 +74,7 @@ var ScriptObject = {
 			var select_temp = '';
 			ManageObject.object.loading.loading(true);
 			Common.ajax({
-				data:{requestType:'anti_assign_permission', pid:id, id:role_id}, callback:function(data){
+				data:{requestType:'revoke_permission', pid:id, id:role_id}, callback:function(data){
 					ManageObject.object.loading.complete();
 					var htm = '';
 					if(data.status){
@@ -128,7 +128,7 @@ var ScriptObject = {
 			console.log(self.module);
 			// ManageObject.object.loading.loading(true);
 			Common.ajax({
-				data    :{requestType:'anti_assign_permission_module', module:code, id:role_id},
+				data    :{requestType:'revoke_permission_module', module:code, id:role_id},
 				callback:function(r){
 					//ManageObject.object.loading.complete();
 					if(r.status){
@@ -198,7 +198,7 @@ var ScriptObject = {
 			console.log(self.module);
 			// ManageObject.object.loading.loading(true);
 			Common.ajax({
-				data    :{requestType:'assign_permission_module', module:code, id:role_id},
+				data    :{requestType:'grant_permission_module', module:code, id:role_id},
 				callback:function(r){
 					//ManageObject.object.loading.complete();
 					if(r.status){

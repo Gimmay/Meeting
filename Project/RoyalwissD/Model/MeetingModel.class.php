@@ -51,7 +51,7 @@
 				$custom_column_list      = $meeting_configure_model->getColumnList(true);
 				$list                    = [];
 				foreach($custom_column_list as $column) $list[] = $column['column_name'];
-				$str = count($list)>0 ? implode(',', $list).',' : ',';
+				$str = count($list)>0 ? implode(',', $list).',' : '';
 
 				return $str;
 			};

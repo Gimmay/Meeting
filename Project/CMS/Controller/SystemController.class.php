@@ -10,6 +10,7 @@
 	use CMS\Logic\ApiConfigureLogic;
 	use CMS\Logic\PageLogic;
 	use CMS\Logic\SystemLogic;
+	use CMS\Logic\UserLogic;
 	use General\Logic\MeetingLogic;
 	use Think\Page;
 
@@ -35,7 +36,6 @@
 				}
 				exit;
 			}
-			
 			$this->display();
 		}
 
@@ -59,14 +59,14 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('GENERAL-API_CONFIGURE.VIEW')) $this->error('您没有查看接口配置的权限');
 			/** @var \CMS\Model\ApiConfigureModel $api_configure_model */
 			$api_configure_model = D('CMS/ApiConfigure');
 			// 获取可见的会议类型
 			$meeting_logic     = new MeetingLogic();
 			$meeting_type_list = $meeting_logic->getViewedMeetingTypeList();
 			// 输出会议类型数据
-			$viewed_meeting_type  = $api_configure_logic->setData('get_meeting_type', $meeting_type_list);
-
+			$viewed_meeting_type = $api_configure_logic->setData('get_meeting_type', $meeting_type_list);
 			$model_control_column = $this->getModelControl();
 			$option               = [];
 			$list                 = $api_configure_model->getList(array_merge($model_control_column, $option, [
@@ -76,7 +76,7 @@
 			$page_object          = new Page(count($list), $this->getPageRecordCount()); // 实例化分页类 传入总记录数和每页显示的记录数
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
-			$list = $api_configure_logic->setData('manage', $list);
+			$list       = $api_configure_logic->setData('manage', $list);
 			$pagination = $page_object->show();// 分页显示输出
 			$this->assign('list', $list);
 			$this->assign('meeting_type_list', $meeting_type_list);

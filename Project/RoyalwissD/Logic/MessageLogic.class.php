@@ -30,6 +30,11 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'save_configure':
+					if(!in_array('SEVERAL-MESSAGE.CONFIGURE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有配置消息的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
 					$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
 					$meeting_configure_logic = new MeetingConfigureLogic();
@@ -46,6 +51,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'create':
+					if(!in_array('SEVERAL-MESSAGE.CREATE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有新建消息模板的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$post       = I('post.');
 					/** @var \RoyalwissD\Model\MessageModel $message_model */
@@ -65,6 +75,11 @@
 					]);
 				break;
 				case 'assign_message':
+					if(!in_array('SEVERAL-MESSAGE.USE_TO', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有使用消息模板的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$action     = I('post.action', '');
 					$message_id = I('post.id', 0, 'int');
@@ -75,6 +90,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'modify':
+					if(!in_array('SEVERAL-MESSAGE.MODIFY', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有修改消息模板的权限',
+						'__ajax__' => true
+					];
 					$id         = I('get.id', 0, 'int');
 					$meeting_id = I('get.mid', 0, 'int');
 					$post       = I('post.');
@@ -92,6 +112,11 @@
 					]);
 				break;
 				case 'delete':
+					if(!in_array('SEVERAL-MESSAGE.DELETE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有删除消息模板的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id         = explode(',', $id_str);
@@ -102,6 +127,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable':
+					if(!in_array('SEVERAL-MESSAGE.ENABLE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有启用消息模板的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id         = explode(',', $id_str);
@@ -112,6 +142,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'disable':
+					if(!in_array('SEVERAL-MESSAGE.DISABLE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有禁用消息模板的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id         = explode(',', $id_str);

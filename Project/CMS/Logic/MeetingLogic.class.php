@@ -26,6 +26,11 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'create':
+					if(!in_array('SEVERAL-MEETING.CREATE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有创建会议的权限',
+						'__ajax__' => true
+					];
 					$module        = MODULE_NAME;
 					$meeting_logic = new GeneralMeetingLogic();
 					$meeting_type  = $meeting_logic->getTypeByModule($module);
@@ -95,6 +100,11 @@
 					return array_merge($list, ['__ajax__' => true]);
 				break;
 				case 'delete_meeting_manager': // 删除会务人员
+					if(!in_array('SEVERAL-MEETING.MEETING_MANAGER', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有管理会务人员的权限',
+						'__ajax__' => true
+					];
 					$meeting_manager_logic = new MeetingManagerLogic();
 					$user_id               = I('post.uid', 0, 'int');
 					$meeting_id            = I('post.mid', 0, 'int');
@@ -111,6 +121,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'assign_meeting_manager':
+					if(!in_array('SEVERAL-MEETING.MEETING_MANAGER', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有管理会务人员的权限',
+						'__ajax__' => true
+					];
 					$role_id               = I('post.rid', 0, 'int');
 					$meeting_id            = I('post.mid', 0, 'int');
 					$user_id_arr           = I('post.uid');
@@ -132,6 +147,11 @@
 					else return ['status' => true, 'message' => "部分分配成功 ($count)", '__ajax__' => true];
 				break;
 				case 'release':
+					if(!in_array('SEVERAL-MEETING.RELEASE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有发布会议的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\MeetingModel $meeting_model */
 					$meeting_model = D('General/Meeting');
 					$meeting_id    = I('post.id', 0, 'int');
@@ -140,6 +160,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'cancel_release':
+					if(!in_array('SEVERAL-MEETING.CANCEL_RELEASE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有取消发布会议的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\MeetingModel $meeting_model */
 					$meeting_model = D('General/Meeting');
 					$meeting_id    = I('post.id', 0, 'int');
@@ -159,6 +184,11 @@
 					else return ['status' => true, 'message' => '该会议不存在'];
 				break;
 				case 'modify':
+					if(!in_array('SEVERAL-MEETING.MODIFY', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有修改会议的权限',
+						'__ajax__' => true
+					];
 					$str_obj = new StringPlus();
 					$data    = $opt['data'];
 					/** @var \General\Model\MeetingModel $meeting_model */
@@ -177,6 +207,11 @@
 					return array_merge($result, ['__ajax__' => false]);
 				break;
 				case 'delete': // 删除项目
+					if(!in_array('SEVERAL-MEETING.DELETE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有删除会议的权限',
+						'__ajax__' => true
+					];
 					$id_arr = explode(',', $opt['id']);
 					/** @var \General\Model\MeetingModel $meeting_model */
 					$meeting_model = D('General/Meeting');
@@ -185,6 +220,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable': // 启用项目
+					if(!in_array('SEVERAL-MEETING.ENABLE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有启用会议的权限',
+						'__ajax__' => true
+					];
 					$id_arr = explode(',', $opt['id']);
 					/** @var \General\Model\MeetingModel $meeting_model */
 					$meeting_model = D('General/Meeting');
@@ -193,6 +233,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'disable': // 禁用项目
+					if(!in_array('SEVERAL-MEETING.DISABLE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有禁用会议的权限',
+						'__ajax__' => true
+					];
 					$id_arr = explode(',', $opt['id']);
 					/** @var \General\Model\MeetingModel $meeting_model */
 					$meeting_model = D('General/Meeting');
@@ -264,8 +309,6 @@
 				return in_array($column_name, $list);
 			};
 			$general_meeting_logic = new GeneralMeetingLogic();
-			$result_count          = 0;
-			$total_count           = count($general_meeting_logic::TYPE)-1;
 			// 2、瑞丽斯成交会
 			/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
 			$meeting_column_control_model = D('General/MeetingColumnControl');
@@ -289,9 +332,13 @@
 				];
 			}
 			$result = $meeting_column_control_model->addAll($data);
-			if($result) $result_count++;
-			if($result_count == $total_count) return ['status' => true, 'message' => '已初始化会议字段记录'];
-			elseif($result_count == 0) return ['status' => false, 'message' => '初始化会议字段记录失败'];
-			else return ['status' => true, 'message' => "已初始化部分会议字段记录 ($result_count)"];
+
+			return $result ? [
+				'status'  => true,
+				'message' => '已初始化会议字段记录 ('.count($meeting_column_list).')'
+			] : [
+				'status'  => false,
+				'message' => '初始化会议字段记录失败'
+			];
 		}
 	}

@@ -34,52 +34,64 @@
 					<section class="content">
 						<div class="c_header">
 							<div class="function_list clearfix">
-								<div class="function_btn" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
-									<a href="<{:U('Meeting/create')}>"> <i class="glyphicon glyphicon-edit"></i>
-										<span>创建会议</span> </a>
-								</div>
-								<div class="function_btn batch_delete_btn">
-									<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
-										<span>批量删除</span></a>
-								</div>
-								<div class="function_btn batch_enable_btn">
-									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
-										<span>批量启用</span></a>
-								</div>
-								<div class="function_btn batch_disable_btn">
-									<a href="javascript:void(0)"><i class="glyphicon glyphicon-ban-circle"></i>
-										<span>批量禁用</span></a>
-								</div>
-								<div class="function_btn">
-									<a href="<{:U('Meeting/fieldSetting')}>"> <i class="glyphicon glyphicon-cog"></i>
-										<span>自定义字段配置</span> </a>
-								</div>
+								<if condition="in_array('SEVERAL-MEETING.CREATE', $permission_list)">
+									<div class="function_btn" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
+										<a href="<{:U('Meeting/create')}>"> <i class="glyphicon glyphicon-edit"></i>
+											<span>创建会议</span> </a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-MEETING.DELETE', $permission_list)">
+									<div class="function_btn batch_delete_btn">
+										<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
+											<span>批量删除</span></a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-MEETING.ENABLE', $permission_list)">
+									<div class="function_btn batch_enable_btn">
+										<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
+											<span>批量启用</span></a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-MEETING.DISABLE', $permission_list)">
+									<div class="function_btn batch_disable_btn">
+										<a href="javascript:void(0)"><i class="glyphicon glyphicon-ban-circle"></i>
+											<span>批量禁用</span></a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-MEETING.MANAGE_COLUMN', $permission_list)">
+									<div class="function_btn">
+										<a href="<{:U('Meeting/columnSetting')}>">
+											<i class="glyphicon glyphicon-cog"></i> <span>自定义字段配置</span> </a>
+									</div>
+								</if>
 							</div>
 						</div>
-						<div class="repertory clearfix">
-							<div class="tabs">
-								<ul class="tabsUl clearfix">
-									<li class="<notpresent name='_GET[process]'>active</notpresent>" id="filter_btn_all">
-										<a href="javascript:void(0)">全部</a>
-									</li>
-									<li class="<if condition='$_GET[process] eq ing'>active</if>" id="filter_btn_ing">
-										<a href="javascript:void(0)">进行</a>
-									</li>
-									<li class="<if condition='$_GET[process] eq fin'>active</if>" id="filter_btn_fin">
-										<a href="javascript:void(0)">结束</a>
-									</li>
-								</ul>
-							</div>
-							<form action="" method="get">
-								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="会议名称/拼音简码" value="<{:I('get.keyword', '')}>">
+						<if condition="in_array('SEVERAL-MEETING.SEARCH', $permission_list)">
+							<div class="repertory clearfix">
+								<div class="tabs">
+									<ul class="tabsUl clearfix">
+										<li class="<notpresent name='_GET[process]'>active</notpresent>" id="filter_btn_all">
+											<a href="javascript:void(0)">全部</a>
+										</li>
+										<li class="<if condition='$_GET[process] eq ing'>active</if>" id="filter_btn_ing">
+											<a href="javascript:void(0)">进行</a>
+										</li>
+										<li class="<if condition='$_GET[process] eq fin'>active</if>" id="filter_btn_fin">
+											<a href="javascript:void(0)">结束</a>
+										</li>
+									</ul>
+								</div>
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" class="form-control" placeholder="会议名称/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default main_search">搜索会议</button>
 									</span>
-								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('')}>">查看所有</a>
-							</form>
-						</div>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('')}>">查看所有</a>
+								</form>
+							</div>
+						</if>
 						<div class="table_wrap">
 							<ul class="meeting_list">
 								<volist name="list" id="meeting">
@@ -88,12 +100,14 @@
 												<span class="check_item">
 													<input type="checkbox" class="icheck" value="<{$meeting.id}>" placeholder="">
 												</span>
-											<a class="list_img" href="<{:U('Meeting/menuList', ['mid'=>$meeting['id']])}>">
+
+											<a class="list_img" href="<eq name='meeting.status_code' value='1'><{:U('Meeting/menuList', ['mid'=>$meeting['id']])}><else/>javascript:void(0)</eq>">
 												<img src="<{$meeting.logo}>" alt=""> </a>
+
 											<div class="content-box">
 												<h3>
-													<a href="<{:U('Meeting/menuList', ['mid'=>$meeting['id']])}>" class="meeting_name"><{$meeting.name}></a>
-													<span class="status disable"><{$meeting.process_status}></span>
+													<a href="<eq name='meeting.status_code' value='1'><{:U('Meeting/menuList', ['mid'=>$meeting['id']])}><else/>javascript:void(0)</eq>" class="meeting_name"><{$meeting.name}></a>
+													<span class="status status<{$meeting.process_status_code}>"><{$meeting.process_status}></span>
 												</h3>
 												<div class="desc clearfix">
 													<div>类型：<span class="type"><{$meeting.type}></span></div>
@@ -111,30 +125,40 @@
 													</div>
 												</div>
 												<ul class="fun_btn clearfix" data-id="<{$meeting.id}>">
-													<!--<li class="fun_li">
-														<a href="<{:U('SignPlace/manage',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-star"></i>签到点</a>
-													</li>-->
-													<li class="fun_li">
-														<a href="<{:U('Client/manage',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-user"></i>客户</a>
-													</li>
-													<li class="fun_li">
-														<a class="meeting_manager_btn" data-toggle="modal" data-target="#role_list_modal"><i class="glyphicon glyphicon-th"></i>会议管理人员</a>
-													</li>
-													<li class="fun_li">
-														<a href="<{:U('Meeting/modify',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-cog"></i>修改</a>
-													</li>
-													<li class="fun_li" data-id="<{$meeting.id}>">
-														<a class="delete_btn" data-toggle="modal" data-target="#delete_modal"><i class="glyphicon glyphicon-trash"></i>删除</a>
-													</li>
+													<if condition="in_array('SEVERAL-CLIENT.VIEW', $permission_list)">
+														<li class="fun_li">
+															<a href="<{:U('Client/manage',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-user"></i>客户</a>
+														</li>
+													</if>
+													<if condition="in_array('SEVERAL-MEETING.MEETING_MANAGER', $permission_list)">
+														<li class="fun_li">
+															<a class="meeting_manager_btn" data-toggle="modal" data-target="#role_list_modal"><i class="glyphicon glyphicon-th"></i>会议管理人员</a>
+														</li>
+													</if>
+													<if condition="in_array('SEVERAL-MEETING.MODIFY', $permission_list)">
+														<li class="fun_li">
+															<a href="<{:U('Meeting/modify',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-cog"></i>修改</a>
+														</li>
+													</if>
+													<if condition="in_array('SEVERAL-MEETING.DELETE', $permission_list)">
+														<li class="fun_li" data-id="<{$meeting.id}>">
+															<a class="delete_btn" data-toggle="modal" data-target="#delete_modal"><i class="glyphicon glyphicon-trash"></i>删除</a>
+														</li>
+													</if>
 													<li class="fun_li" data-id="<{$meeting.id}>" data-status="<{$meeting.status_code}>">
 														<switch name="meeting.status_code">
 															<case value="1">
-																<a class="delete_btn btn-apply"><i class="glyphicon glyphicon-lock"></i>禁用</a>
+																<if condition="in_array('SEVERAL-MEETING.DISABLE', $permission_list)">
+																	<a class="delete_btn btn-apply"><i class="glyphicon glyphicon-lock"></i>禁用</a>
+																</if>
 															</case>
 															<case value="0">
-																<a class="delete_btn btn-apply"><i class="glyphicon glyphicon-lock"></i>启用</a>
+																<if condition="in_array('SEVERAL-MEETING.ENABLE', $permission_list)">
+																	<a class="delete_btn btn-apply"><i class="glyphicon glyphicon-lock"></i>启用</a>
+																</if>
 															</case>
 														</switch>
+													</li>
 												</ul>
 											</div>
 										</div>
@@ -144,10 +168,14 @@
 										<p class="release1 release_btn">
 											<switch name="meeting.process_status_code">
 												<case value="1">
-													<a class="release_a" data-id="<{$meeting.id}>">发布</a>
+													<if condition="in_array('SEVERAL-MEETING.RELEASE', $permission_list)">
+														<a class="release_a" data-id="<{$meeting.id}>">发布</a>
+													</if>
 												</case>
 												<case value="2">
-													<a class="cancel_release_a" data-id="<{$meeting.id}>">取消发布</a>
+													<if condition="in_array('SEVERAL-MEETING.CANCEL_RELEASE', $permission_list)">
+														<a class="cancel_release_a" data-id="<{$meeting.id}>">取消发布</a>
+													</if>
 												</case>
 											</switch>
 										</p>

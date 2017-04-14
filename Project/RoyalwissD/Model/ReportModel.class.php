@@ -27,7 +27,7 @@
 		];
 
 		public function getClientList($control = []){
-			$table_client        = $this->tableName;
+			$table_client        = ClientModel::TABLE_NAME;
 			$table_attendee      = AttendeeModel::TABLE_NAME;
 			$table_user          = UserModel::TABLE_NAME;
 			$table_unit          = UnitModel::TABLE_NAME;
@@ -44,19 +44,16 @@
 				$custom_column_list = $attendee_model->getColumnList(true);
 				$list               = [];
 				foreach($custom_column_list as $column) $list[] = $column['column_name'];
-				$str = count($list)>0 ? implode(',', $list).',' : ',';
+				$str = count($list)>0 ? implode(',', $list).',' : '';
 
 				return $str;
 			};
 			$keyword             = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
 			$order               = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status              = $control[self::CONTROL_COLUMN_PARAMETER['status']];
 			$meeting_id          = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$client_id           = $control[self::CONTROL_COLUMN_PARAMETER_SELF['clientID']];
-			$review_status       = $control[self::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
 			$sign_status         = $control[self::CONTROL_COLUMN_PARAMETER_SELF['signStatus']];
 			$type                = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
-			$where               = ' WHERE 0 = 0 ';
+			$where               = ' ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -70,11 +67,8 @@
 					OR mobile like '%$keyword%'
 				)";
 			}
-			if(isset($status) && isset($status[0]) && isset($status[1])) $where .= " and status $status[0] $status[1] ";
 			if(isset($meeting_id)) $where .= " and mid = $meeting_id ";
-			if(isset($client_id) && isset($client_id[0]) && isset($client_id[1])) $where .= " and cid $client_id[0] $client_id[1] ";
 			if(isset($type) && isset($type[0]) && isset($type[1])) $where .= " and type $type[0] $type[1] ";
-			if(isset($review_status) && isset($review_status[0]) && isset($review_status[1])) $where .= " and review_status $review_status[0] $review_status[1] ";
 			if(isset($sign_status) && isset($sign_status[0]) && isset($sign_status[1])) $where .= " and sign_status $sign_status[0] $sign_status[1] ";
 			$custom_column = $getCustomColumn();
 			$sql           = "
@@ -151,7 +145,7 @@ SELECT * FROM (
 	LEFT JOIN $common_database.$table_user u3 ON u3.id = a1.review_director AND u3.status <> 2
 	LEFT JOIN $this_database.$table_unit u4 ON u4.name = c1.unit AND u4.status <> 2
 ) tab
-$where
+WHERE status = 1 AND review_status = 1 $where
 $order
 ";
 
@@ -172,17 +166,15 @@ $order
 				AND (
 					name like '%$keyword%'
 					OR name_pinyin like '%$keyword%'
-					OR unit like '%$keyword%'
-					OR unit_pinyin like '%$keyword%'
-					OR mobile like '%$keyword%'
 				)";
 			}
 			if(isset($status) && isset($status[0]) && isset($status[1])) $where .= " and status $status[0] $status[1] ";
 			if(isset($meeting_id)) $meeting_id_condition = " and mid = $meeting_id ";
 			else $meeting_id_condition = '';
-			$sql = "
+			$sql    = "
 SELECT
-	*
+	*,
+	if(signed_client > 0, 1, 0) is_signed
 FROM(
 	SELECT
 		u.id,
@@ -195,6 +187,12 @@ FROM(
 		u.status,
 		u.creatime,
 		u.creator creator_code,
+		(SELECT count(c.name) FROM meeting_royalwiss_deal.attendee a
+		JOIN meeting_royalwiss_deal.client c on a.cid = c.id
+		WHERE c.status = 1 AND a.status = 1 AND a.review_status = 1 AND u.name = c.unit $meeting_id_condition) total_client,
+		(SELECT count(c.name) FROM meeting_royalwiss_deal.attendee a
+		JOIN meeting_royalwiss_deal.client c on a.cid = c.id
+		WHERE c.status = 1 AND a.status = 1 AND a.review_status = 1 AND u.name = c.unit $meeting_id_condition AND a.sign_status = 1) signed_client,
 		u1.name creator
 	FROM meeting_royalwiss_deal.unit u
 	LEFT JOIN meeting_common.user u1 ON u1.id = u.creator AND u1.status <> 2
@@ -204,7 +202,12 @@ WHERE name in (
 	JOIN meeting_royalwiss_deal.client c on a.cid = c.id
 	WHERE c.status = 1 AND a.status = 1 AND a.review_status = 1 $meeting_id_condition
 )
+$where
+$order
 ";
+			$result = $this->query($sql);
+
+			return $result;
 		}
 
 		public function getUnitArea($meeting_id){

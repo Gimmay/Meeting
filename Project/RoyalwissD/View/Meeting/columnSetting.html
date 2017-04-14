@@ -6,10 +6,13 @@
 	<title>客户字段设置 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/datetimepicker/bootstrap-datetimepicker.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Iceman.Prompt/jQuery-MobilePrompt.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Iceman.AlterPopup/jquery-alterPopup.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/step/css/index.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/step/static/lib/jquery-step/css/jquery.step.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
@@ -29,9 +32,9 @@
 <body data-meeting-id="<{:I('get.mid')}>" data-place-id="<{:I('get.sid')}>">
 	<div id="mt_container">
 		<div class="mt_content">
-			<include file="Public/innerMenu"/>
+			<include file="./Project/CMS/View/Public/outerMenu.html"/>
 			<div class="mt_wrapper">
-				<include file="Public/innerHeader"/>
+				<include file="./Project/CMS/View/Public/outerHeader.html"/>
 				<div class="main_body">
 					<section class="content">
 						<div class="return">
@@ -40,7 +43,7 @@
 						<div class="table_wrap">
 							<div class="panel panel-info">
 								<!-- Default panel contents -->
-								<div class="panel-heading"><h2>客户字段设置</h2></div>
+								<div class="panel-heading"><h2>会议字段设置</h2></div>
 								<div class="panel-body">
 									<div class="row">
 										<div class="col-sm-6 selected_fields">
@@ -51,20 +54,21 @@
 														<volist name="column_list" id="single">
 															<if condition="$single['view'] eq 1">
 																<div class="form-group">
-																	<label for="text" class="col-sm-12 mb_5">
+																	<label for="text" class="col-sm-12 mb_5"><{$single.name}>
 																		<if condition="$single['must'] eq 1">
-																			<b class="color-red">*</b></if>
-																		<{$single.name}> </label>
+																			<b class="color-red">*</b>
+																		</if>
+																	</label>
 																	<div class="col-sm-10">
-																		<input type="text" class="form-control" id="text" name="<{$single.form}>" placeholder="<{$single.form}>" readonly="readonly" data-is-necessary="<{$single.must}>">
+																		<input class="form-control" name="<{$single.form}>" id="text" placeholder="<{$single.form}>" readonly="readonly" data-is-necessary="<{$single.must}>">
 																	</div>
 																	<div class="col-sm-2">
-																	<span class="f_edit">
-																		<i class="glyphicon glyphicon-edit"></i>
-																	</span>
-																	<span class="f_delete">
-																		<i class="glyphicon glyphicon-trash"></i>
-																	</span>
+																		<span class="f_edit">
+																			<i class="glyphicon glyphicon-edit"></i>
+																		</span>
+																		<span class="f_delete">
+																			<i class="glyphicon glyphicon-trash"></i>
+																		</span>
 																	</div>
 																</div>
 															</if>
@@ -79,19 +83,19 @@
 												<div class="panel-body">
 													<div class="row mb_10 ef_title">
 														<div class="col-sm-12">
-															<h3><i class="glyphicon glyphicon-user"></i>客户基本信息字段</h3>
+															<h3><i class="glyphicon glyphicon-user"></i>会议基本信息字段</h3>
 														</div>
 													</div>
 													<div class="row mb_10 line_b base_fields">
 														<volist name="column_list" id="single">
 															<eq name="single.is_custom" value="0">
 																<if condition="$single['view'] eq 1">
-																	<div class="col-sm-3 btn-item mb_10 has-selected active">
+																	<div class="col-sm-2 btn-item has-selected mb_10 active">
 																		<button type="button" class="btn btn-sm btn-info btn-block" data-name="<{$single.form}>"><{$single.name}></button>
 																		<span class="b_delete glyphicon glyphicon-remove"></span>
 																	</div>
 																	<else/>
-																	<div class="col-sm-3 btn-item not-selected mb_10">
+																	<div class="col-sm-2 btn-item not-selected mb_10">
 																		<button type="button" class="btn btn-sm btn-default btn-block" data-name="<{$single.form}>"><{$single.name}></button>
 																		<span class="b_delete glyphicon glyphicon-remove"></span>
 																	</div>
@@ -108,15 +112,16 @@
 														<volist name="column_list" id="single">
 															<eq name="single.is_custom" value="1">
 																<if condition="$single['view'] eq 1">
-																	<div class="col-sm-3 btn-item has-selected mb_10 active">
+																	<div class="col-sm-2 btn-item has-selected mb_10 active">
 																		<button type="button" class="btn btn-sm btn-info btn-block" data-name="<{$single.form}>"><{$single.name}></button>
 																		<span class="b_delete glyphicon glyphicon-remove"></span>
 																	</div>
 																	<else/>
-																	<div class="col-sm-3 btn-item not-selected mb_10">
+																	<div class="col-sm-2 btn-item not-selected mb_10">
 																		<button type="button" class="btn btn-sm btn-default btn-block" data-name="<{$single.form}>"><{$single.name}></button>
 																		<span class="b_delete glyphicon glyphicon-remove"></span>
 																	</div>
+
 																</if>
 															</eq>
 														</volist>
@@ -184,7 +189,7 @@
 				</div>
 				<div class="modal-body">
 					<div class="box_border_dashed">
-						<form action="" class="form-horizontal" method="post">
+						<form action="" class="form-horizontal">
 							<div class="row">
 								<div class="col-sm-12">
 									<div class="form-group">
@@ -196,25 +201,25 @@
 									<input type="hidden" name="field_type" value="varchar">
 									<input type="hidden" name="field_size" value="255">
 									<!--<div class="form-group">-->
-									<!--<label for="field_name" class="col-sm-2 control-label">字段类型：</label>-->
-									<!--<div class="col-sm-10">-->
-									<!--<select class="form-control" name="field_type" id="field_type" title="">-->
-									<!--<option value="int">整型</option>-->
-									<!--<option value="varchar">字符</option>-->
-									<!--<option value="numeric">小数</option>-->
-									<!--<option value="datetime">时间</option>-->
-									<!--</select>-->
-									<!--</div>-->
+										<!--<label for="field_name" class="col-sm-2 control-label">字段类型：</label>-->
+										<!--<div class="col-sm-10">-->
+											<!--<select class="form-control" name="field_type" id="field_type" title="">-->
+												<!--<option value="int">整型</option>-->
+												<!--<option value="varchar">字符</option>-->
+												<!--<option value="numeric">小数</option>-->
+												<!--<option value="datetime">时间</option>-->
+											<!--</select>-->
+										<!--</div>-->
 									<!--</div>-->
 									<!--<div class="form-group">-->
-									<!--<label for="field_name" class="col-sm-2 control-label">类型长度：</label>-->
-									<!--<div class="col-sm-10">-->
-									<!--<input type="number" class="form-control" name="field_size" id="field_size" placeholder="">-->
-									<!--</div>-->
+										<!--<label for="field_name" class="col-sm-2 control-label">类型长度：</label>-->
+										<!--<div class="col-sm-10">-->
+											<!--<input type="number" class="form-control" name="field_size" id="field_size" placeholder="">-->
+										<!--</div>-->
 									<!--</div>-->
 								</div>
 							</div>
-							<input type="hidden" name="requestType" value="add_field">
+							<input type="hidden" name="requestType" value="create_table_column">
 							<input type="hidden" name="name" value="">
 						</form>
 					</div>
@@ -267,7 +272,7 @@
 		</div>
 	</div>
 	<!-- 删除扩展字段结束 -->
-	<!-- 修改选择字段开始 -->
+	<!-- 编辑选择字段开始 -->
 	<div class="modal fade" id="edit_selected_field" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -281,15 +286,14 @@
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="form-group">
-									<label for="field_name" class="col-sm-2 control-label">是否必填：</label>
+									<label for="field_name" class="col-sm-2 control-label">必填项：</label>
 									<div class="col-sm-10 text-left">
-										<!--<input type="checkbox" class="icheck" value="">-->
 										<input type="checkbox" name="is_necessary" class="icheck">
 									</div>
 								</div>
 							</div>
 						</div>
-						<input type="hidden" name="requestType" value="selected_field_edit">
+						<input type="hidden" name="requestType" value="modify_table_column">
 						<input type="hidden" name="name" value="">
 					</form>
 				</div>
@@ -300,7 +304,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- 修改选择字段结束 -->
+	<!-- 编辑选择字段结束 -->
 	<script>
 		var ManageObject = {
 			object:{

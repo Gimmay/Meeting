@@ -43,7 +43,7 @@
 			1 => '是'
 		];
 		/** 客户类型 */
-		const TYPE = ['其他', '终端', '老板娘', '嘉宾', '员工', '陪同'];
+		const TYPE = ['其他', '终端', '老板娘', '嘉宾', '员工', '陪同', '专家'];
 
 		public function getList($control = []){
 			$table_client        = $this->tableName;
@@ -65,7 +65,7 @@
 				foreach($custom_column_list as $column){
 					if(preg_match('/'.AttendeeModel::CUSTOM_COLUMN.'(\d)+/', $column['column_name'])) $list[] = $column['column_name'];
 				}
-				$str = count($list)>0 ? implode(',', $list).',' : ',';
+				$str = count($list)>0 ? implode(',', $list).',' : '';
 
 				return $str;
 			};

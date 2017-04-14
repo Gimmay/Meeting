@@ -208,7 +208,9 @@
 														<if condition="$order['review_status_code'] neq 1 and $order['status_code'] eq 1">
 															<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
 														</if>
-														<button type="button" class="btn btn-default btn-xs modify_btn">修改</button>
+														<if condition="$order['review_status_code'] neq 1">
+															<button type="button" class="btn btn-default btn-xs modify_btn">修改</button>
+														</if>
 														<if condition="$order['status_code'] eq 1">
 															<button class="btn btn-default btn-xs btn_copy" type="button" data-toggle="modal" data-target="#copy_receivables">复制</button>
 														</if>
@@ -255,7 +257,9 @@
 																	<td><{$single.price}></td>
 																	<td>
 																		<div class="btn-group" data-id="<{$single.did}>">
-																			<button type="button" class="btn btn-default btn-xs alter_details_btn">修改</button>
+																			<if condition="$order['review_status_code'] neq 1">
+																				<button type="button" class="btn btn-default btn-xs alter_details_btn">修改</button>
+																			</if>
 																		</div>
 																	</td>
 																</tr>

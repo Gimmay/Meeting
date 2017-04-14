@@ -69,20 +69,19 @@
 		 * 包含重定向
 		 */
 		private function _checkLogin(){
-			$needModifyPassword   = function (){
+			$needModifyPassword                  = function (){
 				return isset($_SESSION[Session::MUST_MODIFY_PASSWORD]) && session(Session::MUST_MODIFY_PASSWORD) ? true : false;
 			};
-			$canAccessDirectlyWithoutLogin    = function (){
+			$canAccessDirectlyWithoutLogin       = function (){
 				$cur_cv = strtolower(CONTROLLER_NAME.'/'.ACTION_NAME);
 
 				return in_array($cur_cv, self::CAN_ACCESS_WITHOUT_LOGIN_PAGE_LIST) ? true : false;
 			};
-			$canAccessDirectlyWhenModifyPassword    = function (){
+			$canAccessDirectlyWhenModifyPassword = function (){
 				$cur_cv = strtolower(CONTROLLER_NAME.'/'.ACTION_NAME);
 
 				return in_array($cur_cv, self::CAN_GOTO_WHEN_MODIFY_PASSWORD_LIST) ? true : false;
 			};
-
 			$isLogin              = function (){
 				return isset($_SESSION[Session::LOGIN_USER_ID]) && session(Session::LOGIN_USER_ID) ? true : false;
 			};
@@ -119,7 +118,6 @@
 				define('CV', $cv);
 				define('PAGE_SUFFIX', C('PAGE_SUFFIX'));
 			};
-			define('PUBLIC_PATH', '/'.'./Public');
 			define('COMMON_SCRIPT_PATH', '/'.APP_PATH.'Resource/Script');
 			define('COMMON_STYLE_PATH', '/'.APP_PATH.'Resource/Style');
 			define('COMMON_IMAGE_PATH', '/'.APP_PATH.'Resource/Image');
@@ -159,6 +157,7 @@
 			$this->assign('session_user_name', $_SESSION[Session::LOGIN_USER_NICKNAME] == '' ? $_SESSION[Session::LOGIN_USER_NAME] : $_SESSION[Session::LOGIN_USER_NICKNAME]);
 			session(Session::LOGIN_USER_PERMISSION_LIST, $buildPermissionList($user_model->getPermission($user_id))); // 向Session输出权限列表码
 			$getMeetingName(); // 绑定输出会议名称/类型
+			$this->assign('permission_list', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST]);
 			$this->assign('c_name', CONTROLLER_NAME);
 			$this->assign('cv_name', CONTROLLER_NAME.'_'.ACTION_NAME);
 		}

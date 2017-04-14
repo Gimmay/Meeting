@@ -54,15 +54,14 @@
 			// 获取列表数据
 			$model_control_column = $this->getModelControl();
 			$list = $report_model->getClientList(array_merge($model_control_column, [
-				CMSModel::CONTROL_COLUMN_PARAMETER['status']                 => ['!=', 2],
-				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $this->meetingID,
-				$report_model::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus'] => ['=', 1],
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $this->meetingID
 			]));
 			// 设定额外数据并筛选数据
 			$list = $report_logic->setData('client:set_data', [
 				'list'     => $list,
 				'urlParam' => I('get.')
 			]);
+			
 			$statistics = $report_logic->setData('client:statistics', $list);
 			$this->assign('statistics', $statistics);
 			// 分页
@@ -72,6 +71,7 @@
 			$pagination = $page_object->show();
 			$this->assign('pagination', $pagination);
 			$this->assign('list', $list);
+
 			// 获取其他模块数据
 			/** @var \RoyalwissD\Model\ClientModel $client_model */
 			$client_model = D('RoyalwissD/Client');
@@ -106,12 +106,35 @@
 				}
 				exit;
 			}
-			
+			/** @var \RoyalwissD\Model\ReportModel $report_model */
+			$report_model = D('RoyalwissD/Report');
+			// 获取列表数据
+			$model_control_column = $this->getModelControl();
+			$list = $report_model->getUnitList(array_merge($model_control_column, [
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $this->meetingID
+			]));
+			// 设定额外数据并筛选数据
+			$list = $report_logic->setData('unit:set_data', [
+				'list'     => $list,
+				'urlParam' => I('get.')
+			]);
+			$statistics = $report_logic->setData('unit:statistics', $list);
+			$this->assign('statistics', $statistics);
+			// 分页
+			$page_object = new Page(count($list), $this->getPageRecordCount());
+			PageLogic::setTheme1($page_object);
+			$list = array_slice($list, $page_object->firstRow, $page_object->listRows);
+			$pagination = $page_object->show();
+			$this->assign('pagination', $pagination);
+			$this->assign('list', $list);
+			// 获取其他模块数据
 			/** @var \RoyalwissD\Model\UnitModel $unit_model */
 			$unit_model = D('RoyalwissD/Unit');
 			$this->assign('area_list', $unit_model->getUnitSelectedArea($this->meetingID));
 			$this->assign('sign_list', AttendeeModel::SIGN_STATUS);
 			$this->assign('unit_is_new_list', UnitModel::IS_NEW);
+			$this->assign('default_order_column', I('get.'.CMS::URL_CONTROL_PARAMETER['orderColumn'], CMS::DEFAULT_ORDER_COLUMN));
+			$this->assign('default_order_method', I('get.'.CMS::URL_CONTROL_PARAMETER['orderMethod'], CMS::DEFAULT_ORDER_METHOD));
 			$this->display();
 		}
 	}

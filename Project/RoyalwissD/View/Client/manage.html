@@ -96,11 +96,13 @@
 									</button>
 									<ul class="dropdown-menu">
 										<li class="">
-											<a href="<{:U('Client/fieldSetting', ['mid'=>I('get.mid', 0, 'int')])}>">客户字段配置</a>
+											<a href="<{:U('Client/columnSetting', ['mid'=>I('get.mid', 0, 'int')])}>">客户字段控制</a>
 										</li>
+										<li role="separator" class="divider"></li>
 										<li data-toggle="modal" data-target="#configure_modal">
 											<a href="javascript:void(0)">客户重复记录设置</a>
 										</li>
+										<li role="separator" class="divider"></li>
 										<li data-toggle="modal" data-target="#synchronous_wx_modal">
 											<a href="javascript:void(0)">同步微信数据</a>
 										</li>
@@ -122,14 +124,14 @@
 										<i class="glyphicon glyphicon-paperclip"></i> 其他操作 <span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
-										<li class="batch_send_message_btn_confirm"><a href="javascript:void(0)">发送邀请</a>
+										<li class="batch_send_message_btn_confirm"><a href="javascript:void(0)">批量发送邀请</a>
 										<li role="separator" class="divider"></li>
 										<li class="batch_group_btn"><a href="javascript:void(0)">批量分组</a></li>
 										<li class="batch_room_btn"><a href="javascript:void(0)">批量分房</a></li>
 										<li class="batch_badge"><a href="javascript:void(0)">批量打印胸卡</a></li>
 										<li role="separator" class="divider"></li>
-										<li class="batch_receive_gift"><a href="javascript:void(0)">领取礼品</a></li>
-										<li class="batch_refund_gift"><a href="javascript:void(0)">退还礼品</a></li>
+										<li class="batch_receive_gift"><a href="javascript:void(0)">批量领取礼品</a></li>
+										<li class="batch_refund_gift"><a href="javascript:void(0)">批量退还礼品</a></li>
 									</ul>
 								</div>
 							</div>
@@ -182,7 +184,7 @@
 									<span class="total_client">总人数 <b class="color-red"><{$statistics.total}></b> 位</span>
 								</div>
 								<div class="col-sm-6 text-right">
-									<span class="custom_list" data-toggle="modal" data-target="#list_menu"><i class="glyphicon glyphicon-list"></i>&nbsp;自定义列表菜单</span>
+									<span class="custom_list" data-toggle="modal" data-target="#list_menu"><i class="glyphicon glyphicon-list"></i>&nbsp;列表字段控制</span>
 								</div>
 							</div>
 							<table class="table table-bordered table-hover text-center" id="tableExcel">

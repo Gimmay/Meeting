@@ -249,7 +249,7 @@
 
 					return array_merge($result, [
 						'__ajax__' => true,
-						'nextPage' => U('fieldContrast', [
+						'nextPage' => U('importColumnContrast', [
 							'mid'   => $meeting_id,
 							'hid'   => $hotel_id,
 							'logID' => $result['data']['logID']

@@ -6,6 +6,7 @@
 	<title>客户报表 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/jquery-ui.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
@@ -17,6 +18,7 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-ui.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
@@ -159,7 +161,16 @@
 											</div>
 											<div class="col-sm-12">
 												<div class="col-sm-12">
-													<button type="button" class="btn btn-sm btn-success btn-block btn-save">搜索</button>
+													<div class="col-sm-6">
+														<button type="button" class="btn btn-sm btn-success btn-block btn-save">搜索</button>
+													</div>
+													<div class="col-sm-6">
+														<a href="<{:U('', ['mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-sm btn-block btn-default">重置</a>
+													</div>
+
+													<!--<if condition="count($_GET) gt 1">
+														<a href="<{:U('', ['mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-sm btn-default">重置</a>
+													</if>-->
 												</div>
 											</div>
 										</div>
@@ -179,54 +190,91 @@
 											<th></th>
 											<th>报名人数</th>
 											<th>签到人数</th>
+											<th>未到人数</th>
 										</tr>
 										<tr></tr>
 										<tr>
-											<td>客户汇总</td>
+											<td>汇总</td>
 											<td><{$statistics.total.total}></td>
 											<td><{$statistics.total.signed}></td>
+											<td><{:($statistics['total']['total'] - $statistics['total']['signed'])}></td>
 										</tr>
-
 										<tr>
-											<td colspan="3" style="text-align: center"><b>新老客统计</b></td>
+											<td colspan="4" style="text-align: center"><b>新老客统计</b></td>
 										</tr>
 										<tr>
 											<td>新客</td>
 											<td><{$statistics.isNew.1.total}></td>
 											<td><{$statistics.isNew.1.signed}></td>
+											<td><{:($statistics['isNew']['1']['total'] - $statistics['isNew']['1']['signed'])}></td>
 										</tr>
 										<tr>
 											<td>老客</td>
 											<td><{$statistics.isNew.0.total}></td>
 											<td><{$statistics.isNew.0.signed}></td>
+											<td><{:($statistics['isNew']['0']['total'] - $statistics['isNew']['0']['signed'])}></td>
 										</tr>
 										<tr>
-											<td colspan="3" style="text-align: center"><b>新老店统计</b></td>
+											<td colspan="4" style="text-align: center"><b>新老店统计</b></td>
 										</tr>
 										<tr>
 											<td>新店</td>
 											<td><{$statistics.unitIsNew.1.total}></td>
 											<td><{$statistics.unitIsNew.1.signed}></td>
+											<td><{:($statistics['unitIsNew']['1']['total'] - $statistics['unitIsNew']['1']['signed'])}></td>
 										</tr>
 										<tr>
 											<td>老店</td>
 											<td><{$statistics.unitIsNew.0.total}></td>
 											<td><{$statistics.unitIsNew.0.signed}></td>
+											<td><{:($statistics['unitIsNew']['0']['total'] - $statistics['unitIsNew']['0']['signed'])}></td>
 										</tr>
 										<tr>
-											<td colspan="3" style="text-align: center"><b>区域统计</b></td>
+											<td colspan="4" style="text-align: center"><b>区域统计</b></td>
 										</tr>
 										<volist name="statistics.area" id="single">
 											<tr>
 												<td><{$key}></td>
 												<td><{$single.total}></td>
 												<td><{$single.signed}></td>
+												<td><{:($single['total'] - $single['signed'])}></td>
+											</tr>
+										</volist>
+										<tr>
+											<td colspan="4" style="text-align: center"><b>团队统计</b></td>
+										</tr>
+										<volist name="statistics.team" id="single">
+											<tr>
+												<td><{$key}></td>
+												<td><{$single.total}></td>
+												<td><{$single.signed}></td>
+												<td><{:($single['total'] - $single['signed'])}></td>
+											</tr>
+										</volist>
+										<tr>
+											<td colspan="4" style="text-align: center"><b>客户性质统计</b></td>
+										</tr>
+										<volist name="statistics.type" id="single">
+											<tr>
+												<td><{$key}></td>
+												<td><{$single.total}></td>
+												<td><{$single.signed}></td>
+												<td><{:($single['total'] - $single['signed'])}></td>
 											</tr>
 										</volist>
 									</table>
 								</div>
 							</div>
-							<table class="table table-bordered table-hover text-center">
+							<div class="row mb_10">
+								<div class="col-sm-6">
+									<span class="current_number">当前列表人数 <b class="color-red"><{:count($list)}></b> 位</span>，
+									<span class="total_client">总人数 <b class="color-red"><{$statistics.total.total}></b> 位</span>
+								</div>
+								<div class="col-sm-6 text-right">
+									<span class="custom_list" data-toggle="modal" data-target="#list_menu"><i class="glyphicon glyphicon-list"></i>&nbsp;列表字段控制</span>
+								</div>
+							</div>
+							<table class="table table-bordered table-hover text-center" id="tableExcel">
 								<thead>
 									<tr>
 										<th>序号</th>
@@ -336,6 +384,78 @@
 			</div>
 		</div>
 	</div>
+	<!--自定义列表菜单-->
+	<div class="modal fade" id="list_menu" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h2 class="modal-title" id="myModalLabel">自定义列表字段</h2>
+				</div>
+				<div class="modal-body">
+					<form action="" class="form-horizontal">
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="filed_box">
+									<div class="title mb_10"><h3>客户字段控制</h3></div>
+									<div class="checkbox_list">
+										<div class="checkbox">
+											<volist name="column_list" id="single">
+												<label class="checkbox-inline field_checkbox">
+													<eq name="single.view" value="1">
+														<input type="checkbox" class="icheck_f" value="<{$single.form}>" data-code="<{$single.code}>" checked>
+														<else/>
+														<input type="checkbox" class="icheck_f" value="<{$single.form}>" data-code="<{$single.code}>">
+													</eq>
+													<{$single.name}> </label>
+											</volist>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<hr class="f-line">
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="filed_box">
+									<div class="title mb_10"><h3>已选择字段：（可拖动改变字段顺序）</h3></div>
+									<div class="btn-group" id="field_list" role="group">
+										<volist name="column_list" id="single">
+											<eq name="single.view" value="1">
+												<a type="button" class="btn btn-sm btn-default" data-form="<{$single.form}>" data-code="<{$single.code}>"> <{$single.name}>
+													<input type="hidden" name="code[]" value="<{$single.code}>">
+													<input type="hidden" name="form[]" value="<{$single.form}>">
+													<input type="hidden" name="table[]" value="<{$single.table}>">
+													<input type="hidden" name="name[]" value="<{$single.name}>">
+													<input type="hidden" class="c_view" name="view[]" value="<{$single.view}>">
+													<input type="hidden" name="must[]" value="<{$single.must}>"> </a>
+												<else/>
+												<a type="button" class="btn btn-sm btn-default hide" data-form="<{$single.form}>" data-code="<{$single.code}>"> <{$single.name}>
+													<input type="hidden" name="code[]" value="<{$single.code}>">
+													<input type="hidden" name="form[]" value="<{$single.form}>">
+													<input type="hidden" name="table[]" value="<{$single.table}>">
+													<input type="hidden" name="name[]" value="<{$single.name}>">
+													<input type="hidden" class="c_view" name="view[]" value="<{$single.view}>">
+													<input type="hidden" name="must[]" value="<{$single.must}>"> </a>
+											</eq>
+										</volist>
+									</div>
+								</div>
+							</div>
+						</div>
+						<input type="hidden" name="requestType" value="reset_and_order_column">
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-save">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" id="default_order_column" value="<{$default_order_column}>">
+	<input type="hidden" id="default_order_method" value="<{$default_order_method}>">
 	<script>
 		var ManageObject = {
 			object:{
@@ -344,9 +464,19 @@
 				icheck :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
+				}),
+				icheckF:$('.icheck_f').iCheck({
+					checkboxClass:'icheckbox_flat-blue',
+					radioClass   :'icheckbox_flat-blue'
 				})
 			}
 		}
+		$(function(){
+			$("#field_list").sortable({
+				placeholder:"ui-state-highlight"
+			});
+			$("#field_list").disableSelection();
+		});
 	</script>
 </body>
 </html>

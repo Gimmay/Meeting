@@ -29,4 +29,28 @@ $(function(){
 			location.replace(url);
 		}
 	});
+
+	//排序
+	var cur_order_column = $('#default_order_column').val();
+	var cur_order_method = $('#default_order_method').val();
+	$('#tableExcel').find('th[data-column]').on('click', function(){
+		var order_column = $(this).attr('data-column');
+		var order_method = url_object.getUrlParam('orderMethod');
+		var new_url      = url_object.setUrlParam('orderColumn', order_column);
+		if(cur_order_column == order_column){
+			if(order_method == 'desc') order_method = 'asc';
+			else if(order_method == 'asc') order_method = 'desc';
+			else order_method = 'desc';
+		}
+		else order_method = 'asc';
+		new_url = url_object.setUrlParam('orderMethod', order_method, new_url);
+		location.replace(new_url);
+	}).each(function(){
+		var order_column = $(this).attr('data-column');
+		if(order_column == cur_order_column){
+			var column_word = $(this).text();
+			var method_word = cur_order_method == 'desc' ? '▼' : '▲';
+			$(this).css('background', '#EFEFEF').text(column_word+method_word);
+		}
+	});
 });

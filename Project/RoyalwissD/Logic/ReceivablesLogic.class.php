@@ -232,8 +232,7 @@
 						if($result2['status']) $result2['message'] = '创建成功';
 					}
 					if(!$result2['status']) return array_merge($result2, ['__ajax__' => true]);
-
-					// todo 尝试根据手机号去匹配微信的信息
+					
 					return array_merge($result, [
 						'__ajax__' => true,
 						'nextPage' => U('', ['mid' => $meeting_id, 'cid' => $client_id])

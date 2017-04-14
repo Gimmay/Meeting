@@ -67,7 +67,7 @@ var temp = {
 			var select_temp = '';
 			ManageObject.object.loading.loading(true);
 			Common.ajax({
-				data:{requestType:'assign_permission', pid:id, id:user_id}, callback:function(data){
+				data:{requestType:'grant_permission', pid:id, id:user_id}, callback:function(data){
 					ManageObject.object.loading.complete();
 					if(data.status){
 						$('#authorize_all a').each(function(){
@@ -92,7 +92,7 @@ var temp = {
 			var select_temp = '';
 			ManageObject.object.loading.loading(true);
 			Common.ajax({
-				data:{requestType:'anti_assign_permission', pid:id, id:user_id, type:type}, callback:function(data){
+				data:{requestType:'revoke_permission', pid:id, id:user_id, type:type}, callback:function(data){
 					ManageObject.object.loading.complete();
 					if(data.status){
 						$('#authorize_select a').each(function(){

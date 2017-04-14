@@ -23,6 +23,11 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'create': // 创建会议
+					if(!in_array('SEVERAL-MEETING.CREATE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有创建会议的权限',
+						'__ajax__' => true
+					];
 					/**
 					 * 初始化客户控制字段记录
 					 *
@@ -188,6 +193,11 @@
 					return array_merge($result, ['__ajax__' => true, 'nextPage' => U('manage')]);
 				break;
 				case 'modify':
+					if(!in_array('SEVERAL-MEETING.MODIFY', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有修改会议的权限',
+						'__ajax__' => true
+					];
 					$meeting_id    = I('get.mid', 0, 'int');
 					$meeting_logic = new CMSMeetingLogic();
 					$data          = I('post.');
@@ -211,6 +221,11 @@
 					return array_merge($result, ['__ajax__' => true, 'nextPage' => U('manage')]);
 				break;
 				case 'delete': // 删除项目
+					if(!in_array('SEVERAL-MEETING.DELETE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有删除会议的权限',
+						'__ajax__' => true
+					];
 					$id_str        = I('post.id', '');
 					$meeting_logic = new CMSMeetingLogic();
 					$result        = $meeting_logic->handlerRequest('delete', [
@@ -220,6 +235,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable': // 启用项目
+					if(!in_array('SEVERAL-MEETING.ENABLE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有启用会议的权限',
+						'__ajax__' => true
+					];
 					$id_str        = I('post.id', '');
 					$meeting_logic = new CMSMeetingLogic();
 					$result        = $meeting_logic->handlerRequest('enable', [
@@ -229,6 +249,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'disable': // 禁用项目
+					if(!in_array('SEVERAL-MEETING.DISABLE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有禁用会议的权限',
+						'__ajax__' => true
+					];
 					$id_str        = I('post.id', '');
 					$meeting_logic = new CMSMeetingLogic();
 					$result        = $meeting_logic->handlerRequest('disable', [
@@ -250,6 +275,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'delete_meeting_manager': // 删除角色下的会务人员
+					if(!in_array('SEVERAL-MEETING.MEETING_MANAGER', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有管理会务人员的权限',
+						'__ajax__' => true
+					];
 					$meeting_logic = new CMSMeetingLogic();
 					$result        = $meeting_logic->handlerRequest('delete_meeting_manager');
 
@@ -262,18 +292,34 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'assign_meeting_manager': // 分配会务人员
+					if(!in_array('SEVERAL-MEETING.MEETING_MANAGER', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有管理会务人员的权限',
+						'__ajax__' => true
+					];
 					$meeting_logic = new CMSMeetingLogic();
 					$result        = $meeting_logic->handlerRequest('assign_meeting_manager');
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'release': // 发布会议
+					if(!in_array('SEVERAL-MEETING.RELEASE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有发布会议的权限',
+						'__ajax__' => true
+					];
 					$meeting_logic = new CMSMeetingLogic();
 					$result        = $meeting_logic->handlerRequest('release');
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'cancel_release': // 取消发布会议
+
+					if(!in_array('SEVERAL-MEETING.CANCEL_RELEASE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有取消发布会议的权限',
+						'__ajax__' => true
+					];
 					$meeting_logic = new CMSMeetingLogic();
 					$result        = $meeting_logic->handlerRequest('cancel_release');
 
@@ -286,7 +332,12 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				// 字段控制请求
-				case 'field_extend_select': // 显示字段
+				case 'show_table_column': // 显示字段
+					if(!in_array('SEVERAL-MEETING.MANAGE_COLUMN', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有管理字段的权限',
+						'__ajax__' => true
+					];
 					$meeting_logic = new GeneralMeetingLogic();
 					/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
 					$meeting_column_control_model = D('General/MeetingColumnControl');
@@ -299,7 +350,12 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'delete_selected_field': // 隐藏字段
+				case 'hide_table_column': // 隐藏字段
+					if(!in_array('SEVERAL-MEETING.MANAGE_COLUMN', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有管理字段的权限',
+						'__ajax__' => true
+					];
 					$meeting_logic = new GeneralMeetingLogic();
 					/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
 					$meeting_column_control_model = D('General/MeetingColumnControl');
@@ -312,7 +368,12 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'selected_field_edit': // 是否必填项
+				case 'modify_table_column': // 是否必填项
+					if(!in_array('SEVERAL-MEETING.MANAGE_COLUMN', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有管理字段的权限',
+						'__ajax__' => true
+					];
 					$meeting_logic = new GeneralMeetingLogic();
 					/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
 					$meeting_column_control_model = D('General/MeetingColumnControl');
@@ -326,7 +387,12 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'add_field': // 新增自定义字段
+				case 'create_table_column': // 新增自定义字段
+					if(!in_array('SEVERAL-MEETING.MANAGE_COLUMN', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有管理字段的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
 					$meeting_column_control_model = D('General/MeetingColumnControl');
 					$meeting_logic                = new GeneralMeetingLogic();

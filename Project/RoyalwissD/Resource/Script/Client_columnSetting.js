@@ -97,7 +97,7 @@ function fieldsExtendSelect(e){
 	if(!e.parent().hasClass('active')){  // 如果active类不存在，则添加acrtive类，更改样式。
 		ManageObject.object.loading.loading();
 		Common.ajax({
-			data    :{requestType:'field_extend_select', name:name},
+			data    :{requestType:'show_table_column', name:name},
 			callback:function(res){
 				ManageObject.object.loading.complete();
 				if(res.status){
@@ -131,7 +131,7 @@ function deleteSelectedField(e){
 	$('#delete_selected_field_modal .btn-save').on('click', function(){
 		ManageObject.object.loading.loading();
 		Common.ajax({  // ajax提交
-			data    :{requestType:'delete_selected_field', name:name},
+			data    :{requestType:'hide_table_column', name:name},
 			callback:function(res){
 				ManageObject.object.loading.complete();
 				if(res.status){

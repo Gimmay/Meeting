@@ -19,72 +19,88 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'get_detail':
-					if(UserLogic::isPermitted('GENERAL-ROLE.VIEW')){
-						$id = I('post.id', 0, 'int');
-						/** @var \General\Model\RoleModel $role_model */
-						$role_model = D('General/Role');
-						if(!$role_model->fetch(['id' => $id])) return ['__ajax__' => true];
-						$role = $role_model->getObject();
+					$id = I('post.id', 0, 'int');
+					/** @var \General\Model\RoleModel $role_model */
+					$role_model = D('General/Role');
+					if(!$role_model->fetch(['id' => $id])) return ['__ajax__' => true];
+					$role = $role_model->getObject();
 
-						return array_merge($role, ['__ajax__' => true]);
-					}
-					else return ['status' => false, 'message' => '您没有查看角色信息的权限', '__ajax__' => true];
+					return array_merge($role, ['__ajax__' => true]);
 				break;
 				case 'modify':
-					if(UserLogic::isPermitted('GENERAL-ROLE.MODIFY')){
-						/** @var \General\Model\RoleModel $role_model */
-						$role_model          = D('General/Role');
-						$str_obj             = new StringPlus();
-						$role_id             = I('post.id', 0, 'int');
-						$data                = I('post.');
-						$data['name_pinyin'] = $str_obj->getPinyin($data['name'], true, '');
-						$result              = $role_model->modifyInformation(['id' => $role_id], $data);
+					if(!UserLogic::isPermitted('GENERAL-ROLE.MODIFY')) return [
+						'status'   => false,
+						'message'  => '您没有修改角色的权限',
+						'__ajax__' => true
+					];
+					/** @var \General\Model\RoleModel $role_model */
+					$role_model          = D('General/Role');
+					$str_obj             = new StringPlus();
+					$role_id             = I('post.id', 0, 'int');
+					$data                = I('post.');
+					$data['name_pinyin'] = $str_obj->getPinyin($data['name'], true, '');
+					$result              = $role_model->modifyInformation(['id' => $role_id], $data);
 
-						return array_merge($result, ['__ajax__' => true]);
-					}
-					else return ['status' => false, 'message' => '您没有修改角色的权限', '__ajax__' => true];
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'create':
 					// 新增角色
-					if(UserLogic::isPermitted('GENERAL-ROLE.CREATE')){
-						/** @var \General\Model\RoleModel $role_model */
-						$role_model = D('General/Role');
-						$str_obj    = new StringPlus();
-						$data       = I('post.');
-						$result     = $role_model->create(array_merge($data, [
-							'name_pinyin' => $str_obj->getPinyin(I('post.name', ''), true, ''),
-							'creatime'    => date('Y-m-d H:i:s', time()),
-							'creator'     => Session::getCurrentUser()
-						]));
+					if(!UserLogic::isPermitted('GENERAL-ROLE.CREATE')) return [
+						'status'   => false,
+						'message'  => '您没有创建角色的权限',
+						'__ajax__' => true
+					];
+					/** @var \General\Model\RoleModel $role_model */
+					$role_model = D('General/Role');
+					$str_obj    = new StringPlus();
+					$data       = I('post.');
+					$result     = $role_model->create(array_merge($data, [
+						'name_pinyin' => $str_obj->getPinyin(I('post.name', ''), true, ''),
+						'creatime'    => date('Y-m-d H:i:s', time()),
+						'creator'     => Session::getCurrentUser()
+					]));
 
-						return array_merge($result, ['__ajax__' => true]);
-					}
-					else return ['status' => false, 'message' => '您没有创建角色的权限', '__ajax__' => true];
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'delete':
+					if(!UserLogic::isPermitted('GENERAL-ROLE.DELETE')) return [
+						'status'   => false,
+						'message'  => '您没有删除角色的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\RoleModel $role_model */
-					$role_model  = D('General/Role');
-					$id_str = I('post.id', '');
-					$id     = explode(',', $id_str);
-					$result = $role_model->drop(['id' => ['in', $id]]);
+					$role_model = D('General/Role');
+					$id_str     = I('post.id', '');
+					$id         = explode(',', $id_str);
+					$result     = $role_model->drop(['id' => ['in', $id]]);
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable':
+					if(!UserLogic::isPermitted('GENERAL-ROLE.ENABLE')) return [
+						'status'   => false,
+						'message'  => '您没有启用角色的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\RoleModel $role_model */
-					$role_model  = D('General/Role');
-					$id_str = I('post.id', '');
-					$id     = explode(',', $id_str);
-					$result = $role_model->enable(['id' => ['in', $id]]);
+					$role_model = D('General/Role');
+					$id_str     = I('post.id', '');
+					$id         = explode(',', $id_str);
+					$result     = $role_model->enable(['id' => ['in', $id]]);
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'disable':
+					if(!UserLogic::isPermitted('GENERAL-ROLE.DISABLE')) return [
+						'status'   => false,
+						'message'  => '您没有禁用角色的权限',
+						'__ajax__' => true
+					];
 					/** @var \General\Model\RoleModel $role_model */
-					$role_model  = D('General/Role');
-					$id_str = I('post.id', '');
-					$id     = explode(',', $id_str);
-					$result = $role_model->disable(['id' => ['in', $id]]);
+					$role_model = D('General/Role');
+					$id_str     = I('post.id', '');
+					$id         = explode(',', $id_str);
+					$result     = $role_model->disable(['id' => ['in', $id]]);
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
@@ -104,7 +120,12 @@
 
 					return array_merge($list, ['__ajax__' => true]);
 				break;
-				case 'assign_permission':
+				case 'grant_permission':
+					if(!UserLogic::isPermitted('GENERAL-ROLE.GRANT_PERMISSION')) return [
+						'status'   => false,
+						'message'  => '您没有授权的权限',
+						'__ajax__' => true
+					];
 					$role_id       = I('post.id', 0, 'int');
 					$permission_id = I('post.pid', 0, 'int');
 					/** @var \General\Model\RoleModel $role_model */
@@ -114,7 +135,12 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'anti_assign_permission':
+				case 'revoke_permission':
+					if(!UserLogic::isPermitted('GENERAL-ROLE.GRANT_PERMISSION')) return [
+						'status'   => false,
+						'message'  => '您没有授权的权限',
+						'__ajax__' => true
+					];
 					$role_id       = I('post.id', 0, 'int');
 					$permission_id = I('post.pid', 0, 'int');
 					/** @var \General\Model\RoleModel $role_model */
@@ -124,7 +150,12 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'assign_permission_module':
+				case 'grant_permission_module':
+					if(!UserLogic::isPermitted('GENERAL-ROLE.GRANT_PERMISSION')) return [
+						'status'   => false,
+						'message'  => '您没有授权的权限',
+						'__ajax__' => true
+					];
 					$role_id = I('post.id', 0, 'int');
 					$module  = I('post.module', '');
 					/** @var \General\Model\PermissionModel $permission_model */
@@ -138,7 +169,12 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'anti_assign_permission_module':
+				case 'revoke_permission_module':
+					if(!UserLogic::isPermitted('GENERAL-ROLE.GRANT_PERMISSION')) return [
+						'status'   => false,
+						'message'  => '您没有授权的权限',
+						'__ajax__' => true
+					];
 					$role_id = I('post.id', 0, 'int');
 					$module  = I('post.module', '');
 					/** @var \General\Model\PermissionModel $permission_model */

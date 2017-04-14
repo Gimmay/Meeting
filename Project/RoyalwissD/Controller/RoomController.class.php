@@ -171,7 +171,7 @@
 			$this->display();
 		}
 
-		public function fieldContrast(){
+		public function importColumnContrast(){
 			$room_logic = new RoomLogic();
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));

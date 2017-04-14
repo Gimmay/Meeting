@@ -59,7 +59,7 @@
 			}
 			else{
 				$user_logic = new UserLogic();
-				$password = $user_logic->makePassword(self::ADMIN_PASSWORD, self::ADMIN_NAME);
+				$password   = $user_logic->makePassword(self::ADMIN_PASSWORD, self::ADMIN_NAME);
 				C('TOKEN_ON', false);
 				$result = $user_model->create([
 					'name'            => self::ADMIN_NAME,
@@ -135,7 +135,7 @@
 			echo '<br>';
 			// 7、创建会议字段记录
 			$meeting_column_control_logic = new CMSMeetingLogic();
-			$result = $meeting_column_control_logic->initMeetingColumnControlRecord();
+			$result                       = $meeting_column_control_logic->initMeetingColumnControlRecord();
 			echo "7、$result[message]";
 			echo '<br>';
 			// 初始化数据结束

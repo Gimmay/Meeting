@@ -44,7 +44,7 @@ JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id
 JOIN $this_database.$table_role r ON uar.rid = r.id AND r.STATUS = 1
 JOIN $this_database.$table_role_assign_permission rap ON rap.rid = r.id
 JOIN $this_database.$table_permission p ON rap.pid = p.id
-WHERE u.id = $user_id AND p.code like 'GENERAL-%'" : "
+WHERE u.id = $user_id" : "
 SELECT DISTINCT p.id i, p.*, LEFT(code, LOCATE('.', code)-1) module_code FROM $this_database.$table_permission p
 WHERE id NOT IN (
 	SELECT p.id
@@ -53,7 +53,7 @@ WHERE id NOT IN (
 	JOIN $this_database.$table_role r ON uar.rid = r.id AND r.STATUS = 1
 	JOIN $this_database.$table_role_assign_permission rap ON rap.rid = r.id
 	JOIN $this_database.$table_permission p ON rap.pid = p.id
-	WHERE u.id = $user_id AND p.code like 'GENERAL-%'
+	WHERE u.id = $user_id
 )";
 
 			return $this->query($sql);

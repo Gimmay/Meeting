@@ -361,10 +361,9 @@
 					}
 					if(!$result2['status']) return array_merge($result2, ['__ajax__' => true]);
 
-					// todo 尝试根据手机号去匹配微信的信息
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'field_extend_select': // 显示字段
+				case 'show_table_column': // 显示字段
 					/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 					$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 					$meeting_id                  = I('get.mid', 0, 'int');
@@ -377,7 +376,7 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'delete_selected_field': // 隐藏字段
+				case 'hide_table_column': // 隐藏字段
 					/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 					$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 					$meeting_id                  = I('get.mid', 0, 'int');
@@ -390,7 +389,7 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'selected_field_edit': // 是否必填项
+				case 'modify_table_column': // 是否必填项
 					/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 					$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 					$meeting_id                  = I('get.mid', 0, 'int');
@@ -404,7 +403,7 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'add_field': // 新增自定义字段
+				case 'create_table_column': // 新增自定义字段
 					/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 					$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 					$post                        = I('post.');
@@ -506,7 +505,7 @@
 
 					return array_merge($result, [
 						'__ajax__' => true,
-						'nextPage' => U('fieldContrast', [
+						'nextPage' => U('importColumnContrast', [
 							'mid'   => $meeting_id,
 							'logID' => $result['data']['logID']
 						])
@@ -773,7 +772,6 @@
 						if(!$result2) return $makeResult(false, '保存参会数据失败', $excel_data, $saved_client_list, $read_result['data']['head'], $original_repeat_data);
 
 						return $makeResult(true, '导入成功', $excel_data, $saved_client_list, $read_result['data']['head'], $original_repeat_data);
-						// todo 尝试根据手机号去匹配微信的信息
 					}
 					else{
 						return [
@@ -1140,16 +1138,16 @@
 							$user_list = $user_list['userlist'];
 							// 获取系统该会议下的客户
 							/** @var \RoyalwissD\Model\ClientModel $client_model */
-							$client_model = D('RoyalwissD/Client');
-							$client_list  = $client_model->getList([
+							$client_model  = D('RoyalwissD/Client');
+							$client_list   = $client_model->getList([
 								$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $meeting_id,
 								$client_model::CONTROL_COLUMN_PARAMETER['status']         => ['!=', 2]
 							]);
-							$count        = 0;
-							$replace_char = '#%ID%#';
+							$count         = 0;
+							$replace_char  = '#%ID%#';
 							$this_database = $client_model::DATABASE_NAME;
-							$this_table = $client_model::TABLE_NAME;
-							$sql_main     = "
+							$this_table    = $client_model::TABLE_NAME;
+							$sql_main      = "
 UPDATE $this_database.$this_table
 SET
 	wechat_type = 2,
@@ -1164,7 +1162,7 @@ SET
 	wechat_id = CASE id i$replace_char END,
 	wechat_email = CASE id e$replace_char END
 ";
-							$sql_where    = "WHERE id IN ($replace_char) ";
+							$sql_where     = "WHERE id IN ($replace_char) ";
 							foreach($user_list as $wechat_user){
 								foreach($client_list as $client){
 									if($client['mobile'] == $wechat_user['mobile']){
@@ -1271,7 +1269,7 @@ SET
 					$result = [];
 					foreach($data as $val){
 						$val['is_custom'] = ($this->isCustomColumn($val['form'])) ? 1 : 0;
-						$result[] = $val;
+						$result[]         = $val;
 					}
 
 					return $result;

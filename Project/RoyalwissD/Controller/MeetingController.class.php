@@ -10,6 +10,7 @@
 	use CMS\Logic\MeetingLogic as CMSMeetingLogic;
 	use CMS\Logic\PageLogic;
 	use CMS\Logic\Session;
+	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
 	use General\Logic\MeetingLogic as GeneralMeetingLogic;
 	use RoyalwissD\Logic\MeetingLogic;
@@ -85,6 +86,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-MEETING.VIEW')) $this->error('您没有查看会议的权限');
 			/** @var \RoyalwissD\Model\MeetingModel $meeting_model */
 			$meeting_model         = D('RoyalwissD/Meeting');
 			$cms_meeting_logic     = new CMSMeetingLogic();
@@ -105,11 +107,10 @@
 				MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['user'] => Session::getCurrentUser(),
 				MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['type'] => $general_meeting_logic->getTypeByModule(MODULE_NAME)
 			]));
-			$list       = $meeting_logic->setData('manage', ['list'=>$list, 'urlParam'=>I('get.')]);
+			$list        = $meeting_logic->setData('manage', ['list' => $list, 'urlParam' => I('get.')]);
 			$page_object = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
-
 			$pagination = $page_object->show();
 			$this->assign('list', $list);
 			$this->assign('pagination', $pagination);
@@ -133,6 +134,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-MEETING.CREATE')) $this->error('您没有创建会议的权限');
 			/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
 			$meeting_column_control_model = D('General/MeetingColumnControl');
 			$meeting_logic                = new GeneralMeetingLogic();
@@ -141,7 +143,7 @@
 			$this->display();
 		}
 
-		public function fieldSetting(){
+		public function columnSetting(){
 			$meeting_logic = new MeetingLogic();
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
@@ -158,6 +160,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-MEETING.MANAGE_COLUMN')) $this->error('您没有自定义字段的权限');
 			/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
 			$meeting_column_control_model = D('General/MeetingColumnControl');
 			$general_meeting_logic        = new GeneralMeetingLogic();
@@ -213,6 +216,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-MEETING.MODIFY')) $this->error('您没有修改会议的权限');
 			// 获取控制字段
 			/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
 			$meeting_column_control_model = D('General/MeetingColumnControl');

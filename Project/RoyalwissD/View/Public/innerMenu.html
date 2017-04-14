@@ -53,8 +53,8 @@
 					<li class="<if condition='$cv_name eq Client_sign'>active</if>">
 						<a href="<{:U('Client/sign', ['mid'=>I('get.mid', 0, 'int')])}>">签到</a>
 					</li>
-					<li class="<if condition='$cv_name eq Client_fieldSetting'>active</if>">
-						<a href="<{:U('Client/fieldSetting', ['mid'=>I('get.mid', 0, 'int')])}>">客户字段设置</a>
+					<li class="<if condition='$cv_name eq Client_columnSetting'>active</if>">
+						<a href="<{:U('Client/columnSetting', ['mid'=>I('get.mid', 0, 'int')])}>">字段控制</a>
 					</li>
 				</ul>
 			</li>
@@ -72,9 +72,9 @@
 					<li class="<if condition='$cv_name eq Receivables_create'>active</if>">
 						<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">创建收款</a>
 					</li>
-					<li class="<if condition='$cv_name eq Workflow_createClient'>active</if>">
+					<!--<li class="<if condition='$cv_name eq Workflow_createClient'>active</if>">
 						<a href="<{:U('Workflow/createClient', ['mid'=>I('get.mid', 0, 'int')])}>">简易收款</a>
-					</li>
+					</li>-->
 				</ul>
 			</li>
 			<li class="side_item <if condition='$cv_name eq Hotel_manage'>active</if>">
@@ -90,6 +90,9 @@
 				<ul class="nav-second-level">
 					<li class="<if condition='$cv_name eq Recycle_client'>active</if>">
 						<a href="<{:U('Report/client',['mid'=>I('get.mid',0,'int')])}>">客户报表</a>
+					</li>
+					<li class="<if condition='$cv_name eq Recycle_unit'>active</if>">
+						<a href="<{:U('Report/unit',['mid'=>I('get.mid',0,'int')])}>">会所报表</a>
 					</li>
 					<li class="<if condition='$cv_name eq Recycle_client'>active</if>">
 						<a href="<{:U('Report/receivable',['mid'=>I('get.mid',0,'int')])}>">收款报表</a>

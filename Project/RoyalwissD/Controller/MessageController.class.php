@@ -3,6 +3,7 @@
 	namespace RoyalwissD\Controller;
 
 	use CMS\Logic\PageLogic;
+	use CMS\Logic\UserLogic;
 	use RoyalwissD\Logic\MeetingConfigureLogic;
 	use RoyalwissD\Logic\MessageLogic;
 	use RoyalwissD\Model\MessageCorrelationModel;
@@ -32,6 +33,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-MESSAGE.CREATE')) $this->error('您没有新建消息模板的权限');
 			/** @var \RoyalwissD\Model\MessageModel $message_model */
 			$message_model = D('RoyalwissD/Message');
 			$this->assign('message_type_list', $message_model::TYPE);
@@ -55,6 +57,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-MESSAGE.VIEW')) $this->error('您没有查看消息模板的权限');
 			$this->assign('message_action', MessageCorrelationModel::ACTION);
 			// 获取会议配置信息 以及 消息发送模式
 			/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
@@ -127,6 +130,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-MESSAGE.MODIFY')) $this->error('您没有修改消息模板的权限');
 			/** @var \RoyalwissD\Model\MessageModel $message_model */
 			$message_model = D('RoyalwissD/Message');
 			$message_id    = I('get.id', 0, 'int');
