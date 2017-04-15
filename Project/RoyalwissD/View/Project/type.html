@@ -35,43 +35,57 @@
 					<section class="content">
 						<div class="table_wrap mb_10">
 							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="<{:U('Project/type', ['mid'=>I('get.mid', 0, 'int')])}>">项目类型</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Project/manage', ['mid'=>I('get.mid', 0, 'int')])}>">项目管理</a>
-								</div>
+								<if condition="in_array('SEVERAL-PROJECT_TYPE.VIEW', $permission_list)">
+									<div class="nav_tab_li active">
+										<a href="<{:U('Project/type', ['mid'=>I('get.mid', 0, 'int')])}>">项目类型</a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-PROJECT.VIEW', $permission_list)">
+									<div class="nav_tab_li">
+										<a href="<{:U('Project/manage', ['mid'=>I('get.mid', 0, 'int')])}>">项目管理</a>
+									</div>
+								</if>
 							</div>
 						</div>
 						<div class="c_header">
 							<div class="function_list clearfix">
-								<div class="function_btn" data-toggle="modal" data-target="#create_project_type">
-									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-plus"></i>
-										<span>新增项目类型</span> </a>
-								</div>
-								<div class="function_btn batch_delete_btn">
-									<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
-										<span>批量删除</span></a>
-								</div>
-								<div class="function_btn batch_enable_btn"><a href="javascript:void(0)">
-									<i class="glyphicon glyphicon-ok-circle"></i> <span>批量启用</span></a>
-								</div>
-								<div class="function_btn batch_disable_btn"><a href="javascript:void(0)">
-									<i class="glyphicon glyphicon-ban-circle"></i> <span>批量禁用</span></a>
-								</div>
+								<if condition="in_array('SEVERAL-PROJECT_TYPE.CREATE', $permission_list)">
+									<div class="function_btn" data-toggle="modal" data-target="#create_project_type">
+										<a href="javascript:void(0)"> <i class="glyphicon glyphicon-plus"></i>
+											<span>新增项目类型</span> </a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-PROJECT_TYPE.DELETE', $permission_list)">
+									<div class="function_btn batch_delete_btn">
+										<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
+											<span>批量删除</span></a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-PROJECT_TYPE.ENABLE', $permission_list)">
+									<div class="function_btn batch_enable_btn"><a href="javascript:void(0)">
+										<i class="glyphicon glyphicon-ok-circle"></i> <span>批量启用</span></a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-PROJECT_TYPE.DISABLE', $permission_list)">
+									<div class="function_btn batch_disable_btn"><a href="javascript:void(0)">
+										<i class="glyphicon glyphicon-ban-circle"></i> <span>批量禁用</span></a>
+									</div>
+								</if>
 							</div>
 						</div>
-						<div class="repertory clearfix">
-							<form action="" method="get">
-								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="项目类型/拼音简码" value="<{:I('get.keyword', '')}>">
+						<if condition="in_array('SEVERAL-PROJECT_TYPE.SEARCH', $permission_list)">
+							<div class="repertory clearfix">
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" id="keyword" class="form-control" placeholder="项目类型/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default main_search">搜索</button>
+										<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
 									</span>
-								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
-							</form>
-						</div>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
+								</form>
+							</div>
+						</if>
 						<div class="table_wrap">
 							<table class="table table-bordered" style="text-align: center">
 								<thead>
@@ -102,14 +116,22 @@
 											<td class="creator"><{$single.creator}></td>
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>" data-status="<{$single.status_code}>">
-													<button type="button" class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_project_type">修改</button>
-													<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+													<if condition="in_array('SEVERAL-PROJECT_TYPE.MODIFY', $permission_list)">
+														<button type="button" class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_project_type">修改</button>
+													</if>
+													<if condition="in_array('SEVERAL-PROJECT_TYPE.DELETE', $permission_list)">
+														<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+													</if>
 													<switch name="single.status_code">
 														<case value="1">
-															<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+															<if condition="in_array('SEVERAL-PROJECT_TYPE.DISABLE', $permission_list)">
+																<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+															</if>
 														</case>
 														<case value="0">
-															<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+															<if condition="in_array('SEVERAL-PROJECT_TYPE.ENABLE', $permission_list)">
+																<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+															</if>
 														</case>
 													</switch>
 												</div>
@@ -121,7 +143,7 @@
 						</div>
 						<div class="page_wrap">
 							<div class="pagination">
-								<{$page_show}>
+								<{$pagination}>
 							</div>
 						</div>
 					</section>
@@ -140,6 +162,8 @@
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkCreate()">
 					<input type="hidden" name="requestType" value="create">
+					<!-- 避免回车提交 -->
+					<input style="display:none" mce_style="display:none">
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="project_type" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>名称：</label>

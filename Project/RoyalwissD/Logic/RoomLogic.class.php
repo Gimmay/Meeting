@@ -10,6 +10,7 @@
 	use CMS\Logic\ExcelLogic;
 	use CMS\Logic\Session;
 	use CMS\Logic\UploadLogic;
+	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
@@ -28,6 +29,11 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'create':
+					if(!UserLogic::isPermitted('SEVERAL-ROOM.CREATE')) return [
+						'status'   => false,
+						'message'  => '您没有创建房间的权限',
+						'__ajax__' => true
+					];
 					$meeting_id    = I('get.mid', 0, 'int');
 					$hotel_id      = I('get.hid', 0, 'int');
 					$post          = I('post.');
@@ -51,6 +57,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'modify':
+					if(!UserLogic::isPermitted('SEVERAL-ROOM.MODIFY')) return [
+						'status'   => false,
+						'message'  => '您没有修改房间的权限',
+						'__ajax__' => true
+					];
 					$hotel_id   = I('get.hid', 0, 'int');
 					$meeting_id = I('get.mid', 0, 'int');
 					$room_id    = I('post.id', 0, 'int');
@@ -69,6 +80,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'delete': // 删除项目
+					if(!UserLogic::isPermitted('SEVERAL-ROOM.DELETE')) return [
+						'status'   => false,
+						'message'  => '您没有删除房间的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$hotel_id   = I('get.hid', 0, 'int');
 					$id_str     = I('post.id', '');
@@ -84,6 +100,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable': // 启用项目
+					if(!UserLogic::isPermitted('SEVERAL-ROOM.ENABLE')) return [
+						'status'   => false,
+						'message'  => '您没有启用房间的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$hotel_id   = I('get.hid', 0, 'int');
 					$id_str     = I('post.id', '');
@@ -99,6 +120,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'disable': // 禁用项目
+					if(!UserLogic::isPermitted('SEVERAL-ROOM.DISABLE')) return [
+						'status'   => false,
+						'message'  => '您没有禁用房间的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$hotel_id   = I('get.hid', 0, 'int');
 					$id_str     = I('post.id', '');
@@ -177,6 +203,11 @@
 					return array_merge($room_record, ['__ajax__' => true]);
 				break;
 				case 'check_in':
+					if(!UserLogic::isPermitted('SEVERAL-ROOM.MANAGE_DETAIL')) return [
+						'status'   => false,
+						'message'  => '您没有管理房间的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$room_id    = I('post.rid', 0, 'int');
 					$client_id  = I('post.cid', '');
@@ -188,6 +219,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'check_out':
+					if(!UserLogic::isPermitted('SEVERAL-ROOM.MANAGE_DETAIL')) return [
+						'status'   => false,
+						'message'  => '您没有管理房间的权限',
+						'__ajax__' => true
+					];
 					$meeting_id     = I('get.mid', 0, 'int');
 					$room_id        = I('post.rid', 0, 'int');
 					$check_out_time = I('post.check_out_time', '');
@@ -200,6 +236,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'change_room':
+					if(!UserLogic::isPermitted('SEVERAL-ROOM.MANAGE_DETAIL')) return [
+						'status'   => false,
+						'message'  => '您没有管理房间的权限',
+						'__ajax__' => true
+					];
 					$client_id_a = I('post.cid_a', 0, 'int');
 					$room_id_a   = I('post.rid_a', 0, 'int');
 					$client_id_b = I('post.cid_b', 0, 'int');
@@ -242,6 +283,11 @@
 					return array_merge($list, ['__ajax__' => true]);
 				break;
 				case 'import_excel':
+					if(!UserLogic::isPermitted('SEVERAL-ROOM.IMPORT')) return [
+						'status'   => false,
+						'message'  => '您没有导入的权限',
+						'__ajax__' => true
+					];
 					$meeting_id   = I('get.mid', 0, 'int');
 					$hotel_id     = I('get.hid', 0, 'int');
 					$upload_logic = new UploadLogic($meeting_id);
@@ -257,6 +303,11 @@
 					]);
 				break;
 				case 'save_excel_data':
+					if(!UserLogic::isPermitted('SEVERAL-ROOM.IMPORT')) return [
+						'status'   => false,
+						'message'  => '您没有导入的权限',
+						'__ajax__' => true
+					];
 					set_time_limit(0);
 					$str_obj     = new StringPlus();
 					$excel_logic = new ExcelLogic();

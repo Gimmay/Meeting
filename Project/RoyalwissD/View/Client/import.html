@@ -44,7 +44,10 @@
 							<div class="panel panel-default">
 								<!-- Default panel contents -->
 								<div class="panel-heading">
-									<h2>上传客户名单<a href="<{:U('exportTemplate', ['mid'=>I('get.mid', 0, 'int')])}>" class="small color-primary" style="text-decoration: underline"> 下载导入模板 </a></h2>
+									<h2>上传客户名单</h2>
+									<if condition="in_array('SEVERAL-CLIENT.DOWNLOAD_IMPORT_TEMPLATE', $permission_list)">
+										<a href="<{:U('exportTemplate', ['mid'=>I('get.mid', 0, 'int')])}>" class="small color-primary" style="text-decoration: underline"> 下载导入模板 </a>
+									</if>
 								</div>
 								<div class="panel-body">
 									<form class="form-horizontal" role="form" action="" id="form">

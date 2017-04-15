@@ -10,6 +10,7 @@
 	use CMS\Controller\CMS;
 	use CMS\Logic\ExcelLogic;
 	use CMS\Logic\PageLogic;
+	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
 	use RoyalwissD\Logic\ClientLogic;
 	use RoyalwissD\Logic\MeetingConfigureLogic;
@@ -41,6 +42,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-CLIENT.VIEW')) $this->error('您没有查看客户的权限');
 			// 加载客户模块配置信息
 			/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
 			$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
@@ -63,7 +65,7 @@
 			$this->assign('column_list_write', $column_list_write);
 			// 获取搜索字段
 			$column_list_search = $client_column_control_model->getClientSearchColumn($this->meetingID);
-			$search_column_name       = $client_logic->setData('column_setting:search', $column_list_search);
+			$search_column_name = $client_logic->setData('column_setting:search', $column_list_search);
 			$this->assign('column_list_search', $column_list_search);
 			$this->assign('search_column_name', $search_column_name);
 			// 获取列表数据
@@ -125,6 +127,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-CLIENT.CREATE')) $this->error('您没有创建客户的权限');
 			/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 			$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 			$column_list                 = $client_column_control_model->getClientControlledColumn($this->meetingID, $client_column_control_model::ACTION_WRITE);
@@ -153,11 +156,11 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-CLIENT.MANAGE_COLUMN')) $this->error('您没有管理字段的权限');
 			/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 			$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 			$column_list                 = $client_column_control_model->getClientControlledColumn($this->meetingID, $client_column_control_model::ACTION_WRITE);
-
-			$column_list                 = $client_logic->setData('column_setting', $column_list);
+			$column_list = $client_logic->setData('column_setting', $column_list);
 			$this->assign('column_list', $column_list);
 			$this->display();
 		}
@@ -179,6 +182,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-CLIENT.IMPORT')) $this->error('你没有导入客户的权限');
 			$this->display();
 		}
 
@@ -199,6 +203,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-CLIENT.IMPORT')) $this->error('你没有导入客户的权限');
 			/** @var \General\Model\UploadLogModel $upload_log_model */
 			$upload_log_model = D('General/UploadLog');
 			$log_id           = I('get.logID', 0, 'int');
@@ -224,18 +229,14 @@
 		}
 
 		public function importResult(){
+			if(!UserLogic::isPermitted('SEVERAL-CLIENT.IMPORT')) $this->error('你没有导入客户的权限');
 			$result_id = I('get.resultID', 0, 'int');
 			/** @var \RoyalwissD\Model\ClientImportResultModel $client_import_result_model */
 			$client_import_result_model = D('RoyalwissD/ClientImportResult');
-			if($client_import_result_model->fetch(['id' => $result_id])){
-				$record = $client_import_result_model->getObject();
-				$this->assign('result', $record);
-				$this->display();
-			}
-			else{
-				$this->error('缺少导入结果参数');
-				exit;
-			}
+			if(!$client_import_result_model->fetch(['id' => $result_id])) $this->error('缺少导入结果参数');
+			$record = $client_import_result_model->getObject();
+			$this->assign('result', $record);
+			$this->display();
 		}
 
 		public function modify(){
@@ -255,6 +256,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-CLIENT.MODIFY')) $this->error('您没有修改客户的权限');
 			$client_id = I('get.id', 0, 'int');
 			if($client_id == 0) $this->error('缺少必要参数');
 			// 获取客户资料
@@ -279,6 +281,7 @@
 		}
 
 		public function exportTemplate(){
+			if(!UserLogic::isPermitted('SEVERAL-CLIENT.DOWNLOAD_IMPORT_TEMPLATE')) $this->error('您没有下载导入模板的权限');
 			/** @var \General\Model\MeetingModel $meeting_model */
 			$meeting_model = D('General/Meeting');
 			if(!($meeting_model->fetch(['id' => $this->meetingID]))){
@@ -311,6 +314,7 @@
 		}
 
 		public function exportData(){
+			if(!UserLogic::isPermitted('SEVERAL-CLIENT.EXPORT')) $this->error('您没有导出客户的权限');
 			/** @var \General\Model\MeetingModel $meeting_model */
 			$meeting_model = D('General/Meeting');
 			if(!($meeting_model->fetch(['id' => $this->meetingID]))){
@@ -355,12 +359,5 @@
 				'hasHead'      => true,
 				'download'     => true,
 			]);
-		}
-
-		public function test(){
-			$client_logic = new ClientLogic();
-			$result       = $client_logic->sign("220,219", 30, false);
-			print_r($result);
-			exit;
 		}
 	}

@@ -65,9 +65,9 @@
 							<div class="repertory clearfix">
 								<form action="" method="get">
 									<div class="input-group repertory_text">
-										<input type="search" name="keyword" class="form-control" placeholder="用户名/昵称/拼音简码" value="<{:I('get.keyword', '')}>">
+										<input type="search" name="keyword" id="keyword" class="form-control" placeholder="用户名/昵称/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default main_search">搜索用户</button>
+										<button type="button" id="main_search" class="btn btn-default main_search">搜索用户</button>
 									</span>
 									</div>
 									<a type="reset" class="btn btn-default main_search" href="<{:U('')}>">查看所有</a>
@@ -83,11 +83,13 @@
 										</th>
 										<th width="5%">序号</th>
 										<th width="10%">用户名</th>
-										<th width="20%">分配的角色</th>
+										<th width="10%">昵称</th>
+										<th width="10%">手机号</th>
+										<th width="15%">分配的角色</th>
 										<th width="5%">状态</th>
 										<th width="5%">创建者</th>
 										<th width="10%">创建日期</th>
-										<th width="35%">操作</th>
+										<th width="25%">操作</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -98,6 +100,8 @@
 											</td>
 											<td><{$i}></td>
 											<td data-id="<{$single.id}>"><{$single.name}></td>
+											<td><{$single.nickname}></td>
+											<td><{$single.mobile}></td>
 											<td><{$single.role}></td>
 											<td><{$single.status}></td>
 											<td><{$single.creator}></td>

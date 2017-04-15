@@ -35,12 +35,16 @@
 					<section class="content">
 						<div class="table_wrap mb_10">
 							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="<{:U('Room/manage', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间列表</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Room/roomType', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间类型(<{$room_type_number.assigned}>/<{$room_type_number.number}>)</a>
-								</div>
+								<if condition="in_array('SEVERAL-ROOM.VIEW', $permission_list)">
+									<div class="nav_tab_li active">
+										<a href="<{:U('Room/manage', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间列表</a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-ROOM_TYPE.VIEW', $permission_list)">
+									<div class="nav_tab_li">
+										<a href="<{:U('Room/roomType', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间类型(<{$room_type_number.assigned}>/<{$room_type_number.number}>)</a>
+									</div>
+								</if>
 							</div>
 						</div>
 						<div class="c_header">
@@ -50,19 +54,22 @@
 										<i class="glyphicon glyphicon-plus"></i> 创建房间 <span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
-										<li class="create_room" data-toggle="modal" data-target="#distribution_room">
-											<a href="javascript:void(0)">创建房间</a>
-										</li>
-										<li>
-											<a href="<{:U('Room/import',['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">批量导入房间</a>
-										</li>
+										<if condition="in_array('SEVERAL-ROOM.CREATE', $permission_list)">
+											<li class="create_room" data-toggle="modal" data-target="#distribution_room">
+												<a href="javascript:void(0)">创建房间</a>
+											</li>
+										</if>
+										<if condition="in_array('SEVERAL-ROOM.IMPORT', $permission_list)">
+											<li>
+												<a href="<{:U('Room/import',['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">批量导入房间</a>
+											</li>
+										</if>
 										<li role="separator" class="divider"></li>
-										<li>
-											<a href="<{:U('exportTemplate', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">下载导入模板</a>
-										</li>
-										<li>
-											<a href="<{:U('exportData', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">导出房间信息</a>
-										</li>
+										<if condition="in_array('SEVERAL-ROOM.DOWNLOAD_IMPORT_TEMPLATE', $permission_list)">
+											<li>
+												<a href="<{:U('exportTemplate', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">下载导入模板</a>
+											</li>
+										</if>
 									</ul>
 								</div>
 								<div class="btn-group">
@@ -70,32 +77,39 @@
 										<i class="glyphicon glyphicon-lock"></i> 基础操作 <span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
-										<li class="batch_enable_btn"><a href="javascript:void(0)">批量启用</a></li>
-										<li class="batch_disable_btn"><a href="javascript:void(0)">批量禁用</a></li>
+										<if condition="in_array('SEVERAL-ROOM.ENABLE', $permission_list)">
+											<li class="batch_enable_btn"><a href="javascript:void(0)">批量启用</a></li>
+										</if>
+										<if condition="in_array('SEVERAL-ROOM.DISABLE', $permission_list)">
+											<li class="batch_disable_btn"><a href="javascript:void(0)">批量禁用</a></li>
+										</if>
 										<li role="separator" class="divider"></li>
-										<li class="batch_delete_btn"><a href="javascript:void(0)">批量删除</a></li>
+										<if condition="in_array('SEVERAL-ROOM.DELETE', $permission_list)">
+											<li class="batch_delete_btn"><a href="javascript:void(0)">批量删除</a></li>
+										</if>
 									</ul>
 								</div>
 							</div>
 							<div class="count">
 								客户：已入住 <b class="color-red"><{$statistics.clientOfCheckIn}> </b>人，未入住
-								<b class="color-2489c5"><{$statistics.clientOfNotCheckIn}> </b>人
-								<br> 房间：已住满 <b class="color-red"><{$statistics.roomOfFully}></b> 间，未住满
+								<b class="color-2489c5"><{$statistics.clientOfNotCheckIn}> </b>人 <br> 房间：已住满
+								<b class="color-red"><{$statistics.roomOfFully}></b> 间，未住满
 								<b class="color-2489c5"><{$statistics.roomOfNotFully}></b> 间
 							</div>
 						</div>
-
-						<div class="repertory clearfix">
-							<form action="" method="get">
-								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="房间/拼音简码" value="">
+						<if condition="in_array('SEVERAL-ROOM.SEARCH', $permission_list)">
+							<div class="repertory clearfix">
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" id="keyword" class="form-control" placeholder="房间/拼音简码" value="">
 									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default main_search">搜索</button>
+										<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
 									</span>
-								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('Room/manage',['mid'=>I('get.mid',0,'int'),'hid'=>I('get.hid',0,'int')])}>">查看所有</a>
-							</form>
-						</div>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('',['mid'=>I('get.mid',0,'int'),'hid'=>I('get.hid',0,'int')])}>">查看所有</a>
+								</form>
+							</div>
+						</if>
 						<div class="table_wrap">
 							<div class="row mb_10">
 								<div class="col-sm-6">
@@ -155,14 +169,22 @@
 											<td><{$single.creator}></td>
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>" data-status="<{$single.status_code}>">
-													<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_modal">修改</button>
-													<button class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+													<if condition="in_array('SEVERAL-ROOM.MODIFY', $permission_list)">
+														<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_modal">修改</button>
+													</if>
+													<if condition="in_array('SEVERAL-ROOM.DELETE', $permission_list)">
+														<button class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+													</if>
 													<switch name="single.status_code">
 														<case value="0">
-															<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+															<if condition="in_array('SEVERAL-ROOM.ENABLE', $permission_list)">
+																<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+															</if>
 														</case>
 														<case value="1">
-															<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+															<if condition="in_array('SEVERAL-ROOM.DISABLE', $permission_list)">
+																<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+															</if>
 														</case>
 													</switch>
 												</div>
@@ -175,12 +197,11 @@
 										</tr>
 									</volist>
 								</tbody>
-
 							</table>
 						</div>
 						<div class="page_wrap">
 							<div class="pagination">
-								<{$page_show}>
+								<{$pagination}>
 							</div>
 						</div>
 					</section>
@@ -415,7 +436,7 @@
 						</div>
 						<div class="page_wrap">
 							<ul class="pagination">
-								<{$page_show}>
+								<{$pagination}>
 							</ul>
 						</div>
 					</div>
@@ -475,7 +496,7 @@
 						</div>
 						<div class="page_wrap">
 							<ul class="pagination">
-								<{$page_show}>
+								<{$pagination}>
 							</ul>
 						</div>
 					</div>

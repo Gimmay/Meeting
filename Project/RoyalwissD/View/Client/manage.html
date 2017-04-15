@@ -61,20 +61,32 @@
 						<div class="c_header">
 							<div class="btn_group_wrap">
 								<div class="btn-group">
+
 									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										<i class="glyphicon glyphicon-plus"></i> 新建客户 <span class="caret"></span>
 									</button>
+
 									<ul class="dropdown-menu">
-										<li><a href="<{:U('Client/create',['mid'=>I('get.mid')])}>">新建客户</a></li>
-										<li class="batch_create_btn"><a href="javascript:void(0)">批量新建客户</a></li>
-										<li><a href="<{:U('Client/import',['mid'=>I('get.mid')])}>">批量导入客户</a></li>
+										<if condition="in_array('SEVERAL-CLIENT.CREATE', $permission_list)">
+											<li><a href="<{:U('Client/create',['mid'=>I('get.mid')])}>">新建客户</a></li>
+										</if>
+										<if condition="in_array('SEVERAL-CLIENT.MULTI_CREATE', $permission_list)">
+											<li class="batch_create_btn"><a href="javascript:void(0)">批量新建客户</a></li>
+										</if>
+										<if condition="in_array('SEVERAL-CLIENT.IMPORT', $permission_list)">
+											<li><a href="<{:U('Client/import',['mid'=>I('get.mid')])}>">批量导入客户</a></li>
+										</if>
 										<li role="separator" class="divider"></li>
-										<li>
-											<a href="<{:U('exportTemplate', ['mid'=>I('get.mid', 0, 'int')])}>">下载导入模板</a>
-										</li>
-										<li>
-											<a href="<{:U('exportData', array_merge(I('get.'), ['mid'=>I('get.mid', 0, 'int')]))}>">导出客户信息</a>
-										</li>
+										<if condition="in_array('SEVERAL-CLIENT.DOWNLOAD_IMPORT_TEMPLATE', $permission_list)">
+											<li>
+												<a href="<{:U('exportTemplate', ['mid'=>I('get.mid', 0, 'int')])}>">下载导入模板</a>
+											</li>
+										</if>
+										<if condition="in_array('SEVERAL-CLIENT.EXPORT', $permission_list)">
+											<li>
+												<a href="<{:U('exportData', array_merge(I('get.'), ['mid'=>I('get.mid', 0, 'int')]))}>">导出客户信息</a>
+											</li>
+										</if>
 									</ul>
 								</div>
 								<div class="btn-group">
@@ -82,12 +94,23 @@
 										<i class="glyphicon glyphicon-check"></i> 审核/签到 <span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
-										<li class="batch_review_btn_confirm"><a href="javascript:void(0)">批量审核</a></li>
-										<li class="batch_anti_review_btn_confirm">
-											<a href="javascript:void(0)">批量取消审核</a></li>
+										<if condition="in_array('SEVERAL-CLIENT.REVIEW', $permission_list)">
+											<li class="batch_review_btn_confirm"><a href="javascript:void(0)">批量审核</a>
+											</li>
+										</if>
+										<if condition="in_array('SEVERAL-CLIENT.CANCEL_REVIEW', $permission_list)">
+											<li class="batch_anti_review_btn_confirm">
+
+												<a href="javascript:void(0)">批量取消审核</a></li>
+										</if>
 										<li role="separator" class="divider"></li>
-										<li class="batch_sign_point"><a href="javascript:void(0)">批量签到</a></li>
-										<li class="batch_anti_sign_point"><a href="javascript:void(0)">批量取消签到</a></li>
+										<if condition="in_array('SEVERAL-CLIENT.SIGN', $permission_list)">
+											<li class="batch_sign_point"><a href="javascript:void(0)">批量签到</a></li>
+										</if>
+										<if condition="in_array('SEVERAL-CLIENT.CANCEL_SIGN', $permission_list)">
+											<li class="batch_anti_sign_point"><a href="javascript:void(0)">批量取消签到</a>
+											</li>
+										</if>
 									</ul>
 								</div>
 								<div class="btn-group">
@@ -95,17 +118,23 @@
 										<i class="glyphicon glyphicon-cog"></i> 客户配置 <span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
-										<li class="">
-											<a href="<{:U('Client/columnSetting', ['mid'=>I('get.mid', 0, 'int')])}>">客户字段控制</a>
-										</li>
+										<if condition="in_array('SEVERAL-CLIENT.MANAGE_COLUMN', $permission_list)">
+											<li class="">
+												<a href="<{:U('Client/columnSetting', ['mid'=>I('get.mid', 0, 'int')])}>">客户字段控制</a>
+											</li>
+										</if>
 										<li role="separator" class="divider"></li>
-										<li data-toggle="modal" data-target="#configure_modal">
-											<a href="javascript:void(0)">客户重复记录设置</a>
-										</li>
+										<if condition="in_array('SEVERAL-CLIENT.REPEAT_CONFIGURE', $permission_list)">
+											<li data-toggle="modal" data-target="#configure_modal">
+												<a href="javascript:void(0)">客户重复记录设置</a>
+											</li>
+										</if>
 										<li role="separator" class="divider"></li>
-										<li data-toggle="modal" data-target="#synchronous_wx_modal">
-											<a href="javascript:void(0)">同步微信数据</a>
-										</li>
+										<if condition="in_array('SEVERAL-CLIENT.SYNCHRONIZE_WECHAT_DATA', $permission_list)">
+											<li data-toggle="modal" data-target="#synchronous_wx_modal">
+												<a href="javascript:void(0)">同步微信数据</a>
+											</li>
+										</if>
 									</ul>
 								</div>
 								<div class="btn-group">
@@ -113,10 +142,16 @@
 										<i class="glyphicon glyphicon-lock"></i> 基础操作 <span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
-										<li class="batch_enable_btn"><a href="javascript:void(0)">批量启用</a></li>
-										<li class="batch_disable_btn"><a href="javascript:void(0)">批量禁用</a></li>
+										<if condition="in_array('SEVERAL-CLIENT.ENABLE', $permission_list)">
+											<li class="batch_enable_btn"><a href="javascript:void(0)">批量启用</a></li>
+										</if>
+										<if condition="in_array('SEVERAL-CLIENT.DISABLE', $permission_list)">
+											<li class="batch_disable_btn"><a href="javascript:void(0)">批量禁用</a></li>
+										</if>
 										<li role="separator" class="divider"></li>
-										<li class="batch_delete_btn"><a href="javascript:void(0)">批量删除</a></li>
+										<if condition="in_array('SEVERAL-CLIENT.DELETE', $permission_list)">
+											<li class="batch_delete_btn"><a href="javascript:void(0)">批量删除</a></li>
+										</if>
 									</ul>
 								</div>
 								<div class="btn-group">
@@ -124,68 +159,91 @@
 										<i class="glyphicon glyphicon-paperclip"></i> 其他操作 <span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
-										<li class="batch_send_message_btn_confirm"><a href="javascript:void(0)">批量发送邀请</a>
+										<if condition="in_array('SEVERAL-CLIENT.SEND_INVITATION', $permission_list)">
+											<li class="batch_send_message_btn_confirm">
+												<a href="javascript:void(0)">批量发送邀请</a>
+											</li>
+										</if>
 										<li role="separator" class="divider"></li>
-										<li class="batch_group_btn"><a href="javascript:void(0)">批量分组</a></li>
-										<li class="batch_room_btn"><a href="javascript:void(0)">批量分房</a></li>
-										<li class="batch_badge"><a href="javascript:void(0)">批量打印胸卡</a></li>
+										<if condition="in_array('SEVERAL-CLIENT.MULTI_ASSIGN_GROUP', $permission_list)">
+											<li class="batch_group_btn"><a href="javascript:void(0)">批量分组</a></li>
+										</if>
+										<if condition="in_array('SEVERAL-CLIENT.MULTI_CHECK_IN_ROOM', $permission_list)">
+											<li class="batch_room_btn"><a href="javascript:void(0)">批量分房</a></li>
+										</if>
+										<if condition="in_array('SEVERAL-CLIENT.MULTI_PRINT_BADGE', $permission_list)">
+											<li class="batch_badge"><a href="javascript:void(0)">批量打印胸卡</a></li>
+										</if>
 										<li role="separator" class="divider"></li>
-										<li class="batch_receive_gift"><a href="javascript:void(0)">批量领取礼品</a></li>
-										<li class="batch_refund_gift"><a href="javascript:void(0)">批量退还礼品</a></li>
+										<if condition="in_array('SEVERAL-CLIENT.GIFT', $permission_list)">
+											<li class="batch_receive_gift"><a href="javascript:void(0)">批量领取礼品</a></li>
+										</if>
+										<if condition="in_array('SEVERAL-CLIENT.REFUND_GIFT', $permission_list)">
+											<li class="batch_refund_gift"><a href="javascript:void(0)">批量退还礼品</a></li>
+										</if>
 									</ul>
 								</div>
 							</div>
 						</div>
-						<div class="repertory clearfix">
-							<div class="input-group repertory_text" style="width: 30%">
-								<input name="p" type="hidden" value="1">
-								<div class="input-group-addon" data-toggle="modal" data-target="#search_config_modal">
-									<b class="glyphicon glyphicon-cog"></b></div>
-								<input type="search" name="keyword" id="keyword" class="form-control" title="<{$search_column_name}>" placeholder="<{$search_column_name}>" value="<{:I('get.keyword', '')}>">
-								<span class="input-group-btn">
-									<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
-								</span>
+						<if condition="in_array('SEVERAL-CLIENT.SEARCH', $permission_list)">
+							<div class="repertory clearfix">
+								<div class="input-group repertory_text" style="width: 30%">
+									<input name="p" type="hidden" value="1">
+									<if condition="in_array('SEVERAL-CLIENT.MANAGE_SEARCH_COLUMN', $permission_list)">
+										<div class="input-group-addon" data-toggle="modal" data-target="#search_config_modal">
+											<b class="glyphicon glyphicon-cog"></b>
+										</div>
+									</if>
+									<input type="search" name="keyword" id="keyword" class="form-control" title="<{$search_column_name}>" placeholder="<{$search_column_name}>" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
+									</span>
+								</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
 							</div>
-							<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
-						</div>
-						<div class="m_screen clearfix">
-							<div class="screen_title">筛选条件：</div>
-							<form action="" method="get" class="sign_check">
-								<div class="input-group pull-left check_signed color-1b7e5a">
-									<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;签到 (<{$statistics.signed}>)
-								</div>
-								<div class="input-group pull-left check_not_signed color-1b7e5a">
-									<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;未签到 (<{$statistics.notSigned}>)
-								</div>
-								<div class="input-group pull-left check_reviewed color-2489c5">
-									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;审核 (<{$statistics.reviewed}>)
-								</div>
-								<div class="input-group pull-left check_not_reviewed color-2489c5">
-									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.notReviewed}>)
-								</div>
-								<!--<div class="input-group pull-left employee color_red">-->
-								<!--<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;员工 (<{$statistics.employee}>)-->
-								<!--</div>-->
-								<!--<div class="input-group pull-left client color_red">-->
-								<!--<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;客户 (<{$statistics.client}>)-->
-								<!--</div>-->
-								<div class="input-group pull-left usable color_yellow">
-									<input type="radio" name="status" class="icheckYellow">&nbsp;&nbsp;可用 (<{$statistics.enabled}>)
-								</div>
-								<div class="input-group pull-left disable color_yellow">
-									<input type="radio" name="status" class="icheckYellow">&nbsp;&nbsp;禁用 (<{$statistics.disabled}>)
-								</div>
-							</form>
-						</div>
+						</if>
+						<if condition="in_array('SEVERAL-CLIENT.FILTER', $permission_list)">
+							<div class="m_screen clearfix">
+								<div class="screen_title">筛选条件：</div>
+								<form action="" method="get" class="sign_check">
+									<div class="input-group pull-left check_signed color-1b7e5a">
+										<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;签到 (<{$statistics.signed}>)
+									</div>
+									<div class="input-group pull-left check_not_signed color-1b7e5a">
+										<input type="radio" name="sign" class="icheck">&nbsp;&nbsp;未签到 (<{$statistics.notSigned}>)
+									</div>
+									<div class="input-group pull-left check_reviewed color-2489c5">
+										<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;审核 (<{$statistics.reviewed}>)
+									</div>
+									<div class="input-group pull-left check_not_reviewed color-2489c5">
+										<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.notReviewed}>)
+									</div>
+									<!--<div class="input-group pull-left employee color_red">-->
+									<!--<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;员工 (<{$statistics.employee}>)-->
+									<!--</div>-->
+									<!--<div class="input-group pull-left client color_red">-->
+									<!--<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;客户 (<{$statistics.client}>)-->
+									<!--</div>-->
+									<div class="input-group pull-left usable color_yellow">
+										<input type="radio" name="status" class="icheckYellow">&nbsp;&nbsp;可用 (<{$statistics.enabled}>)
+									</div>
+									<div class="input-group pull-left disable color_yellow">
+										<input type="radio" name="status" class="icheckYellow">&nbsp;&nbsp;禁用 (<{$statistics.disabled}>)
+									</div>
+								</form>
+							</div>
+						</if>
 						<div class="table_wrap">
 							<div class="row mb_10">
 								<div class="col-sm-6">
 									<span class="current_number">当前列表人数 <b class="color-red"><{$statistics.list}></b> 位</span>，
 									<span class="total_client">总人数 <b class="color-red"><{$statistics.total}></b> 位</span>
 								</div>
-								<div class="col-sm-6 text-right">
-									<span class="custom_list" data-toggle="modal" data-target="#list_menu"><i class="glyphicon glyphicon-list"></i>&nbsp;列表字段控制</span>
-								</div>
+								<if condition="in_array('SEVERAL-CLIENT.MANAGE_LIST_COLUMN', $permission_list)">
+									<div class="col-sm-6 text-right">
+										<span class="custom_list" data-toggle="modal" data-target="#list_menu"><i class="glyphicon glyphicon-list"></i>&nbsp;列表字段控制</span>
+									</div>
+								</if>
 							</div>
 							<table class="table table-bordered table-hover text-center" id="tableExcel">
 								<thead>
@@ -252,25 +310,25 @@
 											</volist>
 											<td>
 												<div class="btn-group" data-id="<{$single.cid}>" data-status="<{$single.status_code}>">
-													<if condition="$single['review_status_code'] neq 1 and $single['status_code'] eq 1">
+													<if condition="$single['review_status_code'] neq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.REVIEW', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
 													</if>
-													<if condition="$single['review_status_code'] eq 1 and $single['status_code'] eq 1">
+													<if condition="$single['review_status_code'] eq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.CANCEL_REVIEW', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button>
 													</if>
-													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] eq 1 and $single['status_code'] eq 1">
+													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] eq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.CANCEL_SIGN', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button>
 													</if>
-													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] neq 1 and $single['status_code'] eq 1">
+													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] neq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.SIGN', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
 													</if>
-													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] eq 1 and $single['gift_status_code'] eq 1 and $single['status_code'] eq 1">
+													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] eq 1 and $single['gift_status_code'] eq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.REFUND_GIFT', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs anti_btn_gift">退还礼品</button>
 													</if>
-													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] eq 1 and $single['gift_status_code'] neq 1 and $single['status_code'] eq 1">
+													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] eq 1 and $single['gift_status_code'] neq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.GIFT', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs btn_gift">领取礼品</button>
 													</if>
-													<if condition="$single['review_status_code'] eq 1 and $single['status_code'] eq 1">
+													<if condition="$single['review_status_code'] eq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.SEND_INVITATION', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs send_message_btn">发送邀约信息</button>
 													</if>
 													<!--<if condition="$permission_list['CLIENT.EARN-PAYMENT'] and $single['status_code'] eq 1">
@@ -280,18 +338,25 @@
 													<!--<button type="button" class="btn btn-default btn-xs alter_sign_point_btn" data-toggle="modal" data-target="#alter_sign_point">分配签到点</button>-->
 													<!--</if>-->
 													<!--<a href="<{:U('Badge/preview', ['mid'=>I('get.mid', 0, 'int'), 'cid'=>$single['cid']])}>" class="btn btn-default btn-xs print_badge">打印胸卡</a>-->
-
-													<a href="<{:U('Client/modify',['id'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
-													<if condition="$single['status_code'] eq 1">
+													<if condition="in_array('SEVERAL-CLIENT.MODIFY', $permission_list)">
+														<a href="<{:U('Client/modify',['id'=>$single['cid'], 'mid'=>I('get.mid',0,'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
+													</if>
+													<if condition="$single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.COPY', $permission_list)">
 														<button class="btn btn-default btn-xs btn_copy" type="button">复制</button>
 													</if>
-													<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+													<if condition="in_array('SEVERAL-CLIENT.DELETE', $permission_list)">
+														<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+													</if>
 													<switch name="single.status_code">
 														<case value="1">
-															<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+															<if condition="in_array('SEVERAL-CLIENT.DISABLE', $permission_list)">
+																<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+															</if>
 														</case>
 														<case value="0">
-															<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+															<if condition="in_array('SEVERAL-CLIENT.ENABLE', $permission_list)">
+																<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+															</if>
 														</case>
 													</switch>
 												</div>

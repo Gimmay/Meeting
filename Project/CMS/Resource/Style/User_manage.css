@@ -52,15 +52,4 @@
 	overflow: auto;
 }
 
-/*修改密码样式*/
-.form-group .form-control{
-	width : 320px;
-}
-.form-group .paragraph{
-	width: 126px;
-	display: inline-block;
-	margin-top: 4px;
-	color: #C0C0C0;
-	font-size: 12px;
-}
 

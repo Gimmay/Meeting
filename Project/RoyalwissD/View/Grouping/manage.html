@@ -49,8 +49,10 @@
 										<i class="glyphicon glyphicon-plus"></i> 新建组 <span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
-										<li data-toggle="modal" data-target="#add_group_modal">
-											<a href="javascript:void(0)">新建组</a></li>
+										<if condition="in_array('SEVERAL-GROUPING.CREATE', $permission_list)">
+											<li data-toggle="modal" data-target="#add_group_modal">
+												<a href="javascript:void(0)">新建组</a></li>
+										</if>
 									</ul>
 								</div>
 								<div class="btn-group">
@@ -58,27 +60,34 @@
 										<i class="glyphicon glyphicon-lock"></i> 基础操作 <span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
-										<li class="batch_enable_btn"><a href="javascript:void(0)">批量启用</a></li>
-										<li class="batch_disable_btn"><a href="javascript:void(0)">批量禁用</a></li>
+										<if condition="in_array('SEVERAL-GROUPING.ENABLE', $permission_list)">
+											<li class="batch_enable_btn"><a href="javascript:void(0)">批量启用</a></li>
+										</if>
+										<if condition="in_array('SEVERAL-GROUPING.DISABLE', $permission_list)">
+											<li class="batch_disable_btn"><a href="javascript:void(0)">批量禁用</a></li>
+										</if>
 										<li role="separator" class="divider"></li>
-										<li class="batch_delete_btn"><a href="javascript:void(0)">批量删除</a></li>
+										<if condition="in_array('SEVERAL-GROUPING.DELETE', $permission_list)">
+											<li class="batch_delete_btn"><a href="javascript:void(0)">批量删除</a></li>
+										</if>
 									</ul>
 								</div>
 							</div>
 						</div>
-						<div class="repertory clearfix">
-							<div class="input-group repertory_text" style="width: 30%">
-								<input name="p" type="hidden" value="1">
-								<div class="input-group-addon" data-toggle="modal" data-target="#search_config_modal">
-									<b class="glyphicon glyphicon-cog"></b></div>
-								<input type="search" name="keyword" id="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/类型/拼音简码" value="<{:I('get.keyword', '')}>">
-								<span class="input-group-btn">
-									<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
-								</span>
+						<if condition="in_array('SEVERAL-GROUPING.SEARCH', $permission_list)">
+							<div class="repertory clearfix">
+								<div class="input-group repertory_text" style="width: 30%">
+									<input name="p" type="hidden" value="1">
+									<div class="input-group-addon" data-toggle="modal" data-target="#search_config_modal">
+										<b class="glyphicon glyphicon-cog"></b></div>
+									<input type="search" name="keyword" id="keyword" class="form-control" placeholder="客户名称/手机号/单位名称/类型/拼音简码" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
+									</span>
+								</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
 							</div>
-							<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
-
-						</div>
+						</if>
 						<div class="table_wrap">
 							<div class="row mb_10">
 								<div class="col-sm-6">
@@ -119,15 +128,25 @@
 											<td><{$single.comment}></td>
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>" data-status="<{$single.status_code}>">
-													<button type="button" class="btn btn-default btn-xs manage_btn" data-toggle="modal" data-target="#member_modal">组员管理</button>
-													<button type="button" class="btn btn-default btn-xs modify_btn">修改</button>
-													<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+													<if condition="$single['status_code'] eq 1 AND in_array('SEVERAL-GROUPING.MANAGE_MEMBER', $permission_list)">
+														<button type="button" class="btn btn-default btn-xs manage_btn" data-toggle="modal" data-target="#member_modal">组员管理</button>
+													</if>
+													<if condition="in_array('SEVERAL-GROUPING.MODIFY', $permission_list)">
+														<button type="button" class="btn btn-default btn-xs modify_btn">修改</button>
+													</if>
+													<if condition="in_array('SEVERAL-GROUPING.DELETE', $permission_list)">
+														<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+													</if>
 													<switch name="single.status_code">
 														<case value="1">
-															<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+															<if condition="in_array('SEVERAL-GROUPING.DISABLE', $permission_list)">
+																<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+															</if>
 														</case>
 														<case value="0">
-															<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+															<if condition="in_array('SEVERAL-GROUPING.ENABLE', $permission_list)">
+																<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+															</if>
 														</case>
 													</switch>
 												</div>
@@ -179,7 +198,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<!--	<button type="button" class="btn btn-primary btn-save">确认</button>-->
+						<!--	<button type="button" class="btn btn-primary btn-save">确认</button>-->
 					</div>
 				</form>
 			</div>

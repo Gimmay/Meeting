@@ -8,6 +8,7 @@
 	namespace RoyalwissD\Controller;
 
 	use CMS\Logic\PageLogic;
+	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
 	use RoyalwissD\Logic\GroupingLogic;
 	use Think\Page;
@@ -35,6 +36,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-GROUPING.VIEW')) $this->error('您没有查看分组的权限');
 			/** @var \RoyalwissD\Model\GroupingModel $group_model */
 			$group_model = D('RoyalwissD/Grouping');
 			// 获取列表数据

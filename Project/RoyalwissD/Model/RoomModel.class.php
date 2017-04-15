@@ -430,7 +430,7 @@ AND c.COLUMN_NAME IN ('name', 'comment')
 			$sql                 = "
 SELECT
 	id value,
-	name html,
+	concat(name,' [', assigned, '/', capacity,']') html,
 	concat(name,',',name_pinyin,',',type,',','type_pinyin') keyword
 FROM (
 	SELECT

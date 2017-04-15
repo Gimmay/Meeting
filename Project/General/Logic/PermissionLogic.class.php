@@ -314,6 +314,12 @@
 				'name'   => '发送记录-获取短信发送状态',
 				'code'   => 'SEVERAL-MESSAGE.SEND_HISTORY-GET_SMS_SEND_STATUS'
 			],
+			// 胸卡
+			[
+				'module' => '胸卡',
+				'name'   => '查看',
+				'code'   => 'SEVERAL-BADGE.VIEW'
+			],
 			// 项目类型
 			[
 				'module' => '项目类型',
@@ -561,6 +567,11 @@
 			],
 			[
 				'module' => '客户',
+				'name'   => '搜索字段控制',
+				'code'   => 'SEVERAL-CLIENT.MANAGE_SEARCH_COLUMN'
+			],
+			[
+				'module' => '客户',
 				'name'   => '重复记录配置',
 				'code'   => 'SEVERAL-CLIENT.REPEAT_CONFIGURE'
 			],
@@ -577,7 +588,7 @@
 			[
 				'module' => '客户',
 				'name'   => '批量分房',
-				'code'   => 'SEVERAL-CLIENT.MULTI_ASSIGN_ROOM'
+				'code'   => 'SEVERAL-CLIENT.MULTI_CHECK_IN_ROOM'
 			],
 			[
 				'module' => '客户',
@@ -726,6 +737,11 @@
 				'name'   => '打印',
 				'code'   => 'SEVERAL-RECEIVABLES.PRINT'
 			],
+			[
+				'module' => '收款',
+				'name'   => '创建客户',
+				'code'   => 'SEVERAL-RECEIVABLES.CREATE_CLIENT'
+			],
 			// 酒店
 			[
 				'module' => '酒店',
@@ -836,10 +852,20 @@
 			],
 			[
 				'module' => '房间',
+				'name'   => '下载导入模板',
+				'code'   => 'SEVERAL-ROOM.DOWNLOAD_IMPORT_TEMPLATE'
+			],
+			[
+				'module' => '房间',
 				'name'   => '管理&详情',
 				'code'   => 'SEVERAL-ROOM.MANAGE_DETAIL'
 			],
 			// 报表-客户
+			[
+				'module' => '报表-客户',
+				'name'   => '查看',
+				'code'   => 'SEVERAL-REPORT_CLIENT.VIEW'
+			],
 			[
 				'module' => '报表-客户',
 				'name'   => '筛选',
@@ -853,6 +879,11 @@
 			// 报表-会所
 			[
 				'module' => '报表-会所',
+				'name'   => '查看',
+				'code'   => 'SEVERAL-REPORT_UNIT.VIEW'
+			],
+			[
+				'module' => '报表-会所',
 				'name'   => '筛选',
 				'code'   => 'SEVERAL-REPORT_UNIT.FILTER'
 			],
@@ -860,6 +891,12 @@
 				'module' => '报表-会所',
 				'name'   => '列表字段控制',
 				'code'   => 'SEVERAL-REPORT_UNIT.MANAGE_LIST_COLUMN'
-			]
+			],
+			// 报表-收款
+			[
+				'module' => '报表-收款',
+				'name'   => '查看',
+				'code'   => 'SEVERAL-REPORT_RECEIVABLES.VIEW'
+			],
 		];
 	}

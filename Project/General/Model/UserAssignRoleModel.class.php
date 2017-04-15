@@ -8,6 +8,7 @@
 	namespace General\Model;
 
 	use Exception;
+	use General\Logic\Time;
 
 	class UserAssignRoleModel extends GeneralModel{
 		public function _initialize(){
@@ -50,7 +51,10 @@
 		 * @return array 执行结果
 		 */
 		public function clean($condition){
-			$result = $this->where($condition)->delete();
+			$result = $this->where($condition)->save([
+				'status'      => 0,
+				'cancel_time' => Time::getCurrentTime()
+			]);
 
 			return $result ? ['status' => true, 'message' => '取消分配角色成功'] : ['status' => false, 'message' => '取消分配角色失败'];
 		}

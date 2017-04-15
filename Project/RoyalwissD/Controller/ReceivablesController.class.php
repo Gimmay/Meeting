@@ -9,6 +9,7 @@
 
 	use CMS\Logic\PageLogic;
 	use CMS\Logic\Session;
+	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
 	use Quasar\Utility\StringPlus;
 	use RoyalwissD\Logic\ReceivablesLogic;
@@ -44,6 +45,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.CREATE')) $this->error('您没有创建收款的权限');
 			// 获取客户创建的控制字段
 			/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 			$client_column_control_model = D('RoyalwissD/ClientColumnControl');
@@ -116,6 +118,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.VIEW')) $this->error('您没有查看收款的权限');
 			/** @var \RoyalwissD\Model\ReceivablesOrderModel $receivables_order_model */
 			$receivables_order_model = D('RoyalwissD/ReceivablesOrder');
 			// 获取列表数据
@@ -194,6 +197,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-POS_MACHINE.VIEW')) $this->error('您没有查看POS机的权限');
 			/** @var \RoyalwissD\Model\ReceivablesPosMachineModel $pos_machine_model */
 			$pos_machine_model    = D('RoyalwissD/ReceivablesPosMachine');
 			$model_control_column = $this->getModelControl();
@@ -228,6 +232,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-PAY_METHOD.VIEW')) $this->error('您没有查看支付方式的权限');
 			/** @var \RoyalwissD\Model\ReceivablesPayMethodModel $pay_method_model */
 			$pay_method_model     = D('RoyalwissD/ReceivablesPayMethod');
 			$model_control_column = $this->getModelControl();

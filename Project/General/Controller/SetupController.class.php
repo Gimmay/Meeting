@@ -68,6 +68,8 @@
 					'parent_id'       => 0,
 					'creatime'        => Time::getCurrentTime(),
 					'creator'         => 1,
+					'email'           => 'admin@admin.com',
+					'mobile'          => '0',
 					'name_pinyin'     => $str_obj->getPinyin(self::ADMIN_NAME, true, ''),
 					'nickname_pinyin' => $str_obj->getPinyin(self::ADMIN_NICKNAME, true, '')
 				]);

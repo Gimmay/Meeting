@@ -11,6 +11,7 @@
 	use CMS\Logic\QRCodeLogic;
 	use CMS\Logic\Session;
 	use CMS\Logic\UploadLogic;
+	use CMS\Logic\UserLogic;
 	use General\Logic\ClientLogic;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
@@ -30,6 +31,11 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'create':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.CREATE')) return [
+						'status'   => false,
+						'message'  => '您没有创建收款的权限',
+						'__ajax__' => true
+					];
 					$post       = I('post.');
 					$meeting_id = I('get.mid', 0, 'int');
 					// 扣减项目库存
@@ -112,6 +118,11 @@
 					];
 				break;
 				case 'create_client':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.CREATE_CLIENT')) return [
+						'status'   => false,
+						'message'  => '您没有创建客户的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ClientModel $client_model */
 					$client_model = D('RoyalwissD/Client');
 					/** @var \RoyalwissD\Model\AttendeeModel $attendee_model */
@@ -232,7 +243,7 @@
 						if($result2['status']) $result2['message'] = '创建成功';
 					}
 					if(!$result2['status']) return array_merge($result2, ['__ajax__' => true]);
-					
+
 					return array_merge($result, [
 						'__ajax__' => true,
 						'nextPage' => U('', ['mid' => $meeting_id, 'cid' => $client_id])
@@ -248,6 +259,11 @@
 					return array_merge($record, ['__ajax__' => true]);
 				break;
 				case 'review':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.REVIEW')) return [
+						'status'   => false,
+						'message'  => '您没有审核收款的权限',
+						'__ajax__' => true
+					];
 					$receivables_order_id_str = I('post.id', '');
 					$receivables_order_id     = explode(',', $receivables_order_id_str);
 					/** @var \RoyalwissD\Model\ReceivablesOrderModel $receivables_order_model */
@@ -264,6 +280,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'cancel_review':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.CANCEL_REVIEW')) return [
+						'status'   => false,
+						'message'  => '您没有取消审核收款的权限',
+						'__ajax__' => true
+					];
 					$receivables_order_id_str = I('post.id', '');
 					$receivables_order_id     = explode(',', $receivables_order_id_str);
 					/** @var \RoyalwissD\Model\ReceivablesOrderModel $receivables_order_model */
@@ -280,6 +301,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.ENABLE')) return [
+						'status'   => false,
+						'message'  => '您没有启用收款的权限',
+						'__ajax__' => true
+					];
 					$receivables_order_id_str = I('post.id', '');
 					$receivables_order_id     = explode(',', $receivables_order_id_str);
 					/** @var \RoyalwissD\Model\ReceivablesOrderModel $receivables_order_model */
@@ -294,6 +320,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'disable':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.DISABLE')) return [
+						'status'   => false,
+						'message'  => '您没有禁用收款的权限',
+						'__ajax__' => true
+					];
 					$receivables_order_id_str = I('post.id', '');
 					$receivables_order_id     = explode(',', $receivables_order_id_str);
 					/** @var \RoyalwissD\Model\ReceivablesOrderModel $receivables_order_model */
@@ -308,6 +339,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'delete':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.DELETE')) return [
+						'status'   => false,
+						'message'  => '您没有删除收款的权限',
+						'__ajax__' => true
+					];
 					$receivables_order_id_str = I('post.id', '');
 					$meeting_id               = I('get.mid', 0, 'int');
 					$receivables_order_id     = explode(',', $receivables_order_id_str);
@@ -365,6 +401,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'modify_order':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.MODIFY')) return [
+						'status'   => false,
+						'message'  => '您没有修改收款的权限',
+						'__ajax__' => true
+					];
 					$post                 = I('post.');
 					$receivables_order_id = I('post.id', 0, 'int');
 					/** @var \RoyalwissD\Model\ReceivablesOrderModel $receivables_order_model */
@@ -395,6 +436,11 @@
 					return array_merge($receivables_detail[0], ['__ajax__' => true]);
 				break;
 				case 'modify_detail':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.MODIFY')) return [
+						'status'   => false,
+						'message'  => '您没有修改收款的权限',
+						'__ajax__' => true
+					];
 					$post                  = I('post.');
 					$receivables_detail_id = I('post.id', 0, 'int');
 					/** @var \RoyalwissD\Model\ReceivablesProjectModel $receivables_project_model */
@@ -504,6 +550,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'upload_receivables_order_logo':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.CONFIGURE')) return [
+						'status'   => false,
+						'message'  => '您没有配置收款的权限',
+						'__ajax__' => true
+					];
 					$meeting_id   = I('get.mid', 0, 'int');
 					$upload_logic = new UploadLogic($meeting_id);
 					$result       = $upload_logic->upload($_FILES, '/Logo/');
@@ -539,6 +590,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break; // todo
 				case 'copy':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.COPY')) return [
+						'status'   => false,
+						'message'  => '您没有复制收款的权限',
+						'__ajax__' => true
+					];
 					$order_id   = I('post.id', 0, 'int');
 					$meeting_id = I('get.mid', 0, 'int');
 					/** @var \RoyalwissD\Model\ReceivablesOrderModel $receivables_order_model */

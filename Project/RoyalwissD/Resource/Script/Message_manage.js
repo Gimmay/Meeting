@@ -5,14 +5,6 @@ $(function(){
 	var quasar_script = document.getElementById('quasar_script');
 	// 实例化Url类
 	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
-	// 全选checkbox
-	$('.all_check').find('.iCheck-helper').on('click', function(){
-		if($(this).parent('.icheckbox_square-green').hasClass('checked')){
-			$('.check_item').find('.icheckbox_square-green').addClass('checked');
-		}else{
-			$('.check_item').find('.icheckbox_square-green').removeClass('checked');
-		}
-	});
 	// 选择
 	$('.choose_btn').on('click', function(){
 		var $this_modal = $('#choose_modal');

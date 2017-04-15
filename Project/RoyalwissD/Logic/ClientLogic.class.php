@@ -12,6 +12,7 @@
 	use CMS\Logic\QRCodeLogic;
 	use CMS\Logic\Session;
 	use CMS\Logic\UploadLogic;
+	use CMS\Logic\UserLogic;
 	use General\Logic\ClientLogic as GeneralClientLogic;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
@@ -28,6 +29,11 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'multi_create':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MULTI_CREATE')) return [
+						'status'   => false,
+						'message'  => '您没批量创建客户的权限',
+						'__ajax__' => true
+					];
 					$number = I('post.number', 0, 'int');
 					if($number == 0) return [
 						'status'   => false,
@@ -106,6 +112,11 @@
 					];
 				break;
 				case 'copy':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.COPY')) return [
+						'status'   => false,
+						'message'  => '您没复制客户的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$client_id  = I('post.cid', 0, 'int');
 					/** @var \RoyalwissD\Model\ClientModel $client_model */
@@ -176,6 +187,11 @@
 					];
 				break;
 				case 'modify':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MODIFY')) return [
+						'status'   => false,
+						'message'  => '您没修改客户的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ClientModel $client_model */
 					$client_model = D('RoyalwissD/Client');
 					/** @var \RoyalwissD\Model\AttendeeModel $attendee_model */
@@ -249,6 +265,11 @@
 					];
 				break;
 				case 'create':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.CREATE')) return [
+						'status'   => false,
+						'message'  => '您没创建客户的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ClientModel $client_model */
 					$client_model = D('RoyalwissD/Client');
 					/** @var \RoyalwissD\Model\AttendeeModel $attendee_model */
@@ -364,6 +385,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'show_table_column': // 显示字段
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MANAGE_COLUMN')) return [
+						'status'   => false,
+						'message'  => '您没有管理字段的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 					$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 					$meeting_id                  = I('get.mid', 0, 'int');
@@ -377,6 +403,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'hide_table_column': // 隐藏字段
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MANAGE_COLUMN')) return [
+						'status'   => false,
+						'message'  => '您没有管理字段的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 					$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 					$meeting_id                  = I('get.mid', 0, 'int');
@@ -390,6 +421,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'modify_table_column': // 是否必填项
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MANAGE_COLUMN')) return [
+						'status'   => false,
+						'message'  => '您没有管理字段的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 					$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 					$meeting_id                  = I('get.mid', 0, 'int');
@@ -404,6 +440,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'create_table_column': // 新增自定义字段
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MANAGE_COLUMN')) return [
+						'status'   => false,
+						'message'  => '您没有管理字段的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 					$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 					$post                        = I('post.');
@@ -439,7 +480,12 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'set_configure': // 列表字段控制
+				case 'set_configure': // 设定重复记录判定设定
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.REPEAT_CONFIGURE')) return [
+						'status'   => false,
+						'message'  => '您没有配置的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
 					$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
 					$meeting_configure_logic = new MeetingConfigureLogic();
@@ -453,6 +499,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'reset_and_order_column':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MANAGE_LIST_COLUMN')) return [
+						'status'   => false,
+						'message'  => '您没有控制列表字段的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 					$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 					$meeting_id                  = I('get.mid', 0, 'int');
@@ -499,6 +550,11 @@
 					];
 				break;
 				case 'import_excel': // 上传Excel文件
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.IMPORT')) return [
+						'status'   => false,
+						'message'  => '您没有导入的权限',
+						'__ajax__' => true
+					];
 					$meeting_id   = I('get.mid', 0, 'int');
 					$upload_logic = new UploadLogic($meeting_id);
 					$result       = $upload_logic->upload($_FILES, '/Excel/');
@@ -512,6 +568,11 @@
 					]);
 				break;
 				case 'save_excel_data': // 保存导入的Excel数据
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.IMPORT')) return [
+						'status'   => false,
+						'message'  => '您没有导入的权限',
+						'__ajax__' => true
+					];
 					set_time_limit(0);
 					$str_obj = new StringPlus();
 					/** @var \RoyalwissD\Model\ClientModel $client_model */
@@ -782,6 +843,11 @@
 					}
 				break;
 				case 'delete':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.DELETE')) return [
+						'status'   => false,
+						'message'  => '您没有删除客户的权限',
+						'__ajax__' => true
+					];
 					$meeting_id    = I('get.mid', 0, 'int');
 					$client_id_str = I('post.id', '');
 					$client_id     = explode(',', $client_id_str);
@@ -820,6 +886,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'sign':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.SIGN')) return [
+						'status'   => false,
+						'message'  => '您没有签到的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$client_id  = I('post.id', '');
 					$result     = $this->sign($client_id, $meeting_id, 1);
@@ -827,6 +898,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'review':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.REVIEW')) return [
+						'status'   => false,
+						'message'  => '您没有审核的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$client_id  = I('post.id', '');
 					$result     = $this->review($client_id, $meeting_id);
@@ -834,6 +910,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'cancel_review':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.CANCEL_REVIEW')) return [
+						'status'   => false,
+						'message'  => '您没有取消审核的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$client_id  = I('post.id', '');
 					$result     = $this->review($client_id, $meeting_id, true);
@@ -841,6 +922,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'cancel_sign':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.CANCEL_SIGN')) return [
+						'status'   => false,
+						'message'  => '您没有取消签到的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$client_id  = I('post.id', '');
 					$result     = $this->sign($client_id, $meeting_id, 0, true);
@@ -848,6 +934,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'gift':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.GIFT')) return [
+						'status'   => false,
+						'message'  => '您没有领取礼品的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$client_id  = I('post.id', '');
 					$result     = $this->gift($client_id, $meeting_id);
@@ -855,6 +946,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'refund_gift':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.REFUND_GIFT')) return [
+						'status'   => false,
+						'message'  => '您没有退还礼品的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$client_id  = I('post.id', '');
 					$result     = $this->gift($client_id, $meeting_id, true);
@@ -862,6 +958,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'modify_column':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MODIFY')) return [
+						'status'   => false,
+						'message'  => '您没有修改客户的权限',
+						'__ajax__' => true
+					];
 					$client_id    = I('post.cid', 0, 'int');
 					$meeting_id   = I('get.mid', 0, 'int');
 					$table        = I('post._table', '');
@@ -966,6 +1067,11 @@
 					return array_merge($result, ['__ajax__' => true, 'value' => $return_value]);
 				break;
 				case 'disable':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.DISABLE')) return [
+						'status'   => false,
+						'message'  => '您没有禁用客户的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\AttendeeModel $attendee_model */
 					$attendee_model = D('RoyalwissD/Attendee');
 					$meeting_id     = I('get.mid', 0, 'int');
@@ -1004,6 +1110,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.ENABLE')) return [
+						'status'   => false,
+						'message'  => '您没有启用客户的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\AttendeeModel $attendee_model */
 					$attendee_model = D('RoyalwissD/Attendee');
 					$meeting_id     = I('get.mid', 0, 'int');
@@ -1040,6 +1151,11 @@
 					return array_merge($list, ['__ajax__' => true]);
 				break;
 				case 'assign_group':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MULTI_ASSIGN_GROUP')) return [
+						'status'   => false,
+						'message'  => '您没有客户分组的权限',
+						'__ajax__' => true
+					];
 					$meeting_id    = I('get.mid', 0, 'int');
 					$group_id      = I('post.gid', 0, 'int');
 					$client_id_str = I('post.cid', '');
@@ -1086,6 +1202,11 @@
 					return array_merge($room_list, ['__ajax__' => true]);
 				break;
 				case 'check_in':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MULTI_CHECK_IN_GROUP')) return [
+						'status'   => false,
+						'message'  => '您没有客户分房的权限',
+						'__ajax__' => true
+					];
 					$meeting_id    = I('get.mid', 0, 'int');
 					$room_id       = I('post.rid', 0, 'int');
 					$client_id_str = I('post.cid', '');
@@ -1115,6 +1236,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'send_message':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.SEND_INVITATION')) return [
+						'status'   => false,
+						'message'  => '您没有发送邀请的权限',
+						'__ajax__' => true
+					];
 					$meeting_id    = I('get.mid', 0, 'int');
 					$client_id_str = I('post.id', '');
 					$client_id     = explode(',', $client_id_str);
@@ -1124,6 +1250,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'synchronize_wechat_information':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.SYNCHRONIZE_WECHAT_DATA')) return [
+						'status'   => false,
+						'message'  => '您没有同步微信数据的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
 					$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
@@ -1225,6 +1356,11 @@ SET
 					else return array_merge($wechat_enterprise_configure, ['__ajax__' => true]);
 				break;
 				case 'set_search_configure':
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MANAGE_SEARCH_COLUMN')) return [
+						'status'   => false,
+						'message'  => '您没有管理搜索字段的权限',
+						'__ajax__' => true
+					];
 					$column_str = I('post.column', '');
 					$column     = explode(',', $column_str);
 					$meeting_id = I('get.mid', 0, 'int');

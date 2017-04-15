@@ -59,7 +59,7 @@
 										<button type="submit" class="btn btn-default main_search">搜索角色</button>
 									</span>
 									</div>
-									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
 								</form>
 							</div>
 							<div class="table_wrap">
@@ -100,7 +100,7 @@
 							</div>
 							<div class="page_wrap">
 								<ul class="pagination">
-									<{$page_show}>
+									<{$pagination}>
 								</ul>
 							</div>
 						</section>

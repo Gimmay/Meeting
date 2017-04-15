@@ -112,10 +112,8 @@
 				$cv         = '/'.CONTROLLER_NAME.'/'.ACTION_NAME;
 				$condition1 = strpos($_SERVER['REQUEST_URI'], $mcv);
 				$condition2 = strpos($_SERVER['REQUEST_URI'], $cv);
-				if(0 === $condition1 || 0<$condition1) define('TP_SYS_PARAM', $mcv);
-				elseif(0 === $condition2 || 0<$condition2) define('TP_SYS_PARAM', $cv);
-				define('MCV', $mcv);
-				define('CV', $cv);
+				if($condition1!==false) define('TP_SYS_PARAM', $mcv);
+				elseif($condition2!==false) define('TP_SYS_PARAM', $cv);
 				define('PAGE_SUFFIX', C('PAGE_SUFFIX'));
 			};
 			define('COMMON_SCRIPT_PATH', '/'.APP_PATH.'Resource/Script');

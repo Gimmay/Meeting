@@ -139,4 +139,57 @@
 			$this->assign('message_type_list', $message_model::TYPE);
 			$this->display();
 		}
+
+		public function sendHistory(){
+			$message_logic = new MessageLogic();
+			if(IS_POST){
+				$type   = strtolower(I('post.requestType', ''));
+				$result = $message_logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					$url = $result['__return__'] ? $result['__return__'] : '';
+					if($result['status']) $this->success($result['message'], $url);
+					else $this->error($result['message'], $url, 3);
+				}
+				exit;
+			}
+			if(!UserLogic::isPermitted('SEVERAL-MESSAGE.SEND_HISTORY-VIEW')) $this->error('您没有查看消息发送记录的权限');
+			/** @var \RoyalwissD\Model\MessageSendHistoryModel $message_send_history_model */
+			$message_send_history_model = D('RoyalwissD/MessageSendHistory');
+			$model_control_column       = $this->getModelControl();
+			$option                     = [];
+			if(isset($_GET['type'])){
+				switch(I('get.type', '')){
+					case 'sms':
+						$option['type'] = ['=', 1];
+						$sms_balance    = $message_logic->getSMSBalance($this->meetingID);
+						$this->assign('sms_balance', $sms_balance);
+					break;
+					case 'wechatEnterprise':
+						$option['type'] = ['=', 2];
+					break;
+					case 'wechatOfficial':
+						$option['type'] = ['=', 3];
+					break;
+					case 'email':
+						$option['type'] = ['=', 4];
+					break;
+				}
+			}
+			$list = $message_send_history_model->getList(array_merge($model_control_column, $option, [
+				$message_send_history_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID,
+			]));
+			$list        = $message_logic->setData('sendHistory', ['list' => $list, 'urlParam' => I('get.')]);
+			$page_object = new Page(count($list), $this->getPageRecordCount());
+			PageLogic::setTheme1($page_object);
+			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
+			$pagination = $page_object->show();
+			$this->assign('list', $list);
+			$this->assign('pagination', $pagination);
+			$this->display();
+		}
 	}

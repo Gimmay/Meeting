@@ -8,6 +8,7 @@
 	namespace RoyalwissD\Logic;
 
 	use CMS\Logic\Session;
+	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
@@ -29,6 +30,11 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'batch_create':
+					if(!UserLogic::isPermitted('SEVERAL-GROUPING.CREATE')) return [
+						'status'   => false,
+						'message'  => '您没有创建分组的权限',
+						'__ajax__' => true
+					];
 					$post           = I('post.');
 					$meeting_id     = I('get.mid', 0, 'int');
 					$group_name_arr = explode(',', $post['group_name']);
@@ -60,6 +66,11 @@
 					];
 				break;
 				case 'create':
+					if(!UserLogic::isPermitted('SEVERAL-GROUPING.CREATE')) return [
+						'status'   => false,
+						'message'  => '您没有创建分组的权限',
+						'__ajax__' => true
+					];
 					$post       = I('post.');
 					$meeting_id = I('get.mid', 0, 'int');
 					/** @var \RoyalwissD\Model\GroupingModel $group_model */
@@ -78,6 +89,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'delete': // 删除项目
+					if(!UserLogic::isPermitted('SEVERAL-GROUPING.DELETE')) return [
+						'status'   => false,
+						'message'  => '您没有删除分组的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id_arr     = explode(',', $id_str);
@@ -88,6 +104,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable': // 启用项目
+					if(!UserLogic::isPermitted('SEVERAL-GROUPING.ENABLE')) return [
+						'status'   => false,
+						'message'  => '您没有启用分组的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id_arr     = explode(',', $id_str);
@@ -98,6 +119,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'disable': // 禁用项目
+					if(!UserLogic::isPermitted('SEVERAL-GROUPING.DISABLE')) return [
+						'status'   => false,
+						'message'  => '您没有禁用分组的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id_arr     = explode(',', $id_str);
@@ -117,6 +143,11 @@
 					return array_merge($member_list, ['__ajax__' => true]);
 				break;
 				case 'add_member':
+					if(!UserLogic::isPermitted('SEVERAL-GROUPING.ADD_MEMBER')) return [
+						'status'   => false,
+						'message'  => '您没有添加组员的权限',
+						'__ajax__' => true
+					];
 					$meeting_id    = I('get.mid', 0, 'int');
 					$group_id      = I('post.id', 0, 'int');
 					$client_id_str = I('post.cid', '');
@@ -128,6 +159,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'remove_member':
+					if(!UserLogic::isPermitted('SEVERAL-GROUPING.CLEAN_MEMBER')) return [
+						'status'   => false,
+						'message'  => '您没有删除组员的权限',
+						'__ajax__' => true
+					];
 					$group_id   = I('post.id', 0, 'int');
 					$client_id  = I('post.cid', 0, 'int');
 					$meeting_id = I('get.mid', 0, 'int');
@@ -138,6 +174,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'remove_all_member':
+					if(!UserLogic::isPermitted('SEVERAL-GROUPING.CLEAN_MEMBER')) return [
+						'status'   => false,
+						'message'  => '您没有清空组员的权限',
+						'__ajax__' => true
+					];
 					$group_id   = I('post.id', 0, 'int');
 					$meeting_id = I('get.mid', 0, 'int');
 					/** @var \RoyalwissD\Model\GroupingModel $group_model */
@@ -189,6 +230,11 @@
 					return array_merge($group_record, ['__ajax__' => true]);
 				break;
 				case 'modify':
+					if(!UserLogic::isPermitted('SEVERAL-GROUPING.MODIFY')) return [
+						'status'   => false,
+						'message'  => '您没有修改分组的权限',
+						'__ajax__' => true
+					];
 					$group_id   = I('post.id', 0, 'int');
 					$meeting_id = I('get.mid', 0, 'int');
 					$post       = I('post.');

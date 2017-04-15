@@ -83,7 +83,7 @@ ADD COLUMN `$column` $type NULL COMMENT '$comment' AFTER `$last_column`";
 		public function getLastCustomColumnIndex(){
 			$table_meeting_configure = $this->tableName;
 			$this_database           = self::DATABASE_NAME;
-			$list = $this->query("SELECT c.*
+			$list                    = $this->query("SELECT c.*
 FROM information_schema.`TABLES` t
 JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
 WHERE t.TABLE_SCHEMA = '$this_database'

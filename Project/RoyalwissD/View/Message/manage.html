@@ -36,12 +36,16 @@
 					<section class="content">
 						<div class="table_wrap mb_10">
 							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="<{:U('Message/manage', ['mid'=>I('get.mid', 0, 'int')])}>">消息管理</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Message/sendHistory', ['mid'=>I('get.mid', 0, 'int')])}>">发送记录</a>
-								</div>
+								<if condition="in_array('SEVERAL-MESSAGE.VIEW', $permission_list)">
+									<div class="nav_tab_li active">
+										<a href="<{:U('Message/manage', ['mid'=>I('get.mid', 0, 'int')])}>">消息管理</a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-MESSAGE.SEND_HISTORY-VIEW', $permission_list)">
+									<div class="nav_tab_li">
+										<a href="<{:U('Message/sendHistory', ['mid'=>I('get.mid', 0, 'int')])}>">发送记录</a>
+									</div>
+								</if>
 								<present name="sms_balance">
 									<div class="pull-right" style="font-size: 14px; line-height: 50px; padding-right: 20px;">
 										您当前的短信余额：<b style="color: #FB5050; font-weight: bolder; font-size: 16px;"><{$sms_balance}></b>条
@@ -85,6 +89,18 @@
 						</div>
 						<if condition="in_array('SEVERAL-MESSAGE.SEARCH', $permission_list)">
 							<div class="repertory clearfix">
+								<div class="input-group repertory_text" style="width: 30%">
+									<input name="p" type="hidden" value="1">
+									<input type="search" name="keyword" id="keyword" class="form-control" title="<{$search_column_name}>" placeholder="关键字" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
+									</span>
+								</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
+							</div>
+						</if>
+						<if condition="in_array('SEVERAL-MESSAGE.SEARCH', $permission_list)">
+							<div class="repertory clearfix">
 								<div class="tabs">
 									<ul class="tabsUl clearfix">
 										<li class="<notpresent name='_GET[type]'>active</notpresent>" id="filter_btn_all">
@@ -112,7 +128,7 @@
 										<button type="submit" class="btn btn-default main_search">搜索</button>
 									</span>
 									</div>
-									<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
 								</form>
 							</div>
 						</if>

@@ -65,6 +65,7 @@
 			$where                        = ' where 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
+			if(!isset($user)) $user = 0;
 			if(isset($keyword)){
 				$keyword = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
 				$where .= "
@@ -109,19 +110,19 @@ SELECT * FROM (
 	JOIN $common_database.$table_meeting_type mt ON mt.type = m.type AND mt.status = 1
 	JOIN $this_database.$table_meeting_configure mc ON mc.mid = m.id
 	LEFT JOIN $common_database.$table_user u1 ON u1.id = m.creator AND u1.status <> 2
-	WHERE (m.id IN (
-		SELECT mid FROM $common_database.$table_meeting_manager
-		WHERE meeting_manager.uid = $user
+	WHERE (m.id IN ( -- 判断是否是会务人员
+		SELECT mm.mid FROM $common_database.$table_meeting_manager mm
+		WHERE mm.uid = $user AND mm.status = 1
 	)
-	OR ifnull(
+	OR ifnull( -- 判断是否可以全会议可见
 		(
-			SELECT permission.id
-			FROM $common_database.$table_user
-			JOIN $common_database.$table_user_assign_role ON user_assign_role.uid = USER.id
-			JOIN $common_database.$table_role ON user_assign_role.rid = role.id AND role.STATUS = 1
-			JOIN $common_database.$table_role_assign_permission ON role_assign_permission.rid = role.id
-			JOIN $common_database.$table_permission ON role_assign_permission.pid = permission.id
-			WHERE USER.id = $user AND permission.CODE = 'GENERAL-MEETING.VIEW_ALL'
+			SELECT p.id
+			FROM $common_database.$table_user u2
+			JOIN $common_database.$table_user_assign_role uar ON uar.uid = u2.id AND uar.status = 1
+			JOIN $common_database.$table_role r ON uar.rid = r.id AND r.STATUS = 1
+			JOIN $common_database.$table_role_assign_permission rap ON rap.rid = r.id AND rap.status = 1
+			JOIN $common_database.$table_permission p ON rap.pid = p.id
+			WHERE u2.id = $user AND p.CODE = 'SEVERAL-MEETING.VIEW_ALL'
 			LIMIT 1
 		), NULL
 	))

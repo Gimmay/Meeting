@@ -52,6 +52,8 @@ SELECT * FROM (
 		u1.password,
 		u1.nickname,
 		u1.nickname_pinyin,
+		u1.mobile,
+		u1.email,
 		u1.status,
 		u1.comment,
 		u1.parent_id,
@@ -61,11 +63,11 @@ SELECT * FROM (
 		u2.name creator,
 		(SELECT group_concat(r1.name ORDER BY r1.name_pinyin SEPARATOR '".self::ROLE_NAME_SEPARATOR."')
 		FROM $this_database.$table_role r1
-		JOIN $this_database.$table_user_assign_role uar1 ON r1.id = uar1.rid
+		JOIN $this_database.$table_user_assign_role uar1 ON r1.id = uar1.rid AND uar1.status = 1
 		WHERE u1.id = uar1.uid AND r1.status <> 2) role_name,
 		(SELECT group_concat(r1.id ORDER BY r1.name_pinyin)
 		FROM $this_database.$table_role r1
-		JOIN $this_database.$table_user_assign_role uar1 ON r1.id = uar1.rid
+		JOIN $this_database.$table_user_assign_role uar1 ON r1.id = uar1.rid AND uar1.status = 1
 		WHERE u1.id = uar1.uid AND r1.status <> 2) role_id
 	FROM $this_database.$table_user u1
 	LEFT JOIN $this_database.$table_user u2 ON u2.id = u1.creator AND u2.status <> 2

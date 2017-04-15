@@ -36,125 +36,90 @@
 					<section class="content">
 						<div class="table_wrap mb_10">
 							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="<{:U('Message/sendHistory', ['mid'=>I('get.mid', 0, 'int')])}>">发送记录</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Message/manage', ['mid'=>I('get.mid', 0, 'int')])}>">消息管理</a>
-								</div>
+								<if condition="in_array('SEVERAL-MESSAGE.SEND_HISTORY-VIEW', $permission_list)">
+									<div class="nav_tab_li active">
+										<a href="<{:U('Message/sendHistory', ['mid'=>I('get.mid', 0, 'int')])}>">发送记录</a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-MESSAGE.VIEW', $permission_list)">
+									<div class="nav_tab_li">
+										<a href="<{:U('Message/manage', ['mid'=>I('get.mid', 0, 'int')])}>">消息管理</a>
+									</div>
+								</if>
 							</div>
 						</div>
-						<div class="c_header">
+						<div class="c_header hide">
 							<div class="function_list clearfix">
-								<div class="function_btn" data-toggle="modal" data-target="#create_meeting" data-backdrop="static">
-									<a href="<{:U('Message/create', ['mid'=>I('get.mid', 0, 'int')])}>">
-										<i class="glyphicon glyphicon-plus"></i> <span>新建消息模板</span> </a>
-								</div>
-								<div class="function_btn batch_delete_btn">
-									<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
-										<span>批量删除</span></a>
-								</div>
-								<div class="function_btn" data-toggle="modal" data-target="#configure_modal">
-									<a href="javascript:void(0)"><i class="glyphicon glyphicon-cog"></i> <span>配置</span></a>
-								</div>
-								<div class="function_btn batch_enable_btn">
-									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
-										<span>批量启用</span></a>
-								</div>
-								<div class="function_btn batch_disable_btn">
-									<a href="javascript:void(0)"><i class="glyphicon glyphicon-ban-circle"></i>
-										<span>批量禁用</span></a>
-								</div>
+								<if condition="in_array('SEVERAL-MESSAGE.SEND_HISTORY-GET_SMS_SEND_STATUS', $permission_list)">
+									<div class="function_btn" data-toggle="modal" data-target="#configure_modal" data-backdrop="static">
+										<a href="javascript:void(0)"> <i class="glyphicon glyphicon-refresh"></i>
+											<span>获取短信发送最新状态</span> </a>
+									</div>
+								</if>
 							</div>
 						</div>
-						<div class="repertory clearfix">
-							<div class="tabs">
-								<ul class="tabsUl clearfix">
-									<li class="<notpresent name='_GET[type]'>active</notpresent>" id="filter_btn_all">
-										<a href="javascript:void(0)">全部</a>
-									</li>
-									<li class="<if condition='$_GET[type] eq sms'>active</if>" id="filter_btn_sms">
-										<a href="javascript:void(0)">短信模板</a>
-									</li>
-									<li class="<if condition='$_GET[type] eq wechatEnterprise'>active</if>" id="filter_btn_wechat_enterprise">
-										<a href="javascript:void(0)">微信企业号模板</a>
-									</li>
-									<li class="<if condition='$_GET[type] eq wechatOfficial'>active</if>" id="filter_btn_wechat_official">
-										<a href="javascript:void(0)">微信公众号模板</a>
-									</li>
-									<li class="<if condition='$_GET[type] eq email'>active</if>" id="filter_btn_email">
-										<a href="javascript:void(0)">微信企业号模板</a>
-									</li>
-								</ul>
-							</div>
-							<form action="" method="get">
-								<div class="input-group repertory_text">
+						<if condition="in_array('SEVERAL-MESSAGE.SEND_HISTORY-SEARCH', $permission_list)">
+							<div class="repertory clearfix">
+								<div class="input-group repertory_text" style="width: 30%">
 									<input name="p" type="hidden" value="1">
-									<input type="search" name="keyword" class="form-control" placeholder="客户名称/拼音简码" value="<{:I('get.keyword', '')}>">
+									<input type="search" name="keyword" id="keyword" class="form-control" title="<{$search_column_name}>" placeholder="关键字" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default main_search">搜索</button>
+										<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
 									</span>
 								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
-							</form>
-						</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('sendHistory', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
+							</div>
+							<div class="repertory clearfix">
+								<div class="tabs">
+									<ul class="tabsUl clearfix">
+										<li class="<notpresent name='_GET[type]'>active</notpresent>" id="filter_btn_all">
+											<a href="javascript:void(0)">全部</a>
+										</li>
+										<li class="<if condition='$_GET[type] eq sms'>active</if>" id="filter_btn_sms">
+											<a href="javascript:void(0)">短信模板</a>
+										</li>
+										<li class="<if condition='$_GET[type] eq wechatEnterprise'>active</if>" id="filter_btn_wechat_enterprise">
+											<a href="javascript:void(0)">微信企业号模板</a>
+										</li>
+										<li class="<if condition='$_GET[type] eq wechatOfficial'>active</if>" id="filter_btn_wechat_official">
+											<a href="javascript:void(0)">微信公众号模板</a>
+										</li>
+										<li class="<if condition='$_GET[type] eq email'>active</if>" id="filter_btn_email">
+											<a href="javascript:void(0)">微信企业号模板</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</if>
 						<div class="table_wrap">
 							<table class="table table-bordered" id="tableExcel" style="text-align: center">
 								<thead>
 									<tr>
-										<th width="4%" class="all_check">
-											<input type="checkbox" class="icheck" placeholder="" value="">
-										</th>
 										<th width="5%">序号</th>
-										<th width="10%">模板名称</th>
-										<th width="5%">类型</th>
-										<th width="30%">模板内容</th>
-										<th width="10%">使用情况</th>
-										<th width="5%">状态</th>
+										<th width="10%">消息模板名称</th>
+										<th width="5%">消息类型</th>
+										<th width="5%">发送动作</th>
+										<th width="10%">接收者</th>
+										<th width="5%">发送状态</th>
+										<th width="40%">发送内容</th>
 										<th width="10%">创建时间</th>
-										<th width="5%">创建者</th>
-										<th width="15%">操作</th>
+										<th width="10%">创建者</th>
 									</tr>
 								</thead>
 								<tbody>
 									<volist name="list" id="single">
 										<tr>
-											<td class="check_item">
-												<input type="checkbox" class="icheck" value="<{$single.id}>" placeholder="">
-											</td>
 											<td><{$i}></td>
-											<td><{$single.name}></td>
+											<td><{$single.message}></td>
 											<td><{$single.type}></td>
+											<td><{$single.action}></td>
+											<td><{$single.client}></td>
+											<td><{$single.send_status}></td>
 											<td>
 												<p style="word-break: break-all; word-wrap:break-word; text-align: left; overflow-y: hidden; max-height: 30px;"><{$single.context}></p>
 											</td>
-											<td>
-												<{$single.action}>
-												<foreach name="single.action_list" item="val" key="inx">
-													<input type="hidden" data-message-id="<{$single.id}>" data-action-id="<{$val.id}>" data-action-name="<{$val.name}>">
-												</foreach>
-											</td>
-											<td><{$single.status}></td>
 											<td><{$single.creatime}></td>
 											<td><{$single.creator}></td>
-											<td>
-												<div class="btn-group" data-id="<{$single.id}>" data-status="<{$single.status_code}>">
-													<eq name="single.status_code" value="1">
-														<button type="button" class="btn btn-default btn-xs choose_btn" data-toggle="modal" data-target="#choose_modal" data-id="<{$single.id}>">用于</button>
-													</eq>
-													<a href="<{:U('Message/modify',['id'=>$single['id'], 'mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-default btn-xs modify_btn">修改</a>
-
-													<button type="submit" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
-													<switch name="single.status_code">
-														<case value="1">
-															<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
-														</case>
-														<case value="0">
-															<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
-														</case>
-													</switch>
-												</div>
-											</td>
 										</tr>
 									</volist>
 								</tbody>
@@ -162,93 +127,11 @@
 						</div>
 						<div class="page_wrap">
 							<ul class="pagination">
-								<{$page_show}>
+								<{$pagination}>
 							</ul>
 						</div>
 					</section>
 				</div>
-			</div>
-		</div>
-	</div>
-	<!-- 删除消息 -->
-	<div class="modal fade" id="delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">删除消息模板</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
-					<div class="modal-body">
-						是否删除消息模板？
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="button" class="btn btn-primary btn-save">确认删除</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- 批量删除 -->
-	<div class="modal fade" id="batch_delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量删除消息模板</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
-					<div class="modal-body">
-						是否删除已选<span class="sAmount"></span>项消息模板？
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="button" class="btn btn-primary btn-save">确认删除</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- 选择消息 -->
-	<div class="modal fade" id="choose_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">将该消息模板应用于系统的消息提示</h2>
-				</div>
-				<form class="form-horizontal" role="form" method="post" action="">
-					<input type="hidden" name="requestType" value="assign_message">
-					<input type="hidden" name="id" value="">
-					<div class="modal-body">
-						<div class="form-group">
-							<div class="col-sm-12">
-								<div class="filed_box">
-									<div class="title mb_10"><h3>选择动作</h3></div>
-									<div class="checkbox_list">
-										<div class="checkbox">
-											<volist name="message_action" id="single">
-												<label class="checkbox-inline field_checkbox">
-													<input type="checkbox" class="icheck_f" name="action[]" value="<{$key}>"><{$single}>
-												</label>
-											</volist>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="button" class="btn btn-primary btn-save">确认</button>
-					</div>
-				</form>
 			</div>
 		</div>
 	</div>
@@ -259,118 +142,19 @@
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span></button>
-					<h2 class="modal-title">配置</h2>
+					<h2 class="modal-title">获取短信发送最新状态</h2>
 				</div>
 				<div class="modal-body">
-					<form action="" class="form-horizontal">
-						<input type="hidden" name="requestType" value="save_configure">
-						<div class="form-group">
-							<label class="col-sm-3 control-label">消息发送：</label>
-							<div class="col-sm-9 clearfix">
-								<div class="switch pull-left" data-on="primary" data-off="info">
-									短&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;信：
-									<if condition="$message_mode['sms']">
-										<!--suppress XmlDuplicatedId -->
-										<input type="checkbox" id="message_sms" name="message_sms" value="1" checked/>
-										<else/>
-										<!--suppress XmlDuplicatedId -->
-										<input type="checkbox" id="message_sms" name="message_sms" value="1"/>
-									</if>
-								</div>
-								<div class="switch pull-left" data-on="primary" data-off="info">
-									邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件：
-									<if condition="$message_mode['email']">
-										<!--suppress XmlDuplicatedId -->
-										<input type="checkbox" id="message_email" name="message_email" value="1" checked/>
-										<else/><!--suppress XmlDuplicatedId -->
-										<input type="checkbox" id="message_email" name="message_email" value="1"/>
-									</if>
-								</div>
-								<div class="switch pull-left" data-on="primary" data-off="info">
-									微信企业号：
-									<if condition="$message_mode['wechatEnterprise']">
-										<!--suppress XmlDuplicatedId -->
-										<input type="checkbox" id="message_wechat_enterprise" name="message_wechat_enterprise" value="1" checked/>
-										<else/><!--suppress XmlDuplicatedId -->
-										<input type="checkbox" id="message_wechat_enterprise" name="message_wechat_enterprise" value="1"/>
-									</if>
-								</div>
-								<div class="switch pull-left" data-on="primary" data-off="info">
-									微信公众号：
-									<if condition="$message_mode['wechatOfficial']">
-										<!--suppress XmlDuplicatedId -->
-										<input type="checkbox" id="message_wechat_official" name="message_wechat_official" value="1" checked/>
-										<else/><!--suppress XmlDuplicatedId -->
-										<input type="checkbox" id="message_wechat_official" name="message_wechat_official" value="1"/>
-									</if>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label">首易SMS：</label>
-							<div class="col-sm-9 clearfix">
-								<select class="form-control" name="sms_mobset_configure">
-									<option value="0">---请选择接口配置---</option>
-									<volist name="api_configure_list" id="single">
-										<if condition="$single['value'] eq $meeting_configure['sms_mobset_configure']">
-											<option value="<{$single.value}>" selected><{$single.html}></option>
-											<else/>
-											<option value="<{$single.value}>"><{$single.html}></option>
-										</if>
-									</volist>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label">微信公众号：</label>
-							<div class="col-sm-9 clearfix">
-								<select class="form-control" name="wechat_official_configure">
-									<option value="0">---请选择接口配置---</option>
-									<volist name="api_configure_list" id="single">
-										<if condition="$single['value'] eq $meeting_configure['wechat_official_configure']">
-											<option value="<{$single.value}>" selected><{$single.html}></option>
-											<else/>
-											<option value="<{$single.value}>"><{$single.html}></option>
-										</if>
-									</volist>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label">微信企业号：</label>
-							<div class="col-sm-9 clearfix">
-								<select class="form-control" name="wechat_enterprise_configure">
-									<option value="0">---请选择接口配置---</option>
-									<volist name="api_configure_list" id="single">
-										<if condition="$single['value'] eq $meeting_configure['wechat_enterprise_configure']">
-											<option value="<{$single.value}>" selected><{$single.html}></option>
-											<else/>
-											<option value="<{$single.value}>"><{$single.html}></option>
-										</if>
-									</volist>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label">邮件：</label>
-							<div class="col-sm-9 clearfix">
-								<select class="form-control" name="email_configure">
-									<option value="0">---请选择接口配置---</option>
-									<volist name="api_configure_list" id="single">
-										<if condition="$single['value'] eq $meeting_configure['email_configure']">
-											<option value="<{$single.value}>" selected><{$single.html}></option>
-											<else/>
-											<option value="<{$single.value}>"><{$single.html}></option>
-										</if>
-									</volist>
-								</select>
-							</div>
+					<form class="form-horizontal" role="form" method="post" action="">
+						<input type="hidden" name="requestType" value="update_send_report">
+						<div class="modal-body">
+							是否获取短信发送最新状态？
 						</div>
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary btn-save">保存</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary btn-save">确认</button>
 				</div>
 			</div>
 		</div>

@@ -8,6 +8,7 @@
 	namespace RoyalwissD\Logic;
 
 	use CMS\Logic\Session;
+	use CMS\Logic\UserLogic;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
 	use Quasar\Utility\StringPlus;
@@ -24,6 +25,11 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'create': // 创建支付方式
+					if(!UserLogic::isPermitted('SEVERAL-POS_MACHINE.CREATE')) return [
+						'status'   => false,
+						'message'  => '您没有创建POS机的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ReceivablesPosMachineModel $pos_machine_model */
 					$pos_machine_model = D('RoyalwissD/ReceivablesPosMachine');
 					$str_obj           = new StringPlus();
@@ -39,6 +45,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'modify': // 修改支付方式
+					if(!UserLogic::isPermitted('SEVERAL-POS_MACHINE.MODIFY')) return [
+						'status'   => false,
+						'message'  => '您没有修改POS机的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ReceivablesPosMachineModel $pay_method_model */
 					$pay_method_model = D('RoyalwissD/ReceivablesPosMachine');
 					$str_obj          = new StringPlus();
@@ -57,6 +68,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'delete': // 删除支付方式
+					if(!UserLogic::isPermitted('SEVERAL-POS_MACHINE.DELETE')) return [
+						'status'   => false,
+						'message'  => '您没有删除POS机的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ReceivablesPosMachineModel $pay_method_model */
 					$pay_method_model = D('RoyalwissD/ReceivablesPosMachine');
 					$id_str           = I('post.id', '');
@@ -67,6 +83,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable': // 启用支付方式
+					if(!UserLogic::isPermitted('SEVERAL-POS_MACHINE.ENABLE')) return [
+						'status'   => false,
+						'message'  => '您没有启用POS机的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ReceivablesPosMachineModel $pay_method_model */
 					$pay_method_model = D('RoyalwissD/ReceivablesPosMachine');
 					$meeting_id       = I('get.mid', 0, 'int');
@@ -77,6 +98,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'disable': // 禁用支付方式
+					if(!UserLogic::isPermitted('SEVERAL-POS_MACHINE.DISABLE')) return [
+						'status'   => false,
+						'message'  => '您没有禁用POS机的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ReceivablesPosMachineModel $pay_method_model */
 					$pay_method_model = D('RoyalwissD/ReceivablesPosMachine');
 					$meeting_id       = I('get.mid', 0, 'int');

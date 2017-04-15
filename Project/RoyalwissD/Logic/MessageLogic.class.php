@@ -7,7 +7,9 @@
 	 */
 	namespace RoyalwissD\Logic;
 
+	use CMS\Controller\CMS;
 	use CMS\Logic\Session;
+	use CMS\Logic\UserLogic;
 	use General\Logic\SMSMobset;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
@@ -156,8 +158,45 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
-				case 'get_send_report':
-					// todo
+				case 'update_send_report':
+					if(!UserLogic::isPermitted('SEVERAL-MESSAGE.SEND_HISTORY-GET_SMS_SEND_STATUS')) return [
+						'status'   => false,
+						'message'  => '您没有更新消息发送状态的权限',
+						'__ajax__' => true
+					];
+					$meeting_id  = I('get.mid', 0, 'int');
+					$send_report = $this->getSMSStatus($meeting_id);
+					if(!$send_report['status']) return array_merge($send_report, ['__ajax__' => true]);
+					/** @var \RoyalwissD\Model\MessageSendHistoryModel $message_send_history_model */
+					$message_send_history_model = D('RoyalwissD/MessageSendHistory');
+					$this_database              = $message_send_history_model::DATABASE_NAME;
+					$this_table                 = $message_send_history_model::TABLE_NAME;
+					$replace_char               = '#%SMS_ID%#';
+					$sql_main                   = "
+UPDATE $this_database.$this_table
+SET send_status =  CASE sms_id i$replace_char END
+";
+					$sql_where                  = "WHERE mid = $meeting_id AND sms_id IN ($replace_char) ";
+					$count                      = 0;
+					foreach($send_report['data'] as $value){
+						$sql_where = str_replace($replace_char, "'$value[smsID]',$replace_char", $sql_where);
+						$sql_main  = str_replace("i$replace_char", " WHEN '$value[smsID]' THEN '$value[code]'i$replace_char", $sql_main);
+						$count++;
+					}
+					$sql    = "$sql_main $sql_where";
+					$sql    = str_replace(",$replace_char", '', $sql);
+					$sql    = str_replace("i$replace_char", '', $sql);
+					$result = $message_send_history_model->execute($sql);
+					if($result) return [
+						'status'   => true,
+						'message'  => "成功获取并更新[$count]条短信发送记录",
+						'__ajax__' => true
+					];
+					else return [
+						'status'   => false,
+						'message'  => "获取失败更新失败",
+						'__ajax__' => true
+					];
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];
@@ -195,6 +234,46 @@
 
 					return $data;
 				break;
+				case 'sendHistory':
+					$list = [];
+					$get  = $data['urlParam'];
+					$data = $data['list'];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
+					foreach($data as $key => $val){
+						if(isset($keyword)){
+							$found = 0;
+							if($found == 0 && strpos($val['client'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($val['client_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($val['message'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($val['context'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
+						$val['type_code']        = $val['type'];
+						$val['type']             = MessageModel::TYPE[$val['type']];
+						$val['action_code']      = $val['action'];
+						$val['action']           = MessageCorrelationModel::ACTION[$val['action']];
+						$val['status_code']      = $val['status'];
+						$val['status']           = GeneralModel::STATUS[$val['status']];
+						$val['send_status_code'] = $val['send_status'];
+						switch($val['type_code']){
+							case 1:
+								$val['send_status'] = SMSMobset::STATUS[$val['send_status']];
+							break;
+							case 2:
+								$val['send_status'] = EnterpriseAccountLibrary::SEND_STATUS[$val['send_status']];
+							break;
+							case 3:
+								$val['send_status'] = OfficialAccountLibrary::SEND_STATUS[$val['send_status']];
+							break;
+							case 4:
+							break;
+						}
+						$list[] = $val;
+					}
+
+					return $list;
+				break;
 				default:
 					return $data;
 				break;
@@ -224,7 +303,7 @@
 		 *
 		 * @param $meeting_id
 		 *
-		 * @return int|number
+		 * @return array
 		 */
 		public function getSMSStatus($meeting_id){
 			/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */

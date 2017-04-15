@@ -50,9 +50,10 @@
 			}
 		}
 
-		public function getList($control){
+		public function getList($control = []){
 			$table_message_send_history = $this->tableName;
 			$table_user                 = UserModel::TABLE_NAME;
+			$table_client = ClientModel::TABLE_NAME;
 			$table_message              = MessageModel::TABLE_NAME;
 			$common_database            = GeneralModel::DATABASE_NAME;
 			$this_database              = self::DATABASE_NAME;
@@ -71,20 +72,24 @@
 				$where .= "
 				and (
 					message like '%$keyword%'
+					context like '%$keyword%'
+					client like '%$keyword%'
+					client_pinyin like '%$keyword%'
 				)";
 			}
 			if(isset($status) && isset($status[0]) && isset($status[1])) $where .= " and status $status[0] $status[1] ";
 			if(isset($message_id) && isset($message_id[0]) && isset($message_id[1])) $where .= " and status $message_id[0] $message_id[1] ";
 			if(isset($meeting_id)) $where .= " and mid = $meeting_id ";
 			if(isset($action)) $where .= " and action = $action ";
-			if(isset($type)) $where .= " and type = $type ";
+			if(isset($type) && isset($type[0]) && isset($type[1])) $where .= " and type $type[0] $type[1] ";
 			$sql    = "
 SELECT * FROM (
 	SELECT
 		msh.id,
 		msh.mid,
-		msh.message_id message_code,
+		m.id message_code,
 		m.name message,
+		m.name message_pinyin,
 		msh.context,
 		msh.type,
 		msh.action,
@@ -92,9 +97,14 @@ SELECT * FROM (
 		msh.send_status,
 		msh.status,
 		msh.creator creator_code,
+		msh.creatime,
+		c.id client_code,
+		c.name client,
+		c.name_pinyin client_pinyin,
 		u1.name creator
 	FROM $this_database.$table_message_send_history msh
 	LEFT JOIN $common_database.$table_user u1 ON u1.id = msh.creator AND u1.status <> 2
+	JOIN $this_database.$table_client c ON c.id = msh.cid AND c.status <> 2
 	JOIN $this_database.$table_message m ON m.id = msh.message_id AND m.status <> 2
 ) tab
 $where

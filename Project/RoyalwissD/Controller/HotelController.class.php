@@ -8,6 +8,7 @@
 	namespace RoyalwissD\Controller;
 
 	use CMS\Logic\PageLogic;
+	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
 	use RoyalwissD\Logic\HotelLogic;
 	use Think\Page;
@@ -35,6 +36,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-HOTEL.VIEW')) $this->error('您没有查看酒店的权限');
 			// 获取项目数据
 			/** @var \RoyalwissD\Model\HotelModel $hotel_model */
 			$hotel_model = D('RoyalwissD/Hotel');

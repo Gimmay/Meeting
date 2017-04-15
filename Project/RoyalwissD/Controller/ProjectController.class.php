@@ -8,6 +8,7 @@
 	namespace RoyalwissD\Controller;
 
 	use CMS\Logic\PageLogic;
+	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
 	use RoyalwissD\Logic\ProjectLogic;
 	use RoyalwissD\Logic\ProjectTypeLogic;
@@ -36,6 +37,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-PROJECT.VIEW')) $this->error('您没有查看项目的权限');
 			// 获取项目类型
 			/** @var \RoyalwissD\Model\ProjectTypeModel $project_type_model */
 			$project_type_model = D('RoyalwissD/ProjectType');
@@ -80,6 +82,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-PROJECT_TYPE.VIEW')) $this->error('您没有查看项目类型的权限');
 			/** @var \RoyalwissD\Model\ProjectTypeModel $project_type_model */
 			$project_type_model = D('RoyalwissD/ProjectType');
 			$model_control_column = $this->getModelControl();

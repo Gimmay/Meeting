@@ -40,18 +40,18 @@
 			$table_user_assign_role       = UserAssignRoleModel::TABLE_NAME;
 			$sql                          = $assigned ? "
 SELECT DISTINCT p.id i, p.*, LEFT(code, LOCATE('.', code)-1) module_code FROM $this_database.$table_user u
-JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id
+JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id AND uar.status = 1
 JOIN $this_database.$table_role r ON uar.rid = r.id AND r.STATUS = 1
-JOIN $this_database.$table_role_assign_permission rap ON rap.rid = r.id
+JOIN $this_database.$table_role_assign_permission rap ON rap.rid = r.id AND rap.status = 1
 JOIN $this_database.$table_permission p ON rap.pid = p.id
 WHERE u.id = $user_id" : "
 SELECT DISTINCT p.id i, p.*, LEFT(code, LOCATE('.', code)-1) module_code FROM $this_database.$table_permission p
 WHERE id NOT IN (
 	SELECT p.id
 	FROM $this_database.$table_user u
-	JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id
+	JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id AND uar.status = 1
 	JOIN $this_database.$table_role r ON uar.rid = r.id AND r.STATUS = 1
-	JOIN $this_database.$table_role_assign_permission rap ON rap.rid = r.id
+	JOIN $this_database.$table_role_assign_permission rap ON rap.rid = r.id AND rap.status = 1
 	JOIN $this_database.$table_permission p ON rap.pid = p.id
 	WHERE u.id = $user_id
 )";
@@ -62,29 +62,38 @@ WHERE id NOT IN (
 		/**
 		 * 获取用户分配的角色
 		 *
-		 * @param int  $user_id  用户ID
-		 * @param bool $assigned 是否输出分配的角色
+		 * @param int    $user_id  用户ID
+		 * @param string $keyword  检索关键字
+		 * @param bool   $assigned 是否输出分配的角色
 		 *
 		 * @return array
 		 */
-		public function getRole($user_id, $assigned = true){
+		public function getRole($user_id, $keyword = '', $assigned = true){
 			$this_database          = self::DATABASE_NAME;
 			$table_role             = RoleModel::TABLE_NAME;
 			$table_user             = UserModel::TABLE_NAME;
 			$table_user_assign_role = UserAssignRoleModel::TABLE_NAME;
+			$keyword                = $keyword == '' ? '' : " AND (
+				r.name like '%$keyword%'
+				OR r.name_pinyin like '%$keyword%'
+			)";
 			$sql                    = $assigned ? "
 SELECT r.* FROM $this_database.$table_user u
-JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id
-JOIN $this_database.$table_role r ON uar.rid = r.id
-AND r.STATUS = 1
-WHERE u.id = $user_id" : "
-SELECT * FROM $this_database.$table_role r
-WHERE id NOT IN (
-	SELECT r.id FROM $this_database.$table_user u
-	JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id
-	JOIN $this_database.$table_role r ON uar.rid = r.id AND r.STATUS = 1
+JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id AND uar.status = 1
+JOIN $this_database.$table_role r ON uar.rid = r.id AND r.STATUS = 1
+WHERE u.id = $user_id
+$keyword
+" : "
+SELECT r.* FROM $this_database.$table_role r
+WHERE r.id NOT IN (
+	SELECT r1.id FROM $this_database.$table_user u
+	JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id AND uar.status = 1
+	JOIN $this_database.$table_role r1 ON uar.rid = r1.id AND r1.STATUS = 1
 	WHERE u.id = $user_id
-)";
+)
+AND r.status = 1
+$keyword
+";
 
 			return $this->query($sql);
 		}
@@ -108,6 +117,8 @@ WHERE id NOT IN (
 			}catch(Exception $error){
 				$message   = $error->getMessage();
 				$exception = $this->handlerException($message);
+				if(strpos($message, 'unique_user_mobile') !== false) $exception['message'] = "手机号重复";
+				elseif(strpos($message, 'unique_user_name') !== false) $exception['message'] = "用户名已存在";
 
 				return !$exception['status'] ? $exception : ['status' => false, 'message' => $this->getError()];
 			}
@@ -172,6 +183,8 @@ WHERE id NOT IN (
 			}catch(Exception $error){
 				$message   = $error->getMessage();
 				$exception = $this->handlerException($message);
+				if(strpos($message, 'unique_user_mobile') !== false) $exception['message'] = "手机号重复";
+				elseif(strpos($message, 'unique_user_name') !== false) $exception['message'] = "用户名已存在";
 
 				return !$exception['status'] ? $exception : ['status' => false, 'message' => $this->getError()];
 			}
@@ -190,9 +203,7 @@ WHERE id NOT IN (
 			if(is_numeric($role) || is_string($role)){ // 逐项分配角色
 				/** @var \General\Model\UserAssignRoleModel $user_assign_role_model */
 				$user_assign_role_model = D('General/UserAssignRole');
-				/** @var \General\Model\UserAssignRoleLogModel $user_assign_role_log_model */
-				$user_assign_role_log_model = D('General/UserAssignRoleLog');
-				$data                       = [
+				$data                   = [
 					'rid'      => $role,
 					'uid'      => $user_id,
 					'creatime' => Time::getCurrentTime(),
@@ -200,18 +211,16 @@ WHERE id NOT IN (
 					'type'     => 1,
 					'mid'      => $meeting_id
 				];
-				$result                     = $user_assign_role_model->create($data); // 分配角色
-				if($result['status']) $user_assign_role_log_model->create($data); // 分配角色日志
+				$result                 = $user_assign_role_model->create($data); // 分配角色
 				return $result;
 			}
 			elseif(is_array($role)){ // 批量分配角色
 				/** @var \General\Model\UserAssignRoleModel $user_assign_role_model */
 				$user_assign_role_model = D('General/UserAssignRole');
-				/** @var \General\Model\UserAssignRoleLogModel $user_assign_role_log_model */
-				$user_assign_role_log_model = D('General/UserAssignRoleLog');
-				$exist_record_count         = $user_assign_role_model->tally([
+				$exist_record_count     = $user_assign_role_model->tally([
 					'rid' => ['in', $role],
-					'uid' => $user_id
+					'uid' => $user_id,
+					'status' => 1
 				]);// Warning: 先查找有否重复数据
 				if($exist_record_count>=count($role)) return ['status' => false, 'message' => '已分配角色无需重复分配'];
 				if($exist_record_count>0 && $exist_record_count<count($role)){
@@ -233,12 +242,7 @@ WHERE id NOT IN (
 					];
 				}
 				$result = $user_assign_role_model->addAll($data); // 分配角色
-				if($result){
-					$user_assign_role_log_model->addAll($data);
-
-					return ['status' => true, 'message' => '分配角色成功'];
-				} // 分配角色日志
-				else return ['status' => false, 'message' => '分配角色失败'];
+				return $result ? ['status' => true, 'message' => '分配角色成功'] : ['status' => false, 'message' => '分配角色失败'];
 			}
 			else return ['status' => false, 'message' => '参数错误'];
 		}
@@ -254,49 +258,29 @@ WHERE id NOT IN (
 		 */
 		public function cancelRole($role, $user_id, $meeting_id = 0){
 			if(is_numeric($role) || is_string($role)){ // 逐项取消分配角色
-				/** @var \General\Model\UserAssignRoleModel $user_assign_role_model */
-				$user_assign_role_model = D('General/UserAssignRole');
-				/** @var \General\Model\UserAssignRoleLogModel $user_assign_role_log_model */
-				$user_assign_role_log_model = D('General/UserAssignRoleLog');
-				$data                       = [
-					'rid'      => $role,
+				$role = [$role];
+			}
+			elseif(is_array($role) && count($role)>0){ // 批量取消分配角色
+			}
+			else return ['status' => false, 'message' => '参数错误'];
+			/** @var \General\Model\UserAssignRoleModel $user_assign_role_model */
+			$user_assign_role_model = D('General/UserAssignRole');
+			$data                   = [];
+			foreach($role as $role_id){
+				$data[] = [
+					'rid'      => $role_id,
 					'uid'      => $user_id,
 					'creatime' => Time::getCurrentTime(),
 					'creator'  => Session::getCurrentUser(),
 					'type'     => 0,
 					'mid'      => $meeting_id
 				];
-				$user_assign_role_log_model->create($data); // 取消分配角色日志
-				return $user_assign_role_model->clean(['rid' => $role, 'uid' => $user_id]); // 取消分配角色
 			}
-			elseif(is_array($role) && count($role)>0){ // 批量取消分配角色
-				/** @var \General\Model\UserAssignRoleModel $user_assign_role_model */
-				$user_assign_role_model = D('General/UserAssignRole');
-				/** @var \General\Model\UserAssignRoleLogModel $user_assign_role_log_model */
-				$user_assign_role_log_model = D('General/UserAssignRoleLog');
-				$data                       = [];
-				foreach($role as $role_id){
-					$data[] = [
-						'rid'      => $role_id,
-						'uid'      => $user_id,
-						'creatime' => Time::getCurrentTime(),
-						'creator'  => Session::getCurrentUser(),
-						'type'     => 0,
-						'mid'      => $meeting_id
-					];
-				}
-				$where  = [
-					'rid' => ['in', [$role]],
-					'uid' => $user_id
-				];
-				$result = $user_assign_role_model->clean($where); // 取消分配角色
-				$user_assign_role_log_model->addAll($data); // 取消分配角色日志
-				return $result ? ['status' => true, 'message' => '取消分配角色成功'] : [
-					'status'  => false,
-					'message' => '取消分配角色失败'
-				];
-			}
-			else return ['status' => false, 'message' => '参数错误'];
+			$result = $user_assign_role_model->clean([
+				'rid' => ['in', $role],
+				'uid' => $user_id
+			]); // 取消分配角色
+			return $result;
 		}
 
 		/**
@@ -311,12 +295,12 @@ WHERE id NOT IN (
 			$table_role             = RoleModel::TABLE_NAME;
 			$table_user             = UserModel::TABLE_NAME;
 			$table_user_assign_role = UserAssignRoleModel::TABLE_NAME;
-			$sql    = "SELECT min(r.level) level FROM $this_database.$table_user u
-JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id
+			$sql                    = "SELECT min(r.level) level FROM $this_database.$table_user u
+JOIN $this_database.$table_user_assign_role uar ON uar.uid = u.id AND uar.status = 1
 JOIN $this_database.$table_role r ON uar.rid = r.id
 AND r.status = 1
 WHERE u.id = $user_id";
-			$result = $this->query($sql);
+			$result                 = $this->query($sql);
 
 			return (isset($result[0]['level']) && $result[0]['level']) ? $result[0]['level'] : RoleModel::LOWEST_LEVEL;
 		}

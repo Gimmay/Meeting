@@ -8,6 +8,7 @@
 	namespace RoyalwissD\Logic;
 
 	use CMS\Logic\Session;
+	use CMS\Logic\UserLogic;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
 	use Quasar\Utility\StringPlus;
@@ -28,6 +29,11 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'create': // 创建项目类型
+					if(!UserLogic::isPermitted('SEVERAL-PROJECT_TYPE.CREATE')) return [
+						'status'   => false,
+						'message'  => '您没有创建项目类型的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ProjectTypeModel $project_type_model */
 					$project_type_model = D('RoyalwissD/ProjectType');
 					$str_obj            = new StringPlus();
@@ -43,6 +49,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'modify': // 修改项目类型
+					if(!UserLogic::isPermitted('SEVERAL-PROJECT_TYPE.MODIFY')) return [
+						'status'   => false,
+						'message'  => '您没有修改项目类型的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ProjectTypeModel $project_type_model */
 					$project_type_model = D('RoyalwissD/ProjectType');
 					$str_obj            = new StringPlus();
@@ -61,6 +72,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'delete': // 删除项目类型
+					if(!UserLogic::isPermitted('SEVERAL-PROJECT_TYPE.DELETE')) return [
+						'status'   => false,
+						'message'  => '您没有删除项目类型的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id_arr     = explode(',', $id_str);
@@ -71,6 +87,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable': // 启用项目类型
+					if(!UserLogic::isPermitted('SEVERAL-PROJECT_TYPE.ENABLE')) return [
+						'status'   => false,
+						'message'  => '您没有启用项目类型的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id_arr     = explode(',', $id_str);
@@ -81,6 +102,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'disable': // 禁用项目类型
+					if(!UserLogic::isPermitted('SEVERAL-PROJECT_TYPE.DISABLE')) return [
+						'status'   => false,
+						'message'  => '您没有禁用项目类型的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id_arr     = explode(',', $id_str);

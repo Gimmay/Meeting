@@ -31,18 +31,26 @@
 					<section class="content">
 						<div class="table_wrap">
 							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">创建收款</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款管理</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式管理</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机管理</a>
-								</div>
+								<if condition="in_array('SEVERAL-RECEIVABLES.CREATE', $permission_list)">
+									<div class="nav_tab_li active">
+										<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">创建收款</a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-RECEIVABLES.VIEW', $permission_list)">
+									<div class="nav_tab_li">
+										<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款管理</a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-PAY_METHOD.VIEW', $permission_list)">
+									<div class="nav_tab_li">
+										<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式管理</a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-POS_MACHINE.VIEW', $permission_list)">
+									<div class="nav_tab_li">
+										<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机管理</a>
+									</div>
+								</if>
 							</div>
 							<form class="form-horizontal" role="form" method="post" id="form_rece">
 								<input type="hidden" name="requestType" value="create">

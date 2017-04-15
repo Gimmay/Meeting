@@ -8,6 +8,7 @@
 	namespace CMS\Logic;
 
 	use CMS\Controller\CMS;
+	use CMS\Model\RoleModel;
 	use CMS\Model\UserModel;
 	use General\Logic\Time;
 	use General\Logic\UserLogic as GeneralUserLogic;
@@ -49,8 +50,7 @@
 					$str_obj    = new StringPlus();
 					$user_logic = new GeneralUserLogic();
 					$data       = I('post.');
-					// todo 手机号去重判断
-					$result = $user_model->create(array_merge($data, [
+					$result     = $user_model->create(array_merge($data, [
 						'password'        => $user_logic->makePassword($data['password'], $data['name']),
 						'parent_id'       => Session::getCurrentUser(),
 						'creatime'        => Time::getCurrentTime(),
@@ -128,7 +128,8 @@
 					/** @var \General\Model\UserModel $user_model */
 					$user_model = D('General/User');
 					$user_id    = I('post.id', 0, 'int');
-					$role_list  = $user_model->getRole($user_id, false);
+					$keyword    = I('post.keyword', '');
+					$role_list  = $user_model->getRole($user_id, $keyword, false);
 
 					return array_merge(['__ajax__' => true], $role_list);
 				break;
@@ -136,7 +137,8 @@
 					/** @var \General\Model\UserModel $user_model */
 					$user_model = D('General/User');
 					$user_id    = I('post.id', 0, 'int');
-					$role_list  = $user_model->getRole($user_id);
+					$keyword    = I('post.keyword', '');
+					$role_list  = $user_model->getRole($user_id, $keyword);
 
 					return array_merge(['__ajax__' => true], $role_list);
 				break;
@@ -301,10 +303,12 @@
 					foreach($data['list'] as $key => $user){
 						// 1、筛选数据
 						if(isset($keyword)){
-							// todo 获取筛选配置
 							$found = 0;
 							if($found == 0 && strpos($user['name'], $keyword) !== false) $found = 1;
 							if($found == 0 && strpos($user['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($user['mobile'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($user['nickname'], $keyword) !== false) $found = 1;
+							if($found == 0 && strpos($user['nickname_pinyin'], $keyword) !== false) $found = 1;
 							if($found == 0) continue;
 						}
 						$role_id_list = explode(',', $user['role_id']);
@@ -312,8 +316,12 @@
 							if(!in_array($role_id, $role_id_list)) continue;
 						}
 						$role_name_list = explode(UserModel::ROLE_NAME_SEPARATOR, $user['role_name']);
+						$role_id_list   = explode(',', $user['role_id']);
 						$role_name      = '';
-						foreach($role_name_list as $k => $role) $role_name .= "<a href='javascript:void(0)' data-role-id='$role_id_list[$key]'>$role</a>, ";
+						foreach($role_name_list as $k => $role){
+							$role_url = U('Role/manage', [RoleModel::CONTROL_COLUMN_PARAMETER_SELF['roleID'] => $role_id_list[$k]]);
+							$role_name .= "<a href='$role_url' data-role-id='$role_id_list[$key]'>$role</a>, ";
+						}
 						$user['role']        = trim($role_name, ', ');
 						$user['status_code'] = $user['status'];
 						$user['status']      = GeneralModel::STATUS[$user['status']];

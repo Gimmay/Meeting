@@ -302,7 +302,7 @@
 					'sign_start_time',
 					'sign_end_time',
 					'start_time',
-					'start_time',
+					'end_time',
 					'name'
 				];
 

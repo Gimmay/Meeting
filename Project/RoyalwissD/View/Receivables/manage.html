@@ -38,18 +38,26 @@
 					<section class="content">
 						<div class="table_wrap mb_10">
 							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款管理</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">创建收款</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式管理</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机管理</a>
-								</div>
+								<if condition="in_array('SEVERAL-RECEIVABLES.VIEW', $permission_list)">
+									<div class="nav_tab_li active">
+										<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>">收款管理</a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-RECEIVABLES.CREATE', $permission_list)">
+									<div class="nav_tab_li">
+										<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">创建收款</a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-PAY_METHOD.VIEW', $permission_list)">
+									<div class="nav_tab_li">
+										<a href="<{:U('Receivables/payMethod', ['mid'=>I('get.mid', 0, 'int')])}>">支付方式管理</a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-POS_MACHINE.VIEW', $permission_list)">
+									<div class="nav_tab_li">
+										<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>">POS机管理</a>
+									</div>
+								</if>
 								<div class="table_length  pull-right">
 									显示： <select>
 									<option>5</option>
@@ -71,12 +79,17 @@
 										<i class="glyphicon glyphicon-plus"></i> 创建收款 <span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
-										<li>
-											<a href="<{:U('Receivables/create', ['mid'=>I('get.mid', 0, 'int')])}>">创建收款</a>
-										</li>
-										<li>
-											<a href="<{:U('exportData', ['mid'=>I('get.mid', 0, 'int')])}>">导出收款信息</a>
-										</li>
+										<if condition="in_array('SEVERAL-RECEIVABLES.CREATE', $permission_list)">
+											<li>
+												<a href="<{:U('create', ['mid'=>I('get.mid', 0, 'int')])}>">创建收款</a>
+											</li>
+										</if>
+										<li role="separator" class="divider"></li>
+										<if condition="in_array('SEVERAL-RECEIVABLES.EXPORT', $permission_list)">
+											<li>
+												<a href="<{:U('exportData', ['mid'=>I('get.mid', 0, 'int')])}>">导出收款信息</a>
+											</li>
+										</if>
 									</ul>
 								</div>
 								<div class="btn-group">
@@ -84,30 +97,45 @@
 										<i class="glyphicon glyphicon-check"></i> 审核<span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
-										<li class="batch_review_btn_confirm"><a href="javascript:void(0)">批量审核</a></li>
-										<li class="batch_anti_review_btn_confirm">
-											<a href="javascript:void(0)">批量取消审核</a></li>
+										<if condition="in_array('SEVERAL-RECEIVABLES.REVIEW', $permission_list)">
+											<li class="batch_review_btn_confirm">
+												<a href="javascript:void(0)">批量审核</a>
+											</li>
+										</if>
+										<if condition="in_array('SEVERAL-RECEIVABLES.CANCEL_REVIEW', $permission_list)">
+											<li class="batch_anti_review_btn_confirm">
+												<a href="javascript:void(0)">批量取消审核</a>
+											</li>
+										</if>
 									</ul>
 								</div>
-								<div class="btn-group">
-									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										<i class="glyphicon glyphicon-cog"></i> 收款配置 <span class="caret"></span>
-									</button>
-									<ul class="dropdown-menu">
-										<li data-toggle="modal" data-target="#configure_modal">
-											<a href="javascript:void(0)">收款配置</a>
-										</li>
-									</ul>
-								</div>
+								<if condition="in_array('SEVERAL-RECEIVABLES.CONFIGURE', $permission_list)">
+									<div class="btn-group">
+										<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											<i class="glyphicon glyphicon-cog"></i> 收款配置 <span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu">
+											<li data-toggle="modal" data-target="#configure_modal">
+												<a href="javascript:void(0)">收款配置</a>
+											</li>
+										</ul>
+									</div>
+								</if>
 								<div class="btn-group">
 									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										<i class="glyphicon glyphicon-lock"></i> 基础操作 <span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
-										<li class="batch_enable_btn"><a href="javascript:void(0)">批量启用</a></li>
-										<li class="batch_disable_btn"><a href="javascript:void(0)">批量禁用</a></li>
+										<if condition="in_array('SEVERAL-RECEIVABLES.ENABLE', $permission_list)">
+											<li class="batch_enable_btn"><a href="javascript:void(0)">批量启用</a></li>
+										</if>
+										<if condition="in_array('SEVERAL-RECEIVABLES.DISABLE', $permission_list)">
+											<li class="batch_disable_btn"><a href="javascript:void(0)">批量禁用</a></li>
+										</if>
 										<li role="separator" class="divider"></li>
-										<li class="batch_delete_btn"><a href="javascript:void(0)">批量删除</a></li>
+										<if condition="in_array('SEVERAL-RECEIVABLES.DELETE', $permission_list)">
+											<li class="batch_delete_btn"><a href="javascript:void(0)">批量删除</a></li>
+										</if>
 									</ul>
 								</div>
 								<!--<div class="btn-group">
@@ -120,38 +148,41 @@
 								</div>-->
 							</div>
 						</div>
-						<div class="repertory clearfix">
-							<form action="" method="get">
-								<div class="input-group repertory_text" style="width: 30%">
-									<input name="p" type="hidden" value="1">
-									<div class="input-group-addon" data-toggle="modal" data-target="#search_config_modal">
-										<b class="glyphicon glyphicon-cog"></b></div>
-									<input type="search" name="keyword" class="form-control" placeholder="单据号/项目类型/收款人/类型/拼音简码" value="<{:I('get.keyword', '')}>">
+						<if condition="in_array('SEVERAL-RECEIVABLES.SEARCH', $permission_list)">
+							<div class="repertory clearfix">
+								<form action="" method="get">
+									<div class="input-group repertory_text" style="width: 30%">
+										<input name="p" type="hidden" value="1">
+										<div class="input-group-addon" data-toggle="modal" data-target="#search_config_modal">
+											<b class="glyphicon glyphicon-cog"></b></div>
+										<input type="search" name="keyword" id="keyword" class="form-control" placeholder="单据号/项目类型/收款人/类型/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default main_search">搜索</button>
+										<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
 									</span>
-								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
-							</form>
-
-						</div>
-						<div class="m_screen clearfix">
-							<div class="screen_title">筛选条件：</div>
-							<form action="" method="get" class="sign_check">
-								<div class="input-group pull-left check_reviewed color-2489c5">
-									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;审核 (<{$statistics.reviewedCount}>)
-								</div>
-								<div class="input-group pull-left check_not_reviewed color-2489c5">
-									<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.notReviewedCount}>)
-								</div>
-								<!--<div class="input-group pull-left check_receivables color-1b7e5a">-->
-								<!--<input type="radio" name="receivables" class="icheck">&nbsp;&nbsp;收款 (<{$statistics.receivables}>)-->
-								<!--</div>-->
-								<!--<div class="input-group pull-left check_not_receivables color-1b7e5a">-->
-								<!--<input type="radio" name="receivables" class="icheck">&nbsp;&nbsp;未收款 (<{$statistics.not_receivables}>)-->
-								<!--</div>-->
-							</form>
-						</div>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
+								</form>
+							</div>
+						</if>
+						<if condition="in_array('SEVERAL-RECEIVABLES.FILTER', $permission_list)">
+							<div class="m_screen clearfix">
+								<div class="screen_title">筛选条件：</div>
+								<form action="" method="get" class="sign_check">
+									<div class="input-group pull-left check_reviewed color-2489c5">
+										<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;审核 (<{$statistics.reviewedCount}>)
+									</div>
+									<div class="input-group pull-left check_not_reviewed color-2489c5">
+										<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.notReviewedCount}>)
+									</div>
+									<!--<div class="input-group pull-left check_receivables color-1b7e5a">-->
+									<!--<input type="radio" name="receivables" class="icheck">&nbsp;&nbsp;收款 (<{$statistics.receivables}>)-->
+									<!--</div>-->
+									<!--<div class="input-group pull-left check_not_receivables color-1b7e5a">-->
+									<!--<input type="radio" name="receivables" class="icheck">&nbsp;&nbsp;未收款 (<{$statistics.not_receivables}>)-->
+									<!--</div>-->
+								</form>
+							</div>
+						</if>
 						<div class="table_wrap">
 							<div class="row mb_10">
 								<div class="col-sm-6">
@@ -199,30 +230,36 @@
 												<span class="color-danger price"><{:number_format($order['price'])}>元</span>
 												<span class="function">
 													<div class="btn-group" data-id="<{$order.id}>" data-status="<{$order.status_code}>">
-														<if condition="$order['review_status_code'] eq 1 and $order['status_code'] eq 1">
+														<if condition="$order['review_status_code'] eq 1 and $order['status_code'] eq 1 and in_array('SEVERAL-RECEIVABLES.PRINT', $permission_list)">
 															<button type="button" class="btn btn-primary btn-xs print">打印</button>
 														</if>
-														<if condition="$order['review_status_code'] eq 1 and $order['status_code'] eq 1">
+														<if condition="$order['review_status_code'] eq 1 and $order['status_code'] eq 1 and in_array('SEVERAL-RECEIVABLES.CANCEL_REVIEW', $permission_list)">
 															<button type="button" class="btn btn-default btn-xs cancel_review_btn">取消审核</button>
 														</if>
-														<if condition="$order['review_status_code'] neq 1 and $order['status_code'] eq 1">
+														<if condition="$order['review_status_code'] neq 1 and $order['status_code'] eq 1 and in_array('SEVERAL-RECEIVABLES.REVIEW', $permission_list)">
 															<button type="button" class="btn btn-default btn-xs review_btn">审核</button>
 														</if>
-														<if condition="$order['review_status_code'] neq 1">
+														<if condition="$order['review_status_code'] neq 1 and in_array('SEVERAL-RECEIVABLES.MODIFY', $permission_list)">
 															<button type="button" class="btn btn-default btn-xs modify_btn">修改</button>
 														</if>
-														<if condition="$order['status_code'] eq 1">
+														<if condition="$order['status_code'] eq 1 and in_array('SEVERAL-RECEIVABLES.COPY', $permission_list)">
 															<button class="btn btn-default btn-xs btn_copy" type="button" data-toggle="modal" data-target="#copy_receivables">复制</button>
 														</if>
-														<button type="submit" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+														<if condition="in_array('SEVERAL-RECEIVABLES.DELETE', $permission_list)">
+															<button type="submit" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+														</if>
 														<switch name="order.status_code">
 															<case value="1">
-																<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+																<if condition="in_array('SEVERAL-RECEIVABLES.DISABLE', $permission_list)">
+																	<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+																</if>
 															</case>
 															<case value="0">
-																<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+																<if condition="in_array('SEVERAL-RECEIVABLES.ENABLE', $permission_list)">
+																	<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+																</if>
 															</case>
-													</switch>
+														</switch>
 													</div>
 												</span> <b class="plus glyphicon glyphicon-plus"></b>
 											</div>
@@ -257,7 +294,7 @@
 																	<td><{$single.price}></td>
 																	<td>
 																		<div class="btn-group" data-id="<{$single.did}>">
-																			<if condition="$order['review_status_code'] neq 1">
+																			<if condition="$order['review_status_code'] neq 1 and in_array('SEVERAL-RECEIVABLES.MODIFY', $permission_list)">
 																				<button type="button" class="btn btn-default btn-xs alter_details_btn">修改</button>
 																			</if>
 																		</div>

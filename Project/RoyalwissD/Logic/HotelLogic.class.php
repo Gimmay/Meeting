@@ -8,6 +8,7 @@
 	namespace RoyalwissD\Logic;
 
 	use CMS\Logic\Session;
+	use CMS\Logic\UserLogic;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
 	use Quasar\Utility\StringPlus;
@@ -24,6 +25,11 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'create':
+					if(!UserLogic::isPermitted('SEVERAL-HOTEL.CREATE')) return [
+						'status'   => false,
+						'message'  => '您没有创建酒店的权限',
+						'__ajax__' => true
+					];
 					$meeting_id = I('get.mid', 0, 'int');
 					$post       = I('post.');
 					/** @var \RoyalwissD\Model\HotelModel $hotel_model */
@@ -55,6 +61,11 @@
 					return array_merge($record, ['__ajax__' => true]);
 				break;
 				case 'modify':
+					if(!UserLogic::isPermitted('SEVERAL-HOTEL.MODIFY')) return [
+						'status'   => false,
+						'message'  => '您没有修改酒店的权限',
+						'__ajax__' => true
+					];
 					$hotel_id   = I('post.id', 0, 'int');
 					$meeting_id = I('get.mid', 0, 'int');
 					$post       = I('post.');
@@ -70,6 +81,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'delete': // 删除项目
+					if(!UserLogic::isPermitted('SEVERAL-HOTEL.DELETE')) return [
+						'status'   => false,
+						'message'  => '您没有删除酒店的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id_arr     = explode(',', $id_str);
@@ -80,6 +96,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable': // 启用项目
+					if(!UserLogic::isPermitted('SEVERAL-HOTEL.ENABLE')) return [
+						'status'   => false,
+						'message'  => '您没有删除酒店的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id_arr     = explode(',', $id_str);
@@ -90,6 +111,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'disable': // 禁用项目
+					if(!UserLogic::isPermitted('SEVERAL-HOTEL.DISABLE')) return [
+						'status'   => false,
+						'message'  => '您没有禁用酒店的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id_arr     = explode(',', $id_str);

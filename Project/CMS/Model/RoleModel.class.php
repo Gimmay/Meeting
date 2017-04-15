@@ -22,7 +22,8 @@
 		protected $autoCheckFields = true;
 		protected $connection      = "DB_CONFIG_COMMON";
 		const CONTROL_COLUMN_PARAMETER_SELF = [
-			'level' => 'level'
+			'level'  => 'level',
+			'roleID' => 'id'
 		];
 
 		public function getList($control = []){
@@ -62,12 +63,12 @@ SELECT * FROM (
 		(SELECT
 		GROUP_CONCAT(u2.name ORDER BY u2.name_pinyin SEPARATOR '".self::USER_NAME_SEPARATOR."')
 		FROM $this_database.$table_user u2
-		JOIN $this_database.$table_user_assign_role uar1 ON uar1.uid = u2.id
+		JOIN $this_database.$table_user_assign_role uar1 ON uar1.uid = u2.id AND uar1.status = 1
 		WHERE r1.id = uar1.rid AND u2.status <> 2) user_name,
 		(SELECT
 		GROUP_CONCAT(u2.id ORDER BY u2.name_pinyin)
 		FROM $this_database.$table_user u2
-		JOIN $this_database.$table_user_assign_role uar1 ON uar1.uid = u2.id
+		JOIN $this_database.$table_user_assign_role uar1 ON uar1.uid = u2.id AND uar1.status = 1
 		WHERE r1.id = uar1.rid AND u2.status <> 2) user_id
 	FROM $this_database.$table_role r1
 	LEFT JOIN $this_database.$table_user u1 ON u1.id = r1.creator AND u1.status <> 2

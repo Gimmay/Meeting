@@ -8,6 +8,7 @@
 	namespace RoyalwissD\Logic;
 
 	use CMS\Logic\Session;
+	use CMS\Logic\UserLogic;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
 	use Quasar\Utility\StringPlus;
@@ -29,6 +30,11 @@
 		public function handlerRequest($type, $opt = []){
 			switch($type){
 				case 'create': // 创建项目
+					if(!UserLogic::isPermitted('SEVERAL-PROJECT.CREATE')) return [
+						'status'   => false,
+						'message'  => '您没有创建项目的权限',
+						'__ajax__' => true
+					];
 					$str_obj = new StringPlus();
 					/** @var \RoyalwissD\Model\ProjectModel $project_model */
 					$project_model = D('RoyalwissD/Project');
@@ -61,6 +67,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'modify': // 修改项目信息（不包括库存）
+					if(!UserLogic::isPermitted('SEVERAL-PROJECT.MODIFY')) return [
+						'status'   => false,
+						'message'  => '您没有修改项目的权限',
+						'__ajax__' => true
+					];
 					/** @var \RoyalwissD\Model\ProjectModel $project_model */
 					$project_model = D('RoyalwissD/Project');
 					$str_obj       = new StringPlus();
@@ -77,6 +88,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'modify_stock': // 修改库存信息
+					if(!UserLogic::isPermitted('SEVERAL-PROJECT.UPDATE_STOCK')) return [
+						'status'   => false,
+						'message'  => '您没有更新项目库存的权限',
+						'__ajax__' => true
+					];
 					$post = I('post.');
 					if(isset($post['is_stock_limit']) && $post['is_stock_limit']){
 						// 1、判断修改库存
@@ -114,6 +130,11 @@
 					else return ['status' => false, 'message' => '未做任何修改', '__ajax__' => true];
 				break;
 				case 'delete': // 删除项目
+					if(!UserLogic::isPermitted('SEVERAL-PROJECT.DELETE')) return [
+						'status'   => false,
+						'message'  => '您没有删除项目的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id_arr     = explode(',', $id_str);
@@ -124,6 +145,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'enable': // 启用项目
+					if(!UserLogic::isPermitted('SEVERAL-PROJECT.ENABLE')) return [
+						'status'   => false,
+						'message'  => '您没有启用项目的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id_arr     = explode(',', $id_str);
@@ -134,6 +160,11 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'disable': // 禁用项目
+					if(!UserLogic::isPermitted('SEVERAL-PROJECT.DISABLE')) return [
+						'status'   => false,
+						'message'  => '您没有禁用项目的权限',
+						'__ajax__' => true
+					];
 					$id_str     = I('post.id', '');
 					$meeting_id = I('get.mid', 0, 'int');
 					$id_arr     = explode(',', $id_str);

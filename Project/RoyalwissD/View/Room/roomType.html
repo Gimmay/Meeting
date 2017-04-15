@@ -35,45 +35,59 @@
 					<section class="content">
 						<div class="table_wrap mb_10">
 							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="<{:U('Room/roomType', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间类型(<{$room_type_number.assigned}>/<{$room_type_number.number}>)</a>
-								</div>
-								<div class="nav_tab_li">
-									<a href="<{:U('Room/manage', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间列表</a>
-								</div>
+								<if condition="in_array('SEVERAL-ROOM_TYPE.VIEW', $permission_list)">
+									<div class="nav_tab_li active">
+										<a href="<{:U('Room/roomType', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间类型(<{$room_type_number.assigned}>/<{$room_type_number.number}>)</a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-ROOM.VIEW', $permission_list)">
+									<div class="nav_tab_li">
+										<a href="<{:U('Room/manage', ['mid'=>I('get.mid', 0, 'int'),'hid'=>I('get.hid', 0, 'int')])}>">房间列表</a>
+									</div>
+								</if>
 							</div>
 						</div>
 						<div class="c_header">
 							<div class="function_list clearfix">
-								<div class="function_btn" data-toggle="modal" data-target="#add_roomType">
-									<a href="javascript:void(0)"><i class="glyphicon glyphicon-plus"></i>
-										<span>新增房间类型</span></a>
-								</div>
-								<div class="function_btn batch_delete_btn">
-									<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
-										<span>批量删除</span></a>
-								</div>
-								<div class="function_btn batch_enable_btn">
-									<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
-										<span>批量启用</span></a>
-								</div>
-								<div class="function_btn batch_disable_btn">
-									<a href="javascript:void(0)"><i class="glyphicon glyphicon-ban-circle"></i>
-										<span>批量禁用</span></a>
-								</div>
+								<if condition="in_array('SEVERAL-ROOM_TYPE.CREATE', $permission_list)">
+									<div class="function_btn" data-toggle="modal" data-target="#add_roomType">
+										<a href="javascript:void(0)"><i class="glyphicon glyphicon-plus"></i>
+											<span>新增房间类型</span></a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-ROOM_TYPE.DELETE', $permission_list)">
+									<div class="function_btn batch_delete_btn">
+										<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
+											<span>批量删除</span></a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-ROOM_TYPE.ENABLE', $permission_list)">
+									<div class="function_btn batch_enable_btn">
+										<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
+											<span>批量启用</span></a>
+									</div>
+								</if>
+								<if condition="in_array('SEVERAL-ROOM_TYPE.DISABLE', $permission_list)">
+									<div class="function_btn batch_disable_btn">
+										<a href="javascript:void(0)"><i class="glyphicon glyphicon-ban-circle"></i>
+											<span>批量禁用</span></a>
+									</div>
+								</if>
 							</div>
 						</div>
-						<div class="repertory clearfix">
-							<form class="form-horizontal" role="form" method="get" id="form" action="">
-								<div class="input-group repertory_text">
-									<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
-											<span class="input-group-btn">
-												<button type="submit" class="btn btn-default main_search">搜索</button>
-											</span>
-								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('Room/roomType',['mid'=>I('get.mid',0,'int'),'hid'=>I('get.hid',0,'int')])}>">查看所有</a>
-							</form>
-						</div>
+						<if condition="in_array('SEVERAL-ROOM_TYPE.SEARCH', $permission_list)">
+							<div class="repertory clearfix">
+								<form class="form-horizontal" role="form" method="get" id="form" action="">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" class="form-control" placeholder="关键字" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default main_search">搜索</button>
+									</span>
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('',['mid'=>I('get.mid',0,'int'),'hid'=>I('get.hid',0,'int')])}>">查看所有</a>
+								</form>
+							</div>
+						</if>
 						<div class="table_wrap">
 							<div class="row mb_10">
 								<div class="col-sm-6">
@@ -116,14 +130,22 @@
 												<td class="comment"><{$single.creatime}></td>
 												<td>
 													<div class="btn-group" data-id="<{$single.id}>" data-status="<{$single.status_code}>">
-														<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_roomType">修改</button>
-														<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+														<if condition="in_array('SEVERAL-ROOM_TYPE.MODIFY', $permission_list)">
+															<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#alter_roomType">修改</button>
+														</if>
+														<if condition="in_array('SEVERAL-ROOM_TYPE.DELETE', $permission_list)">
+															<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+														</if>
 														<switch name="single.status_code">
 															<case value="1">
-																<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+																<if condition="in_array('SEVERAL-ROOM_TYPE.DISABLE', $permission_list)">
+																	<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+																</if>
 															</case>
 															<case value="0">
-																<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+																<if condition="in_array('SEVERAL-ROOM_TYPE.ENABLE', $permission_list)">
+																	<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+																</if>
 															</case>
 														</switch>
 													</div>
@@ -132,6 +154,11 @@
 										</volist>
 									</tbody>
 								</table>
+							</div>
+							<div class="page_wrap">
+								<div class="pagination">
+									<{$pagination}>
+								</div>
 							</div>
 						</div>
 					</section>
@@ -166,8 +193,10 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"></label>
 							<div class="col-sm-10">
-								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;房间入住人数为单个房间可以入住的人数上限</p>
-								<p><span class="glyphicon glyphicon-warning-sign color-red" style="opacity: 0"></span>&nbsp;&nbsp;0为不限制</p>
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;房间入住人数为单个房间可以入住的人数上限
+								</p>
+								<p><span class="glyphicon glyphicon-warning-sign color-red" style="opacity: 0"></span>&nbsp;&nbsp;0为不限制
+								</p>
 							</div>
 						</div>
 						<div class="form-group">
@@ -185,8 +214,10 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"></label>
 							<div class="col-sm-10">
-								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;房间数量为该类型可以分配的房间数量</p>
-								<p><span class="glyphicon glyphicon-warning-sign color-red" style="opacity: 0"></span>&nbsp;&nbsp;0为不限制</p>
+								<p><span class="glyphicon glyphicon-warning-sign color-red"></span>&nbsp;&nbsp;房间数量为该类型可以分配的房间数量
+								</p>
+								<p><span class="glyphicon glyphicon-warning-sign color-red" style="opacity: 0"></span>&nbsp;&nbsp;0为不限制
+								</p>
 							</div>
 						</div>
 						<div class="form-group">

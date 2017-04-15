@@ -9,6 +9,7 @@
 
 	use CMS\Logic\ExcelLogic;
 	use CMS\Logic\PageLogic;
+	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
 	use RoyalwissD\Logic\RoomLogic;
 	use RoyalwissD\Logic\RoomTypeLogic;
@@ -48,6 +49,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-ROOM.VIEW')) $this->error('您没有查看房间的权限');
 			// 获取项目数据
 			/** @var \RoyalwissD\Model\RoomModel $room_model */
 			$room_model           = D('RoyalwissD/Room');
@@ -62,7 +64,11 @@
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$pagination = $page_object->show();
 			$list       = $room_logic->setData('manage', $list);
-			$statistics = $room_logic->setData('manage:statistics', ['list' => $list, 'total' => $total, 'meetingID'=>$this->meetingID]);
+			$statistics = $room_logic->setData('manage:statistics', [
+				'list'      => $list,
+				'total'     => $total,
+				'meetingID' => $this->meetingID
+			]);
 			$this->assign('statistics', $statistics);
 			// 获取房间类型的可用数和总数
 			/** @var \RoyalwissD\Model\RoomTypeModel $room_type_model */
@@ -91,6 +97,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-ROOM_TYPE.VIEW')) $this->error('您没有查看房间类型的权限');
 			// 获取项目数据
 			/** @var \RoyalwissD\Model\RoomTypeModel $room_type_model */
 			$room_type_model      = D('RoyalwissD/RoomType');
@@ -116,6 +123,7 @@
 		}
 
 		public function exportTemplate(){
+			if(!UserLogic::isPermitted('SEVERAL-ROOM_TYPE.DOWNLOAD_IMPORT_TEMPLATE')) $this->error('您没有下载导入模板的权限');
 			/** @var \General\Model\MeetingModel $meeting_model */
 			$meeting_model = D('General/Meeting');
 			/** @var \RoyalwissD\Model\HotelModel $hotel_model */
@@ -168,6 +176,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-ROOM_TYPE.IMPORT')) $this->error('您没有导入的权限');
 			$this->display();
 		}
 
@@ -188,6 +197,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-ROOM_TYPE.IMPORT')) $this->error('您没有导入的权限');
 			/** @var \General\Model\UploadLogModel $upload_log_model */
 			$upload_log_model = D('General/UploadLog');
 			$log_id           = I('get.logID', 0, 'int');
@@ -212,17 +222,13 @@
 		}
 
 		public function importResult(){
+			if(!UserLogic::isPermitted('SEVERAL-ROOM_TYPE.IMPORT')) $this->error('您没有导入的权限');
 			$result_id = I('get.resultID', 0, 'int');
 			/** @var \RoyalwissD\Model\RoomImportResultModel $room_import_result_model */
 			$room_import_result_model = D('RoyalwissD/RoomImportResult');
-			if($room_import_result_model->fetch(['id' => $result_id])){
-				$record = $room_import_result_model->getObject();
-				$this->assign('result', $record);
-				$this->display();
-			}
-			else{
-				$this->error('缺少导入结果参数');
-				exit;
-			}
+			if(!$room_import_result_model->fetch(['id' => $result_id])) $this->error('缺少导入结果参数');
+			$record = $room_import_result_model->getObject();
+			$this->assign('result', $record);
+			$this->display();
 		}
 	}
