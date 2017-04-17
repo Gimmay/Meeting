@@ -177,8 +177,10 @@
 				break;
 				case 'client:statistics':
 					$report_template = [
-						'total'  => 0,
-						'signed' => 0
+						'total'       => 0,
+						'signed'      => 0,
+						'consumption' => 0,
+						'receivables' => 0
 					];
 					//
 					$statistics = [
@@ -200,37 +202,62 @@
 					foreach($data as $client){
 						if(!isset($statistics['area'][$client['unit_area']])) $statistics['area'][$client['unit_area']] = $report_template;
 						if(!isset($statistics['team'][$client['team']])) $statistics['team'][$client['team']] = $report_template;
-						if(!isset($statistics['type'][$client['type']])) $statistics['type'][$client['type']] = $report_template;
-						// 新老客判定
-						if($client['is_new_code'] == 1){
-							$statistics['isNew'][1]['total']++;
-							if($client['sign_status_code'] == 1) $statistics['isNew'][1]['signed']++;
+
+						if(in_array($client['type'], ClientModel::TYPE)){
+							if(!isset($statistics['type'][$client['type']])) $statistics['type'][$client['type']] = $report_template;
+							// 新老客判定
+							if($client['is_new_code'] == 1){
+								$statistics['isNew'][1]['total']++;
+								$statistics['isNew'][1]['consumption'] += $client['consumption'];
+								$statistics['isNew'][1]['receivables'] += $client['receivables'];
+								if($client['sign_status_code'] == 1) $statistics['isNew'][1]['signed']++;
+							}
+							if($client['is_new_code'] == 0){
+								$statistics['isNew'][0]['total']++;
+								$statistics['isNew'][0]['consumption'] += $client['consumption'];
+								$statistics['isNew'][0]['receivables'] += $client['receivables'];
+								if($client['sign_status_code'] == 1) $statistics['isNew'][0]['signed']++;
+							}
+							// 新老店判定
+							if($client['unit_is_new_code'] == 1){
+								$statistics['unitIsNew'][1]['total']++;
+								$statistics['unitIsNew'][1]['consumption'] += $client['consumption'];
+								$statistics['unitIsNew'][1]['receivables'] += $client['receivables'];
+								if($client['sign_status_code'] == 1) $statistics['unitIsNew'][1]['signed']++;
+							}
+							if($client['unit_is_new_code'] == 0){
+								$statistics['unitIsNew'][0]['total']++;
+								$statistics['unitIsNew'][0]['consumption'] += $client['consumption'];
+								$statistics['unitIsNew'][0]['receivables'] += $client['receivables'];
+								if($client['sign_status_code'] == 1) $statistics['unitIsNew'][0]['signed']++;
+							}
+							// 区域判定
+							$statistics['area'][$client['unit_area']]['total']++;
+							$statistics['area'][$client['unit_area']]['consumption'] += $client['consumption'];
+							$statistics['area'][$client['unit_area']]['receivables'] += $client['receivables'];
+							if($client['sign_status_code'] == 1) $statistics['area'][$client['unit_area']]['signed']++;
+							// 团队判定
+							$statistics['team'][$client['team']]['total']++;
+							$statistics['team'][$client['team']]['consumption'] += $client['consumption'];
+							$statistics['team'][$client['team']]['receivables'] += $client['receivables'];
+							if($client['sign_status_code'] == 1) $statistics['team'][$client['team']]['signed']++;
+							// 总判定
+							$statistics['total']['total']++;
+							$statistics['total']['consumption'] += $client['consumption'];
+							$statistics['total']['receivables'] += $client['receivables'];
+							if($client['sign_status_code'] == 1) $statistics['total']['signed']++;
+							// 客户性质判定
+							$statistics['type'][$client['type']]['total']++;
+							$statistics['type'][$client['type']]['consumption'] += $client['consumption'];
+							$statistics['type'][$client['type']]['receivables'] += $client['receivables'];
+							if($client['sign_status_code'] == 1) $statistics['type'][$client['type']]['signed']++;
 						}
-						if($client['is_new_code'] == 0){
-							$statistics['isNew'][0]['total']++;
-							if($client['sign_status_code'] == 1) $statistics['isNew'][0]['signed']++;
+						else{
+							if(!isset($statistics['type']["×$client[type]"])) $statistics['type']["×$client[type]"] = $report_template;
+							// 客户性质判定
+							$statistics['type']["×$client[type]"]['total']++;
+							if($client['sign_status_code'] == 1) $statistics['type']["×$client[type]"]['signed']++;
 						}
-						// 新老店判定
-						if($client['unit_is_new_code'] == 1){
-							$statistics['unitIsNew'][1]['total']++;
-							if($client['sign_status_code'] == 1) $statistics['unitIsNew'][1]['signed']++;
-						}
-						if($client['unit_is_new_code'] == 0){
-							$statistics['unitIsNew'][0]['total']++;
-							if($client['sign_status_code'] == 1) $statistics['unitIsNew'][0]['signed']++;
-						}
-						// 区域判定
-						$statistics['area'][$client['unit_area']]['total']++;
-						if($client['sign_status_code'] == 1) $statistics['area'][$client['unit_area']]['signed']++;
-						// 团队判定
-						$statistics['team'][$client['team']]['total']++;
-						if($client['sign_status_code'] == 1) $statistics['team'][$client['team']]['signed']++;
-						// 客户性质判定
-						$statistics['type'][$client['type']]['total']++;
-						if($client['sign_status_code'] == 1) $statistics['type'][$client['type']]['signed']++;
-						// 总判定
-						$statistics['total']['total']++;
-						if($client['sign_status_code'] == 1) $statistics['total']['signed']++;
 					}
 
 					return $statistics;

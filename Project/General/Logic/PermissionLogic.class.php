@@ -72,7 +72,7 @@
 			],
 			[
 				'module' => '用户',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'GENERAL-USER.MODIFY'
 			],
 			[
@@ -123,7 +123,7 @@
 			],
 			[
 				'module' => '角色',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'GENERAL-ROLE.MODIFY'
 			],
 			[
@@ -164,7 +164,7 @@
 			],
 			[
 				'module' => '接口配置',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'GENERAL-API_CONFIGURE.MODIFY'
 			],
 			[
@@ -205,7 +205,7 @@
 			],
 			[
 				'module' => '会议',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'SEVERAL-MEETING.MODIFY'
 			],
 			[
@@ -261,7 +261,7 @@
 			],
 			[
 				'module' => '消息',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'SEVERAL-MESSAGE.MODIFY'
 			],
 			[
@@ -328,7 +328,7 @@
 			],
 			[
 				'module' => '项目类型',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'SEVERAL-PROJECT_TYPE.MODIFY'
 			],
 			[
@@ -364,7 +364,7 @@
 			],
 			[
 				'module' => '项目',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'SEVERAL-PROJECT.MODIFY'
 			],
 			[
@@ -410,7 +410,7 @@
 			],
 			[
 				'module' => '支付方式',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'SEVERAL-PAY_METHOD.MODIFY'
 			],
 			[
@@ -446,7 +446,7 @@
 			],
 			[
 				'module' => 'POS机',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'SEVERAL-POS_MACHINE.MODIFY'
 			],
 			[
@@ -482,7 +482,7 @@
 			],
 			[
 				'module' => '客户',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'SEVERAL-CLIENT.MODIFY'
 			],
 			[
@@ -615,6 +615,32 @@
 				'name'   => '复制',
 				'code'   => 'SEVERAL-CLIENT.COPY'
 			],
+			// 会所
+			[
+				'module' => '会所',
+				'name'   => '修改',
+				'code'   => 'SEVERAL-UNIT.MODIFY'
+			],
+			[
+				'module' => '会所',
+				'name'   => '查看',
+				'code'   => 'SEVERAL-UNIT.VIEW'
+			],
+			[
+				'module' => '会所',
+				'name'   => '检索',
+				'code'   => 'SEVERAL-UNIT.SEARCH'
+			],
+			[
+				'module' => '会所',
+				'name'   => '禁用',
+				'code'   => 'SEVERAL-UNIT.DISABLE'
+			],
+			[
+				'module' => '会所',
+				'name'   => '启用',
+				'code'   => 'SEVERAL-UNIT.ENABLE'
+			],
 			// 分组
 			[
 				'module' => '分组',
@@ -623,7 +649,7 @@
 			],
 			[
 				'module' => '分组',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'SEVERAL-GROUPING.MODIFY'
 			],
 			[
@@ -674,7 +700,7 @@
 			],
 			[
 				'module' => '收款',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'SEVERAL-RECEIVABLES.MODIFY'
 			],
 			[
@@ -750,7 +776,7 @@
 			],
 			[
 				'module' => '酒店',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'SEVERAL-HOTEL.MODIFY'
 			],
 			[
@@ -786,7 +812,7 @@
 			],
 			[
 				'module' => '房间类型',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'SEVERAL-ROOM_TYPE.MODIFY'
 			],
 			[
@@ -822,7 +848,7 @@
 			],
 			[
 				'module' => '房间',
-				'name'   => '编辑',
+				'name'   => '修改',
 				'code'   => 'SEVERAL-ROOM.MODIFY'
 			],
 			[
@@ -886,11 +912,6 @@
 				'module' => '报表-会所',
 				'name'   => '筛选',
 				'code'   => 'SEVERAL-REPORT_UNIT.FILTER'
-			],
-			[
-				'module' => '报表-会所',
-				'name'   => '列表字段控制',
-				'code'   => 'SEVERAL-REPORT_UNIT.MANAGE_LIST_COLUMN'
 			],
 			// 报表-收款
 			[

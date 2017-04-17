@@ -141,6 +141,22 @@ LIMIT 1");
 			$table_grouping     = GroupingModel::TABLE_NAME;
 			$table_room         = RoomModel::TABLE_NAME;
 			$this_database = self::DATABASE_NAME;
+			$sql_special = "
+SELECT
+	c.TABLE_SCHEMA,
+	c.TABLE_NAME,
+	c.COLUMN_NAME,
+	c.DATA_TYPE,
+	c.CHARACTER_MAXIMUM_LENGTH,
+	c.COLUMN_TYPE,
+	c.COLUMN_COMMENT,
+	'fixed' TYPE
+FROM information_schema.`TABLES` t
+JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_attendee'
+AND COLUMN_NAME IN ('receivables', 'consumption')
+";
 			$sql_custom         = "
 SELECT
 	c.TABLE_SCHEMA,
@@ -198,8 +214,8 @@ SELECT
 FROM information_schema.`TABLES` t
 JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
 WHERE t.TABLE_SCHEMA = '$this_database'
-AND t.TABLE_NAME = '$table_attendee'  AND COLUMN_NAME NOT LIKE '".self::CUSTOM_COLUMN.'%\'';
-			$sql                = $just_custom_column ? $sql_custom : "$sql_fixed UNION $sql_custom";
+AND t.TABLE_NAME = '$table_attendee' AND COLUMN_NAME NOT LIKE '".self::CUSTOM_COLUMN.'%\'';
+			$sql                = $just_custom_column ? "$sql_custom UNION $sql_special": "$sql_fixed UNION $sql_custom";
 			$list               = $this->query($sql);
 
 			return $list;

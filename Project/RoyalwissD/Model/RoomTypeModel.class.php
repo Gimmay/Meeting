@@ -120,7 +120,7 @@ FROM $this_database.$table_room_type rt
 WHERE rt.mid = $meeting_id AND rt.hid = $hotel_id AND rt.status = 1
 ";
 			$result = $this->query($sql);
-			if(isset($result[0]) && $result[0]['assigned']) return $result[0];
+			if(isset($result[0]) && $result[0]['number']) return $result[0];
 			else return ['assigned' => 0, 'number' => 0];
 		}
 

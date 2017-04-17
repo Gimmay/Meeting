@@ -142,11 +142,11 @@
 				if(($meeting_id != 0) && ($meeting_id != $meeting_id_cache)){
 					/** @var \General\Model\MeetingModel $meeting_model */
 					$meeting_model = D('General/Meeting');
-					if($meeting_model->fetch(['id' => $meeting_id])){
+					if($meeting_model->fetch(['id' => $meeting_id, 'status'=>1])){
 						$meeting_record = $meeting_model->getObject();
 						$this->assign('current_meeting_name', $meeting_record['name']);
 						$this->assign('current_meeting_type', MeetingLogic::TYPE[$meeting_record['type']]);
-					}
+					}else $this->error('会议已删除或禁用');
 				}
 			};
 			/** @var \General\Model\UserModel $user_model */

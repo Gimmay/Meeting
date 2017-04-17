@@ -40,7 +40,7 @@
 													</a>
 													<a href="<{:U('Client/exportTemplate', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/magic-wand.png" alt="">
-														<p>下载导入模板</p>
+														<p>下载客户导入模板</p>
 													</a>
 													<a href="<{:U('Client/import', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/hat-and-magic-wand.png" alt="">
@@ -61,13 +61,13 @@
 													</a>
 													<a href="<{:U('Receivables/posMachine', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/safe.png" alt="">
-														<p>pos机管理</p>
+														<p>Pos机管理</p>
 													</a>
 												</div>
 											</div>
 											<div class="pb_item">
 												<div class="caption">
-													<i class="glyphicon glyphicon-tag"></i> <span>系统设置</span>
+													<i class="glyphicon glyphicon-tag"></i><span>系统设置</span>
 												</div>
 												<div class="row">
 													<a href="<{:U('Client/columnSetting', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
@@ -95,19 +95,15 @@
 													</a>-->
 													<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/medal-gold.png" alt="">
-														<p>审核签到</p>
+														<p>客户管理</p>
 													</a>
 													<a href="<{:U('Client/sign', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/search.png" alt="">
 														<p>扫码签到</p>
 													</a>
-													<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
-														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/gift.png" alt="">
-														<p>领取礼品</p>
-													</a>
 													<a href="<{:U('Grouping/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/books.png" alt="">
-														<p>分组</p>
+														<p>分组管理</p>
 													</a>
 													<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/tick.png" alt="">
@@ -117,13 +113,55 @@
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/home.png" alt="">
 														<p>酒店房间管理</p>
 													</a>
-													<a href="<{:U('Report/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+												</div>
+											</div>
+											<div class="pb_item">
+												<div class="caption">
+													<i class="glyphicon glyphicon-tag"></i> <span>相关报表</span>
+												</div>
+												<div class="row">
+													<a href="<{:U('Report/client', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/notepad.png" alt="">
-														<p>报表管理</p>
+														<p>客户报表</p>
 													</a>
-													<a href="<{:U('Report/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+													<a href="<{:U('Report/unit', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/notepad.png" alt="">
+														<p>客户报表</p>
+													</a>
+												</div>
+											</div>
+											<div class="pb_item">
+												<div class="caption">
+													<i class="glyphicon glyphicon-tag"></i> <span>回收站</span>
+												</div>
+												<div class="row">
+													<a href="<{:U('Recycle/client', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
 														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/trash.png" alt="">
-														<p>回收站管理</p>
+														<p>客户回收站</p>
+													</a>
+													<a href="<{:U('Recycle/project', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/trash.png" alt="">
+														<p>项目回收站</p>
+													</a>
+													<a href="<{:U('Recycle/message', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/trash.png" alt="">
+														<p>消息回收站</p>
+													</a>
+													<a href="<{:U('Recycle/group', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/trash.png" alt="">
+														<p>分组回收站</p>
+													</a>
+													<a href="<{:U('Recycle/groupMember', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/trash.png" alt="">
+														<p>组员回收站</p>
+													</a>
+													<a href="<{:U('Recycle/hotel', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/trash.png" alt="">
+														<p>酒店回收站</p>
+													</a>
+													<a href="<{:U('Recycle/room', ['mid'=>I('get.mid', 0, 'int')])}>" class="func_btn">
+														<img src="<{$Think.COMMON_IMAGE_PATH}>/icon48/trash.png" alt="">
+														<p>房间回收站</p>
 													</a>
 												</div>
 											</div>

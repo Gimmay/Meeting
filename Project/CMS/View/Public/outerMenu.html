@@ -2,21 +2,27 @@
 <div class="mt_navbar">
 	<div class="sidenav">
 		<ul class="sidenav_list" id="side_menu">
+			<if condition="in_array('GENERAL-USER.VIEW', $permission_list)">
 			<li class="side_item <if condition='CONTROLLER_NAME eq User'>active</if>">
 				<a href="<{:U('CMS/User/manage')}>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon-user"></i> <span class="nav-label">用户管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 			</li>
+				</if>
+			<if condition="in_array('GENERAL-ROLE.VIEW', $permission_list)">
 			<li class="side_item <if condition='CONTROLLER_NAME eq Role'>active</if>">
 				<a href="<{:U('CMS/Role/manage')}>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon glyphicon-star"></i> <span class="nav-label">角色管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 			</li>
+				</if>
+			<if condition="in_array('SEVERAL-MEETING.VIEW', $permission_list)">
 			<li class="side_item <if condition='CONTROLLER_NAME eq Meeting'>active</if>">
 				<a href="<{:U('CMS/Meeting/type')}>" class="side-item-link">
 					<i class="icon_nav glyphicon glyphicon-th"></i> <span class="nav-label">会议管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 			</li>
+				</if>
 			<li class="side_item <if condition='CONTROLLER_NAME eq System'>active</if>">
 				<div class="side-item-link no_link">
 					<i class="icon_nav glyphicon glyphicon-cog"></i> <span class="nav-label">全局配置</span>
@@ -26,9 +32,11 @@
 					<!--<li class="<if condition='$cv_name eq Client_manage'>active</if>">
 						<a href="<{:U('CMS/System/configure')}>" class="side-item-link">基础配置</a>
 					</li>-->
+					<if condition="in_array('GENERAL-API_CONFIGURE.VIEW', $permission_list)">
 					<li class="<if condition='$cv_name eq System_apiConfigure'>active</if>">
 						<a href="<{:U('CMS/System/apiConfigure')}>">接口配置</a>
 					</li>
+						</if>
 				</ul>
 			</li>
 		</ul>

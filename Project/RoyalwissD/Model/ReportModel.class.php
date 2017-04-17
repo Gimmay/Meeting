@@ -43,7 +43,9 @@
 				$attendee_model     = D('RoyalwissD/Attendee');
 				$custom_column_list = $attendee_model->getColumnList(true);
 				$list               = [];
-				foreach($custom_column_list as $column) $list[] = $column['column_name'];
+				foreach($custom_column_list as $column){
+					if(preg_match('/'.AttendeeModel::CUSTOM_COLUMN.'(\d)+/', $column['column_name'])) $list[] = $column['column_name'];
+				}
 				$str = count($list)>0 ? implode(',', $list).',' : '';
 
 				return $str;
@@ -69,6 +71,12 @@
 			}
 			if(isset($meeting_id)) $where .= " and mid = $meeting_id ";
 			if(isset($type) && isset($type[0]) && isset($type[1])) $where .= " and type $type[0] $type[1] ";
+			elseif(isset($type) && is_bool($type)){
+				$str = "";
+				foreach(ClientModel::TYPE as $val) $str .= "'$val',";
+				$str = trim($str, ',');
+				if($type) $where .= " and type in ($str)";
+			}
 			if(isset($sign_status) && isset($sign_status[0]) && isset($sign_status[1])) $where .= " and sign_status $sign_status[0] $sign_status[1] ";
 			$custom_column = $getCustomColumn();
 			$sql           = "
@@ -94,6 +102,8 @@ SELECT * FROM (
 		c1.type,
 		c1.comment,
 		$custom_column
+		a1.consumption,
+		a1.receivables,
 		a1.register_type,
 		a1.review_status,
 		a1.review_time,
@@ -148,7 +158,6 @@ SELECT * FROM (
 WHERE status = 1 AND review_status = 1 $where
 $order
 ";
-
 			return $this->query($sql);
 		}
 
@@ -156,6 +165,7 @@ $order
 			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
 			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
 			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$type                = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
 			$meeting_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
 			$where      = ' ';
 			if(isset($order)) $order = " ORDER BY $order";
@@ -169,6 +179,13 @@ $order
 				)";
 			}
 			if(isset($status) && isset($status[0]) && isset($status[1])) $where .= " and status $status[0] $status[1] ";
+			if(isset($type) && isset($type[0]) && isset($type[1])) $client_type_condition = " and type $type[0] $type[1] ";
+			elseif(isset($type) && is_bool($type)){
+				$str = "";
+				foreach(ClientModel::TYPE as $val) $str .= "'$val',";
+				$str = trim($str, ',');
+				if($type) $client_type_condition = " and type in ($str)";
+			}
 			if(isset($meeting_id)) $meeting_id_condition = " and mid = $meeting_id ";
 			else $meeting_id_condition = '';
 			$sql    = "
@@ -187,10 +204,12 @@ FROM(
 		u.status,
 		u.creatime,
 		u.creator creator_code,
-		(SELECT count(c.name) FROM meeting_royalwiss_deal.attendee a
+		(SELECT count(c.name)
+		FROM meeting_royalwiss_deal.attendee a
 		JOIN meeting_royalwiss_deal.client c on a.cid = c.id
 		WHERE c.status = 1 AND a.status = 1 AND a.review_status = 1 AND u.name = c.unit $meeting_id_condition) total_client,
-		(SELECT count(c.name) FROM meeting_royalwiss_deal.attendee a
+		(SELECT count(c.name)
+		FROM meeting_royalwiss_deal.attendee a
 		JOIN meeting_royalwiss_deal.client c on a.cid = c.id
 		WHERE c.status = 1 AND a.status = 1 AND a.review_status = 1 AND u.name = c.unit $meeting_id_condition AND a.sign_status = 1) signed_client,
 		u1.name creator
@@ -198,9 +217,10 @@ FROM(
 	LEFT JOIN meeting_common.user u1 ON u1.id = u.creator AND u1.status <> 2
 ) tab
 WHERE name in (
-	SELECT c.unit FROM meeting_royalwiss_deal.attendee a
+	SELECT c.unit
+	FROM meeting_royalwiss_deal.attendee a
 	JOIN meeting_royalwiss_deal.client c on a.cid = c.id
-	WHERE c.status = 1 AND a.status = 1 AND a.review_status = 1 $meeting_id_condition
+	WHERE c.status = 1 AND a.status = 1 AND a.review_status = 1 $meeting_id_condition $client_type_condition
 )
 $where
 $order

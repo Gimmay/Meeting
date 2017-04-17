@@ -210,6 +210,7 @@
 						$client_model::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus'] => ['=', 1],
 						$client_model::CONTROL_COLUMN_PARAMETER_SELF['signStatus']   => ['=', 1],
 						$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $meeting_id,
+						$client_model::CONTROL_COLUMN_PARAMETER_SELF['type']         => true
 						//						$client_model::CONTROL_COLUMN_PARAMETER_SELF['limit']        => [0, 20] // 分段读取
 					]));
 

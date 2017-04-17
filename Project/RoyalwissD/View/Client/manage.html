@@ -40,28 +40,36 @@
 					<section class="content">
 						<div class="table_wrap mb_10">
 							<div class="nav_tab clearfix">
-								<div class="nav_tab_li active">
-									<a href="javascript:void(0)">客户列表</a>
-								</div>
-								<div class="table_length  pull-right">
-									显示： <select>
-									<option>5</option>
-									<option>10</option>
-									<option selected>20</option>
-									<option>50</option>
-									<option>100</option>
-									<option>150</option>
-									<option>200</option>
-									<option>500</option>
-									<option>10000</option>
-								</select> 项结果
+								<div class="nav_tab clearfix">
+									<if condition="in_array('SEVERAL-CLIENT.VIEW', $permission_list)">
+										<div class="nav_tab_li active">
+											<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>">客户管理</a>
+										</div>
+									</if>
+									<if condition="in_array('SEVERAL-UNIT.VIEW', $permission_list)">
+										<div class="nav_tab_li">
+											<a href="<{:U('Client/unit', ['mid'=>I('get.mid', 0, 'int')])}>">会所管理</a>
+										</div>
+									</if>
+									<div class="table_length  pull-right">
+										显示： <select>
+										<option>5</option>
+										<option>10</option>
+										<option selected>20</option>
+										<option>50</option>
+										<option>100</option>
+										<option>150</option>
+										<option>200</option>
+										<option>500</option>
+										<option>10000</option>
+									</select> 项结果
+									</div>
 								</div>
 							</div>
 						</div>
 						<div class="c_header">
 							<div class="btn_group_wrap">
 								<div class="btn-group">
-
 									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										<i class="glyphicon glyphicon-plus"></i> 新建客户 <span class="caret"></span>
 									</button>
@@ -198,6 +206,8 @@
 									<span class="input-group-btn">
 										<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
 									</span>
+									<!-- 避免回车提交 -->
+									<input style="display:none" mce_style="display:none">
 								</div>
 								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有</a>
 							</div>
@@ -300,6 +310,12 @@
 																	</foreach>
 																</select>
 															</case>
+															<case value="ROYALWISSD-ATTENDEE-CONSUMPTION">
+																<input type="number" class="sub_val form-control input-sm" name="<{$column.form}>" value="<{$single[$column['form']]}>">
+															</case>
+															<case value="ROYALWISSD-ATTENDEE-RECEIVABLES">
+																<input type="number" class="sub_val form-control input-sm" name="<{$column.form}>" value="<{$single[$column['form']]}>">
+															</case>
 															<default/>
 															<input class="sub_val form-control input-sm" name="<{$column.form}>" value="<{$single[$column['form']]}>">
 														</switch>
@@ -316,16 +332,16 @@
 													<if condition="$single['review_status_code'] eq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.CANCEL_REVIEW', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs anti_review_btn">取消审核</button>
 													</if>
-													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] eq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.CANCEL_SIGN', $permission_list)">
+													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] eq 1 and $single['status_code'] eq 1 and $single['special_type'] == false and in_array('SEVERAL-CLIENT.CANCEL_SIGN', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs anti_sign_btn">取消签到</button>
 													</if>
-													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] neq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.SIGN', $permission_list)">
+													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] neq 1 and $single['status_code'] eq 1 and $single['special_type'] == false and in_array('SEVERAL-CLIENT.SIGN', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs sign_btn">签到</button>
 													</if>
-													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] eq 1 and $single['gift_status_code'] eq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.REFUND_GIFT', $permission_list)">
+													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] eq 1 and $single['gift_status_code'] eq 1 and $single['status_code'] eq 1 and $single['special_type'] == false and in_array('SEVERAL-CLIENT.REFUND_GIFT', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs anti_btn_gift">退还礼品</button>
 													</if>
-													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] eq 1 and $single['gift_status_code'] neq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.GIFT', $permission_list)">
+													<if condition="$single['review_status_code'] eq 1 and $single['sign_status_code'] eq 1 and $single['gift_status_code'] neq 1 and $single['status_code'] eq 1 and $single['special_type'] == false and in_array('SEVERAL-CLIENT.GIFT', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs btn_gift">领取礼品</button>
 													</if>
 													<if condition="$single['review_status_code'] eq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-CLIENT.SEND_INVITATION', $permission_list)">
@@ -752,6 +768,10 @@
 									<case value="ROYALWISSD-CLIENT-ID_CARD_NUMBER">
 									</case>
 									<case value="ROYALWISSD-CLIENT-BIRTHDAY">
+									</case>
+									<case value="ROYALWISSD-ATTENDEE-CONSUMPTION">
+									</case>
+									<case value="ROYALWISSD-ATTENDEE-RECEIVABLES">
 									</case>
 									<case value="ROYALWISSD-UNIT-UNIT_IS_NEW">
 										<div class="form-group">

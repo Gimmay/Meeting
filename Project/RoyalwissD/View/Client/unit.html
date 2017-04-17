@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>项目模块 - 会议系统</title>
+	<title>会所管理 - 会议系统</title>
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
@@ -13,6 +13,7 @@
 	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
@@ -20,7 +21,6 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/operate.js"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
@@ -35,49 +35,39 @@
 					<section class="content">
 						<div class="table_wrap mb_10">
 							<div class="nav_tab clearfix">
-								<if condition="in_array('SEVERAL-PROJECT_TYPE.VIEW', $permission_list)">
+								<if condition="in_array('SEVERAL-UNIT.VIEW', $permission_list)">
 									<div class="nav_tab_li active">
-										<a href="<{:U('Project/type', ['mid'=>I('get.mid', 0, 'int')])}>">项目类型</a>
+										<a href="<{:U('Client/unit', ['mid'=>I('get.mid', 0, 'int')])}>">会所管理</a>
 									</div>
 								</if>
-								<if condition="in_array('SEVERAL-PROJECT.VIEW', $permission_list)">
+								<if condition="in_array('SEVERAL-CLIENT.VIEW', $permission_list)">
 									<div class="nav_tab_li">
-										<a href="<{:U('Project/manage', ['mid'=>I('get.mid', 0, 'int')])}>">项目管理</a>
+										<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>">客户管理</a>
 									</div>
 								</if>
 							</div>
 						</div>
 						<div class="c_header">
 							<div class="function_list clearfix">
-								<if condition="in_array('SEVERAL-PROJECT_TYPE.CREATE', $permission_list)">
-									<div class="function_btn" data-toggle="modal" data-target="#create_project_type">
-										<a href="javascript:void(0)"> <i class="glyphicon glyphicon-plus"></i>
-											<span>新增项目类型</span> </a>
+								<if condition="in_array('SEVERAL-UNIT.ENABLE', $permission_list)">
+									<div class="function_btn batch_enable_btn">
+										<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
+											<span>批量启用</span></a>
 									</div>
 								</if>
-								<if condition="in_array('SEVERAL-PROJECT_TYPE.DELETE', $permission_list)">
-									<div class="function_btn batch_delete_btn">
-										<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
-											<span>批量删除</span></a>
-									</div>
-								</if>
-								<if condition="in_array('SEVERAL-PROJECT_TYPE.ENABLE', $permission_list)">
-									<div class="function_btn batch_enable_btn"><a href="javascript:void(0)">
-										<i class="glyphicon glyphicon-ok-circle"></i> <span>批量启用</span></a>
-									</div>
-								</if>
-								<if condition="in_array('SEVERAL-PROJECT_TYPE.DISABLE', $permission_list)">
-									<div class="function_btn batch_disable_btn"><a href="javascript:void(0)">
-										<i class="glyphicon glyphicon-ban-circle"></i> <span>批量禁用</span></a>
+								<if condition="in_array('SEVERAL-UNIT.DISABLE', $permission_list)">
+									<div class="function_btn batch_disable_btn">
+										<a href="javascript:void(0)"><i class="glyphicon glyphicon-ban-circle"></i>
+											<span>批量禁用</span></a>
 									</div>
 								</if>
 							</div>
 						</div>
-						<if condition="in_array('SEVERAL-PROJECT_TYPE.SEARCH', $permission_list)">
+						<if condition="in_array('SEVERAL-UNIT.SEARCH', $permission_list)">
 							<div class="repertory clearfix">
 								<form action="" method="get">
 									<div class="input-group repertory_text">
-										<input type="search" name="keyword" id="keyword" class="form-control" placeholder="项目类型/拼音简码" value="<{:I('get.keyword', '')}>">
+										<input type="search" name="keyword" id="keyword" class="form-control" placeholder="会所名称 / 名称拼音简码 / 区域" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
 										<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
 									</span>
@@ -96,12 +86,14 @@
 											<input type="checkbox" class="icheck" placeholder="" value="">
 										</th>
 										<th width="5%">序号</th>
-										<th width="10%">名称</th>
-										<th width="20%">备注</th>
+										<th width="20%">名称</th>
+										<th width="5%">区域</th>
+										<th width="5%">是否新店</th>
+										<th width="25%">备注</th>
 										<th width="5%">状态</th>
-										<th width="10%">创建时间</th>
 										<th width="5%">创建者</th>
-										<th width="40%">操作</th>
+										<th width="10%">创建时间</th>
+										<th width="15%">操作</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -112,27 +104,26 @@
 											</td>
 											<td><{$i}></td>
 											<td class="name"><{$single.name}></td>
-											<td class="comment"><{$single.comment}></td>
+											<td class="type"><{$single.area}></td>
+											<td><{$single.is_new}></td>
+											<td class="status"><{$single.comment}></td>
 											<td class="status"><{$single.status}></td>
-											<td class="creatime"><{$single.creatime}></td>
 											<td class="creator"><{$single.creator}></td>
+											<td class="creatime"><{$single.creatime}></td>
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>" data-status="<{$single.status_code}>">
-													<if condition="in_array('SEVERAL-PROJECT_TYPE.MODIFY', $permission_list)">
-														<button type="button" class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_project_type">修改</button>
-													</if>
-													<if condition="in_array('SEVERAL-PROJECT_TYPE.DELETE', $permission_list)">
-														<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+													<if condition="in_array('SEVERAL-UNIT.MODIFY', $permission_list)">
+														<button type="button" class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_modal">修改</button>
 													</if>
 													<switch name="single.status_code">
-														<case value="1">
-															<if condition="in_array('SEVERAL-PROJECT_TYPE.DISABLE', $permission_list)">
-																<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+														<case value="0">
+															<if condition="in_array('SEVERAL-UNIT.ENABLE', $permission_list)">
+																<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
 															</if>
 														</case>
-														<case value="0">
-															<if condition="in_array('SEVERAL-PROJECT_TYPE.ENABLE', $permission_list)">
-																<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+														<case value="1">
+															<if condition="in_array('SEVERAL-UNIT.DISABLE', $permission_list)">
+																<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
 															</if>
 														</case>
 													</switch>
@@ -153,64 +144,44 @@
 			</div>
 		</div>
 	</div>
-	<!-- 新增项目类型 -->
-	<div class="modal fade" id="create_project_type" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- 修改 -->
+	<div class="modal fade" id="alter_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="create_role_title">新增项目类型</h2>
+					<h2 class="modal-title">修改会所</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkCreate()">
-					<input type="hidden" name="requestType" value="create">
-					<!-- 避免回车提交 -->
-					<input style="display:none" mce_style="display:none">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="project_type" class="col-sm-2 control-label color-red "><b style="vertical-align: middle;">*</b>名称：</label>
-							<div class="col-sm-10">
-								<input type="text" name="name" class="form-control" id="project_type">
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="create_role_comment" class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-10">
-								<textarea class="form-control comment" name="comment" id="create_role_comment"></textarea>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="button" class="btn btn-primary btn-save">确认</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- 修改项目类型 -->
-	<div class="modal fade" id="alter_project_type" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="modify_role_title">修改项目类型</h2>
-				</div>
-				<form class="form-horizontal" role="form" action="" method="post" onsubmit="return checkAlter()">
+				<form class="form-horizontal" role="form" action="" method="post">
 					<input type="hidden" name="requestType" value="modify"> <input type="hidden" name="id">
 					<div class="modal-body">
-
 						<div class="form-group">
-							<label for="project_type_a" class="col-sm-2 control-label  color-red "><b style="vertical-align: middle;">*</b>名称：</label>
+							<label class="col-sm-2 control-label color-red"><b style="vertical-align: middle;">*</b>名称：</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control name" name="name" id="project_type_a">
+								<input type="text" class="form-control" name="name" placeholder="" disabled>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="create_role_comment" class="col-sm-2 control-label">备注：</label>
+							<label class="col-sm-2 control-label">区域：</label>
 							<div class="col-sm-10">
-								<textarea class="form-control comment" name="comment"></textarea>
+								<input class="form-control" name="area" placeholder="">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">是否新店：</label>
+							<div class="col-sm-10">
+								<select class="form-control" name="is_new" title="">
+									<volist name="is_new_list" id="single">
+										<option value="<{$key}>"><{$single}></option>
+									</volist>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control comment" name="comment" placeholder=""></textarea>
 							</div>
 						</div>
 					</div>
@@ -222,7 +193,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- 删除项目类型 -->
+	<!-- 删除 -->
 	<div class="modal fade" id="delete_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -230,12 +201,12 @@
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 					</button>
-					<h2 class="modal-title">删除项目类型</h2>
+					<h2 class="modal-title">删除会所</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否删除项目类型？
+						是否删除会所？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -245,20 +216,19 @@
 			</div>
 		</div>
 	</div>
-	<!-- 批量删除项目类型-->
+	<!-- 批量删除-->
 	<div class="modal fade" id="batch_delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title">批量删除项目类型</h2>
+					<h2 class="modal-title">批量删除会所</h2>
 				</div>
 				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
 					<div class="modal-body">
-						是否删除已选<span class="sAmount"></span>项项目类型？
-
+						是否删除已选<span class="sAmount"></span>项会所？
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>

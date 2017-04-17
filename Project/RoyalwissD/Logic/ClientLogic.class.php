@@ -704,9 +704,14 @@
 							// 字段映射
 							foreach($client as $key => $val){
 								$save_column_name = $column_list[$map[$key]]['form']; // 字段映射后这列数据保存在数据库的列名
-								$kv               = $this->_convertColumnValue($save_column_name, $val); // 特殊处理字段数据
+								if($save_column_name == null) continue;
+								$kv = $this->_convertColumnValue($save_column_name, $val); // 特殊处理字段数据
 								$kv ? $temp_client_data = array_merge($temp_client_data, $kv) : null; // 拼接数据
-								if($client_logic->isCustomColumn($save_column_name)) $temp_attendee_data[$save_column_name] = $val;
+								if($client_logic->isCustomColumn($save_column_name)) $temp_attendee_data = array_merge($temp_attendee_data, $kv); // 自定义字段
+								elseif(in_array($save_column_name, [
+									'receivables',
+									'consumption'
+								])) $temp_attendee_data = array_merge($temp_attendee_data, $kv); // 特殊的收款/消耗字段
 							}
 							// 开始判定数据是否重复
 							$is_repeat = false;
@@ -820,16 +825,19 @@
 						// 构建参会记录的数据
 						/** @var array $saved_client_list 获取刚才插入的客户数据 */
 						$saved_client_list = $client_model->where("_batch_save_id = '$batch_id'")->field('id, _batch_column_id, _batch_save_id')->select();
-						foreach($attendee_data as $key => $attendee){
-							foreach($saved_client_list as $saved_client){
+						/** @var array $true_attendee_data 真正需要保存的参会数据（有可能excel表中本身就存在重复记录的情况） */
+						$true_attendee_data = [];
+						foreach($saved_client_list as $saved_client){
+							foreach($attendee_data as $key => $attendee){
 								if($saved_client['_batch_column_id'] == $attendee['_batch_column_id'] && $saved_client['_batch_save_id'] == $batch_id){
-									$attendee_data[$key]['cid'] = $saved_client['id'];
+									$attendee['cid']      = $saved_client['id'];
+									$true_attendee_data[] = $attendee;
 									break;
 								}
 							}
 						}
 						// 开始保存参会数据
-						$result2 = $attendee_model->addAll($attendee_data, [], true);
+						$result2 = $attendee_model->addAll($true_attendee_data, [], true);
 						if(!$result2) return $makeResult(false, '保存参会数据失败', $excel_data, $saved_client_list, $read_result['data']['head'], $original_repeat_data);
 
 						return $makeResult(true, '导入成功', $excel_data, $saved_client_list, $read_result['data']['head'], $original_repeat_data);
@@ -1171,7 +1179,8 @@
 							'in',
 							'('.implode(',', $client_id).')'
 						],
-						$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $meeting_id
+						$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $meeting_id,
+						$client_model::CONTROL_COLUMN_PARAMETER_SELF['type']         => true
 					]);
 					if(count($client_list)<count($client_id)) return [
 						'status'   => false,
@@ -1222,7 +1231,8 @@
 							'in',
 							'('.implode(',', $client_id).')'
 						],
-						$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $meeting_id
+						$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $meeting_id,
+						$client_model::CONTROL_COLUMN_PARAMETER_SELF['type']         => true
 					]);
 					if(count($client_list)<count($client_id)) return [
 						'status'   => false,
@@ -1416,6 +1426,10 @@ SET
 						$val['is_custom'] = ($this->isCustomColumn($val['form'])) ? 1 : 0;
 						if($val['is_custom'] == 1 && $val['view'] == 1) $val['can_modified'] = 1;
 						elseif($val['is_custom'] == 0 && $val['view'] == 1 && $val['table'] == 'client') $val['can_modified'] = 1;
+						elseif(in_array($val['code'], [
+							'ROYALWISSD-ATTENDEE-RECEIVABLES',
+							'ROYALWISSD-ATTENDEE-CONSUMPTION'
+						])) $val['can_modified'] = 1;
 						else $val['can_modified'] = 0;
 						$result[] = $val;
 					}
@@ -1444,10 +1458,12 @@ SET
 					foreach($data['total'] as $value){
 						if($value['review_status'] == 1) $statistics['reviewed']++;
 						else $statistics['notReviewed']++;
-						if($value['sign_status'] == 1) $statistics['signed']++;
-						else $statistics['notSigned']++;
 						if($value['status'] == 1) $statistics['enabled']++;
 						if($value['status'] == 0) $statistics['disabled']++;
+						if(in_array($value['type'], ClientModel::TYPE)){
+							if($value['sign_status'] == 1) $statistics['signed']++;
+							else $statistics['notSigned']++;
+						}
 					}
 
 					return $statistics;
@@ -1509,6 +1525,8 @@ SET
 						$client['unit_is_new']        = UnitModel::IS_NEW[$client['unit_is_new']];
 						if(strtotime($client['creatime'])>(time()-self::NEW_DATA_TIME)) $client['new_data'] = true;
 						else $client['new_data'] = false;
+						if(in_array($client['type'], ClientModel::TYPE_SPECIAL)) $client['special_type'] = true;
+						else $client['special_type'] = false;
 						$list[] = $client;
 					}
 
@@ -1707,14 +1725,16 @@ SET
 				])
 				) $result[] = $val;
 			}
-			$attendee_except_column_list = [
-				'id',
-				'cid',
-				'mid'
-			];
 			foreach($attendee_model->getColumnList(true) as $val){
 				// 排除不必要的字段
-				if(!in_array($val['column_name'], $attendee_except_column_list)) $result[] = $val;
+				if(!in_array($val['column_name'], [
+					'id',
+					'cid',
+					'mid',
+					'receivables',
+					'consumption'
+				])
+				) $result[] = $val;
 			}
 
 			return $result;
@@ -1918,6 +1938,16 @@ SET
 		 */
 		private function _convertColumnValue($column_name, $column_value, $return_full_result = false){
 			switch($column_name){
+				case 'consumption':
+				case 'receivables':
+					if(is_numeric($column_value)) $val = $column_value;
+					else $val = 0;
+
+					return $return_full_result ? [
+						'save' => [$column_name => $val],
+						'data' => ['value' => $val, 'content' => $val]
+					] : [$column_name => $val];
+				break;
 				case 'gender':
 					switch($column_value){
 						case '男':

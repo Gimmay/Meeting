@@ -14,6 +14,7 @@
 	use CMS\Model\CMSModel;
 	use RoyalwissD\Logic\ClientLogic;
 	use RoyalwissD\Logic\MeetingConfigureLogic;
+	use RoyalwissD\Logic\UnitLogic;
 	use RoyalwissD\Model\ClientColumnControlModel;
 	use RoyalwissD\Model\ClientModel;
 	use RoyalwissD\Model\UnitModel;
@@ -101,7 +102,7 @@
 			$this->assign('unit_is_new_list', UnitModel::IS_NEW);
 			$this->assign('gender_list', ClientModel::GENDER);
 			$this->assign('is_new_list', ClientModel::IS_NEW);
-			$this->assign('type_list', ClientModel::TYPE);
+			$this->assign('type_list', ClientModel::getClientType());
 			$this->assign('default_order_column', I('get.'.CMS::URL_CONTROL_PARAMETER['orderColumn'], CMS::DEFAULT_ORDER_COLUMN));
 			$this->assign('default_order_method', I('get.'.CMS::URL_CONTROL_PARAMETER['orderMethod'], CMS::DEFAULT_ORDER_METHOD));
 			$this->display();
@@ -134,7 +135,7 @@
 			$this->assign('column_list', $column_list);
 			$this->assign('gender_list', ClientModel::GENDER);
 			$this->assign('is_new_list', ClientModel::IS_NEW);
-			$this->assign('type_list', ClientModel::TYPE);
+			$this->assign('type_list', ClientModel::getClientType());
 			$this->assign('unit_is_new_list', UnitModel::IS_NEW);
 			$this->display();
 		}
@@ -160,7 +161,7 @@
 			/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 			$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 			$column_list                 = $client_column_control_model->getClientControlledColumn($this->meetingID, $client_column_control_model::ACTION_WRITE);
-			$column_list = $client_logic->setData('column_setting', $column_list);
+			$column_list                 = $client_logic->setData('column_setting', $column_list);
 			$this->assign('column_list', $column_list);
 			$this->display();
 		}
@@ -207,25 +208,20 @@
 			/** @var \General\Model\UploadLogModel $upload_log_model */
 			$upload_log_model = D('General/UploadLog');
 			$log_id           = I('get.logID', 0, 'int');
-			if($upload_log_model->fetch(['id' => $log_id])){
-				$upload_record = $upload_log_model->getObject();
-				// 获取可控制的客户写入字段
-				/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
-				$client_column_control_model = D('RoyalwissD/ClientColumnControl');
-				$column_list                 = $client_column_control_model->getClientControlledColumn($this->meetingID, $client_column_control_model::ACTION_WRITE);
-				// 获取导入的Excel数据
-				$file_path   = trim($upload_record['save_path'], '/');
-				$excel_logic = new ExcelLogic();
-				$read_result = $excel_logic->readCustomData($file_path);
-				$this->assign('data_head', $read_result['data']['head']);
-				$this->assign('data_body', $read_result['data']['body']);
-				$this->assign('column_list', $column_list);
-				$this->display();
-			}
-			else{
-				$this->error('缺少上传日志参数');
-				exit;
-			}
+			if(!$upload_log_model->fetch(['id' => $log_id])) $this->error('缺少上传日志参数');
+			$upload_record = $upload_log_model->getObject();
+			// 获取可控制的客户写入字段
+			/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
+			$client_column_control_model = D('RoyalwissD/ClientColumnControl');
+			$column_list                 = $client_column_control_model->getClientControlledColumn($this->meetingID, $client_column_control_model::ACTION_WRITE);
+			// 获取导入的Excel数据
+			$file_path   = trim($upload_record['save_path'], '/');
+			$excel_logic = new ExcelLogic();
+			$read_result = $excel_logic->readCustomData($file_path);
+			$this->assign('data_head', $read_result['data']['head']);
+			$this->assign('data_body', $read_result['data']['body']);
+			$this->assign('column_list', $column_list);
+			$this->display();
 		}
 
 		public function importResult(){
@@ -241,9 +237,9 @@
 
 		public function modify(){
 			if(IS_POST){
-				$meeting_logic = new ClientLogic();
-				$type          = strtolower(I('post.requestType', ''));
-				$result        = $meeting_logic->handlerRequest($type);
+				$client_logic = new ClientLogic();
+				$type         = strtolower(I('post.requestType', ''));
+				$result       = $client_logic->handlerRequest($type);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);
 					echo json_encode($result);
@@ -274,7 +270,7 @@
 			$this->assign('column_list', $column_list);
 			$this->assign('gender_list', ClientModel::GENDER);
 			$this->assign('is_new_list', ClientModel::IS_NEW);
-			$this->assign('type_list', ClientModel::TYPE);
+			$this->assign('type_list', ClientModel::getClientType());
 			$this->assign('unit_is_new_list', UnitModel::IS_NEW);
 			$this->assign('info', $client);
 			$this->display();
@@ -289,7 +285,7 @@
 				exit;
 			}
 			$meeting      = $meeting_model->getObject();
-			$meeting_name = $meeting['name'];
+			$meeting_name = str_replace(' ', '_', $meeting['name']);
 			$excel_logic  = new ExcelLogic();
 			/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control */
 			$client_column_control = D('RoyalwissD/ClientColumnControl');
@@ -322,7 +318,7 @@
 				exit;
 			}
 			$meeting      = $meeting_model->getObject();
-			$meeting_name = $meeting['name'];
+			$meeting_name = str_replace(' ', '_', $meeting['name']);
 			/** @var \RoyalwissD\Model\ClientModel $client_model */
 			$client_model = D('RoyalwissD/Client');
 			/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
@@ -359,5 +355,45 @@
 				'hasHead'      => true,
 				'download'     => true,
 			]);
+		}
+
+		public function unit(){
+			$unit_logic = new UnitLogic();
+			if(IS_POST){
+				$type   = strtolower(I('post.requestType', ''));
+				$result = $unit_logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					$url = $result['__return__'] ? $result['__return__'] : '';
+					if($result['status']) $this->success($result['message'], $url);
+					else $this->error($result['message'], $url, 3);
+				}
+				exit;
+			}
+			if(!UserLogic::isPermitted('SEVERAL-UNIT.VIEW')) $this->error('您没有查看会所的权限');
+			$model_control_column = $this->getModelControl();
+			/** @var \RoyalwissD\Model\UnitModel $unit_model */
+			$unit_model = D('RoyalwissD/Unit');
+			$list = $unit_model->getList(array_merge($model_control_column, [
+				CMSModel::CONTROL_COLUMN_PARAMETER['status']              => ['!=', 2],
+				$unit_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID
+			]));
+			$list = $unit_logic->setData('unit:set_data', [
+				'list'     => $list,
+				'urlParam' => I('get.')
+			]);
+			$page_object = new Page(count($list), $this->getPageRecordCount());
+			PageLogic::setTheme1($page_object);
+			// 分页
+			$list = array_slice($list, $page_object->firstRow, $page_object->listRows);
+			$this->assign('list', $list);
+			$pagination = $page_object->show();
+			$this->assign('pagination', $pagination);
+			$this->assign('is_new_list', UnitModel::IS_NEW);
+			$this->display();
 		}
 	}

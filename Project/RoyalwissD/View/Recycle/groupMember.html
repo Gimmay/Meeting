@@ -52,12 +52,14 @@
 							<form action="" method="get">
 								<div class="input-group repertory_text">
 									<input name="p" type="hidden" value="1">
-									<input type="search" name="keyword" class="form-control" placeholder="名称/拼音简码" value="<{:I('get.keyword', '')}>">
+									<input type="search" name="keyword" id="keyword" class="form-control" placeholder="名称/拼音简码" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
-										<button type="submit" class="btn btn-default main_search">搜索</button>
+									<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
 									</span>
 								</div>
-								<a type="reset" class="btn btn-default main_search" href="<{:U('manage', ['mid'=>I('get.mid', 0, 'int'), 'sid'=>$_GET['sid']])}>">查看所有&nbsp;(<{$statistics.total}>人)</a>
+								<!-- 避免回车提交 -->
+								<input style="display:none" mce_style="display:none">
+								<a type="reset" class="btn btn-default main_search" href="<{:U('', ['mid'=>I('get.mid', 0, 'int')])}>">查看所有</a>
 							</form>
 						</div>
 						<div class="table_wrap">

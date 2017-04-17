@@ -486,7 +486,7 @@
 					}
 				break;
 				default:
-					return ['status' => false, 'message' => '缺少必要参数'];
+					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];
 				break;
 			}
 		}
@@ -592,6 +592,7 @@
 				$client_model::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus'] => ['=', 1],
 				$client_model::CONTROL_COLUMN_PARAMETER_SELF['signStatus']   => ['=', 1],
 				$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $meeting_id,
+				$client_model::CONTROL_COLUMN_PARAMETER_SELF['type']         => true
 			]));
 
 			return $list;

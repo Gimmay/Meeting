@@ -16,7 +16,6 @@
 			parent::_initialize();
 		}
 
-		// todo 统计签到、收款等报表时 注意场外/场内的客户区别
 		protected $tableName = 'client';
 		const TABLE_NAME = 'client';
 		protected $autoCheckFields  = true;
@@ -42,8 +41,21 @@
 			0 => '否',
 			1 => '是'
 		];
+		/** 特殊客户类型：此类客户类型不会被进入签到统计，但是可以收款 */
+		const TYPE_SPECIAL = ['内场'];
 		/** 客户类型 */
 		const TYPE = ['其他', '终端', '老板娘', '嘉宾', '员工', '陪同', '专家'];
+
+		/**
+		 * 获取客户类型
+		 *
+		 * @return array
+		 */
+		public static function getClientType(){
+			$list = array_merge(self::TYPE, self::TYPE_SPECIAL);
+
+			return $list;
+		}
 
 		public function getList($control = []){
 			$table_client        = $this->tableName;
@@ -97,6 +109,12 @@
 			if(isset($meeting_id)) $where .= " and mid = $meeting_id ";
 			if(isset($client_id) && isset($client_id[0]) && isset($client_id[1])) $where .= " and cid $client_id[0] $client_id[1] ";
 			if(isset($type) && isset($type[0]) && isset($type[1])) $where .= " and type $type[0] $type[1] ";
+			elseif(isset($type) && is_bool($type)){
+				$str = "";
+				foreach(self::TYPE as $val) $str .= "'$val',";
+				$str = trim($str, ',');
+				if($type) $where .= " and type in ($str)";
+			}
 			if(isset($review_status) && isset($review_status[0]) && isset($review_status[1])) $where .= " and review_status $review_status[0] $review_status[1] ";
 			if(isset($sign_status) && isset($sign_status[0]) && isset($sign_status[1])) $where .= " and sign_status $sign_status[0] $sign_status[1] ";
 			if(isset($limit) && isset($limit[0]) && isset($limit[1])) $split = " limit $limit[0], $limit[1] ";
@@ -124,6 +142,8 @@ SELECT * FROM (
 		c1.type,
 		c1.comment,
 		$custom_column
+		a1.consumption,
+		a1.receivables,
 		a1.register_type,
 		a1.review_status,
 		a1.review_time,
@@ -248,7 +268,7 @@ $split
 SELECT
 	c.TABLE_SCHEMA,
 	c.TABLE_NAME,
-	'unit_is_new' COLUMN_NAME,
+	concat('unit_', COLUMN_NAME) COLUMN_NAME,
 	c.DATA_TYPE,
 	c.CHARACTER_MAXIMUM_LENGTH,
 	c.COLUMN_TYPE,
@@ -258,22 +278,7 @@ FROM information_schema.TABLES t
 JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
 WHERE t.TABLE_SCHEMA = '$this_database'
 AND t.TABLE_NAME = '$table_unit'
-AND c.COLUMN_NAME = 'is_new'
-UNION
-SELECT
-	c.TABLE_SCHEMA,
-	c.TABLE_NAME,
-	'unit_area' COLUMN_NAME,
-	c.DATA_TYPE,
-	c.CHARACTER_MAXIMUM_LENGTH,
-	c.COLUMN_TYPE,
-	c.COLUMN_COMMENT,
-	'fixed' TYPE
-FROM information_schema.TABLES t
-JOIN information_schema.COLUMNS c ON c.TABLE_NAME = t.TABLE_NAME
-WHERE t.TABLE_SCHEMA = '$this_database'
-AND t.TABLE_NAME = '$table_unit'
-AND c.COLUMN_NAME = 'area'
+AND c.COLUMN_NAME IN ('is_new', 'area')
 UNION
 SELECT
 	c.TABLE_SCHEMA,
@@ -302,14 +307,22 @@ AND t.TABLE_NAME = '$table_client'
 		 * @return array
 		 */
 		public function getSelectedList($meeting_id, $include_unit = false){
+			$getTypeString  = function (){
+				$str = "";
+				foreach(self::TYPE as $val) $str .= "'$val',";
+				$str = trim($str, ',');
+
+				return $str;
+			};
 			$table_client   = $this->tableName;
 			$table_attendee = AttendeeModel::TABLE_NAME;
 			$this_database  = self::DATABASE_NAME;
 			$name           = $include_unit ? "concat('[',c.unit,'] ',c.name)" : 'c.name';
+			$type           = $getTypeString();
 			$sql            = "
 SELECT
 	c.id value,
-	IF(a.sign_status = 1, $name, concat('* ', $name)) html,
+	IF(a.sign_status = 1, IF(c.type IN ($type), $name, concat('× ', $name)), IF(c.type IN ($type), concat('* ', $name), concat('× ', $name))) html,
 	concat(c.name,',',c.name_pinyin,',',c.unit,',',c.unit_pinyin,',',c.mobile) keyword
 FROM $this_database.$table_client c
 JOIN $this_database.$table_attendee a ON c.id = a.cid

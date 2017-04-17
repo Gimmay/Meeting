@@ -9,6 +9,7 @@
 
 	use CMS\Controller\CMS;
 	use CMS\Logic\PageLogic;
+	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
 	use RoyalwissD\Logic\MeetingConfigureLogic;
 	use RoyalwissD\Logic\ReportLogic;
@@ -40,6 +41,7 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-REPORT_CLIENT.VIEW')) $this->error('您没有查看客户报表的权限');
 			/** @var \RoyalwissD\Model\ReportModel $report_model */
 			$report_model = D('RoyalwissD/Report');
 			/** @var \RoyalwissD\Model\ReportColumnControlModel $report_column_control_model */
@@ -54,14 +56,14 @@
 			// 获取列表数据
 			$model_control_column = $this->getModelControl();
 			$list = $report_model->getClientList(array_merge($model_control_column, [
-				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $this->meetingID
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $this->meetingID,
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['type']    => true
 			]));
 			// 设定额外数据并筛选数据
 			$list = $report_logic->setData('client:set_data', [
 				'list'     => $list,
 				'urlParam' => I('get.')
 			]);
-			
 			$statistics = $report_logic->setData('client:statistics', $list);
 			$this->assign('statistics', $statistics);
 			// 分页
@@ -71,7 +73,6 @@
 			$pagination = $page_object->show();
 			$this->assign('pagination', $pagination);
 			$this->assign('list', $list);
-
 			// 获取其他模块数据
 			/** @var \RoyalwissD\Model\ClientModel $client_model */
 			$client_model = D('RoyalwissD/Client');
@@ -106,12 +107,14 @@
 				}
 				exit;
 			}
+			if(!UserLogic::isPermitted('SEVERAL-REPORT_UNIT.VIEW')) $this->error('您没有查看客户报表的权限');
 			/** @var \RoyalwissD\Model\ReportModel $report_model */
 			$report_model = D('RoyalwissD/Report');
 			// 获取列表数据
 			$model_control_column = $this->getModelControl();
 			$list = $report_model->getUnitList(array_merge($model_control_column, [
-				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $this->meetingID
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $this->meetingID,
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['type']=>true
 			]));
 			// 设定额外数据并筛选数据
 			$list = $report_logic->setData('unit:set_data', [

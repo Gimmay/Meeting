@@ -52,14 +52,8 @@
 						'sign_end_time'   => Time::isTimeFormat($data['sign_end_time'])
 					]));
 					if($result['status']){
-						/** @var \General\Model\MeetingManagerModel $meeting_manager_model */
-						$meeting_manager_model = D('General/MeetingManager');
-						$result2               = $meeting_manager_model->create([
-							'mid'      => $result['id'],
-							'uid'      => Session::getCurrentUser(),
-							'creatime' => Time::getCurrentTime(),
-							'creator'  => Session::getCurrentUser()
-						]);
+						$meeting_manager_logic = new MeetingManagerLogic();
+						$result2 = $meeting_manager_logic->create($result['id'], Session::getCurrentUser(), 0);
 						if(!$result2['status']) return ['status' => false, 'message' => '初始化会务人员失败'];
 					}
 
@@ -82,7 +76,6 @@
 					$list                  = $meeting_manager_model->getList([
 						$meeting_manager_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => I('post.mid', 0, 'int'),
 						$meeting_manager_model::CONTROL_COLUMN_PARAMETER_SELF['roleID']    => I('post.rid', 0, 'int'),
-						CMSModel::CONTROL_COLUMN_PARAMETER['status']                       => ['=', 1],
 						CMSModel::CONTROL_COLUMN_PARAMETER['order']                        => ' name asc ',
 					]);
 
@@ -137,7 +130,6 @@
 							// 分配角色
 							/** @var \General\Model\UserModel $user_model */
 							$user_model = D('General/User');
-							C('TOKEN_ON', false);
 							$result2 = $user_model->assignRole($role_id, $user_id, $meeting_id);
 							if($result2['status']) $count++;
 						}

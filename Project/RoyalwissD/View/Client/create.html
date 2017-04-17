@@ -120,6 +120,26 @@
 															</select>
 														</div>
 													</case>
+													<case value="ROYALWISSD-ATTENDEE-RECEIVABLES">
+														<if condition="$single['must'] eq 1">
+															<label class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+															<else/>
+															<label class="col-sm-1 control-label"><{$single.name}>：</label>
+														</if>
+														<div class="col-sm-11">
+															<input type="number" class="form-control <eq name='single.must' value='1'>necessary</eq>" name="receivables" placeholder="" id="receivables" value="0">
+														</div>
+													</case>
+													<case value="ROYALWISSD-ATTENDEE-CONSUMPTION">
+														<if condition="$single['must'] eq 1">
+															<label class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>
+															<else/>
+															<label class="col-sm-1 control-label"><{$single.name}>：</label>
+														</if>
+														<div class="col-sm-11">
+															<input type="number" class="form-control <eq name='single.must' value='1'>necessary</eq>" name="consumption" placeholder="" id="consumption" value="0">
+														</div>
+													</case>
 													<case value="ROYALWISSD-CLIENT-COMMENT">
 														<if condition="$single['must'] eq 1">
 															<label class="col-sm-1 control-label color-red"><b style="vertical-align: middle;">*</b><{$single.name}>：</label>

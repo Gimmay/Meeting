@@ -158,14 +158,20 @@ $keyword
 			if(is_numeric($permission) || is_string($permission)){ // 逐项授权
 				/** @var \General\Model\RoleAssignPermissionModel $role_assign_permission_model */
 				$role_assign_permission_model = D('General/RoleAssignPermission');
-				$data                         = [
+				$exist_record_count           = $role_assign_permission_model->tally([
+					'pid'    => $permission,
+					'rid'    => $role_id,
+					'status' => 1
+				]); // Warning: 先查找有否重复数据
+				if($exist_record_count>=1) return ['status' => true, 'message' => '已授权无需重复授权'];
+				$data   = [
 					'pid'      => $permission,
 					'rid'      => $role_id,
 					'creatime' => Time::getCurrentTime(),
 					'creator'  => Session::getCurrentUser(),
 					'type'     => 1
 				];
-				$result                       = $role_assign_permission_model->create($data); // 授权
+				$result = $role_assign_permission_model->create($data); // 授权
 				return $result;
 			}
 			elseif(is_array($permission)){ // 批量授权

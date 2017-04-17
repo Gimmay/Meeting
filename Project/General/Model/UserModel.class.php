@@ -203,6 +203,12 @@ $keyword
 			if(is_numeric($role) || is_string($role)){ // 逐项分配角色
 				/** @var \General\Model\UserAssignRoleModel $user_assign_role_model */
 				$user_assign_role_model = D('General/UserAssignRole');
+				$exist_record_count     = $user_assign_role_model->tally([
+					'rid' => $role,
+					'uid' => $user_id,
+					'status' => 1
+				]);// Warning: 先查找有否重复数据
+				if($exist_record_count>=1) return ['status' => true, 'message' => '已分配角色无需重复分配'];
 				$data                   = [
 					'rid'      => $role,
 					'uid'      => $user_id,

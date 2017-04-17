@@ -54,7 +54,7 @@
 			// 输出创建客户必要的数据
 			$this->assign('gender_list', ClientModel::GENDER);
 			$this->assign('is_new_list', ClientModel::IS_NEW);
-			$this->assign('type_list', ClientModel::TYPE);
+			$this->assign('type_list', ClientModel::getClientType());
 			// 输出客户列表
 			/** @var \RoyalwissD\Model\ClientModel $client_model */
 			$client_model = D('RoyalwissD/Client');

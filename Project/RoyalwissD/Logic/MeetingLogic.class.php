@@ -434,7 +434,7 @@
 					return array_merge($result, ['__ajax__' => true,]);
 				break;
 				default:
-					return ['status' => false, 'message' => '缺少必要参数'];
+					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];
 				break;
 			}
 		}

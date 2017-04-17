@@ -130,6 +130,7 @@ var ScriptObject = {
 			Common.ajax({
 				data    :{requestType:'revoke_permission_module', module:code, id:role_id},
 				callback:function(r){
+					console.log(r);
 					//ManageObject.object.loading.complete();
 					if(r.status){
 						ManageObject.object.toast.toast(r.message);
@@ -200,6 +201,7 @@ var ScriptObject = {
 			Common.ajax({
 				data    :{requestType:'grant_permission_module', module:code, id:role_id},
 				callback:function(r){
+					console.log(r);
 					//ManageObject.object.loading.complete();
 					if(r.status){
 						ManageObject.object.toast.toast(r.message);
@@ -213,7 +215,6 @@ var ScriptObject = {
 									var str = '';
 									console.log(self.module.list);
 									$.each(self.module.list, function(index, value){
-										console.log(value);
 										str += self.authorizeRoleTemp.replace('$id', value.id)
 												   .replace('$name', value.name)
 												   .replace('$module-name', self.module.moduleName)

@@ -223,7 +223,6 @@ $(function(){
 	 */
 	$('#keyword').on('keydown', function(e){
 		if(e.keyCode == 13){
-			alert('123');
 			var keyword = $('#keyword').val();
 			var new_url = url_object.delUrlParam('p');
 			if(keyword == ''){

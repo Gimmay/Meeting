@@ -12,12 +12,12 @@ var ScriptObject = {
 				callback:function(data){
 					console.log(data);
 					if(data.status){
-						ManageObject.object.toast.toast('发布成功！');
-						t.removeClass('release_a').addClass('cancel_release_a').text('取消发布');
+						ManageObject.object.toast.toast(data.message);
+						t.removeClass('release_a').addClass('cancel_release_a').text('新建');
 						self.unbindEvent();
 						self.bindEvent();
 					}else{
-						ManageObject.object.toast.toast('发布失败！');
+						ManageObject.object.toast.toast(data.message);
 					}
 				}
 			})
@@ -31,12 +31,12 @@ var ScriptObject = {
 				callback:function(data){
 					console.log(data);
 					if(data.status){
-						ManageObject.object.toast.toast('取消发布成功！');
+						ManageObject.object.toast.toast(data.message);
 						t.removeClass('cancel_release_a').addClass('release_a').text('发布');
 						self.unbindEvent();
 						self.bindEvent();
 					}else{
-						ManageObject.object.toast.toast('取消发布失败！');
+						ManageObject.object.toast.toast(data.message);
 					}
 				}
 			})

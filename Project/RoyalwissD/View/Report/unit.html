@@ -39,7 +39,8 @@
 							</div>
 						</div>
 						<div class="table_wrap">
-							<div class="panel panel-default">
+							<if condition="in_array('SEVERAL-REPORT_UNIT.FILTER', $permission_list)">
+								<div class="panel panel-default">
 								<div class="panel-heading">筛选条件</div>
 								<div class="panel-body">
 									<form class="form-horizontal" id="control_form" action="">
@@ -114,6 +115,7 @@
 									</form>
 								</div>
 							</div>
+							</if>
 							<div class="panel panel-default">
 								<div class="panel-heading">统计数据</div>
 								<div class="panel-body">

@@ -74,6 +74,7 @@ SELECT * FROM (
 		u1.comment,
 		u1.status,
 		u1.creator creator_code,
+		u1.creatime,
 		u2.name creator
 	FROM $this_database.$table_unit u1
 	LEFT JOIN $common_database.$table_user u2 ON u2.id = u1.creator AND u1.status <> 2

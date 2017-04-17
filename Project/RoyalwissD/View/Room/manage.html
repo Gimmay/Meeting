@@ -106,6 +106,8 @@
 										<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
 									</span>
 									</div>
+									<!-- 避免回车提交 -->
+									<input style="display:none" mce_style="display:none">
 									<a type="reset" class="btn btn-default main_search" href="<{:U('',['mid'=>I('get.mid',0,'int'),'hid'=>I('get.hid',0,'int')])}>">查看所有</a>
 								</form>
 							</div>
@@ -132,8 +134,7 @@
 										<th width="5%">状态</th>
 										<th width="8%">创建时间</th>
 										<th width="5%">创建者</th>
-										<th width="15%">操作</th>
-										<th width="5%">详情</th>
+										<th width="20%">操作</th>
 									</tr>
 								</thead>
 
@@ -169,6 +170,9 @@
 											<td><{$single.creator}></td>
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>" data-status="<{$single.status_code}>">
+													<if condition="in_array('SEVERAL-ROOM.MANAGE_DETAIL', $permission_list)">
+														<button class="btn btn-default btn-xs details_btn">管理</button>
+													</if>
 													<if condition="in_array('SEVERAL-ROOM.MODIFY', $permission_list)">
 														<button class="btn btn-default btn-xs alter_btn" data-toggle="modal" data-target="#alter_modal">修改</button>
 													</if>
@@ -187,11 +191,6 @@
 															</if>
 														</case>
 													</switch>
-												</div>
-											</td>
-											<td>
-												<div class="btn-group" data-id="<{$single.id}>">
-													<button class="btn btn-default btn-xs details_btn">详情</button>
 												</div>
 											</td>
 										</tr>

@@ -37,7 +37,6 @@
 			$common_database       = GeneralModel::DATABASE_NAME;
 			$keyword               = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
 			$order                 = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status                = $control[self::CONTROL_COLUMN_PARAMETER['status']];
 			$meeting_id            = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
 			$user_id               = $control[self::CONTROL_COLUMN_PARAMETER_SELF['userID']];
 			$role_id               = $control[self::CONTROL_COLUMN_PARAMETER_SELF['roleID']];
@@ -52,7 +51,6 @@
 					or name_pinyin like '%$keyword%'
 				)";
 			}
-			if(isset($status) && isset($status[0]) && isset($status[1])) $where .= " and status $status[0] $status[1] ";
 			if(isset($user_id) && isset($user_id[0]) && isset($user_id[1])) $where .= " and uid $user_id[0] $user_id[1] ";
 			if(isset($meeting_id)) $where .= " and mid = $meeting_id ";
 			if(isset($role_id)) $where .= " and rid = $role_id ";
@@ -73,6 +71,7 @@ SELECT * FROM (
 	FROM $common_database.$table_meeting_manager mm
 	JOIN $common_database.$table_user u1 ON u1.id = mm.uid AND u1.status = 1
 	LEFT JOIN $common_database.$table_user u2 ON u2.id = mm.creator AND u2.status <> 2
+	WHERE mm.status = 1
 ) tab
 $where
 $order";
