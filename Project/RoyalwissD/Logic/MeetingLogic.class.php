@@ -29,14 +29,16 @@
 						'__ajax__' => true
 					];
 					/**
-					 * 初始化客户控制字段记录
+					 * 初始化控制字段记录<br>
+					 * 包括客户读写检索控制记录
+					 * 收款检索记录
 					 *
 					 * @param int $meeting_id 会议ID
 					 *
 					 * @return array
 					 */
 					$initControlledColumnRecord = function ($meeting_id){
-						$setNecessaryColumn = function ($column_name){
+						$setClientNecessaryColumn   = function ($column_name){
 							$list = [
 								'name',
 								'unit',
@@ -45,7 +47,7 @@
 
 							return in_array($column_name, $list) ? 1 : 0;
 						};
-						$setViewedColumn    = function ($column_name){
+						$setClientViewedColumn      = function ($column_name){
 							$list = [
 								'name',
 								'unit',
@@ -58,7 +60,7 @@
 
 							return in_array($column_name, $list) ? 1 : 0;
 						};
-						$setSearchColumn    = function ($column_name){
+						$setClientSearchColumn      = function ($column_name){
 							$list = [
 								'name',
 								'name_pinyin',
@@ -69,32 +71,58 @@
 
 							return in_array($column_name, $list) ? 1 : 0;
 						};
+						$setReceivablesSearchColumn = function ($column_name){
+							$list = [
+								'client',
+								'client_pinyin',
+								'unit',
+								'unit_pinyin'
+							];
+
+							return in_array($column_name, $list) ? 1 : 0;
+						};
+						$setReceivablesViewedColumn = function ($column_name){
+							$except_list = [
+								'review_director',
+								'review_time',
+								'place',
+								'creatime',
+								'creator'
+							];
+
+							return !in_array($column_name, $except_list) ? 1 : 0;
+						};
 						/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 						$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 						/** @var \RoyalwissD\Model\ReportColumnControlModel $report_column_control_model */
 						$report_column_control_model = D('RoyalwissD/ReportColumnControl');
-						$client_logic                = new ClientLogic();
-						$module                      = 'RoyalwissD';
-						$client_column_list_write    = $client_logic->getControlledColumn(true);
-						$client_column_list_read     = $client_logic->getControlledColumn(false);
-						$client_search_column_list   = $client_logic->getSearchColumn();
-						$data_write                  = $data_read = $data_report_read = $data_search = $data_report_search = [];
+						/** @var \RoyalwissD\Model\ReceivablesColumnControlModel $receivables_column_control_model */
+						$receivables_column_control_model = D('RoyalwissD/ReceivablesColumnControl');
+						$client_logic                     = new ClientLogic();
+						$module                           = 'RoyalwissD';
+						$client_column_list_write         = $client_logic->getControlledColumn(true); // 获取客户的写入控制字段
+						$client_column_list_read          = $client_logic->getControlledColumn(false); // 获取客户的列表控制字段
+						$client_search_column_list        = $client_logic->getSearchColumn(); // 获取客户的检索字段
+						$receivables_column_list_read     = $receivables_column_control_model->getDatabaseColumn($receivables_column_control_model::ACTION_READ); // 获取收款的读取字段
+						$receivables_column_list_search   = $receivables_column_control_model->getDatabaseColumn($receivables_column_control_model::ACTION_SEARCH); // 获取收款的检索字段
+						$data_client_write                = $data_client_read = $data_client_report_read = $data_client_search = $data_client_report_search = [];
+						$data_receivables_search          = $data_receivables_read = [];
 						foreach($client_column_list_write as $value){
-							$data_write[] = [
+							$data_client_write[] = [
 								'action'   => $client_column_control_model::ACTION_WRITE,
 								'mid'      => $meeting_id,
 								'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
 								'form'     => $value['column_name'],
 								'table'    => $value['table_name'],
 								'name'     => $value['column_comment'],
-								'must'     => $setNecessaryColumn($value['column_name']),
-								'view'     => $setViewedColumn($value['column_name']),
+								'must'     => $setClientNecessaryColumn($value['column_name']),
+								'view'     => $setClientViewedColumn($value['column_name']),
 								'creatime' => Time::getCurrentTime(),
 								'creator'  => Session::getCurrentUser()
 							];
 						}
 						foreach($client_column_list_read as $value){
-							$data_read[]        = [
+							$data_client_read[]        = [
 								'action'   => $client_column_control_model::ACTION_READ,
 								'mid'      => $meeting_id,
 								'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
@@ -102,11 +130,11 @@
 								'table'    => $value['table_name'],
 								'name'     => $value['column_comment'],
 								'must'     => 0,
-								'view'     => $setViewedColumn($value['column_name']),
+								'view'     => $setClientViewedColumn($value['column_name']),
 								'creatime' => Time::getCurrentTime(),
 								'creator'  => Session::getCurrentUser()
 							];
-							$data_report_read[] = [
+							$data_client_report_read[] = [
 								'type'     => $report_column_control_model::TYPE_CLIENT,
 								'action'   => $report_column_control_model::ACTION_READ,
 								'mid'      => $meeting_id,
@@ -115,25 +143,25 @@
 								'table'    => $value['table_name'],
 								'name'     => $value['column_comment'],
 								'must'     => 0,
-								'view'     => $setViewedColumn($value['column_name']),
+								'view'     => $setClientViewedColumn($value['column_name']),
 								'creatime' => Time::getCurrentTime(),
 								'creator'  => Session::getCurrentUser()
 							];
 						}
 						foreach($client_search_column_list as $value){
-							$data_search[]        = [
+							$data_client_search[]        = [
 								'action'   => $client_column_control_model::ACTION_SEARCH,
 								'mid'      => $meeting_id,
 								'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
 								'form'     => $value['column_name'],
 								'table'    => $value['table_name'],
 								'name'     => $value['column_comment'],
-								'search'   => $setSearchColumn($value['column_name']),
-								'view'     => $setViewedColumn($value['column_name']),
+								'search'   => $setClientSearchColumn($value['column_name']),
+								'view'     => $setClientViewedColumn($value['column_name']),
 								'creatime' => Time::getCurrentTime(),
 								'creator'  => Session::getCurrentUser()
 							];
-							$data_report_search[] = [
+							$data_client_report_search[] = [
 								'type'     => $report_column_control_model::TYPE_CLIENT,
 								'action'   => $report_column_control_model::ACTION_SEARCH,
 								'mid'      => $meeting_id,
@@ -141,18 +169,46 @@
 								'form'     => $value['column_name'],
 								'table'    => $value['table_name'],
 								'name'     => $value['column_comment'],
-								'search'   => $setSearchColumn($value['column_name']),
-								'view'     => $setViewedColumn($value['column_name']),
+								'search'   => $setClientSearchColumn($value['column_name']),
+								'view'     => $setClientViewedColumn($value['column_name']),
 								'creatime' => Time::getCurrentTime(),
 								'creator'  => Session::getCurrentUser()
 							];
 						}
-						$result1 = $client_column_control_model->addAll($data_read);
-						$result2 = $client_column_control_model->addAll($data_write);
-						$result3 = $client_column_control_model->addAll($data_search);
-						$result4 = $report_column_control_model->addAll($data_report_read);
-						$result5 = $report_column_control_model->addAll($data_report_search);
-						if($result1 && $result2 && $result3 && $result4 && $result5) return [
+						foreach($receivables_column_list_search as $value){
+							$data_receivables_search[] = [
+								'action'   => $receivables_column_control_model::ACTION_SEARCH,
+								'mid'      => $meeting_id,
+								'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
+								'form'     => $value['column_name'],
+								'table'    => $value['table_name'],
+								'name'     => $value['column_comment'],
+								'search'   => $setReceivablesSearchColumn($value['column_name']),
+								'creatime' => Time::getCurrentTime(),
+								'creator'  => Session::getCurrentUser()
+							];
+						}
+						foreach($receivables_column_list_read as $value){
+							$data_receivables_read[] = [
+								'action'   => $receivables_column_control_model::ACTION_READ,
+								'mid'      => $meeting_id,
+								'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
+								'form'     => $value['column_name'],
+								'table'    => $value['table_name'],
+								'name'     => $value['column_comment'],
+								'view'     => $setReceivablesViewedColumn($value['column_name']),
+								'creatime' => Time::getCurrentTime(),
+								'creator'  => Session::getCurrentUser()
+							];
+						}
+						$result1 = $client_column_control_model->addAll($data_client_read);
+						$result2 = $client_column_control_model->addAll($data_client_write);
+						$result3 = $client_column_control_model->addAll($data_client_search);
+						$result4 = $report_column_control_model->addAll($data_client_report_read);
+						$result5 = $report_column_control_model->addAll($data_client_report_search);
+						$result6 = $receivables_column_control_model->addAll($data_receivables_search);
+						$result7 = $receivables_column_control_model->addAll($data_receivables_read);
+						if($result1 && $result2 && $result3 && $result4 && $result5 && $result6 && $result7) return [
 							'status'  => true,
 							'message' => '初始化字段控制数据成功'
 						];
@@ -181,13 +237,12 @@
 							'__ajax__' => true,
 							'nextPage' => U('manage')
 						]);
-						// 初始化客户控制字段记录
+						// 初始化控制字段记录
 						$result3 = $initControlledColumnRecord($result['id']);
 						if(!$result3['status']) array_merge($result3, [
 							'__ajax__' => true,
 							'nextPage' => U('manage')
 						]);
-						//
 					}
 
 					return array_merge($result, ['__ajax__' => true, 'nextPage' => U('manage')]);
@@ -314,7 +369,6 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'cancel_release': // 取消发布会议
-
 					if(!in_array('SEVERAL-MEETING.CANCEL_RELEASE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
 						'status'   => false,
 						'message'  => '您没有取消发布会议的权限',

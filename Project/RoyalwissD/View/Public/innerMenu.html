@@ -53,15 +53,15 @@
 
 				<ul class="nav-second-level">
 					<if condition="in_array('SEVERAL-CLIENT.VIEW', $permission_list)">
-					<li class="<if condition='$cv_name eq Client_manage'>active</if>">
-						<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>">客户列表</a>
-					</li>
-						</if>
+						<li class="<if condition='$cv_name eq Client_manage'>active</if>">
+							<a href="<{:U('Client/manage', ['mid'=>I('get.mid', 0, 'int')])}>">客户列表</a>
+						</li>
+					</if>
 					<if condition="in_array('SEVERAL-UNIT.VIEW', $permission_list)">
-					<li class="<if condition='$cv_name eq Client_unit'>active</if>">
-						<a href="<{:U('Client/unit', ['mid'=>I('get.mid', 0, 'int')])}>">会所列表</a>
-					</li>
-						</if>
+						<li class="<if condition='$cv_name eq Client_unit'>active</if>">
+							<a href="<{:U('Client/unit', ['mid'=>I('get.mid', 0, 'int')])}>">会所列表</a>
+						</li>
+					</if>
 					<if condition="in_array('SEVERAL-CLIENT.IMPORT', $permission_list)">
 						<li class="<if condition='in_array($cv_name, [Client_import, Client_importContrast, Client_importResult])'>active</if>">
 							<a href="<{:U('Client/import', ['mid'=>I('get.mid', 0, 'int')])}>">导入客户</a>
@@ -87,7 +87,7 @@
 				</li>
 			</if>
 			<if condition="in_array('SEVERAL-RECEIVABLES.VIEW', $permission_list)">
-				<li class="side_item <if condition='in_array($cv_name, [Receivables_view, Receivables_create])'>active</if>">
+				<li class="side_item <if condition='in_array($cv_name, [Receivables_manage, Receivables_create])'>active</if>">
 					<a href="<{:U('Receivables/manage', ['mid'=>I('get.mid', 0, 'int')])}>" class="side-item-link">
 						<i class="icon_nav glyphicon glyphicon-usd"></i> <span class="nav-label">收款管理</span>
 						<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>

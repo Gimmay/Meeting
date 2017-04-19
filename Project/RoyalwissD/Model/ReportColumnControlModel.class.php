@@ -63,7 +63,8 @@
 		public function getClientControlledColumn($meeting_id){
 			$result = $this->where([
 				'mid'    => $meeting_id,
-				'action' => self::ACTION_READ
+				'action' => self::ACTION_READ,
+				'type'   => self::TYPE_CLIENT
 			])->select();
 
 			return $result;

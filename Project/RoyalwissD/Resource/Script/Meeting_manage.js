@@ -52,7 +52,7 @@ var ScriptObject = {
 		$('.release_a').off('click');
 		$('.cancel_release_a').off('click');
 	},
-	roleListTemp :'<tr>\n\t<td>$i</td>\n\t<td>$name</td>\n\t<td>$comment</td>\n\t<td>\n\t\t<div class="btn-group" data-id="$id">\n\t\t\t<button type="button" class="btn btn-default btn-xs choose_user" data-toggle="modal" data-target="#add_meeting_manager">添加</button>\n\t\t\t<button type="button" class="btn btn-default btn-xs get_meeting_manager" data-toggle="modal" data-target="#see_meeting_manager">查看人员</button>\n\t\t</div>\n\t</td>\n</tr>',
+	roleListTemp :'<tr>\n\t<td>$i</td>\n\t<td class="name">$name</td>\n\t<td>$comment</td>\n\t<td>\n\t\t<div class="btn-group" data-id="$id">\n\t\t\t<button type="button" class="btn btn-default btn-xs choose_user" data-toggle="modal" data-target="#add_meeting_manager">添加</button>\n\t\t\t<button type="button" class="btn btn-default btn-xs get_meeting_manager" data-toggle="modal" data-target="#see_meeting_manager">查看人员</button>\n\t\t</div>\n\t</td>\n</tr>',
 	userListTemp :'<tr>\n\t<td class="check_item_e"><input type="checkbox" class="icheck" value="$id" placeholder=""></td>\n\t<td>$num</td>\n\t<td class="name">$name</td>\n\t<td class="nickname">$nickname</td>\n</tr>',
 	userListTemp2:'<tr data-id="$id" data-uid="$uid">\n\t<td>$num</td>\n\t<td class="name">$name</td>\n\t<td class="nickname">$nickname</td>\n\t<td>\n\t\t<button type="button" class="btn btn-default btn-xs delete_user" data-toggle="modal" data-target="#delete_meeting_manager">删除</button>\n\t</td>\n</tr>',
 };

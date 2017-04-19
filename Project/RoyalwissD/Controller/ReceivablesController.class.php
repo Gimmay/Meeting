@@ -7,16 +7,20 @@
 	 */
 	namespace RoyalwissD\Controller;
 
+	use CMS\Controller\CMS;
 	use CMS\Logic\PageLogic;
 	use CMS\Logic\Session;
 	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
+	use General\Logic\GeneralLogic;
+	use General\Model\GeneralModel;
 	use Quasar\Utility\StringPlus;
 	use RoyalwissD\Logic\ReceivablesLogic;
 	use RoyalwissD\Logic\ReceivablesPayMethodLogic;
 	use RoyalwissD\Logic\ReceivablesPosMachineLogic;
 	use RoyalwissD\Model\ClientModel;
 	use RoyalwissD\Model\ReceivablesDetailModel;
+	use RoyalwissD\Model\UnitModel;
 	use Think\Page;
 
 	class ReceivablesController extends RoyalwissD{
@@ -27,7 +31,6 @@
 
 		// todo 导出
 		// todo 排序
-
 		public function create(){
 			if(IS_POST){
 				$receivables_logic = new ReceivablesLogic();
@@ -54,6 +57,7 @@
 			// 输出创建客户必要的数据
 			$this->assign('gender_list', ClientModel::GENDER);
 			$this->assign('is_new_list', ClientModel::IS_NEW);
+			$this->assign('unit_is_new_list', UnitModel::IS_NEW);
 			$this->assign('type_list', ClientModel::getClientType());
 			// 输出客户列表
 			/** @var \RoyalwissD\Model\ClientModel $client_model */
@@ -119,6 +123,16 @@
 				exit;
 			}
 			if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.VIEW')) $this->error('您没有查看收款的权限');
+			/** @var \RoyalwissD\Model\ReceivablesColumnControlModel $receivables_column_control_model */
+			$receivables_column_control_model = D('RoyalwissD/ReceivablesColumnControl');
+			// 获取检索字段
+			$column_list_search = $receivables_column_control_model->getSearchColumn($this->meetingID);
+			$search_column_name = $receivables_logic->setData('column_setting:search', $column_list_search);
+			$this->assign('column_list_search', $column_list_search);
+			$this->assign('search_column_name', $search_column_name);
+			// 获取列表字段
+			$column_list_read = $receivables_column_control_model->getControlledColumn($this->meetingID);
+			$this->assign('column_list', $column_list_read);
 			/** @var \RoyalwissD\Model\ReceivablesOrderModel $receivables_order_model */
 			$receivables_order_model = D('RoyalwissD/ReceivablesOrder');
 			// 获取列表数据
@@ -131,7 +145,7 @@
 				'list'     => $list,
 				'urlParam' => I('get.')
 			]);
-			$page_object = new Page(count($list), $this->getPageRecordCount());
+			$page_object          = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$statistics = $receivables_logic->setData('manage:statistics', [
@@ -174,9 +188,11 @@
 				$meeting_configure_record = $meeting_configure_model->getObject();
 				$this->assign('receivables_order_logo', $meeting_configure_record['receivables_order_logo']);
 			}
-			$this->assign('list', $list);
+			$this->assign('list', GeneralLogic::orderList($list, I('get.'.CMS::URL_CONTROL_PARAMETER['orderColumn'], CMS::DEFAULT_ORDER_COLUMN), I('get.'.CMS::URL_CONTROL_PARAMETER['orderMethod'], CMS::DEFAULT_ORDER_METHOD)));
 			$this->assign('statistics', $statistics);
 			$this->assign('pagination', $pagination);
+			$this->assign('default_order_column', I('get.'.CMS::URL_CONTROL_PARAMETER['orderColumn'], CMS::DEFAULT_ORDER_COLUMN));
+			$this->assign('default_order_method', I('get.'.CMS::URL_CONTROL_PARAMETER['orderMethod'], CMS::DEFAULT_ORDER_METHOD));
 			$this->display();
 		}
 
@@ -208,7 +224,7 @@
 			$page_object          = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
-			$list       = $pos_machine_logic->setData('manage', $list);
+			$list       = $pos_machine_logic->setData('manage', ['list' => $list, 'urlParam' => I('get.')]);
 			$pagination = $page_object->show();
 			$this->assign('list', $list);
 			$this->assign('pagination', $pagination);
@@ -243,7 +259,7 @@
 			$page_object          = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
-			$list       = $pay_method_logic->setData('manage', $list);
+			$list       = $pay_method_logic->setData('manage', ['list' => $list, 'urlParam' => I('get.')]);
 			$pagination = $page_object->show();
 			$this->assign('list', $list);
 			$this->assign('pagination', $pagination);

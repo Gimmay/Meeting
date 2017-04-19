@@ -57,7 +57,7 @@
 						'cid'          => $post['client'],
 						'payee'        => $post['payeeID'],
 						'place'        => $post['place'],
-						'price'        => $post['totalAmount'],
+						'price'        => $post['totalAmount'] ? 0 : $post['totalAmount'],
 						'time'         => $post['time'],
 						'creatime'     => Time::getCurrentTime(),
 						'creator'      => Session::getCurrentUser()
@@ -97,7 +97,7 @@
 							$detail_data[] = [
 								'mid'         => $meeting_id,
 								'pid'         => $receivables_project['id'],
-								'price'       => $post["price$index"][$key],
+								'price'       => $post["price$index"][$key] == '' ? 0 : $post["price$index"][$key],
 								'pay_method'  => $post["payMethod$index"][$key],
 								'pos_machine' => $post["posMachine$index"][$key],
 								'source'      => $post["source$index"][$key],
@@ -273,7 +273,11 @@
 							'in',
 							$receivables_order_id
 						]
-					], ['review_status' => 1]);
+					], [
+						'review_status'   => 1,
+						'review_time'     => Time::getCurrentTime(),
+						'review_director' => Session::getCurrentUser()
+					]);
 					if($result['status']) $result['message'] = '审核成功';
 					else $result['message'] = '审核失败';
 
@@ -294,7 +298,11 @@
 							'in',
 							$receivables_order_id
 						]
-					], ['review_status' => 2]);
+					], [
+						'review_status'   => 2,
+						'review_time'     => null,
+						'review_director' => null
+					]);
 					if($result['status']) $result['message'] = '取消审核成功';
 					else $result['message'] = '取消审核失败';
 
@@ -588,7 +596,7 @@
 					$result        = $project_model->refund($project_data);
 
 					return array_merge($result, ['__ajax__' => true]);
-				break; // todo
+				break;
 				case 'copy':
 					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.COPY')) return [
 						'status'   => false,
@@ -683,6 +691,95 @@
 						'__ajax__' => true
 					];
 				break;
+				case 'reset_and_order_column':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.MANAGE_LIST_COLUMN')) return [
+						'status'   => false,
+						'message'  => '您没有控制列表字段的权限',
+						'__ajax__' => true
+					];
+					/** @var \RoyalwissD\Model\ReceivablesColumnControlModel $receivables_column_control_model */
+					$receivables_column_control_model = D('RoyalwissD/ReceivablesColumnControl');
+					$meeting_id                       = I('get.mid', 0, 'int');
+					$post                             = I('post.');
+					// 锁表
+					$receivables_column_control_model->lock('read');
+					$receivables_column_control_model->lock('write');
+					// 删除旧数据
+					$receivables_column_control_model->where([
+						'mid'    => $meeting_id,
+						'action' => $receivables_column_control_model::ACTION_READ
+					])->delete();
+					// 写入数据
+					$data = [];
+					foreach($post['code'] as $key => $val){
+						$data[] = [
+							'code'     => $post['code'][$key],
+							'name'     => $post['name'][$key],
+							'form'     => $post['form'][$key],
+							'view'     => $post['view'][$key],
+							'must'     => $post['must'][$key],
+							'table'    => $post['table'][$key],
+							'mid'      => $meeting_id,
+							'action'   => $receivables_column_control_model::ACTION_READ,
+							'creator'  => Session::getCurrentUser(),
+							'creatime' => Time::getCurrentTime(),
+						];
+					}
+					$result = $receivables_column_control_model->addAll($data, [
+						'mid'    => $meeting_id,
+						'action' => $receivables_column_control_model::ACTION_READ
+					], true);
+					// 解锁
+					$receivables_column_control_model->unlock();
+
+					return $result ? [
+						'status'   => true,
+						'message'  => '设置成功',
+						'__ajax__' => true
+					] : [
+						'status'   => false,
+						'message'  => '设置失败',
+						'__ajax__' => true
+					];
+				break;
+				case 'set_search_configure':
+					if(!UserLogic::isPermitted('SEVERAL-RECEIVABLES.MANAGE_SEARCH_COLUMN')) return [
+						'status'   => false,
+						'message'  => '您没有管理搜索字段的权限',
+						'__ajax__' => true
+					];
+					$column_str = I('post.column', '');
+					$column     = explode(',', $column_str);
+					$meeting_id = I('get.mid', 0, 'int');
+					/** @var \RoyalwissD\Model\ReceivablesColumnControlModel $receivables_column_control_model */
+					$receivables_column_control_model = D('RoyalwissD/ReceivablesColumnControl');
+					$receivables_column_control_model->where([
+						'mid'    => $meeting_id,
+						'action' => $receivables_column_control_model::ACTION_SEARCH
+					])->save(['search' => 0]);
+					if($column_str != ''){
+						$result = $receivables_column_control_model->where([
+							'mid'    => $meeting_id,
+							'action' => $receivables_column_control_model::ACTION_SEARCH,
+							'form'   => ['in', $column]
+						])->save(['search' => 1]);
+
+						return $result ? [
+							'status'   => true,
+							'message'  => '设定成功',
+							'__ajax__' => true
+						] : [
+							'status'   => false,
+							'message'  => '设定失败',
+							'__ajax__' => true
+						];
+					}
+					else return [
+						'status'   => true,
+						'message'  => '设定成功',
+						'__ajax__' => true
+					];
+				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];
 				break;
@@ -721,21 +818,14 @@
 					for($i = 0, $key = 0; $i<count($data); $i++){
 						// 1、筛选数据
 						if(isset($keyword)){
-							// todo 获取筛选配置
-							$found = 0;
-							if($found == 0 && stripos($data[$i]['client'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($data[$i]['client_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($data[$i]['unit'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($data[$i]['unit_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($data[$i]['project'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($data[$i]['project_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($data[$i]['project_type'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($data[$i]['project_type_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($data[$i]['payee'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($data[$i]['payee_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($data[$i]['pay_method'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($data[$i]['pay_method_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($data[$i]['order_number'], $keyword) !== false) $found = 1;
+							/** @var \RoyalwissD\Model\ReceivablesColumnControlModel $receivables_column_control_model */
+							$receivables_column_control_model = D('RoyalwissD/ReceivablesColumnControl');
+							$search_list                      = $receivables_column_control_model->getSearchColumn($get['mid'], true);
+							$found                            = 0;
+							foreach($search_list as $value){
+								if($found == 0 && stripos($data[$i][$value['form']], $keyword) !== false) $found = 1;
+							}
+							if(count($search_list) == 0) $found = 1;
 							if($found == 0) continue;
 						}
 						if(isset($client_id) && $client_id != $data[$i]['cid']) continue;
@@ -778,12 +868,15 @@
 						$result[$index]['list'][]             = &$data[$i];
 						$result[$index]['id']                 = $data[$i]['id'];
 						$result[$index]['order_number']       = $data[$i]['order_number'];
-						$result[$index]['client_name']        = $data[$i]['client'];
+						$result[$index]['client']             = $data[$i]['client'];
+						$result[$index]['cid']                = $data[$i]['cid'];
 						$result[$index]['payee']              = $data[$i]['payee'];
 						$result[$index]['place']              = $data[$i]['place'];
 						$result[$index]['time']               = $data[$i]['time'];
 						$result[$index]['unit']               = $data[$i]['unit'];
 						$result[$index]['review_status_code'] = $data[$i]['review_status'];
+						$result[$index]['review_time']        = $data[$i]['review_time'];
+						$result[$index]['review_director']    = $data[$i]['review_director'];
 						$result[$index]['review_status']      = ReceivablesOrderModel::REVIEW_STATUS[$data[$i]['review_status']];
 						$result[$index]['status_code']        = $data[$i]['status'];
 						$result[$index]['status']             = GeneralModel::STATUS[$data[$i]['status']];
@@ -817,6 +910,14 @@
 					$result['totalCount'] = count($handler_list);
 
 					return $result;
+				break;
+				case 'column_setting:search':
+					$result = '';
+					foreach($data as $val){
+						if($val['search'] == 1) $result .= "$val[name] / ";
+					}
+
+					return trim($result, ' / ');
 				break;
 				default:
 					return $data;

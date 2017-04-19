@@ -192,7 +192,7 @@ $(function(){
 				str.push(name);
 			}
 		});
-		$('#search_config_modal input[name=search_field]').val(str);
+		$('#search_config_modal input[name=column]').val(str);
 	});
 	// 全选
 	$('.sc_check_all').on('click', function(){
@@ -209,7 +209,7 @@ $(function(){
 				str.push(name);
 			}
 		});
-		$('#search_config_modal input[name=search_field]').val(str);
+		$('#search_config_modal input[name=column]').val(str);
 	});
 	// 取消
 	$('.sc_cancel').on('click', function(){
@@ -226,7 +226,7 @@ $(function(){
 				str.push(name);
 			}
 		});
-		$('#search_config_modal input[name=search_field]').val(str);
+		$('#search_config_modal input[name=column]').val(str);
 	});
 	// 搜索配置提交
 	$('#search_config_modal .btn-save').on('click', function(){
@@ -271,73 +271,54 @@ $(function(){
 	})();
 	// 已审核客户列表
 	$('.check_reviewed').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('reviewed');
-		var new_url = link.delUrlParam('p');
+		var param   = url_object.getUrlParam('reviewed');
+		var new_url = url_object.delUrlParam('p');
 		if(param == 1){
-			new_url = link.delUrlParam('reviewed', new_url);
+			new_url = url_object.delUrlParam('reviewed', new_url);
 			location.replace(new_url);
 		}else{
-			new_url = link.setUrlParam('reviewed', 1, new_url);
+			new_url = url_object.setUrlParam('reviewed', 1, new_url);
 			location.replace(new_url);
 		}
 	});
 	// 未审核客户列表
 	$('.check_not_reviewed').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('reviewed');
-		var new_url = link.delUrlParam('p');
+		var param   = url_object.getUrlParam('reviewed');
+		var new_url = url_object.delUrlParam('p');
 		if(param == 0){
-			new_url = link.delUrlParam('reviewed', new_url);
+			new_url = url_object.delUrlParam('reviewed', new_url);
 			location.replace(new_url);
 		}else{
-			new_url = link.setUrlParam('reviewed', 0, new_url);
+			new_url = url_object.setUrlParam('reviewed', 0, new_url);
 			location.replace(new_url);
 		}
 	});
 	// 已收款客户列表
 	$('.check_receivables').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('receivables');
+		var param   = url_object.getUrlParam('receivables');
 		if(param == 1){
-			var new_url = link.delUrlParam('receivables');
+			var new_url = url_object.delUrlParam('receivables');
 			location.replace(new_url);
 		}else{
-			var reviewed_url = link.setUrlParam('receivables', 1);
+			var reviewed_url = url_object.setUrlParam('receivables', 1);
 			location.replace(reviewed_url);
 		}
 	});
 	// 未收款客户列表
 	$('.check_not_receivables').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('receivables');
+		var param   = url_object.getUrlParam('receivables');
 		if(param == 0){
-			var new_url = link.delUrlParam('receivables');
+			var new_url = url_object.delUrlParam('receivables');
 			location.replace(new_url);
 		}else{
-			var reviewed_url = link.setUrlParam('receivables', 0);
+			var reviewed_url = url_object.setUrlParam('receivables', 0);
 			location.replace(reviewed_url);
 		}
 	});
 	(function(){
 		// 人员状态列表（签到\审核\收款）
-		var mvc         = $('#quasar_script').attr('data-url-sys-param');
-		var suffix      = $('#quasar_script').attr('data-page-suffix');
-		var link        = new Quasar.UrlClass(1, mvc, suffix);
-		var reviewed    = link.getUrlParam('reviewed');
-		var receivables = link.getUrlParam('receivables');
+		var reviewed    = url_object.getUrlParam('reviewed');
+		var receivables = url_object.getUrlParam('receivables');
 		if(reviewed == 1) $('.check_reviewed').find('.iradio_square-blue').addClass('checked');
 		if(reviewed == 0) $('.check_not_reviewed').find('.iradio_square-blue').addClass('checked');
 		if(receivables == 1) $('.check_receivables').find('.iradio_square-green').addClass('checked');
@@ -616,8 +597,6 @@ $(function(){
 			}
 		})
 	});
-	var quasar_script = document.getElementById('quasar_script');
-	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
 	ThisObject.bindEvent();
 	/**
 	 * 1、收款类型分为门票和代金券
@@ -673,15 +652,15 @@ $(function(){
 	var cur_order_method = $('#default_order_method').val();
 	$('.table_header span[data-column]').on('click', function(){
 		var order_column = $(this).attr('data-column');
-		var order_method = url_object.getUrlParam('_orderMethod');
-		var new_url      = url_object.setUrlParam('_orderColumn', order_column);
+		var order_method = url_object.getUrlParam('orderMethod');
+		var new_url      = url_object.setUrlParam('orderColumn', order_column);
 		if(cur_order_column == order_column){
 			if(order_method == 'desc') order_method = 'asc';
 			else if(order_method == 'asc') order_method = 'desc';
 			else order_method = 'desc';
 		}
 		else order_method = 'asc';
-		new_url = url_object.setUrlParam('_orderMethod', order_method, new_url);
+		new_url = url_object.setUrlParam('orderMethod', order_method, new_url);
 		location.replace(new_url);
 	}).each(function(){
 		var order_column = $(this).attr('data-column');

@@ -23,6 +23,7 @@
 		const CONTROL_COLUMN_PARAMETER_SELF = ['area' => 'area', 'meetingID' => 'mid'];
 		/** 是否新店 */
 		const IS_NEW = [
+			9 => '',
 			0 => '否',
 			1 => '是'
 		];

@@ -215,24 +215,37 @@ SET send_status =  CASE sms_id i$replace_char END
 		public function setData($type, $data){
 			switch($type){
 				case 'manage':
+					$get  = $data['urlParam'];
+					$data = $data['list'];
+					$list = [];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
 					foreach($data as $key => $message){
-						$data[$key]['status_code'] = $message['status'];
-						$data[$key]['status']      = GeneralModel::STATUS[$message['status']];
-						$data[$key]['type_code']   = $message['type'];
-						$data[$key]['type']        = MessageModel::TYPE[$message['type']];
-						$data[$key]['action_code'] = $message['action'];
-						$data[$key]['action']      = [];
+						// 1、筛选数据
+						if(isset($keyword)){
+							$found = 0;
+							if($found == 0 && stripos($message['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($message['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
+						$message['status_code'] = $message['status'];
+						$message['status']      = GeneralModel::STATUS[$message['status']];
+						$message['type_code']   = $message['type'];
+						$message['type']        = MessageModel::TYPE[$message['type']];
+						$message['action_code'] = $message['action'];
+						$message['action']      = [];
 						foreach(explode(',', $message['action']) as $action){
-							$data[$key]['action_list'][] = [
+							$message['action_list'][] = [
 								'name' => MessageCorrelationModel::ACTION[$action],
 								'id'   => $action
 							];
-							$data[$key]['action'][]      = MessageCorrelationModel::ACTION[$action];
+							$message['action'][]      = MessageCorrelationModel::ACTION[$action];
 						}
-						$data[$key]['action'] = implode(', ', $data[$key]['action']);
+						$message['action'] = implode(', ', $message['action']);
+						$list[]            = $message;
 					}
 
-					return $data;
+					return $list;
 				break;
 				case 'sendHistory':
 					$list = [];

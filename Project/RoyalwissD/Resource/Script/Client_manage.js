@@ -319,191 +319,150 @@ $(function(){
 	});
 	// 已签到客户列表
 	$('.check_signed').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('signed');
-		var new_url = link.delUrlParam('p');
+		var param   = url_object.getUrlParam('signed');
+		var new_url = url_object.delUrlParam('p');
 		if(param == 1){
-			new_url = link.delUrlParam('signed', new_url);
+			new_url = url_object.delUrlParam('signed', new_url);
 			location.replace(new_url);
 		}else{
-			new_url = link.setUrlParam('signed', 1, new_url);
+			new_url = url_object.setUrlParam('signed', 1, new_url);
 			location.replace(new_url);
 		}
 	});
 	// 未签到客户列表
 	$('.check_not_signed').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('signed');
-		var new_url = link.delUrlParam('p');
+		var param   = url_object.getUrlParam('signed');
+		var new_url = url_object.delUrlParam('p');
 		if(param == 0){
-			new_url = link.delUrlParam('signed', new_url);
+			new_url = url_object.delUrlParam('signed', new_url);
 			location.replace(new_url);
 		}else{
-			new_url = link.setUrlParam('signed', 0, new_url);
+			new_url = url_object.setUrlParam('signed', 0, new_url);
 			location.replace(new_url);
 		}
 	});
 	// 已审核客户列表
 	$('.check_reviewed').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('reviewed');
-		var new_url = link.delUrlParam('p');
+		var param   = url_object.getUrlParam('reviewed');
+		var new_url = url_object.delUrlParam('p');
 		if(param == 1){
-			new_url = link.delUrlParam('reviewed', new_url);
+			new_url = url_object.delUrlParam('reviewed', new_url);
 			location.replace(new_url);
 		}else{
-			new_url = link.setUrlParam('reviewed', 1, new_url);
+			new_url = url_object.setUrlParam('reviewed', 1, new_url);
 			location.replace(new_url);
 		}
 	});
 	// 未审核客户列表
 	$('.check_not_reviewed').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('reviewed');
-		var new_url = link.delUrlParam('p');
+		var param   = url_object.getUrlParam('reviewed');
+		var new_url = url_object.delUrlParam('p');
 		if(param == 0){
-			new_url = link.delUrlParam('reviewed', new_url);
+			new_url = url_object.delUrlParam('reviewed', new_url);
 			location.replace(new_url);
 		}else{
-			new_url = link.setUrlParam('reviewed', 0, new_url);
+			new_url = url_object.setUrlParam('reviewed', 0, new_url);
 			location.replace(new_url);
 		}
 	});
 	/*// 已收款客户列表
 	 $('.check_receivables').find('.iCheck-helper').on('click', function(){
-	 var $quasar = $('#quasar_script');
-	 var mvc     = $quasar.attr('data-url-sys-param');
-	 var suffix  = $quasar.attr('data-page-suffix');
-	 var link    = new Quasar.UrlClass(1, mvc, suffix);
-	 var param   = link.getUrlParam('receivables');
+
+	 var param   = url_object.getUrlParam('receivables');
 	 if(param == 1){
-	 var new_url = link.delUrlParam('receivables');
+	 var new_url = url_object.delUrlParam('receivables');
 	 location.replace(new_url);
 	 }else{
-	 var reviewed_url = link.setUrlParam('receivables', 1);
+	 var reviewed_url = url_object.setUrlParam('receivables', 1);
 	 location.replace(reviewed_url);
 	 }
 	 });
 	 // 未收款客户列表
 	 $('.check_not_receivables').find('.iCheck-helper').on('click', function(){
-	 var $quasar = $('#quasar_script');
-	 var mvc     = $quasar.attr('data-url-sys-param');
-	 var suffix  = $quasar.attr('data-page-suffix');
-	 var link    = new Quasar.UrlClass(1, mvc, suffix);
-	 var param   = link.getUrlParam('receivables');
+
+	 var param   = url_object.getUrlParam('receivables');
 	 if(param == 0){
-	 var new_url = link.delUrlParam('receivables');
+	 var new_url = url_object.delUrlParam('receivables');
 	 location.replace(new_url);
 	 }else{
-	 var reviewed_url = link.setUrlParam('receivables', 0);
+	 var reviewed_url = url_object.setUrlParam('receivables', 0);
 	 location.replace(reviewed_url);
 	 }
 	 });*/
-	// 客户类型列表
-	$('.client').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('is_employee');
-		var new_url = link.delUrlParam('p');
-		if(param == 0){
-			new_url = link.delUrlParam('is_employee', new_url);
+	// 陪同类型列表
+	$('.type_1').find('.iCheck-helper').on('click', function(){
+
+		var param   = decodeURI(decodeURI(url_object.getUrlParam('type')));
+		var new_url = url_object.delUrlParam('p');
+		if(param == '陪同'){
+			new_url = url_object.delUrlParam('type', new_url);
 			location.replace(new_url);
 		}else{
-			new_url = link.setUrlParam('is_employee', 0, new_url);
+			new_url = url_object.setUrlParam('type', encodeURI(encodeURI('陪同')), new_url);
 			location.replace(new_url);
 		}
 	});
-	// 员工类型列表
-	$('.employee').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('is_employee');
-		var new_url = link.delUrlParam('p');
-		if(param == 1){
-			new_url = link.delUrlParam('is_employee', new_url);
+	// 终端类型列表
+	$('.type_2').find('.iCheck-helper').on('click', function(){
+
+		var param   = decodeURI(decodeURI(url_object.getUrlParam('type')));
+		var new_url = url_object.delUrlParam('p');
+		if(param == '终端'){
+			new_url = url_object.delUrlParam('type', new_url);
 			location.replace(new_url);
 		}else{
-			new_url = link.setUrlParam('is_employee', 1, new_url);
+			new_url = url_object.setUrlParam('type', encodeURI(encodeURI('终端')), new_url);
 			location.replace(new_url);
 		}
 	});
 	//	// 新客户列表
 	//	$('.new_client').find('.iCheck-helper').on('click', function(){
-	//		var $quasar = $('#quasar_script');
-	//		var mvc     = $quasar.attr('data-url-sys-param');
-	//		var suffix  = $quasar.attr('data-page-suffix');
-	//		var link    = new Quasar.UrlClass(1, mvc, suffix);
-	//		var param   = link.getUrlParam('client_type');
-	//		var new_url = link.delUrlParam('p');
+	//		var param   = url_object.getUrlParam('client_type');
+	//		var new_url = url_object.delUrlParam('p');
 	//		if(param == 1){
-	//			new_url = link.delUrlParam('client_type', new_url);
+	//			new_url = url_object.delUrlParam('client_type', new_url);
 	//			location.replace(new_url);
 	//		}else{
-	//			new_url = link.setUrlParam('client_type', 1, new_url);
+	//			new_url = url_object.setUrlParam('client_type', 1, new_url);
 	//			location.replace(new_url);
 	//		}
 	//	});
 	//	// 老客户列表
 	//	$('.old_client').find('.iCheck-helper').on('click', function(){
-	//		var $quasar = $('#quasar_script');
-	//		var mvc     = $quasar.attr('data-url-sys-param');
-	//		var suffix  = $quasar.attr('data-page-suffix');
-	//		var link    = new Quasar.UrlClass(1, mvc, suffix);
-	//		var param   = link.getUrlParam('client_type');
-	//		var new_url = link.delUrlParam('p');
+	//		var param   = url_object.getUrlParam('client_type');
+	//		var new_url = url_object.delUrlParam('p');
 	//		if(param == 0){
-	//			new_url = link.delUrlParam('client_type', new_url);
+	//			new_url = url_object.delUrlParam('client_type', new_url);
 	//			location.replace(new_url);
 	//		}else{
-	//			new_url = link.setUrlParam('client_type', 0, new_url);
+	//			new_url = url_object.setUrlParam('client_type', 0, new_url);
 	//			location.replace(new_url);
 	//		}
 	//	});
 	// 可用列表
 	$('.usable').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('status');
-		var new_url = link.delUrlParam('p');
+
+
+		var param   = url_object.getUrlParam('status');
+		var new_url = url_object.delUrlParam('p');
 		if(param == 1){
-			new_url = link.delUrlParam('status', new_url);
+			new_url = url_object.delUrlParam('status', new_url);
 			location.replace(new_url);
 		}else{
-			new_url = link.setUrlParam('status', 1, new_url);
+			new_url = url_object.setUrlParam('status', 1, new_url);
 			location.replace(new_url);
 		}
 	});
 	// 禁用列表
 	$('.disable').find('.iCheck-helper').on('click', function(){
-		var $quasar = $('#quasar_script');
-		var mvc     = $quasar.attr('data-url-sys-param');
-		var suffix  = $quasar.attr('data-page-suffix');
-		var link    = new Quasar.UrlClass(1, mvc, suffix);
-		var param   = link.getUrlParam('status');
-		var new_url = link.delUrlParam('p');
+
+		var param   = url_object.getUrlParam('status');
+		var new_url = url_object.delUrlParam('p');
 		if(param == 0){
-			new_url = link.delUrlParam('status', new_url);
+			new_url = url_object.delUrlParam('status', new_url);
 			location.replace(new_url);
 		}else{
-			new_url = link.setUrlParam('status', 0, new_url);
+			new_url = url_object.setUrlParam('status', 0, new_url);
 			location.replace(new_url);
 		}
 	});
@@ -989,7 +948,7 @@ $(function(){
 		//var receivables = link.getUrlParam('receivables');
 		var client_type = link.getUrlParam('client_type');
 		var status      = link.getUrlParam('status');
-		var is_employee = link.getUrlParam('is_employee');
+		var type = decodeURI(decodeURI(link.getUrlParam('type')));
 		if(signed == 1) $('.check_signed').find('.iradio_square-green').addClass('checked');
 		if(signed == 0) $('.check_not_signed').find('.iradio_square-green').addClass('checked');
 		if(reviewed == 1) $('.check_reviewed').find('.iradio_square-blue').addClass('checked');
@@ -1000,8 +959,8 @@ $(function(){
 		//		if(client_type == 0) $('.old_client').find('.iradio_square-red').addClass('checked');
 		if(status == 1) $('.usable').find('.iradio_square-yellow').addClass('checked');
 		if(status == 0) $('.disable').find('.iradio_square-yellow').addClass('checked');
-		if(is_employee == 1) $('.employee').find('.iradio_square-red').addClass('checked');
-		if(is_employee == 0) $('.client').find('.iradio_square-red').addClass('checked');
+		if(type == '陪同') $('.type_1').find('.iradio_square-red').addClass('checked');
+		if(type == '终端') $('.type_2').find('.iradio_square-red').addClass('checked');
 	})();
 	/**
 	 * 双击表格弹出编辑界面

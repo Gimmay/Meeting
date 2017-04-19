@@ -736,6 +736,7 @@
 									$temp_client_data['id'] = $val['id']; // Warning：根据插入主键ID数据并根据此字段做覆盖操作！
 									break;
 								}
+								else $temp_client_data['id'] = '_default';
 							}
 							// 重复了不过设定了覆盖配置：写入
 							if($is_repeat && $client_repeat_action == $meeting_configure_model::CLIENT_REPEAT_ACTION_OVERRIDE){
@@ -744,31 +745,33 @@
 								$attendee_data[]        = $temp_attendee_data;
 								$original_repeat_data[] = $client;
 								// 会所数据
-								$temp_unit_data = [];
-								if(isset($client['unit_area'])) $temp_unit_data['area'] = $client['unit_area'];
-								if(isset($temp_client_data['unit_is_new'])){
-									switch($temp_client_data['unit_is_new']){
-										case '是':
-										case '新店':
-											$temp_client_data['unit_is_new'] = 1;
-										break;
-										case '否':
-										case '不是':
-										case '老店':
-										default:
-											$temp_client_data['unit_is_new'] = 0;
-										break;
-									}
-									$temp_unit_data['is_new'] = $temp_client_data['unit_is_new'];
-								}
 								if(isset($client['unit'])){
 									$temp_unit_data['name']        = $client['unit'];
 									$temp_unit_data['name_pinyin'] = $str_obj->getPinyin($client['unit'], true, '');
+									if(isset($client['unit_area'])) $temp_unit_data['area'] = $client['unit_area'];
+									else $temp_unit_data['area'] = $client['unit_area'];
+									if(isset($temp_client_data['unit_is_new'])){
+										switch($temp_client_data['unit_is_new']){
+											case '是':
+											case '新店':
+												$temp_client_data['unit_is_new'] = 1;
+											break;
+											case '否':
+											case '不是':
+											case '老店':
+											default:
+												$temp_client_data['unit_is_new'] = 9;
+											break;
+										}
+										$temp_unit_data['is_new'] = $temp_client_data['unit_is_new'];
+									}
+									else $temp_unit_data['is_new'] = 9;
+
+									$unit_data[] = array_merge($temp_unit_data, [
+										'creator'  => Session::getCurrentUser(),
+										'creatime' => Time::getCurrentTime()
+									]);
 								}
-								$unit_data[] = array_merge($temp_unit_data, [
-									'creator'  => Session::getCurrentUser(),
-									'creatime' => Time::getCurrentTime()
-								]);
 							}
 							// 重复了并设定了跳过
 							elseif($is_repeat && $client_repeat_action == $meeting_configure_model::CLIENT_REPEAT_ACTION_SKIP){
@@ -780,31 +783,31 @@
 								$client_data[]   = $temp_client_data;
 								$attendee_data[] = $temp_attendee_data;
 								// 会所数据
-								$temp_unit_data = [];
-								if(isset($temp_client_data['unit_area'])) $temp_unit_data['area'] = $temp_client_data['unit_area'];
-								if(isset($temp_client_data['unit_is_new'])){
-									switch($temp_client_data['unit_is_new']){
-										case '是':
-										case '新店':
-											$temp_client_data['unit_is_new'] = 1;
-										break;
-										case '否':
-										case '不是':
-										case '老店':
-										default:
-											$temp_client_data['unit_is_new'] = 0;
-										break;
-									}
-									$temp_unit_data['is_new'] = $temp_client_data['unit_is_new'];
-								}
 								if(isset($temp_client_data['unit'])){
 									$temp_unit_data['name']        = $temp_client_data['unit'];
 									$temp_unit_data['name_pinyin'] = $str_obj->getPinyin($temp_client_data['unit'], true, '');
+									$temp_unit_data                = [];
+									if(isset($temp_client_data['unit_area'])) $temp_unit_data['area'] = $temp_client_data['unit_area'];
+									if(isset($temp_client_data['unit_is_new'])){
+										switch($temp_client_data['unit_is_new']){
+											case '是':
+											case '新店':
+												$temp_client_data['unit_is_new'] = 1;
+											break;
+											case '否':
+											case '不是':
+											case '老店':
+											default:
+												$temp_client_data['unit_is_new'] = 0;
+											break;
+										}
+										$temp_unit_data['is_new'] = $temp_client_data['unit_is_new'];
+									}
+									$unit_data[] = array_merge($temp_unit_data, [
+										'creator'  => Session::getCurrentUser(),
+										'creatime' => Time::getCurrentTime()
+									]);
 								}
-								$unit_data[] = array_merge($temp_unit_data, [
-									'creator'  => Session::getCurrentUser(),
-									'creatime' => Time::getCurrentTime()
-								]);
 							}
 						}
 						// 保存会所数据
@@ -1453,13 +1456,17 @@ SET
 						'reviewed'    => 0,
 						'notReviewed' => 0,
 						'enabled'     => 0,
-						'disabled'    => 0
+						'disabled'    => 0,
+						'终端'          => 0,
+						'陪同'          => 0
 					];
 					foreach($data['total'] as $value){
 						if($value['review_status'] == 1) $statistics['reviewed']++;
 						else $statistics['notReviewed']++;
 						if($value['status'] == 1) $statistics['enabled']++;
 						if($value['status'] == 0) $statistics['disabled']++;
+						if($value['type'] == '终端') $statistics['终端']++;
+						if($value['type'] == '陪同') $statistics['陪同']++;
 						if(in_array($value['type'], ClientModel::TYPE)){
 							if($value['sign_status'] == 1) $statistics['signed']++;
 							else $statistics['notSigned']++;
@@ -1481,6 +1488,8 @@ SET
 					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['signStatus']])) $sign_status = $get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['signStatus']];
 					// 若指定了审核状态码的情况
 					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']])) $review_status = $get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
+					// 若指定了审核状态码的情况
+					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['type']])) $client_type = $get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['type']];
 					foreach($data['list'] as $index => $client){
 						// 1、筛选数据
 						if(isset($keyword)){
@@ -1496,6 +1505,7 @@ SET
 						}
 						if(isset($client_id) && $client_id != $client['cid']) continue;
 						if(isset($status) && $status != $client['status']) continue;
+						if(isset($client_type) && $client_type != $client['type']) continue;
 						if(isset($sign_status)){
 							if($sign_status == 0 && in_array($client['sign_status'], [1])) continue;
 							if($sign_status == 1 && in_array($client['sign_status'], [0, 2])) continue;

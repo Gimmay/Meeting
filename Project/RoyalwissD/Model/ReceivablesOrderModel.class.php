@@ -69,16 +69,16 @@
 			$table_pay_method          = ReceivablesPayMethodModel::TABLE_NAME;
 			$table_pos_machine         = ReceivablesPosMachineModel::TABLE_NAME;
 			$common_database           = GeneralModel::DATABASE_NAME;
-			$this_database = self::DATABASE_NAME;
-			$keyword       = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
-			$order         = $control[self::CONTROL_COLUMN_PARAMETER['order']];
-			$status        = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$meeting_id    = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
-			$client_id     = $control[self::CONTROL_COLUMN_PARAMETER_SELF['clientID']];
-			$order_id      = $control[self::CONTROL_COLUMN_PARAMETER_SELF['orderID']];
-			$detail_id     = $control[self::CONTROL_COLUMN_PARAMETER_SELF['detailID']];
-			$review_status = $control[self::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
-			$where         = ' WHERE 0 = 0 ';
+			$this_database             = self::DATABASE_NAME;
+			$keyword                   = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order                     = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status                    = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$meeting_id                = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$client_id                 = $control[self::CONTROL_COLUMN_PARAMETER_SELF['clientID']];
+			$order_id                  = $control[self::CONTROL_COLUMN_PARAMETER_SELF['orderID']];
+			$detail_id                 = $control[self::CONTROL_COLUMN_PARAMETER_SELF['detailID']];
+			$review_status             = $control[self::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
+			$where                     = ' WHERE 0 = 0 ';
 			if(isset($order)) $order = " ORDER BY $order";
 			else $order = ' ';
 			if(isset($keyword)){
@@ -120,6 +120,9 @@ SELECT * FROM (
 		ro.time,
 		ro.status,
 		ro.review_status,
+		ro.review_time,
+		u3.id review_director_code,
+		u3.name review_director,
 		ro.creatime,
 		ro.creator creator_code,
 		u2.name creator,
@@ -148,6 +151,7 @@ SELECT * FROM (
 	JOIN $this_database.$table_receivables_detail rd ON rp.id = rd.pid AND rd.status <> 2
 	LEFT JOIN $common_database.$table_user u1 ON u1.id = ro.payee AND u1.status <> 2
 	LEFT JOIN $common_database.$table_user u2 ON u2.id = ro.creator AND u2.status <> 2
+	LEFT JOIN $common_database.$table_user u3 ON u3.id = ro.review_director AND u3.status <> 2
 	JOIN $this_database.$table_client c ON c.id = ro.cid AND c.status <> 2
 	JOIN $this_database.$table_attendee a ON a.cid = c.id AND a.status <> 2 AND a.mid = ro.mid
 	LEFT JOIN $this_database.$table_project p ON p.id = rp.project_id AND p.status <> 2
@@ -162,5 +166,30 @@ $order
 			$result = $this->query($sql);
 
 			return $result;
+		}
+
+		/**
+		 * 获取收款人
+		 *
+		 * @param int $meeting_id 会议ID
+		 *
+		 * @return array
+		 */
+		public function getPayeeSelectList($meeting_id){
+			$table_receivables_order = self::TABLE_NAME;
+			$table_user              = UserModel::TABLE_NAME;
+			$common_database         = GeneralModel::DATABASE_NAME;
+			$this_database           = self::DATABASE_NAME;
+			$sql                     = "
+SELECT
+	DISTINCT u.id `value`,
+	u.name html,
+	concat(u.name, u.name_pinyin) keyword
+FROM $this_database.$table_receivables_order ro
+JOIN $common_database.$table_user u ON u.id = ro.payee
+WHERE ro.review_status = 1 AND ro.status = 1 AND ro.mid = $meeting_id AND u.status = 1
+";
+
+			return $this->query($sql);
 		}
 	}

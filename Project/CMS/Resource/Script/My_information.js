@@ -12,9 +12,9 @@ $(function(){
 					ManageObject.object.loading.complete();
 					if(r.status){
 						ManageObject.object.toast.toast(r.message, 1);
-						ManageObject.object.toast.onQuasarHidden(function(){
-							location.href = r.nextPage;
-						})
+						/*ManageObject.object.toast.onQuasarHidden(function(){
+						 location.href = r.nextPage;
+						 })*/
 					}else{
 						ManageObject.object.toast.toast(r.message, 2);
 					}

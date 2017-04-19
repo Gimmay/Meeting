@@ -7,6 +7,7 @@
 	 */
 	namespace RoyalwissD\Logic;
 
+	use CMS\Controller\CMS;
 	use CMS\Logic\Session;
 	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
@@ -269,12 +270,25 @@
 		public function setData($type, $data){
 			switch($type){
 				case 'manage':
+					$get  = $data['urlParam'];
+					$data = $data['list'];
+					$list = [];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
 					foreach($data as $key => $group){
-						$data[$key]['status_code'] = $data[$key]['status'];
-						$data[$key]['status']      = GeneralModel::STATUS[$data[$key]['status']];
+						// 1、筛选数据
+						if(isset($keyword)){
+							$found = 0;
+							if($found == 0 && stripos($group['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($group['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
+						$group['status_code'] = $group['status'];
+						$group['status']      = GeneralModel::STATUS[$group['status']];
+						$list[]               = $group;
 					}
 
-					return $data;
+					return $list;
 				break;
 			}
 		}

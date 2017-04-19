@@ -2,7 +2,7 @@
  * Created by qyqy on 2016-10-8.
  */
 
-var template = '<tr>\n\t<td>$type</td>\n\t<td>$number</td>\n\t<td>$createTime</td>\n</tr>';
+var template = '<tr>\n\t<td>$type</td>\n\t<td>$number</td>\n\t<td>$createTime</td>\n\t<td>$comment</td>\n</tr>';
 $(function(){
 	// 新增项目保存
 	$('#create_project .btn-save').on('click', function(){
@@ -139,7 +139,7 @@ $(function(){
 				var str = '';
 				$.each(r.list, function(index, value){
 					str += template.replace('$type', value.type).replace('$number', value.number)
-								   .replace('$createTime', value.creatime);
+								   .replace('$createTime', value.creatime).replace('$comment', value.comment);
 				})
 				var $tableTbody = $('#inventory_history_body');
 				$tableTbody.html(str);

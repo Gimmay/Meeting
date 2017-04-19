@@ -11,6 +11,7 @@
 	use CMS\Logic\PageLogic;
 	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
+	use General\Logic\GeneralLogic;
 	use RoyalwissD\Logic\MeetingConfigureLogic;
 	use RoyalwissD\Logic\ReportLogic;
 	use RoyalwissD\Model\AttendeeModel;
@@ -180,7 +181,7 @@
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$pagination = $page_object->show();
 			$this->assign('pagination', $pagination);
-			$this->assign('list', $list);
+			$this->assign('list', GeneralLogic::orderList($list, I('get.'.CMS::URL_CONTROL_PARAMETER['orderColumn'], CMS::DEFAULT_ORDER_COLUMN), I('get.'.CMS::URL_CONTROL_PARAMETER['orderMethod'], CMS::DEFAULT_ORDER_METHOD)));
 			// 获取其他模块数据
 			/** @var \RoyalwissD\Model\ProjectTypeModel $project_type_model */
 			$project_type_model = D('RoyalwissD/ProjectType');
@@ -190,10 +191,13 @@
 			$pay_method_model = D('RoyalwissD/ReceivablesPayMethod');
 			/** @var \RoyalwissD\Model\ReceivablesPosMachineModel $pos_machine_model */
 			$pos_machine_model = D('RoyalwissD/ReceivablesPosMachine');
+			/** @var \RoyalwissD\Model\ReceivablesOrderModel $receivables_order_model */
+			$receivables_order_model = D('RoyalwissD/ReceivablesOrder');
 			$this->assign('project_type_list', $project_type_model->getSelectedList($this->meetingID));
 			$this->assign('project_list', $project_model->getSelectedList($this->meetingID, false));
 			$this->assign('pay_method_list', $pay_method_model->getSelectedList($this->meetingID));
 			$this->assign('pos_machine_list', $pos_machine_model->getSelectedList($this->meetingID));
+			$this->assign('payee_list', $receivables_order_model->getPayeeSelectList($this->meetingID));
 			$this->assign('source_list', ReceivablesDetailModel::RECEIVABLES_SOURCE);
 			$this->assign('default_order_column', I('get.'.CMS::URL_CONTROL_PARAMETER['orderColumn'], CMS::DEFAULT_ORDER_COLUMN));
 			$this->assign('default_order_method', I('get.'.CMS::URL_CONTROL_PARAMETER['orderMethod'], CMS::DEFAULT_ORDER_METHOD));

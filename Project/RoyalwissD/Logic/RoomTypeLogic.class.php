@@ -36,9 +36,12 @@
 					/** @var \RoyalwissD\Model\RoomTypeModel $room_type_model */
 					$room_type_model = D('RoyalwissD/RoomType');
 					$str_obj         = new StringPlus();
-					$result          = $room_type_model->create(array_merge($post, [
+					$price           = $post['price'];
+					unset($post['price']);
+					$result = $room_type_model->create(array_merge($post, [
 						'mid'         => $meeting_id,
 						'hid'         => $hotel_id,
+						'price'       => $price == '' ? 0 : $price,
 						'creatime'    => Time::getCurrentTime(),
 						'creator'     => Session::getCurrentUser(),
 						'name_pinyin' => $str_obj->getPinyin($post['name'], true, ''),
@@ -79,12 +82,15 @@
 					/** @var \RoyalwissD\Model\RoomTypeModel $room_type_model */
 					$room_type_model = D('RoyalwissD/RoomType');
 					$str_obj         = new StringPlus();
+					$price           = $post['price'];
+					unset($post['price']);
 					$result = $room_type_model->modify([
 						'id'  => $room_type_id,
 						'mid' => $meeting_id,
 						'hid' => $hotel_id
 					], array_merge($post, [
 						'name_pinyin' => $str_obj->getPinyin($post['name'], true, ''),
+						'price'       => $price == '' ? 0 : $price
 					]));
 
 					return array_merge($result, ['__ajax__' => true]);

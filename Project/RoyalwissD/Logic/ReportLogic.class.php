@@ -46,6 +46,7 @@
 					$data = [];
 					foreach($post['code'] as $key => $val){
 						$data[] = [
+							'type'     => $report_column_control_model::TYPE_CLIENT,
 							'code'     => $post['code'][$key],
 							'name'     => $post['name'][$key],
 							'form'     => $post['form'][$key],
@@ -289,7 +290,7 @@
 							if($is_new != $unit['is_new']) continue;
 						}
 						if(isset($area)){
-							if($area != $unit['unit_area']) continue;
+							if($area != $unit['area']) continue;
 						}
 						// 2、映射替换
 						$unit['is_signed_code'] = $unit['is_signed'];
@@ -354,6 +355,11 @@
 					if(isset($get['payMethod'])) $pay_method = $get['payMethod'];
 					if(isset($get['posMachine'])) $pos_machine = $get['posMachine'];
 					if(isset($get['source'])) $source = $get['source'];
+					if(isset($get['startTime'])) $start_time = strtotime($get['startTime']);
+					if(isset($get['endTime'])) $end_time = strtotime($get['endTime']);
+					if(isset($get['minPrice'])) $min_price = $get['minPrice'];
+					if(isset($get['maxPrice'])) $max_price = $get['maxPrice'];
+					if(isset($get['payee'])) $payee = $get['payee'];
 					// 1、合并单据号
 					//					for($i = 0, $key = 0; $i<count($data); $i++){
 					//						// 1、筛选数据
@@ -461,6 +467,11 @@
 						if(isset($pay_method) && $original_data[$i]['pay_method_code'] != $pay_method) continue;
 						if(isset($pos_machine) && $original_data[$i]['pos_machine_code'] != $pos_machine) continue;
 						if(isset($source) && $original_data[$i]['source'] != $source) continue;
+						if(isset($payee) && $original_data[$i]['payee_code'] != $payee) continue;
+						if(isset($start_time) && strtotime($original_data[$i]['time'])<=$start_time) continue;
+						if(isset($end_time) && strtotime($original_data[$i]['time'])>=$end_time) continue;
+						if(isset($min_price) && $original_data[$i]['price']<=$min_price) continue;
+						if(isset($max_price) && $original_data[$i]['price']>=$max_price) continue;
 						$client_id = $original_data[$i]['cid'];
 						if(!in_array($client_id, $client_reflect['clientID'])){
 							$client_reflect['clientID'][]        = $client_id;
@@ -480,7 +491,7 @@
 							$result2[$index]['project_code'][] = $original_data[$i]['project_code'];
 							$result2[$index]['project'][]      = $original_data[$i]['project'];
 						}
-						if(!in_array($original_data[$i]['pay_method_code'], $result2[$index]['pay_method_code'])){
+						if(!in_array($original_data[$i]['pay_method_code'], $result2[$index]['pay_method_code']) && $original_data[$i]['pay_method_code'] != 0){
 							$result2[$index]['pay_method_code'][] = $original_data[$i]['pay_method_code'];
 							$result2[$index]['pay_method'][]      = $original_data[$i]['pay_method'];
 						}
@@ -499,6 +510,7 @@
 						'_clientList' => []
 					];
 					$statistics      = [
+						'unit'        => [],
 						'projectType' => [],
 						'project'     => [],
 						'payMethod'   => [],
@@ -508,7 +520,8 @@
 						foreach($order['list'] as $detail){
 							if(!isset($statistics['projectType'][$detail['project_type']])) $statistics['projectType'][$detail['project_type']] = $report_template;
 							if(!isset($statistics['project'][$detail['project']])) $statistics['project'][$detail['project']] = $report_template;
-							if(!isset($statistics['payMethod'][$detail['pay_method']])) $statistics['payMethod'][$detail['pay_method']] = $report_template;
+							if($detail['pay_method_code']!=0) if(!isset($statistics['payMethod'][$detail['pay_method']])) $statistics['payMethod'][$detail['pay_method']] = $report_template;
+							if(!isset($statistics['unit'][$detail['unit']])) $statistics['unit'][$detail['unit']] = $report_template;
 							// 项目类型
 							$statistics['projectType'][$detail['project_type']]['price'] += $detail['price'];
 							if(!in_array($detail['cid'], $statistics['projectType'][$detail['project_type']]['_clientList'])){
@@ -522,10 +535,12 @@
 								$statistics['project'][$detail['project']]['client']++;
 							}
 							// 支付方式
-							$statistics['payMethod'][$detail['pay_method']]['price'] += $detail['price'];
-							if(!in_array($detail['cid'], $statistics['payMethod'][$detail['pay_method']]['_clientList'])){
-								$statistics['payMethod'][$detail['pay_method']]['_clientList'][] = $detail['cid'];
-								$statistics['payMethod'][$detail['pay_method']]['client']++;
+							if($detail['pay_method_code']!=0){
+								$statistics['payMethod'][$detail['pay_method']]['price'] += $detail['price'];
+								if(!in_array($detail['cid'], $statistics['payMethod'][$detail['pay_method']]['_clientList'])){
+									$statistics['payMethod'][$detail['pay_method']]['_clientList'][] = $detail['cid'];
+									$statistics['payMethod'][$detail['pay_method']]['client']++;
+								}
 							}
 							// 汇总
 							$statistics['total']['price'] += $detail['price'];
@@ -533,6 +548,8 @@
 								$statistics['total']['_clientList'][] = $detail['cid'];
 								$statistics['total']['client']++;
 							}
+							// 会所
+							$statistics['unit'][$detail['unit']]['price'] += $detail['price'];
 						}
 					}
 

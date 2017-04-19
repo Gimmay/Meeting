@@ -109,10 +109,10 @@
 															<select name="type" class="form-control" title="" value="<{$_GET['type']}>">
 																<option value="">---无限制---</option>
 																<volist name="type_list" id="single">
-																	<if condition="isset($_GET['type']) and $_GET['type'] eq $key">
-																		<option value="<{$key}>" selected><{$single}></option>
+																	<if condition="isset($_GET['type']) and $_GET['type'] eq $single">
+																		<option value="<{$single}>" selected><{$single}></option>
 																		<else/>
-																		<option value="<{$key}>"><{$single}></option>
+																		<option value="<{$single}>"><{$single}></option>
 																	</if>
 																</volist>
 															</select>

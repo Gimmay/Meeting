@@ -7,6 +7,7 @@
 	 */
 	namespace RoyalwissD\Logic;
 
+	use CMS\Controller\CMS;
 	use CMS\Logic\Session;
 	use CMS\Logic\UserLogic;
 	use General\Logic\Time;
@@ -40,11 +41,14 @@
 					$project_model = D('RoyalwissD/Project');
 					$post          = I('post.');
 					$meeting_id    = I('get.mid', 0, 'int');
+					$price         = $post['price'];
+					unset($post['price']);
 					// 1、创建项目记录
 					$result = $project_model->create(array_merge($post, [
 						'name_pinyin'    => $str_obj->getPinyin($post['name'], true, ''),
 						'mid'            => $meeting_id,
 						'total'          => $post['stock'],
+						'price'          => $price == '' ? 0 : $price,
 						'creator'        => Session::getCurrentUser(),
 						'creatime'       => Time::getCurrentTime(),
 						'is_stock_limit' => $post['is_stock_limit'] ? 1 : 0
@@ -82,7 +86,7 @@
 						'name_pinyin' => $str_obj->getPinyin($post['name'], true, ''),
 						'comment'     => $post['comment'],
 						'type'        => $post['type'],
-						'price'       => $post['price']
+						'price'       => $post['price'] == '' ? 0 : $post['price']
 					]);
 
 					return array_merge($result, ['__ajax__' => true]);
@@ -231,12 +235,25 @@
 		public function setData($type, $data){
 			switch($type){
 				case 'manage':
+					$get  = $data['urlParam'];
+					$data = $data['list'];
+					$list = [];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
 					foreach($data as $key => $project){
-						$data[$key]['status_code'] = $project['status'];
-						$data[$key]['status']      = GeneralModel::STATUS[$project['status']];
+						// 1、筛选数据
+						if(isset($keyword)){
+							$found = 0;
+							if($found == 0 && stripos($project['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($project['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
+						$project['status_code'] = $project['status'];
+						$project['status']      = GeneralModel::STATUS[$project['status']];
+						$list[]                 = $project;
 					}
 
-					return $data;
+					return $list;
 				break;
 				default:
 					return $data;

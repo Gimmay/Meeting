@@ -153,9 +153,10 @@
 								<form action="" method="get">
 									<div class="input-group repertory_text" style="width: 30%">
 										<input name="p" type="hidden" value="1">
-										<div class="input-group-addon" data-toggle="modal" data-target="#search_config_modal">
-											<b class="glyphicon glyphicon-cog"></b></div>
-										<input type="search" name="keyword" id="keyword" class="form-control" placeholder="单据号/项目类型/收款人/类型/拼音简码" value="<{:I('get.keyword', '')}>">
+										<if condition="in_array('SEVERAL-RECEIVABLES.MANAGE_SEARCH_COLUMN', $permission_list)">
+											<div class="input-group-addon" data-toggle="modal" data-target="#search_config_modal"><b class="glyphicon glyphicon-cog"></b></div>
+										</if>
+										<input type="search" name="keyword" id="keyword" class="form-control" placeholder="<{$search_column_name}>" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
 										<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
 									</span>
@@ -176,12 +177,6 @@
 									<div class="input-group pull-left check_not_reviewed color-2489c5">
 										<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.notReviewedCount}>)
 									</div>
-									<!--<div class="input-group pull-left check_receivables color-1b7e5a">-->
-									<!--<input type="radio" name="receivables" class="icheck">&nbsp;&nbsp;收款 (<{$statistics.receivables}>)-->
-									<!--</div>-->
-									<!--<div class="input-group pull-left check_not_receivables color-1b7e5a">-->
-									<!--<input type="radio" name="receivables" class="icheck">&nbsp;&nbsp;未收款 (<{$statistics.not_receivables}>)-->
-									<!--</div>-->
 								</form>
 							</div>
 						</if>
@@ -190,27 +185,31 @@
 								<div class="col-sm-6">
 									<span class="total_client">当前列表单据数 <b class="color-red"><{:count($list)}></b> 单，共 <b class="color-red"><{$statistics.totalCount}></b> 单收款项</span>
 								</div>
-								<!--<div class="col-sm-6 text-right">
-									<span class="custom_list" data-toggle="modal" data-target="#list_menu"><i class="glyphicon glyphicon-list"></i>&nbsp;自定义列表菜单</span>
-								</div>-->
+								<if condition="in_array('SEVERAL-RECEIVABLES.MANAGE_LIST_COLUMN', $permission_list)">
+									<div class="col-sm-6 text-right">
+										<span class="custom_list" data-toggle="modal" data-target="#list_menu"><i class="glyphicon glyphicon-list"></i>&nbsp;自定义列表菜单</span>
+									</div>
+								</if>
 							</div>
 							<div class="tab-content clearfix">
 								<div class="ticket_list">
 									<div class="table_header">
 										<span class="all_check"><input type="checkbox" class="icheck" placeholder="" value=""></span>
 										<span class="number">序号</span>
-										<span class="order_number" data-column="order_number">单据号</span>
-										<span class="client_name" data-column="client_name">客户</span>
-										<span class="unit" data-column="unit">会所</span>
-										<span class="district" data-column="payee">收款人</span>
-										<!--<span class="district" data-column="place">收款地点</span>-->
-										<span class="time" data-column="time">收款时间</span>
-										<span class="unit_style" data-column="time">审核状态</span>
-										<span class="unit_style" data-column="status">状态</span>
-										<span class="unit_style" data-column="creatime">创建时间</span>
-										<span class="unit_style" data-column="creator">创建者</span>
-										<span class="unit_style" data-column="reviewer">审核人</span>
-										<span class="price" data-column="price">收款金额</span>
+
+										<volist name="column_list" id="single">
+											<eq name="single.view" value="1">
+												<if condition="in_array($single['form'], ['order_number', 'client', 'unit', 'payee', 'place', 'time', 'review_status', 'review_time', 'status', 'review_director', 'creatime', 'creator'])">
+													<span class="<{$single.form}>" data-column="<{$single.form}>"><{$single.name}></span>
+												</if>
+												<switch name="single.code">
+													<case value="ROYALWISSD-RECEIVABLES_DETAIL-PRICE">
+														<span class="<{$single.form}>" data-column="<{$single.form}>"><{$single.name}></span>
+													</case>
+												</switch>
+											</eq>
+										</volist>
+
 										<span class="function" data-column="time">操作</span>
 									</div>
 									<volist name="list" id="order">
@@ -218,18 +217,20 @@
 											<div class="header" data-id="<{$order.id}>">
 												<span class="check_item"><input type="checkbox" class="icheck" value="<{$order.id}>" placeholder=""></span>
 												<span class="number"><{:($key+1)}></span>
-												<span class="order_number"><{$order.order_number}></span>
-												<span class="client_name"><{$order.client_name}></span>
-												<span class="unit"><{$order.unit}></span>
-												<span class="district"><{$order.payee}></span>
-												<!--<span class="district"><{$order.place}></span>-->
-												<span class="time"><{$order.time}></span>
-												<span class="unit_style"><{$order.review_status}></span>
-												<span class="unit_style"><{$order.status}></span>
-												<span class="unit_style"><{$order.creatime}></span>
-												<span class="unit_style"><{$order.creator}></span>
-												<span class="unit_style"><{$order.creator}></span>
-												<span class="color-danger price"><{:number_format($order['price'])}>元</span>
+
+												<volist name="column_list" id="single">
+													<eq name="single.view" value="1">
+														<if condition="in_array($single['form'], ['order_number', 'client', 'unit', 'payee', 'place', 'time', 'review_status', 'review_time', 'status', 'review_director', 'creatime', 'creator'])">
+															<span class="<{$single.form}>" data-column="<{$single.form}>"><{$order[$single['form']]}></span>
+														</if>
+														<switch name="single.code">
+															<case value="ROYALWISSD-RECEIVABLES_DETAIL-PRICE">
+																<span class="<{$single.form}>" data-column="<{$single.form}>"><{:number_format($order['price'])}>元</span>
+															</case>
+														</switch>
+													</eq>
+												</volist>
+
 												<span class="function">
 													<div class="btn-group" data-id="<{$order.id}>" data-status="<{$order.status_code}>">
 														<if condition="$order['review_status_code'] eq 1 and $order['status_code'] eq 1 and in_array('SEVERAL-RECEIVABLES.PRINT', $permission_list)">
@@ -270,30 +271,57 @@
 													<table class="table table-bordered rece_details_table">
 														<thead>
 															<tr>
-																<th>项目类型</th>
-																<th>项目名字</th>
-																<th>支付方式</th>
-																<th>POS机</th>
-																<th>收款来源</th>
-																<th>备注</th>
-																<th>金额</th>
+																<volist name="column_list" id="single">
+																	<switch name="single.code">
+																		<case value="ROYALWISSD-PROJECT_TYPE-PROJECT_TYPE">
+																			<th><{$single.name}></th>
+																		</case>
+																		<case value="ROYALWISSD-PROJECT-PROJECT">
+																			<th><{$single.name}></th>
+																		</case>
+																		<case value="ROYALWISSD-RECEIVABLES_DETAIL-PRICE">
+																			<th><{$single.name}></th>
+																		</case>
+																	</switch>
+																	<eq name="single.view" value="1">
+																		<if condition="in_array($single['form'], ['pay_method', 'pos_machine', 'source', 'comment'])">
+																			<th><{$single.name}></th>
+																		</if>
+																	</eq>
+
+																</volist>
 																<th>操作</th>
 															</tr>
 														</thead>
 														<tbody>
 															<volist name="order.list" id="single">
 																<tr class="item_order">
-																	<notempty name="single._merge_column">
-																		<td rowspan="<{$single._merge_column}>"><{$single.project_type}></td>
-																	</notempty>
-																	<notempty name="single._merge_column">
-																		<td rowspan="<{$single._merge_column}>"><{$single.project}></td>
-																	</notempty>
-																	<td><{$single.pay_method}></td>
-																	<td><{$single.pos_machine}></td>
-																	<td><{$single.source}></td>
-																	<td><{$single.comment}></td>
-																	<td><{$single.price}></td>
+																	<volist name="column_list" id="column">
+																		<eq name="column.view" value="1">
+																			<switch name="column.code">
+																				<case value="ROYALWISSD-PROJECT_TYPE-PROJECT_TYPE">
+																					<notempty name="single._merge_column">
+																						<td rowspan="<{$single._merge_column}>"><{$single.project_type}></td>
+																					</notempty>
+																				</case>
+																			</switch>
+																			<switch name="column.code">
+																				<case value="ROYALWISSD-PROJECT-PROJECT">
+																					<notempty name="single._merge_column">
+																						<td rowspan="<{$single._merge_column}>"><{$single.project}></td>
+																					</notempty>
+																				</case>
+																			</switch>
+																			<switch name="column.code">
+																				<case value="ROYALWISSD-RECEIVABLES_DETAIL-PRICE">
+																					<td><{$single.price}></td>
+																				</case>
+																			</switch>
+																			<if condition="in_array($column['form'], ['pay_method', 'pos_machine', 'source', 'comment'])">
+																				<td><{$single[$column['form']]}></td>
+																			</if>
+																		</eq>
+																	</volist>
 																	<td>
 																		<div class="btn-group" data-id="<{$single.did}>">
 																			<if condition="$order['review_status_code'] neq 1 and in_array('SEVERAL-RECEIVABLES.MODIFY', $permission_list)">
@@ -340,7 +368,7 @@
 				<div class="modal-body">
 					<form action="" class="form-horizontal">
 						<input type="hidden" name="requestType" value="set_search_configure">
-						<input type="hidden" name="search_field">
+						<input type="hidden" name="column">
 						<div class="panel panel-info">
 							<div class="panel-heading"><h3>搜索字段选择</h3></div>
 							<div class="panel-body">
@@ -354,15 +382,17 @@
 									</div>
 								</div>
 								<div class="row mb_10 line_b base_fields">
-									<div class="col-sm-3 btn-item mb_10 active">
-										<button type="button" class="btn btn-sm btn-info btn-block" data-name="name">姓名</button>
-									</div>
-									<div class="col-sm-3 btn-item mb_10 active">
-										<button type="button" class="btn btn-sm btn-info btn-block" data-name="name1">姓名</button>
-									</div>
-									<div class="col-sm-3 btn-item mb_10 active">
-										<button type="button" class="btn btn-sm btn-info btn-block" data-name="name2">姓名</button>
-									</div>
+									<volist name="column_list_search" id="value">
+										<if condition="$value['search'] eq 1">
+											<div class="col-sm-3 btn-item mb_10 active">
+												<button type="button" class="btn btn-sm btn-info btn-block" data-name="<{$value.form}>"><{$value.name}></button>
+											</div>
+											<else/>
+											<div class="col-sm-3 btn-item mb_10">
+												<button type="button" class="btn btn-sm btn-default btn-block" data-name="<{$value.form}>"><{$value.name}></button>
+											</div>
+										</if>
+									</volist>
 								</div>
 							</div>
 						</div>
@@ -877,6 +907,10 @@
 				icheckYellow    :$('.icheckYellow').iCheck({
 					checkboxClass:'icheckbox_square-yellow',
 					radioClass   :'iradio_square-yellow'
+				}),
+				icheckF         :$('.icheck_f').iCheck({
+					checkboxClass:'icheckbox_flat-blue',
+					radioClass   :'icheckbox_flat-blue'
 				}),
 				receivablesTimeA:jeDate({
 					dateCell:"#receivables_time1",

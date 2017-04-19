@@ -107,7 +107,7 @@
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$pagination = $page_object->show();
-			$list       = $message_logic->setData('manage', $list);
+			$list       = $message_logic->setData('manage', ['list' => $list, 'urlParam' => I('get.')]);
 			$this->assign('list', $list);
 			$this->assign('pagination', $pagination);
 			$this->display();
@@ -180,7 +180,7 @@
 					break;
 				}
 			}
-			$list = $message_send_history_model->getList(array_merge($model_control_column, $option, [
+			$list        = $message_send_history_model->getList(array_merge($model_control_column, $option, [
 				$message_send_history_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID,
 			]));
 			$list        = $message_logic->setData('sendHistory', ['list' => $list, 'urlParam' => I('get.')]);

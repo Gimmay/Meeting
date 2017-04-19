@@ -7,6 +7,7 @@
 	 */
 	namespace RoyalwissD\Logic;
 
+	use CMS\Controller\CMS;
 	use CMS\Logic\ExcelLogic;
 	use CMS\Logic\Session;
 	use CMS\Logic\UploadLogic;
@@ -502,20 +503,33 @@
 		public function setData($type, $data){
 			switch($type){
 				case 'manage':
-					foreach($data as $key => $project){
-						$data[$key]['status_code'] = $project['status'];
-						$data[$key]['status']      = GeneralModel::STATUS[$project['status']];
-						if($data[$key]['client_code'] === null){
-							$data[$key]['count']  = 0;
-							$data[$key]['client'] = '';
+					$get  = $data['urlParam'];
+					$data = $data['list'];
+					$list = [];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
+					foreach($data as $key => $room){
+						// 1、筛选数据
+						if(isset($keyword)){
+							$found = 0;
+							if($found == 0 && stripos($room['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($room['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
+						$room['status_code'] = $room['status'];
+						$room['status']      = GeneralModel::STATUS[$room['status']];
+						if($room['client_code'] === null){
+							$room['count']  = 0;
+							$room['client'] = '';
 						}
 						else{
-							$data[$key]['count']  = count(explode(',', $data[$key]['client_code']));
-							$data[$key]['client'] = str_replace(RoomModel::CLIENT_NAME_SEPARATOR, ', ', $data[$key]['client']);
+							$room['count']  = count(explode(',', $room['client_code']));
+							$room['client'] = str_replace(RoomModel::CLIENT_NAME_SEPARATOR, ', ', $room['client']);
 						}
+						$list[] = $room;
 					}
 
-					return $data;
+					return $list;
 				break;
 				case 'manage:statistics':
 					$meeting_id = $data['meetingID'];

@@ -18,7 +18,7 @@
 			parent::_initialize();
 			$this->initMeetingID();
 		}
-		
+
 		public function manage(){
 			$hotel_logic = new HotelLogic();
 			if(IS_POST){
@@ -39,17 +39,17 @@
 			if(!UserLogic::isPermitted('SEVERAL-HOTEL.VIEW')) $this->error('您没有查看酒店的权限');
 			// 获取项目数据
 			/** @var \RoyalwissD\Model\HotelModel $hotel_model */
-			$hotel_model = D('RoyalwissD/Hotel');
+			$hotel_model          = D('RoyalwissD/Hotel');
 			$model_control_column = $this->getModelControl();
 			$list                 = $hotel_model->getList(array_merge($model_control_column, [
-				CMSModel::CONTROL_COLUMN_PARAMETER['status']                    => ['<>', 2],
+				CMSModel::CONTROL_COLUMN_PARAMETER['status']             => ['<>', 2],
 				$hotel_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID
 			]));
 			$page_object          = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$pagination = $page_object->show();
-			$list       = $hotel_logic->setData('manage', $list);
+			$list       = $hotel_logic->setData('manage', ['list' => $list, 'urlParam' => I('get.')]);
 			$this->assign('list', $list);
 			$this->assign('pagination', $pagination);
 			$this->display();

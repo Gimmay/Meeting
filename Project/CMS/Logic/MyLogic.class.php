@@ -65,17 +65,13 @@
 						return ['status' => false, 'message' => '找不到该用户', '__ajax__' => true];
 					}
 				break;
-				case 'modify_information':
+				case 'modify':
 					/** @var \General\Model\UserModel $user_model */
-					$user_model = D('General/User');
-					$str_obj    = new StringPlus();
-					$post       = I('post.');
-					$data       = [
-						'nickname'        => $post['nickname'],
-						'nickname_pinyin' => $str_obj->getPinyin($post['nickname'], true, ''),
-						'comment'         => $post['comment']
-					];
-					$result     = $user_model->modifyInformation(['id' => Session::getCurrentUser()], $data);
+					$user_model              = D('General/User');
+					$str_obj                 = new StringPlus();
+					$post                    = I('post.');
+					$post['nickname_pinyin'] = $str_obj->getPinyin($post['nickname'], true, '');
+					$result                  = $user_model->modifyInformation(['id' => Session::getCurrentUser()], $post);
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;

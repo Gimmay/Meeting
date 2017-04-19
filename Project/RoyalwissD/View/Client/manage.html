@@ -228,12 +228,12 @@
 									<div class="input-group pull-left check_not_reviewed color-2489c5">
 										<input type="radio" name="review" class="icheckBlue">&nbsp;&nbsp;未审核 (<{$statistics.notReviewed}>)
 									</div>
-									<!--<div class="input-group pull-left employee color_red">-->
-									<!--<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;员工 (<{$statistics.employee}>)-->
-									<!--</div>-->
-									<!--<div class="input-group pull-left client color_red">-->
-									<!--<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;客户 (<{$statistics.client}>)-->
-									<!--</div>-->
+									<div class="input-group pull-left type_1 color_red">
+										<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;陪同 (<{$statistics['陪同']}>)
+									</div>
+									<div class="input-group pull-left type_2 color_red">
+										<input type="radio" name="type" class="icheckRed">&nbsp;&nbsp;终端 (<{$statistics['终端']}>)
+									</div>
 									<div class="input-group pull-left usable color_yellow">
 										<input type="radio" name="status" class="icheckYellow">&nbsp;&nbsp;可用 (<{$statistics.enabled}>)
 									</div>

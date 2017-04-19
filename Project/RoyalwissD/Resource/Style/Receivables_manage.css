@@ -59,49 +59,86 @@
 	word-break : break-all;
 }
 
-.all_check, .check_item{
-	width : 2%;
+/** 列表的宽度控制 **/
+
+.all_check ,.check_item{
+	min-width : 30px;
+	width     : 2%;
 }
 
 .number{
-	width      : 3%;
-	text-align : center;
+	min-width : 30px;
+	width     : 2%;
 }
 
 .order_number{
-	width : 8%;
+	min-width : 80px;
+	width     : 7%;
 }
 
-.client_name{
-	width : 7%;
+.payee{
+	min-width : 50px;
+	width     : 5%;
 }
 
-.unit{
-	width : 10%;
-}
-
-.district{
-	width : 5%;
-}
-
-.unit_style{
-	width : 5%;
-}
-
-.project_total{
-	width : 5%;
-}
-
-.price{
-	width : 8%;
+.place{
+	min-width : 50px;
+	width     : 5%;
 }
 
 .time{
-	width : 10%;
+	min-width : 60px;
+	width     : 6%;
+}
+
+.review_status{
+	min-width : 50px;
+	width     : 4%;
+}
+
+.status{
+	min-width : 30px;
+	width     : 3%;
+}
+
+.creatime{
+	min-width : 70px;
+	width     : 8%;
+}
+
+.creator{
+	min-width : 45px;
+	width     : 4%;
+}
+
+.client{
+	min-width : 50px;
+	width     : 5%;
+}
+
+.unit{
+	width     : 8%;
+	min-width : 100px;
+}
+
+.review_time{
+	min-width : 70px;
+	width     : 8%;
+}
+
+.review_director{
+	min-width : 50px;
+	width     : 5%;
+}
+
+.price{
+	min-width : 50px;
+	width     : 5%;
 }
 
 .function{
-	width : 15%;
+	min-width : 200px;
+	width     : 15%;
 }
 
 .table_header{
@@ -113,6 +150,7 @@
 	line-height   : 50px;
 	overflow      : hidden;
 	margin-bottom : 5px;
+	padding-right : 50px;
 }
 
 .table_header > span{
@@ -122,7 +160,7 @@
 	height       : 50px;
 	display      : block;
 	float        : left;
-	font-size    : 14px;
+	font-size    : 12px;
 	border-right : 1px solid rgba(0, 0, 0, .08);
 }
 
@@ -133,12 +171,13 @@
 }
 
 .rece_item .header{
-	position    : relative;
-	height      : 40px;
-	width       : 100%;
-	background  : rgba(0, 0, 0, 0.07);
-	line-height : 40px;
-	overflow    : hidden;
+	position      : relative;
+	height        : 40px;
+	width         : 100%;
+	background    : rgba(0, 0, 0, 0.07);
+	line-height   : 40px;
+	overflow      : hidden;
+	padding-right : 50px;
 }
 
 .rece_item .header span{
@@ -148,7 +187,7 @@
 	height       : 40px;
 	display      : block;
 	float        : left;
-	font-size    : 14px;
+	font-size    : 12px;
 	border-right : 1px solid rgba(0, 0, 0, .08);
 }
 

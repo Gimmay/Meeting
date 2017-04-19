@@ -7,6 +7,7 @@
 	 */
 	namespace RoyalwissD\Logic;
 
+	use CMS\Controller\CMS;
 	use CMS\Logic\Session;
 	use CMS\Logic\UserLogic;
 	use General\Logic\Time;
@@ -133,12 +134,25 @@
 		public function setData($type, $data){
 			switch($type){
 				case 'manage':
+					$get  = $data['urlParam'];
+					$data = $data['list'];
+					$list = [];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
 					foreach($data as $key => $project_type){
-						$data[$key]['status_code'] = $project_type['status'];
-						$data[$key]['status']      = GeneralModel::STATUS[$project_type['status']];
+						// 1、筛选数据
+						if(isset($keyword)){
+							$found = 0;
+							if($found == 0 && stripos($project_type['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($project_type['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
+						$project_type['status_code'] = $project_type['status'];
+						$project_type['status']      = GeneralModel::STATUS[$project_type['status']];
+						$list[]                      = $project_type;
 					}
 
-					return $data;
+					return $list;
 				break;
 				default:
 					return $data;

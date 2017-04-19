@@ -58,7 +58,7 @@
 													<div class="col-sm-3">
 														<div class="input-group">
 															<span class="input-group-addon">区域　　</span>
-															<select name="unitArea" class="form-control" title="" value="<{$_GET['area']}>">
+															<select name="area" class="form-control" title="" value="<{$_GET['area']}>">
 																<option value="">---无限制---</option>
 																<volist name="area_list" id="single">
 																	<if condition="isset($_GET['area']) and $_GET['area'] eq $single['value']">
@@ -88,10 +88,10 @@
 													<div class="col-sm-3">
 														<div class="input-group">
 															<span class="input-group-addon">是否新店</span>
-															<select name="unitIsNew" class="form-control" title="" value="<{$_GET['unitIsNew']}>">
+															<select name="isNew" class="form-control" title="" value="<{$_GET['isNew']}>">
 																<option value="">---无限制---</option>
 																<volist name="unit_is_new_list" id="single">
-																	<if condition="isset($_GET['unitIsNew']) and $_GET['unitIsNew'] eq $key">
+																	<if condition="isset($_GET['isNew']) and $_GET['isNew'] eq $key">
 																		<option value="<{$key}>" selected><{$single}></option>
 																		<else/>
 																		<option value="<{$key}>"><{$single}></option>

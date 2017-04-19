@@ -48,7 +48,7 @@
 			]);
 			// 获取项目数据
 			/** @var \RoyalwissD\Model\ProjectModel $project_model */
-			$project_model = D('RoyalwissD/Project');
+			$project_model        = D('RoyalwissD/Project');
 			$model_control_column = $this->getModelControl();
 			$list                 = $project_model->getList(array_merge($model_control_column, [
 				CMSModel::CONTROL_COLUMN_PARAMETER['status']                    => ['<>', 2],
@@ -58,7 +58,7 @@
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$pagination = $page_object->show();
-			$list       = $project_logic->setData('manage', $list);
+			$list       = $project_logic->setData('manage', ['list' => $list, 'urlParam' => I('get.')]);
 			$this->assign('list', $list);
 			$this->assign('pagination', $pagination);
 			$this->assign('project_type_list', $project_type_list);
@@ -84,7 +84,7 @@
 			}
 			if(!UserLogic::isPermitted('SEVERAL-PROJECT_TYPE.VIEW')) $this->error('您没有查看项目类型的权限');
 			/** @var \RoyalwissD\Model\ProjectTypeModel $project_type_model */
-			$project_type_model = D('RoyalwissD/ProjectType');
+			$project_type_model   = D('RoyalwissD/ProjectType');
 			$model_control_column = $this->getModelControl();
 			$list                 = $project_type_model->getList(array_merge($model_control_column, [
 				CMSModel::CONTROL_COLUMN_PARAMETER['status']                    => ['<>', 2],
@@ -93,7 +93,7 @@
 			$page_object          = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
-			$list       = $project_type_logic->setData('manage', $list);
+			$list       = $project_type_logic->setData('manage', ['list' => $list, 'urlParam' => I('get.')]);
 			$pagination = $page_object->show();
 			$this->assign('list', $list);
 			$this->assign('pagination', $pagination);

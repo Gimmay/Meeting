@@ -63,7 +63,7 @@
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$pagination = $page_object->show();
-			$list       = $room_logic->setData('manage', $list);
+			$list       = $room_logic->setData('manage', ['list' => $list, 'urlParam' => I('get.')]);
 			$statistics = $room_logic->setData('manage:statistics', [
 				'list'      => $list,
 				'total'     => $total,

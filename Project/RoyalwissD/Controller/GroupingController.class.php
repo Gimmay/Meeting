@@ -48,7 +48,7 @@
 			$page_object          = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows); // 分页
-			$list       = $grouping_logic->setData('manage', $list);
+			$list       = $grouping_logic->setData('manage', ['list' => $list, 'urlParam' => I('get.')]);
 			$pagination = $page_object->show();
 			$this->assign('list', $list);
 			$this->assign('pagination', $pagination);

@@ -768,6 +768,16 @@
 				'name'   => '创建客户',
 				'code'   => 'SEVERAL-RECEIVABLES.CREATE_CLIENT'
 			],
+			[
+				'module' => '收款',
+				'name'   => '列表字段控制',
+				'code'   => 'SEVERAL-RECEIVABLES.MANAGE_LIST_COLUMN'
+			],
+			[
+				'module' => '收款',
+				'name'   => '搜索字段控制',
+				'code'   => 'SEVERAL-RECEIVABLES.MANAGE_SEARCH_COLUMN'
+			],
 			// 酒店
 			[
 				'module' => '酒店',

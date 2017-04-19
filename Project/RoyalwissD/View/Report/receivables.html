@@ -14,6 +14,7 @@
 	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:C('PAGE_SUFFIX')}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jedate/jedate.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
@@ -131,6 +132,43 @@
 													</div>
 												</div>
 											</div>
+											<div class="col-sm-12 mb_10">
+												<div class="col-sm-4">
+													<div class="input-group">
+														<span class="input-group-addon">收款人　</span>
+														<select class="form-control" name="payee" title="">
+															<option value="">---无限制---</option>
+															<volist name="payee_list" id="single">
+																<if condition="isset($_GET['payee']) and $_GET['payee'] eq $single['value']">
+																	<option value="<{$single.value}>" selected><{$single.html}></option>
+																	<else/>
+																	<option value="<{$single.value}>"><{$single.html}></option>
+																</if>
+															</volist>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="label-li">收款时间</div>
+													<div class="ipt-li">
+														<input type="text" name="startTime" id="start_time" class="form-control" placeholder="开始时间..." value="<{:I('get.startTime', '')}>">
+													</div>
+													<div class="interval-li">-</div>
+													<div class="ipt-li">
+														<input type="text" name="endTime" id="end_time" class="form-control" placeholder="结束时间..." value="<{:I('get.endTime', '')}>">
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="label-li">价　　格</div>
+													<div class="ipt-li">
+														<input type="number" name="minPrice" class="form-control" placeholder="价格最小值..." value="<{:I('get.startPrice', '')}>">
+													</div>
+													<div class="interval-li">-</div>
+													<div class="ipt-li">
+														<input type="number" name="maxPrice" class="form-control" placeholder="价格最大值..." value="<{:I('get.endPrice', '')}>">
+													</div>
+												</div>
+											</div>
 											<div class="col-sm-12">
 												<div class="col-sm-12">
 													<div class="col-sm-6">
@@ -199,6 +237,18 @@
 												<td><{$single.client}></td>
 											</tr>
 										</volist>
+										<tr></tr>
+
+										<tr>
+											<td colspan="4" style="text-align: center"><b>会所统计</b></td>
+										</tr>
+										<volist name="statistics.unit" id="single">
+											<tr>
+												<td><{$key}></td>
+												<td><{$single.price}></td>
+												<td>-</td>
+											</tr>
+										</volist>
 									</table>
 								</div>
 							</div>
@@ -207,6 +257,7 @@
 									<tr>
 										<th>序号</th>
 										<th data-column="client_name">客户名称</th>
+										<th data-column="unit">客户名称</th>
 										<th data-column="price">收款金额(元)</th>
 										<th data-column="project_type">项目类型</th>
 										<th data-column="project">项目</th>
@@ -217,8 +268,9 @@
 								<tbody>
 									<volist name="list" id="single">
 										<tr>
-											<td><{$i}></td>
+											<td><{:($key+1)}></td>
 											<td><{$single.client_name}></td>
+											<td><{$single.unit}></td>
 											<td><{$single.price}></td>
 											<td>
 												<volist name="single.project_type" id="project_type">
@@ -304,11 +356,25 @@
 	<script>
 		var ManageObject = {
 			object:{
-				toast  :$().QuasarToast(),
-				loading:$().QuasarLoading(),
-				icheck :$('.icheck').iCheck({
+				toast    :$().QuasarToast(),
+				loading  :$().QuasarLoading(),
+				icheck   :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
+				}),
+				startTime:jeDate({
+					dateCell:"#start_time",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					isTime  :true, // isClear:false, // 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
+				}),
+				endTime  :jeDate({
+					dateCell:"#end_time",
+					format  :"YYYY-MM-DD hh:mm:ss",
+					isTime  :true, // isClear:false, // 时分秒--true
+					/*	minDate :"2015-10-19 00:00:00",
+					 maxDate :"2016-11-8 00:00:00"*/
 				})
 			}
 		}
