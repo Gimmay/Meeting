@@ -304,11 +304,11 @@
 						// 1、筛选数据
 						if(isset($keyword)){
 							$found = 0;
-							if($found == 0 && strpos($user['name'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($user['name_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($user['mobile'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($user['nickname'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($user['nickname_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($user['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($user['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($user['mobile'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($user['nickname'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($user['nickname_pinyin'], $keyword) !== false) $found = 1;
 							if($found == 0) continue;
 						}
 						$role_id_list = explode(',', $user['role_id']);

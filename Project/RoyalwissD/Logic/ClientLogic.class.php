@@ -1161,7 +1161,7 @@
 				case 'assign_group':
 					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MULTI_ASSIGN_GROUP')) return [
 						'status'   => false,
-						'message'  => '您没有客户分组的权限',
+						'message'  => '您没有分配组员的权限',
 						'__ajax__' => true
 					];
 					$meeting_id    = I('get.mid', 0, 'int');
@@ -1211,9 +1211,9 @@
 					return array_merge($room_list, ['__ajax__' => true]);
 				break;
 				case 'check_in':
-					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MULTI_CHECK_IN_GROUP')) return [
+					if(!UserLogic::isPermitted('SEVERAL-CLIENT.MULTI_CHECK_IN_ROOM')) return [
 						'status'   => false,
-						'message'  => '您没有客户分房的权限',
+						'message'  => '您没有分配房间的权限',
 						'__ajax__' => true
 					];
 					$meeting_id    = I('get.mid', 0, 'int');
@@ -1489,7 +1489,7 @@ SET
 							$search_list                 = $client_column_control_model->getClientSearchColumn($get['mid'], true);
 							$found                       = 0;
 							foreach($search_list as $value){
-								if($found == 0 && strpos($client[$value['form']], $keyword) !== false) $found = 1;
+								if($found == 0 && stripos($client[$value['form']], $keyword) !== false) $found = 1;
 							}
 							if(count($search_list) == 0) $found = 1;
 							if($found == 0) continue;
@@ -1552,11 +1552,11 @@ SET
 						// 1、筛选数据
 						if(isset($keyword)){
 							$found = 0;
-							if($found == 0 && strpos($client['name'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($client['name_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($client['unit'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($client['unit_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($client['mobile'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($client['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($client['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($client['unit'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($client['unit_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($client['mobile'], $keyword) !== false) $found = 1;
 							if($found == 0) continue;
 						}
 						if(isset($client_id) && $client_id != $client['cid']) continue;
@@ -1855,9 +1855,9 @@ SET
 					$attendee_list[$key]['review_director']  = Session::getCurrentUser();
 					$attendee_list[$key]['review_status']    = 1;
 					$attendee_list[$key]['review_time']      = Time::getCurrentTime();
-					$attendee_list[$key]['sign_qrcode']      = $qrcode_logic->make($sign_qrcode);
+					$attendee_list[$key]['sign_qrcode']      = trim($qrcode_logic->make($sign_qrcode), '.');
 					$attendee_list[$key]['sign_code']        = $sign_code;
-					$attendee_list[$key]['sign_code_qrcode'] = $qrcode_logic->make($sign_code);
+					$attendee_list[$key]['sign_code_qrcode'] = trim($qrcode_logic->make($sign_code), '.');
 				}
 				else{
 					if($attendee['sign_status'] == 1) return ['status' => false, 'message' => '取消审核失败：存在签到的客户'];

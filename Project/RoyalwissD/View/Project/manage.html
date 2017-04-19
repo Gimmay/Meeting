@@ -131,7 +131,7 @@
 											<td>
 												<div class="btn-group" data-id="<{$single.id}>" data-stock-limit="<{$single.is_stock_limit}>" data-status="<{$single.status_code}>" data-stock="<{$single.stock}>">
 													<if condition="$single['is_stock_limit'] eq 1 and $single['status_code'] eq 1 and in_array('SEVERAL-PROJECT.VIEW_STOCK_HISTORY', $permission_list)">
-														<a href="<{:U('detail',['id'=>$single['id'], 'mid'=>I('get.mid', 0, 'int')])}>" type="button" class="btn btn-default btn-xs seeList">出入库记录</a>
+														<button type="button" class="btn btn-default btn-xs seeList" data-toggle="modal" data-target="#inventory_history_modal">出入库记录</button>
 													</if>
 													<if condition="$single['status_code'] eq 1 and in_array('SEVERAL-PROJECT.UPDATE_STOCK', $permission_list)">
 														<button type="button" class="btn btn-default btn-xs alter_stock_btn" data-toggle="modal" data-target="#alter_stock_limit">更新库存</button>
@@ -178,9 +178,9 @@
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h2 class="modal-title" id="create_role_title">新增项目</h2>
+					<h2 class="modal-title">新增项目</h2>
 				</div>
-				<form class="form-horizontal" role="form" method="post" action="" onsubmit="return checkCreate()">
+				<form class="form-horizontal" role="form" method="post" action="">
 					<input type="hidden" name="requestType" value="create">
 					<div class="modal-body">
 						<div class="form-group">
@@ -203,7 +203,7 @@
 							<label for="stock" class="col-sm-2 control-label">库存：</label>
 							<div class="col-sm-10">
 								<div class="input-group">
-									<input type="text" class="form-control" name="stock" id="stock" placeholder="无库存限制" readonly>
+									<input type="text" class="form-control" name="stock" id="stock" placeholder="无库存限制" value="0" readonly>
 									  <span class="input-group-addon">
 										<input type="checkbox" name="is_stock_limit" id="is_stock_limit" placeholder="" title="是否开启库存限制">
 									</span>
@@ -280,6 +280,32 @@
 			</div>
 		</div>
 	</div>
+	<!-- 出入库记录 -->
+	<div class="modal fade" id="inventory_history_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">出入库记录</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="create">
+					<div class="modal-body">
+						<table class="table table-bordered" style="text-align: center">
+							<thead>
+								<th>类型</th>
+								<th>数量</th>
+								<th>时间</th>
+							</thead>
+							<tbody id="inventory_history_body">
+							</tbody>
+						</table>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 	<!-- 库存更新-->
 	<div class="modal fade" id="alter_stock_limit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -311,7 +337,7 @@
 							<label for="stock_alter" class="col-sm-2 control-label">数量：</label>
 							<div class="col-sm-10">
 								<div class="input-group">
-									<input type="number" class="form-control" name="number" id="stock_alter" placeholder="无库存限制" readonly>
+									<input type="number" class="form-control" name="number" id="stock_alter" placeholder="无库存限制" value="0" readonly>
 									  <span class="input-group-addon">
 										<input type="checkbox" name="is_stock_limit" id="is_stock_limit_alter" placeholder="" title="是否开启库存限制">
 									</span>

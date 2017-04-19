@@ -453,8 +453,8 @@
 						if(isset($keyword)){
 							//todo 获取筛选配置
 							$found = 0;
-							if($found == 0 && strpos($meeting['name'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($meeting['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($meeting['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($meeting['name_pinyin'], $keyword) !== false) $found = 1;
 							if($found == 0) continue;
 						}
 						if(isset($status) && $status != $meeting['status']) continue;

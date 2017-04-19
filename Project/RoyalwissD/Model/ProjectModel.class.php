@@ -171,29 +171,31 @@ $order";
 		}
 
 		/**
-		 * 获取Select插件的数据列表（如果有库存的话只显示库存有余的）
+		 * 获取Select插件的数据列表
 		 *
 		 * @param int      $meeting_id      会议ID
+		 * @param bool     $just_show_available 是否只显示有库存的可用项目
 		 * @param int|null $project_type_id 项目类型ID
 		 *
 		 * @return array
 		 */
-		public function getSelectedList($meeting_id, $project_type_id = null){
+		public function getSelectedList($meeting_id, $just_show_available = true, $project_type_id = null){
 			$table_project      = $this->tableName;
 			$table_project_type = ProjectTypeModel::TABLE_NAME;
 			$this_database      = self::DATABASE_NAME;
-			$condition          = '';
-			if($project_type_id) $condition = " and p.type = $project_type_id ";
+			$condition1 = $condition2 = '';
+			if($project_type_id) $condition1 = " and p.type = $project_type_id ";
+			if($just_show_available) $condition2 = " AND IF(p.is_stock_limit=1, p.stock>0, TRUE) ";
 			$sql    = "
 SELECT p.id value, concat('[',pt.name,'] ',p.name) html, concat(p.name,',',pt.name,',',p.name_pinyin,',',pt.name_pinyin) keyword, concat(pt.id,',',p.price) ext
 FROM $this_database.$table_project p
-JOIN $this_database.$table_project_type pt on pt.id = p.type
+JOIN $this_database.$table_project_type pt on pt.id = p.type AND p.mid = pt.mid
 WHERE p.status = 1
-	AND IF(p.is_stock_limit=1, p.stock>0, TRUE)
-	AND pt.status = 1
-	AND p.mid = $meeting_id
-	AND pt.mid = $meeting_id
-	$condition";
+AND pt.status = 1
+AND p.mid = $meeting_id
+$condition1
+$condition2
+";
 			$result = $this->query($sql);
 
 			return $result;

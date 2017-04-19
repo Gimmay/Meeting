@@ -18,8 +18,14 @@
 		const TABLE_NAME = 'project_inventory';
 		protected $autoCheckFields = true;
 		protected $connection      = 'DB_CONFIG_ROYALWISS_DEAL';
-		const TYPE_IN  = 1;
-		const TYPE_OUT = 0;
+		const TYPE       = [
+			0 => '出库',
+			1 => '入库',
+			2 => '清空'
+		];
+		const TYPE_IN    = 1;
+		const TYPE_OUT   = 0;
+		const TYPE_CLEAN = 2;
 
 		/**
 		 * 创建项目出入库明细表

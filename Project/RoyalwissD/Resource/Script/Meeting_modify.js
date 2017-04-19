@@ -4,7 +4,7 @@
 
 $(function(){
 	$('#updateBackground').on('change', function(){
-		$('input[name=requestType]').val('upload_image');
+		$('input[name=requestType]').val('upload_logo');
 		$('#submit_logo').trigger('click');
 	});
 	// 全选checkbox
@@ -75,6 +75,6 @@ function upLoadLogo(){
 			ManageObject.object.toast.toast(data.message);
 		}
 	});
-	$('input[name=requestType]').val('create');
+	$('input[name=requestType]').val('modify');
 	return false;
 }

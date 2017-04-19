@@ -93,13 +93,15 @@
 						'message'  => '您没有更新项目库存的权限',
 						'__ajax__' => true
 					];
-					$post = I('post.');
+					/** @var \RoyalwissD\Model\ProjectModel $project_model */
+					$project_model = D('RoyalwissD/Project');
+					$meeting_id    = I('get.mid', 0, 'int');
+					$post          = I('post.');
+					$project_id    = $post['id'];
 					if(isset($post['is_stock_limit']) && $post['is_stock_limit']){
-						// 1、判断修改库存
-						/** @var \RoyalwissD\Model\ProjectModel $project_model */
-						$project_model = D('RoyalwissD/Project');
-						$project_id    = $post['id'];
-						$meeting_id    = I('get.mid', 0, 'int');
+						// 1、修改信息
+						$project_model->modify(['id' => $project_id], ['is_stock_limit' => 1]);
+						// 2、判断修改库存
 						if($post['type'] == 1){
 							$result = $project_model->input($project_id, $post['number']);
 							$type   = ProjectInventoryModel::TYPE_IN;
@@ -108,26 +110,44 @@
 							$result = $project_model->output($project_id, $post['number']);
 							$type   = ProjectInventoryModel::TYPE_OUT;
 						}
-						if($result['status']){
-							// 2、新增库存出入库记录
-							/** @var \RoyalwissD\Model\ProjectInventoryModel $project_inventory_model */
-							$project_inventory_model = D('RoyalwissD/ProjectInventory');
-							C('TOKEN_ON', false);
-							$project_inventory_model->create([
-								'creator'    => Session::getCurrentUser(),
-								'creatime'   => Time::getCurrentTime(),
-								'mid'        => $meeting_id,
-								'project_id' => $project_id,
-								'number'     => $post['number'],
-								'type'       => $type,
-								'comment'    => $post['comment']
-							]);
+						if(!$result['status']) return array_merge($result, ['__ajax__' => true]);
+						// 3、新增库存出入库记录
+						/** @var \RoyalwissD\Model\ProjectInventoryModel $project_inventory_model */
+						$project_inventory_model = D('RoyalwissD/ProjectInventory');
+						$project_inventory_model->create([
+							'creator'    => Session::getCurrentUser(),
+							'creatime'   => Time::getCurrentTime(),
+							'mid'        => $meeting_id,
+							'project_id' => $project_id,
+							'number'     => $post['number'],
+							'type'       => $type,
+							'comment'    => $post['comment']
+						]);
 
-							return array_merge($result, ['__ajax__' => true]);
-						}
-						else return array_merge($result, ['__ajax__' => true]);
+						return array_merge($result, ['__ajax__' => true]);
 					}
-					else return ['status' => false, 'message' => '未做任何修改', '__ajax__' => true];
+					else{
+						// 1、修改信息
+						$result = $project_model->modify(['id' => $project_id], [
+							'is_stock_limit' => 0,
+							'total'          => 0,
+							'stock'          => 0
+						]);
+						// 2、新增出入库记录
+						/** @var \RoyalwissD\Model\ProjectInventoryModel $project_inventory_model */
+						$project_inventory_model = D('RoyalwissD/ProjectInventory');
+						$project_inventory_model->create([
+							'creator'    => Session::getCurrentUser(),
+							'creatime'   => Time::getCurrentTime(),
+							'mid'        => $meeting_id,
+							'project_id' => $project_id,
+							'number'     => 0,
+							'type'       => $project_inventory_model::TYPE_CLEAN,
+							'comment'    => $post['comment']
+						]);
+
+						return array_merge($result, ['__ajax__' => true]);
+					}
 				break;
 				case 'delete': // 删除项目
 					if(!UserLogic::isPermitted('SEVERAL-PROJECT.DELETE')) return [
@@ -173,6 +193,26 @@
 					$result        = $project_model->disable(['id' => ['in', $id_arr], 'mid' => $meeting_id]);
 
 					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'get_inventory_history':
+					$project_id = I('post.id', 0, 'int');
+					$meeting_id = I('get.mid', 0, 'int');
+					/** @var \RoyalwissD\Model\ProjectInventoryModel $project_inventory_model */
+					$project_inventory_model = D('RoyalwissD/ProjectInventory');
+					/** @var \RoyalwissD\Model\ProjectModel $project_model */
+					$project_model = D('RoyalwissD/Project');
+					if(!$project_model->fetch(['id' => $project_id])) return ['__ajax__' => true];
+					$project = $project_model->getObject();
+					$list    = $project_inventory_model->where([
+						'project_id' => $project_id,
+						'mid'        => $meeting_id
+					])->select();
+					foreach($list as $key => $record){
+						$list[$key]['type_code'] = $record['type'];
+						$list[$key]['type']      = $project_inventory_model::TYPE[$record['type']];
+					}
+
+					return array_merge(['list' => $list, 'project' => $project['name'], '__ajax__' => true]);
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];

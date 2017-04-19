@@ -1,0 +1,11 @@
+#tableExcel thead tr th{
+	text-align : center;
+}
+
+.labelClass{
+	padding       : 5px 8px;
+	background    : #4cafdb;
+	margin        : 0 4px;
+	color         : #FFFFFF;
+	border-radius : 4px;
+}

@@ -25,7 +25,7 @@
 			'orderID'      => 'oid',
 			'clientID'     => 'cid',
 			'detailID'     => 'did',
-			'reviewStatus' => 'review_status'
+			'reviewStatus' => 'reviewed'
 		];
 		/** 审核状态 */
 		const REVIEW_STATUS = [

@@ -20,8 +20,6 @@
 	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
 	<script src="<{$Think.COMMON_SCRIPT}>"></script>
 	<script src="<{$Think.SELF_SCRIPT}>"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery-1.4.4.min.js"></script>
-	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jqprint/jquery.jqprint-0.3.js"></script>
 </head>
 <body data-meeting-id="<{:I('get.mid')}>" data-place-id="<{:I('get.sid')}>">
 	<div id="mt_container">
@@ -36,100 +34,56 @@
 								<div class="nav_tab_li active">
 									<a href="javascript:void(0)">客户签到</a>
 								</div>
-								<!--<button class="btn gift_btn" data-toggle="modal" data-target="#gift_modal">领取奖品</button>-->
-
-								<if condition="$client['sign_status'] eq 1 and $client['gift_status'] neq 1 ">
-									<!--<button class="btn print_btn" onclick="jqprint()">打印胸卡</button>-->
-									<a class="btn gift_btn" href="<{:U('RequestHandler/getHandler', ['mid'=>I('get.mid',0,'int'), 'cid'=>$client['cid'], 'requestType'=>'get:get_gift'])}>">领取奖品</a>
+								<if condition="$client['sign_status_code'] eq 1 and $client['gift_status_code'] neq 1 ">
+									<button class="btn gift_btn" data-toggle="modal" data-target="#gift_modal">领取奖品</button>
 								</if>
+								<!--<button class="btn print_btn" onclick="jqprint()">打印胸卡</button>-->
+
 							</div>
 						</div>
 						<div class="repertory clearfix">
-							<input type="search" id="search_input" class="form-control" placeholder="选中此处" value="<{$client.name}>" style="height: 60px; font-size: 30px">
+							<input type="search" id="search_input" class="form-control" placeholder="选中此处" value="<{:I('get.keyword', '')}>" style="height: 60px; font-size: 30px">
 						</div>
 						<div class="table_wrap">
-							<if condition="$info_type eq 0">
-								<table class="table table-bordered">
-									<tr>
-										<td>没有获取到任何客户信息</td>
-									</tr>
-								</table>
-							</if>
-							<if condition="$info_type eq 1">
-								<table class="table table-bordered">
-									<tr>
-										<td>该客户(<b><{$client.name}></b>)没有被审核</td>
-									</tr>
-								</table>
-							</if>
-							<if condition="$info_type eq 2">
-
-								<table class="table table-bordered">
-									<tr>
-										<td>姓名</td>
-										<td><{$client.name}></td>
-									</tr>
-									<tr>
-										<td>单位</td>
-										<td><{$client.unit}></td>
-									</tr>
-									<tr>
-										<td>手机号</td>
-										<td><{$client.mobile}></td>
-									</tr>
-									<tr>
-										<td>性别</td>
-										<td>
-											<switch name="client.gender">
-												<case value="0">未指定</case>
-												<case value="1">男</case>
-												<case value="2">女</case>
-											</switch>
-										</td>
-									</tr>
-									<tr>
-										<td>类型</td>
-										<td><{$client.type}></td>
-									</tr>
-									<tr>
-										<td>是否新客</td>
-										<td>
-											<switch name="client.is_new">
-												<case value="0">老客</case>
-												<case value="1">新客</case>
-											</switch>
-										</td>
-									</tr>
-									<tr>
-										<td>是否审核</td>
-										<td>
-											<switch name="client.review_status">
-												<case value="1"><span class="color-green">已审核</span></case>
-												<default/>
-												未审核
-											</switch>
-										</td>
-									</tr>
-									<tr>
-										<td>是否签到</td>
-										<td>
-											<switch name="client.sign_status">
-												<case value="1"><span class="color-green">已签到</span></case>
-												<default/>
-												未签到
-											</switch>
-										</td>
-									</tr>
-									<tr>
-										<td>是否领取奖品</td>
-										<td>
-											<php>
-												if($client['gift_status']) echo "<span class='color-green'>是</span>"; else echo "否";
-											</php>
-										</td>
-									</tr>
-								</table>
-							</if>
+							<switch name="info_type">
+								<case value="0">
+									<table class="table table-bordered">
+										<tr>
+											<td>没有获取到任何客户信息</td>
+										</tr>
+									</table>
+								</case>
+								<case value="1">
+									<table class="table table-bordered">
+										<tr>
+											<th width="30%"></th>
+											<th width="70%"></th>
+										</tr>
+										<tr>
+											<td colspan="2" style="text-align: center; font-size: 20px; font-weight: bold; color: green">签到成功</td>
+										</tr>
+										<volist name="column_list" id="single">
+											<eq name="single.view" value="1">
+												<tr>
+													<td><{$single.name}></td>
+													<td>
+														<switch name="single.code">
+															<case value="ROYALWISSD-ATTENDEE-SIGN_QRCODE">
+																<img src="<{$client[$single['form']]}>" width="50px">
+															</case>
+															<case value="ROYALWISSD-ATTENDEE-SIGN_CODE_QRCODE">
+																<img src="<{$client[$single['form']]}>" width="50px">
+															</case>
+															<default/>
+															<{$client[$single['form']]}>
+														</switch>
+													</td>
+												</tr>
+											</eq>
+										</volist>
+									</table>
+								</case>
+							</switch>
 						</div>
 					</section>
 				</div>

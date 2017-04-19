@@ -254,7 +254,7 @@
 					$meeting_id      = I('get.mid', 0, 'int');
 					/** @var \RoyalwissD\Model\ProjectModel $project_model */
 					$project_model = D('RoyalwissD/Project');
-					$record        = $project_model->getSelectedList($meeting_id, $project_type_id);
+					$record        = $project_model->getSelectedList($meeting_id, true, $project_type_id);
 
 					return array_merge($record, ['__ajax__' => true]);
 				break;
@@ -723,14 +723,19 @@
 						if(isset($keyword)){
 							// todo 获取筛选配置
 							$found = 0;
-							if($found == 0 && strpos($data[$i]['name'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($data[$i]['name_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($data[$i]['unit'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($data[$i]['unit_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($data[$i]['project'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($data[$i]['project_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($data[$i]['project_type'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($data[$i]['project_type_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['client'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['client_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['unit'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['unit_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['project'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['project_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['project_type'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['project_type_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['payee'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['payee_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['pay_method'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['pay_method_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($data[$i]['order_number'], $keyword) !== false) $found = 1;
 							if($found == 0) continue;
 						}
 						if(isset($client_id) && $client_id != $data[$i]['cid']) continue;

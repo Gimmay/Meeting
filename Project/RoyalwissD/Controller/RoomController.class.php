@@ -123,7 +123,7 @@
 		}
 
 		public function exportTemplate(){
-			if(!UserLogic::isPermitted('SEVERAL-ROOM_TYPE.DOWNLOAD_IMPORT_TEMPLATE')) $this->error('您没有下载导入模板的权限');
+			if(!UserLogic::isPermitted('SEVERAL-ROOM.DOWNLOAD_IMPORT_TEMPLATE')) $this->error('您没有下载导入模板的权限');
 			/** @var \General\Model\MeetingModel $meeting_model */
 			$meeting_model = D('General/Meeting');
 			/** @var \RoyalwissD\Model\HotelModel $hotel_model */

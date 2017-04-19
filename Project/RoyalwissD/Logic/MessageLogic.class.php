@@ -243,10 +243,10 @@ SET send_status =  CASE sms_id i$replace_char END
 					foreach($data as $key => $val){
 						if(isset($keyword)){
 							$found = 0;
-							if($found == 0 && strpos($val['client'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($val['client_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($val['message'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($val['context'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($val['client'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($val['client_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($val['message'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($val['context'], $keyword) !== false) $found = 1;
 							if($found == 0) continue;
 						}
 						$val['type_code']        = $val['type'];

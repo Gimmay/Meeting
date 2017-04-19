@@ -285,8 +285,17 @@
 												<td><{$index}></td>
 											</if>
 											<volist name="column_list" id="column">
-												<td class="<eq name='column.can_modified' value='1'>can-alter</eq><eq name='column.view' value='0'>hide</eq>">
-													<span class="need-alter"><{$single[$column['form']]}></span>
+												<td class="<eq name='column.can_modified' value='1'>can-alter</eq> <eq name='column.view' value='0'>hide</eq>">
+													<switch name="column.code">
+														<case value="ROYALWISSD-ATTENDEE-SIGN_QRCODE">
+															<img src="<{$single[$column['form']]}>" width="50px">
+														</case>
+														<case value="ROYALWISSD-ATTENDEE-SIGN_CODE_QRCODE">
+															<img src="<{$single[$column['form']]}>" width="50px">
+														</case>
+														<default/>
+														<span class="need-alter"><{$single[$column['form']]}></span>
+													</switch>
 													<span class="hide-form" style="display: none;">
 														<switch name="column.code">
 															<case value="ROYALWISSD-CLIENT-IS_NEW">
@@ -311,13 +320,13 @@
 																</select>
 															</case>
 															<case value="ROYALWISSD-ATTENDEE-CONSUMPTION">
-																<input type="number" class="sub_val form-control input-sm" name="<{$column.form}>" value="<{$single[$column['form']]}>">
+																<input placeholder="" type="number" class="sub_val form-control input-sm" name="<{$column.form}>" value="<{$single[$column['form']]}>">
 															</case>
 															<case value="ROYALWISSD-ATTENDEE-RECEIVABLES">
-																<input type="number" class="sub_val form-control input-sm" name="<{$column.form}>" value="<{$single[$column['form']]}>">
+																<input placeholder="" type="number" class="sub_val form-control input-sm" name="<{$column.form}>" value="<{$single[$column['form']]}>">
 															</case>
 															<default/>
-															<input class="sub_val form-control input-sm" name="<{$column.form}>" value="<{$single[$column['form']]}>">
+															<input placeholder="" class="sub_val form-control input-sm" name="<{$column.form}>" value="<{$single[$column['form']]}>">
 														</switch>
 														<input type="hidden" name="_column" value="<{$column.form}>">
 														<input type="hidden" name="_table" value="<{$column.table}>">

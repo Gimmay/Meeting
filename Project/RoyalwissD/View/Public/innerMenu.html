@@ -69,7 +69,7 @@
 					</if>
 					<if condition="in_array('SEVERAL-CLIENT.SIGN', $permission_list)">
 						<li class="<if condition='$cv_name eq Client_sign'>active</if>">
-							<a href="<{:U('Client/sign', ['mid'=>I('get.mid', 0, 'int')])}>">签到</a>
+							<a href="<{:U('Client/sign', ['mid'=>I('get.mid', 0, 'int')])}>">扫码签到</a>
 						</li>
 					</if>
 					<if condition="in_array('SEVERAL-CLIENT.MANAGE_COLUMN', $permission_list)">
@@ -128,7 +128,7 @@
 					</if>
 					<if condition="in_array('SEVERAL-REPORT_RECEIVABLES.VIEW', $permission_list)">
 						<li class="<if condition='$cv_name eq Report_receivables'>active</if>">
-							<a href="<{:U('Report/receivable',['mid'=>I('get.mid',0,'int')])}>">收款报表</a>
+							<a href="<{:U('Report/receivables',['mid'=>I('get.mid',0,'int')])}>">收款报表</a>
 						</li>
 					</if>
 				</ul>

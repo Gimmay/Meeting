@@ -13,6 +13,8 @@
 	use General\Model\GeneralModel;
 	use RoyalwissD\Model\AttendeeModel;
 	use RoyalwissD\Model\ClientModel;
+	use RoyalwissD\Model\ReceivablesDetailModel;
+	use RoyalwissD\Model\ReceivablesOrderModel;
 	use RoyalwissD\Model\UnitModel;
 
 	class ReportLogic extends RoyalwissDLogic{
@@ -124,7 +126,7 @@
 							$search_list                 = $report_column_control_model->getClientSearchColumn($get['mid'], true);
 							$found                       = 0;
 							foreach($search_list as $value){
-								if($found == 0 && strpos($client[$value['form']], $keyword) !== false) $found = 1;
+								if($found == 0 && stripos($client[$value['form']], $keyword) !== false) $found = 1;
 							}
 							if(count($search_list) == 0) $found = 1;
 							if($found == 0) continue;
@@ -202,7 +204,6 @@
 					foreach($data as $client){
 						if(!isset($statistics['area'][$client['unit_area']])) $statistics['area'][$client['unit_area']] = $report_template;
 						if(!isset($statistics['team'][$client['team']])) $statistics['team'][$client['team']] = $report_template;
-
 						if(in_array($client['type'], ClientModel::TYPE)){
 							if(!isset($statistics['type'][$client['type']])) $statistics['type'][$client['type']] = $report_template;
 							// 新老客判定
@@ -277,8 +278,8 @@
 						// 1、筛选数据
 						if(isset($keyword)){
 							$found = 0;
-							if($found == 0 && strpos($unit['name'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($unit['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($unit['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($unit['name_pinyin'], $keyword) !== false) $found = 1;
 							if($found == 0) continue;
 						}
 						if(isset($is_signed)){
@@ -333,6 +334,206 @@
 						// 总判定
 						$statistics['total']['total']++;
 						if($unit['is_signed_code'] == 1) $statistics['total']['signed']++;
+					}
+
+					return $statistics;
+				break;
+				case 'receivables:set_data':
+					$result = [];
+					// 合并单据号的映射变量
+					$order_reflect = [
+						'orderID' => [], // 已存在的单据号ID数组
+						'index'   => [] // 映射表
+					];
+					$get           = $data['urlParam'];
+					$original_data = $data = $data['list'];
+					// 若指定了关键字
+					if(isset($get[CMS::URL_CONTROL_PARAMETER['keyword']])) $keyword = $get[CMS::URL_CONTROL_PARAMETER['keyword']];
+					if(isset($get['projectType'])) $project_type = $get['projectType'];
+					if(isset($get['project'])) $project = $get['project'];
+					if(isset($get['payMethod'])) $pay_method = $get['payMethod'];
+					if(isset($get['posMachine'])) $pos_machine = $get['posMachine'];
+					if(isset($get['source'])) $source = $get['source'];
+					// 1、合并单据号
+					//					for($i = 0, $key = 0; $i<count($data); $i++){
+					//						// 1、筛选数据
+					//						if(isset($keyword)){
+					//							// todo 获取筛选配置
+					//							$found = 0;
+					//							if($found == 0 && stripos($data[$i]['client'], $keyword) !== false) $found = 1;
+					//							if($found == 0 && stripos($data[$i]['client_pinyin'], $keyword) !== false) $found = 1;
+					//							if($found == 0 && stripos($data[$i]['unit'], $keyword) !== false) $found = 1;
+					//							if($found == 0 && stripos($data[$i]['unit_pinyin'], $keyword) !== false) $found = 1;
+					//							if($found == 0 && stripos($data[$i]['project'], $keyword) !== false) $found = 1;
+					//							if($found == 0 && stripos($data[$i]['project_pinyin'], $keyword) !== false) $found = 1;
+					//							if($found == 0 && stripos($data[$i]['project_type'], $keyword) !== false) $found = 1;
+					//							if($found == 0 && stripos($data[$i]['project_type_pinyin'], $keyword) !== false) $found = 1;
+					//							if($found == 0 && stripos($data[$i]['payee'], $keyword) !== false) $found = 1;
+					//							if($found == 0 && stripos($data[$i]['payee_pinyin'], $keyword) !== false) $found = 1;
+					//							if($found == 0 && stripos($data[$i]['pay_method'], $keyword) !== false) $found = 1;
+					//							if($found == 0 && stripos($data[$i]['pay_method_pinyin'], $keyword) !== false) $found = 1;
+					//							if($found == 0 && stripos($data[$i]['order_number'], $keyword) !== false) $found = 1;
+					//							if($found == 0) continue;
+					//						}
+					//						if(isset($project_type) && $data[$i]['project_type_code'] != $project_type) continue;
+					//						if(isset($project) && $data[$i]['project_code'] != $project) continue;
+					//						if(isset($pay_method) && $data[$i]['pay_method_code'] != $pay_method) continue;
+					//						if(isset($pos_machine) && $data[$i]['pos_machine_code'] != $pos_machine) continue;
+					//						if(isset($source) && $data[$i]['source'] != $source) continue;
+					//						// 合并
+					//						$order_id   = $data[$i]['id'];
+					//						$project_id = $data[$i]['project_code'];
+					//						if(!in_array($data[$i]['id'], $order_reflect['orderID'])){
+					//							$order_reflect['orderID'][]                        = $order_id;
+					//							$order_reflect['index'][$order_id]['i']            = $key++;
+					//							$order_reflect['index'][$order_id]['project']      = [];
+					//							$order_reflect['index'][$order_id]['projectIndex'] = [];
+					//						}
+					//						$index = $order_reflect['index'][$order_id]['i'];
+					//						// 统计同一个单据下的项目数
+					//						if(!in_array($project_id, $order_reflect['index'][$order_id]['project'])){
+					//							$order_reflect['index'][$order_id]['project'][] = $project_id;
+					//							if(!isset($result[$index]['projectCount'])){
+					//								$result[$index]['projectCount'] = 0;
+					//							}
+					//							// 如果是新的项目 则自增统计数
+					//							$result[$index]['projectCount']++;
+					//							// 初始化项目列表的合并数
+					//							$data[$i]['_merge_column'] = 1;
+					//							// 构建项目合并判定的回溯映射表 可由项目ID映射到data列表的数字下标
+					//							$order_reflect['index'][$order_id]['projectIndex'][$project_id] = $i;
+					//						}
+					//						else{
+					//							$merge_first_project_index = $order_reflect['index'][$order_id]['projectIndex'][$project_id];
+					//							$data[$merge_first_project_index]['_merge_column']++;
+					//						}
+					//						// 统计项目相同合并计数
+					//						// 统计同一个收据下的总金额
+					//						if(!isset($result[$index]['price'])) $result[$index]['price'] = 0;
+					//						$result[$index]['price'] += $data[$i]['price'];
+					//						$data[$i]['source_code']              = $data[$i]['source'];
+					//						$data[$i]['source']                   = ReceivablesDetailModel::RECEIVABLES_SOURCE[$data[$i]['source']];
+					//						$result[$index]['list'][]             = &$data[$i];
+					//						$result[$index]['id']                 = $data[$i]['id'];
+					//						$result[$index]['order_number']       = $data[$i]['order_number'];
+					//						$result[$index]['client_name']        = $data[$i]['client'];
+					//						$result[$index]['client_id'] = $data[$i]['cid'];
+					//						$result[$index]['payee']              = $data[$i]['payee'];
+					//						$result[$index]['place']              = $data[$i]['place'];
+					//						$result[$index]['time']               = $data[$i]['time'];
+					//						$result[$index]['unit']               = $data[$i]['unit'];
+					//						$result[$index]['review_status_code'] = $data[$i]['review_status'];
+					//						$result[$index]['review_status']      = ReceivablesOrderModel::REVIEW_STATUS[$data[$i]['review_status']];
+					//						$result[$index]['status_code']        = $data[$i]['status'];
+					//						$result[$index]['status']             = GeneralModel::STATUS[$data[$i]['status']];
+					//						$result[$index]['creatime']           = $data[$i]['creatime'];
+					//						$result[$index]['creator']            = $data[$i]['creator'];
+					//					}
+					// 2、合并客户
+					$result2 = [];
+					// 合并单据号的映射变量
+					$client_reflect = [
+						'clientID' => [], // 已存在的客户ID数组
+						'index'    => [] // 映射表
+					];
+					for($i = 0, $key = 0; $i<count($original_data); $i++){
+						// 1、筛选数据
+						if(isset($keyword)){
+							// todo 获取筛选配置
+							$found = 0;
+							if($found == 0 && stripos($original_data[$i]['client'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($original_data[$i]['client_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($original_data[$i]['unit'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($original_data[$i]['unit_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($original_data[$i]['project'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($original_data[$i]['project_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($original_data[$i]['project_type'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($original_data[$i]['project_type_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($original_data[$i]['payee'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($original_data[$i]['payee_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($original_data[$i]['pay_method'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($original_data[$i]['pay_method_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($original_data[$i]['order_number'], $keyword) !== false) $found = 1;
+							if($found == 0) continue;
+						}
+						if(isset($project_type) && $original_data[$i]['project_type_code'] != $project_type) continue;
+						if(isset($project) && $original_data[$i]['project_code'] != $project) continue;
+						if(isset($pay_method) && $original_data[$i]['pay_method_code'] != $pay_method) continue;
+						if(isset($pos_machine) && $original_data[$i]['pos_machine_code'] != $pos_machine) continue;
+						if(isset($source) && $original_data[$i]['source'] != $source) continue;
+						$client_id = $original_data[$i]['cid'];
+						if(!in_array($client_id, $client_reflect['clientID'])){
+							$client_reflect['clientID'][]        = $client_id;
+							$client_reflect['index'][$client_id] = $key++;
+						}
+						$index                          = $client_reflect['index'][$client_id];
+						$result2[$index]['list'][]      = $original_data[$i];
+						$result2[$index]['client_id']   = $original_data[$i]['cid'];
+						$result2[$index]['client_name'] = $original_data[$i]['client'];
+						$result2[$index]['unit']        = $original_data[$i]['unit'];
+						$result2[$index]['price'] += $original_data[$i]['price'];
+						if(!in_array($original_data[$i]['project_type_code'], $result2[$index]['project_type_code'])){
+							$result2[$index]['project_type_code'][] = $original_data[$i]['project_type_code'];
+							$result2[$index]['project_type'][]      = $original_data[$i]['project_type'];
+						}
+						if(!in_array($original_data[$i]['project_code'], $result2[$index]['project_code'])){
+							$result2[$index]['project_code'][] = $original_data[$i]['project_code'];
+							$result2[$index]['project'][]      = $original_data[$i]['project'];
+						}
+						if(!in_array($original_data[$i]['pay_method_code'], $result2[$index]['pay_method_code'])){
+							$result2[$index]['pay_method_code'][] = $original_data[$i]['pay_method_code'];
+							$result2[$index]['pay_method'][]      = $original_data[$i]['pay_method'];
+						}
+						if(!in_array($original_data[$i]['pos_machine_code'], $result2[$index]['pos_machine_code']) && $original_data[$i]['pos_machine_code'] != 0){
+							$result2[$index]['pos_machine_code'][] = $original_data[$i]['pos_machine_code'];
+							$result2[$index]['pos_machine'][]      = $original_data[$i]['pos_machine'];
+						}
+					}
+
+					return $result2;
+				break;
+				case 'receivables:statistics':
+					$report_template = [
+						'price'       => 0,
+						'client'      => 0,
+						'_clientList' => []
+					];
+					$statistics      = [
+						'projectType' => [],
+						'project'     => [],
+						'payMethod'   => [],
+						'total'       => $report_template
+					];
+					foreach($data as $order){
+						foreach($order['list'] as $detail){
+							if(!isset($statistics['projectType'][$detail['project_type']])) $statistics['projectType'][$detail['project_type']] = $report_template;
+							if(!isset($statistics['project'][$detail['project']])) $statistics['project'][$detail['project']] = $report_template;
+							if(!isset($statistics['payMethod'][$detail['pay_method']])) $statistics['payMethod'][$detail['pay_method']] = $report_template;
+							// 项目类型
+							$statistics['projectType'][$detail['project_type']]['price'] += $detail['price'];
+							if(!in_array($detail['cid'], $statistics['projectType'][$detail['project_type']]['_clientList'])){
+								$statistics['projectType'][$detail['project_type']]['_clientList'][] = $detail['cid'];
+								$statistics['projectType'][$detail['project_type']]['client']++;
+							}
+							// 项目
+							$statistics['project'][$detail['project']]['price'] += $detail['price'];
+							if(!in_array($detail['cid'], $statistics['project'][$detail['project']]['_clientList'])){
+								$statistics['project'][$detail['project']]['_clientList'][] = $detail['cid'];
+								$statistics['project'][$detail['project']]['client']++;
+							}
+							// 支付方式
+							$statistics['payMethod'][$detail['pay_method']]['price'] += $detail['price'];
+							if(!in_array($detail['cid'], $statistics['payMethod'][$detail['pay_method']]['_clientList'])){
+								$statistics['payMethod'][$detail['pay_method']]['_clientList'][] = $detail['cid'];
+								$statistics['payMethod'][$detail['pay_method']]['client']++;
+							}
+							// 汇总
+							$statistics['total']['price'] += $detail['price'];
+							if(!in_array($detail['cid'], $statistics['total']['_clientList'])){
+								$statistics['total']['_clientList'][] = $detail['cid'];
+								$statistics['total']['client']++;
+							}
+						}
 					}
 
 					return $statistics;

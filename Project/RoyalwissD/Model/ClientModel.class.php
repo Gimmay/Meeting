@@ -27,7 +27,8 @@
 			'type'         => 'type',
 			'reviewStatus' => 'reviewed',
 			'signStatus'   => 'signed',
-			'limit'        => 'limit'
+			'limit'        => 'limit',
+			'signCode'     => 'sign_code'
 		];
 		/** 性别 */
 		const GENDER = [
@@ -88,6 +89,7 @@
 			$client_id           = $control[self::CONTROL_COLUMN_PARAMETER_SELF['clientID']];
 			$review_status       = $control[self::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
 			$sign_status         = $control[self::CONTROL_COLUMN_PARAMETER_SELF['signStatus']];
+			$sign_code         = $control[self::CONTROL_COLUMN_PARAMETER_SELF['signCode']];
 			$type                = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
 			$limit               = $control[self::CONTROL_COLUMN_PARAMETER_SELF['limit']];
 			$where               = ' WHERE 0 = 0 ';
@@ -107,6 +109,7 @@
 			}
 			if(isset($status) && isset($status[0]) && isset($status[1])) $where .= " and status $status[0] $status[1] ";
 			if(isset($meeting_id)) $where .= " and mid = $meeting_id ";
+			if(isset($sign_code)) $where .= " and sign_code = '$sign_code'";
 			if(isset($client_id) && isset($client_id[0]) && isset($client_id[1])) $where .= " and cid $client_id[0] $client_id[1] ";
 			if(isset($type) && isset($type[0]) && isset($type[1])) $where .= " and type $type[0] $type[1] ";
 			elseif(isset($type) && is_bool($type)){

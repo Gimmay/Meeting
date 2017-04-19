@@ -158,6 +158,7 @@ SELECT * FROM (
 WHERE status = 1 AND review_status = 1 $where
 $order
 ";
+
 			return $this->query($sql);
 		}
 
@@ -165,7 +166,7 @@ $order
 			$keyword    = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
 			$order      = $control[self::CONTROL_COLUMN_PARAMETER['order']];
 			$status     = $control[self::CONTROL_COLUMN_PARAMETER['status']];
-			$type                = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
+			$type       = $control[self::CONTROL_COLUMN_PARAMETER_SELF['type']];
 			$meeting_id = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
 			$where      = ' ';
 			if(isset($order)) $order = " ORDER BY $order";
@@ -230,9 +231,110 @@ $order
 			return $result;
 		}
 
-		public function getUnitArea($meeting_id){
-		}
+		public function getReceivablesList($control = []){
+			$table_receivables_order   = ReceivablesOrderModel::TABLE_NAME;
+			$table_receivables_detail  = ReceivablesDetailModel::TABLE_NAME;
+			$table_receivables_project = ReceivablesProjectModel::TABLE_NAME;
+			$table_user                = UserModel::TABLE_NAME;
+			$table_client              = ClientModel::TABLE_NAME;
+			$table_attendee            = AttendeeModel::TABLE_NAME;
+			$table_project             = ProjectModel::TABLE_NAME;
+			$table_project_type        = ProjectTypeModel::TABLE_NAME;
+			$table_pay_method          = ReceivablesPayMethodModel::TABLE_NAME;
+			$table_pos_machine         = ReceivablesPosMachineModel::TABLE_NAME;
+			$common_database           = GeneralModel::DATABASE_NAME;
+			$this_database             = self::DATABASE_NAME;
+			$keyword                   = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+			$order                     = $control[self::CONTROL_COLUMN_PARAMETER['order']];
+			$status                    = $control[self::CONTROL_COLUMN_PARAMETER['status']];
+			$meeting_id                = $control[self::CONTROL_COLUMN_PARAMETER_SELF['meetingID']];
+			$client_id                 = $control[self::CONTROL_COLUMN_PARAMETER_SELF['clientID']];
+			$order_id                  = $control[self::CONTROL_COLUMN_PARAMETER_SELF['orderID']];
+			$detail_id                 = $control[self::CONTROL_COLUMN_PARAMETER_SELF['detailID']];
+			$review_status             = $control[self::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
+			$where                     = ' WHERE 0 = 0 ';
+			if(isset($order)) $order = " ORDER BY $order";
+			else $order = ' ';
+			if(isset($keyword)){
+				$keyword = $control[self::CONTROL_COLUMN_PARAMETER['keyword']];
+				$where .= "
+				and (
+					client like '%$keyword%'
+					or client_pinyin like '%$keyword%'
+					or unit like '%$keyword%'
+					or unit_pinyin like '%$keyword%'
+					or project like '%$keyword%'
+					or project_pinyin like '%$keyword%'
+					or project_type like '%$keyword%'
+					or project_type_pinyin like '%$keyword%'
+				)";
+			}
+			if(isset($status) && isset($status[0]) && isset($status[1])) $where .= " and status $status[0] $status[1] ";
+			if(isset($client_id) && isset($client_id[0]) && isset($client_id[1])) $where .= " and cid $client_id[0] $client_id[1] ";
+			if(isset($order_id) && isset($order_id[0]) && isset($order_id[1])) $where .= " and id $order_id[0] $order_id[1] ";
+			if(isset($detail_id) && isset($detail_id[0]) && isset($detail_id[1])) $where .= " and did $detail_id[0] $detail_id[1] ";
+			if(isset($review_status) && isset($review_status[0]) && isset($review_status[1])) $where .= " and review_status $review_status[0] $review_status[1] ";
+			if(isset($meeting_id)) $where .= " and mid = $meeting_id ";
+			$sql    = "
+SELECT * FROM (
+	SELECT
+		ro.id,
+		ro.order_number,
+		ro.cid,
+		ro.mid,
+		c.name client,
+		c.name_pinyin client_pinyin,
+		c.unit,
+		c.unit_pinyin unit_pinyin,
+		ro.payee payee_code,
+		u1.name payee,
+		u1.name payee_pinyin,
+		ro.place,
+		ro.price total_price,
+		ro.time,
+		ro.status,
+		ro.review_status,
+		ro.creatime,
+		ro.creator creator_code,
+		u2.name creator,
+		u2.name_pinyin creator_pinyin,
+		rp.id prid,
+		p.id project_code,
+		p.name project,
+		p.name_pinyin project_pinyin,
+		pt.id project_type_code,
+		pt.name project_type,
+		pt.name_pinyin project_type_pinyin,
+		rp.coupon_item_id,
+		1 _type,
+		rd.id did,
+		rd.price,
+		rd.pay_method pay_method_code,
+		pam.name pay_method,
+		pam.name_pinyin pay_method_pinyin,
+		rd.pos_machine pos_machine_code,
+		pom.name pos_machine,
+		pom.name_pinyin pos_machine_pinyin,
+		rd.source,
+		rd.comment
+	FROM $this_database.$table_receivables_order ro
+	JOIN $this_database.$table_receivables_project rp ON ro.id = rp.oid AND rp.status <> 2
+	JOIN $this_database.$table_receivables_detail rd ON rp.id = rd.pid AND rd.status <> 2
+	LEFT JOIN $common_database.$table_user u1 ON u1.id = ro.payee AND u1.status <> 2
+	LEFT JOIN $common_database.$table_user u2 ON u2.id = ro.creator AND u2.status <> 2
+	JOIN $this_database.$table_client c ON c.id = ro.cid AND c.status <> 2
+	JOIN $this_database.$table_attendee a ON a.cid = c.id AND a.status <> 2 AND a.mid = ro.mid
+	LEFT JOIN $this_database.$table_project p ON p.id = rp.project_id AND p.status <> 2
+	LEFT JOIN $this_database.$table_project_type pt ON pt.id = p.type AND pt.status <> 2
+	LEFT JOIN $this_database.$table_pay_method pam ON pam.id = rd.pay_method AND pam.status <> 2
+	LEFT JOIN $this_database.$table_pos_machine pom ON pom.id = rd.pos_machine AND pom.status <> 2
+	ORDER BY ro.id DESC, rp.id 
+) tab
+$where
+$order
+			";
+			$result = $this->query($sql);
 
-		public function getClientTeam($meeting_id){
+			return $result;
 		}
 	}

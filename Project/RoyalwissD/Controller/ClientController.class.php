@@ -12,10 +12,11 @@
 	use CMS\Logic\PageLogic;
 	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
+	use General\Model\GeneralModel;
 	use RoyalwissD\Logic\ClientLogic;
 	use RoyalwissD\Logic\MeetingConfigureLogic;
 	use RoyalwissD\Logic\UnitLogic;
-	use RoyalwissD\Model\ClientColumnControlModel;
+	use RoyalwissD\Model\AttendeeModel;
 	use RoyalwissD\Model\ClientModel;
 	use RoyalwissD\Model\UnitModel;
 	use Think\Page;
@@ -24,6 +25,60 @@
 		public function _initialize(){
 			parent::_initialize();
 			$this->initMeetingID();
+		}
+
+		public function sign(){
+			if(isset($_GET['keyword'])){
+				$keyword = I('get.keyword', '');
+				/** @var \RoyalwissD\Model\ClientModel $client_model */
+				$client_model = D('RoyalwissD/Client');
+				$client_list  = $client_model->getList([
+					$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $this->meetingID,
+					$client_model::CONTROL_COLUMN_PARAMETER_SELF['signCode']     => $keyword,
+					$client_model::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus'] => ['=', 1]
+				]);
+				if(count($client_list)>0){
+					$client = $client_list[0];
+					// 1、获取控制字段
+					/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
+					$client_column_control_model = D('RoyalwissD/ClientColumnControl');
+					$column_list                 = $client_column_control_model->getClientControlledColumn($this->meetingID, $client_column_control_model::ACTION_READ);
+					$this->assign('column_list', $column_list);
+
+					// 2、签到
+					$client_logic = new ClientLogic();
+					$client_logic->sign($client['cid'], $this->meetingID, 2);
+					$client_list = $client_model->getList([
+						$client_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $this->meetingID,
+						$client_model::CONTROL_COLUMN_PARAMETER_SELF['clientID'] => ['=', $client['cid']]
+					]);
+					$client = $client_list[0];
+					// 3、映射替换
+					$client['register_type']      = AttendeeModel::REGISTER_TYPE[$client['register_type']];
+					$client['review_status_code'] = $client['review_status'];
+					$client['review_status']      = AttendeeModel::REVIEW_STATUS[$client['review_status']];
+					$client['sign_status_code']   = $client['sign_status'];
+					$client['sign_status']        = AttendeeModel::SIGN_STATUS[$client['sign_status']];
+					$client['sign_type']          = AttendeeModel::SIGN_TYPE[$client['sign_type']];
+					$client['print_status_code']  = $client['print_status'];
+					$client['print_status']       = AttendeeModel::PRINT_STATUS[$client['print_status']];
+					$client['gift_status_code']   = $client['gift_status'];
+					$client['gift_status']        = AttendeeModel::GIFT_STATUS[$client['gift_status']];
+					$client['status_code']        = $client['status'];
+					$client['status']             = GeneralModel::STATUS[$client['status']];
+					$client['gender_code']        = $client['gender'];
+					$client['gender']             = ClientModel::GENDER[$client['gender']];
+					$client['is_new_code']        = $client['is_new'];
+					$client['is_new']             = ClientModel::IS_NEW[$client['is_new']];
+					$client['unit_is_new_code']   = $client['unit_is_new'];
+					$client['unit_is_new']        = UnitModel::IS_NEW[$client['unit_is_new']];
+					$this->assign('client', $client);
+					$info = 1;
+				}
+				else $info = 0;
+				$this->assign('info_type', $info);
+			}
+			$this->display();
 		}
 
 		public function manage(){
@@ -377,12 +432,12 @@
 			if(!UserLogic::isPermitted('SEVERAL-UNIT.VIEW')) $this->error('您没有查看会所的权限');
 			$model_control_column = $this->getModelControl();
 			/** @var \RoyalwissD\Model\UnitModel $unit_model */
-			$unit_model = D('RoyalwissD/Unit');
-			$list = $unit_model->getList(array_merge($model_control_column, [
-				CMSModel::CONTROL_COLUMN_PARAMETER['status']              => ['!=', 2],
+			$unit_model  = D('RoyalwissD/Unit');
+			$list        = $unit_model->getList(array_merge($model_control_column, [
+				CMSModel::CONTROL_COLUMN_PARAMETER['status']            => ['!=', 2],
 				$unit_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID
 			]));
-			$list = $unit_logic->setData('unit:set_data', [
+			$list        = $unit_logic->setData('unit:set_data', [
 				'list'     => $list,
 				'urlParam' => I('get.')
 			]);

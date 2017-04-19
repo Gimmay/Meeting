@@ -188,7 +188,7 @@
 						<div class="table_wrap">
 							<div class="row mb_10">
 								<div class="col-sm-6">
-									<span class="total_client">共 <b class="color-red"><{$statistics.totalCount}></b> 单收款项</span>
+									<span class="total_client">当前列表单据数 <b class="color-red"><{:count($list)}></b> 单，共 <b class="color-red"><{$statistics.totalCount}></b> 单收款项</span>
 								</div>
 								<!--<div class="col-sm-6 text-right">
 									<span class="custom_list" data-toggle="modal" data-target="#list_menu"><i class="glyphicon glyphicon-list"></i>&nbsp;自定义列表菜单</span>
@@ -210,7 +210,7 @@
 										<span class="unit_style" data-column="creatime">创建时间</span>
 										<span class="unit_style" data-column="creator">创建者</span>
 										<span class="unit_style" data-column="reviewer">审核人</span>
-										<span class="price" data-column="price">收款金额(<span style="color: red;"><{:number_format($statistics['totalPrice'])}>元</span>)</span>
+										<span class="price" data-column="price">收款金额</span>
 										<span class="function" data-column="time">操作</span>
 									</div>
 									<volist name="list" id="order">
@@ -271,7 +271,7 @@
 														<thead>
 															<tr>
 																<th>项目类型</th>
-																<th>项目名字/代金券码</th>
+																<th>项目名字</th>
 																<th>支付方式</th>
 																<th>POS机</th>
 																<th>收款来源</th>
@@ -312,7 +312,8 @@
 								</div>
 								<div class="summary">
 									<p>
-										<span>当页金额总计：<b class="color-red"><{:number_format($statistics['pagePrice'])}></b>&nbsp;元</span>
+										<span>当页金额总计：<b class="color-red"><{:number_format($statistics['pagePrice'])}></b>元</span>
+										<span>总收款金额：<b class="color-red"><{:number_format($statistics['totalPrice'])}></b>元</span>
 									</p>
 								</div>
 							</div>

@@ -15,6 +15,7 @@
 	use RoyalwissD\Logic\ReportLogic;
 	use RoyalwissD\Model\AttendeeModel;
 	use RoyalwissD\Model\ClientModel;
+	use RoyalwissD\Model\ReceivablesDetailModel;
 	use RoyalwissD\Model\UnitModel;
 	use Think\Page;
 
@@ -55,12 +56,12 @@
 			$this->assign('search_column_name', $search_column_name);
 			// 获取列表数据
 			$model_control_column = $this->getModelControl();
-			$list = $report_model->getClientList(array_merge($model_control_column, [
-				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $this->meetingID,
-				$report_model::CONTROL_COLUMN_PARAMETER_SELF['type']    => true
+			$list                 = $report_model->getClientList(array_merge($model_control_column, [
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID,
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['type']      => true
 			]));
 			// 设定额外数据并筛选数据
-			$list = $report_logic->setData('client:set_data', [
+			$list       = $report_logic->setData('client:set_data', [
 				'list'     => $list,
 				'urlParam' => I('get.')
 			]);
@@ -69,7 +70,7 @@
 			// 分页
 			$page_object = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
-			$list = array_slice($list, $page_object->firstRow, $page_object->listRows);
+			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$pagination = $page_object->show();
 			$this->assign('pagination', $pagination);
 			$this->assign('list', $list);
@@ -112,12 +113,12 @@
 			$report_model = D('RoyalwissD/Report');
 			// 获取列表数据
 			$model_control_column = $this->getModelControl();
-			$list = $report_model->getUnitList(array_merge($model_control_column, [
-				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $this->meetingID,
-				$report_model::CONTROL_COLUMN_PARAMETER_SELF['type']=>true
+			$list                 = $report_model->getUnitList(array_merge($model_control_column, [
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID,
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['type']      => true
 			]));
 			// 设定额外数据并筛选数据
-			$list = $report_logic->setData('unit:set_data', [
+			$list       = $report_logic->setData('unit:set_data', [
 				'list'     => $list,
 				'urlParam' => I('get.')
 			]);
@@ -126,7 +127,7 @@
 			// 分页
 			$page_object = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
-			$list = array_slice($list, $page_object->firstRow, $page_object->listRows);
+			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$pagination = $page_object->show();
 			$this->assign('pagination', $pagination);
 			$this->assign('list', $list);
@@ -136,6 +137,64 @@
 			$this->assign('area_list', $unit_model->getUnitSelectedArea($this->meetingID));
 			$this->assign('sign_list', AttendeeModel::SIGN_STATUS);
 			$this->assign('unit_is_new_list', UnitModel::IS_NEW);
+			$this->assign('default_order_column', I('get.'.CMS::URL_CONTROL_PARAMETER['orderColumn'], CMS::DEFAULT_ORDER_COLUMN));
+			$this->assign('default_order_method', I('get.'.CMS::URL_CONTROL_PARAMETER['orderMethod'], CMS::DEFAULT_ORDER_METHOD));
+			$this->display();
+		}
+
+		public function receivables(){
+			$report_logic = new ReportLogic();
+			if(IS_POST){
+				$type   = strtolower(I('post.requestType', ''));
+				$result = $report_logic->handlerRequest($type);
+				if($result['__ajax__']){
+					unset($result['__ajax__']);
+					echo json_encode($result);
+				}
+				else{
+					unset($result['__ajax__']);
+					$url = $result['__return__'] ? $result['__return__'] : '';
+					if($result['status']) $this->success($result['message'], $url);
+					else $this->error($result['message'], $url, 3);
+				}
+				exit;
+			}
+			if(!UserLogic::isPermitted('SEVERAL-REPORT_RECEIVABLES.VIEW')) $this->error('您没有查看收款报表的权限');
+			/** @var \RoyalwissD\Model\ReportModel $report_model */
+			$report_model = D('RoyalwissD/Report');
+			// 获取列表数据
+			$model_control_column = $this->getModelControl();
+			$list                 = $report_model->getReceivablesList(array_merge($model_control_column, [
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID
+			]));
+			// 设定额外数据并筛选数据
+			$list       = $report_logic->setData('receivables:set_data', [
+				'list'     => $list,
+				'urlParam' => I('get.')
+			]);
+			$statistics = $report_logic->setData('receivables:statistics', $list);
+			$this->assign('statistics', $statistics);
+			// 分页
+			$page_object = new Page(count($list), $this->getPageRecordCount());
+			PageLogic::setTheme1($page_object);
+			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
+			$pagination = $page_object->show();
+			$this->assign('pagination', $pagination);
+			$this->assign('list', $list);
+			// 获取其他模块数据
+			/** @var \RoyalwissD\Model\ProjectTypeModel $project_type_model */
+			$project_type_model = D('RoyalwissD/ProjectType');
+			/** @var \RoyalwissD\Model\ProjectModel $project_model */
+			$project_model = D('RoyalwissD/Project');
+			/** @var \RoyalwissD\Model\ReceivablesPayMethodModel $pay_method_model */
+			$pay_method_model = D('RoyalwissD/ReceivablesPayMethod');
+			/** @var \RoyalwissD\Model\ReceivablesPosMachineModel $pos_machine_model */
+			$pos_machine_model = D('RoyalwissD/ReceivablesPosMachine');
+			$this->assign('project_type_list', $project_type_model->getSelectedList($this->meetingID));
+			$this->assign('project_list', $project_model->getSelectedList($this->meetingID, false));
+			$this->assign('pay_method_list', $pay_method_model->getSelectedList($this->meetingID));
+			$this->assign('pos_machine_list', $pos_machine_model->getSelectedList($this->meetingID));
+			$this->assign('source_list', ReceivablesDetailModel::RECEIVABLES_SOURCE);
 			$this->assign('default_order_column', I('get.'.CMS::URL_CONTROL_PARAMETER['orderColumn'], CMS::DEFAULT_ORDER_COLUMN));
 			$this->assign('default_order_method', I('get.'.CMS::URL_CONTROL_PARAMETER['orderMethod'], CMS::DEFAULT_ORDER_METHOD));
 			$this->display();

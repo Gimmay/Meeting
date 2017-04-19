@@ -95,9 +95,9 @@
 						// 1、筛选数据
 						if(isset($keyword)){
 							$found = 0;
-							if($found == 0 && strpos($unit['name'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($unit['area'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($unit['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($unit['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($unit['area'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($unit['name_pinyin'], $keyword) !== false) $found = 1;
 							if($found == 0) continue;
 						}
 						// 2、映射替换

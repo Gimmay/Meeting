@@ -16,6 +16,9 @@ var ScriptObject = {
 						t.removeClass('release_a').addClass('cancel_release_a').text('新建');
 						self.unbindEvent();
 						self.bindEvent();
+						ManageObject.object.toast.onQuasarHidden(function(){
+							location.reload();
+						});
 					}else{
 						ManageObject.object.toast.toast(data.message);
 					}
@@ -35,6 +38,9 @@ var ScriptObject = {
 						t.removeClass('cancel_release_a').addClass('release_a').text('发布');
 						self.unbindEvent();
 						self.bindEvent();
+						ManageObject.object.toast.onQuasarHidden(function(){
+							location.reload();
+						});
 					}else{
 						ManageObject.object.toast.toast(data.message);
 					}
@@ -230,13 +236,12 @@ $(function(){
 				data    :{requestType:'assign_meeting_manager', uid:arr, rid:rid, mid:mid},
 				callback:function(data){
 					ManageObject.object.loading.complete();
-					console.log(data);
 					if(data.status == 1){
 						$('#add_meeting_manager').modal('hide');
-						ManageObject.object.toast.toast('添加成功！');
+						ManageObject.object.toast.toast(data.message);
 					}else if(data.status == 0){
 						$('#add_meeting_manager').modal('hide');
-						ManageObject.object.toast.toast('添加成功！');
+						ManageObject.object.toast.toast(data.message);
 					}
 				}, error:function(){
 					/*ManageObject.object.toast.toast('添加失败');*/
@@ -290,7 +295,7 @@ function get_user_list(mid, rid){
 							ManageObject.object.loading.complete();
 							console.log(data);
 							if(data.status){
-								ManageObject.object.toast.toast('删除成功！');
+								ManageObject.object.toast.toast(data.message);
 								get_user_list(mid, rid);
 							}
 						}

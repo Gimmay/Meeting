@@ -2,6 +2,7 @@
  * Created by qyqy on 2016-10-8.
  */
 
+var template = '<tr>\n\t<td>$type</td>\n\t<td>$number</td>\n\t<td>$createTime</td>\n</tr>';
 $(function(){
 	// 新增项目保存
 	$('#create_project .btn-save').on('click', function(){
@@ -91,12 +92,12 @@ $(function(){
 						callback:function(res){
 							ManageObject.object.loading.complete();
 							if(res.status){
-								ManageObject.object.toast.toast('修改成功！', '1');
+								ManageObject.object.toast.toast(res.message, '1');
 								ManageObject.object.toast.onQuasarHidden(function(){
 									location.reload();
 								});
 							}else{
-								ManageObject.object.toast.toast('修改失败！', '2');
+								ManageObject.object.toast.toast(res.message, '2');
 							}
 						}
 					});
@@ -107,12 +108,12 @@ $(function(){
 					callback:function(res){
 						ManageObject.object.loading.complete();
 						if(res.status){
-							ManageObject.object.toast.toast('修改成功！', '1');
+							ManageObject.object.toast.toast(res.message, '1');
 							ManageObject.object.toast.onQuasarHidden(function(){
 								location.reload();
 							});
 						}else{
-							ManageObject.object.toast.toast('修改失败！', '2');
+							ManageObject.object.toast.toast(res.message, '2');
 						}
 					}
 				});
@@ -128,6 +129,22 @@ $(function(){
 			$(this).parents('.input-group').find('#stock_alter').prop({'readonly':true, 'placeholder':'无库存限制'}).val('');
 			$('#alter_stock_limit .active_form').addClass('hidden');
 		}
+	});
+	// 出入库记录
+	$('.seeList').on('click', function(){
+		var id = $(this).parent().attr('data-id');
+		Common.ajax({
+			data    :{requestType:'get_inventory_history', id:id},
+			callback:function(r){
+				var str = '';
+				$.each(r.list, function(index, value){
+					str += template.replace('$type', value.type).replace('$number', value.number)
+								   .replace('$createTime', value.creatime);
+				})
+				var $tableTbody = $('#inventory_history_body');
+				$tableTbody.html(str);
+			}
+		});
 	});
 });
 function checkIsEmpty(){

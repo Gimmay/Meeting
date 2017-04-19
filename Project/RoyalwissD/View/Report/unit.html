@@ -41,80 +41,80 @@
 						<div class="table_wrap">
 							<if condition="in_array('SEVERAL-REPORT_UNIT.FILTER', $permission_list)">
 								<div class="panel panel-default">
-								<div class="panel-heading">筛选条件</div>
-								<div class="panel-body">
-									<form class="form-horizontal" id="control_form" action="">
-										<input type="hidden" name="requestType" value="search">
-										<div class="row">
-											<div class="col-sm-12 mb_10">
-												<input style="display:none" mce_style="display:none">
-												<div class="col-sm-3">
-													<div class="input-group">
-														<input style="display:none" mce_style="display:none">
-														<span class="input-group-addon">关键字</span>
-														<input name="keyword" class="form-control keyword" placeholder="<{$search_column_name}>" title="<{$search_column_name}>" value="<{$_GET['keyword']}>">
+									<div class="panel-heading">筛选条件</div>
+									<div class="panel-body">
+										<form class="form-horizontal" id="control_form" action="">
+											<input type="hidden" name="requestType" value="search">
+											<div class="row">
+												<div class="col-sm-12 mb_10">
+													<input style="display:none" mce_style="display:none">
+													<div class="col-sm-3">
+														<div class="input-group">
+															<input style="display:none" mce_style="display:none">
+															<span class="input-group-addon">关键字</span>
+															<input name="keyword" class="form-control keyword" placeholder="<{$search_column_name}>" title="<{$search_column_name}>" value="<{$_GET['keyword']}>">
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="input-group">
+															<span class="input-group-addon">区域　　</span>
+															<select name="unitArea" class="form-control" title="" value="<{$_GET['area']}>">
+																<option value="">---无限制---</option>
+																<volist name="area_list" id="single">
+																	<if condition="isset($_GET['area']) and $_GET['area'] eq $single['value']">
+																		<option value="<{$single.value}>" selected><{$single.html}></option>
+																		<else/>
+																		<option value="<{$single.value}>"><{$single.html}></option>
+																	</if>
+																</volist>
+															</select>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="input-group">
+															<span class="input-group-addon">是否签到</span>
+															<select name="isSigned" class="form-control" title="" value="<{$_GET['isSigned']}>">
+																<option value="">---无限制---</option>
+																<volist name="sign_list" id="single">
+																	<if condition="isset($_GET['isSigned']) and $_GET['isSigned'] eq $key">
+																		<option value="<{$key}>" selected><{$single}></option>
+																		<else/>
+																		<option value="<{$key}>"><{$single}></option>
+																	</if>
+																</volist>
+															</select>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="input-group">
+															<span class="input-group-addon">是否新店</span>
+															<select name="unitIsNew" class="form-control" title="" value="<{$_GET['unitIsNew']}>">
+																<option value="">---无限制---</option>
+																<volist name="unit_is_new_list" id="single">
+																	<if condition="isset($_GET['unitIsNew']) and $_GET['unitIsNew'] eq $key">
+																		<option value="<{$key}>" selected><{$single}></option>
+																		<else/>
+																		<option value="<{$key}>"><{$single}></option>
+																	</if>
+																</volist>
+															</select>
+														</div>
 													</div>
 												</div>
-												<div class="col-sm-3">
-													<div class="input-group">
-														<span class="input-group-addon">区域　　</span>
-														<select name="unitArea" class="form-control" title="" value="<{$_GET['area']}>">
-															<option value="">---无限制---</option>
-															<volist name="area_list" id="single">
-																<if condition="isset($_GET['area']) and $_GET['area'] eq $single['value']">
-																	<option value="<{$single.value}>" selected><{$single.html}></option>
-																	<else/>
-																	<option value="<{$single.value}>"><{$single.html}></option>
-																</if>
-															</volist>
-														</select>
-													</div>
-												</div>
-												<div class="col-sm-3">
-													<div class="input-group">
-														<span class="input-group-addon">是否签到</span>
-														<select name="isSigned" class="form-control" title="" value="<{$_GET['isSigned']}>">
-															<option value="">---无限制---</option>
-															<volist name="sign_list" id="single">
-																<if condition="isset($_GET['isSigned']) and $_GET['isSigned'] eq $key">
-																	<option value="<{$key}>" selected><{$single}></option>
-																	<else/>
-																	<option value="<{$key}>"><{$single}></option>
-																</if>
-															</volist>
-														</select>
-													</div>
-												</div>
-												<div class="col-sm-3">
-													<div class="input-group">
-														<span class="input-group-addon">是否新店</span>
-														<select name="unitIsNew" class="form-control" title="" value="<{$_GET['unitIsNew']}>">
-															<option value="">---无限制---</option>
-															<volist name="unit_is_new_list" id="single">
-																<if condition="isset($_GET['unitIsNew']) and $_GET['unitIsNew'] eq $key">
-																	<option value="<{$key}>" selected><{$single}></option>
-																	<else/>
-																	<option value="<{$key}>"><{$single}></option>
-																</if>
-															</volist>
-														</select>
-													</div>
-												</div>
-											</div>
-											<div class="col-sm-12">
 												<div class="col-sm-12">
-													<div class="col-sm-6">
-														<button type="button" class="btn btn-sm btn-success btn-block btn-save">搜索</button>
-													</div>
-													<div class="col-sm-6">
-														<a href="<{:U('', ['mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-sm btn-block btn-default">重置</a>
+													<div class="col-sm-12">
+														<div class="col-sm-6">
+															<button type="button" class="btn btn-sm btn-success btn-block btn-save">搜索</button>
+														</div>
+														<div class="col-sm-6">
+															<a href="<{:U('', ['mid'=>I('get.mid', 0, 'int')])}>" class="btn btn-sm btn-block btn-default">重置</a>
+														</div>
 													</div>
 												</div>
 											</div>
-										</div>
-									</form>
+										</form>
+									</div>
 								</div>
-							</div>
 							</if>
 							<div class="panel panel-default">
 								<div class="panel-heading">统计数据</div>
@@ -126,10 +126,10 @@
 									</style>
 									<table class="table table-bordered">
 										<tr>
-											<th></th>
-											<th>报名数</th>
-											<th>签到数</th>
-											<th>未到数</th>
+											<th width="25%"></th>
+											<th width="25%">报名数</th>
+											<th width="25%">签到数</th>
+											<th width="25%">未到数</th>
 										</tr>
 										<tr></tr>
 										<tr>
@@ -194,11 +194,11 @@
 									</volist>
 								</tbody>
 							</table>
-						</div>
-						<div class="page_wrap">
-							<ul class="pagination">
-								<{$pagination}>
-							</ul>
+							<div class="page_wrap">
+								<ul class="pagination">
+									<{$pagination}>
+								</ul>
+							</div>
 						</div>
 					</section>
 				</div>

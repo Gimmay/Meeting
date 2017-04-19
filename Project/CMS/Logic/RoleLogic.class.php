@@ -212,8 +212,8 @@
 						// 1、筛选数据
 						if(isset($keyword)){
 							$found = 0;
-							if($found == 0 && strpos($role['name'], $keyword) !== false) $found = 1;
-							if($found == 0 && strpos($role['name_pinyin'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($role['name'], $keyword) !== false) $found = 1;
+							if($found == 0 && stripos($role['name_pinyin'], $keyword) !== false) $found = 1;
 							if($found == 0) continue;
 						}
 						if(isset($role_id)){
