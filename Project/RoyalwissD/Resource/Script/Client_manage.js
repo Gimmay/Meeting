@@ -7,7 +7,8 @@ var ThisObject = {
 	uploadInterval   :null,
 	signBntTemp      :'<a class="btn btn-default btn-sm" href="javascript:void(0)" role="button" data-id="$id">$signName</a>',
 	signActiveBntTemp:'<a class="btn btn-default btn-sm active" href="javascript:void(0)" role="button" data-id="$id">$signName</a>',
-	detailsLiTemp    :'<tr><td>#key#</td><td>#name#</td></tr>'
+	detailsLiTemp    :'<tr><td>#key#</td><td>#name#</td></tr>',
+	detailsLiTempImg :'<tr><td>#key#</td><td><img class="qrcode-style" src="#src#" alt=""></td></tr>'
 };
 $(function(){
 	//排序
@@ -126,28 +127,24 @@ $(function(){
 				$.each(r[0], function(index1, value1){
 					$.each(r[1], function(index2, value2){
 						if(index1 == index2){
-							str += ThisObject.detailsLiTemp.replace('#key#', value1)
-											 .replace('#name#', value2)
+							if(value2 != null){
+								if(index1 == 'sign_code_qrcode' || index1 == 'sign_qrcode'){
+									str += ThisObject.detailsLiTempImg.replace('#key#', value1)
+													 .replace('#src#', value2)
+								}else{
+									str += ThisObject.detailsLiTemp.replace('#key#', value1)
+													 .replace('#name#', value2)
+								}
+							}else{
+								str += ThisObject.detailsLiTemp.replace('#key#', value1)
+												 .replace('#name#', '')
+							}
 						}
 					})
 				});
 				$('.info').html(str);
 			}
 		});
-		$('.add_client').on('click', function(){
-			var $add_recipient2 = $('#add_recipient2');
-			var per             = $add_recipient2.find('input[name=can_live]').val();
-			$add_recipient2.modal('show');
-			$add_recipient2.find('.can_live_p').text(per);
-		});
-		$('.add_employee').on('click', function(){
-			var $add_recipient2_employee = $('#add_recipient2_employee');
-			var per                      = $add_recipient2_employee.find('input[name=can_live]').val();
-			$add_recipient2_employee.modal('show');
-			$add_recipient2_employee.find('.can_live_p').text(per);
-		});
-		$('#add_recipient2').find('input[name=room_id]').val(id);
-		$('#add_recipient2_employee').find('input[name=room_id]').val(id);
 	});
 	/**
 	 * 礼品功能
@@ -391,7 +388,6 @@ $(function(){
 	 });*/
 	// 陪同类型列表
 	$('.type_1').find('.iCheck-helper').on('click', function(){
-
 		var param   = decodeURI(decodeURI(url_object.getUrlParam('type')));
 		var new_url = url_object.delUrlParam('p');
 		if(param == '陪同'){
@@ -404,7 +400,6 @@ $(function(){
 	});
 	// 终端类型列表
 	$('.type_2').find('.iCheck-helper').on('click', function(){
-
 		var param   = decodeURI(decodeURI(url_object.getUrlParam('type')));
 		var new_url = url_object.delUrlParam('p');
 		if(param == '终端'){
@@ -441,8 +436,6 @@ $(function(){
 	//	});
 	// 可用列表
 	$('.usable').find('.iCheck-helper').on('click', function(){
-
-
 		var param   = url_object.getUrlParam('status');
 		var new_url = url_object.delUrlParam('p');
 		if(param == 1){
@@ -455,7 +448,6 @@ $(function(){
 	});
 	// 禁用列表
 	$('.disable').find('.iCheck-helper').on('click', function(){
-
 		var param   = url_object.getUrlParam('status');
 		var new_url = url_object.delUrlParam('p');
 		if(param == 0){
@@ -948,7 +940,7 @@ $(function(){
 		//var receivables = link.getUrlParam('receivables');
 		var client_type = link.getUrlParam('client_type');
 		var status      = link.getUrlParam('status');
-		var type = decodeURI(decodeURI(link.getUrlParam('type')));
+		var type        = decodeURI(decodeURI(link.getUrlParam('type')));
 		if(signed == 1) $('.check_signed').find('.iradio_square-green').addClass('checked');
 		if(signed == 0) $('.check_not_signed').find('.iradio_square-green').addClass('checked');
 		if(reviewed == 1) $('.check_reviewed').find('.iradio_square-blue').addClass('checked');

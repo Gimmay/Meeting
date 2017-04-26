@@ -129,8 +129,7 @@ SELECT
 	concat(u.area) keyword
 FROM $this_database.$table_unit u
 WHERE u.name in (
-	SELECT
-		c.unit
+	SELECT c.unit
 	FROM $this_database.$table_client c
 	JOIN $this_database.$table_attendee a ON c.id = a.cid
 	AND a.mid = $meeting_id

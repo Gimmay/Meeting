@@ -206,10 +206,12 @@
 													<case value="ROYALWISSD-RECEIVABLES_DETAIL-PRICE">
 														<span class="<{$single.form}>" data-column="<{$single.form}>"><{$single.name}></span>
 													</case>
+													<case value="ROYALWISSD-RECEIVABLES_PROJECT-FIXED_PRICE">
+														<span class="<{$single.form}>" data-column="<{$single.form}>"><{$single.name}></span>
+													</case>
 												</switch>
 											</eq>
 										</volist>
-
 										<span class="function" data-column="time">操作</span>
 									</div>
 									<volist name="list" id="order">
@@ -227,10 +229,12 @@
 															<case value="ROYALWISSD-RECEIVABLES_DETAIL-PRICE">
 																<span class="<{$single.form}>" data-column="<{$single.form}>"><{:number_format($order['price'])}>元</span>
 															</case>
+															<case value="ROYALWISSD-RECEIVABLES_PROJECT-FIXED_PRICE">
+																<span class="<{$single.form}>" data-column="<{$single.form}>"><{:number_format($order['fixed_price'])}>元</span>
+															</case>
 														</switch>
 													</eq>
 												</volist>
-
 												<span class="function">
 													<div class="btn-group" data-id="<{$order.id}>" data-status="<{$order.status_code}>">
 														<if condition="$order['review_status_code'] eq 1 and $order['status_code'] eq 1 and in_array('SEVERAL-RECEIVABLES.PRINT', $permission_list)">
@@ -282,13 +286,15 @@
 																		<case value="ROYALWISSD-RECEIVABLES_DETAIL-PRICE">
 																			<th><{$single.name}></th>
 																		</case>
+																		<case value="ROYALWISSD-RECEIVABLES_PROJECT-FIXED_PRICE">
+																			<th><{$single.name}></th>
+																		</case>
 																	</switch>
 																	<eq name="single.view" value="1">
 																		<if condition="in_array($single['form'], ['pay_method', 'pos_machine', 'source', 'comment'])">
 																			<th><{$single.name}></th>
 																		</if>
 																	</eq>
-
 																</volist>
 																<th>操作</th>
 															</tr>
@@ -304,15 +310,16 @@
 																						<td rowspan="<{$single._merge_column}>"><{$single.project_type}></td>
 																					</notempty>
 																				</case>
-																			</switch>
-																			<switch name="column.code">
 																				<case value="ROYALWISSD-PROJECT-PROJECT">
 																					<notempty name="single._merge_column">
 																						<td rowspan="<{$single._merge_column}>"><{$single.project}></td>
 																					</notempty>
 																				</case>
-																			</switch>
-																			<switch name="column.code">
+																				<case value="ROYALWISSD-RECEIVABLES_PROJECT-FIXED_PRICE">
+																					<notempty name="single._merge_column">
+																						<td rowspan="<{$single._merge_column}>"><{$single.fixedPrice}></td>
+																					</notempty>
+																				</case>
 																				<case value="ROYALWISSD-RECEIVABLES_DETAIL-PRICE">
 																					<td><{$single.price}></td>
 																				</case>

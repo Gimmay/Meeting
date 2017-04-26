@@ -87,6 +87,18 @@
 				exit;
 			}
 			if(!UserLogic::isPermitted('SEVERAL-MEETING.VIEW')) $this->error('您没有查看会议的权限');
+			// 获取搜索字段
+			/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
+			$meeting_column_control_model = D('General/MeetingColumnControl');
+			$general_meeting_logic                = new GeneralMeetingLogic();
+			$meeting_type = $general_meeting_logic->getTypeByModule(MODULE_NAME);
+			$column_list_search = $meeting_column_control_model->getMeetingSearchColumn($meeting_type);
+			$search_column_name = $meeting_logic->setData('column_setting:search', $column_list_search);
+			$this->assign('column_list_search', $column_list_search);
+			$this->assign('search_column_name', $search_column_name);
+			// 获取读取字段
+			$column_list       = $meeting_column_control_model->getMeetingControlledColumn($meeting_type, $meeting_column_control_model::ACTION_READ);
+			$this->assign('column_list', $column_list);
 			/** @var \RoyalwissD\Model\MeetingModel $meeting_model */
 			$meeting_model         = D('RoyalwissD/Meeting');
 			$cms_meeting_logic     = new CMSMeetingLogic();
@@ -102,17 +114,24 @@
 				]
 			] : [];
 			// 处理会议列表URL参数/////////////
-			$list        = $meeting_model->getList(array_merge($model_control_column, $process_status, [
+			$total = $list        = $meeting_model->getList(array_merge($model_control_column, $process_status, [
 				CMSModel::CONTROL_COLUMN_PARAMETER['status']        => ['<>', 2],
 				MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['user'] => Session::getCurrentUser(),
 				MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['type'] => $general_meeting_logic->getTypeByModule(MODULE_NAME)
 			]));
 			$list        = $meeting_logic->setData('manage', ['list' => $list, 'urlParam' => I('get.')]);
+			// 获取统计数据
+			$statistics = $meeting_logic->setData('manage:statistics', [
+				'list'     => $list,
+				'total'    => $total,
+				'urlParam' => I('get.')
+			]);
 			$page_object = new Page(count($list), $this->getPageRecordCount());
 			PageLogic::setTheme1($page_object);
 			$list       = array_slice($list, $page_object->firstRow, $page_object->listRows);
 			$pagination = $page_object->show();
 			$this->assign('list', $list);
+			$this->assign('statistics', $statistics);
 			$this->assign('pagination', $pagination);
 			$this->display();
 		}
@@ -138,7 +157,7 @@
 			/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
 			$meeting_column_control_model = D('General/MeetingColumnControl');
 			$meeting_logic                = new GeneralMeetingLogic();
-			$column_list                  = $meeting_column_control_model->getMeetingControlledColumn($meeting_logic->getTypeByModule(MODULE_NAME));
+			$column_list                  = $meeting_column_control_model->getMeetingControlledColumn($meeting_logic->getTypeByModule(MODULE_NAME), $meeting_column_control_model::ACTION_WRITE);
 			$this->assign('column_list', $column_list);
 			$this->display();
 		}
@@ -164,7 +183,7 @@
 			/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
 			$meeting_column_control_model = D('General/MeetingColumnControl');
 			$general_meeting_logic        = new GeneralMeetingLogic();
-			$column_list                  = $meeting_column_control_model->getMeetingControlledColumn($general_meeting_logic->getTypeByModule(MODULE_NAME));
+			$column_list                  = $meeting_column_control_model->getMeetingControlledColumn($general_meeting_logic->getTypeByModule(MODULE_NAME), $meeting_column_control_model::ACTION_WRITE);
 			$column_list                  = $meeting_logic->setData('field_setting', $column_list);
 			$this->assign('column_list', $column_list);
 			$this->display();
@@ -221,7 +240,7 @@
 			/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
 			$meeting_column_control_model = D('General/MeetingColumnControl');
 			$meeting_logic                = new GeneralMeetingLogic();
-			$column_list                  = $meeting_column_control_model->getMeetingControlledColumn($meeting_logic->getTypeByModule(MODULE_NAME));
+			$column_list                  = $meeting_column_control_model->getMeetingControlledColumn($meeting_logic->getTypeByModule(MODULE_NAME), $meeting_column_control_model::ACTION_WRITE);
 			$this->assign('column_list', $column_list);
 			// 获取会议数据
 			$meeting_id = I('get.mid', 0, 'int');

@@ -170,6 +170,7 @@ FROM (
 	FROM $this_database.$table_grouping g
 ) tab
 WHERE status = 1 AND mid = $meeting_id AND ((assigned < capacity AND capacity > 0) OR capacity = 0)
+ORDER BY html asc
 ";
 			$result             = $this->query($sql);
 

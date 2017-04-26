@@ -266,11 +266,11 @@ try{
 									var _html    = opts.data[i].html;
 									//noinspection JSUnresolvedVariable
 									if(_keyword && _keyword.indexOf(value) != -1){
-										handler(i);
+										//handler(i);
 										return true;
 									}
 									if(_html && _html.indexOf(value) != -1){
-										handler(i);
+										//handler(i);
 										return true;
 									}
 								}
@@ -367,6 +367,8 @@ try{
 						$(this).addClass('hover');
 					}).on('mouseleave', function(){
 						$_dataItems.removeClass('hover');
+					}).on('keyup', function(){
+						console.log(123)
 					});
 					$(self).off('_private.event.change').on('_private.event.change', function(){
 						if(_blurThenClick){

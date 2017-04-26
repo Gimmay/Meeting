@@ -163,6 +163,9 @@
 														<div class="rece_item project_style">
 															<div id="name_rece"></div>
 														</div>
+														<div class="rece_item price_style">
+															<input type="text" class="form-control fixed_price" name="fixed_price1[]" placeholder="方案款" title="方案款" value="0">
+														</div>
 														<div class="rece_item pay_style">
 															<select name="payMethod1[]" class="form-control payMethod">
 																<option value="0">-----支付方式-----</option>
@@ -192,7 +195,7 @@
 														<div class="rece_item">
 															<input type="text" class="form-control comment" name="comment1[]" placeholder="备注">
 														</div>
-														<div class="rece_item">
+														<div class="rece_item other_style">
 															<span class="add glyphicon glyphicon-plus"></span>
 														</div>
 													</div>
@@ -419,6 +422,7 @@
 						var data = $(this).find('textarea').attr('data-ext');
 						data     = data.split(',');
 						$(this).parents('.rece_li').find('.price').val(data[1]);
+						$(this).parents('.rece_li').find('.fixed_price').val(data[1]);
 						ScriptObject.totalAmount()
 					}
 				}),
@@ -437,12 +441,12 @@
 					dateCell:"#receivables_time",
 					format  :"YYYY-MM-DD hh:mm:ss",
 					//isClear:false,
-					isTime  :true,// 时分秒--true
+					isTime  :true// 时分秒--true
 					/*	minDate :"2015-10-19 00:00:00",
 					 maxDate :"2016-11-8 00:00:00"*/
 				}),
 				toast          :$().QuasarToast(),
-				loading        :$().QuasarLoading(),
+				loading        :$().QuasarLoading()
 			},
 			data  :{
 				meetingStatus:parseInt('<{$meeting_status}>')

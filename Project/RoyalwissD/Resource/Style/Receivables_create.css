@@ -77,6 +77,12 @@ input, select{
 	position      : relative;
 }
 
+.rece_li .rece_item.other_style{
+	width         : 8%;
+	float         : left;
+	position      : relative;
+}
+
 .rece_li.title{
 	font-size   : 14px;
 	font-weight : bold;

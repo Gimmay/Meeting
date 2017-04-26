@@ -253,6 +253,16 @@
 				'name'   => '字段控制',
 				'code'   => 'SEVERAL-MEETING.MANAGE_COLUMN'
 			],
+			[
+				'module' => '会议',
+				'name'   => '列表字段控制',
+				'code'   => 'SEVERAL-MEETING.MANAGE_LIST_COLUMN'
+			],
+			[
+				'module' => '会议',
+				'name'   => '搜索字段控制',
+				'code'   => 'SEVERAL-MEETING.MANAGE_SEARCH_COLUMN'
+			],
 			// 消息
 			[
 				'module' => '消息',

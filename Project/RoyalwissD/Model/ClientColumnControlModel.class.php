@@ -57,7 +57,7 @@
 		 * @return array
 		 */
 		public function getClientControlledColumn($meeting_id, $action){
-			if($action == 1 || $action) $action = self::ACTION_WRITE;
+			if($action == self::ACTION_WRITE || $action) $action = self::ACTION_WRITE;
 			else $action = self::ACTION_READ;
 
 			return $this->where("mid = $meeting_id and action = $action")->select();

@@ -166,7 +166,8 @@
 			// 获取列表数据
 			$model_control_column = $this->getModelControl();
 			$list                 = $report_model->getReceivablesList(array_merge($model_control_column, [
-				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => $this->meetingID
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['meetingID']    => $this->meetingID,
+				$report_model::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus'] => ['=', 1]
 			]));
 			// 设定额外数据并筛选数据
 			$list       = $report_logic->setData('receivables:set_data', [
@@ -198,6 +199,14 @@
 			$this->assign('pay_method_list', $pay_method_model->getSelectedList($this->meetingID));
 			$this->assign('pos_machine_list', $pos_machine_model->getSelectedList($this->meetingID));
 			$this->assign('payee_list', $receivables_order_model->getPayeeSelectList($this->meetingID));
+
+
+			/** @var \RoyalwissD\Model\ClientModel $client_model */
+			$client_model = D('RoyalwissD/Client');
+			$this->assign('team_list', $client_model->getTeamSelectedList($this->meetingID));
+			/** @var \RoyalwissD\Model\UnitModel $unit_model */
+			$unit_model = D('RoyalwissD/Unit');
+			$this->assign('area_list', $unit_model->getUnitSelectedArea($this->meetingID));
 			$this->assign('source_list', ReceivablesDetailModel::RECEIVABLES_SOURCE);
 			$this->assign('default_order_column', I('get.'.CMS::URL_CONTROL_PARAMETER['orderColumn'], CMS::DEFAULT_ORDER_COLUMN));
 			$this->assign('default_order_method', I('get.'.CMS::URL_CONTROL_PARAMETER['orderMethod'], CMS::DEFAULT_ORDER_METHOD));

@@ -179,11 +179,15 @@
 					return $list;
 				break;
 				case 'client:statistics':
-					$report_template = [
+					$report_template  = [
 						'total'       => 0,
 						'signed'      => 0,
 						'consumption' => 0,
 						'receivables' => 0
+					];
+					$unit_is_new_temp = [
+						'new' => [],
+						'old' => []
 					];
 					//
 					$statistics = [
@@ -222,16 +226,21 @@
 							}
 							// 新老店判定
 							if($client['unit_is_new_code'] == 1){
-								$statistics['unitIsNew'][1]['total']++;
-								$statistics['unitIsNew'][1]['consumption'] += $client['consumption'];
-								$statistics['unitIsNew'][1]['receivables'] += $client['receivables'];
-								if($client['sign_status_code'] == 1) $statistics['unitIsNew'][1]['signed']++;
+								if(!in_array($client['unit'], $unit_is_new_temp['new'])){
+									$unit_is_new_temp['new'][] = $client['unit'];
+									$statistics['unitIsNew'][1]['total']++;
+									$statistics['unitIsNew'][1]['consumption'] += $client['consumption'];
+									$statistics['unitIsNew'][1]['receivables'] += $client['receivables'];
+									if($client['sign_status_code'] == 1) $statistics['unitIsNew'][1]['signed']++;
+								}
 							}
 							if($client['unit_is_new_code'] == 0){
-								$statistics['unitIsNew'][0]['total']++;
-								$statistics['unitIsNew'][0]['consumption'] += $client['consumption'];
-								$statistics['unitIsNew'][0]['receivables'] += $client['receivables'];
-								if($client['sign_status_code'] == 1) $statistics['unitIsNew'][0]['signed']++;
+								if(!in_array($client['unit'], $unit_is_new_temp['old'])){
+									$statistics['unitIsNew'][0]['total']++;
+									$statistics['unitIsNew'][0]['consumption'] += $client['consumption'];
+									$statistics['unitIsNew'][0]['receivables'] += $client['receivables'];
+									if($client['sign_status_code'] == 1) $statistics['unitIsNew'][0]['signed']++;
+								}
 							}
 							// 区域判定
 							$statistics['area'][$client['unit_area']]['total']++;
@@ -360,6 +369,8 @@
 					if(isset($get['minPrice'])) $min_price = $get['minPrice'];
 					if(isset($get['maxPrice'])) $max_price = $get['maxPrice'];
 					if(isset($get['payee'])) $payee = $get['payee'];
+					if(isset($get['unitArea'])) $unit_area = $get['unitArea'];
+					if(isset($get['team'])) $team = $get['team'];
 					// 1、合并单据号
 					//					for($i = 0, $key = 0; $i<count($data); $i++){
 					//						// 1、筛选数据
@@ -472,6 +483,8 @@
 						if(isset($end_time) && strtotime($original_data[$i]['time'])>=$end_time) continue;
 						if(isset($min_price) && $original_data[$i]['price']<=$min_price) continue;
 						if(isset($max_price) && $original_data[$i]['price']>=$max_price) continue;
+						if(isset($team) && $original_data[$i]['team'] != $team) continue;
+						if(isset($unit_area) && $original_data[$i]['area'] != $unit_area) continue;
 						$client_id = $original_data[$i]['cid'];
 						if(!in_array($client_id, $client_reflect['clientID'])){
 							$client_reflect['clientID'][]        = $client_id;
@@ -483,6 +496,10 @@
 						$result2[$index]['client_name'] = $original_data[$i]['client'];
 						$result2[$index]['unit']        = $original_data[$i]['unit'];
 						$result2[$index]['price'] += $original_data[$i]['price'];
+						if(!in_array($original_data[$i]['prid'], $result2[$index]['prList'])){
+							$result2[$index]['fixed_price'] += $original_data[$i]['fixed_price'];
+							$result2[$index]['prList'][] = $original_data[$i]['prid'];
+						}
 						if(!in_array($original_data[$i]['project_type_code'], $result2[$index]['project_type_code'])){
 							$result2[$index]['project_type_code'][] = $original_data[$i]['project_type_code'];
 							$result2[$index]['project_type'][]      = $original_data[$i]['project_type'];
@@ -507,10 +524,14 @@
 					$report_template = [
 						'price'       => 0,
 						'client'      => 0,
-						'_clientList' => []
+						'fixedPrice'=>0,
+						'_clientList' => [],
+						'_prList'     => []
 					];
 					$statistics      = [
 						'unit'        => [],
+						'team'        => [],
+						'area'        => [],
 						'projectType' => [],
 						'project'     => [],
 						'payMethod'   => [],
@@ -520,23 +541,37 @@
 						foreach($order['list'] as $detail){
 							if(!isset($statistics['projectType'][$detail['project_type']])) $statistics['projectType'][$detail['project_type']] = $report_template;
 							if(!isset($statistics['project'][$detail['project']])) $statistics['project'][$detail['project']] = $report_template;
-							if($detail['pay_method_code']!=0) if(!isset($statistics['payMethod'][$detail['pay_method']])) $statistics['payMethod'][$detail['pay_method']] = $report_template;
+							if($detail['pay_method_code'] != 0) if(!isset($statistics['payMethod'][$detail['pay_method']])) $statistics['payMethod'][$detail['pay_method']] = $report_template;
 							if(!isset($statistics['unit'][$detail['unit']])) $statistics['unit'][$detail['unit']] = $report_template;
+							if(!isset($statistics['team'][$detail['team']])) $statistics['team'][$detail['team']] = $report_template;
+							if(!isset($statistics['area'][$detail['area']])) $statistics['area'][$detail['area']] = $report_template;
 							// 项目类型
 							$statistics['projectType'][$detail['project_type']]['price'] += $detail['price'];
+							if(!in_array($detail['prid'], $statistics['projectType'][$detail['project_type']]['_prList'])){
+								$statistics['projectType'][$detail['project_type']]['_prList'][] = $detail['prid'];
+								$statistics['projectType'][$detail['project_type']]['fixedPrice']+=$detail['fixed_price'];
+							}
 							if(!in_array($detail['cid'], $statistics['projectType'][$detail['project_type']]['_clientList'])){
 								$statistics['projectType'][$detail['project_type']]['_clientList'][] = $detail['cid'];
 								$statistics['projectType'][$detail['project_type']]['client']++;
 							}
 							// 项目
 							$statistics['project'][$detail['project']]['price'] += $detail['price'];
+							if(!in_array($detail['prid'], $statistics['project'][$detail['project']]['_prList'])){
+								$statistics['project'][$detail['project']]['_prList'][] = $detail['prid'];
+								$statistics['project'][$detail['project']]['fixedPrice']+=$detail['fixed_price'];
+							}
 							if(!in_array($detail['cid'], $statistics['project'][$detail['project']]['_clientList'])){
 								$statistics['project'][$detail['project']]['_clientList'][] = $detail['cid'];
 								$statistics['project'][$detail['project']]['client']++;
 							}
 							// 支付方式
-							if($detail['pay_method_code']!=0){
+							if($detail['pay_method_code'] != 0){
 								$statistics['payMethod'][$detail['pay_method']]['price'] += $detail['price'];
+								if(!in_array($detail['prid'], $statistics['payMethod'][$detail['pay_method']]['_prList'])){
+									$statistics['payMethod'][$detail['pay_method']]['_prList'][] = $detail['prid'];
+									$statistics['payMethod'][$detail['pay_method']]['fixedPrice']+=$detail['fixed_price'];
+								}
 								if(!in_array($detail['cid'], $statistics['payMethod'][$detail['pay_method']]['_clientList'])){
 									$statistics['payMethod'][$detail['pay_method']]['_clientList'][] = $detail['cid'];
 									$statistics['payMethod'][$detail['pay_method']]['client']++;
@@ -544,15 +579,46 @@
 							}
 							// 汇总
 							$statistics['total']['price'] += $detail['price'];
+							if(!in_array($detail['prid'], $statistics['total']['_prList'])){
+								$statistics['total']['_prList'][] = $detail['prid'];
+								$statistics['total']['fixedPrice']+=$detail['fixed_price'];
+							}
 							if(!in_array($detail['cid'], $statistics['total']['_clientList'])){
 								$statistics['total']['_clientList'][] = $detail['cid'];
 								$statistics['total']['client']++;
 							}
 							// 会所
 							$statistics['unit'][$detail['unit']]['price'] += $detail['price'];
+							if(!in_array($detail['prid'], $statistics['unit'][$detail['unit']]['_prList'])){
+								$statistics['unit'][$detail['unit']]['_prList'][] = $detail['prid'];
+								$statistics['unit'][$detail['unit']]['fixedPrice']+=$detail['fixed_price'];
+							}
+							if(!in_array($detail['cid'], $statistics['unit'][$detail['unit']]['_clientList'])){
+								$statistics['unit'][$detail['unit']]['_clientList'][] = $detail['cid'];
+								$statistics['unit'][$detail['unit']]['client']++;
+							}
+							// 区域
+							$statistics['area'][$detail['area']]['price'] += $detail['price'];
+							if(!in_array($detail['prid'], $statistics['area'][$detail['area']]['_prList'])){
+								$statistics['area'][$detail['area']]['_prList'][] = $detail['prid'];
+								$statistics['area'][$detail['area']]['fixedPrice']+=$detail['fixed_price'];
+							}
+							if(!in_array($detail['cid'], $statistics['area'][$detail['area']]['_clientList'])){
+								$statistics['area'][$detail['area']]['_clientList'][] = $detail['cid'];
+								$statistics['area'][$detail['area']]['client']++;
+							}
+							// 团队
+							$statistics['team'][$detail['team']]['price'] += $detail['price'];
+							if(!in_array($detail['prid'], $statistics['team'][$detail['team']]['_prList'])){
+								$statistics['team'][$detail['team']]['_prList'][] = $detail['prid'];
+								$statistics['team'][$detail['team']]['fixedPrice']+=$detail['fixed_price'];
+							}
+							if(!in_array($detail['cid'], $statistics['team'][$detail['team']]['_clientList'])){
+								$statistics['team'][$detail['team']]['_clientList'][] = $detail['cid'];
+								$statistics['team'][$detail['team']]['client']++;
+							}
 						}
 					}
-
 					return $statistics;
 				break;
 				default:

@@ -14,6 +14,7 @@
 	use CMS\Model\CMSModel;
 	use General\Logic\Time;
 	use General\Model\GeneralModel;
+	use General\Model\MeetingColumnControlModel;
 	use General\Model\MeetingModel;
 	use RoyalwissD\Model\MeetingConfigureModel;
 	use General\Logic\MeetingLogic as GeneralMeetingLogic;
@@ -398,8 +399,9 @@
 					$meeting_type                 = $meeting_logic->getTypeByModule(MODULE_NAME);
 					$column_name                  = I('post.name', '');
 					$result                       = $meeting_column_control_model->modify([
-						'mtype' => $meeting_type,
-						'form'  => $column_name
+						'mtype'  => $meeting_type,
+						'action' => $meeting_column_control_model::ACTION_WRITE,
+						'form'   => $column_name
 					], ['view' => 1]);
 
 					return array_merge($result, ['__ajax__' => true]);
@@ -416,8 +418,9 @@
 					$meeting_type                 = $meeting_logic->getTypeByModule(MODULE_NAME);
 					$column_name                  = I('post.name', '');
 					$result                       = $meeting_column_control_model->modify([
-						'mtype' => $meeting_type,
-						'form'  => $column_name
+						'mtype'  => $meeting_type,
+						'action' => $meeting_column_control_model::ACTION_WRITE,
+						'form'   => $column_name
 					], ['view' => 0]);
 
 					return array_merge($result, ['__ajax__' => true]);
@@ -435,8 +438,9 @@
 					$column_name                  = I('post.name', '');
 					$must                         = isset($_POST['is_necessary']) && $_POST['is_necessary'] ? 1 : 0;
 					$result                       = $meeting_column_control_model->modify([
-						'mtype' => $meeting_type,
-						'form'  => $column_name
+						'mtype'  => $meeting_type,
+						'action' => $meeting_column_control_model::ACTION_WRITE,
+						'form'   => $column_name
 					], ['must' => $must]);
 
 					return array_merge($result, ['__ajax__' => true]);
@@ -462,20 +466,27 @@
 					$result                  = $meeting_configure_model->addColumn($data);
 					if($result['status']){
 						$last_column_index = $meeting_configure_model->getLastCustomColumnIndex();
-						C('TOKEN_ON', false);
-						$table_name = 'meeting_configure';
-						$result2    = $meeting_column_control_model->create([
+						$table_name        = 'meeting_configure';
+						$data              = [
 							'mtype'    => $meeting_type,
 							'code'     => strtoupper(MODULE_NAME."-$table_name-".$meeting_configure_model::CUSTOM_COLUMN.$last_column_index),
 							'form'     => $meeting_configure_model::CUSTOM_COLUMN.$last_column_index,
 							'table'    => $table_name,
 							'name'     => $post['field_name'],
 							'view'     => 0,
-							'must'     => 0,
 							'creatime' => Time::getCurrentTime(),
 							'creator'  => Session::getCurrentUser()
-						]);
+						];
+						$result2           = $meeting_column_control_model->create(array_merge($data, [
+							'action' => $meeting_column_control_model::ACTION_WRITE,
+							'must'   => 0
+						]));
 						if(!$result2['status']) $result['message'] = $result2['message'];
+						$result3 = $meeting_column_control_model->create(array_merge($data, [
+							'action' => $meeting_column_control_model::ACTION_SEARCH,
+							'search' => 0
+						]));
+						if(!$result3['status']) $result['message'] = $result3['message'];
 					}
 
 					return array_merge($result, ['__ajax__' => true]);
@@ -486,6 +497,26 @@
 					$result       = $upload_logic->upload($_FILES, '/Logo/');
 
 					return array_merge($result, ['__ajax__' => true,]);
+				break;
+				case 'reset_and_order_column':
+					$meeting_logic         = new CMSMeetingLogic();
+					$general_meeting_logic = new GeneralMeetingLogic();
+					$result                = $meeting_logic->handlerRequest('reset_and_order_column', [
+						'meetingType' => $general_meeting_logic->getTypeByModule(MODULE_NAME),
+						'post'        => I('post.'),
+					]);
+
+					return array_merge($result, ['__ajax__' => true]);
+				break;
+				case 'set_search_configure':
+					$meeting_logic         = new CMSMeetingLogic();
+					$general_meeting_logic = new GeneralMeetingLogic();
+					$result                = $meeting_logic->handlerRequest('set_search_configure', [
+						'meetingType' => $general_meeting_logic->getTypeByModule(MODULE_NAME),
+						'post'        => I('post.'),
+					]);
+
+					return array_merge($result, ['__ajax__' => true]);
 				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];
@@ -505,10 +536,15 @@
 					foreach($data['list'] as $key => $meeting){
 						// 1、筛选数据
 						if(isset($keyword)){
-							//todo 获取筛选配置
-							$found = 0;
-							if($found == 0 && stripos($meeting['name'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($meeting['name_pinyin'], $keyword) !== false) $found = 1;
+							/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
+							$meeting_column_control_model = D('General/MeetingColumnControl');
+							$general_meeting_logic        = new GeneralMeetingLogic();
+							$search_list                  = $meeting_column_control_model->getMeetingSearchColumn($general_meeting_logic->getTypeByModule(MODULE_NAME), true);
+							$found                        = 0;
+							foreach($search_list as $value){
+								if($found == 0 && stripos($meeting[$value['form']], $keyword) !== false) $found = 1;
+							}
+							if(count($search_list) == 0) $found = 1;
 							if($found == 0) continue;
 						}
 						if(isset($status) && $status != $meeting['status']) continue;
@@ -517,6 +553,32 @@
 						$meeting['process_status_code'] = $meeting['process_status'];
 						$meeting['process_status']      = MeetingModel::PROCESS_STATUS[$meeting['process_status_code']];
 						$list[]                         = $meeting;
+					}
+
+					return $list;
+				break;
+				case 'get_detail':
+					$list        = [];
+					$column_list = $data['columnValue'];
+					$column_name = $data['columnName'];
+					foreach($data['dataList'] as $key => $meeting){
+						$temp_head = $temp_body = [];
+						foreach($meeting as $k => $val){
+							if(!in_array($k, $column_list)) continue;
+							$i             = array_search($k, $column_list);
+							$temp_head[$k] = $column_name[$i];
+							switch($k){
+								case 'status':
+									$val = GeneralModel::STATUS[$val];
+								break;
+								case 'process_status':
+									$val = MeetingModel::PROCESS_STATUS[$val];
+								break;
+							}
+							$temp_body[$k] = $val;
+						}
+						if(count($list) == 0) $list[] = $temp_head;
+						$list[] = $temp_body;
 					}
 
 					return $list;
@@ -530,6 +592,21 @@
 
 					return $result;
 				break;
+				case 'column_setting:search':
+					$result = '';
+					foreach($data as $val){
+						if($val['search'] == 1) $result .= "$val[name] / ";
+					}
+
+					return trim($result, ' / ');
+				break;
+				case 'manage:statistics':
+					$statistics = [
+						'total'=>count($data['total']),
+						'list'=>count($data['list'])
+					];
+					return $statistics;
+				break;
 				default:
 					return $data;
 				break;
@@ -539,18 +616,22 @@
 		/**
 		 * 获取可控制的字段列表
 		 *
-		 * @param bool $just_include_custom_column 只包含自定义字段
+		 * @param int $action 操作类型
 		 *
 		 * @return array
 		 */
-		public function getControlledColumn($just_include_custom_column = false){
+		public function getControlledColumn($action){
 			/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
 			$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
 			/** @var \General\Model\MeetingModel $meeting_model */
 			$meeting_model = D('General/Meeting');
 			$result        = [];
 			foreach($meeting_model->getColumnList() as $val){
-				if(!in_array($val['column_name'], [
+				if($action == MeetingColumnControlModel::ACTION_READ) $data = [
+					'id',
+					'name_pinyin'
+				];
+				elseif($action == MeetingColumnControlModel::ACTION_WRITE) $data = [
 					'creator',
 					'status',
 					'creatime',
@@ -558,10 +639,46 @@
 					'type',
 					'process_status',
 					'name_pinyin'
+				];
+				else $data = [];
+				if(!in_array($val['column_name'], $data)) $result[] = $val;
+			}
+			foreach($meeting_configure_model->getColumnList(true) as $val){
+				// 排除不必要的字段
+				if(!in_array($val['column_name'], [
+					'creator',
+					'status',
+					'creatime',
+					'id'
 				])
 				) $result[] = $val;
 			}
-			foreach($meeting_configure_model->getColumnList($just_include_custom_column) as $val){
+
+			return $result;
+		}
+
+		/**
+		 * 获取检索的字段列表
+		 *
+		 * @return array
+		 */
+		public function getSearchColumn(){
+			/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
+			$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
+			/** @var \General\Model\MeetingModel $meeting_model */
+			$meeting_model = D('General/Meeting');
+			$result        = [];
+			foreach($meeting_model->getColumnList() as $val){
+				if(in_array($val['column_name'], [
+					'name',
+					'name_pinyin',
+					'host',
+					'plan',
+					'place',
+					'brief'
+				])) $result[] = $val;
+			}
+			foreach($meeting_configure_model->getColumnList(true) as $val){
 				// 排除不必要的字段
 				if(!in_array($val['column_name'], [
 					'creator',

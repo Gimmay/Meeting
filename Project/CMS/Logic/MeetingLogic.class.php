@@ -13,6 +13,7 @@
 	use General\Logic\Time;
 	use Quasar\Utility\StringPlus;
 	use RoyalwissD\Logic\MeetingLogic as RoyalwissDMeetingLogic;
+	use RoyalwissD\Model\MeetingModel;
 
 	class MeetingLogic extends CMSLogic{
 		/** 会议管理页面URL控制参数 */
@@ -53,7 +54,7 @@
 					]));
 					if($result['status']){
 						$meeting_manager_logic = new MeetingManagerLogic();
-						$result2 = $meeting_manager_logic->create($result['id'], Session::getCurrentUser(), 0);
+						$result2               = $meeting_manager_logic->create($result['id'], Session::getCurrentUser(), 0);
 						if(!$result2['status']) return ['status' => false, 'message' => '初始化会务人员失败'];
 					}
 
@@ -130,7 +131,7 @@
 							// 分配角色
 							/** @var \General\Model\UserModel $user_model */
 							$user_model = D('General/User');
-							$result2 = $user_model->assignRole($role_id, $user_id, $meeting_id);
+							$result2    = $user_model->assignRole($role_id, $user_id, $meeting_id);
 							if($result2['status']) $count++;
 						}
 					}
@@ -165,15 +166,36 @@
 					return array_merge($result, ['__ajax__' => true]);
 				break;
 				case 'get_detail':
-					/** @var \General\Model\MeetingModel $meeting_model */
-					$meeting_model = D('General/Meeting');
-					$meeting_id    = I('post.id', 0, 'int');
-					if($meeting_model->fetch(['id' => $meeting_id])){
-						$result = $meeting_model->getObject();
 
-						return array_merge($result, ['__ajax__' => true]);
+
+
+					/** @var \RoyalwissD\Model\MeetingModel $meeting_model */
+					$meeting_model = D('RoyalwissD/Meeting');
+					/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
+					$meeting_column_control_model = D('General/MeetingColumnControl');
+					$general_meeting_logic = new GeneralMeetingLogic();
+					$meeting_logic = new RoyalwissDMeetingLogic();
+					$meeting_id                  = I('post.id', 0, 'int');
+					$column_list                 = $meeting_column_control_model->getMeetingControlledColumn($general_meeting_logic->getTypeByModule(MODULE_NAME), $meeting_column_control_model::ACTION_READ);
+					$column_head                 = $column_name_list = [];
+					$list                        = $meeting_model->getList(array_merge([
+						MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['meetingID'] => ['=', $meeting_id],
+						MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['user'] => Session::getCurrentUser(),
+						MeetingModel::CONTROL_COLUMN_PARAMETER_SELF['type'] => $general_meeting_logic->getTypeByModule(MODULE_NAME)
+					]));
+					foreach($column_list as $column){
+						if(!$column['view']) continue;
+						$column_head[]      = $column['name'];
+						$column_name_list[] = $column['form'];
 					}
-					else return ['status' => true, 'message' => '该会议不存在'];
+					$list = $meeting_logic->setData('get_detail', [
+						'dataList'    => $list,
+						'columnValue' => $column_name_list,
+						'columnName'  => $column_head
+					]);
+
+					return array_merge($list, ['__ajax__' => true]);
+
 				break;
 				case 'modify':
 					if(!in_array('SEVERAL-MEETING.MODIFY', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
@@ -237,6 +259,95 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
+				case 'reset_and_order_column':
+					if(!UserLogic::isPermitted('SEVERAL-MEETING.MANAGE_LIST_COLUMN')) return [
+						'status'   => false,
+						'message'  => '您没有控制列表字段的权限',
+						'__ajax__' => true
+					];
+					/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
+					$meeting_column_control_model = D('General/MeetingColumnControl');
+					$meeting_type                 = $opt['meetingType'];
+					$post                         = $opt['post'];
+					// 锁表
+					$meeting_column_control_model->lock('read');
+					$meeting_column_control_model->lock('write');
+					// 删除旧数据
+					$meeting_column_control_model->where([
+						'mtype'  => $meeting_type,
+						'action' => $meeting_column_control_model::ACTION_READ
+					])->delete();
+					// 写入数据
+					$data = [];
+					foreach($post['code'] as $key => $val){
+						$data[] = [
+							'code'     => $post['code'][$key],
+							'name'     => $post['name'][$key],
+							'form'     => $post['form'][$key],
+							'view'     => $post['view'][$key],
+							'must'     => $post['must'][$key],
+							'table'    => $post['table'][$key],
+							'mtype'    => $meeting_type,
+							'action'   => $meeting_column_control_model::ACTION_READ,
+							'creator'  => Session::getCurrentUser(),
+							'creatime' => Time::getCurrentTime()
+						];
+					}
+					$result = $meeting_column_control_model->addAll($data, [
+						'mtype'  => $meeting_type,
+						'action' => $meeting_column_control_model::ACTION_READ
+					], true);
+					// 解锁
+					$meeting_column_control_model->unlock();
+
+					return $result ? [
+						'status'   => true,
+						'message'  => '设置成功',
+						'__ajax__' => true
+					] : [
+						'status'   => false,
+						'message'  => '设置失败',
+						'__ajax__' => true
+					];
+				break;
+				case 'set_search_configure':
+					if(!UserLogic::isPermitted('SEVERAL-MEETING.MANAGE_SEARCH_COLUMN')) return [
+						'status'   => false,
+						'message'  => '您没有管理搜索字段的权限',
+						'__ajax__' => true
+					];
+					$post = $opt['post'];
+					$column_str = $post['column'];
+					$column     = explode(',', $column_str);
+					$meeting_type                 = $opt['meetingType'];
+					/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
+					$meeting_column_control_model = D('General/MeetingColumnControl');
+					$meeting_column_control_model->where([
+						'mtype'    => $meeting_type,
+						'action' => $meeting_column_control_model::ACTION_SEARCH
+					])->save(['search' => 0]);
+					if($column_str != ''){
+						$result = $meeting_column_control_model->where([
+							'mtype'    => $meeting_type,
+							'action' => $meeting_column_control_model::ACTION_SEARCH,
+							'form'   => ['in', $column]
+						])->save(['search' => 1]);
+						return $result ? [
+							'status'   => true,
+							'message'  => '设定成功',
+							'__ajax__' => true
+						] : [
+							'status'   => false,
+							'message'  => '设定失败',
+							'__ajax__' => true
+						];
+					}
+					else return [
+						'status'   => true,
+						'message'  => '设定成功',
+						'__ajax__' => true
+					];
+				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];
 				break;
@@ -244,6 +355,12 @@
 		}
 
 		public function setData($type, $data){
+			switch($type){
+				case '':
+				break;
+				default:
+					break;
+			}
 		}
 
 		/**
@@ -298,20 +415,30 @@
 					'name'
 				];
 
-				return in_array($column_name, $list);
+				return in_array($column_name, $list) ? 1 : 0;
+			};
+			$setSearchColumn       = function ($column_name){
+				$list = [
+					'name',
+					'name_pinyin'
+				];
+
+				return in_array($column_name, $list) ? 1 : 0;
 			};
 			$general_meeting_logic = new GeneralMeetingLogic();
 			// 2、瑞丽斯成交会
 			/** @var \General\Model\MeetingColumnControlModel $meeting_column_control_model */
 			$meeting_column_control_model = D('General/MeetingColumnControl');
 			$meeting_column_control_model->where('0 = 0')->delete(); // 先清除旧数据
-			$meeting_logic       = new RoyalwissDMeetingLogic();
-			$module              = 'RoyalwissD';
-			$meeting_type        = $general_meeting_logic->getTypeByModule($module);
-			$meeting_column_list = $meeting_logic->getControlledColumn(true);
-			$data                = [];
-			foreach($meeting_column_list as $value){
-				$data[] = [
+			$meeting_logic              = new RoyalwissDMeetingLogic();
+			$module                     = 'RoyalwissD';
+			$meeting_type               = $general_meeting_logic->getTypeByModule($module);
+			$meeting_write_column_list        = $meeting_logic->getControlledColumn($meeting_column_control_model::ACTION_WRITE);
+			$meeting_read_column_list        = $meeting_logic->getControlledColumn($meeting_column_control_model::ACTION_READ);
+			$meeting_search_column_list = $meeting_logic->getSearchColumn();
+			$data_write                 = $data_search = $data_read = [];
+			foreach($meeting_write_column_list as $value){
+				$data_write[] = [
 					'mtype'    => $meeting_type,
 					'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
 					'form'     => $value['column_name'],
@@ -320,14 +447,45 @@
 					'must'     => $setNecessaryColumn($value['column_name']),
 					'view'     => 1,
 					'creatime' => Time::getCurrentTime(),
-					'creator'  => Session::getCurrentUser()
+					'creator'  => Session::getCurrentUser(),
+					'action'   => $meeting_column_control_model::ACTION_WRITE
 				];
 			}
-			$result = $meeting_column_control_model->addAll($data);
+			foreach($meeting_search_column_list as $value){
+				$data_search[] = [
+					'mtype'    => $meeting_type,
+					'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
+					'form'     => $value['column_name'],
+					'table'    => $value['table_name'],
+					'name'     => $value['column_comment'],
+					'view'     => 1,
+					'search'   => $setSearchColumn($value['column_name']),
+					'creatime' => Time::getCurrentTime(),
+					'creator'  => Session::getCurrentUser(),
+					'action'   => $meeting_column_control_model::ACTION_SEARCH
+				];
+			}
+			foreach($meeting_read_column_list as $value){
+				$data_read[] = [
+					'mtype'    => $meeting_type,
+					'code'     => strtoupper("$module-$value[table_name]-$value[column_name]"),
+					'form'     => $value['column_name'],
+					'table'    => $value['table_name'],
+					'name'     => $value['column_comment'],
+					'view'     => 1,
+					'creatime' => Time::getCurrentTime(),
+					'creator'  => Session::getCurrentUser(),
+					'action'   => $meeting_column_control_model::ACTION_READ
+				];
+			}
 
-			return $result ? [
+			$result1 = $meeting_column_control_model->addAll($data_write);
+			$result2 = $meeting_column_control_model->addAll($data_search);
+			$result3 = $meeting_column_control_model->addAll($data_read);
+
+			return ($result1 && $result2 && $result3) ? [
 				'status'  => true,
-				'message' => '已初始化会议字段记录 ('.count($meeting_column_list).')'
+				'message' => '已初始化会议字段记录 ('.count($meeting_write_column_list).')'
 			] : [
 				'status'  => false,
 				'message' => '初始化会议字段记录失败'

@@ -1,6 +1,10 @@
 /*
 	Meeting manage
 */
+.qrcode-style{
+	width  : 120px;
+	height : 120px;
+}
 
 .has-error .error{
 	color : #A94442;

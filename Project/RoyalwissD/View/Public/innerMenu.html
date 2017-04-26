@@ -18,11 +18,11 @@
 							<a href="<{:U('Message/manage', ['mid'=>I('get.mid', 0, 'int')])}>">消息管理</a>
 						</li>
 					</if>
-					<if condition="in_array('SEVERAL-BADGE.VIEW', $permission_list)">
+					<!--<if condition="in_array('SEVERAL-BADGE.VIEW', $permission_list)">
 						<li class="<if condition='$cv_name eq Badge_manage'>active</if>">
 							<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">胸卡设计</a>
 						</li>
-					</if>
+					</if>-->
 					<if condition="in_array('SEVERAL-PROJECT.VIEW', $permission_list)">
 						<li class="<if condition='$cv_name eq Project_manage'>active</if>">
 							<a href="<{:U('Project/manage', ['mid'=>I('get.mid', 0, 'int')])}>">项目管理</a>
@@ -133,7 +133,7 @@
 					</if>
 				</ul>
 			</li>
-			<li class="side_item cls <if condition='$c_name eq Recycle'>active</if>">
+			<!--<li class="side_item cls <if condition='$c_name eq Recycle'>active</if>">
 				<div class="side-item-link no_link">
 					<i class="icon_nav glyphicon glyphicon-trash"></i> <span class="nav-label">回收站管理</span>
 					<span class="arrow glyphicon glyphicon-chevron-left"></span>
@@ -161,7 +161,7 @@
 						<a href="<{:U('Recycle/room',['mid'=>I('get.mid',0,'int')])}>">酒店房间管理</a>
 					</li>
 				</ul>
-			</li>
+			</li>-->
 		</ul>
 	</div>
 </div>

@@ -72,12 +72,14 @@
 					foreach($post['name'] as $key => $project_id){
 						if(!$project_id) continue;
 						$project_id_list[] = $project_id;
+						$fixed_price       = $post["fixed_price".($key+1)][0];
 						$project_data[]    = [
 							'_batch_save_id'   => $batch_id,
 							'_batch_column_id' => $key,
 							'oid'              => $result2['id'],
 							'mid'              => $meeting_id,
 							'project_id'       => $project_id,
+							'fixed_price'      => $fixed_price,
 							'type'             => 1,
 							'creatime'         => Time::getCurrentTime(),
 							'creator'          => Session::getCurrentUser()
@@ -852,6 +854,7 @@
 							$result[$index]['projectCount']++;
 							// 初始化项目列表的合并数
 							$data[$i]['_merge_column'] = 1;
+							$data[$i]['fixedPrice'] = $data[$i]['fixed_price'];
 							// 构建项目合并判定的回溯映射表 可由项目ID映射到data列表的数字下标
 							$order_reflect['index'][$order_id]['projectIndex'][$project_id] = $i;
 						}
@@ -862,7 +865,9 @@
 						// 统计项目相同合并计数
 						// 统计同一个收据下的总金额
 						if(!isset($result[$index]['price'])) $result[$index]['price'] = 0;
+						if(!isset($result[$index]['fixed_price'])) $result[$index]['fixed_price'] = 0;
 						$result[$index]['price'] += $data[$i]['price'];
+						$result[$index]['fixed_price'] += $data[$i]['fixedPrice'];
 						$data[$i]['source_code']              = $data[$i]['source'];
 						$data[$i]['source']                   = ReceivablesDetailModel::RECEIVABLES_SOURCE[$data[$i]['source']];
 						$result[$index]['list'][]             = &$data[$i];

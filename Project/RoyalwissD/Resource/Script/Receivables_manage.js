@@ -734,6 +734,9 @@ $(function(){
 			}
 		})
 	});
+	$('#configure_modal').on('hide.bs.modal', function (e) {
+		location.reload();
+	})
 });
 // 修改收款不为空控制
 function checkIsEmptyAlter(){

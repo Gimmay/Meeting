@@ -72,8 +72,8 @@
 }
 
 .order_number{
-	min-width : 80px;
-	width     : 7%;
+	min-width : 60px;
+	width     : 6%;
 }
 
 .payee{
@@ -87,8 +87,8 @@
 }
 
 .time{
-	min-width : 60px;
-	width     : 6%;
+	min-width : 80px;
+	width     : 7%;
 }
 
 .review_status{
@@ -132,6 +132,11 @@
 }
 
 .price{
+	min-width : 50px;
+	width     : 5%;
+}
+
+.fixed_price{
 	min-width : 50px;
 	width     : 5%;
 }

@@ -75,4 +75,32 @@ AND t.TABLE_NAME = '$table_meeting'
 
 			return $list;
 		}
+
+		/**
+		 * 获取检索列表
+		 *
+		 * @return array
+		 */
+		public function getSearchList(){
+			$table_meeting   = $this->tableName;
+			$common_database = self::DATABASE_NAME;
+			$list = $this->query("
+SELECT
+	c.TABLE_SCHEMA,
+	c.TABLE_NAME,
+	c.COLUMN_NAME,
+	c.DATA_TYPE,
+	c.CHARACTER_MAXIMUM_LENGTH,
+	c.COLUMN_TYPE,
+	c.COLUMN_COMMENT,
+	'fixed' TYPE
+FROM information_schema.`TABLES` t
+JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
+WHERE t.TABLE_SCHEMA = '$common_database'
+AND t.TABLE_NAME = '$table_meeting'
+AND COLUMN_NAME IN ('name, name_pinyin, host, plan, place, brief')
+");
+
+			return $list;
+		}
 	}

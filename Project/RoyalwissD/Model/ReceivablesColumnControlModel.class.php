@@ -99,6 +99,7 @@
 			$table_project_type       = ProjectTypeModel::TABLE_NAME;
 			$table_pay_method         = ReceivablesPayMethodModel::TABLE_NAME;
 			$table_pos_machine        = ReceivablesPosMachineModel::TABLE_NAME;
+			$table_receivables_project= ReceivablesProjectModel::TABLE_NAME;
 			$table_receivables_detail = ReceivablesDetailModel::TABLE_NAME;
 			$table_client             = ClientModel::TABLE_NAME;
 			$table_user              = UserModel::TABLE_NAME;
@@ -132,6 +133,20 @@ JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
 WHERE t.TABLE_SCHEMA = '$this_database'
 AND t.TABLE_NAME = '$table_client'
 AND COLUMN_NAME = 'name'
+UNION
+SELECT
+	c.TABLE_SCHEMA,
+	c.TABLE_NAME,
+	c.COLUMN_NAME,
+	c.DATA_TYPE,
+	c.CHARACTER_MAXIMUM_LENGTH,
+	c.COLUMN_TYPE,
+	c.COLUMN_COMMENT
+FROM information_schema.`TABLES` t
+JOIN information_schema.`COLUMNS` c ON c.TABLE_NAME = t.TABLE_NAME
+WHERE t.TABLE_SCHEMA = '$this_database'
+AND t.TABLE_NAME = '$table_receivables_project'
+AND COLUMN_NAME = 'fixed_price'
 UNION
 SELECT
 	c.TABLE_SCHEMA,

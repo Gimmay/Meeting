@@ -103,11 +103,11 @@
 												</div>
 												<div class="col-sm-4">
 													<div class="input-group">
-														<span class="input-group-addon">POS机　</span>
-														<select name="posMachine" class="form-control" title="">
+														<span class="input-group-addon">区域　　</span>
+														<select name="unitArea" class="form-control" title="" value="<{$_GET['unitArea']}>">
 															<option value="">---无限制---</option>
-															<volist name="pos_machine_list" id="single">
-																<if condition="isset($_GET['posMachine']) and $_GET['posMachine'] eq $single['value']">
+															<volist name="area_list" id="single">
+																<if condition="isset($_GET['unitArea']) and $_GET['unitArea'] eq $single['value']">
 																	<option value="<{$single.value}>" selected><{$single.html}></option>
 																	<else/>
 																	<option value="<{$single.value}>"><{$single.html}></option>
@@ -116,6 +116,54 @@
 														</select>
 													</div>
 												</div>
+												<div class="col-sm-4">
+													<div class="input-group">
+														<span class="input-group-addon" title="">团队　　</span>
+														<select name="team" class="form-control" title="" value="<{$_GET['team']}>">
+															<option value="">---无限制---</option>
+															<volist name="team_list" id="single">
+																<if condition="isset($_GET['team']) and $_GET['team'] eq $single['value']">
+																	<option value="<{$single.value}>" selected><{$single.html}></option>
+																	<else/>
+																	<option value="<{$single.value}>"><{$single.html}></option>
+																</if>
+															</volist>
+														</select>
+													</div>
+												</div>
+												<!--<div class="col-sm-4">-->
+												<!--<div class="input-group">-->
+												<!--<span class="input-group-addon">POS机　</span>-->
+												<!--<select name="posMachine" class="form-control" title="">-->
+												<!--<option value="">-&#45;&#45;无限制-&#45;&#45;</option>-->
+												<!--<volist name="pos_machine_list" id="single">-->
+												<!--<if condition="isset($_GET['posMachine']) and $_GET['posMachine'] eq $single['value']">-->
+												<!--<option value="<{$single.value}>" selected><{$single.html}></option>-->
+												<!--<else/>-->
+												<!--<option value="<{$single.value}>"><{$single.html}></option>-->
+												<!--</if>-->
+												<!--</volist>-->
+												<!--</select>-->
+												<!--</div>-->
+												<!--</div>-->
+
+												<!--<div class="col-sm-4">-->
+												<!--<div class="input-group">-->
+												<!--<span class="input-group-addon">收款人　</span>-->
+												<!--<select class="form-control" name="payee" title="">-->
+												<!--<option value="">-&#45;&#45;无限制-&#45;&#45;</option>-->
+												<!--<volist name="payee_list" id="single">-->
+												<!--<if condition="isset($_GET['payee']) and $_GET['payee'] eq $single['value']">-->
+												<!--<option value="<{$single.value}>" selected><{$single.html}></option>-->
+												<!--<else/>-->
+												<!--<option value="<{$single.value}>"><{$single.html}></option>-->
+												<!--</if>-->
+												<!--</volist>-->
+												<!--</select>-->
+												<!--</div>-->
+												<!--</div>-->
+											</div>
+											<div class="col-sm-12 mb_10">
 												<div class="col-sm-4">
 													<div class="input-group">
 														<span class="input-group-addon">收款来源</span>
@@ -126,23 +174,6 @@
 																	<option value="<{$key}>" selected><{$single}></option>
 																	<else/>
 																	<option value="<{$key}>"><{$single}></option>
-																</if>
-															</volist>
-														</select>
-													</div>
-												</div>
-											</div>
-											<div class="col-sm-12 mb_10">
-												<div class="col-sm-4">
-													<div class="input-group">
-														<span class="input-group-addon">收款人　</span>
-														<select class="form-control" name="payee" title="">
-															<option value="">---无限制---</option>
-															<volist name="payee_list" id="single">
-																<if condition="isset($_GET['payee']) and $_GET['payee'] eq $single['value']">
-																	<option value="<{$single.value}>" selected><{$single.html}></option>
-																	<else/>
-																	<option value="<{$single.value}>"><{$single.html}></option>
 																</if>
 															</volist>
 														</select>
@@ -193,14 +224,16 @@
 									</style>
 									<table class="table table-bordered">
 										<tr>
-											<th width="33.3%"></th>
-											<th width="33.3%">合计金额(元)</th>
-											<th width="33.3%">客户数</th>
+											<th width="25%"></th>
+											<th width="25%">实收合计(元)</th>
+											<th width="25%">方案款(元)</th>
+											<th width="25%">客户数</th>
 										</tr>
 										<tr></tr>
 										<tr>
 											<td>汇总</td>
 											<td><{$statistics.total.price}></td>
+											<td><{$statistics.total.fixedPrice}></td>
 											<td><{$statistics.total.client}></td>
 										</tr>
 										<tr></tr>
@@ -211,6 +244,7 @@
 											<tr>
 												<td><{$key}></td>
 												<td><{$single.price}></td>
+												<td><{$single.fixedPrice}></td>
 												<td><{$single.client}></td>
 											</tr>
 										</volist>
@@ -222,6 +256,7 @@
 											<tr>
 												<td><{$key}></td>
 												<td><{$single.price}></td>
+												<td><{$single.fixedPrice}></td>
 												<td><{$single.client}></td>
 											</tr>
 										</volist>
@@ -234,11 +269,34 @@
 											<tr>
 												<td><{$key}></td>
 												<td><{$single.price}></td>
+												<td><{$single.fixedPrice}></td>
 												<td><{$single.client}></td>
 											</tr>
 										</volist>
 										<tr></tr>
 
+										<tr>
+											<td colspan="4" style="text-align: center"><b>区域统计</b></td>
+										</tr>
+										<volist name="statistics.area" id="single">
+											<tr>
+												<td><{$key}></td>
+												<td><{$single.price}></td>
+												<td><{$single.fixedPrice}></td>
+												<td><{$single.client}></td>
+											</tr>
+										</volist>
+										<tr>
+											<td colspan="4" style="text-align: center"><b>团队统计</b></td>
+										</tr>
+										<volist name="statistics.team" id="single">
+											<tr>
+												<td><{$key}></td>
+												<td><{$single.price}></td>
+												<td><{$single.fixedPrice}></td>
+												<td><{$single.client}></td>
+											</tr>
+										</volist>
 										<tr>
 											<td colspan="4" style="text-align: center"><b>会所统计</b></td>
 										</tr>
@@ -246,7 +304,8 @@
 											<tr>
 												<td><{$key}></td>
 												<td><{$single.price}></td>
-												<td>-</td>
+												<td><{$single.fixedPrice}></td>
+												<td><{$single.client}></td>
 											</tr>
 										</volist>
 									</table>
@@ -256,13 +315,14 @@
 								<thead>
 									<tr>
 										<th>序号</th>
-										<th data-column="client_name">客户名称</th>
-										<th data-column="unit">客户名称</th>
+										<th data-column="client_name">客户</th>
+										<th data-column="unit">会所</th>
 										<th data-column="price">收款金额(元)</th>
-										<th data-column="project_type">项目类型</th>
-										<th data-column="project">项目</th>
-										<th data-column="pay_method">支付方式</th>
-										<th data-column="pos_machine">POS机</th>
+										<th data-column="fixed_price">方案款(元)</th>
+										<th>项目类型</th>
+										<th>项目</th>
+										<th>支付方式</th>
+										<th>POS机</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -272,6 +332,7 @@
 											<td><{$single.client_name}></td>
 											<td><{$single.unit}></td>
 											<td><{$single.price}></td>
+											<td><{$single.fixed_price}></td>
 											<td>
 												<volist name="single.project_type" id="project_type">
 													<span class="labelClass"><{$project_type}></span>

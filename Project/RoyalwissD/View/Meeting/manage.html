@@ -81,20 +81,34 @@
 										</li>
 									</ul>
 								</div>
-								<form action="" method="get">
-									<div class="input-group repertory_text">
-										<input type="search" name="keyword" id="keyword" class="form-control" placeholder="会议/拼音简码" value="<{:I('get.keyword', '')}>">
+
+								<div class="input-group repertory_text">
+									<input name="p" type="hidden" value="1">
+									<div class="input-group-addon" data-toggle="modal" data-target="#search_config_modal">
+										<b class="glyphicon glyphicon-cog"></b>
+									</div>
+									<input type="search" name="keyword" id="keyword" class="form-control" placeholder="<{$search_column_name}>" value="<{:I('get.keyword', '')}>">
 									<span class="input-group-btn">
 										<button type="button" id="main_search" class="btn btn-default main_search">搜索</button>
 									</span>
-										<!-- 避免回车提交 -->
-										<input style="display:none" mce_style="display:none">
-									</div>
-									<a type="reset" class="btn btn-default main_search" href="<{:U('')}>">查看所有</a>
-								</form>
+									<!-- 避免回车提交 -->
+									<input style="display:none" mce_style="display:none">
+								</div>
+								<a type="reset" class="btn btn-default main_search" href="<{:U('')}>">查看所有</a>
 							</div>
 						</if>
 						<div class="table_wrap">
+							<div class="row mb_10" style="border-bottom: 1px solid #E1E1E1; padding-bottom: 5px;">
+								<div class="col-sm-6">
+									<span class="current_number">当前 <b class="color-red"><{$statistics.list}></b> 场会议</span>，
+									<span class="total_client">总共 <b class="color-red"><{$statistics.total}></b> 场会议</span>
+								</div>
+								<if condition="in_array('SEVERAL-CLIENT.MANAGE_LIST_COLUMN', $permission_list)">
+									<div class="col-sm-6 text-right">
+										<span class="custom_list" data-toggle="modal" data-target="#list_menu"><i class="glyphicon glyphicon-list"></i>&nbsp;列表字段控制</span>
+									</div>
+								</if>
+							</div>
 							<ul class="meeting_list">
 								<volist name="list" id="meeting">
 									<li class="meeting_li clearfix">
@@ -197,62 +211,9 @@
 						<div class="title">
 							<span>详情</span>
 						</div>
-						<div class="info">
-							<div class="li">
-								<span>单位：</span> <span class="meeting_name"></span>
-							</div>
-							<div class="li">
-								<span>状态：</span> <span class="status"></span>
-							</div>
-							<div class="li">
-								<span>类型：</span> <span class="type"></span>
-							</div>
-							<div class="li">
-								<span>主办方：</span> <span class="host"></span>
-							</div>
-							<div class="li">
-								<span>策划方：</span> <span class="plan"></span>
-							</div>
-							<div class="li">
-								<span>举办地点：</span> <span class="place"></span>
-							</div>
-							<div class="li">
-								<span>会议酒店：</span> <span class="hotel"></span>
-							</div>
-							<div class="li">
-								<span>开始结束时间：</span> <span class="setime"></span>
-							</div>
-							<div class="li">
-								<span>负责人：</span> <span class="director_name"></span>
-							</div>
-							<div class="li">
-								<span>创建时间：</span> <span class="create_time"></span>
-							</div>
-							<div class="li">
-								<span>备注：</span> <span class="comment"></span>
-							</div>
-							<div class="li">
-								<span>简介：</span> <span class="brief"></span>
-							</div>
-							<div class="li">
-								<span>消息类型：</span><span class="config_message_type"></span>
-							</div>
-						</div>
-						<!--	<div class="btn_fun">
-								<a data-toggle="modal" data-target="#alter_room">选择消息模板</a>
-								<a href="javascript:void(0)">胸卡设计</a> <a href="javascript:void(0)">选择酒店</a>
-								<a href="javascript:void(0)">会议管理人员</a> <a href="javascript:void(0)">签到点</a>
-							</div>-->
-						<div class="d_list">
-							<div class="list_title">二维码</div>
-							<div class="QRcode img">
-								<img src="">
-							</div>
-							<div class="list_title">logo图</div>
-							<div class="logo img">
-								<img src="">
-							</div>
-						</div>
+						<table class="table table-bordered">
+							<tbody class="info"></tbody>
+						</table>
 					</div>
 				</div>
 			</div>
@@ -452,6 +413,125 @@
 			</div>
 		</div>
 	</div>
+	<!--搜索配置-->
+	<div class="modal fade" id="search_config_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h2 class="modal-title">搜索设置</h2>
+				</div>
+				<div class="modal-body">
+					<form action="" class="form-horizontal">
+						<input type="hidden" name="requestType" value="set_search_configure">
+						<input type="hidden" name="column">
+						<div class="panel panel-info">
+							<div class="panel-heading"><h3>搜索字段选择</h3></div>
+							<div class="panel-body">
+								<div class="row mb_10 line_b text-right">
+									<div class="col-sm-8 mb_10"></div>
+									<div class="col-sm-2 mb_10 sc_check_all">
+										<button type="button" class="btn btn-xs btn-success btn-block" data-name="name">全选</button>
+									</div>
+									<div class="col-sm-2 mb_10 sc_cancel">
+										<button type="button" class="btn btn-xs btn-danger btn-block" data-name="name">取消</button>
+									</div>
+								</div>
+								<div class="row mb_10 line_b base_fields">
+									<volist name="column_list_search" id="value">
+										<if condition="$value['search'] eq 1">
+											<div class="col-sm-3 btn-item mb_10 active">
+												<button type="button" class="btn btn-sm btn-info btn-block" data-name="<{$value.form}>"><{$value.name}></button>
+											</div>
+											<else/>
+											<div class="col-sm-3 btn-item mb_10">
+												<button type="button" class="btn btn-sm btn-default btn-block" data-name="<{$value.form}>"><{$value.name}></button>
+											</div>
+										</if>
+									</volist>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-save">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--自定义列表菜单-->
+	<div class="modal fade" id="list_menu" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h2 class="modal-title" id="myModalLabel">自定义列表字段</h2>
+				</div>
+				<div class="modal-body">
+					<form action="" class="form-horizontal">
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="filed_box">
+									<div class="title mb_10"><h3>客户字段控制</h3></div>
+									<div class="checkbox_list">
+										<div class="checkbox">
+											<volist name="column_list" id="single">
+												<label class="checkbox-inline field_checkbox">
+													<eq name="single.view" value="1">
+														<input type="checkbox" class="icheck_f" value="<{$single.form}>" data-code="<{$single.code}>" checked>
+														<else/>
+														<input type="checkbox" class="icheck_f" value="<{$single.form}>" data-code="<{$single.code}>">
+													</eq>
+													<{$single.name}> </label>
+											</volist>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<hr class="f-line">
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="filed_box">
+									<div class="title mb_10"><h3>已选择字段：（可拖动改变字段顺序）</h3></div>
+									<div class="btn-group" id="field_list" role="group">
+										<volist name="column_list" id="single">
+											<eq name="single.view" value="1">
+												<a type="button" class="btn btn-sm btn-default" data-form="<{$single.form}>" data-code="<{$single.code}>"> <{$single.name}>
+													<input type="hidden" name="code[]" value="<{$single.code}>">
+													<input type="hidden" name="form[]" value="<{$single.form}>">
+													<input type="hidden" name="table[]" value="<{$single.table}>">
+													<input type="hidden" name="name[]" value="<{$single.name}>">
+													<input type="hidden" class="c_view" name="view[]" value="<{$single.view}>">
+													<input type="hidden" name="must[]" value="<{$single.must}>"> </a>
+												<else/>
+												<a type="button" class="btn btn-sm btn-default hide" data-form="<{$single.form}>" data-code="<{$single.code}>"> <{$single.name}>
+													<input type="hidden" name="code[]" value="<{$single.code}>">
+													<input type="hidden" name="form[]" value="<{$single.form}>">
+													<input type="hidden" name="table[]" value="<{$single.table}>">
+													<input type="hidden" name="name[]" value="<{$single.name}>">
+													<input type="hidden" class="c_view" name="view[]" value="<{$single.view}>">
+													<input type="hidden" name="must[]" value="<{$single.must}>"> </a>
+											</eq>
+										</volist>
+									</div>
+								</div>
+							</div>
+						</div>
+						<input type="hidden" name="requestType" value="reset_and_order_column">
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-save">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<script>
 		var ManageObject = {
 			object:{
@@ -487,6 +567,10 @@
 				icheck                  :$('.icheck').iCheck({
 					checkboxClass:'icheckbox_square-green',
 					radioClass   :'iradio_square-green'
+				}),
+				icheckF                 :$('.icheck_f').iCheck({
+					checkboxClass:'icheckbox_flat-blue',
+					radioClass   :'icheckbox_flat-blue'
 				})
 			},
 			url   :{

@@ -192,6 +192,7 @@ $order
 			$sql    = "
 SELECT
 	*,
+	(total_client - signed_client) unsigned_client,
 	if(signed_client > 0, 1, 0) is_signed
 FROM(
 	SELECT
@@ -237,6 +238,7 @@ $order
 			$table_receivables_project = ReceivablesProjectModel::TABLE_NAME;
 			$table_user                = UserModel::TABLE_NAME;
 			$table_client              = ClientModel::TABLE_NAME;
+			$table_unit = UnitModel::TABLE_NAME;
 			$table_attendee            = AttendeeModel::TABLE_NAME;
 			$table_project             = ProjectModel::TABLE_NAME;
 			$table_project_type        = ProjectTypeModel::TABLE_NAME;
@@ -286,6 +288,8 @@ SELECT * FROM (
 		c.name_pinyin client_pinyin,
 		c.unit,
 		c.unit_pinyin unit_pinyin,
+		c.team,
+		u0.area,
 		ro.payee payee_code,
 		u1.name payee,
 		u1.name payee_pinyin,
@@ -299,6 +303,7 @@ SELECT * FROM (
 		u2.name creator,
 		u2.name_pinyin creator_pinyin,
 		rp.id prid,
+		rp.fixed_price,
 		p.id project_code,
 		p.name project,
 		p.name_pinyin project_pinyin,
@@ -323,6 +328,7 @@ SELECT * FROM (
 	LEFT JOIN $common_database.$table_user u1 ON u1.id = ro.payee AND u1.status <> 2
 	LEFT JOIN $common_database.$table_user u2 ON u2.id = ro.creator AND u2.status <> 2
 	JOIN $this_database.$table_client c ON c.id = ro.cid AND c.status <> 2
+	LEFT JOIN $this_database.$table_unit u0 ON u0.name = c.unit
 	JOIN $this_database.$table_attendee a ON a.cid = c.id AND a.status <> 2 AND a.mid = ro.mid
 	LEFT JOIN $this_database.$table_project p ON p.id = rp.project_id AND p.status <> 2
 	LEFT JOIN $this_database.$table_project_type pt ON pt.id = p.type AND pt.status <> 2

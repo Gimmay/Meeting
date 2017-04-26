@@ -128,6 +128,7 @@ SELECT * FROM (
 		u2.name creator,
 		u2.name_pinyin creator_pinyin,
 		rp.id prid,
+		rp.fixed_price,
 		p.id project_code,
 		p.name project,
 		p.name_pinyin project_pinyin,

@@ -174,7 +174,8 @@
 										<th>序号</th>
 										<th data-column="name">会所名称</th>
 										<th data-column="total_client">报名人数</th>
-										<th data-column="signed_client">签到人数</th>
+										<th data-column="signed_client">已到人数</th>
+										<th data-column="unsigned_client">未到人数</th>
 										<th data-column="is_signed">是否签到</th>
 										<th data-column="area">区域</th>
 										<th data-column="is_new">是否新店</th>
@@ -187,6 +188,7 @@
 											<td><{$single.name}></td>
 											<td><{$single.total_client}></td>
 											<td><{$single.signed_client}></td>
+											<td><{$single.unsigned_client}></td>
 											<td><{$single.is_signed}></td>
 											<td><{$single.area}></td>
 											<td><{$single.is_new}></td>

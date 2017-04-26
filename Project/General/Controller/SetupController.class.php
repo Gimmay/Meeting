@@ -26,6 +26,7 @@
 		const ADMIN_ROLE_LEVEL = 1;
 
 		public function initData(){
+			echo 'forbidden';exit;
 			// 初始化数据开始
 			echo '======================初始化数据开始======================';
 			echo '<br>';

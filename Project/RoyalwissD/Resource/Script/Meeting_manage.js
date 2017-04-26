@@ -2,6 +2,8 @@
  * Created by qyqy on 2016-9-12.
  */
 var ScriptObject = {
+	detailsLiTemp    :'<tr><td>#key#</td><td>#name#</td></tr>',
+	detailsLiTempImg :'<tr><td>#key#</td><td><img class="qrcode-style" src="#src#" alt=""></td></tr>',
 	bindEvent    :function(){
 		var self = this;
 		$('.release_a').on('click', function(){
@@ -79,53 +81,27 @@ $(function(){
 		Common.ajax({
 			data    :{requestType:'get_detail', id:id},
 			callback:function(r){
-				console.log(r);
-				var $right_details = $('.right_details');
-				$right_details.find('.meeting_name').text(r.name);
-				if(r.status == 0){
-					$right_details.find('.status').text("禁用");
-				}else if(r.status == 1){
-					$right_details.find('.status').text("新建");
-				}else if(r.status == 2){
-					$right_details.find('.status').text("发布");
-				}else if(r.status == 3){
-					$right_details.find('.status').text("进行中");
-				}else if(r.status == 4){
-					$right_details.find('.status').text("结束");
-				}
-				$right_details.find('.type').text(r.type);
-				$right_details.find('.host').text(r.host);
-				$right_details.find('.plan').text(r.plan);
-				$right_details.find('.place').text(r.place);
-				$right_details.find('.hotel').text(r.hotel);
-				$right_details.find('.car').text(r.car);
-				$right_details.find('.setime').text(r.start_time+'-'+r.end_time);
-				$right_details.find('.director_name').text(r.director);
-				$right_details.find('.create_time').text(r.creatime);
-				$right_details.find('.brief').html(r.brief);
-				$right_details.find('.comment').html(r.comment);
-				$right_details.find('.message_type').html(r.message_type);
-				if(r.qrcode){
-					$right_details.find('.QRcode img').attr('src', r.qrcode)
-				}else{
-					$('.QRcode').hide();
-				}
-				if(r.logo){
-					$right_details.find('.logo img').attr('src', r.logo)
-				}else{
-					$('.details_btn .logo').hide();
-				}
 				var str = '';
-				/*$.each(r,function(index,value){
-				 if(!value.leave_time){
-				 str+=ScriptObject.roomDetailsTemp.replace('$n',index+1).replace('$name',value.name).replace('$id',value.id);
-				 }else{
-				 str+=ScriptObject.roomDetailsTemp2.replace('$n',index+1).replace('$name',value.name).replace('$id',value.id);
-				 }
-				 });
-				 $('#list_c').html(str);
-				 leave_btn();
-				 change_room();*/
+				console.log(r);
+				$.each(r[0], function(index1, value1){
+					$.each(r[1], function(index2, value2){
+						if(index1 == index2){
+							if(value2 != null){
+								if(index1 == 'logo'){
+									str += ScriptObject.detailsLiTempImg.replace('#key#', value1)
+													   .replace('#src#', value2)
+								}else{
+									str += ScriptObject.detailsLiTemp.replace('#key#', value1)
+													   .replace('#name#', value2)
+								}
+							}else{
+								str += ScriptObject.detailsLiTemp.replace('#key#', value1)
+												 .replace('#name#', '')
+							}
+						}
+					})
+				});
+				$('.info').html(str);
 			}
 		});
 	});
@@ -269,6 +245,151 @@ $(function(){
 		var new_url = ManageObject.url.thisPage;
 		new_url     = url_object.setUrlParam('process', 'fin', new_url);
 		location.replace(new_url);
+	});
+	var $search_config_modal = $('#search_config_modal');
+	/**
+	 * 搜索功能
+	 */
+	// 搜索配置
+	$search_config_modal.find('.btn-item .btn').on('click', function(){
+		if($(this).parent().hasClass('active')){
+			$(this).parent().removeClass('active');
+			$(this).removeClass('btn-info').addClass('btn-default');
+		}else{
+			$(this).parent().addClass('active');
+			$(this).addClass('btn-info').removeClass('btn-default');
+		}
+		var str = [];
+		$search_config_modal.find('.btn-item').each(function(){
+			if($(this).hasClass('active')){
+				var name = $(this).find('.btn').attr('data-name');
+				str.push(name);
+			}
+		});
+		$search_config_modal.find('input[name=column]').val(str);
+	});
+	// 全选搜索字段
+	$('.sc_check_all').on('click', function(){
+		$search_config_modal.find('.btn-item').each(function(){
+			if(!$(this).hasClass('active')){
+				$(this).addClass('active');
+				$(this).find('.btn').addClass('btn-info').removeClass('btn-default');
+			}
+		});
+		var str = [];
+		$search_config_modal.find('.btn-item').each(function(){
+			if($(this).hasClass('active')){
+				var name = $(this).find('.btn').attr('data-name');
+				str.push(name);
+			}
+		});
+		$search_config_modal.find('input[name=column]').val(str);
+	});
+	// 取消
+	$('.sc_cancel').on('click', function(){
+		$search_config_modal.find('.btn-item').each(function(){
+			if($(this).hasClass('active')){
+				$(this).removeClass('active');
+				$(this).find('.btn').addClass('btn-default').removeClass('btn-info');
+			}
+		});
+		var str = [];
+		$search_config_modal.find('.btn-item').each(function(){
+			if($(this).hasClass('active')){
+				var name = $(this).find('.btn').attr('data-name');
+				str.push(name);
+			}
+		});
+		$search_config_modal.find('input[name=column]').val(str);
+	});
+	// 搜索配置提交
+	$search_config_modal.find('.btn-save').on('click', function(){
+		var data = $('#search_config_modal').find('form').serialize();
+		ManageObject.object.loading.loading();
+		Common.ajax({
+			data    :data,
+			callback:function(r){
+				ManageObject.object.loading.complete();
+				if(r.status){
+					ManageObject.object.toast.toast(r.message, '1');
+					ManageObject.object.toast.onQuasarHidden(function(){
+						location.reload();
+					})
+				}else{
+					ManageObject.object.toast.toast(r.message, '2');
+				}
+			}
+		});
+	});
+	/**
+	 * 列表字段功能
+	 */
+	// 自定义列表字段控制
+	//  点击field_checkbox label标签
+	$('.field_checkbox').on('click', function(){
+		if($(this).find('.icheckbox_flat-blue').hasClass('checked')){
+			var t_code = $(this).find('.icheck_f').attr('data-code');
+			$('#field_list .btn').each(function(){
+				var m_code = $(this).attr('data-code');
+				if(t_code == m_code){
+					$(this).addClass('show').removeClass('hide');
+					$(this).find('input.c_view').val(1);
+				}
+			});
+		}else{
+			var t_code = $(this).find('.icheck_f').attr('data-code');
+			$('#field_list .btn').each(function(){
+				var m_code = $(this).attr('data-code');
+				if(t_code == m_code){
+					$(this).addClass('hide').removeClass('show');
+					$(this).find('input.c_view').val(0);
+				}
+			});
+		}
+	});
+	/**
+	 * 客户字段控制
+	 */
+	// 选中字段操作
+	$('.field_checkbox .icheck_f').on('ifChecked', function(){
+		var t_code = $(this).parent().find('.icheck_f').attr('data-code');
+		$('#field_list .btn').each(function(){
+			var m_code = $(this).attr('data-code');
+			if(t_code == m_code){
+				$(this).addClass('show').removeClass('hide');
+				$(this).find('input.c_view').val(1);
+			}
+		});
+	});
+	// 取消选中字段操作
+	$('.field_checkbox .icheck_f').on('ifUnchecked', function(){
+		var t_code = $(this).parent().find('.icheck_f').attr('data-code');
+		$('#field_list .btn').each(function(){
+			var m_code = $(this).attr('data-code');
+			if(t_code == m_code){
+				$(this).addClass('hide').removeClass('show');
+				$(this).find('input.c_view').val(0);
+			}
+		});
+	});
+	// 保存列表字段设置
+	$('#list_menu .btn-save').on('click', function(){
+		var data = $('#list_menu form').serialize();
+		ManageObject.object.loading.loading();
+		Common.ajax({
+			data    :data,
+			callback:function(res){
+				ManageObject.object.loading.complete();
+				if(res.status){
+					ManageObject.object.toast.toast(res.message, '1');
+					ManageObject.object.toast.onQuasarHidden(function(){
+						location.reload();
+					});
+				}else{
+				}
+				ManageObject.object.toast.toast(res.message, '2');
+			}
+		})
 	});
 });
 function get_user_list(mid, rid){

@@ -139,7 +139,7 @@
 					$attendee              = $attendee_model->getObject();
 					$client['name']        = "$client[name] (复制)";
 					$client['name_pinyin'] = $str_obj->getPinyin($client['name'], true, '');
-					$client['unit']        = "$client[unit] (复制)";
+					$client['unit']        = "$client[unit]";
 					$client['unit_pinyin'] = $str_obj->getPinyin($client['unit'], true, '');
 					$client['mobile']      = "$client[mobile] (copy)";
 					$client['creatime']    = Time::getCurrentTime();
@@ -445,6 +445,7 @@
 						'message'  => '您没有管理字段的权限',
 						'__ajax__' => true
 					];
+					// 新增数据库字段
 					/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
 					$client_column_control_model = D('RoyalwissD/ClientColumnControl');
 					$post                        = I('post.');
@@ -459,23 +460,29 @@
 					$result         = $attendee_model->addColumn($data);
 					if($result['status']){
 						$last_column_index = $attendee_model->getLastCustomColumnIndex();
-						C('TOKEN_ON', false);
-						$table_name = 'meeting_configure';
-						$data       = [
+						$table_name        = 'attendee';
+						$data              = [
 							'mid'      => $meeting_id,
 							'code'     => strtoupper(MODULE_NAME."-$table_name-".$attendee_model::CUSTOM_COLUMN.$last_column_index),
 							'form'     => $attendee_model::CUSTOM_COLUMN.$last_column_index,
 							'table'    => $table_name,
 							'name'     => $post['field_name'],
 							'view'     => 0,
-							'must'     => 0,
 							'creatime' => Time::getCurrentTime(),
 							'creator'  => Session::getCurrentUser()
 						];
-						$result2    = $client_column_control_model->create(array_merge($data, ['action' => $client_column_control_model::ACTION_WRITE]));
+						$result2           = $client_column_control_model->create(array_merge($data, [
+							'action' => $client_column_control_model::ACTION_WRITE,
+							'must'   => 0
+						]));
 						if(!$result2['status']) $result['message'] = $result2['message'];
 						$result3 = $client_column_control_model->create(array_merge($data, ['action' => $client_column_control_model::ACTION_READ]));
 						if(!$result3['status']) $result['message'] = $result3['message'];
+						$result4 = $client_column_control_model->create(array_merge($data, [
+							'action' => $client_column_control_model::ACTION_SEARCH,
+							'search' => 0
+						]));
+						if(!$result4['status']) $result['message'] = $result4['message'];
 					}
 
 					return array_merge($result, ['__ajax__' => true]);
@@ -766,7 +773,6 @@
 										$temp_unit_data['is_new'] = $temp_client_data['unit_is_new'];
 									}
 									else $temp_unit_data['is_new'] = 9;
-
 									$unit_data[] = array_merge($temp_unit_data, [
 										'creator'  => Session::getCurrentUser(),
 										'creatime' => Time::getCurrentTime()
@@ -1542,6 +1548,53 @@ SET
 
 					return $list;
 				break;
+				case 'get_detail':
+					$column_list = $data['columnValue'];
+					$column_name = $data['columnName'];
+					$result      = [];
+					foreach($data['dataList'] as $index => $client){
+						$temp_head = $temp_body = [];
+						foreach($client as $key => $val){
+							if(!in_array($key, $column_list)) continue;
+							$i               = array_search($key, $column_list);
+							$temp_head[$key] = $column_name[$i];
+							switch($key){
+								case 'register_type':
+									$val = AttendeeModel::REGISTER_TYPE[$val];
+								break;
+								case 'review_status':
+									$val = AttendeeModel::REVIEW_STATUS[$val];
+								break;
+								case 'sign_status':
+									$val = AttendeeModel::SIGN_STATUS[$val];
+								break;
+								case 'sign_type':
+									$val = AttendeeModel::SIGN_TYPE[$val];
+								break;
+								case 'print_status':
+									$val = AttendeeModel::PRINT_STATUS[$val];
+								break;
+								case 'gift_status':
+									$val = AttendeeModel::GIFT_STATUS[$val];
+								break;
+								case 'status':
+									$val = GeneralModel::STATUS[$val];
+								break;
+								case 'gender':
+									$val = ClientModel::GENDER[$val];
+								break;
+								case 'is_new':
+									$val = ClientModel::IS_NEW[$val];
+								break;
+							}
+							$temp_body[$key] = $val;
+						}
+						if(count($result) == 0) $result[] = $temp_head;
+						$result[] = $temp_body;
+					}
+
+					return $result;
+				break;
 				case 'downloadData':
 					$column_list = $data['columnValue'];
 					$column_name = $data['columnName'];
@@ -1557,20 +1610,25 @@ SET
 					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['signStatus']])) $sign_status = $get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['signStatus']];
 					// 若指定了审核状态码的情况
 					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']])) $review_status = $get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['reviewStatus']];
+					// 若指定了审核状态码的情况
+					if(isset($get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['type']])) $client_type = $get[ClientModel::CONTROL_COLUMN_PARAMETER_SELF['type']];
 					foreach($data['dataList'] as $index => $client){
 						$temp_head = $temp_body = [];
 						// 1、筛选数据
 						if(isset($keyword)){
-							$found = 0;
-							if($found == 0 && stripos($client['name'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($client['name_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($client['unit'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($client['unit_pinyin'], $keyword) !== false) $found = 1;
-							if($found == 0 && stripos($client['mobile'], $keyword) !== false) $found = 1;
+							/** @var \RoyalwissD\Model\ClientColumnControlModel $client_column_control_model */
+							$client_column_control_model = D('RoyalwissD/ClientColumnControl');
+							$search_list                 = $client_column_control_model->getClientSearchColumn($get['mid'], true);
+							$found                       = 0;
+							foreach($search_list as $value){
+								if($found == 0 && stripos($client[$value['form']], $keyword) !== false) $found = 1;
+							}
+							if(count($search_list) == 0) $found = 1;
 							if($found == 0) continue;
 						}
 						if(isset($client_id) && $client_id != $client['cid']) continue;
 						if(isset($status) && $status != $client['status']) continue;
+						if(isset($client_type) && $client_type != $client['type']) continue;
 						if(isset($sign_status)){
 							if($sign_status == 0 && in_array($client['sign_status'], [1])) continue;
 							if($sign_status == 1 && in_array($client['sign_status'], [0, 2])) continue;

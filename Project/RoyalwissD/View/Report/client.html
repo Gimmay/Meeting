@@ -136,10 +136,10 @@
 													<div class="col-sm-3">
 														<div class="input-group">
 															<span class="input-group-addon">区域　　</span>
-															<select name="unitArea" class="form-control" title="" value="<{$_GET['area']}>">
+															<select name="unitArea" class="form-control" title="" value="<{$_GET['unitArea']}>">
 																<option value="">---无限制---</option>
 																<volist name="area_list" id="single">
-																	<if condition="isset($_GET['area']) and $_GET['area'] eq $single['value']">
+																	<if condition="isset($_GET['unitArea']) and $_GET['unitArea'] eq $single['value']">
 																		<option value="<{$single.value}>" selected><{$single.html}></option>
 																		<else/>
 																		<option value="<{$single.value}>"><{$single.html}></option>
@@ -195,7 +195,7 @@
 										<tr>
 											<th width="16%"></th>
 											<th width="16%">报名人数</th>
-											<th width="16%">签到人数</th>
+											<th width="16%">已到人数</th>
 											<th width="16%">未到人数</th>
 											<th width="16%">消耗金额(元)</th>
 											<th width="16%">会前收款金额(元)</th>
@@ -210,7 +210,7 @@
 											<td><{$statistics.total.receivables}></td>
 										</tr>
 										<tr>
-											<td colspan="4" style="text-align: center"><b>新老客统计</b></td>
+											<td colspan="6" style="text-align: center"><b>新老客统计</b></td>
 										</tr>
 										<tr>
 											<td>新客</td>
@@ -228,27 +228,27 @@
 											<td><{$statistics.isNew.0.consumption}></td>
 											<td><{$statistics.isNew.0.receivables}></td>
 										</tr>
+										<!--<tr>-->
+											<!--<td colspan="4" style="text-align: center"><b>新老店统计</b></td>-->
+										<!--</tr>-->
+										<!--<tr>-->
+											<!--<td>新店</td>-->
+											<!--<td><{$statistics.unitIsNew.1.total}></td>-->
+											<!--<td><{$statistics.unitIsNew.1.signed}></td>-->
+											<!--<td><{:($statistics['unitIsNew']['1']['total'] - $statistics['unitIsNew']['1']['signed'])}></td>-->
+											<!--<td><{$statistics.unitIsNew.1.consumption}></td>-->
+											<!--<td><{$statistics.unitIsNew.1.receivables}></td>-->
+										<!--</tr>-->
+										<!--<tr>-->
+											<!--<td>老店</td>-->
+											<!--<td><{$statistics.unitIsNew.0.total}></td>-->
+											<!--<td><{$statistics.unitIsNew.0.signed}></td>-->
+											<!--<td><{:($statistics['unitIsNew']['0']['total'] - $statistics['unitIsNew']['0']['signed'])}></td>-->
+											<!--<td><{$statistics.unitIsNew.0.consumption}></td>-->
+											<!--<td><{$statistics.unitIsNew.0.receivables}></td>-->
+										<!--</tr>-->
 										<tr>
-											<td colspan="4" style="text-align: center"><b>新老店统计</b></td>
-										</tr>
-										<tr>
-											<td>新店</td>
-											<td><{$statistics.unitIsNew.1.total}></td>
-											<td><{$statistics.unitIsNew.1.signed}></td>
-											<td><{:($statistics['unitIsNew']['1']['total'] - $statistics['unitIsNew']['1']['signed'])}></td>
-											<td><{$statistics.unitIsNew.1.consumption}></td>
-											<td><{$statistics.unitIsNew.1.receivables}></td>
-										</tr>
-										<tr>
-											<td>老店</td>
-											<td><{$statistics.unitIsNew.0.total}></td>
-											<td><{$statistics.unitIsNew.0.signed}></td>
-											<td><{:($statistics['unitIsNew']['0']['total'] - $statistics['unitIsNew']['0']['signed'])}></td>
-											<td><{$statistics.unitIsNew.0.consumption}></td>
-											<td><{$statistics.unitIsNew.0.receivables}></td>
-										</tr>
-										<tr>
-											<td colspan="4" style="text-align: center"><b>区域统计</b></td>
+											<td colspan="6" style="text-align: center"><b>区域统计</b></td>
 										</tr>
 										<volist name="statistics.area" id="single">
 											<tr>
@@ -261,7 +261,7 @@
 											</tr>
 										</volist>
 										<tr>
-											<td colspan="4" style="text-align: center"><b>团队统计</b></td>
+											<td colspan="6" style="text-align: center"><b>团队统计</b></td>
 										</tr>
 										<volist name="statistics.team" id="single">
 											<tr>
@@ -274,7 +274,7 @@
 											</tr>
 										</volist>
 										<tr>
-											<td colspan="4" style="text-align: center"><b>客户性质统计</b></td>
+											<td colspan="6" style="text-align: center"><b>客户性质统计</b></td>
 										</tr>
 										<volist name="statistics.type" id="single">
 											<tr>

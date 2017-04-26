@@ -45,7 +45,7 @@
 		/** 特殊客户类型：此类客户类型不会被进入签到统计，但是可以收款 */
 		const TYPE_SPECIAL = ['内场'];
 		/** 客户类型 */
-		const TYPE = ['其他', '终端', '老板娘', '嘉宾', '员工', '陪同', '专家'];
+		const TYPE = ['其他', '终端', '老板娘', '嘉宾', '员工', '陪同', '专家', '观摩'];
 
 		/**
 		 * 获取客户类型
@@ -326,7 +326,7 @@ AND t.TABLE_NAME = '$table_client'
 SELECT
 	c.id value,
 	IF(a.sign_status = 1, IF(c.type IN ($type), $name, concat('× ', $name)), IF(c.type IN ($type), concat('* ', $name), concat('× ', $name))) html,
-	concat(c.name,',',c.name_pinyin,',',c.unit,',',c.unit_pinyin,',',c.mobile) keyword
+	concat(c.name,',',c.name_pinyin,',',c.unit,',',c.unit_pinyin) keyword
 FROM $this_database.$table_client c
 JOIN $this_database.$table_attendee a ON c.id = a.cid
 AND a.mid = $meeting_id
@@ -335,6 +335,7 @@ ORDER BY a.sign_time DESC, a.review_time DESC, a.id DESC";
 
 			return $this->query($sql);
 		}
+
 
 		/**
 		 * 获取团队Select插件的数据列表（审核的客户）
