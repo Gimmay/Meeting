@@ -151,7 +151,7 @@
 													</if>
 													<if condition="in_array('SEVERAL-MEETING.MODIFY', $permission_list)">
 														<li class="fun_li">
-															<a href="<{:U('Meeting/modify',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-cog"></i>修改</a>
+															<a href="<{:U('Meeting/modify',['mid'=>$meeting['id']])}>"><i class="glyphicon glyphicon-log-out"></i>修改</a>
 														</li>
 													</if>
 													<if condition="in_array('SEVERAL-MEETING.DELETE', $permission_list)">
@@ -172,6 +172,9 @@
 																</if>
 															</case>
 														</switch>
+													</li>
+													<li class="fun_li" data-id="<{$meeting.id}>">
+														<a class="config_btn" data-toggle="modal"><i class="glyphicon glyphicon-cog"></i>配置</a>
 													</li>
 												</ul>
 											</div>
@@ -462,6 +465,98 @@
 			</div>
 		</div>
 	</div>
+	<!--配置-->
+	<div class="modal fade" id="config_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h2 class="modal-title">会议配置</h2>
+				</div>
+				<div class="modal-body">
+					<form action="" class="form-horizontal">
+						<input type="hidden" name="requestType" value="set_configure"> <input type="hidden" name="id">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">首易SMS：</label>
+							<div class="col-sm-9 clearfix">
+								<select class="form-control" name="sms_mobset_configure">
+									<option value="0">---请选择接口配置---</option>
+									<volist name="api_configure_list" id="single">
+										<if condition="$single['value'] eq $meeting_configure['sms_mobset_configure']">
+											<option value="<{$single.value}>" selected><{$single.html}></option>
+											<else/>
+											<option value="<{$single.value}>"><{$single.html}></option>
+										</if>
+									</volist>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">微信公众号：</label>
+							<div class="col-sm-9 clearfix">
+								<select class="form-control" name="wechat_official_configure">
+									<option value="0">---请选择接口配置---</option>
+									<volist name="api_configure_list" id="single">
+										<if condition="$single['value'] eq $meeting_configure['wechat_official_configure']">
+											<option value="<{$single.value}>" selected><{$single.html}></option>
+											<else/>
+											<option value="<{$single.value}>"><{$single.html}></option>
+										</if>
+									</volist>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">微信企业号：</label>
+							<div class="col-sm-9 clearfix">
+								<select class="form-control" name="wechat_enterprise_configure">
+									<option value="0">---请选择接口配置---</option>
+									<volist name="api_configure_list" id="single">
+										<if condition="$single['value'] eq $meeting_configure['wechat_enterprise_configure']">
+											<option value="<{$single.value}>" selected><{$single.html}></option>
+											<else/>
+											<option value="<{$single.value}>"><{$single.html}></option>
+										</if>
+									</volist>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">邮件：</label>
+							<div class="col-sm-9 clearfix">
+								<select class="form-control" name="email_configure">
+									<option value="0">---请选择接口配置---</option>
+									<volist name="api_configure_list" id="single">
+										<if condition="$single['value'] eq $meeting_configure['email_configure']">
+											<option value="<{$single.value}>" selected><{$single.html}></option>
+											<else/>
+											<option value="<{$single.value}>"><{$single.html}></option>
+										</if>
+									</volist>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">默认选择：</label>
+							<div class="col-sm-9 clearfix">
+								<div class="input-group pull-left type_1 ">
+									<input type="radio" name="wechat_mode" class="icheckGreen">&nbsp;&nbsp;微信公众号
+								</div>
+								<div class="input-group pull-left type_2" style="margin-left: 20px;">
+									<input type="radio" name="wechat_mode" class="icheckGreen">&nbsp;&nbsp;微信企业号
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-save">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<!--自定义列表菜单-->
 	<div class="modal fade" id="list_menu" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 		<div class="modal-dialog" role="document">
@@ -571,6 +666,10 @@
 				icheckF                 :$('.icheck_f').iCheck({
 					checkboxClass:'icheckbox_flat-blue',
 					radioClass   :'icheckbox_flat-blue'
+				}),
+				icheckGreen:$('.icheckGreen').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
 				})
 			},
 			url   :{

@@ -1,7 +1,7 @@
 <?php
 	return [
 		'LOAD_EXT_CONFIG'          => 'mysql_config',
-		'MODULE_ALLOW_LIST'        => ['General', 'CMS', 'RoyalwissD', 'WayneE'],
+		'MODULE_ALLOW_LIST'        => ['General', 'CMS', 'Mobile', 'RoyalwissD', 'WayneE'],
 		'DEFAULT_MODULE'           => 'CMS',
 		'DEFAULT_CONTROLLER'       => 'Meeting',
 		'DEFAULT_ACTION'           => 'type',

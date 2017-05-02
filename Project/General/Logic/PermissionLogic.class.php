@@ -156,6 +156,42 @@
 				'name'   => '权限控制',
 				'code'   => 'GENERAL-ROLE.GRANT_PERMISSION'
 			],
+			// 部门
+			[
+				'module' => '部门',
+				'name'   => '创建',
+				'code'   => 'GENERAL-DEPARTMENT.CREATE'
+			],
+			[
+				'module' => '部门',
+				'name'   => '修改',
+				'code'   => 'GENERAL-DEPARTMENT.MODIFY'
+			],
+			[
+				'module' => '部门',
+				'name'   => '查看',
+				'code'   => 'GENERAL-DEPARTMENT.VIEW'
+			],
+			[
+				'module' => '部门',
+				'name'   => '检索',
+				'code'   => 'GENERAL-DEPARTMENT.SEARCH'
+			],
+			[
+				'module' => '部门',
+				'name'   => '删除',
+				'code'   => 'GENERAL-DEPARTMENT.DELETE'
+			],
+			[
+				'module' => '部门',
+				'name'   => '禁用',
+				'code'   => 'GENERAL-DEPARTMENT.DISABLE'
+			],
+			[
+				'module' => '部门',
+				'name'   => '启用',
+				'code'   => 'GENERAL-DEPARTMENT.ENABLE'
+			],
 			// 接口配置
 			[
 				'module' => '接口配置',
@@ -262,6 +298,11 @@
 				'module' => '会议',
 				'name'   => '搜索字段控制',
 				'code'   => 'SEVERAL-MEETING.MANAGE_SEARCH_COLUMN'
+			],
+			[
+				'module' => '会议',
+				'name'   => '配置',
+				'code'   => 'SEVERAL-MEETING.CONFIGURE'
 			],
 			// 消息
 			[

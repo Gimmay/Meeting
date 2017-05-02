@@ -5,6 +5,7 @@
 	 * Date: 2017-3-11
 	 * Time: 16:58
 	 */
+
 	namespace RoyalwissD\Logic;
 
 	use CMS\Controller\CMS;
@@ -753,6 +754,7 @@
 								$original_repeat_data[] = $client;
 								// 会所数据
 								if(isset($client['unit'])){
+									$temp_unit_data                = [];
 									$temp_unit_data['name']        = $client['unit'];
 									$temp_unit_data['name_pinyin'] = $str_obj->getPinyin($client['unit'], true, '');
 									if(isset($client['unit_area'])) $temp_unit_data['area'] = $client['unit_area'];
@@ -790,9 +792,9 @@
 								$attendee_data[] = $temp_attendee_data;
 								// 会所数据
 								if(isset($temp_client_data['unit'])){
+									$temp_unit_data                = [];
 									$temp_unit_data['name']        = $temp_client_data['unit'];
 									$temp_unit_data['name_pinyin'] = $str_obj->getPinyin($temp_client_data['unit'], true, '');
-									$temp_unit_data                = [];
 									if(isset($temp_client_data['unit_area'])) $temp_unit_data['area'] = $temp_client_data['unit_area'];
 									if(isset($temp_client_data['unit_is_new'])){
 										switch($temp_client_data['unit_is_new']){

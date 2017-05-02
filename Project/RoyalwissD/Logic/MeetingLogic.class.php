@@ -5,6 +5,7 @@
 	 * Date: 2017-3-9
 	 * Time: 10:35
 	 */
+
 	namespace RoyalwissD\Logic;
 
 	use CMS\Controller\CMS;
@@ -232,7 +233,8 @@
 							'creatime'             => Time::getCurrentTime(),
 							'client_repeat_mode'   => $meeting_configure_model::CLIENT_REPEAT_MODE,
 							'client_repeat_action' => $meeting_configure_model::CLIENT_REPEAT_ACTION_OVERRIDE,
-							'message_mode'         => $meeting_configure_model::MESSAGE_MODE
+							'message_mode'         => $meeting_configure_model::MESSAGE_MODE,
+							'wechat_mode'          => $meeting_configure_model::WECHAT_MODE_ENTERPRISE
 						]));
 						if(!$result2['status']) array_merge($result2, [
 							'__ajax__' => true,
@@ -518,6 +520,35 @@
 
 					return array_merge($result, ['__ajax__' => true]);
 				break;
+				case 'get_configure':
+					$meeting_id = I('post.mid', 0, 'int');
+					/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
+					$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
+					if(!$meeting_configure_model->fetch(['mid' => $meeting_id])) return ['__ajax__' => true];
+					$meeting_configure = $meeting_configure_model->getObject();
+
+					return array_merge($meeting_configure, ['__ajax__' => true]);
+				break;
+				case 'set_configure':
+					if(!in_array('SEVERAL-MEETING.CONFIGURE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
+						'status'   => false,
+						'message'  => '您没有配置会议的权限',
+						'__ajax__' => true
+					];
+					/** @var \RoyalwissD\Model\MeetingConfigureModel $meeting_configure_model */
+					$meeting_configure_model = D('RoyalwissD/MeetingConfigure');
+					$meeting_id              = I('post.id', 0, 'int');
+					$post                    = I('post.');
+					$result                  = $meeting_configure_model->modify(['mid' => $meeting_id], [
+						'wechat_official_configure'   => $post['wechat_official_configure'],
+						'wechat_enterprise_configure' => $post['wechat_enterprise_configure'],
+						'sms_mobset_configure'        => $post['sms_mobset_configure'],
+						'email_configure'             => $post['email_configure'],
+						'wechat_mode'                 => $post['wechat_mode']
+					]);
+
+					return array_merge($result, ['__ajax__' => true]);
+				break;
 				default:
 					return ['status' => false, 'message' => '缺少必要参数', '__ajax__' => true];
 				break;
@@ -602,9 +633,10 @@
 				break;
 				case 'manage:statistics':
 					$statistics = [
-						'total'=>count($data['total']),
-						'list'=>count($data['list'])
+						'total' => count($data['total']),
+						'list'  => count($data['list'])
 					];
+
 					return $statistics;
 				break;
 				default:

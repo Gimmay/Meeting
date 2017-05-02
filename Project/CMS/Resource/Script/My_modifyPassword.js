@@ -27,7 +27,7 @@ function decide(){
 	var $old_password   = $("#old_password");
 	var $new_password   = $("#new_password");
 	var $new_password_2 = $("#new_password_2");
-	var reg             = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/;
+	var reg             = /^(?![^a-zA-Z]+$)(?!\D+$).{2,}/;
 	//		新密码功能判断条件
 	if(!reg.test($new_password.val())){
 		ManageObject.object.toast.toast("新密码至少6位，必须同时包含字母和数字！");

@@ -5,6 +5,7 @@
 	 * Date: 2017-3-2
 	 * Time: 15:23
 	 */
+
 	namespace General\Model;
 
 	use CMS\Logic\Session;
@@ -204,12 +205,12 @@ $keyword
 				/** @var \General\Model\UserAssignRoleModel $user_assign_role_model */
 				$user_assign_role_model = D('General/UserAssignRole');
 				$exist_record_count     = $user_assign_role_model->tally([
-					'rid' => $role,
-					'uid' => $user_id,
+					'rid'    => $role,
+					'uid'    => $user_id,
 					'status' => 1
 				]);// Warning: 先查找有否重复数据
 				if($exist_record_count>=1) return ['status' => true, 'message' => '已分配角色无需重复分配'];
-				$data                   = [
+				$data   = [
 					'rid'      => $role,
 					'uid'      => $user_id,
 					'creatime' => Time::getCurrentTime(),
@@ -217,15 +218,16 @@ $keyword
 					'type'     => 1,
 					'mid'      => $meeting_id
 				];
-				$result                 = $user_assign_role_model->create($data); // 分配角色
+				$result = $user_assign_role_model->create($data); // 分配角色
+
 				return $result;
 			}
 			elseif(is_array($role)){ // 批量分配角色
 				/** @var \General\Model\UserAssignRoleModel $user_assign_role_model */
 				$user_assign_role_model = D('General/UserAssignRole');
 				$exist_record_count     = $user_assign_role_model->tally([
-					'rid' => ['in', $role],
-					'uid' => $user_id,
+					'rid'    => ['in', $role],
+					'uid'    => $user_id,
 					'status' => 1
 				]);// Warning: 先查找有否重复数据
 				if($exist_record_count>=count($role)) return ['status' => false, 'message' => '已分配角色无需重复分配'];
@@ -248,6 +250,7 @@ $keyword
 					];
 				}
 				$result = $user_assign_role_model->addAll($data); // 分配角色
+
 				return $result ? ['status' => true, 'message' => '分配角色成功'] : ['status' => false, 'message' => '分配角色失败'];
 			}
 			else return ['status' => false, 'message' => '参数错误'];
@@ -286,6 +289,7 @@ $keyword
 				'rid' => ['in', $role],
 				'uid' => $user_id
 			]); // 取消分配角色
+
 			return $result;
 		}
 

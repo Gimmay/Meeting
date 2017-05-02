@@ -124,47 +124,49 @@
 											text-align : left;
 										}
 									</style>
-									<table class="table table-bordered">
+									<table class="table table-bordered layered-table">
+										<thead>
 										<tr>
 											<th width="25%"></th>
 											<th width="25%">报名数</th>
 											<th width="25%">签到数</th>
 											<th width="25%">未到数</th>
 										</tr>
-										<tr></tr>
-										<tr>
-											<td>汇总</td>
-											<td><{$statistics.total.total}></td>
-											<td><{$statistics.total.signed}></td>
-											<td><{:($statistics['total']['total'] - $statistics['total']['signed'])}></td>
-										</tr>
-
-										<tr>
-											<td colspan="4" style="text-align: center"><b>新老店统计</b></td>
-										</tr>
-										<tr>
-											<td>新店</td>
-											<td><{$statistics.isNew.1.total}></td>
-											<td><{$statistics.isNew.1.signed}></td>
-											<td><{:($statistics['isNew']['1']['total'] - $statistics['isNew']['1']['signed'])}></td>
-										</tr>
-										<tr>
-											<td>老店</td>
-											<td><{$statistics.isNew.0.total}></td>
-											<td><{$statistics.isNew.0.signed}></td>
-											<td><{:($statistics['isNew']['0']['total'] - $statistics['isNew']['0']['signed'])}></td>
-										</tr>
-										<tr>
-											<td colspan="4" style="text-align: center"><b>区域统计</b></td>
-										</tr>
-										<volist name="statistics.area" id="single">
+										</thead>
+										<tbody>
 											<tr>
-												<td><{$key}></td>
-												<td><{$single.total}></td>
-												<td><{$single.signed}></td>
-												<td><{:($single['total'] - $single['signed'])}></td>
+												<td>汇总</td>
+												<td><{$statistics.total.total}></td>
+												<td><{$statistics.total.signed}></td>
+												<td><{:($statistics['total']['total'] - $statistics['total']['signed'])}></td>
 											</tr>
-										</volist>
+											<tr>
+												<td colspan="4" style="text-align: center"><b>新老店统计</b></td>
+											</tr>
+											<tr>
+												<td>新店</td>
+												<td><{$statistics.isNew.1.total}></td>
+												<td><{$statistics.isNew.1.signed}></td>
+												<td><{:($statistics['isNew']['1']['total'] - $statistics['isNew']['1']['signed'])}></td>
+											</tr>
+											<tr>
+												<td>老店</td>
+												<td><{$statistics.isNew.0.total}></td>
+												<td><{$statistics.isNew.0.signed}></td>
+												<td><{:($statistics['isNew']['0']['total'] - $statistics['isNew']['0']['signed'])}></td>
+											</tr>
+											<tr>
+												<td colspan="4" style="text-align: center"><b>区域统计</b></td>
+											</tr>
+											<volist name="statistics.area" id="single">
+												<tr>
+													<td><{$key}></td>
+													<td><{$single.total}></td>
+													<td><{$single.signed}></td>
+													<td><{:($single['total'] - $single['signed'])}></td>
+												</tr>
+											</volist>
+										</tbody>
 									</table>
 								</div>
 							</div>

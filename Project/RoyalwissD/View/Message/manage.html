@@ -296,7 +296,7 @@
 				</div>
 				<div class="modal-body">
 					<form action="" class="form-horizontal">
-						<input type="hidden" name="requestType" value="save_configure">
+						<input type="hidden" name="requestType" value="set_configure">
 						<div class="form-group">
 							<label class="col-sm-3 control-label">消息发送：</label>
 							<div class="col-sm-9 clearfix">
@@ -339,11 +339,11 @@
 								</div>
 							</div>
 						</div>
-						<div class="form-group">
+						<!--<div class="form-group">
 							<label class="col-sm-3 control-label">首易SMS：</label>
 							<div class="col-sm-9 clearfix">
 								<select class="form-control" name="sms_mobset_configure">
-									<option value="0">---请选择接口配置---</option>
+									<option value="0">-&#45;&#45;请选择接口配置-&#45;&#45;</option>
 									<volist name="api_configure_list" id="single">
 										<if condition="$single['value'] eq $meeting_configure['sms_mobset_configure']">
 											<option value="<{$single.value}>" selected><{$single.html}></option>
@@ -358,7 +358,7 @@
 							<label class="col-sm-3 control-label">微信公众号：</label>
 							<div class="col-sm-9 clearfix">
 								<select class="form-control" name="wechat_official_configure">
-									<option value="0">---请选择接口配置---</option>
+									<option value="0">-&#45;&#45;请选择接口配置-&#45;&#45;</option>
 									<volist name="api_configure_list" id="single">
 										<if condition="$single['value'] eq $meeting_configure['wechat_official_configure']">
 											<option value="<{$single.value}>" selected><{$single.html}></option>
@@ -373,7 +373,7 @@
 							<label class="col-sm-3 control-label">微信企业号：</label>
 							<div class="col-sm-9 clearfix">
 								<select class="form-control" name="wechat_enterprise_configure">
-									<option value="0">---请选择接口配置---</option>
+									<option value="0">-&#45;&#45;请选择接口配置-&#45;&#45;</option>
 									<volist name="api_configure_list" id="single">
 										<if condition="$single['value'] eq $meeting_configure['wechat_enterprise_configure']">
 											<option value="<{$single.value}>" selected><{$single.html}></option>
@@ -388,7 +388,7 @@
 							<label class="col-sm-3 control-label">邮件：</label>
 							<div class="col-sm-9 clearfix">
 								<select class="form-control" name="email_configure">
-									<option value="0">---请选择接口配置---</option>
+									<option value="0">-&#45;&#45;请选择接口配置-&#45;&#45;</option>
 									<volist name="api_configure_list" id="single">
 										<if condition="$single['value'] eq $meeting_configure['email_configure']">
 											<option value="<{$single.value}>" selected><{$single.html}></option>
@@ -398,7 +398,7 @@
 									</volist>
 								</select>
 							</div>
-						</div>
+						</div>-->
 					</form>
 				</div>
 				<div class="modal-footer">

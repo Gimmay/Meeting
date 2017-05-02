@@ -5,6 +5,7 @@
 	 * Date: 2017-3-4
 	 * Time: 14:59
 	 */
+
 	namespace General\Logic;
 
 	use CMS\Logic\Session;
@@ -72,9 +73,9 @@
 		}
 
 		/**
-		 * 通过模板查找会议类型
+		 * 通过模块查找会议类型
 		 *
-		 * @param $module
+		 * @param int $module 模块名称
 		 *
 		 * @return int|null|string
 		 */
@@ -84,5 +85,16 @@
 			}
 
 			return null;
+		}
+
+		/**
+		 * 通过会议类型查找模块
+		 *
+		 * @param int $type 会议类型
+		 *
+		 * @return string|null 模块名称
+		 */
+		public function getModuleByType($type){
+			return $this->_moduleMapTable[$type]['module'];
 		}
 	}

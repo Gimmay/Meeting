@@ -8,10 +8,8 @@
 	namespace CMS\Controller;
 
 	use CMS\Logic\PageLogic;
-	use CMS\Logic\RoleLogic;
 	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
-	use CMS\Model\UserModel;
 	use Think\Page;
 
 	class UserController extends CMS{

@@ -2,9 +2,9 @@
  * Created by qyqy on 2016-9-12.
  */
 var ScriptObject = {
-	detailsLiTemp    :'<tr><td>#key#</td><td>#name#</td></tr>',
-	detailsLiTempImg :'<tr><td>#key#</td><td><img class="qrcode-style" src="#src#" alt=""></td></tr>',
-	bindEvent    :function(){
+	detailsLiTemp   :'<tr><td>#key#</td><td>#name#</td></tr>',
+	detailsLiTempImg:'<tr><td>#key#</td><td><img class="qrcode-style" src="#src#" alt=""></td></tr>',
+	bindEvent       :function(){
 		var self = this;
 		$('.release_a').on('click', function(){
 			var id = $(this).attr('data-id');
@@ -50,13 +50,13 @@ var ScriptObject = {
 			})
 		});
 	},
-	unbindEvent  :function(){
+	unbindEvent     :function(){
 		$('.release_a').off('click');
 		$('.cancel_release_a').off('click');
 	},
-	roleListTemp :'<tr>\n\t<td>$i</td>\n\t<td class="name">$name</td>\n\t<td>$comment</td>\n\t<td>\n\t\t<div class="btn-group" data-id="$id">\n\t\t\t<button type="button" class="btn btn-default btn-xs choose_user" data-toggle="modal" data-target="#add_meeting_manager">添加</button>\n\t\t\t<button type="button" class="btn btn-default btn-xs get_meeting_manager" data-toggle="modal" data-target="#see_meeting_manager">查看人员</button>\n\t\t</div>\n\t</td>\n</tr>',
-	userListTemp :'<tr>\n\t<td class="check_item_e"><input type="checkbox" class="icheck" value="$id" placeholder=""></td>\n\t<td>$num</td>\n\t<td class="name">$name</td>\n\t<td class="nickname">$nickname</td>\n</tr>',
-	userListTemp2:'<tr data-id="$id" data-uid="$uid">\n\t<td>$num</td>\n\t<td class="name">$name</td>\n\t<td class="nickname">$nickname</td>\n\t<td>\n\t\t<button type="button" class="btn btn-default btn-xs delete_user" data-toggle="modal" data-target="#delete_meeting_manager">删除</button>\n\t</td>\n</tr>',
+	roleListTemp    :'<tr>\n\t<td>$i</td>\n\t<td class="name">$name</td>\n\t<td>$comment</td>\n\t<td>\n\t\t<div class="btn-group" data-id="$id">\n\t\t\t<button type="button" class="btn btn-default btn-xs choose_user" data-toggle="modal" data-target="#add_meeting_manager">添加</button>\n\t\t\t<button type="button" class="btn btn-default btn-xs get_meeting_manager" data-toggle="modal" data-target="#see_meeting_manager">查看人员</button>\n\t\t</div>\n\t</td>\n</tr>',
+	userListTemp    :'<tr>\n\t<td class="check_item_e"><input type="checkbox" class="icheck" value="$id" placeholder=""></td>\n\t<td>$num</td>\n\t<td class="name">$name</td>\n\t<td class="nickname">$nickname</td>\n</tr>',
+	userListTemp2   :'<tr data-id="$id" data-uid="$uid">\n\t<td>$num</td>\n\t<td class="name">$name</td>\n\t<td class="nickname">$nickname</td>\n\t<td>\n\t\t<button type="button" class="btn btn-default btn-xs delete_user" data-toggle="modal" data-target="#delete_meeting_manager">删除</button>\n\t</td>\n</tr>',
 };
 $(function(){
 	$('#add_meeting_manager').keydown(function(e){
@@ -69,12 +69,6 @@ $(function(){
 	var quasar_script = document.getElementById('quasar_script');
 	// 实例化Url类
 	var url_object    = new Quasar.UrlClass(1, quasar_script.getAttribute('data-url-sys-param'), quasar_script.getAttribute('data-page-suffix'));
-	// 发布
-	/*// 单个会议删除
-	 $('.delete_btn').on('click', function(){
-	 var id = $(this).parents('ul.fun_btn').attr('data-id');
-	 $('#delete_modal').find('input[name=id]').val(id);
-	 });*/
 	// 会议详情
 	$('.details_btn').on('click', function(){
 		var id = $(this).attr('data-id');
@@ -96,7 +90,7 @@ $(function(){
 								}
 							}else{
 								str += ScriptObject.detailsLiTemp.replace('#key#', value1)
-												 .replace('#name#', '')
+												   .replace('#name#', '')
 							}
 						}
 					})
@@ -386,10 +380,61 @@ $(function(){
 						location.reload();
 					});
 				}else{
+					ManageObject.object.toast.toast(res.message, '2');
 				}
-				ManageObject.object.toast.toast(res.message, '2');
 			}
 		})
+	});
+	// 会议配置
+	$('.config_btn').on('click', function(){
+		var $this_modal = $('#config_modal');
+		var mid         = $(this).parent('li').attr('data-id');
+		$this_modal.find('input[name=id]').val(mid);
+		Common.ajax({
+			data    :{
+				requestType:'get_configure', mid:mid
+			},
+			callback:function(r){
+				$this_modal.modal('show');
+				if(r.sms_mobset_configure == null){
+					r.sms_mobset_configure = 0;
+				}
+				if(r.wechat_official_configure == null){
+					r.wechat_official_configure = 0;
+				}
+				if(r.wechat_enterprise_configure == null){
+					r.wechat_enterprise_configure = 0;
+				}
+				if(r.email_configure == null){
+					r.email_configure = 0;
+				}
+				$this_modal.find('select[name=sms_mobset_configure]').val(r.sms_mobset_configure);
+				$this_modal.find('select[name=wechat_official_configure]').val(r.wechat_official_configure);
+				$this_modal.find('select[name=wechat_enterprise_configure]').val(r.wechat_enterprise_configure);
+				$this_modal.find('select[name=email_configure]').val(r.email_configure);
+				$('input[name=wechat_mode]').eq(r.wechat_mode-1).iCheck('check');
+			}
+		});
+	});
+	// 会议配置保存
+	$('#config_modal').find('.btn-save').on('click', function(){
+		var $this_modal = $('#config_modal');
+		var data        = $this_modal.find('form').serialize();
+		ManageObject.object.loading.loading();
+		Common.ajax({
+			data    :data,
+			callback:function(r){
+				ManageObject.object.loading.complete();
+				if(res.status){
+					ManageObject.object.toast.toast(res.message, '1');
+					ManageObject.object.toast.onQuasarHidden(function(){
+						location.reload();
+					});
+				}else{
+					ManageObject.object.toast.toast(res.message, '2');
+				}
+			}
+		});
 	});
 });
 function get_user_list(mid, rid){
@@ -407,7 +452,7 @@ function get_user_list(mid, rid){
 				});
 				$('#user_body1').html(str);
 				$('.delete_user').on('click', function(){
-					var id = $(this).parents('tr').attr('data-id');
+					var id  = $(this).parents('tr').attr('data-id');
 					var uid = $(this).parents('tr').attr('data-uid');
 					ManageObject.object.loading.loading();
 					Common.ajax({

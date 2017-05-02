@@ -18,11 +18,11 @@
 							<a href="<{:U('Message/manage', ['mid'=>I('get.mid', 0, 'int')])}>">消息管理</a>
 						</li>
 					</if>
-					<!--<if condition="in_array('SEVERAL-BADGE.VIEW', $permission_list)">
+					<if condition="in_array('SEVERAL-BADGE.VIEW', $permission_list)">
 						<li class="<if condition='$cv_name eq Badge_manage'>active</if>">
 							<a href="<{:U('Badge/manage', ['mid'=>I('get.mid', 0, 'int')])}>">胸卡设计</a>
 						</li>
-					</if>-->
+					</if>
 					<if condition="in_array('SEVERAL-PROJECT.VIEW', $permission_list)">
 						<li class="<if condition='$cv_name eq Project_manage'>active</if>">
 							<a href="<{:U('Project/manage', ['mid'=>I('get.mid', 0, 'int')])}>">项目管理</a>

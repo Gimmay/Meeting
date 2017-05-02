@@ -1,0 +1,25 @@
+.d_table{
+	width : 80%;
+	float : left;
+}
+
+.d_tree{
+	width   : 20%;
+	float   : left;
+	padding : 0 10px;
+}
+
+.d_tree .tree_wrapper{
+	border  : 1px solid #E1E1E1;
+	padding : 10px 20px;
+}
+
+.d_tree .tree_wrapper h2{
+	padding-bottom : 10px;
+	font-weight    : bold;
+	border-bottom: 1px solid #e1e1e1;
+}
+
+.tree_content{
+	padding: 5px ;
+}

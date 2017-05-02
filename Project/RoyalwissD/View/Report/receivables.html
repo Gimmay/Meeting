@@ -222,92 +222,95 @@
 											text-align : left;
 										}
 									</style>
-									<table class="table table-bordered">
-										<tr>
-											<th width="25%"></th>
-											<th width="25%">实收合计(元)</th>
-											<th width="25%">方案款(元)</th>
-											<th width="25%">客户数</th>
-										</tr>
-										<tr></tr>
-										<tr>
-											<td>汇总</td>
-											<td><{$statistics.total.price}></td>
-											<td><{$statistics.total.fixedPrice}></td>
-											<td><{$statistics.total.client}></td>
-										</tr>
-										<tr></tr>
-										<tr>
-											<td colspan="4" style="text-align: center"><b>项目类型统计</b></td>
-										</tr>
-										<volist name="statistics.projectType" id="single">
+									<table class="table table-bordered layered-table">
+										<thead>
 											<tr>
-												<td><{$key}></td>
-												<td><{$single.price}></td>
-												<td><{$single.fixedPrice}></td>
-												<td><{$single.client}></td>
+												<th width="25%"></th>
+												<th width="25%">实收合计(元)</th>
+												<th width="25%">方案款(元)</th>
+												<th width="25%">客户数</th>
 											</tr>
-										</volist>
-										<tr></tr>
-										<tr>
-											<td colspan="4" style="text-align: center"><b>项目统计</b></td>
-										</tr>
-										<volist name="statistics.project" id="single">
+										</thead>
+										<tbody>
 											<tr>
-												<td><{$key}></td>
-												<td><{$single.price}></td>
-												<td><{$single.fixedPrice}></td>
-												<td><{$single.client}></td>
+												<td>汇总</td>
+												<td><{$statistics.total.price}></td>
+												<td><{$statistics.total.fixedPrice}></td>
+												<td><{$statistics.total.client}></td>
 											</tr>
-										</volist>
-										<tr></tr>
+											<tr></tr>
+											<tr>
+												<td colspan="4" style="text-align: center"><b>项目类型统计</b></td>
+											</tr>
+											<volist name="statistics.projectType" id="single">
+												<tr>
+													<td><{$key}></td>
+													<td><{$single.price}></td>
+													<td><{$single.fixedPrice}></td>
+													<td><{$single.client}></td>
+												</tr>
+											</volist>
+											<tr></tr>
+											<tr>
+												<td colspan="4" style="text-align: center"><b>项目统计</b></td>
+											</tr>
+											<volist name="statistics.project" id="single">
+												<tr>
+													<td><{$key}></td>
+													<td><{$single.price}></td>
+													<td><{$single.fixedPrice}></td>
+													<td><{$single.client}></td>
+												</tr>
+											</volist>
+											<tr></tr>
 
-										<tr>
-											<td colspan="4" style="text-align: center"><b>支付方式统计</b></td>
-										</tr>
-										<volist name="statistics.payMethod" id="single">
 											<tr>
-												<td><{$key}></td>
-												<td><{$single.price}></td>
-												<td><{$single.fixedPrice}></td>
-												<td><{$single.client}></td>
+												<td colspan="4" style="text-align: center"><b>支付方式统计</b></td>
 											</tr>
-										</volist>
-										<tr></tr>
+											<volist name="statistics.payMethod" id="single">
+												<tr>
+													<td><{$key}></td>
+													<td><{$single.price}></td>
+													<td><{$single.fixedPrice}></td>
+													<td><{$single.client}></td>
+												</tr>
+											</volist>
+											<tr></tr>
 
-										<tr>
-											<td colspan="4" style="text-align: center"><b>区域统计</b></td>
-										</tr>
-										<volist name="statistics.area" id="single">
 											<tr>
-												<td><{$key}></td>
-												<td><{$single.price}></td>
-												<td><{$single.fixedPrice}></td>
-												<td><{$single.client}></td>
+												<td colspan="4" style="text-align: center"><b>区域统计</b></td>
 											</tr>
-										</volist>
-										<tr>
-											<td colspan="4" style="text-align: center"><b>团队统计</b></td>
-										</tr>
-										<volist name="statistics.team" id="single">
+											<volist name="statistics.area" id="single">
+												<tr>
+													<td><{$key}></td>
+													<td><{$single.price}></td>
+													<td><{$single.fixedPrice}></td>
+													<td><{$single.client}></td>
+												</tr>
+											</volist>
 											<tr>
-												<td><{$key}></td>
-												<td><{$single.price}></td>
-												<td><{$single.fixedPrice}></td>
-												<td><{$single.client}></td>
+												<td colspan="4" style="text-align: center"><b>团队统计</b></td>
 											</tr>
-										</volist>
-										<tr>
-											<td colspan="4" style="text-align: center"><b>会所统计</b></td>
-										</tr>
-										<volist name="statistics.unit" id="single">
+											<volist name="statistics.team" id="single">
+												<tr>
+													<td><{$key}></td>
+													<td><{$single.price}></td>
+													<td><{$single.fixedPrice}></td>
+													<td><{$single.client}></td>
+												</tr>
+											</volist>
 											<tr>
-												<td><{$key}></td>
-												<td><{$single.price}></td>
-												<td><{$single.fixedPrice}></td>
-												<td><{$single.client}></td>
+												<td colspan="4" style="text-align: center"><b>会所统计</b></td>
 											</tr>
-										</volist>
+											<volist name="statistics.unit" id="single">
+												<tr>
+													<td><{$key}></td>
+													<td><{$single.price}></td>
+													<td><{$single.fixedPrice}></td>
+													<td><{$single.client}></td>
+												</tr>
+											</volist>
+										</tbody>
 									</table>
 								</div>
 							</div>

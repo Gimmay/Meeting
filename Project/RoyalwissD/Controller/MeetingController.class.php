@@ -13,6 +13,7 @@
 	use CMS\Logic\UserLogic;
 	use CMS\Model\CMSModel;
 	use General\Logic\MeetingLogic as GeneralMeetingLogic;
+	use General\Logic\PermissionLogic;
 	use RoyalwissD\Logic\MeetingLogic;
 	use RoyalwissD\Model\MeetingModel;
 	use Think\Page;
@@ -133,6 +134,11 @@
 			$this->assign('list', $list);
 			$this->assign('statistics', $statistics);
 			$this->assign('pagination', $pagination);
+			// 获取配置列表
+			/** @var \General\Model\ApiConfigureModel $api_configure_model */
+			$api_configure_model = D('General/ApiConfigure');
+			$api_configure_list  = $api_configure_model->getSelectedList($meeting_type);
+			$this->assign('api_configure_list', $api_configure_list);
 			$this->display();
 		}
 

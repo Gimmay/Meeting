@@ -5,6 +5,7 @@
 	 * Date: 2017-3-2
 	 * Time: 17:57
 	 */
+
 	namespace General\Controller;
 
 	use CMS\Logic\MeetingLogic as CMSMeetingLogic;
@@ -26,7 +27,8 @@
 		const ADMIN_ROLE_LEVEL = 1;
 
 		public function initData(){
-			echo 'forbidden';exit;
+			echo 'forbidden';
+			exit;
 			// 初始化数据开始
 			echo '======================初始化数据开始======================';
 			echo '<br>';
@@ -141,6 +143,21 @@
 			$result                       = $meeting_column_control_logic->initMeetingColumnControlRecord();
 			echo "7、$result[message]";
 			echo '<br>';
+			// 8、初始化系统配置
+			/** @var \General\Model\SystemConfigureModel $system_configure_model */
+			$system_configure_model = D('General/SystemConfigure');
+			$system_configure_model->where('0 = 0')->delete();
+			$data = [];
+			foreach($system_configure_model::CONFIGURE as $key => $value){
+				$data[] = [
+					'code'  => $key,
+					'value' => $value['value'],
+					'name'  => $value['name']
+				];
+			}
+			$result = $system_configure_model->addAll($data);
+			if($result) echo "8、已初始化系统配置";
+			else echo "8、初始化系统配置失败";
 			// 初始化数据结束
 			Session::cleanAll();
 			echo '======================初始化数据结束======================';

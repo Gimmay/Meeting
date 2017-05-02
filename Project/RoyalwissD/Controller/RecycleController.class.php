@@ -5,10 +5,8 @@
 	 * Date: 2016-10-6
 	 * Time: 10:13
 	 */
-	namespace RoyalwissD\Controller;
 
-	use RoyalwissD\Logic\RecycleLogic;
-	use Think\Page;
+	namespace RoyalwissD\Controller;
 
 	class RecycleController extends RoyalwissD{
 		public function _initialize(){
@@ -16,57 +14,42 @@
 		}
 
 		public function client(){
-
 			$this->display();
 		}
 
-		public function employee(){
-
+		public function project(){
 			$this->display();
 		}
 
-		public function meeting(){
-
+		public function projectType(){
 			$this->display();
 		}
 
-		public function role(){
-
+		public function payMethod(){
 			$this->display();
 		}
 
-		public function coupon(){
-
+		public function posMachine(){
 			$this->display();
 		}
 
-		public function couponItem(){
-
-			$this->display();
-		}
-
-		public function message(){
-
-			$this->display();
-		}
-
-		public function group(){
-
-			$this->display();
-		}
-
-		public function groupMember(){
-
+		public function receivables(){
 			$this->display();
 		}
 
 		public function hotel(){
-
 			$this->display();
 		}
 
 		public function room(){
+			$this->display();
+		}
 
+		public function message(){
+			$this->display();
+		}
+
+		public function group(){
 			$this->display();
 		}
 	}

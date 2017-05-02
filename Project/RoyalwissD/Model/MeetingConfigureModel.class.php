@@ -5,11 +5,13 @@
 	 * Date: 2017-3-9
 	 * Time: 11:25
 	 */
+
 	namespace RoyalwissD\Model;
 
 	use Exception;
+	use General\Model\MeetingConfigureModel as InterfaceMeetingConfigureModel;
 
-	class MeetingConfigureModel extends RoyalwissDModel{
+	class MeetingConfigureModel extends RoyalwissDModel implements InterfaceMeetingConfigureModel{
 		public function _initialize(){
 			parent::_initialize();
 		}
@@ -143,13 +145,6 @@ AND t.TABLE_NAME = '$table_meeting_configure' AND COLUMN_NAME NOT LIKE '".self::
 			return $list;
 		}
 
-		/**
-		 * 获取微信公众号的接口配置信息
-		 *
-		 * @param int $meeting_id 会议ID
-		 *
-		 * @return array
-		 */
 		public function getWechatOfficialConfigure($meeting_id){
 			if(!$this->fetch(['mid' => $meeting_id])) return [
 				'status'  => false,
@@ -165,7 +160,7 @@ AND t.TABLE_NAME = '$table_meeting_configure' AND COLUMN_NAME NOT LIKE '".self::
 				])
 				) return [
 					'status'  => false,
-					'message' => '找不到微信公众号接口配置信息'
+					'message' => '缺少微信公众号接口配置信息'
 				];
 				$api_configure = $api_configure_model->getObject();
 
@@ -184,13 +179,6 @@ AND t.TABLE_NAME = '$table_meeting_configure' AND COLUMN_NAME NOT LIKE '".self::
 			];
 		}
 
-		/**
-		 * 获取微信企业号的接口配置信息
-		 *
-		 * @param int $meeting_id 会议ID
-		 *
-		 * @return array
-		 */
 		public function getWechatEnterpriseConfigure($meeting_id){
 			if(!$this->fetch(['mid' => $meeting_id])) return [
 				'status'  => false,
@@ -206,7 +194,7 @@ AND t.TABLE_NAME = '$table_meeting_configure' AND COLUMN_NAME NOT LIKE '".self::
 				])
 				) return [
 					'status'  => false,
-					'message' => '找不到微信企业号接口配置信息'
+					'message' => '缺少微信企业号接口配置信息'
 				];
 				$api_configure = $api_configure_model->getObject();
 
@@ -226,13 +214,6 @@ AND t.TABLE_NAME = '$table_meeting_configure' AND COLUMN_NAME NOT LIKE '".self::
 			];
 		}
 
-		/**
-		 * 获取首易SMS的接口配置信息
-		 *
-		 * @param int $meeting_id 会议ID
-		 *
-		 * @return array
-		 */
 		public function getSMSMobsetConfigure($meeting_id){
 			if(!$this->fetch(['mid' => $meeting_id])) return [
 				'status'  => false,

@@ -5,6 +5,7 @@
 	 * Date: 2017-3-30
 	 * Time: 14:46
 	 */
+
 	namespace RoyalwissD\Logic;
 
 	use CMS\Controller\CMS;
@@ -31,7 +32,7 @@
 		 */
 		public function handlerRequest($type, $opt = []){
 			switch($type){
-				case 'save_configure':
+				case 'set_configure':
 					if(!in_array('SEVERAL-MESSAGE.CONFIGURE', $_SESSION[Session::LOGIN_USER_PERMISSION_LIST])) return [
 						'status'   => false,
 						'message'  => '您没有配置消息的权限',
@@ -43,11 +44,7 @@
 					$meeting_id              = I('get.mid', 0, 'int');
 					$post                    = I('post.');
 					$result                  = $meeting_configure_model->modify(['mid' => $meeting_id], [
-						'message_mode'                => $meeting_configure_logic->encodeMessageMode($post['message_sms'], $post['message_wechat_enterprise'], $post['message_wechat_official'], $post['message_email']),
-						'wechat_official_configure'   => $post['wechat_official_configure'],
-						'wechat_enterprise_configure' => $post['wechat_enterprise_configure'],
-						'sms_mobset_configure'        => $post['sms_mobset_configure'],
-						'email_configure'             => $post['email_configure']
+						'message_mode'                => $meeting_configure_logic->encodeMessageMode($post['message_sms'], $post['message_wechat_enterprise'], $post['message_wechat_official'], $post['message_email'])
 					]);
 
 					return array_merge($result, ['__ajax__' => true]);
@@ -454,8 +451,7 @@ SET send_status =  CASE sms_id i$replace_char END
 			else $email_flag = 0;
 			/** @var \RoyalwissD\Model\MessageModel $message_model */
 			$message_model = D('RoyalwissD/Message');
-			$send_result   = [
-			];
+			$send_result   = [];
 			// 4、如果开启SMS发送的话
 			if($sms_flag == 1){
 				$message = $message_model->getMessage($meeting_id, 1, $action);

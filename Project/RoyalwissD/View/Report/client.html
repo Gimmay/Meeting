@@ -191,101 +191,104 @@
 											text-align : left;
 										}
 									</style>
-									<table class="table table-bordered">
-										<tr>
-											<th width="16%"></th>
-											<th width="16%">报名人数</th>
-											<th width="16%">已到人数</th>
-											<th width="16%">未到人数</th>
-											<th width="16%">消耗金额(元)</th>
-											<th width="16%">会前收款金额(元)</th>
-										</tr>
-										<tr></tr>
-										<tr>
-											<td>汇总</td>
-											<td><{$statistics.total.total}></td>
-											<td><{$statistics.total.signed}></td>
-											<td><{:($statistics['total']['total'] - $statistics['total']['signed'])}></td>
-											<td><{$statistics.total.consumption}></td>
-											<td><{$statistics.total.receivables}></td>
-										</tr>
-										<tr>
-											<td colspan="6" style="text-align: center"><b>新老客统计</b></td>
-										</tr>
-										<tr>
-											<td>新客</td>
-											<td><{$statistics.isNew.1.total}></td>
-											<td><{$statistics.isNew.1.signed}></td>
-											<td><{:($statistics['isNew']['1']['total'] - $statistics['isNew']['1']['signed'])}></td>
-											<td><{$statistics.isNew.1.consumption}></td>
-											<td><{$statistics.isNew.1.receivables}></td>
-										</tr>
-										<tr>
-											<td>老客</td>
-											<td><{$statistics.isNew.0.total}></td>
-											<td><{$statistics.isNew.0.signed}></td>
-											<td><{:($statistics['isNew']['0']['total'] - $statistics['isNew']['0']['signed'])}></td>
-											<td><{$statistics.isNew.0.consumption}></td>
-											<td><{$statistics.isNew.0.receivables}></td>
-										</tr>
-										<!--<tr>-->
-											<!--<td colspan="4" style="text-align: center"><b>新老店统计</b></td>-->
-										<!--</tr>-->
-										<!--<tr>-->
-											<!--<td>新店</td>-->
-											<!--<td><{$statistics.unitIsNew.1.total}></td>-->
-											<!--<td><{$statistics.unitIsNew.1.signed}></td>-->
-											<!--<td><{:($statistics['unitIsNew']['1']['total'] - $statistics['unitIsNew']['1']['signed'])}></td>-->
-											<!--<td><{$statistics.unitIsNew.1.consumption}></td>-->
-											<!--<td><{$statistics.unitIsNew.1.receivables}></td>-->
-										<!--</tr>-->
-										<!--<tr>-->
-											<!--<td>老店</td>-->
-											<!--<td><{$statistics.unitIsNew.0.total}></td>-->
-											<!--<td><{$statistics.unitIsNew.0.signed}></td>-->
-											<!--<td><{:($statistics['unitIsNew']['0']['total'] - $statistics['unitIsNew']['0']['signed'])}></td>-->
-											<!--<td><{$statistics.unitIsNew.0.consumption}></td>-->
-											<!--<td><{$statistics.unitIsNew.0.receivables}></td>-->
-										<!--</tr>-->
-										<tr>
-											<td colspan="6" style="text-align: center"><b>区域统计</b></td>
-										</tr>
-										<volist name="statistics.area" id="single">
+									<table class="table table-bordered layered-table">
+										<thead>
 											<tr>
-												<td><{$key}></td>
-												<td><{$single.total}></td>
-												<td><{$single.signed}></td>
-												<td><{:($single['total'] - $single['signed'])}></td>
-												<td><{$single.consumption}></td>
-												<td><{$single.receivables}></td>
+												<th width="16%"></th>
+												<th width="16%">报名人数</th>
+												<th width="16%">已到人数</th>
+												<th width="16%">未到人数</th>
+												<th width="16%">消耗金额(元)</th>
+												<th width="16%">会前收款金额(元)</th>
 											</tr>
-										</volist>
-										<tr>
-											<td colspan="6" style="text-align: center"><b>团队统计</b></td>
-										</tr>
-										<volist name="statistics.team" id="single">
+										</thead>
+										<tbody>
 											<tr>
-												<td><{$key}></td>
-												<td><{$single.total}></td>
-												<td><{$single.signed}></td>
-												<td><{:($single['total'] - $single['signed'])}></td>
-												<td><{$single.consumption}></td>
-												<td><{$single.receivables}></td>
+												<td>汇总</td>
+												<td><{$statistics.total.total}></td>
+												<td><{$statistics.total.signed}></td>
+												<td><{:($statistics['total']['total'] - $statistics['total']['signed'])}></td>
+												<td><{$statistics.total.consumption}></td>
+												<td><{$statistics.total.receivables}></td>
 											</tr>
-										</volist>
-										<tr>
-											<td colspan="6" style="text-align: center"><b>客户性质统计</b></td>
-										</tr>
-										<volist name="statistics.type" id="single">
 											<tr>
-												<td><{$key}></td>
-												<td><{$single.total}></td>
-												<td><{$single.signed}></td>
-												<td><{:($single['total'] - $single['signed'])}></td>
-												<td><{$single.consumption}></td>
-												<td><{$single.receivables}></td>
+												<td colspan="6" style="text-align: center"><b>新老客统计</b></td>
 											</tr>
-										</volist>
+											<tr>
+												<td>新客</td>
+												<td><{$statistics.isNew.1.total}></td>
+												<td><{$statistics.isNew.1.signed}></td>
+												<td><{:($statistics['isNew']['1']['total'] - $statistics['isNew']['1']['signed'])}></td>
+												<td><{$statistics.isNew.1.consumption}></td>
+												<td><{$statistics.isNew.1.receivables}></td>
+											</tr>
+											<tr>
+												<td>老客</td>
+												<td><{$statistics.isNew.0.total}></td>
+												<td><{$statistics.isNew.0.signed}></td>
+												<td><{:($statistics['isNew']['0']['total'] - $statistics['isNew']['0']['signed'])}></td>
+												<td><{$statistics.isNew.0.consumption}></td>
+												<td><{$statistics.isNew.0.receivables}></td>
+											</tr>
+											<!--<tr>-->
+												<!--<td colspan="4" style="text-align: center"><b>新老店统计</b></td>-->
+											<!--</tr>-->
+											<!--<tr>-->
+												<!--<td>新店</td>-->
+												<!--<td><{$statistics.unitIsNew.1.total}></td>-->
+												<!--<td><{$statistics.unitIsNew.1.signed}></td>-->
+												<!--<td><{:($statistics['unitIsNew']['1']['total'] - $statistics['unitIsNew']['1']['signed'])}></td>-->
+												<!--<td><{$statistics.unitIsNew.1.consumption}></td>-->
+												<!--<td><{$statistics.unitIsNew.1.receivables}></td>-->
+											<!--</tr>-->
+											<!--<tr>-->
+												<!--<td>老店</td>-->
+												<!--<td><{$statistics.unitIsNew.0.total}></td>-->
+												<!--<td><{$statistics.unitIsNew.0.signed}></td>-->
+												<!--<td><{:($statistics['unitIsNew']['0']['total'] - $statistics['unitIsNew']['0']['signed'])}></td>-->
+												<!--<td><{$statistics.unitIsNew.0.consumption}></td>-->
+												<!--<td><{$statistics.unitIsNew.0.receivables}></td>-->
+											<!--</tr>-->
+											<tr>
+												<td colspan="6" style="text-align: center"><b>区域统计</b></td>
+											</tr>
+											<volist name="statistics.area" id="single">
+												<tr>
+													<td><{$key}></td>
+													<td><{$single.total}></td>
+													<td><{$single.signed}></td>
+													<td><{:($single['total'] - $single['signed'])}></td>
+													<td><{$single.consumption}></td>
+													<td><{$single.receivables}></td>
+												</tr>
+											</volist>
+											<tr>
+												<td colspan="6" style="text-align: center"><b>团队统计</b></td>
+											</tr>
+											<volist name="statistics.team" id="single">
+												<tr>
+													<td><{$key}></td>
+													<td><{$single.total}></td>
+													<td><{$single.signed}></td>
+													<td><{:($single['total'] - $single['signed'])}></td>
+													<td><{$single.consumption}></td>
+													<td><{$single.receivables}></td>
+												</tr>
+											</volist>
+											<tr>
+												<td colspan="6" style="text-align: center"><b>客户性质统计</b></td>
+											</tr>
+											<volist name="statistics.type" id="single">
+												<tr>
+													<td><{$key}></td>
+													<td><{$single.total}></td>
+													<td><{$single.signed}></td>
+													<td><{:($single['total'] - $single['signed'])}></td>
+													<td><{$single.consumption}></td>
+													<td><{$single.receivables}></td>
+												</tr>
+											</volist>
+										</tbody>
 									</table>
 								</div>
 							</div>

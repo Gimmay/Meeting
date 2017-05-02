@@ -5,6 +5,7 @@
 	 * Date: 2017-3-31
 	 * Time: 12:01
 	 */
+
 	namespace General\Model;
 
 	use Exception;
@@ -49,10 +50,11 @@
 		 *
 		 * @return array
 		 */
-		public function getSelectedList($meeting_type){
-			return $this->where([
-				'mtype'  => $meeting_type,
+		public function getSelectedList($meeting_type = null){
+			$option = $meeting_type == null ? [] : ['mtype' => $meeting_type];
+
+			return $this->where(array_merge($option, [
 				'status' => 1
-			])->field("id value, name html, concat(name,',',name_pinyin)")->select();
+			]))->field("id value, name html, concat(name,',',name_pinyin)")->select();
 		}
 	}

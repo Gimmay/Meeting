@@ -20,4 +20,5 @@
 			$this->assign('list', $meeting_type_list);
 			$this->display();
 		}
+
 	}

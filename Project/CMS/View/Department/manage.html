@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>部门管理 - 会议系统</title>
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/bootstrap/icheck-1.x/skins/all.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Aimara/normalize.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Aimara/Aimara.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE_PATH}>/jQuery/Aimara/Example.css">
+	<link rel="stylesheet" href="<{$Think.COMMON_STYLE}>">
+	<link rel="stylesheet" href="<{$Think.SELF_STYLE}>">
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/jquery-3.1.0.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/Quasar.js" id="quasar_script" data-url-sys-param="<{:TP_SYS_PARAM}>" data-page-suffix="<{:PAGE_SUFFIX}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/bootstrap.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/icheck.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/bootstrap/icheck-1.x/custom.min.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Select/jquery.quasar.select.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Toast/jquery.quasar.toast.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Quasar.Loading/jquery.quasar.loading.js"></script>
+	<script src="<{$Think.COMMON_SCRIPT}>"></script>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/operate.js"></script>
+	<script src="<{$Think.SELF_SCRIPT}>"></script>
+</head>
+<body>
+	<div id="mt_container">
+		<div class="mt_content">
+			<include file="Public/outerMenu"/>
+			<div class="mt_wrapper">
+				<include file="Public/outerHeader"/>
+				<div class="main_body">
+					<section class="content">
+						<div class="c_header">
+							<div class="function_list clearfix">
+								<if condition="in_array('GENERAL-ROLE.CREATE', $permission_list)">
+									<div class="function_btn" data-toggle="modal" data-target="#create_modal">
+										<a href="javascript:void(0)"><i class="glyphicon glyphicon-plus"></i>
+											<span>新增部门</span></a>
+									</div>
+								</if>
+								<if condition="in_array('GENERAL-ROLE.DELETE', $permission_list)">
+									<div class="function_btn batch_delete_btn">
+										<a href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i>
+											<span>批量删除</span></a>
+									</div>
+								</if>
+								<if condition="in_array('GENERAL-ROLE.ENABLE', $permission_list)">
+									<div class="function_btn batch_enable_btn">
+										<a href="javascript:void(0)"> <i class="glyphicon glyphicon-ok-circle"></i>
+											<span>批量启用</span></a>
+									</div>
+								</if>
+								<if condition="in_array('GENERAL-ROLE.DISABLE', $permission_list)">
+									<div class="function_btn batch_disable_btn">
+										<a href="javascript:void(0)"><i class="glyphicon glyphicon-ban-circle"></i>
+											<span>批量禁用</span></a>
+									</div>
+								</if>
+							</div>
+						</div>
+						<if condition="in_array('GENERAL-ROLE.SEARCH', $permission_list)">
+							<div class="repertory clearfix">
+								<form action="" method="get">
+									<div class="input-group repertory_text">
+										<input type="search" name="keyword" id="keyword" class="form-control" placeholder="名称 / 拼音简码" value="<{:I('get.keyword', '')}>">
+									<span class="input-group-btn">
+										<button type="button" id="main_search" class="btn btn-default main_search">搜索角色</button>
+									</span>
+										<!-- 避免回车提交 -->
+										<input style="display:none" mce_style="display:none">
+									</div>
+									<a type="reset" class="btn btn-default main_search" href="<{:U('')}>">查看所有</a>
+								</form>
+							</div>
+						</if>
+						<div class="table_wrap">
+							<div class="d_table">
+								<table class="table table-bordered" style="text-align: center">
+									<thead>
+										<tr>
+											<th width="5%" class="all_check">
+												<input type="checkbox" class="icheck" placeholder="" value="">
+											</th>
+											<th width="5%">序号</th>
+											<th width="15%">名称</th>
+											<th width="5%">用户数</th>
+											<th width="5%">等级</th>
+											<th width="5%">状态</th>
+											<th width="10%">创建者</th>
+											<th width="15%">创建时间</th>
+											<th width="35%">操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<volist name="list" id="single">
+											<if condition="$max_role_level elt $single['level']">
+												<tr>
+													<td class="check_item">
+														<input type="checkbox" class="icheck" placeholder="" value="<{$single.id}>">
+													</td>
+													<td><{$i}></td>
+													<td class="name"><{$single.name}></td>
+
+													<td>
+														<notempty name="single.user_id">
+															<a href="<{:U('User/manage', ['rid'=>$single['id']])}>" class="link color-primary"><{:count(explode(',', $single['user_id']))}></a>
+															<else/>
+															0
+														</notempty>
+													</td>
+													<td><{$single.level}></td>
+													<td><{$single.status}></td>
+													<td><{$single.creator}></td>
+													<td><{$single.creatime}></td>
+													<td>
+														<div class="btn-group" data-id="<{$single.id}>" data-status="<{$single.status_code}>">
+															<if condition="$single['status_code'] eq 1">
+																<if condition="in_array('GENERAL-ROLE.GRANT_PERMISSION', $permission_list)">
+																	<button type="button" class="btn btn-default btn-xs authorize_btn" data-toggle="modal" data-target="#authorize_role">授权</button>
+																</if>
+															</if>
+															<if condition="in_array('GENERAL-ROLE.MODIFY', $permission_list)">
+																<button type="button" class="btn btn-default btn-xs modify_btn" data-toggle="modal" data-target="#modify_role">修改</button>
+															</if>
+															<if condition="in_array('GENERAL-ROLE.DELETE', $permission_list)">
+																<button type="button" class="btn btn-danger btn-xs delete_btn" data-toggle="modal" data-target="#delete_modal">删除</button>
+															</if>
+															<switch name="single.status_code">
+																<case value="0">
+																	<if condition="in_array('GENERAL-ROLE.ENABLE', $permission_list)">
+																		<button type="button" class="btn btn-success btn-xs btn-apply">启用</button>
+																	</if>
+																</case>
+																<case value="1">
+																	<if condition="in_array('GENERAL-ROLE.DISABLE', $permission_list)">
+																		<button type="button" class="btn btn-danger btn-xs btn-apply">禁用</button>
+																	</if>
+																</case>
+															</switch>
+														</div>
+													</td>
+												</tr>
+											</if>
+										</volist>
+									</tbody>
+								</table>
+							</div>
+							<div id="div_log" style="display: none"></div>
+							<div class="d_tree">
+								<div class="tree_wrapper">
+									<h2 class="text-center">部门结构图</h2>
+									<div id="div_tree" class="tree_content"></div>
+								</div>
+							</div>
+						</div>
+						<div class="page_wrap">
+							<div class="pagination">
+								<{$pagination}>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--新增角色-->
+	<div class="modal fade" id="create_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">新增部门</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="create">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="name" class="col-sm-2 control-label  color-red  "><b style="vertical-align: middle;">*</b>名称：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="name" id="name">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="comment" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control" name="comment" id="comment"></textarea>
+							</div>
+						</div>
+						<!--部门ID-->
+						<input type="hidden" name="id" value="0">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">新增</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="modify_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">修改部门</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="modify">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="name_modify" class="col-sm-2 control-label  color-red  "><b style="vertical-align: middle;">*</b>名称：</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="name" id="name_modify">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="comment_modify" class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-10">
+								<textarea class="form-control" name="comment" id="comment_modify"></textarea>
+							</div>
+						</div>
+						<!--部门ID-->
+						<input type="hidden" name="id" value="">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">新增</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="delete_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">删除角色</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除角色？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认删除</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="authorize_role" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 80%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title text-center" id="authorize_role_title">
+						<span class="role_name" style="font-size: 16px; color: #FB5050; margin-left: 10px;"></span>&nbsp;&nbsp;&nbsp;&nbsp;角色授权
+					</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post">
+					<div class="modal-body role_body clearfix">
+						<div class="btn_rect">
+							<div>
+								<h2 class="text-center">已分配的权限</h2>
+								<div class="form-group">
+									<div class="input-group" id="authorize_search_o">
+										<input class="form-control" type="text" placeholder="权限名称">
+										<div class="input-group-addon">搜索</div>
+									</div>
+								</div>
+							</div>
+							<section class="select_area btn_green" id="authorize_select">
+							</section>
+						</div>
+						<div class="btn_rect">
+							<div>
+								<h2 class="text-center">未分配的权限</h2>
+								<div class="form-group">
+									<div class="input-group" id="authorize_search">
+										<input class="form-control" type="text" placeholder="权限名称">
+										<div class="input-group-addon">搜索</div>
+									</div>
+								</div>
+							</div>
+							<section class="all_area clearfix" id="authorize_all">
+							</section>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					</div>
+					<input type="hidden" name="hide_role_id">
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="batch_delete_modal" tabindex="3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h2 class="modal-title">批量删除角色</h2>
+				</div>
+				<form class="form-horizontal" role="form" method="post" action="">
+					<input type="hidden" name="requestType" value="delete"> <input type="hidden" name="id" value="">
+					<div class="modal-body">
+						是否删除已选<span class="sAmount"></span>项？
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary btn-save">确认删除</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div id="department_tree" style="display: none">
+		<{:json_encode($department_tree)}>
+	</div>
+	<script src="<{$Think.COMMON_SCRIPT_PATH}>/jQuery/Aimara/Aimara.js"></script>
+	<script>
+		var ManageObject = {
+			url   :{
+				TreeImagePath:'<{$Think.COMMON_IMAGE_PATH}>/tree'
+			},
+			object:{
+				toast  :$().QuasarToast(),
+				icheck :$('.icheck').iCheck({
+					checkboxClass:'icheckbox_square-green',
+					radioClass   :'iradio_square-green'
+				}),
+				loading:$().QuasarLoading()
+			}
+		};
+	</script>
+	<script type="text/javascript">
+		window.onload = function(){
+			//Initializing Tree
+			//Tree Context Menu Structure
+			var contex_menu           = {
+				'context1':{
+					elements:[
+						{
+							text  :'新增',
+							icon  :'<{$Think.COMMON_IMAGE_PATH}>/tree/blue_key.png',
+							action:function(node){
+								$('#create_modal').modal('show');
+							}
+						},
+						{
+							text  :'修改',
+							icon  :'<{$Think.COMMON_IMAGE_PATH}>/tree/blue_key.png',
+							action:function(node){
+								$('#modify_modal').modal('show');
+							}
+						}
+					]
+				}
+			};
+			//Creating the tree
+			tree                      = createTree('div_tree', 'white', contex_menu);
+			div_log                   = document.getElementById('div_log');
+			//Setting custom events
+			tree.nodeBeforeOpenEvent  = function(node){
+				div_log.innerHTML += node.text+': Before expand event<br/>';
+			}
+			tree.nodeAfterOpenEvent   = function(node){
+				div_log.innerHTML += node.text+': After expand event<br/>';
+			}
+			tree.nodeBeforeCloseEvent = function(node){
+				div_log.innerHTML += node.text+': Before collapse event<br/>';
+			}
+			//Loop to create test nodes
+			for(var i = 1; i<10; i++){
+				node1 = tree.createNode('Level 0 - Node '+i, false, '<{$Think.COMMON_IMAGE_PATH}>/tree/star.png', null, null, 'context1');
+				for(var j = 1; j<5; j++){
+					node2 = node1.createChildNode('Level 1 - Node '+j, false, '<{$Think.COMMON_IMAGE_PATH}>/tree/blue_key.png', null, 'context1');
+					for(var k = 1; k<5; k++){
+						node3 = node2.createChildNode('Level 2 - Node '+k, false, '<{$Think.COMMON_IMAGE_PATH}>/tree/monitor.png', null, 'context1');
+						for (var l=1; l<5; l++) {
+						 node4 = node3.createChildNode('Level 3 - Node ' + l, false, '<{$Think.COMMON_IMAGE_PATH}>/tree/key_green.png',null,'context1');
+						 for (var m=1; m<5; m++) {
+						 node4.createChildNode('Level 4 - Node ' + m, false, '<{$Think.COMMON_IMAGE_PATH}>/tree/file.png',null,'context1');
+						 }
+						 }
+					}
+				}
+			}
+			//Rendering the tree
+			tree.drawTree();
+			/*//Adding node after tree is already rendered
+			tree.createNode('Real Time', false, '<{$Think.COMMON_IMAGE_PATH}>/tree/leaf.png', null, null, 'context1');*/
+		};
+		function expand_all(){
+			tree.expandTree();
+		}
+		function clear_log(){
+			document.getElementById('div_log').innerHTML = '';
+		}
+		function collapse_all(){
+			tree.collapseTree();
+		}
+	</script>
+</body>
+</html>

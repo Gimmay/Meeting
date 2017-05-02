@@ -16,6 +16,11 @@
 					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
 			</li>
 				</if>
+			<li class="side_item <if condition='CONTROLLER_NAME eq Department'>active</if>">
+				<a href="<{:U('CMS/Department/manage')}>" class="side-item-link">
+					<i class="icon_nav glyphicon glyphicon glyphicon-compressed"></i> <span class="nav-label">部门管理</span>
+					<span class="arrow glyphicon glyphicon-chevron-left"></span> </a>
+			</li>
 			<if condition="in_array('SEVERAL-MEETING.VIEW', $permission_list)">
 			<li class="side_item <if condition='CONTROLLER_NAME eq Meeting'>active</if>">
 				<a href="<{:U('CMS/Meeting/type')}>" class="side-item-link">
@@ -29,9 +34,9 @@
 					<span class="arrow glyphicon glyphicon-chevron-left"></span>
 				</div>
 				<ul class="nav-second-level">
-					<!--<li class="<if condition='$cv_name eq Client_manage'>active</if>">
+					<li class="<if condition='$cv_name eq Client_manage'>active</if>">
 						<a href="<{:U('CMS/System/configure')}>" class="side-item-link">基础配置</a>
-					</li>-->
+					</li>
 					<if condition="in_array('GENERAL-API_CONFIGURE.VIEW', $permission_list)">
 					<li class="<if condition='$cv_name eq System_apiConfigure'>active</if>">
 						<a href="<{:U('CMS/System/apiConfigure')}>">接口配置</a>

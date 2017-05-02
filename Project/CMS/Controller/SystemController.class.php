@@ -5,10 +5,12 @@
 	 * Date: 2017-3-11
 	 * Time: 14:51
 	 */
+
 	namespace CMS\Controller;
 
 	use CMS\Logic\ApiConfigureLogic;
 	use CMS\Logic\PageLogic;
+	use CMS\Logic\SystemConfigureLogic;
 	use CMS\Logic\SystemLogic;
 	use CMS\Logic\UserLogic;
 	use General\Logic\MeetingLogic;
@@ -20,10 +22,10 @@
 		}
 
 		public function configure(){
-			$logic = new SystemLogic();
+			$system_configure_logic = new SystemConfigureLogic();
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
-				$result = $logic->handlerRequest($type);
+				$result = $system_configure_logic->handlerRequest($type);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);
 					echo json_encode($result);
@@ -36,6 +38,15 @@
 				}
 				exit;
 			}
+			// 获取配置列表
+			/** @var \General\Model\ApiConfigureModel $api_configure_model */
+			$api_configure_model = D('General/ApiConfigure');
+			$api_configure_list  = $api_configure_model->getSelectedList();
+			$this->assign('api_configure_list', $api_configure_list);
+			/** @var \General\Model\SystemConfigureModel $system_configure_model */
+			$system_configure_model = D('General/SystemConfigure');
+			$system_configure       = $system_configure_model->getConfigure();
+			$this->assign('system_configure', $system_configure);
 			$this->display();
 		}
 
@@ -43,10 +54,7 @@
 			$api_configure_logic = new ApiConfigureLogic();
 			if(IS_POST){
 				$type   = strtolower(I('post.requestType', ''));
-				$result = $api_configure_logic->handlerRequest($type, [
-					'username' => I('post.username', ''),
-					'password' => I('post.password', '')
-				]);
+				$result = $api_configure_logic->handlerRequest($type);
 				if($result['__ajax__']){
 					unset($result['__ajax__']);
 					echo json_encode($result);
@@ -66,7 +74,7 @@
 			$meeting_logic     = new MeetingLogic();
 			$meeting_type_list = $meeting_logic->getViewedMeetingTypeList();
 			// 输出会议类型数据
-			$viewed_meeting_type = $api_configure_logic->setData('get_meeting_type', $meeting_type_list);
+			$viewed_meeting_type  = $api_configure_logic->setData('get_meeting_type', $meeting_type_list);
 			$model_control_column = $this->getModelControl();
 			$option               = [];
 			$list                 = $api_configure_model->getList(array_merge($model_control_column, $option, [
